@@ -273,3 +273,52 @@ describe('buildConsolidatedSheet — sources open-data', () => {
     expect(() => getSheet([valeur])).toThrow(/pas de définition/);
   });
 });
+
+describe('buildConsolidatedSheet — sans colonnes de métadonnées', () => {
+  it('limite l’en-tête aux colonnes A à D suivies des périodes', () => {
+    const workbook = new Workbook();
+    buildConsolidatedSheet(
+      workbook,
+      [
+        {
+          ...parent,
+          enfants: [
+            { id: 2, identifiantReferentiel: 'cae_1.b', titre: 'Enfant' },
+          ],
+        },
+      ],
+      [
+        makeValeur({ indicateurId: 1, annee: 2022, resultat: 100 }),
+        makeValeur({ indicateurId: 2, annee: 2022, objectif: 50 }),
+      ],
+      new Map(),
+      { withMetaColumns: false }
+    );
+    const ws = workbook.getWorksheet(1);
+    if (!ws) throw new Error('Worksheet not found');
+
+    expect((ws.getRow(1).values as unknown[]).slice(1)).toEqual([
+      'Identifiant',
+      "Nom de l'indicateur",
+      'Indicateur parent',
+      'Unité',
+      '2022 Résultat',
+      '2022 Objectif',
+    ]);
+    expect((ws.getRow(2).values as unknown[]).slice(1)).toEqual([
+      'cae_1',
+      'Indicateur test',
+      '',
+      'kg',
+      100,
+    ]);
+    expect((ws.getRow(3).values as unknown[]).slice(1)).toEqual([
+      'cae_1.b',
+      '  Enfant',
+      'Indicateur test',
+      'kg',
+      undefined,
+      50,
+    ]);
+  });
+});

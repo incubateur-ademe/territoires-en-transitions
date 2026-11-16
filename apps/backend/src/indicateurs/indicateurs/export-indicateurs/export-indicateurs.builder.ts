@@ -24,7 +24,7 @@ type RowData = EnfantRow & {
   commentaire: string | null;
 };
 
-type ParentRow = RowData & {
+export type ParentRow = RowData & {
   enfants: EnfantRow[];
 };
 
@@ -43,6 +43,10 @@ const FIXED_HEADERS = [
   "Nom de l'indicateur",
   'Indicateur parent',
   'Unité',
+] as const;
+
+/** Colonnes de métadonnées, retirées quand `withMetaColumns` vaut `false`. */
+const META_HEADERS = [
   'Pilote',
   'Direction ou service pilote',
   'Commentaire',
@@ -64,12 +68,16 @@ type PeriodsByType = {
  * - Colonnes dynamiques `<période> Résultat` / `<période> Objectif`, créées
  *   uniquement pour les périodes comportant au moins une valeur du type concerné
  * - En-tête figé (freeze panes)
+ *
+ * `withMetaColumns: false` retire les colonnes Pilote, Direction, Commentaire
+ * et Source : l'en-tête se limite aux colonnes A à D suivies des périodes.
  */
 export function buildConsolidatedSheet(
   workbook: Workbook,
   parents: ParentRow[],
   indicateursValeurs: IndicateurValeurAvecMetadonnesDefinition[],
-  sourceLabels: Map<string, string> = new Map()
+  sourceLabels: Map<string, string> = new Map(),
+  { withMetaColumns = true }: { withMetaColumns?: boolean } = {}
 ): void {
   const worksheet = workbook.addWorksheet('Indicateurs');
 
@@ -77,7 +85,7 @@ export function buildConsolidatedSheet(
   // par type : une colonne n'est créée que si elle contient au moins une valeur.
   const periods = collectPeriods(indicateursValeurs);
 
-  addHeaderRow(worksheet, periods);
+  addHeaderRow(worksheet, periods, withMetaColumns);
 
   // Index des valeurs par identifiant d'indicateur, séparant saisie
   // collectivité et sources open-data.
@@ -90,7 +98,8 @@ export function buildConsolidatedSheet(
       null,
       periods,
       valeursByIndicateurId,
-      sourceLabels
+      sourceLabels,
+      withMetaColumns
     );
 
     for (const enfant of parent.enfants ?? []) {
@@ -106,7 +115,8 @@ export function buildConsolidatedSheet(
         parent.titre,
         periods,
         valeursByIndicateurId,
-        sourceLabels
+        sourceLabels,
+        withMetaColumns
       );
     }
   }
@@ -178,9 +188,14 @@ function indexValeurs(
   return map;
 }
 
-function addHeaderRow(worksheet: Worksheet, periods: PeriodsByType): void {
+function addHeaderRow(
+  worksheet: Worksheet,
+  periods: PeriodsByType,
+  withMetaColumns: boolean
+): void {
   worksheet.addRow([
     ...FIXED_HEADERS,
+    ...(withMetaColumns ? META_HEADERS : []),
     ...periods.resultat.map(
       (period) => `${IndicateurPeriodes.format(period)} Résultat`
     ),
@@ -200,7 +215,8 @@ function addIndicateurRows(
   parentTitre: string | null,
   periods: PeriodsByType,
   valeursByIndicateurId: Map<number, IndicateurValeurs>,
-  sourceLabels: Map<string, string>
+  sourceLabels: Map<string, string>,
+  withMetaColumns: boolean
 ): void {
   const valeurs = valeursByIndicateurId.get(indicator.id);
 
@@ -213,7 +229,7 @@ function addIndicateurRows(
     SOURCE_COLLECTIVITE,
     valeurs?.collectivite ?? [],
     periods,
-    { withMeta: true }
+    { withMeta: true, withMetaColumns }
   );
 
   // Lignes open-data : une par source disposant d'au moins une valeur.
@@ -228,7 +244,7 @@ function addIndicateurRows(
       sourceLabels.get(sourceId) ?? sourceId,
       sourceValeurs,
       periods,
-      { withMeta: false }
+      { withMeta: false, withMetaColumns }
     );
   }
 }
@@ -240,7 +256,7 @@ function addValeursRow(
   source: string,
   valeurs: IndicateurValeurAvecMetadonnesDefinition[],
   periods: PeriodsByType,
-  { withMeta }: { withMeta: boolean }
+  { withMeta, withMetaColumns }: { withMeta: boolean; withMetaColumns: boolean }
 ): void {
   const resultatByPeriod = new Map<IndicateurPeriodeKey, number | null>();
   const objectifByPeriod = new Map<IndicateurPeriodeKey, number | null>();
@@ -263,11 +279,16 @@ function addValeursRow(
     titre,
     parentTitre ?? '',
     indicator.unite,
-    // Pilote / service / commentaire ne concernent que la saisie collectivité.
-    withMeta ? indicator.pilotes.map((p) => p.nom).join(', ') : '',
-    withMeta ? indicator.services.map((s) => s.nom).join(', ') : '',
-    withMeta ? indicator.commentaire ?? '' : '',
-    source,
+    ...(withMetaColumns
+      ? [
+          // Pilote / service / commentaire ne concernent que la saisie
+          // collectivité.
+          withMeta ? indicator.pilotes.map((p) => p.nom).join(', ') : '',
+          withMeta ? indicator.services.map((s) => s.nom).join(', ') : '',
+          withMeta ? indicator.commentaire ?? '' : '',
+          source,
+        ]
+      : []),
     ...periods.resultat.map(
       (period) => resultatByPeriod.get(IndicateurPeriodes.key(period)) ?? null
     ),
