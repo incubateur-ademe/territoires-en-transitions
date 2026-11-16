@@ -1,5 +1,8 @@
 import { INestApplication } from '@nestjs/common';
-import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import {
+  addTestCollectivite,
+  addTestCollectiviteAndUser,
+} from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import {
   getAuthUserFromUserCredentials,
@@ -17,8 +20,8 @@ import {
 import { CollectiviteRole } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
 import { onTestFinished } from 'vitest';
+import { pickFreeRegionCode } from '../demarches-pcaet.test-fixture';
 import { pcaetDemandeAvisTable } from '../shared/models/pcaet-demande-avis.table';
-import { DemarchePcaetDemoService } from './demarche-pcaet-demo.service';
 
 describe('Mode démo du dépôt PCAET', () => {
   let app: INestApplication;
@@ -38,13 +41,15 @@ describe('Mode démo du dépôt PCAET', () => {
   const freshDemarche = async ({
     type = collectiviteTypeEnum.TEST,
     superAdmin = true,
+    regionCode,
   }: {
     type?: (typeof collectiviteTypeEnum)[keyof typeof collectiviteTypeEnum];
     superAdmin?: boolean;
+    regionCode?: string;
   } = {}) => {
     const fixture = await addTestCollectiviteAndUser(db, {
       user: { role: CollectiviteRole.ADMIN },
-      collectivite: { type },
+      collectivite: { type, regionCode },
     });
     const user = getAuthUserFromUserCredentials(fixture.user);
     const caller = router.createCaller({ user });
@@ -81,8 +86,15 @@ describe('Mode démo du dépôt PCAET', () => {
     expect(demarche.demo).toBe(true);
   });
 
-  it('enchaîne tout le parcours avec les raccourcis, sans saisir de vrai service', async () => {
-    const fixture = await freshDemarche();
+  it('enchaîne tout le parcours avec les raccourcis, en saisissant les services qui couvrent la collectivité', async () => {
+    const regionCode = await pickFreeRegionCode(db, collectiviteTypeEnum.DREAL);
+    const { collectivite: dreal, cleanup } = await addTestCollectivite(db, {
+      nom: 'DREAL test démo',
+      type: collectiviteTypeEnum.DREAL,
+      regionCode,
+    });
+    onTestFinished(cleanup);
+    const fixture = await freshDemarche({ regionCode });
     const { caller, ref } = fixture;
 
     await completerElaboration(fixture);
@@ -91,14 +103,12 @@ describe('Mode démo du dépôt PCAET', () => {
 
     await caller.demarches.pcaet.transmettrePourAvis(ref);
 
-    const services = await app.get(DemarchePcaetDemoService).listServicesDemo();
+    // La transmission de démo est la vraie : la DREAL de la région est saisie.
     const demandes = await db.db
       .select({ instructeur: pcaetDemandeAvisTable.instructeurCollectiviteId })
       .from(pcaetDemandeAvisTable)
       .where(eq(pcaetDemandeAvisTable.demarcheId, ref.demarcheId));
-    expect(demandes.map((d) => d.instructeur).sort()).toEqual(
-      services.map((s) => s.id).sort()
-    );
+    expect(demandes.map((d) => d.instructeur)).toContain(dreal.id);
 
     await caller.demarches.pcaet.demo.simulerAvis(ref);
     expect((await caller.demarches.pcaet.get(ref)).status).toBe('instruit');

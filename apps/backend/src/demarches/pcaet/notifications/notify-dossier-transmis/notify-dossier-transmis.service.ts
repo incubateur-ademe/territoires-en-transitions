@@ -30,7 +30,10 @@ import { alias } from 'drizzle-orm/pg-core';
 import { z } from 'zod';
 import { CollectiviteContactsRepository } from '../../shared/collectivite-contacts.repository';
 import { pcaetDemandeAvisTable } from '../../shared/models/pcaet-demande-avis.table';
-import type { DemandeAvisDestinataire } from '../../shared/pcaet-instructeurs.repository';
+import {
+  PcaetInstructeursRepository,
+  type DemandeAvisDestinataire,
+} from '../../shared/pcaet-instructeurs.repository';
 import { NotifyDossierTransmisEmail } from './notify-dossier-transmis.email';
 import { NotifyDossierTransmisProps } from './notify-dossier-transmis.props';
 import { NotifySupportServicesSansCompteEmail } from './notify-support-services-sans-compte.email';
@@ -71,7 +74,8 @@ export class NotifyDossierTransmisService {
     private readonly getDemarcheUrlService: GetDemarcheUrlService,
     private readonly listUsersService: ListUsersService,
     private readonly emailService: EmailService,
-    private readonly databaseService: DatabaseService
+    private readonly databaseService: DatabaseService,
+    private readonly instructeursRepository: PcaetInstructeursRepository
   ) {
     this.notificationsService.registerContentGenerator(
       NotifiedOnEnum['DEMARCHES.PCAET.DOSSIER_TRANSMIS_POUR_AVIS'],
@@ -87,14 +91,26 @@ export class NotifyDossierTransmisService {
    * Les services nationaux sont écartés : ils voient passer tous les dossiers du
    * pays, les notifier noierait leur boîte. Sauf la DGEC, qui a demandé à être
    * en copie de chaque transmission.
+   *
+   * Le dossier d'une collectivité de test saisit les services sans leur
+   * écrire, ni alerter le support : ce sont de vrais services, qu'une
+   * démonstration ou un essai ne doit pas solliciter.
    */
   async creerNotifications(
     {
+      demarcheId,
       demandes,
       createdBy,
-    }: { demandes: DemandeAvisDestinataire[]; createdBy: string },
+    }: {
+      demarcheId: number;
+      demandes: DemandeAvisDestinataire[];
+      createdBy: string;
+    },
     tx?: Transaction
   ): Promise<ServiceSansCompte[]> {
+    if (await this.instructeursRepository.isDossierDeTest(demarcheId, tx)) {
+      return [];
+    }
     const aNotifier = demandes.filter(
       (demande) => !estInstructeurNational(demande.type) || isDgec(demande)
     );

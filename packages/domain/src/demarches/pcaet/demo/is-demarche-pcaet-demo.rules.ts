@@ -5,7 +5,8 @@ import {
 
 /**
  * Le mode démo raccourcit le parcours pour le présenter d'une traite : il
- * remplit les étapes, simule les avis et ne saisit aucun service réel.
+ * remplit les étapes et simule les avis. La transmission, elle, reste la
+ * vraie : elle saisit les services qui couvrent la collectivité de test.
  *
  * Double verrou : une collectivité de test ET un super admin. Un super admin
  * sur une vraie collectivité garde le parcours normal, et un membre ordinaire

@@ -1,8 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
+import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { CollectiviteType } from '@tet/domain/collectivites';
+import {
+  CollectiviteType,
+  collectiviteTypeEnum,
+} from '@tet/domain/collectivites';
 import {
   PcaetPerimetreSaisineEnum,
   PerimetreInstructeurEnum,
@@ -245,38 +249,6 @@ export class PcaetInstructeursRepository {
   }
 
   /**
-   * Saisine du mode démo : les services fictifs, au périmètre principal,
-   * à la place des services qui couvrent réellement la collectivité.
-   */
-  async saisirServicesDemo(
-    {
-      demarcheId,
-      instructeurCollectiviteIds,
-    }: { demarcheId: number; instructeurCollectiviteIds: readonly number[] },
-    tx?: Transaction
-  ): Promise<DemandeAvisDestinataire[]> {
-    if (instructeurCollectiviteIds.length > 0) {
-      await (tx ?? this.databaseService.db)
-        .insert(pcaetDemandeAvisTable)
-        .values(
-          instructeurCollectiviteIds.map((instructeurCollectiviteId) => ({
-            demarcheId,
-            instructeurCollectiviteId,
-            source: 'transmission' as const,
-            perimetre: PcaetPerimetreSaisineEnum.PRINCIPAL,
-          }))
-        )
-        .onConflictDoNothing({
-          target: [
-            pcaetDemandeAvisTable.demarcheId,
-            pcaetDemandeAvisTable.instructeurCollectiviteId,
-          ],
-        });
-    }
-    return this.listDemandesAvisDuDossier(demarcheId, tx);
-  }
-
-  /**
    * Les saisines inscrites sur un dossier, avec de quoi écrire à chacune.
    *
    * Relire plutôt que se fier au `returning()` de l'insert : avec
@@ -326,5 +298,20 @@ export class PcaetInstructeursRepository {
       .limit(1);
 
     return service?.nom ?? null;
+  }
+
+  /** Le dossier est-il celui d'une collectivité de test ? */
+  async isDossierDeTest(demarcheId: number, tx?: Transaction): Promise<boolean> {
+    const [deposante] = await (tx ?? this.databaseService.db)
+      .select({ type: collectiviteTable.type })
+      .from(demarcheTable)
+      .innerJoin(
+        collectiviteTable,
+        eq(collectiviteTable.id, demarcheTable.collectiviteId)
+      )
+      .where(eq(demarcheTable.id, demarcheId))
+      .limit(1);
+
+    return deposante?.type === collectiviteTypeEnum.TEST;
   }
 }
