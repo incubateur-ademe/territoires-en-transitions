@@ -199,6 +199,10 @@ En cas de refus :
 - `SOURCE_NOT_CONFIGURED` : publier les `lienSource` des références externes pour
   le catalogue, ou renseigner `ELECTRIFICATION_LAUREATS_GRIST_DOCUMENT_ID` pour les lauréats.
 - `SOURCE_UNAVAILABLE` : vérifier les droits Grist, le secret et l'accès réseau.
+  Pour une réponse HTTP en échec, les logs indiquent le statut, le document et
+  la ressource concernés, sans clé API ni contenu de la réponse. Un statut 403
+  demande de vérifier les droits du compte associé à `GRIST_API_KEY` sur la
+  table concernée. L'accès au catalogue ne garantit pas l'accès à l'annuaire.
 - `SOURCE_CHANGED` : relancer après la fin des modifications dans Grist.
 - `INVALID_SOURCE` : vérifier les liens Grist, tables, colonnes et rattachements
   attendus. Les liens des deux espaces du catalogue doivent désigner le même document.

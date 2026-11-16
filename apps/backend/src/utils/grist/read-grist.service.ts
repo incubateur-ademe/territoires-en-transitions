@@ -1,5 +1,5 @@
 import { GristDocumentRules } from './grist-document.rules';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { z } from 'zod';
 import ConfigurationService from '../config/configuration.service';
 import { failure, Result, success } from '../result.type';
@@ -30,6 +30,8 @@ type ReadGristError =
 /** Lecture d'un document cohérent, sans modification de Grist. */
 @Injectable()
 export class ReadGristService {
+  private readonly logger = new Logger(ReadGristService.name);
+
   constructor(private readonly config: ConfigurationService) {}
 
   async read(
@@ -105,7 +107,13 @@ export class ReadGristService {
         signal: AbortSignal.timeout(15_000),
       }
     );
-    if (!response.ok) throw new Error(`Grist HTTP ${response.status}`);
+    if (!response.ok) {
+      // Conserver le contexte technique sans exposer le token ni la réponse privée.
+      this.logger.warn(
+        `Lecture Grist refusée : HTTP ${response.status}, document ${documentId}, ressource ${path}`
+      );
+      throw new Error(`Grist HTTP ${response.status}`);
+    }
     return response.json();
   }
 }

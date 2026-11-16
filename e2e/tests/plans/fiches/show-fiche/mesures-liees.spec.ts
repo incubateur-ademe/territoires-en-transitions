@@ -1,6 +1,9 @@
 import { expect } from '@playwright/test';
 import { test } from 'tests/main.fixture';
-import { FichesLieesMesurePom, MesuresLieesFichePom } from './mesures-liees.pom';
+import {
+  FichesLieesMesurePom,
+  MesuresLieesFichePom,
+} from './mesures-liees.pom';
 
 const MESURE_CAE = 'cae_1.1.1';
 const AUTRE_MESURE_CAE = 'cae_1.1.2';
@@ -24,7 +27,10 @@ test.describe('Lien fiche ↔ mesure sur une collectivité basculée vers Climat
         userArgs: { role: 'admin', autoLogin: true },
       });
     const [ficheId] = await fiches.create(adminUser, [
-      { titre: 'Fiche liée à une mesure CAE', collectiviteId: collectivite.data.id },
+      {
+        titre: 'Fiche liée à une mesure CAE',
+        collectiviteId: collectivite.data.id,
+      },
     ]);
     await adminUser.getTrpcClient().plans.fiches.update.mutate({
       ficheId,
@@ -71,12 +77,22 @@ test.describe('Lien fiche ↔ mesure sur une collectivité basculée vers Climat
     await expect(pom.mesureCard(MESURE_CR)).toBeVisible();
     await expect(pom.mesureCard(MESURE_CAE)).toHaveCount(0);
 
+    // L'affichage est optimiste : attendre la persistance avant de recharger.
+    await expect
+      .poll(async () => {
+        const fiche = await adminUser
+          .getTrpcClient()
+          .plans.fiches.get.query({ id: ficheId });
+        return fiche.mesures?.map(({ id }) => id);
+      })
+      .toEqual([MESURE_CR]);
+
     await page.reload();
     await expect(pom.mesureCard(MESURE_CR)).toBeVisible();
     await expect(pom.mesureCard(MESURE_CAE)).toHaveCount(0);
   });
 
-  test("depuis une mesure CAE archivée, les actions liées sont en consultation", async ({
+  test('depuis une mesure CAE archivée, les actions liées sont en consultation', async ({
     page,
     collectivites,
     fiches,
