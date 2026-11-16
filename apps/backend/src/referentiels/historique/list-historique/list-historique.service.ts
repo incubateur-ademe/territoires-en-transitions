@@ -1,3 +1,4 @@
+import { getDataOrThrow } from '@tet/backend/utils/result.type';
 import { Injectable, Logger } from '@nestjs/common';
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { GetReferentielDefinitionService } from '@tet/backend/referentiels/definitions/get-referentiel-definition/get-referentiel-definition.service';
@@ -105,13 +106,9 @@ export class ListHistoriqueService {
   ): Promise<ListHistoriqueOutput> {
     const { collectiviteId } = input;
 
-    const collectivitePrivateResult = await this.collectivites.isPrivate(
-      collectiviteId
+    const collectivitePrivate = getDataOrThrow(
+      await this.collectivites.isPrivate(collectiviteId)
     );
-    if (!collectivitePrivateResult.success) {
-      throw collectivitePrivateResult.cause;
-    }
-    const collectivitePrivate = collectivitePrivateResult.data;
     await this.permissions.assertAllowed(
       user,
       collectivitePrivate

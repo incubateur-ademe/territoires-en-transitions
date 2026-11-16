@@ -4,7 +4,12 @@ import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.tab
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
-import { failure, Result, success } from '@tet/backend/utils/result.type';
+import {
+  failure,
+  Result,
+  success,
+  getDataOrThrow,
+} from '@tet/backend/utils/result.type';
 import {
   DEMARCHE_PCAET_PUBLIC_STATUSES,
   DemarcheTypeEnum,
@@ -48,14 +53,9 @@ export class DemarchePcaetPublicAccessService {
       return failure('UNAUTHORIZED');
     }
 
-    const isPrivateResult = await this.collectivitesService.isPrivate(
-      collectiviteId,
-      tx
+    const isPrivate = getDataOrThrow(
+      await this.collectivitesService.isPrivate(collectiviteId, tx)
     );
-    if (!isPrivateResult.success) {
-      throw isPrivateResult.cause;
-    }
-    const isPrivate = isPrivateResult.data;
     if (isPrivate) {
       const confidentielResult = await this.permissionService.isAllowed(
         user,

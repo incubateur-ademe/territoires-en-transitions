@@ -137,6 +137,10 @@ export default class CollectivitesService {
       }
       return success(collectivite);
     } catch (error) {
+      this.logger.error(
+        `Erreur lors de la lecture de la collectivité ${collectiviteId}`,
+        error
+      );
       return failure(CommonErrorEnum.DATABASE_ERROR, error as Error);
     }
   }
@@ -202,6 +206,10 @@ export default class CollectivitesService {
       }
       return success(collectivite.accesRestreint ?? false);
     } catch (error) {
+      this.logger.error(
+        `Erreur lors de la lecture de la collectivité ${collectiviteId}`,
+        error
+      );
       return failure(CommonErrorEnum.DATABASE_ERROR, error as Error);
     }
   }

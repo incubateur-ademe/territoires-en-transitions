@@ -1,3 +1,4 @@
+import { getDataOrThrow } from '@tet/backend/utils/result.type';
 import { Injectable, Logger } from '@nestjs/common';
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { GetValeursReferenceRequest } from '@tet/backend/indicateurs/valeurs/get-valeurs-reference/get-valeurs-reference.request';
@@ -94,12 +95,9 @@ export default class ValeursReferenceService {
     // l'identité et la personnalisation de la collectivité
     let collectiviteInfo = collectiviteAvecType;
     if (!collectiviteInfo) {
-      const collectiviteResult =
-        await this.collectivitesService.getCollectiviteAvecType(collectiviteId);
-      if (!collectiviteResult.success) {
-        throw collectiviteResult.cause;
-      }
-      collectiviteInfo = collectiviteResult.data;
+      collectiviteInfo = getDataOrThrow(
+        await this.collectivitesService.getCollectiviteAvecType(collectiviteId)
+      );
     }
     const reponses =
       personnalisationReponses ||
@@ -163,12 +161,9 @@ export default class ValeursReferenceService {
     // l'identité et la personnalisation de la collectivité
     let collectiviteInfo = collectiviteAvecType;
     if (!collectiviteInfo) {
-      const collectiviteResult =
-        await this.collectivitesService.getCollectiviteAvecType(collectiviteId);
-      if (!collectiviteResult.success) {
-        throw collectiviteResult.cause;
-      }
-      collectiviteInfo = collectiviteResult.data;
+      collectiviteInfo = getDataOrThrow(
+        await this.collectivitesService.getCollectiviteAvecType(collectiviteId)
+      );
     }
     const reponses =
       personnalisationReponses ||

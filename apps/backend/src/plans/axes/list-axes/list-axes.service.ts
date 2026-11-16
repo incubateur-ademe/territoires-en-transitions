@@ -3,7 +3,7 @@ import CollectivitesService from '@tet/backend/collectivites/services/collectivi
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
-import { Result } from '@tet/backend/utils/result.type';
+import { Result, getDataOrThrow } from '@tet/backend/utils/result.type';
 import { PlanNode } from '@tet/domain/plans';
 import { ResourceType } from '@tet/domain/users';
 import { ListAxesError, ListAxesErrorEnum } from './list-axes.errors';
@@ -60,13 +60,9 @@ export class ListAxesService {
     collectiviteId: number,
     user: AuthenticatedUser
   ): Promise<boolean> {
-    const collectivitePrivateResult = await this.collectivite.isPrivate(
-      collectiviteId
+    const collectivitePrivate = getDataOrThrow(
+      await this.collectivite.isPrivate(collectiviteId)
     );
-    if (!collectivitePrivateResult.success) {
-      throw collectivitePrivateResult.cause;
-    }
-    const collectivitePrivate = collectivitePrivateResult.data;
 
     const permissionResult = await this.permissionService.isAllowed(
       user,

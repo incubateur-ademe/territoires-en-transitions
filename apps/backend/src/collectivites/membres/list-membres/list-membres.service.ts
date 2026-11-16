@@ -1,3 +1,4 @@
+import { getDataOrThrow } from '@tet/backend/utils/result.type';
 import { Injectable, Logger } from '@nestjs/common';
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
@@ -32,13 +33,9 @@ export class ListMembresService {
       // `dcp`. Sur une collectivité en accès restreint — ce que sont les
       // services de l'État — ces coordonnées ne relèvent pas du mode visite :
       // il faut y avoir un rôle. Même arbitrage que les documents et les tags.
-      const accesRestreintResult = await this.collectivitesService.isPrivate(
-        collectiviteId
+      const accesRestreint = getDataOrThrow(
+        await this.collectivitesService.isPrivate(collectiviteId)
       );
-      if (!accesRestreintResult.success) {
-        throw accesRestreintResult.cause;
-      }
-      const accesRestreint = accesRestreintResult.data;
       await this.permissionService.assertAllowed(
         user,
         accesRestreint

@@ -1,3 +1,4 @@
+import { getDataOrThrow } from '@tet/backend/utils/result.type';
 import {
   INDICATEUR_SOURCES_WITH_DEDICATED_METADATA,
   IndicateurPeriodiciteEnum,
@@ -49,12 +50,9 @@ export default class ValeursMoyenneService {
 
     // Vérifie les droits if needed
     if (user) {
-      const collectivitePrivateResult =
-        await this.collectiviteService.isPrivate(collectiviteId);
-      if (!collectivitePrivateResult.success) {
-        throw collectivitePrivateResult.cause;
-      }
-      const collectivitePrivate = collectivitePrivateResult.data;
+      const collectivitePrivate = getDataOrThrow(
+        await this.collectiviteService.isPrivate(collectiviteId)
+      );
       await this.permissionService.assertAllowed(
         user,
         collectivitePrivate

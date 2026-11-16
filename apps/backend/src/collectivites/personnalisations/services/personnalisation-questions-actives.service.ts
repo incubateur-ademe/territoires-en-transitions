@@ -1,3 +1,4 @@
+import { getDataOrThrow } from '@tet/backend/utils/result.type';
 import { Injectable, Logger } from '@nestjs/common';
 import type { ListPersonnalisationQuestionsFilters } from '@tet/backend/collectivites/personnalisations/list-personnalisation-questions/list-personnalisation-questions.input';
 import { ListPersonnalisationQuestionsRepository } from '@tet/backend/collectivites/personnalisations/list-personnalisation-questions/list-personnalisation-questions.repository';
@@ -71,12 +72,9 @@ export class PersonnalisationQuestionsActivesService {
   ): Promise<ResolveActiveQuestionsResult> {
     const { enabledReferentiels, filters, reponses, collectiviteId } = input;
 
-    const identiteCollectiviteResult =
-      await this.collectivitesService.getCollectiviteAvecType(collectiviteId);
-    if (!identiteCollectiviteResult.success) {
-      throw identiteCollectiviteResult.cause;
-    }
-    const identiteCollectivite = identiteCollectiviteResult.data;
+    const identiteCollectivite = getDataOrThrow(
+      await this.collectivitesService.getCollectiviteAvecType(collectiviteId)
+    );
 
     const questions =
       await this.listPersonnalisationQuestionsRepository.listQuestionsWithChoices(

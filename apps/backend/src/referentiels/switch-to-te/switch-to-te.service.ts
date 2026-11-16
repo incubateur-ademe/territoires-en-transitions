@@ -3,7 +3,12 @@ import { CollectiviteReferentielModeService } from '@tet/backend/collectivites/c
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import type { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
-import { failure, success, type Result } from '@tet/backend/utils/result.type';
+import {
+  failure,
+  success,
+  type Result,
+  getDataOrThrow,
+} from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import type { CollectiviteReferentielPreferences } from '@tet/domain/collectivites';
 import {
@@ -84,12 +89,9 @@ export class SwitchToTeService {
         this.getLabellisationService.isCotActif(collectiviteId),
         this.collectivitesService
           .getCollectiviteAvecType(collectiviteId)
-          .then((collectiviteResult) => {
-            if (!collectiviteResult.success) {
-              throw collectiviteResult.cause;
-            }
-            return getEligibiliteType(collectiviteResult.data);
-          }),
+          .then((collectiviteResult) =>
+            getEligibiliteType(getDataOrThrow(collectiviteResult))
+          ),
         Promise.all(
           referentielsToCheck.map(async (referentiel) => {
             const demandeEtAudit =

@@ -243,6 +243,7 @@ export class PptBuilderService {
       return {
         success: false,
         error: planDataResult.error,
+        cause: planDataResult.cause,
       };
     }
 

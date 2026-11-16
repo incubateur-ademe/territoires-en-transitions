@@ -6,7 +6,11 @@ import {
 } from '@nestjs/common';
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { Result, success } from '@tet/backend/utils/result.type';
+import {
+  Result,
+  success,
+  getDataOrThrow,
+} from '@tet/backend/utils/result.type';
 import {
   COLLECTIVITE_SOURCE_ID,
   IndicateurSourceMetadonnee,
@@ -77,12 +81,9 @@ export class ListIndicateurValeursService {
     // Vérifie les droits
     let hasPermissionLecture;
     if (!isUserTrusted && user) {
-      const collectivitePrivateResult =
-        await this.collectiviteService.isPrivate(collectiviteId, tx);
-      if (!collectivitePrivateResult.success) {
-        throw collectivitePrivateResult.cause;
-      }
-      const collectivitePrivate = collectivitePrivateResult.data;
+      const collectivitePrivate = getDataOrThrow(
+        await this.collectiviteService.isPrivate(collectiviteId, tx)
+      );
       const permissionLectureResult = await this.permissionService.isAllowed(
         user,
         'indicateurs.valeurs.read_confidentiel',

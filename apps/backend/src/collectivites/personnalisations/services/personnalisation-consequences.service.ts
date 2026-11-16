@@ -1,3 +1,4 @@
+import { getDataOrThrow } from '@tet/backend/utils/result.type';
 import { Injectable, Logger } from '@nestjs/common';
 import { GetPersonnalisationConsequencesRequestType } from '@tet/backend/collectivites/personnalisations/models/get-personnalisation-consequences.request';
 import { GetPersonnalisationReglesResponseType } from '@tet/backend/collectivites/personnalisations/models/get-personnalisation-regles.response';
@@ -80,12 +81,9 @@ export class PersonnalisationConsequencesService {
     }
 
     if (!collectiviteInfo) {
-      const collectiviteResult =
-        await this.collectivitesService.getCollectiviteAvecType(collectiviteId);
-      if (!collectiviteResult.success) {
-        throw collectiviteResult.cause;
-      }
-      collectiviteInfo = collectiviteResult.data;
+      collectiviteInfo = getDataOrThrow(
+        await this.collectivitesService.getCollectiviteAvecType(collectiviteId)
+      );
     }
 
     const reponsesPourQuestionsActives =

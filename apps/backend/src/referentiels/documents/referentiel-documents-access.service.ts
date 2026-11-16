@@ -2,7 +2,12 @@ import { Injectable } from '@nestjs/common';
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
-import { failure, Result, success } from '@tet/backend/utils/result.type';
+import {
+  failure,
+  Result,
+  success,
+  getDataOrThrow,
+} from '@tet/backend/utils/result.type';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { ResourceType } from '@tet/domain/users';
 
@@ -20,12 +25,9 @@ export class ReferentielDocumentsAccessService {
     }: { collectiviteId: number; referentielId: ReferentielId },
     { user, tx }: ServiceSecondArg
   ): Promise<Result<{ canReadConfidentiel: boolean }, 'UNAUTHORIZED'>> {
-    const isCollectivitePrivateResult =
-      await this.collectivitesService.isPrivate(collectiviteId);
-    if (!isCollectivitePrivateResult.success) {
-      throw isCollectivitePrivateResult.cause;
-    }
-    const isCollectivitePrivate = isCollectivitePrivateResult.data;
+    const isCollectivitePrivate = getDataOrThrow(
+      await this.collectivitesService.isPrivate(collectiviteId)
+    );
 
     const [readResult, readConfidentielResult] = await Promise.all([
       this.permissions.isAllowed(
