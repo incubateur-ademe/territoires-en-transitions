@@ -48,10 +48,14 @@ export class DemarchePcaetPublicAccessService {
       return failure('UNAUTHORIZED');
     }
 
-    const isPrivate = await this.collectivitesService.isPrivate(
+    const isPrivateResult = await this.collectivitesService.isPrivate(
       collectiviteId,
       tx
     );
+    if (!isPrivateResult.success) {
+      throw isPrivateResult.cause;
+    }
+    const isPrivate = isPrivateResult.data;
     if (isPrivate) {
       const confidentielResult = await this.permissionService.isAllowed(
         user,

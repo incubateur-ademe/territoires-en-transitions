@@ -181,8 +181,12 @@ export default class ListPersonnalisationQuestionsService {
         }
       );
 
-    const identiteCollectivite =
+    const identiteCollectiviteResult =
       await this.collectivitesService.getCollectiviteAvecType(collectiviteId);
+    if (!identiteCollectiviteResult.success) {
+      throw identiteCollectiviteResult.cause;
+    }
+    const identiteCollectivite = identiteCollectiviteResult.data;
 
     const regles =
       await this.personnalisationConsequencesService.getPersonnalisationRegles(

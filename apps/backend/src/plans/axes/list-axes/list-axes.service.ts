@@ -60,9 +60,13 @@ export class ListAxesService {
     collectiviteId: number,
     user: AuthenticatedUser
   ): Promise<boolean> {
-    const collectivitePrivate = await this.collectivite.isPrivate(
+    const collectivitePrivateResult = await this.collectivite.isPrivate(
       collectiviteId
     );
+    if (!collectivitePrivateResult.success) {
+      throw collectivitePrivateResult.cause;
+    }
+    const collectivitePrivate = collectivitePrivateResult.data;
 
     const permissionResult = await this.permissionService.isAllowed(
       user,

@@ -83,18 +83,17 @@ export class GetIndicateursAssociesService {
       return failure(indicateursResult.error, indicateursResult.cause);
     }
 
-    let identiteCollectivite: CollectiviteAvecType;
-    try {
-      identiteCollectivite =
-        await this.collectivitesService.getCollectiviteAvecType(
-          input.collectiviteId
-        );
-    } catch (error) {
+    const collectiviteResult =
+      await this.collectivitesService.getCollectiviteAvecType(
+        input.collectiviteId
+      );
+    if (!collectiviteResult.success) {
       return failure(
         ScoreIndicatifErrorEnum.COLLECTIVITE_LOAD_ERROR,
-        error instanceof Error ? error : new Error(String(error))
+        collectiviteResult.cause
       );
     }
+    const identiteCollectivite = collectiviteResult.data;
 
     const indicateursFiltres = filterIndicateursByLocalisation(
       indicateursResult.data,

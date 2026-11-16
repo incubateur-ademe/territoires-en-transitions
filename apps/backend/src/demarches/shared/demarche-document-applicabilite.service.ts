@@ -75,13 +75,17 @@ export class DemarcheDocumentApplicabiliteService {
     // que le parcours d'expressions qui déciderait de l'éviter. Le chargement
     // paresseux reste justifié pour les réponses, qui coûtent une union de trois
     // tables jointe aux compétences BANATIC.
-    const [identite, renouvellement] = await Promise.all([
+    const [identiteResult, renouvellement] = await Promise.all([
       this.collectivitesService.getCollectiviteAvecType(collectiviteId),
       this.historiqueRepository.aDejaAbouti(
         { collectiviteId, demarcheType, demarcheId },
         tx
       ),
     ]);
+    if (!identiteResult.success) {
+      throw identiteResult.cause;
+    }
+    const identite = identiteResult.data;
     const identiteCollectivite: IdentiteCollectivite = {
       ...identite,
       communesMembresPopulationTags:

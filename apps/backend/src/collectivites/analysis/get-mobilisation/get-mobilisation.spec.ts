@@ -75,7 +75,7 @@ const toService = ({
     isAllowed: isAllowedSpy,
   } as unknown as PermissionService;
   const collectivitesService = {
-    isPrivate: vi.fn().mockResolvedValue(isCollectivitePrivate),
+    isPrivate: vi.fn().mockResolvedValue(success(isCollectivitePrivate)),
   } as unknown as CollectivitesService;
   const mobilisationRepository = {
     getMobilisation: vi.fn().mockResolvedValue(mobilisationOutcome),

@@ -148,7 +148,7 @@ function buildService({
     {
       getCollectivite: vi
         .fn()
-        .mockResolvedValue({ collectivite: { nom: 'Ville de Test' } }),
+        .mockResolvedValue(success({ collectivite: { nom: 'Ville de Test' } })),
     } as never
   );
 

@@ -63,11 +63,18 @@ export class DownloadAvisPiecesService {
     if (deposanteCollectiviteId === null) {
       return failure(DownloadAvisPiecesErrorEnum.AVIS_NOT_FOUND);
     }
-    const [{ collectivite: emetteur }, { collectivite: deposante }] =
-      await Promise.all([
-        this.collectivitesService.getCollectivite(emetteurCollectiviteId, tx),
-        this.collectivitesService.getCollectivite(deposanteCollectiviteId, tx),
-      ]);
+    const [emetteurResult, deposanteResult] = await Promise.all([
+      this.collectivitesService.getCollectivite(emetteurCollectiviteId, tx),
+      this.collectivitesService.getCollectivite(deposanteCollectiviteId, tx),
+    ]);
+    if (!emetteurResult.success) {
+      return failure(emetteurResult.error, emetteurResult.cause);
+    }
+    if (!deposanteResult.success) {
+      return failure(deposanteResult.error, deposanteResult.cause);
+    }
+    const emetteur = emetteurResult.data.collectivite;
+    const deposante = deposanteResult.data.collectivite;
 
     return success({
       filename: toAvisArchiveFilename({

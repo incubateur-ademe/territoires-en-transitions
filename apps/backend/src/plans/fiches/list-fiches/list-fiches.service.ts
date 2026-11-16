@@ -96,7 +96,7 @@ import {
 import { PgColumn, TableConfig } from 'drizzle-orm/pg-core';
 import { subYears } from 'date-fns';
 import { isNil } from 'es-toolkit';
-import { Result } from '../../../utils/result.type';
+import { failure, Result } from '../../../utils/result.type';
 import { ficheActionEtapeTable } from '../fiche-action-etape/fiche-action-etape.table';
 import { ficheActionActionTable } from '../shared/models/fiche-action-action.table';
 import { ficheActionAxeTable } from '../shared/models/fiche-action-axe.table';
@@ -828,12 +828,15 @@ export default class ListFichesService {
     }
 
     if (addCollectiviteData) {
-      const collectivite = await this.collectiviteService.getCollectivite(
+      const collectiviteResult = await this.collectiviteService.getCollectivite(
         ficheAction.collectiviteId,
         tx
       );
+      if (!collectiviteResult.success) {
+        return failure(collectiviteResult.error, collectiviteResult.cause);
+      }
       (ficheAction as FicheWithRelationsAndCollectivite).collectivite =
-        collectivite.collectivite as Collectivite;
+        collectiviteResult.data.collectivite as Collectivite;
     }
 
     return { success: true, data: ficheAction };

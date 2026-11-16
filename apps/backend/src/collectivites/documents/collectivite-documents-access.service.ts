@@ -40,9 +40,13 @@ export class CollectiviteDocumentsAccessService {
       return failure(CommonErrorEnum.UNAUTHORIZED);
     }
 
-    const isAccesRestreint = await this.collectivitesService.isPrivate(
+    const isAccesRestreintResult = await this.collectivitesService.isPrivate(
       collectiviteId
     );
+    if (!isAccesRestreintResult.success) {
+      throw isAccesRestreintResult.cause;
+    }
+    const isAccesRestreint = isAccesRestreintResult.data;
 
     const canReachCollectivite = isAccesRestreint
       ? canReadConfidentiel

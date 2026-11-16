@@ -40,17 +40,16 @@ export class CollectiviteAccessService {
         },
     user: AuthenticatedUser
   ): Promise<Result<{ accesRestreint: boolean }, CollectiviteAccessError>> {
-    let accesRestreint: boolean;
-    try {
-      accesRestreint = await this.collectivitesService.isPrivate(
-        collectiviteId
-      );
-    } catch {
+    const accesRestreintResult = await this.collectivitesService.isPrivate(
+      collectiviteId
+    );
+    if (!accesRestreintResult.success) {
       return failure(
         'NOT_FOUND',
         new Error(`Collectivité ${collectiviteId} introuvable`)
       );
     }
+    const accesRestreint = accesRestreintResult.data;
 
     const operation = accesRestreint
       ? operations.confidentiel

@@ -215,21 +215,22 @@ export class GeneratePreuvesArchiveService {
     collectiviteId: number,
     referentielId: ReferentielId
   ): Promise<Result<string, GenerateArchiveFailure>> {
-    try {
-      const { collectivite } = await this.collectivitesService.getCollectivite(
-        collectiviteId
-      );
-      return success(
-        toPreuvesArchiveName({
-          referentielId,
-          collectiviteNom: collectivite.nom,
-        })
-      );
-    } catch (error) {
+    const collectiviteResult = await this.collectivitesService.getCollectivite(
+      collectiviteId
+    );
+    if (!collectiviteResult.success) {
       return retryableFailure(
-        `Récupération de la collectivité échouée: ${getErrorMessage(error)}`
+        `Récupération de la collectivité échouée: ${getErrorMessage(
+          collectiviteResult.cause
+        )}`
       );
     }
+    return success(
+      toPreuvesArchiveName({
+        referentielId,
+        collectiviteNom: collectiviteResult.data.collectivite.nom,
+      })
+    );
   }
 
   private async resolveDemandeId(

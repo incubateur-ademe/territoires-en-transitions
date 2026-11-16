@@ -156,10 +156,14 @@ export class GetPlanService {
     user: AuthenticatedUser,
     tx?: Transaction
   ): Promise<boolean> {
-    const collectivitePrivate = await this.collectivite.isPrivate(
+    const collectivitePrivateResult = await this.collectivite.isPrivate(
       collectiviteId,
       tx
     );
+    if (!collectivitePrivateResult.success) {
+      throw collectivitePrivateResult.cause;
+    }
+    const collectivitePrivate = collectivitePrivateResult.data;
 
     const permissionResult = await this.permissionService.isAllowed(
       user,

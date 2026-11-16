@@ -1,3 +1,4 @@
+import { success } from '@tet/backend/utils/result.type';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { describe, expect, it, vi, type Mock } from 'vitest';
 import { CollectiviteDocumentsAccessService } from './collectivite-documents-access.service';
@@ -42,7 +43,7 @@ function buildService({
   };
 
   const collectivitesService = {
-    isPrivate: vi.fn().mockResolvedValue(isCollectivitePrivate),
+    isPrivate: vi.fn().mockResolvedValue(success(isCollectivitePrivate)),
   };
 
   const service = new CollectiviteDocumentsAccessService(

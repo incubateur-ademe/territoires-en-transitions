@@ -71,8 +71,12 @@ export class PersonnalisationQuestionsActivesService {
   ): Promise<ResolveActiveQuestionsResult> {
     const { enabledReferentiels, filters, reponses, collectiviteId } = input;
 
-    const identiteCollectivite =
+    const identiteCollectiviteResult =
       await this.collectivitesService.getCollectiviteAvecType(collectiviteId);
+    if (!identiteCollectiviteResult.success) {
+      throw identiteCollectiviteResult.cause;
+    }
+    const identiteCollectivite = identiteCollectiviteResult.data;
 
     const questions =
       await this.listPersonnalisationQuestionsRepository.listQuestionsWithChoices(

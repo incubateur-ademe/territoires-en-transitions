@@ -41,10 +41,14 @@ function buildService({
   signedUrlResult = success({
     signedUrl: 'https://signed.example/archive.zip',
   }),
+  getCollectivite = vi
+    .fn()
+    .mockResolvedValue(success({ collectivite: { nom: 'Ville de Test' } })),
 }: {
   isAllowed?: boolean;
   getByIdResult?: Result<AuditPreuvesArchive, PreuvesArchiveError>;
   signedUrlResult?: Result<{ signedUrl: string }, PreuvesArchiveError>;
+  getCollectivite?: ReturnType<typeof vi.fn>;
 } = {}) {
   const permissions = {
     isAllowed: vi
@@ -64,11 +68,7 @@ function buildService({
     createSignedDownloadUrl: vi.fn().mockResolvedValue(signedUrlResult),
   };
 
-  const collectivitesService = {
-    getCollectivite: vi
-      .fn()
-      .mockResolvedValue({ collectivite: { nom: 'Ville de Test' } }),
-  };
+  const collectivitesService = { getCollectivite };
 
   return Object.assign(
     new GetPreuvesArchiveService(
@@ -132,6 +132,29 @@ describe('GetPreuvesArchiveService', () => {
         errorMessage: null,
       })
     );
+  });
+
+  it('renvoie GET_ARCHIVE_ERROR quand getCollectivite échoue', async () => {
+    const cause = new Error('Collectivité introuvable');
+    const service = buildService({
+      getByIdResult: success(
+        makeArchive({
+          status: AuditPreuvesArchiveStatusEnum.COMPLETED,
+          storagePath: 'archive-id.zip',
+        })
+      ),
+      getCollectivite: vi.fn().mockResolvedValue(failure('NOT_FOUND', cause)),
+    });
+
+    const result = await service.get({
+      archiveId: 'archive-id',
+      user: owner,
+    });
+
+    expect(result).toEqual(
+      failure(PreuvesArchiveErrorEnum.GET_ARCHIVE_ERROR, cause)
+    );
+    expect(service.createSignedDownloadUrl).not.toHaveBeenCalled();
   });
 
   it("renvoie NOT_FOUND quand l'utilisateur a perdu referentiels.read sur la collectivité", async () => {

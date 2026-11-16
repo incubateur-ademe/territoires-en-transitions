@@ -25,8 +25,18 @@ export class ListPertinencesLeviersService {
     { collectiviteId, enjeu }: ListPertinencesLeviersInput,
     { user }: ServiceSecondArg
   ): Promise<Result<PertinencesLeviers, PertinenceLeviersError>> {
-    const { collectivite } =
-      await this.collectivites.getCollectivite(collectiviteId);
+    const collectiviteResult = await this.collectivites.getCollectivite(
+      collectiviteId
+    );
+    if (!collectiviteResult.success) {
+      return failure(
+        collectiviteResult.error === 'NOT_FOUND'
+          ? PertinenceLeviersErrorEnum.COLLECTIVITE_NOT_FOUND
+          : collectiviteResult.error,
+        collectiviteResult.cause
+      );
+    }
+    const { collectivite } = collectiviteResult.data;
     const readCollectiviteOperation = collectivite.accesRestreint
       ? PermissionOperationEnum['COLLECTIVITES.READ_CONFIDENTIEL']
       : PermissionOperationEnum['COLLECTIVITES.READ'];

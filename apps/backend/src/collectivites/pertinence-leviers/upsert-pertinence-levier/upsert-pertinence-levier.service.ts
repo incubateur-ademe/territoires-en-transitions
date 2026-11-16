@@ -50,11 +50,19 @@ export class UpsertPertinenceLevierService {
         return failure(PertinenceLeviersErrorEnum.UNAUTHORIZED);
       }
 
-      const { collectivite } = await this.collectivites.getCollectivite(
+      const collectiviteResult = await this.collectivites.getCollectivite(
         collectiviteId,
         transaction
       );
-      if (!isPriorisationAvailable(collectivite.type)) {
+      if (!collectiviteResult.success) {
+        return failure(
+          collectiviteResult.error === 'NOT_FOUND'
+            ? PertinenceLeviersErrorEnum.COLLECTIVITE_NOT_FOUND
+            : collectiviteResult.error,
+          collectiviteResult.cause
+        );
+      }
+      if (!isPriorisationAvailable(collectiviteResult.data.collectivite.type)) {
         return failure(PertinenceLeviersErrorEnum.PRIORISATION_NOT_AVAILABLE);
       }
 

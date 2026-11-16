@@ -31,9 +31,13 @@ export default class ListCategoriesService {
     tokenInfo: AuthUser
   ): Promise<TagWithCollectiviteId[]> {
     // Vérifie les droits
-    const collectivitePrivate = await this.collectiviteService.isPrivate(
+    const collectivitePrivateResult = await this.collectiviteService.isPrivate(
       collectiviteId
     );
+    if (!collectivitePrivateResult.success) {
+      throw collectivitePrivateResult.cause;
+    }
+    const collectivitePrivate = collectivitePrivateResult.data;
     await this.permissionService.assertAllowed(
       tokenInfo,
       collectivitePrivate

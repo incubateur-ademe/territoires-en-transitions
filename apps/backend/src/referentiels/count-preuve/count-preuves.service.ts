@@ -30,9 +30,13 @@ export class CountPreuvesService {
     const { collectiviteId, actionId } = input;
     const referentielId = getReferentielIdFromActionId(actionId);
 
-    const collectivitePrivate = await this.collectivitesService.isPrivate(
+    const collectivitePrivateResult = await this.collectivitesService.isPrivate(
       collectiviteId
     );
+    if (!collectivitePrivateResult.success) {
+      throw collectivitePrivateResult.cause;
+    }
+    const collectivitePrivate = collectivitePrivateResult.data;
 
     await this.permissions.assertAllowed(
       user,

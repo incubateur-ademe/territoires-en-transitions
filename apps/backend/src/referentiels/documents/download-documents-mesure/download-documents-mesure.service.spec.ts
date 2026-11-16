@@ -72,7 +72,7 @@ function buildService({
     checkUserCanReadDocuments,
   } as unknown as ReferentielDocumentsAccessService;
   const collectivites = {
-    getCollectivite: async () => ({ collectivite: { nom: 'Ambérieu' } }),
+    getCollectivite: async () => success({ collectivite: { nom: 'Ambérieu' } }),
   } as unknown as CollectivitesService;
   const archives = {
     assembleZip: vi

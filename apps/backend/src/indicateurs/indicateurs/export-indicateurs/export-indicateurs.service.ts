@@ -144,13 +144,16 @@ export default class ExportIndicateursService {
     }
 
     // Charge la collectivité
-    const collectivite = await this.collectiviteService.getCollectivite(
+    const collectiviteResult = await this.collectiviteService.getCollectivite(
       options.collectiviteId
     );
+    if (!collectiviteResult.success) {
+      throw collectiviteResult.cause;
+    }
 
     const filename = this.getFilename(
       parents,
-      collectivite.collectivite.nom ?? ''
+      collectiviteResult.data.collectivite.nom ?? ''
     );
     if (!filename) return null;
 
