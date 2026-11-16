@@ -313,15 +313,11 @@ export const CollectiviteCell = ({
           </Link>
         )}
         <div className="flex flex-wrap items-center gap-1">
-          {dossier.typePorteurSupra !== null && (
-            <Badge
-              title={appLabels.instructionListeBadgeSupra}
-              variant="new"
-              size="sm"
-              uppercase={false}
-            />
+          {/* L'obligation d'un Supra est celle de chacun des EPCI qu'il
+              couvre : elle se lit sur leurs sous-lignes. */}
+          {dossier.typePorteurSupra === null && (
+            <ObligationBadge dossier={dossier} />
           )}
-          <ObligationBadge dossier={dossier} />
           <ScotAecBadge dossier={dossier} />
         </div>
       </div>
@@ -333,19 +329,21 @@ type CollectiviteCouverte = Dossier['collectivitesCouvertes'][number];
 
 /**
  * Un EPCI que couvre le dépôt d'un Supra, en sous-ligne de son porteur : son
- * nom, son obligation propre et qui le porte. Ni statut, ni dates, ni action —
- * ce sont ceux du dépôt, sur la ligne du porteur.
+ * nom et son obligation propre. Ni statut, ni dates, ni action — ce sont ceux
+ * du dépôt, sur la ligne du porteur.
  */
 export const CollectiviteCouverteCell = ({
   couverte,
-  typePorteurSupra,
 }: {
   couverte: CollectiviteCouverte;
-  typePorteurSupra: Dossier['typePorteurSupra'];
 }) => (
-  <div className="flex flex-col items-start gap-1 pl-6">
-    <span className="text-primary-9">{couverte.nom}</span>
-    <div className="flex flex-wrap items-center gap-1">
+  <div className="flex items-start gap-2 pl-6">
+    <span
+      aria-hidden
+      className="mt-0.5 h-3 w-2.5 shrink-0 border-b border-l border-grey-5"
+    />
+    <div className="flex flex-col items-start gap-1">
+      <span className="text-primary-9">{couverte.nom}</span>
       {couverte.obligation !== null && (
         <Badge
           title={OBLIGATION_LABELS[couverte.obligation]}
@@ -354,20 +352,21 @@ export const CollectiviteCouverteCell = ({
           uppercase={false}
         />
       )}
-      <Badge
-        title={
-          typePorteurSupra
-            ? appLabels.demarchePorteParType[typePorteurSupra]
-            : appLabels.demarchePorteParAutreStructure
-        }
-        variant="grey"
-        type="outlined"
-        size="sm"
-        uppercase={false}
-        trim={false}
-      />
     </div>
   </div>
+);
+
+/** La colonne Pilotes d'un EPCI couvert renvoie à son porteur. */
+export const PiloteCouverteCell = ({
+  typePorteurSupra,
+}: {
+  typePorteurSupra: Dossier['typePorteurSupra'];
+}) => (
+  <span className="text-grey-6">
+    {typePorteurSupra
+      ? appLabels.instructionListePiloteParPorteur[typePorteurSupra]
+      : appLabels.instructionListePiloteParAutreStructure}
+  </span>
 );
 
 export const RegionCell = ({ dossier }: { dossier: Dossier }) => (
