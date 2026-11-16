@@ -844,8 +844,16 @@ export const demarchesLabels = {
   instructionDateSaisineErreur:
     "La date de saisine n'a pas pu être enregistrée",
   instructionListeColonneActions: 'Actions',
-  /** Badge de la ligne d'un Supra qui dépose pour plusieurs EPCI. */
+  /** Badge d'un Supra dans les suggestions de la recherche. */
   instructionListeBadgeSupra: 'Supra',
+  /** Colonne Pilotes d'un EPCI couvert : ses pilotes sont ceux du Supra. */
+  instructionListePiloteParPorteur: {
+    petr: 'Piloté par le PETR',
+    pole_metropolitain: 'Piloté par le pôle métropolitain',
+    syndicat_mixte: 'Piloté par le syndicat mixte',
+    syndicat_intercommunal: 'Piloté par le syndicat intercommunal',
+  } satisfies Record<TypePorteurSupra, string>,
+  instructionListePiloteParAutreStructure: 'Piloté par la structure porteuse',
   instructionListeRecherche: 'Rechercher un PCAET',
   instructionListeRechercheCollectivites:
     'Collectivités et structures porteuses',

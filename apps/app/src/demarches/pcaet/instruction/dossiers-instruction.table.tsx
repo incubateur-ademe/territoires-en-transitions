@@ -40,6 +40,7 @@ import {
   EcheanceCell,
   DepartementCell,
   PiloteCell,
+  PiloteCouverteCell,
   RegionCell,
   type Dossier,
 } from './dossiers-instruction.cells';
@@ -107,8 +108,9 @@ const CollectiviteGroupeCell = ({ dossier }: { dossier: Dossier }) => {
 };
 
 /**
- * Ce qu'une sous-ligne montre dans chaque colonne : son nom et ses badges, son
- * territoire. Le reste — statut, dates, action — appartient au dépôt.
+ * Ce qu'une sous-ligne montre dans chaque colonne : son nom et son obligation,
+ * son territoire, et le renvoi aux pilotes du porteur. Le reste — statut,
+ * dates, action — appartient au dépôt.
  */
 const contenuSousLigne = (
   colonne: string,
@@ -116,12 +118,10 @@ const contenuSousLigne = (
   dossier: Dossier
 ): ReactNode => {
   if (colonne === 'collectivite') {
-    return (
-      <CollectiviteCouverteCell
-        couverte={couverte}
-        typePorteurSupra={dossier.typePorteurSupra}
-      />
-    );
+    return <CollectiviteCouverteCell couverte={couverte} />;
+  }
+  if (colonne === 'pilote') {
+    return <PiloteCouverteCell typePorteurSupra={dossier.typePorteurSupra} />;
   }
   if (colonne === 'region') {
     return (
