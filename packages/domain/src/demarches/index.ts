@@ -12,6 +12,7 @@ export * from './pcaet/demarche-pcaet-status.enum.schema';
 export * from './pcaet/demarche-pcaet.schema';
 export * from './pcaet/demo/build-demo-diagnostic.rules';
 export * from './pcaet/demo/is-demarche-pcaet-demo.rules';
+export * from './pcaet/diagnostic/demarche-pcaet-diagnostic-tables.rules';
 export * from './pcaet/diagnostic/demarche-pcaet-diagnostic.rules';
 export * from './pcaet/diagnostic/demarche-pcaet-diagnostic.schema';
 export * from './pcaet/diagnostic/demarche-pcaet-diagnostic.config';
