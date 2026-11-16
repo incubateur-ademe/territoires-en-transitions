@@ -103,8 +103,6 @@ export const plansLabels = {
   ficheSecteursARenseigner: 'À renseigner',
   ficheSecteursNonRenseigne: 'Non renseigné',
   ficheSecteursChargement: 'Chargement des secteurs',
-  planSecteursARenseignerBouton: ({ count }: { count: number }) =>
-    `Secteurs réglementaires à renseigner (${count})`,
   planSecteursVerifierTitre: 'Vérifier les secteurs',
   planSecteursGroupeARenseigner: 'À renseigner',
   planSecteursPosition: ({ index, total }: { index: number; total: number }) =>
