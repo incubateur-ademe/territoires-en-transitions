@@ -1,6 +1,7 @@
 import { Workbook } from 'exceljs';
 import { describe, expect, it } from 'vitest';
 import {
+  buildUniqueWorksheetNames,
   neutralizeCsvValue,
   sanitizeWorksheetForCsvExport,
 } from './export-excel.utils';
@@ -56,5 +57,86 @@ describe('sanitizeWorksheetForCsvExport', () => {
     expect(worksheet.getCell('A1').value).toBe("'=SUM(A1)");
     expect(worksheet.getCell('B1').value).toBe(42);
     expect(worksheet.getCell('C1').value).toBe(date);
+  });
+});
+
+describe('buildUniqueWorksheetNames', () => {
+  it('garde les noms valides et distincts', () => {
+    expect(buildUniqueWorksheetNames(['PCAET', 'Plan vélo'])).toEqual([
+      'PCAET',
+      'Plan vélo',
+    ]);
+  });
+
+  it('tronque à 31 caractères', () => {
+    const [name] = buildUniqueWorksheetNames(['a'.repeat(40)]);
+
+    expect(name).toBe('a'.repeat(31));
+  });
+
+  it('distingue les doublons sans tenir compte de la casse', () => {
+    expect(buildUniqueWorksheetNames(['Plan', 'plan', 'PLAN'])).toEqual([
+      'Plan',
+      'plan (2)',
+      'PLAN (3)',
+    ]);
+  });
+
+  it('distingue les doublons apparus après troncature, sans dépasser 31 caractères', () => {
+    const names = buildUniqueWorksheetNames([
+      `${'a'.repeat(31)} 2024`,
+      `${'a'.repeat(31)} 2025`,
+    ]);
+
+    expect(names).toEqual(['a'.repeat(31), `${'a'.repeat(27)} (2)`]);
+  });
+
+  it('remplace les caractères interdits', () => {
+    expect(buildUniqueWorksheetNames(['Plan 2024/2028 : [v2]'])).toEqual([
+      'Plan 2024-2028 - -v2-',
+    ]);
+  });
+
+  it("retire l'apostrophe en début et en fin de nom", () => {
+    expect(buildUniqueWorksheetNames(["'Plan de l'eau'"])).toEqual([
+      "Plan de l'eau",
+    ]);
+  });
+
+  it("retire l'apostrophe laissée en fin de nom par la troncature", () => {
+    const [name] = buildUniqueWorksheetNames([
+      "Plan d'actions climat-air de l'EPCI",
+    ]);
+
+    expect(name).toBe("Plan d'actions climat-air de l");
+    expect(() => new Workbook().addWorksheet(name)).not.toThrow();
+  });
+
+  it('remplace un nom vide par sa position', () => {
+    expect(buildUniqueWorksheetNames(['', '   ', 'PCAET'], 'Plan')).toEqual([
+      'Plan 1',
+      'Plan 2',
+      'PCAET',
+    ]);
+  });
+
+  it('écarte le nom réservé « History »', () => {
+    expect(buildUniqueWorksheetNames(['History'])).toEqual(['History (2)']);
+  });
+
+  it('produit des noms acceptés par exceljs', () => {
+    const workbook = new Workbook();
+    const names = buildUniqueWorksheetNames([
+      'Plan',
+      'PLAN',
+      '',
+      'History',
+      `${'b'.repeat(40)}`,
+      `${'b'.repeat(40)}`,
+    ]);
+
+    expect(() =>
+      names.forEach((name) => workbook.addWorksheet(name))
+    ).not.toThrow();
   });
 });
