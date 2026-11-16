@@ -72,8 +72,9 @@ const SupportLinks = () => (
 );
 
 /**
- * Plan importé par IA en attente de la validation d'un humain : renseigner
- * les secteurs que l'IA n'a pas su classer, puis vérifier et valider.
+ * Plan importé par IA en attente de la validation d'un humain : vérifier et
+ * valider, après avoir renseigné, pour un PCAET, les secteurs que l'IA n'a pas
+ * su classer.
  */
 export const ImportedPlanBanner = ({
   planId,
@@ -82,7 +83,7 @@ export const ImportedPlanBanner = ({
   demarcheUrl,
 }: {
   planId: number;
-  /** Plan dont les actions portent un secteur réglementaire. */
+  /** Plan transmis avec une démarche PCAET : ses secteurs sont exigés. */
   isSecteursConcerne: boolean;
   secteursARenseigner: number;
   /** Démarche qui tient le plan : le toast de validation y ramène. */
@@ -125,7 +126,7 @@ export const ImportedPlanBanner = ({
         footer={
           <div className="flex flex-col gap-4 mt-4">
             <div>
-              {secteursARenseigner > 0 ? (
+              {isSecteursConcerne && secteursARenseigner > 0 ? (
                 <SecteursButton count={secteursARenseigner} />
               ) : (
                 <Button
