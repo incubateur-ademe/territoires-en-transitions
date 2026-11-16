@@ -14,6 +14,7 @@ export * from './fiches/participation-citoyenne.enum.schema';
 export * from './fiches/pilier-eci.enum.schema';
 export * from './fiches/priorite.enum.schema';
 export * from './fiches/secteur-reglementaire.enum.schema';
+export * from './fiches/secteur-reglementaire.labels';
 export * from './fiches/statut.enum.schema';
 export * from './fiches/utils/fiche-secteurs.rules';
 export * from './fiches/utils/fiche-status-color.utils';
