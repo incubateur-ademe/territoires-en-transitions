@@ -8,6 +8,7 @@ import {
   PlanRow,
 } from '@tet/backend/plans/fiches/plan-actions.service';
 import { formatDate } from '@tet/backend/utils/excel/export-excel.utils';
+import { FicheSecteurs, SECTEUR_REGLEMENTAIRE_LABELS } from '@tet/domain/plans';
 import { htmlToText } from '@tet/domain/utils';
 import { getDepthLabel, participationCitoyenneTypeToLabel } from './utils';
 
@@ -34,6 +35,19 @@ const getNames = (items: Array<{ nom: string | null }> | null | undefined) => {
   return items?.map(({ nom }) => nom || '') || '';
 };
 
+// « à renseigner » ou pas d'attribution : cellule vide
+const getSecteursLabels = (secteurs: FicheSecteurs | null) => {
+  if (secteurs?.etat === 'attribue') {
+    return secteurs.secteurs.map(
+      (secteur) => SECTEUR_REGLEMENTAIRE_LABELS[secteur]
+    );
+  }
+  if (secteurs?.etat === 'non_attribuable') {
+    return 'Non attribuable';
+  }
+  return '';
+};
+
 const PRESENTATION: Section = {
   sectionLabel: "Présentation de l'action",
   cols: ({ maxDepth }) => [
@@ -45,7 +59,15 @@ const PRESENTATION: Section = {
     })),
     {
       colLabel: "Titre de l'action",
-      cellValue: ({ fiche }: PlanRow) => fiche?.titre,
+      // sur la ligne d'une sous-action, le titre de sa fiche parente est répété
+      cellValue: ({ fiche, parentFiche }: PlanRow) =>
+        (parentFiche ?? fiche)?.titre,
+      excludeFromDocx: true,
+    },
+    {
+      colLabel: 'Titre de la sous-action',
+      cellValue: ({ fiche, parentFiche }: PlanRow) =>
+        parentFiche ? fiche?.titre || 'Sans titre' : '',
       excludeFromDocx: true,
     },
     {
@@ -59,6 +81,10 @@ const PRESENTATION: Section = {
     {
       colLabel: 'Sous-thématiques',
       cellValue: ({ fiche }: PlanRow) => getNames(fiche?.sousThematiques),
+    },
+    {
+      colLabel: 'Secteurs réglementaires',
+      cellValue: ({ secteurs }: PlanRow) => getSecteursLabels(secteurs),
     },
     {
       colLabel: 'Tags de suivi',

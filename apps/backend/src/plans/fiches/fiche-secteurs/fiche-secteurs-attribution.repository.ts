@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { OrigineSecteursEnum } from '@tet/domain/plans';
-import { eq, sql } from 'drizzle-orm';
+import { eq, inArray, sql } from 'drizzle-orm';
 import {
   FicheActionSecteurAttribution,
   ficheActionSecteurAttributionTable,
@@ -27,6 +27,25 @@ export class FicheSecteursAttributionRepository {
       .from(ficheActionSecteurAttributionTable)
       .where(eq(ficheActionSecteurAttributionTable.ficheId, ficheId));
     return row ?? null;
+  }
+
+  async listByFicheIds(
+    ficheIds: number[],
+    tx?: Transaction
+  ): Promise<
+    Pick<FicheActionSecteurAttribution, 'ficheId' | 'secteurs' | 'origine'>[]
+  > {
+    if (ficheIds.length === 0) {
+      return [];
+    }
+    return (tx ?? this.databaseService.db)
+      .select({
+        ficheId: ficheActionSecteurAttributionTable.ficheId,
+        secteurs: ficheActionSecteurAttributionTable.secteurs,
+        origine: ficheActionSecteurAttributionTable.origine,
+      })
+      .from(ficheActionSecteurAttributionTable)
+      .where(inArray(ficheActionSecteurAttributionTable.ficheId, ficheIds));
   }
 
   /**

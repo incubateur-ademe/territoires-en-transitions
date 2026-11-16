@@ -3,11 +3,17 @@ import FicheActionPermissionsService from '@tet/backend/plans/fiches/fiche-actio
 import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches.service';
 import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
-import { Fiche, FicheWithRelations } from '@tet/domain/plans';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { failure, Result, success } from '@tet/backend/utils/result.type';
+import { CommonError } from '@tet/backend/utils/trpc/common-errors';
+import { Fiche, FicheSecteurs, FicheWithRelations } from '@tet/domain/plans';
 import { and, count, eq, isNull, sql } from 'drizzle-orm';
-import { uniq } from 'es-toolkit';
+import { groupBy, isNil, uniq } from 'es-toolkit';
 import z from 'zod';
 import { DatabaseService } from '../../utils/database/database.service';
+import { FicheSecteursAttributionRepository } from './fiche-secteurs/fiche-secteurs-attribution.repository';
+import { toFicheSecteurs } from './fiche-secteurs/fiche-secteurs.rules';
+import { QueryOptionsSchema } from './list-fiches/list-fiches.request';
 import { axeTable } from './shared/models/axe.table';
 import { ficheActionAxeTable } from './shared/models/fiche-action-axe.table';
 
@@ -26,7 +32,32 @@ type AxeEtFicheIds = Awaited<
   ReturnType<PlanActionsService['getAxesEtFicheIds']>
 >[number];
 
-type PlanData = Awaited<ReturnType<PlanActionsService['fetchPlan']>>;
+type PlanData = ReturnType<PlanActionsService['toPlanData']>;
+
+export type PlanSnapshot = {
+  plan: Plan;
+  /** `null` si le plan n'a aucune fiche ni sous-action restreinte */
+  planWithoutFichesRestreintes: Plan | null;
+};
+
+export type GetPlanSnapshotError = Extract<
+  CommonError,
+  'NOT_FOUND' | 'DATABASE_ERROR'
+>;
+
+type PlanContent = {
+  /** Fiches de premier niveau rattachées aux axes du plan */
+  fiches: FicheWithRelations[];
+  /** Sous-actions de ces fiches : sans axe, elles suivent leur fiche parente */
+  sousActions: FicheWithRelations[];
+  secteursByFicheId: Map<number, FicheSecteurs>;
+};
+
+// même ordre qu'à l'écran
+const SOUS_ACTIONS_QUERY_OPTIONS: QueryOptionsSchema = {
+  sort: [{ field: 'created_at', direction: 'asc' }],
+  limit: 'all',
+};
 
 @Injectable()
 export default class PlanActionsService {
@@ -35,7 +66,8 @@ export default class PlanActionsService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly fichePermissionsService: FicheActionPermissionsService,
-    private readonly listFichesService: ListFichesService
+    private readonly listFichesService: ListFichesService,
+    private readonly ficheSecteursAttributionRepository: FicheSecteursAttributionRepository
   ) {}
 
   async count(collectiviteId: number): Promise<number> {
@@ -67,10 +99,148 @@ export default class PlanActionsService {
       user
     );
 
-    // charge le plan et extrait les données dérivées nécessaires à l'export
-    const plan = await this.fetchPlan(input, user);
-    const { root } = plan;
-    const rows = this.getRows(plan, root);
+    const axesEtFicheIds = await this.getAxesEtFicheIds(input);
+    const { data: fiches } =
+      await this.listFichesService.getFichesActionResumes(
+        {
+          collectiviteId,
+          filters: { planActionIds: [planId] },
+          readsMaskedFields: true,
+        },
+        { user }
+      );
+    // une fiche restreinte illisible est déjà exclue : ses sous-actions ne sont pas demandées
+    const sousActions = fiches.length
+      ? (
+          await this.listFichesService.getFichesActionResumes(
+            {
+              collectiviteId,
+              filters: { parentsId: fiches.map((f) => f.id) },
+              queryOptions: SOUS_ACTIONS_QUERY_OPTIONS,
+              readsMaskedFields: true,
+            },
+            { user }
+          )
+        ).data
+      : [];
+    const secteursByFicheId = await this.getSecteursByFicheId([
+      ...fiches,
+      ...sousActions,
+    ]);
+
+    return this.buildPlan(axesEtFicheIds, {
+      fiches,
+      sousActions,
+      secteursByFicheId,
+    });
+  }
+
+  /**
+   * Charge un plan hors contexte utilisateur, sans contrôle d'accès : fiches
+   * restreintes comprises. À réserver aux traitements de la plateforme.
+   */
+  async getPlanSnapshot(
+    input: GetPlanRequest,
+    { tx }: { tx?: Transaction } = {}
+  ): Promise<Result<PlanSnapshot, GetPlanSnapshotError>> {
+    try {
+      return await this.loadPlanSnapshot(input, tx);
+    } catch (error) {
+      this.logger.error(
+        `Échec du chargement du plan ${input.planId} de la collectivité ${input.collectiviteId}`,
+        error
+      );
+      return failure(
+        'DATABASE_ERROR',
+        error instanceof Error ? error : undefined
+      );
+    }
+  }
+
+  private async loadPlanSnapshot(
+    input: GetPlanRequest,
+    tx?: Transaction
+  ): Promise<Result<PlanSnapshot, GetPlanSnapshotError>> {
+    const { collectiviteId, planId } = input;
+
+    const axesEtFicheIds = await this.getAxesEtFicheIds(input, tx);
+    if (!axesEtFicheIds.some((axe) => axe.parent === null)) {
+      return failure('NOT_FOUND');
+    }
+    const { data: fiches } = await this.listFichesService.listFichesQuery(
+      collectiviteId,
+      { planActionIds: [planId] },
+      { limit: 'all' },
+      tx
+    );
+    const sousActions = fiches.length
+      ? (
+          await this.listFichesService.listFichesQuery(
+            collectiviteId,
+            { parentsId: fiches.map((f) => f.id) },
+            SOUS_ACTIONS_QUERY_OPTIONS,
+            tx
+          )
+        ).data
+      : [];
+    const secteursByFicheId = await this.getSecteursByFicheId(
+      [...fiches, ...sousActions],
+      tx
+    );
+
+    const plan = this.buildPlan(axesEtFicheIds, {
+      fiches,
+      sousActions,
+      secteursByFicheId,
+    });
+
+    const hasFicheRestreinte = [...fiches, ...sousActions].some(
+      (f) => f.restreint
+    );
+    if (!hasFicheRestreinte) {
+      return success({ plan, planWithoutFichesRestreintes: null });
+    }
+
+    const visibleFiches = fiches.filter((f) => !f.restreint);
+    const visibleFicheIds = new Set(visibleFiches.map((f) => f.id));
+    // une sous-action suit sa fiche parente
+    const visibleSousActions = sousActions.filter(
+      (f) =>
+        !f.restreint && !isNil(f.parentId) && visibleFicheIds.has(f.parentId)
+    );
+
+    return success({
+      plan,
+      planWithoutFichesRestreintes: this.buildPlan(axesEtFicheIds, {
+        fiches: visibleFiches,
+        sousActions: visibleSousActions,
+        secteursByFicheId,
+      }),
+    });
+  }
+
+  private async getSecteursByFicheId(
+    fiches: FicheWithRelations[],
+    tx?: Transaction
+  ): Promise<Map<number, FicheSecteurs>> {
+    const attributions =
+      await this.ficheSecteursAttributionRepository.listByFicheIds(
+        fiches.map((f) => f.id),
+        tx
+      );
+    return new Map(
+      attributions.map((attribution) => [
+        attribution.ficheId,
+        toFicheSecteurs(attribution),
+      ])
+    );
+  }
+
+  // extrait les données dérivées nécessaires à l'export
+  private buildPlan(axesEtFicheIds: AxeEtFicheIds[], content: PlanContent) {
+    const planData = this.toPlanData(axesEtFicheIds, content);
+    const { root } = planData;
+    const rows = this.getRows(planData, root);
     const maxDepth = Math.max(...rows.map((r) => r.depth));
     const anneesNotes = uniq(
       rows.flatMap((r) =>
@@ -86,7 +256,7 @@ export default class PlanActionsService {
     return {
       /** Racine du plan */
       root,
-      /** Une ligne par fiche */
+      /** Une ligne par fiche ou sous-action */
       rows,
       /** Profondeur maximum d'une fiche dans le plan */
       maxDepth,
@@ -97,21 +267,10 @@ export default class PlanActionsService {
     };
   }
 
-  private async fetchPlan(input: GetPlanRequest, user: AuthUser) {
-    const { collectiviteId, planId } = input;
-
-    // charge les données
-    const axesEtFicheIds = await this.getAxesEtFicheIds(input);
-    const { data: fiches } =
-      await this.listFichesService.getFichesActionResumes(
-        {
-          collectiviteId,
-          filters: { planActionIds: [planId] },
-          readsMaskedFields: true,
-        },
-        { user }
-      );
-
+  private toPlanData(
+    axesEtFicheIds: AxeEtFicheIds[],
+    { fiches, sousActions, secteursByFicheId }: PlanContent
+  ) {
     // extrait et tri les fiches associées à un axe
     const getFiches = ({ ficheIds }: AxeEtFicheIds) =>
       ficheIds?.length && fiches?.length
@@ -123,10 +282,23 @@ export default class PlanActionsService {
       return axesEtFicheIds.filter((r) => r.parent === parentId);
     };
 
+    // les sous-actions sont déjà triées par date de création
+    const sousActionsByParentId = groupBy(
+      sousActions.filter((f) => !isNil(f.parentId)),
+      (f) => f.parentId as number
+    );
+    const getSousActions = (ficheId: number): FicheWithRelations[] =>
+      sousActionsByParentId[ficheId] ?? [];
+
+    const getSecteurs = (ficheId: number) =>
+      secteursByFicheId.get(ficheId) ?? null;
+
     return {
       root: getChildren(null)[0],
       getChildren,
       getFiches,
+      getSousActions,
+      getSecteurs,
     };
   }
 
@@ -139,22 +311,37 @@ export default class PlanActionsService {
     rows: Array<
       Omit<AxeEtFicheIds, 'ficheIds'> & {
         fiche: FicheWithRelations | null;
+        /** Renseignée sur la ligne d'une sous-action */
+        parentFiche: FicheWithRelations | null;
+        /** `null` : la fiche n'a pas d'attribution enregistrée */
+        secteurs: FicheSecteurs | null;
         path: string[];
         depth: number;
       }
     > = []
   ) {
-    const { getFiches, getChildren } = plan;
+    const { getFiches, getChildren, getSousActions, getSecteurs } = plan;
     const fiches = getFiches(axe);
     const { id, nom, parent } = axe;
 
     if (fiches?.length) {
-      const row = { id, nom, parent, depth, path, fiche: null };
+      const row = { id, nom, parent, depth, path };
 
       fiches.forEach((fiche) => {
         rows.push({
           ...row,
           fiche,
+          parentFiche: null,
+          secteurs: getSecteurs(fiche.id),
+        });
+        // les sous-actions suivent leur fiche parente, sur l'axe de celle-ci
+        getSousActions(fiche.id).forEach((sousAction) => {
+          rows.push({
+            ...row,
+            fiche: sousAction,
+            parentFiche: fiche,
+            secteurs: getSecteurs(sousAction.id),
+          });
         });
       });
     }
@@ -168,9 +355,9 @@ export default class PlanActionsService {
     return rows;
   }
 
-  private getAxesEtFicheIds(input: GetPlanRequest) {
+  private getAxesEtFicheIds(input: GetPlanRequest, tx?: Transaction) {
     const ficheIdsParAxe = this.getFicheIdsParAxe(input);
-    return this.databaseService.db
+    return (tx ?? this.databaseService.db)
       .with(ficheIdsParAxe)
       .select({
         id: axeTable.id,
