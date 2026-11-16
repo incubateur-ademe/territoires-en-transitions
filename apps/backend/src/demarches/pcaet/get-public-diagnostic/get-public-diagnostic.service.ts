@@ -37,7 +37,9 @@ export class GetPublicDiagnosticService {
       { user, tx }
     );
     if (!accessResult.success) {
-      return failure(GetPublicDiagnosticErrorEnum.DEMARCHE_PCAET_NOT_FOUND);
+      return accessResult.error === 'DATABASE_ERROR'
+        ? failure(accessResult.error, accessResult.cause)
+        : failure(GetPublicDiagnosticErrorEnum.DEMARCHE_PCAET_NOT_FOUND);
     }
 
     const valeursResult = await this.permissionService.isAllowed(

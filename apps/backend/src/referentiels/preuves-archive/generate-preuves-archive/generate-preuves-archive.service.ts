@@ -219,6 +219,11 @@ export class GeneratePreuvesArchiveService {
       collectiviteId
     );
     if (!collectiviteResult.success) {
+      if (collectiviteResult.error === 'NOT_FOUND') {
+        return nonRetryableFailure(
+          `Collectivité ${collectiviteId} introuvable`
+        );
+      }
       return retryableFailure(
         `Récupération de la collectivité échouée: ${getErrorMessage(
           collectiviteResult.cause

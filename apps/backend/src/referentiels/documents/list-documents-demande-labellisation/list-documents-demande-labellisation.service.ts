@@ -62,10 +62,7 @@ export class ListDocumentsDemandeLabellisationService {
         { user }
       );
     if (!accessResult.success) {
-      return {
-        success: false,
-        error: 'UNAUTHORIZED',
-      };
+      return accessResult;
     }
 
     const { canReadConfidentiel } = accessResult.data;

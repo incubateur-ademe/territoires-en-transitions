@@ -35,7 +35,7 @@ export class ListDocumentsReferentielService {
         { user, tx }
       );
     if (!accessResult.success) {
-      return failure(ListDocumentsReferentielErrorEnum.UNAUTHORIZED);
+      return accessResult;
     }
     const { canReadConfidentiel } = accessResult.data;
     const scope = { collectiviteId, referentielId, canReadConfidentiel };

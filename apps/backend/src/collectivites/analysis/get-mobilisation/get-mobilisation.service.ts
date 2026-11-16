@@ -63,7 +63,9 @@ export class GetMobilisationService {
     );
     if (!isCollectivitePrivateResult.success) {
       return failure(
-        isCollectivitePrivateResult.error,
+        isCollectivitePrivateResult.error === 'NOT_FOUND'
+          ? AnalysisJobErrorEnum.COLLECTIVITE_NOT_FOUND
+          : isCollectivitePrivateResult.error,
         isCollectivitePrivateResult.cause
       );
     }

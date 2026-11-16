@@ -1,15 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
+import CollectivitesService, {
+  type GetCollectiviteError,
+} from '@tet/backend/collectivites/services/collectivites.service';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
-import {
-  failure,
-  Result,
-  success,
-  getDataOrThrow,
-} from '@tet/backend/utils/result.type';
+import { failure, Result, success } from '@tet/backend/utils/result.type';
 import {
   DEMARCHE_PCAET_PUBLIC_STATUSES,
   DemarcheTypeEnum,
@@ -41,7 +38,9 @@ export class DemarchePcaetPublicAccessService {
   async canReadCollectivite(
     collectiviteId: number,
     { user, tx }: ServiceSecondArg
-  ): Promise<Result<{ isPrivate: boolean }, 'UNAUTHORIZED'>> {
+  ): Promise<
+    Result<{ isPrivate: boolean }, 'UNAUTHORIZED' | GetCollectiviteError>
+  > {
     const readResult = await this.permissionService.isAllowed(
       user,
       PermissionOperationEnum['DEMARCHES.PCAET.READ'],
@@ -53,9 +52,14 @@ export class DemarchePcaetPublicAccessService {
       return failure('UNAUTHORIZED');
     }
 
-    const isPrivate = getDataOrThrow(
-      await this.collectivitesService.isPrivate(collectiviteId, tx)
+    const isPrivateResult = await this.collectivitesService.isPrivate(
+      collectiviteId,
+      tx
     );
+    if (!isPrivateResult.success) {
+      return isPrivateResult;
+    }
+    const isPrivate = isPrivateResult.data;
     if (isPrivate) {
       const confidentielResult = await this.permissionService.isAllowed(
         user,
@@ -83,7 +87,7 @@ export class DemarchePcaetPublicAccessService {
       collectiviteId,
     }: { demarcheId: number; collectiviteId: number },
     { user, tx }: ServiceSecondArg
-  ): Promise<Result<{ isPrivate: boolean }, 'NOT_FOUND'>> {
+  ): Promise<Result<{ isPrivate: boolean }, 'NOT_FOUND' | 'DATABASE_ERROR'>> {
     const [demarche] = await (tx ?? this.databaseService.db)
       .select({ id: demarcheTable.id })
       .from(demarcheTable)
@@ -105,7 +109,10 @@ export class DemarchePcaetPublicAccessService {
       tx,
     });
     if (!accessResult.success) {
-      return failure('NOT_FOUND');
+      // Un refus se tait, une panne non : elle ne doit pas passer pour une absence.
+      return accessResult.error === 'DATABASE_ERROR'
+        ? failure(accessResult.error, accessResult.cause)
+        : failure('NOT_FOUND');
     }
 
     return accessResult;

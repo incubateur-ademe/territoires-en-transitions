@@ -30,7 +30,7 @@ export class ListPublicDemarchesPcaetService {
       { user, tx }
     );
     if (!accessResult.success) {
-      return failure(ListPublicDemarchesPcaetErrorEnum.UNAUTHORIZED);
+      return accessResult;
     }
 
     const listResult =

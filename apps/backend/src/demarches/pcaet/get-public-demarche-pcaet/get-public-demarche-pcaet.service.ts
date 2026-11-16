@@ -83,7 +83,9 @@ export class GetPublicDemarchePcaetService {
       { user, tx }
     );
     if (!accessResult.success) {
-      return failure(GetPublicDemarchePcaetErrorEnum.DEMARCHE_PCAET_NOT_FOUND);
+      return accessResult.error === 'DATABASE_ERROR'
+        ? failure(accessResult.error, accessResult.cause)
+        : failure(GetPublicDemarchePcaetErrorEnum.DEMARCHE_PCAET_NOT_FOUND);
     }
     const { isPrivate } = accessResult.data;
 

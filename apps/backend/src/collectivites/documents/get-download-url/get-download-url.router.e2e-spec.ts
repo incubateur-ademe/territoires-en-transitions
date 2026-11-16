@@ -119,8 +119,6 @@ describe('GetDownloadUrlRouter', () => {
         collectiviteId: UNKNOWN_COLLECTIVITE_ID,
         fichierId: UNKNOWN_FICHIER_ID,
       })
-    ).rejects.toThrowError(
-      `Collectivité avec l'identifiant ${UNKNOWN_COLLECTIVITE_ID} introuvable`
-    );
+    ).rejects.toMatchObject({ code: 'NOT_FOUND' });
   });
 });
