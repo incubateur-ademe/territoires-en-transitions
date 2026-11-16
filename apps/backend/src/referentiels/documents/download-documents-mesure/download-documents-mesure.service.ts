@@ -57,7 +57,7 @@ export class DownloadDocumentsMesureService {
         { user, tx }
       );
     if (!accessResult.success) {
-      return failure(DownloadDocumentsMesureErrorEnum.UNAUTHORIZED);
+      return accessResult;
     }
 
     const documentsResult = await this.documents.listDocuments({

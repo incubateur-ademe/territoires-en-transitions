@@ -1,13 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
+import CollectivitesService, {
+  type GetCollectiviteError,
+} from '@tet/backend/collectivites/services/collectivites.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
-import {
-  failure,
-  success,
-  type Result,
-  getDataOrThrow,
-} from '@tet/backend/utils/result.type';
+import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { CommonErrorEnum } from '@tet/backend/utils/trpc/common-errors';
 import { ResourceType } from '@tet/domain/users';
 
@@ -21,7 +18,12 @@ export class CollectiviteDocumentsAccessService {
   async checkUserCanReadDocuments(
     { collectiviteId }: { collectiviteId: number },
     { user, tx }: ServiceSecondArg
-  ): Promise<Result<{ canReadConfidentiel: boolean }, 'UNAUTHORIZED'>> {
+  ): Promise<
+    Result<
+      { canReadConfidentiel: boolean },
+      'UNAUTHORIZED' | GetCollectiviteError
+    >
+  > {
     const [readResult, readConfidentielResult] = await Promise.all([
       this.permissionService.isAllowed(
         user,
@@ -45,9 +47,13 @@ export class CollectiviteDocumentsAccessService {
       return failure(CommonErrorEnum.UNAUTHORIZED);
     }
 
-    const isAccesRestreint = getDataOrThrow(
-      await this.collectivitesService.isPrivate(collectiviteId)
+    const isAccesRestreintResult = await this.collectivitesService.isPrivate(
+      collectiviteId
     );
+    if (!isAccesRestreintResult.success) {
+      return isAccesRestreintResult;
+    }
+    const isAccesRestreint = isAccesRestreintResult.data;
 
     const canReachCollectivite = isAccesRestreint
       ? canReadConfidentiel

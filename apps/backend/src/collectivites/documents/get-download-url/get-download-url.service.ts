@@ -35,7 +35,7 @@ export class GetDownloadUrlService {
         { user, tx }
       );
     if (!accessResult.success) {
-      return failure(GetDownloadUrlErrorEnum.UNAUTHORIZED);
+      return accessResult;
     }
     return this.createDownloadUrl({
       collectiviteId,

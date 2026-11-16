@@ -40,7 +40,7 @@ export class ListDocumentsMesureService {
         { user, tx }
       );
     if (!accessResult.success) {
-      return failure(ListDocumentsMesureErrorEnum.UNAUTHORIZED);
+      return accessResult;
     }
 
     const { canReadConfidentiel } = accessResult.data;

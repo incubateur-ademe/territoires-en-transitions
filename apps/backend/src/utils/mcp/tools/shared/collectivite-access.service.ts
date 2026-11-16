@@ -12,7 +12,10 @@ import { ResourceType } from '@tet/domain/users';
 export const SUPER_ADMIN_REQUIRED_MESSAGE =
   "Accès refusé à cette collectivité. Un compte support doit activer le mode super admin dans l'app (menu du profil) pour lire les données d'une collectivité dont il n'est pas membre.";
 
-export type CollectiviteAccessError = 'NOT_FOUND' | 'UNAUTHORIZED';
+export type CollectiviteAccessError =
+  | 'NOT_FOUND'
+  | 'UNAUTHORIZED'
+  | 'DATABASE_ERROR';
 
 /**
  * Garde commune des outils métier : la collectivité existe et l'appelant a la
@@ -44,10 +47,17 @@ export class CollectiviteAccessService {
       collectiviteId
     );
     if (!accesRestreintResult.success) {
-      return failure(
-        'NOT_FOUND',
-        new Error(`Collectivité ${collectiviteId} introuvable`)
-      );
+      return accesRestreintResult.error === 'NOT_FOUND'
+        ? failure(
+            'NOT_FOUND',
+            new Error(`Collectivité ${collectiviteId} introuvable`)
+          )
+        : failure(
+            'DATABASE_ERROR',
+            new Error(
+              `Lecture de la collectivité ${collectiviteId} impossible pour le moment, réessayer`
+            )
+          );
     }
     const accesRestreint = accesRestreintResult.data;
 

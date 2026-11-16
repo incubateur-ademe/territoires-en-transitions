@@ -1,4 +1,4 @@
-import { success } from '@tet/backend/utils/result.type';
+import { failure, success } from '@tet/backend/utils/result.type';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { describe, expect, it, vi, type Mock } from 'vitest';
 import { CollectiviteDocumentsAccessService } from './collectivite-documents-access.service';
@@ -140,5 +140,20 @@ describe('CollectiviteDocumentsAccessService', () => {
 
     expect(result).toEqual({ success: false, error: 'UNAUTHORIZED' });
     expect(collectivitesService.isPrivate).not.toHaveBeenCalled();
+  });
+
+  it("rend l'echec de lecture de la collectivite au lieu de le lever", async () => {
+    const { service, collectivitesService } = buildService();
+    const cause = new Error('connexion perdue');
+    collectivitesService.isPrivate.mockResolvedValue(
+      failure('DATABASE_ERROR', cause)
+    );
+
+    const result = await service.checkUserCanReadDocuments(
+      { collectiviteId: 1 },
+      { user }
+    );
+
+    expect(result).toEqual({ success: false, error: 'DATABASE_ERROR', cause });
   });
 });
