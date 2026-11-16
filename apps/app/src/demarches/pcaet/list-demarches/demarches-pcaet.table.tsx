@@ -6,10 +6,7 @@ import {
 } from '@/app/demarches/pcaet/constants';
 import { appLabels } from '@/app/labels/catalog';
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
-import {
-  BasculerGroupeButton,
-  BasculerTousLesGroupesButton,
-} from '@/app/demarches/components/basculer-groupe.button';
+import { BasculerGroupeButton } from '@/app/demarches/components/basculer-groupe.button';
 import {
   GroupesRepliablesProvider,
   useEtatGroupesRepliables,
@@ -392,20 +389,11 @@ export const DemarchesPcaetTable = <T extends DemarcheListItem>({
     state: { columnVisibility: { actions: renderActions !== undefined } },
   });
 
-  const clesDesGroupes = demarches.filter(aDesSousLignes).map(getRowKey);
-  const { groupes, toutDeplie, basculerTous } =
-    useEtatGroupesRepliables(clesDesGroupes);
+  const groupes = useEtatGroupesRepliables();
 
   return (
     <PilotageContext.Provider value={pilotage}>
       <GroupesRepliablesProvider value={groupes}>
-        {clesDesGroupes.length > 0 && (
-          <BasculerTousLesGroupesButton
-            toutDeplie={toutDeplie}
-            onClick={basculerTous}
-            dataTest="demarches.pcaet.liste.basculer-tous-les-groupes"
-          />
-        )}
         {/* Région défilante atteignable au clavier (WCAG 2.1.1). */}
         <div
           className="max-xl:overflow-x-auto"

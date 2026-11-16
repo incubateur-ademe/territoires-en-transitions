@@ -4,7 +4,6 @@ import { appLabels } from '@/app/labels/catalog';
 import type { CollectivitePcaetObligation } from '@tet/domain/demarches';
 import { type PcaetStatutInstruction } from '@tet/domain/demarches';
 import type { EmptyCardProps } from '@tet/ui';
-import { BasculerTousLesGroupesButton } from '@/app/demarches/components/basculer-groupe.button';
 import {
   GroupesRepliablesProvider,
   useEtatGroupesRepliables,
@@ -528,22 +527,11 @@ export const DossiersInstructionTable = ({
     getRowId: getRowKey,
   });
 
-  const clesDesGroupes = dossiers
-    .filter((dossier) => dossier.collectivitesCouvertes.length > 0)
-    .map(getRowKey);
-  const { groupes, toutDeplie, basculerTous } =
-    useEtatGroupesRepliables(clesDesGroupes);
+  const groupes = useEtatGroupesRepliables();
 
   return (
     <PilotageContext.Provider value={pilotage}>
       <GroupesRepliablesProvider value={groupes}>
-        {clesDesGroupes.length > 0 && (
-          <BasculerTousLesGroupesButton
-            toutDeplie={toutDeplie}
-            onClick={basculerTous}
-            dataTest="demarches.pcaet.instruction.basculer-tous-les-groupes"
-          />
-        )}
         {/* Région défilante atteignable au clavier (WCAG 2.1.1). */}
         <div
           className={

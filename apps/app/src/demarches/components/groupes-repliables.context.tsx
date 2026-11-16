@@ -31,8 +31,8 @@ export const useGroupesRepliables = (): GroupesRepliables => {
   return groupes;
 };
 
-/** L'état des groupes d'un tableau, et la bascule de tous à la fois. */
-export const useEtatGroupesRepliables = (clesDesGroupes: string[]) => {
+/** L'état des groupes d'un tableau. */
+export const useEtatGroupesRepliables = (): GroupesRepliables => {
   const [replies, setReplies] = useState<ReadonlySet<string>>(new Set());
   const basculer = useCallback(
     (cle: string) =>
@@ -45,16 +45,8 @@ export const useEtatGroupesRepliables = (clesDesGroupes: string[]) => {
       }),
     []
   );
-  const groupes = useMemo(
+  return useMemo(
     () => ({ estDeplie: (cle: string) => !replies.has(cle), basculer }),
     [replies, basculer]
   );
-  const toutDeplie = replies.size === 0;
-
-  return {
-    groupes,
-    toutDeplie,
-    basculerTous: () =>
-      setReplies(toutDeplie ? new Set(clesDesGroupes) : new Set()),
-  };
 };

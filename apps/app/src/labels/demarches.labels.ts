@@ -868,8 +868,6 @@ export const demarchesLabels = {
   instructionListeRechercheCollectiviteSansNom: 'Collectivité choisie',
   instructionListeRechercheApprochee: ({ recherche }: { recherche: string }) =>
     `Aucun nom ne contient « ${recherche} ». Voici les noms les plus proches.`,
-  instructionListeToutReplier: 'Tout replier',
-  instructionListeToutDeplier: 'Tout déplier',
   instructionListeReplierGroupe: ({ porteur }: { porteur: string }) =>
     `Replier les EPCI couverts par ${porteur}`,
   instructionListeDeplierGroupe: ({ porteur }: { porteur: string }) =>

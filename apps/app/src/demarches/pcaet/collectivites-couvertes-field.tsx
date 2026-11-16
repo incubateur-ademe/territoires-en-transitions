@@ -147,16 +147,7 @@ export const CollectivitesCouvertesField = ({
                 >
                   <Checkbox
                     size="sm"
-                    label={
-                      <span className="flex items-baseline gap-2">
-                        {candidat.nom}
-                        {candidat.departementCode && (
-                          <span className="text-xs text-grey-6">
-                            {candidat.departementCode}
-                          </span>
-                        )}
-                      </span>
-                    }
+                    label={candidat.nom}
                     checked={selection.has(candidat.id)}
                     disabled={candidat.engagement !== null}
                     message={

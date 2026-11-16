@@ -7,6 +7,7 @@ import { ErrorCard } from '@/app/utils/error/error.card';
 import { useUser } from '@tet/api/users';
 import { peutDeposerAvisInstructeur } from '@tet/domain/demarches';
 import { useTrackDemarcheView } from '@/app/demarches/use-demarche-tracker';
+import { useSuperAdminMode } from '@/app/users/authorizations/super-admin-mode/super-admin-mode.provider';
 import {
   Alert,
   Badge,
@@ -17,11 +18,13 @@ import {
   Pagination,
   useEventTracker,
 } from '@tet/ui';
+import { useMemo } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { useListCollectivitesSuivies } from './data/use-list-collectivites-suivies';
 import { useListDossiersInstruction } from './data/use-list-dossiers-instruction';
 import { DossiersInstructionTable } from './dossiers-instruction.table';
 import { SearchDossiersCombobox } from './search-dossiers.combobox';
+import { filterTerritoiresDeTest } from './territoires-de-test';
 
 const TRACK_RECHERCHE_DELAY_MS = 2000;
 
@@ -56,7 +59,24 @@ export const DossiersInstructionPage = ({
     trierPar,
   } = useListDossiersInstruction(serviceId);
   // Chargées en même temps que la liste, et non une fois le champ affiché.
-  const { data: collectivitesSuivies } = useListCollectivitesSuivies(serviceId);
+  const { data: collectivitesSuiviesData } =
+    useListCollectivitesSuivies(serviceId);
+  const { isSuperAdminRoleEnabled } = useSuperAdminMode();
+  const collectivitesSuivies = useMemo(
+    () =>
+      collectivitesSuiviesData && {
+        ...collectivitesSuiviesData,
+        departements: filterTerritoiresDeTest(
+          collectivitesSuiviesData.departements,
+          isSuperAdminRoleEnabled
+        ),
+        regions: filterTerritoiresDeTest(
+          collectivitesSuiviesData.regions,
+          isSuperAdminRoleEnabled
+        ),
+      },
+    [collectivitesSuiviesData, isSuperAdminRoleEnabled]
+  );
 
   // La famille du service est lue sur l'accès désigné par l'URL, pour la même
   // raison que la requête : le store est en retard d'un rendu quand on arrive
@@ -101,8 +121,16 @@ export const DossiersInstructionPage = ({
     return setFiltres(nouveauxFiltres);
   };
 
-  const afficherRegion = (data?.perimetreRegions.length ?? 0) > 1;
-  const afficherDepartement = (data?.perimetreDepartements.length ?? 0) > 1;
+  const regionsOptions = filterTerritoiresDeTest(
+    data?.perimetreRegions ?? [],
+    isSuperAdminRoleEnabled
+  );
+  const departementsOptions = filterTerritoiresDeTest(
+    data?.perimetreDepartements ?? [],
+    isSuperAdminRoleEnabled
+  );
+  const afficherRegion = regionsOptions.length > 1;
+  const afficherDepartement = departementsOptions.length > 1;
 
   return (
     <div
@@ -198,9 +226,9 @@ export const DossiersInstructionPage = ({
               dossiers={data.items}
               deposeAvis={deposeAvis}
               afficherRegion={afficherRegion}
-              regionsOptions={data.perimetreRegions}
+              regionsOptions={regionsOptions}
               afficherDepartement={afficherDepartement}
-              departementsOptions={data.perimetreDepartements}
+              departementsOptions={departementsOptions}
               filtres={filtres}
               nbFiltresActifs={nbFiltresActifs}
               setFiltres={setFiltresTracked}
