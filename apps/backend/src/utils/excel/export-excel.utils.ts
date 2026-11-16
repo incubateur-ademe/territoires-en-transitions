@@ -175,6 +175,41 @@ const RE_WS_FORBIDDEN_CHARS = /[*?:\\/[\]]/g;
 export const normalizeWorksheetName = (name: string) =>
   name.replaceAll(RE_WS_FORBIDDEN_CHARS, '-');
 
+const WORKSHEET_NAME_MAX_LENGTH = 31;
+// nom réservé par Excel, refusé par exceljs
+const WORKSHEET_RESERVED_NAME = 'history';
+
+/**
+ * Rend des noms de feuilles acceptés par exceljs, qui lève une exception sur
+ * un nom vide, réservé ou en doublon (sans tenir compte de la casse).
+ * Un nom vide devient `<fallbackPrefix> <position>`.
+ */
+export const buildUniqueWorksheetNames = (
+  names: string[],
+  fallbackPrefix = 'Feuille'
+): string[] => {
+  const usedNames = new Set<string>([WORKSHEET_RESERVED_NAME]);
+
+  return names.map((rawName, index) => {
+    const baseName =
+      normalizeWorksheetName(rawName)
+        .slice(0, WORKSHEET_NAME_MAX_LENGTH)
+        // une apostrophe en début ou en fin de nom est interdite, y compris
+        // quand la troncature la laisse en dernière position
+        .replace(/^['\s]+|['\s]+$/g, '') || `${fallbackPrefix} ${index + 1}`;
+
+    let name = baseName;
+    for (let n = 2; usedNames.has(name.toLowerCase()); n++) {
+      const suffix = ` (${n})`;
+      name =
+        baseName.slice(0, WORKSHEET_NAME_MAX_LENGTH - suffix.length).trim() +
+        suffix;
+    }
+    usedNames.add(name.toLowerCase());
+    return name;
+  });
+};
+
 export const formatDate = (dateStr: Date | string | null | undefined) => {
   return dateStr ? format(new Date(dateStr), 'dd/MM/yyyy') : '';
 };
