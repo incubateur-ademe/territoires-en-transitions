@@ -1,7 +1,10 @@
 import { AuthRole } from '@tet/backend/users/models/auth.models';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { describe, expect, it, vi } from 'vitest';
-import type { IndicateurTotalReader } from '@tet/domain/indicateurs';
+import type {
+  IndicateurTotalReader,
+  SousIndicateurRattache,
+} from '@tet/domain/indicateurs';
 import type { IndicateurValeursReadDenial } from '../indicateur-valeurs-read-access.service';
 import type { ParentForTotals } from './get-indicateur-totals.repository';
 import { GetIndicateurTotalsService } from './get-indicateur-totals.service';
@@ -40,17 +43,17 @@ const createService = ({
     confidentiel: false,
   } as ParentForTotals | null,
   sousIndicateurs = [
-    { id: 7, confidentiel: false },
-    { id: 8, confidentiel: true },
+    { id: 7, parentId: 42, confidentiel: false },
+    { id: 8, parentId: 42, confidentiel: true },
   ],
 }: {
   readerResult?: Result<IndicateurTotalReader, IndicateurValeursReadDenial>;
   parent?: ParentForTotals | null;
-  sousIndicateurs?: { id: number; confidentiel: boolean }[];
+  sousIndicateurs?: SousIndicateurRattache[];
 } = {}) => {
   const repository = {
     getParentForTotals: vi.fn().mockResolvedValue(parent),
-    listSousIndicateurs: vi.fn().mockResolvedValue(sousIndicateurs),
+    listSousIndicateursRattaches: vi.fn().mockResolvedValue(sousIndicateurs),
   };
   const valeursRepository = {
     listIndicateurValeurs: vi.fn().mockResolvedValue(
@@ -113,7 +116,7 @@ describe('GetIndicateurTotalsService', () => {
     );
   });
 
-  it('masque à un visiteur le résultat de la date du dernier résultat d’un enfant confidentiel mais pas l’objectif', async () => {
+  it('masque à un visiteur le résultat de la date du dernier résultat d’un sous-indicateur confidentiel mais pas l’objectif', async () => {
     const { service } = createService({ readerResult: success('visitor') });
 
     await expect(service.getIndicateurTotals(input, { user })).resolves.toEqual(
@@ -192,8 +195,8 @@ describe('GetIndicateurTotalsService', () => {
         confidentiel: true,
       },
       sousIndicateurs: [
-        { id: 7, confidentiel: false },
-        { id: 8, confidentiel: false },
+        { id: 7, parentId: 42, confidentiel: false },
+        { id: 8, parentId: 42, confidentiel: false },
       ],
     });
 
@@ -210,6 +213,45 @@ describe('GetIndicateurTotalsService', () => {
           objectif: complete(32),
         },
       ])
+    );
+  });
+
+  it('lit les valeurs de tous les descendants et rend incomplet un parent dont un sous-indicateur de bas niveau est vide', async () => {
+    const { service, valeursRepository } = createService({
+      sousIndicateurs: [
+        { id: 7, parentId: 42, confidentiel: false },
+        { id: 8, parentId: 7, confidentiel: false },
+        { id: 9, parentId: 7, confidentiel: false },
+      ],
+    });
+
+    const incomplete = {
+      status: 'incomplete',
+      filledCount: 0,
+      expectedCount: 1,
+    };
+
+    await expect(service.getIndicateurTotals(input, { user })).resolves.toEqual(
+      success([
+        {
+          dateValeur: '2022-01-01',
+          resultat: incomplete,
+          objectif: incomplete,
+        },
+        {
+          dateValeur: '2023-01-01',
+          resultat: incomplete,
+          objectif: incomplete,
+        },
+      ])
+    );
+    expect(valeursRepository.listIndicateurValeurs).toHaveBeenCalledWith(
+      {
+        collectiviteId: 1,
+        indicateurIds: [7, 8, 9],
+        sources: ['collectivite'],
+      },
+      undefined
     );
   });
 

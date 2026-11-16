@@ -1,3 +1,4 @@
+import { uniq } from 'es-toolkit';
 import { sumRoundedTo } from '../../utils/number.utils';
 
 export type SousIndicateurValeur = Readonly<{
@@ -18,6 +19,9 @@ export type IndicateurTotal =
     }>
   | Readonly<{ status: 'complete'; valeur: number }>;
 
+const listFilledNumbers = (valeurs: readonly (number | null)[]): number[] =>
+  valeurs.flatMap((valeur) => (valeur === null ? [] : [valeur]));
+
 export const calculateIndicateurTotal = ({
   totalEstCumulDesSousIndicateurs,
   reader,
@@ -35,15 +39,15 @@ export const calculateIndicateurTotal = ({
   if (sousIndicateurs.length === 0) {
     return { status: 'no-sous-indicateur' };
   }
-  const isHiddenFromVisitor =
+  if (
     reader === 'visitor' &&
-    sousIndicateurs.some(({ confidentiel }) => confidentiel);
-  if (isHiddenFromVisitor) {
+    sousIndicateurs.some(({ confidentiel }) => confidentiel)
+  ) {
     return { status: 'hidden' };
   }
 
-  const valeurs = sousIndicateurs.flatMap(({ valeur }) =>
-    valeur === null ? [] : [valeur]
+  const valeurs = listFilledNumbers(
+    sousIndicateurs.map(({ valeur }) => valeur)
   );
   if (valeurs.length < sousIndicateurs.length) {
     return {
@@ -62,6 +66,7 @@ export type SousIndicateurSerie = Readonly<{
     resultat: number | null;
     objectif: number | null;
   }>[];
+  sousIndicateurs: readonly SousIndicateurSerie[];
 }>;
 
 export type IndicateurTotalAtDate = Readonly<{
@@ -70,71 +75,185 @@ export type IndicateurTotalAtDate = Readonly<{
   objectif: IndicateurTotal;
 }>;
 
-type DatedValeur = Readonly<{ dateValeur: string; valeur: number }>;
+type ValeurKind = 'resultat' | 'objectif';
 
-type FilledSerie = Readonly<{
+type FilledSousIndicateur = Readonly<{
   confidentiel: boolean;
   latestDate: string | null;
-  valeurs: readonly DatedValeur[];
+  ownValeurByDate: ReadonlyMap<string, number>;
+  sousIndicateurs: readonly FilledSousIndicateur[];
+}>;
+
+type SousIndicateurContribution = Readonly<{
+  valeur: number | null;
+  hasValeur: boolean;
+  hidden: boolean;
+}>;
+
+type TotalAtDateParams = Readonly<{
+  totalEstCumulDesSousIndicateurs: boolean;
+  reader: IndicateurTotalReader;
+  precision: number;
+  sousIndicateurs: readonly FilledSousIndicateur[];
 }>;
 
 const HIDDEN_TOTAL: IndicateurTotal = { status: 'hidden' };
 
 const findLatestDate = (dates: readonly string[]): string | null =>
-  dates.reduce<string | null>(
-    (latest, date) => (latest === null || date > latest ? date : latest),
-    null
-  );
+  [...dates].sort().at(-1) ?? null;
 
-const toFilledSerie = ({
-  confidentiel,
-  valeurs,
+const listDates = (
+  sousIndicateurs: readonly FilledSousIndicateur[]
+): string[] =>
+  sousIndicateurs.flatMap((sousIndicateur) => [
+    ...sousIndicateur.ownValeurByDate.keys(),
+    ...listDates(sousIndicateur.sousIndicateurs),
+  ]);
+
+const listSortedDates = (
+  sousIndicateurs: readonly FilledSousIndicateur[]
+): string[] => uniq(listDates(sousIndicateurs)).sort();
+
+const listOwnValeurByDate = ({
+  serie,
+  kind,
 }: {
-  confidentiel: boolean;
-  valeurs: readonly Readonly<{ dateValeur: string; valeur: number | null }>[];
-}): FilledSerie => {
-  const filledValeurs = valeurs.flatMap(({ dateValeur, valeur }) =>
-    valeur === null ? [] : [{ dateValeur, valeur }]
+  serie: SousIndicateurSerie;
+  kind: ValeurKind;
+}): Map<string, number> => {
+  if (serie.sousIndicateurs.length > 0) {
+    return new Map();
+  }
+  return new Map(
+    serie.valeurs.flatMap(({ dateValeur, ...valeurs }) => {
+      const valeur = valeurs[kind];
+      return valeur === null ? [] : [[dateValeur, valeur] as const];
+    })
   );
+};
+
+const toFilledSousIndicateur = ({
+  serie,
+  kind,
+}: {
+  serie: SousIndicateurSerie;
+  kind: ValeurKind;
+}): FilledSousIndicateur => {
+  const sousIndicateurs = serie.sousIndicateurs.map((sousIndicateur) =>
+    toFilledSousIndicateur({ serie: sousIndicateur, kind })
+  );
+  const ownValeurByDate = listOwnValeurByDate({ serie, kind });
+
   return {
-    confidentiel,
-    latestDate: findLatestDate(
-      filledValeurs.map(({ dateValeur }) => dateValeur)
-    ),
-    valeurs: filledValeurs,
+    confidentiel: kind === 'resultat' && serie.confidentiel,
+    latestDate: findLatestDate([
+      ...ownValeurByDate.keys(),
+      ...listDates(sousIndicateurs),
+    ]),
+    ownValeurByDate,
+    sousIndicateurs,
   };
 };
 
-const listDates = (series: readonly FilledSerie[]): string[] =>
-  series.flatMap(({ valeurs }) => valeurs.map(({ dateValeur }) => dateValeur));
+const isLatestConfidentialValeur = ({
+  sousIndicateur,
+  dateValeur,
+  hasValeur,
+}: {
+  sousIndicateur: FilledSousIndicateur;
+  dateValeur: string;
+  hasValeur: boolean;
+}): boolean =>
+  sousIndicateur.confidentiel &&
+  hasValeur &&
+  dateValeur === sousIndicateur.latestDate;
+
+const calculateOwnContribution = ({
+  sousIndicateur,
+  dateValeur,
+}: {
+  sousIndicateur: FilledSousIndicateur;
+  dateValeur: string;
+}): SousIndicateurContribution => {
+  const valeur = sousIndicateur.ownValeurByDate.get(dateValeur);
+  const hasValeur = valeur !== undefined;
+  return {
+    valeur: valeur ?? null,
+    hasValeur,
+    hidden: isLatestConfidentialValeur({
+      sousIndicateur,
+      dateValeur,
+      hasValeur,
+    }),
+  };
+};
+
+const sumWhenAllFilled = (
+  contributions: readonly SousIndicateurContribution[]
+): number | null => {
+  const valeurs = listFilledNumbers(contributions.map(({ valeur }) => valeur));
+  const isFullyFilled = valeurs.length === contributions.length;
+  if (!isFullyFilled) {
+    return null;
+  }
+  return valeurs.reduce((total, valeur) => total + valeur, 0);
+};
+
+const calculateContribution = ({
+  sousIndicateur,
+  dateValeur,
+}: {
+  sousIndicateur: FilledSousIndicateur;
+  dateValeur: string;
+}): SousIndicateurContribution => {
+  const hasSousIndicateurs = sousIndicateur.sousIndicateurs.length > 0;
+  if (!hasSousIndicateurs) {
+    return calculateOwnContribution({ sousIndicateur, dateValeur });
+  }
+
+  const contributions = sousIndicateur.sousIndicateurs.map(
+    (sousIndicateurDeBasNiveau) =>
+      calculateContribution({
+        sousIndicateur: sousIndicateurDeBasNiveau,
+        dateValeur,
+      })
+  );
+  const hasValeur = contributions.some(
+    (contribution) => contribution.hasValeur
+  );
+  const isHiddenBySousIndicateur = contributions.some(
+    (contribution) => contribution.hidden
+  );
+  const isHiddenItself = isLatestConfidentialValeur({
+    sousIndicateur,
+    dateValeur,
+    hasValeur,
+  });
+
+  return {
+    valeur: sumWhenAllFilled(contributions),
+    hasValeur,
+    hidden: isHiddenBySousIndicateur || isHiddenItself,
+  };
+};
 
 const calculateTotalAtDate = ({
   dateValeur,
   totalEstCumulDesSousIndicateurs,
   reader,
   precision,
-  series,
-}: {
-  dateValeur: string;
-  totalEstCumulDesSousIndicateurs: boolean;
-  reader: IndicateurTotalReader;
-  precision: number;
-  series: readonly FilledSerie[];
-}): IndicateurTotal =>
+  sousIndicateurs,
+}: TotalAtDateParams & Readonly<{ dateValeur: string }>): IndicateurTotal =>
   calculateIndicateurTotal({
     totalEstCumulDesSousIndicateurs,
     reader,
     precision,
-    sousIndicateurs: series.map(({ confidentiel, latestDate, valeurs }) => {
-      const valeurAtDate = valeurs.find(
-        (datedValeur) => datedValeur.dateValeur === dateValeur
-      );
-      const isLatestConfidentialValeur =
-        confidentiel && valeurAtDate !== undefined && dateValeur === latestDate;
-      return {
-        valeur: valeurAtDate?.valeur ?? null,
-        confidentiel: isLatestConfidentialValeur,
-      };
+    sousIndicateurs: sousIndicateurs.map((sousIndicateur) => {
+      const { valeur, hidden } = calculateContribution({
+        sousIndicateur,
+        dateValeur,
+      });
+      return { valeur, confidentiel: hidden };
     }),
   });
 
@@ -151,52 +270,40 @@ export const calculateIndicateurTotalsByDate = ({
   parentConfidentiel: boolean;
   sousIndicateurs: readonly SousIndicateurSerie[];
 }): readonly IndicateurTotalAtDate[] => {
-  const resultatSeries = sousIndicateurs.map(({ confidentiel, valeurs }) =>
-    toFilledSerie({
-      confidentiel,
-      valeurs: valeurs.map(({ dateValeur, resultat }) => ({
-        dateValeur,
-        valeur: resultat,
-      })),
-    })
+  const resultatSousIndicateurs = sousIndicateurs.map((serie) =>
+    toFilledSousIndicateur({ serie, kind: 'resultat' })
   );
-  const objectifSeries = sousIndicateurs.map(({ valeurs }) =>
-    toFilledSerie({
-      confidentiel: false,
-      valeurs: valeurs.map(({ dateValeur, objectif }) => ({
-        dateValeur,
-        valeur: objectif,
-      })),
-    })
+  const objectifSousIndicateurs = sousIndicateurs.map((serie) =>
+    toFilledSousIndicateur({ serie, kind: 'objectif' })
   );
 
-  const dates = [
-    ...new Set([...listDates(resultatSeries), ...listDates(objectifSeries)]),
-  ].sort();
-  const latestResultatDate = findLatestDate(listDates(resultatSeries));
+  const dates = listSortedDates([
+    ...resultatSousIndicateurs,
+    ...objectifSousIndicateurs,
+  ]);
   const hidesLatestResultat = reader === 'visitor' && parentConfidentiel;
+  const latestResultatDate = findLatestDate(listDates(resultatSousIndicateurs));
 
   return dates.map((dateValeur) => {
-    const isHiddenByConfidentialParent =
+    const isParentResultatHidden =
       hidesLatestResultat && dateValeur === latestResultatDate;
-    const resultat = isHiddenByConfidentialParent
-      ? HIDDEN_TOTAL
-      : calculateTotalAtDate({
-          dateValeur,
-          totalEstCumulDesSousIndicateurs,
-          reader,
-          precision,
-          series: resultatSeries,
-        });
     return {
       dateValeur,
-      resultat,
+      resultat: isParentResultatHidden
+        ? HIDDEN_TOTAL
+        : calculateTotalAtDate({
+            dateValeur,
+            totalEstCumulDesSousIndicateurs,
+            reader,
+            precision,
+            sousIndicateurs: resultatSousIndicateurs,
+          }),
       objectif: calculateTotalAtDate({
         dateValeur,
         totalEstCumulDesSousIndicateurs,
         reader,
         precision,
-        series: objectifSeries,
+        sousIndicateurs: objectifSousIndicateurs,
       }),
     };
   });

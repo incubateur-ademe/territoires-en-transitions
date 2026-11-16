@@ -7,19 +7,18 @@ import {
   type CommonError,
 } from '@tet/backend/utils/trpc/common-errors';
 import {
+  buildSousIndicateurSeries,
   calculateIndicateurTotalsByDate,
   COLLECTIVITE_SOURCE_ID,
   type IndicateurTotalAtDate,
+  type SousIndicateurRattache,
   type SousIndicateurSerie,
 } from '@tet/domain/indicateurs';
-import { groupBy } from 'es-toolkit';
+import { groupBy, mapValues } from 'es-toolkit';
 import { IndicateurValeursReadAccessService } from '../indicateur-valeurs-read-access.service';
 import { IndicateurValeursRepository } from '../indicateur-valeurs.repository';
 import { GetIndicateurTotalsInput } from './get-indicateur-totals.input';
-import {
-  GetIndicateurTotalsRepository,
-  type SousIndicateurConfidentialite,
-} from './get-indicateur-totals.repository';
+import { GetIndicateurTotalsRepository } from './get-indicateur-totals.repository';
 
 export type GetIndicateurTotalsError = Extract<
   CommonError,
@@ -57,17 +56,18 @@ export class GetIndicateurTotalsService {
       return failure(CommonErrorEnum.NOT_FOUND);
     }
 
-    const sousIndicateurs = await this.repository.listSousIndicateurs(
+    const rattaches = await this.repository.listSousIndicateursRattaches(
       { parentId: indicateurId, collectiviteId },
       tx
     );
-    if (sousIndicateurs.length === 0) {
+    if (rattaches.length === 0) {
       return success([]);
     }
 
     const seriesResult = await this.listSeries({
       collectiviteId,
-      sousIndicateurs,
+      indicateurId,
+      rattaches,
       tx,
     });
     if (!seriesResult.success) {
@@ -87,17 +87,19 @@ export class GetIndicateurTotalsService {
 
   private async listSeries({
     collectiviteId,
-    sousIndicateurs,
+    indicateurId,
+    rattaches,
     tx,
   }: {
     collectiviteId: number;
-    sousIndicateurs: readonly SousIndicateurConfidentialite[];
+    indicateurId: number;
+    rattaches: readonly SousIndicateurRattache[];
     tx?: Transaction;
-  }): Promise<Result<SousIndicateurSerie[], 'DATABASE_ERROR'>> {
+  }): Promise<Result<readonly SousIndicateurSerie[], 'DATABASE_ERROR'>> {
     const valeursResult = await this.valeursRepository.listIndicateurValeurs(
       {
         collectiviteId,
-        indicateurIds: sousIndicateurs.map(({ id }) => id),
+        indicateurIds: rattaches.map(({ id }) => id),
         sources: [COLLECTIVITE_SOURCE_ID],
       },
       tx
@@ -106,22 +108,25 @@ export class GetIndicateurTotalsService {
       return valeursResult;
     }
 
-    const valeursByIndicateurId = groupBy(
-      valeursResult.data,
-      ({ indicateurValeur }) => indicateurValeur.indicateurId
+    const valeursByIndicateurId = mapValues(
+      groupBy(
+        valeursResult.data,
+        ({ indicateurValeur }) => indicateurValeur.indicateurId
+      ),
+      (valeursOfIndicateur) =>
+        valeursOfIndicateur.map(({ indicateurValeur }) => ({
+          dateValeur: indicateurValeur.dateValeur,
+          resultat: indicateurValeur.resultat,
+          objectif: indicateurValeur.objectif,
+        }))
     );
 
     return success(
-      sousIndicateurs.map(({ id, confidentiel }) => ({
-        confidentiel,
-        valeurs: (valeursByIndicateurId[id] ?? []).map(
-          ({ indicateurValeur }) => ({
-            dateValeur: indicateurValeur.dateValeur,
-            resultat: indicateurValeur.resultat,
-            objectif: indicateurValeur.objectif,
-          })
-        ),
-      }))
+      buildSousIndicateurSeries({
+        indicateurId,
+        rattaches,
+        valeursByIndicateurId,
+      })
     );
   }
 }

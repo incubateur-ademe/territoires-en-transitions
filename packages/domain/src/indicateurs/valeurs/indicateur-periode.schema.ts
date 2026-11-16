@@ -19,7 +19,10 @@ export const indicateurPeriodeSchema: z.ZodMiniType<
   indicateurPeriodeJsonSchema,
   z.transform((value, context): IndicateurPeriode => {
     try {
-      return IndicateurPeriodes.fromDateValeur(value.periodicite, value.dateDebut);
+      return IndicateurPeriodes.fromDateValeur(
+        value.periodicite,
+        value.dateDebut
+      );
     } catch (error) {
       context.issues.push({
         code: 'custom',
