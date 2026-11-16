@@ -84,7 +84,7 @@ describe('DemarchesPcaetTable', () => {
     ).toBeNull();
   });
 
-  it('replie un dépôt, puis tous', () => {
+  it('replie un dépôt', () => {
     renderTable([PREMIER_GROUPE, SECOND_GROUPE, SANS_PERIMETRE]);
 
     fireEvent.click(
@@ -98,37 +98,13 @@ describe('DemarchesPcaetTable', () => {
       screen.queryByText('CC Castelnaudary Lauragais Audois')
     ).not.toBeInTheDocument();
     expect(screen.getByText('CC Lauragais Revel Sorezois')).toBeInTheDocument();
-
-    // Un groupe replié : le bouton propose de tout déplier.
-    fireEvent.click(
-      screen.getByRole('button', {
-        name: appLabels.instructionListeToutDeplier,
-      })
-    );
-    expect(
-      screen.getByText('CC Castelnaudary Lauragais Audois')
-    ).toBeInTheDocument();
-
-    fireEvent.click(
-      screen.getByRole('button', {
-        name: appLabels.instructionListeToutReplier,
-      })
-    );
-    expect(
-      screen.queryByText('CC Castelnaudary Lauragais Audois')
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByText('CC Lauragais Revel Sorezois')
-    ).not.toBeInTheDocument();
   });
 
-  it('sans dépôt groupé, ni chevron ni bouton pour tout replier', () => {
+  it('sans dépôt groupé, aucun chevron', () => {
     renderTable([SANS_PERIMETRE]);
 
     expect(
-      screen.queryByRole('button', {
-        name: appLabels.instructionListeToutReplier,
-      })
+      screen.queryByRole('button', { expanded: true })
     ).not.toBeInTheDocument();
     expect(screen.getAllByRole('row')).toHaveLength(2);
   });
