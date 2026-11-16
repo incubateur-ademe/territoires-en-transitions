@@ -168,6 +168,48 @@ describe('Totaux des sous-indicateurs', () => {
     ]);
   });
 
+  test('ne calcule aucun total quand le parent décoche le cumul de ses sous-indicateurs', async () => {
+    const { caller, parentId, firstChildId, secondChildId } =
+      await createParentWithTwoChildren();
+    await saveValeurs({
+      caller,
+      indicateurId: firstChildId,
+      valeurs: { '2023-01-01': { resultat: 10, objectif: 100 } },
+    });
+    await saveValeurs({
+      caller,
+      indicateurId: secondChildId,
+      valeurs: { '2023-01-01': { resultat: 5.5, objectif: 50 } },
+    });
+    await caller.indicateurs.indicateurs.update({
+      collectiviteId: collectivite.id,
+      indicateurId: parentId,
+      indicateurFields: { totalEstCumulDesSousIndicateurs: false },
+    });
+
+    await expect(getTotals(caller, parentId)).resolves.toEqual([
+      {
+        dateValeur: '2023-01-01',
+        resultat: { status: 'not-additive' },
+        objectif: { status: 'not-additive' },
+      },
+    ]);
+
+    await caller.indicateurs.indicateurs.update({
+      collectiviteId: collectivite.id,
+      indicateurId: parentId,
+      indicateurFields: { totalEstCumulDesSousIndicateurs: true },
+    });
+
+    await expect(getTotals(caller, parentId)).resolves.toEqual([
+      {
+        dateValeur: '2023-01-01',
+        resultat: complete(15.5),
+        objectif: complete(150),
+      },
+    ]);
+  });
+
   test('indique le nombre de sous-indicateurs renseignés quand il en manque', async () => {
     const { caller, parentId, firstChildId } =
       await createParentWithTwoChildren();

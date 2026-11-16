@@ -437,6 +437,36 @@ describe('UpdateIndicateurRouter', () => {
       expect(dbIndicateur[0].unite).toBe(updateData.indicateurFields.unite);
     });
 
+    test('le total d’un indicateur perso est le cumul de ses sous-indicateurs à sa création, puis il décoche ce cumul', async () => {
+      const caller = router.createCaller({ user: authenticatedUser });
+      const indicateurId = await createIndicateurPerso({
+        caller,
+        indicateurData: {
+          collectiviteId: collectivite.id,
+          titre: 'Déchets ménagers',
+        },
+      });
+      const readTotalEstCumulDesSousIndicateurs = async () => {
+        const [indicateur] = await databaseService.db
+          .select({
+            totalEstCumulDesSousIndicateurs:
+              indicateurDefinitionTable.totalEstCumulDesSousIndicateurs,
+          })
+          .from(indicateurDefinitionTable)
+          .where(eq(indicateurDefinitionTable.id, indicateurId));
+        return indicateur.totalEstCumulDesSousIndicateurs;
+      };
+      expect(await readTotalEstCumulDesSousIndicateurs()).toBe(true);
+
+      await caller.indicateurs.indicateurs.update({
+        indicateurId,
+        collectiviteId: collectivite.id,
+        indicateurFields: { totalEstCumulDesSousIndicateurs: false },
+      });
+
+      expect(await readTotalEstCumulDesSousIndicateurs()).toBe(false);
+    });
+
     test('rejects a periodicity change before the first value', async () => {
       const caller = router.createCaller({ user: authenticatedUser });
       const indicateurId = await createIndicateurPerso({
@@ -1232,6 +1262,7 @@ describe('UpdateIndicateurRouter', () => {
     test.each([
       { titre: 'Titre non autorisé' },
       { unite: 'kg' },
+      { totalEstCumulDesSousIndicateurs: false },
       { thematiques: [] },
     ])(
       'refuse les champs globaux au membre sans changement partiel : %j',
@@ -1252,6 +1283,39 @@ describe('UpdateIndicateurRouter', () => {
         ).toEqual([h.definition]);
       }
     );
+
+    test('refuse de changer le cumul des sous-indicateurs d’un indicateur personnalisé d’une autre collectivité', async () => {
+      const other = await addTestCollectiviteAndUser(databaseService, {
+        user: { role: CollectiviteRole.ADMIN },
+      });
+      const [indicateur] = await databaseService.db
+        .insert(indicateurDefinitionTable)
+        .values({
+          collectiviteId: other.collectivite.id,
+          titre: 'Indicateur personnalisé voisin',
+          unite: 't',
+          periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+        })
+        .returning();
+      const caller = router.createCaller({ user: authenticatedUser });
+
+      await expect(
+        caller.indicateurs.indicateurs.update({
+          indicateurId: indicateur.id,
+          collectiviteId: collectivite.id,
+          indicateurFields: { totalEstCumulDesSousIndicateurs: false },
+        })
+      ).rejects.toThrow(/non trouvé/);
+
+      const [unchanged] = await databaseService.db
+        .select({
+          totalEstCumulDesSousIndicateurs:
+            indicateurDefinitionTable.totalEstCumulDesSousIndicateurs,
+        })
+        .from(indicateurDefinitionTable)
+        .where(eq(indicateurDefinitionTable.id, indicateur.id));
+      expect(unchanged.totalEstCumulDesSousIndicateurs).toBe(true);
+    });
 
     test('refuse un indicateur personnalisé appartenant à une autre collectivité', async () => {
       const other = await addTestCollectiviteAndUser(databaseService, {

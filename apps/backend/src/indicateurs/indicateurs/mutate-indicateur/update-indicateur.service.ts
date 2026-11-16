@@ -48,6 +48,18 @@ const isInCollectiviteScope = (
   isIndicateurPredefini(indicateur) ||
   isOwnedByCollectivite(indicateur, collectiviteId);
 
+const hasDefinitionFieldsToUpdate = ({
+  titre,
+  unite,
+  totalEstCumulDesSousIndicateurs,
+}: Pick<
+  UpdateIndicateurInput['indicateurFields'],
+  'titre' | 'unite' | 'totalEstCumulDesSousIndicateurs'
+>): boolean =>
+  titre !== undefined ||
+  unite !== undefined ||
+  totalEstCumulDesSousIndicateurs !== undefined;
+
 const hasChildrenToUpdate = ({
   indicateurInGroup,
   unite,
@@ -201,9 +213,10 @@ export class UpdateIndicateurService {
       return;
     }
 
-    const { titre, unite, thematiques } = indicateurFields;
+    const { thematiques } = indicateurFields;
     const updatesGlobalDefinitionFields =
-      titre !== undefined || unite !== undefined || thematiques !== undefined;
+      hasDefinitionFieldsToUpdate(indicateurFields) ||
+      thematiques !== undefined;
     if (updatesGlobalDefinitionFields) {
       throw new BadRequestException(
         `Les champs globaux de l'indicateur ${indicateurId} ne peuvent être modifiés que par sa collectivité propriétaire`
@@ -243,6 +256,7 @@ export class UpdateIndicateurService {
       isSuivi,
       titre,
       unite,
+      totalEstCumulDesSousIndicateurs,
       isApplicable,
       ficheIds,
       pilotes,
@@ -324,13 +338,14 @@ export class UpdateIndicateurService {
         );
       }
 
-      if (titre !== undefined || unite !== undefined) {
+      if (hasDefinitionFieldsToUpdate(indicateurFields)) {
         const updated = await this.repository.updateIndicateurPerso(
           {
             indicateurId,
             collectiviteId,
             titre,
             unite,
+            totalEstCumulDesSousIndicateurs,
           },
           tx
         );
@@ -402,8 +417,7 @@ export class UpdateIndicateurService {
       // Only update modified fields if we have changes that don't affect indicateurCollectiviteTable
       // (since we already handle modifiedBy/modifiedAt in the upsert above)
       const hasNonCollectiviteChanges =
-        titre !== undefined ||
-        unite !== undefined ||
+        hasDefinitionFieldsToUpdate(indicateurFields) ||
         ficheIds !== undefined ||
         pilotes !== undefined ||
         services !== undefined ||

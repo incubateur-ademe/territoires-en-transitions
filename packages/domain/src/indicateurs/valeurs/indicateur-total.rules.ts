@@ -8,7 +8,7 @@ export type SousIndicateurValeur = Readonly<{
 export type IndicateurTotalReader = 'member' | 'visitor';
 
 export type IndicateurTotal =
-  | Readonly<{ status: 'not-cumulative' }>
+  | Readonly<{ status: 'not-additive' }>
   | Readonly<{ status: 'no-sous-indicateur' }>
   | Readonly<{ status: 'hidden' }>
   | Readonly<{
@@ -19,18 +19,18 @@ export type IndicateurTotal =
   | Readonly<{ status: 'complete'; valeur: number }>;
 
 export const calculateIndicateurTotal = ({
-  cumul,
+  totalEstCumulDesSousIndicateurs,
   reader,
   precision,
   sousIndicateurs,
 }: {
-  cumul: boolean;
+  totalEstCumulDesSousIndicateurs: boolean;
   reader: IndicateurTotalReader;
   precision: number;
   sousIndicateurs: readonly SousIndicateurValeur[];
 }): IndicateurTotal => {
-  if (!cumul) {
-    return { status: 'not-cumulative' };
+  if (!totalEstCumulDesSousIndicateurs) {
+    return { status: 'not-additive' };
   }
   if (sousIndicateurs.length === 0) {
     return { status: 'no-sous-indicateur' };
@@ -110,17 +110,19 @@ const listDates = (series: readonly FilledSerie[]): string[] =>
 
 const calculateTotalAtDate = ({
   dateValeur,
+  totalEstCumulDesSousIndicateurs,
   reader,
   precision,
   series,
 }: {
   dateValeur: string;
+  totalEstCumulDesSousIndicateurs: boolean;
   reader: IndicateurTotalReader;
   precision: number;
   series: readonly FilledSerie[];
 }): IndicateurTotal =>
   calculateIndicateurTotal({
-    cumul: true,
+    totalEstCumulDesSousIndicateurs,
     reader,
     precision,
     sousIndicateurs: series.map(({ confidentiel, latestDate, valeurs }) => {
@@ -137,11 +139,13 @@ const calculateTotalAtDate = ({
   });
 
 export const calculateIndicateurTotalsByDate = ({
+  totalEstCumulDesSousIndicateurs,
   reader,
   precision,
   parentConfidentiel,
   sousIndicateurs,
 }: {
+  totalEstCumulDesSousIndicateurs: boolean;
   reader: IndicateurTotalReader;
   precision: number;
   parentConfidentiel: boolean;
@@ -179,6 +183,7 @@ export const calculateIndicateurTotalsByDate = ({
       ? HIDDEN_TOTAL
       : calculateTotalAtDate({
           dateValeur,
+          totalEstCumulDesSousIndicateurs,
           reader,
           precision,
           series: resultatSeries,
@@ -188,6 +193,7 @@ export const calculateIndicateurTotalsByDate = ({
       resultat,
       objectif: calculateTotalAtDate({
         dateValeur,
+        totalEstCumulDesSousIndicateurs,
         reader,
         precision,
         series: objectifSeries,

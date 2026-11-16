@@ -34,7 +34,11 @@ const createService = ({
     IndicateurTotalReader,
     IndicateurValeursReadDenial
   >,
-  parent = { precision: 2, confidentiel: false } as ParentForTotals | null,
+  parent = {
+    totalEstCumulDesSousIndicateurs: true,
+    precision: 2,
+    confidentiel: false,
+  } as ParentForTotals | null,
   sousIndicateurs = [
     { id: 7, confidentiel: false },
     { id: 8, confidentiel: true },
@@ -128,10 +132,65 @@ describe('GetIndicateurTotalsService', () => {
     );
   });
 
+  it('ne calcule aucun total quand le total du parent n’est pas le cumul de ses sous-indicateurs', async () => {
+    const { service } = createService({
+      parent: {
+        totalEstCumulDesSousIndicateurs: false,
+        precision: 2,
+        confidentiel: false,
+      },
+    });
+
+    await expect(service.getIndicateurTotals(input, { user })).resolves.toEqual(
+      success([
+        {
+          dateValeur: '2022-01-01',
+          resultat: { status: 'not-additive' },
+          objectif: { status: 'not-additive' },
+        },
+        {
+          dateValeur: '2023-01-01',
+          resultat: { status: 'not-additive' },
+          objectif: { status: 'not-additive' },
+        },
+      ])
+    );
+  });
+
+  it('ne révèle à un visiteur que le statut non additif quand le total du parent n’est pas le cumul et qu’un sous-indicateur est confidentiel', async () => {
+    const { service } = createService({
+      readerResult: success('visitor'),
+      parent: {
+        totalEstCumulDesSousIndicateurs: false,
+        precision: 2,
+        confidentiel: false,
+      },
+    });
+
+    await expect(service.getIndicateurTotals(input, { user })).resolves.toEqual(
+      success([
+        {
+          dateValeur: '2022-01-01',
+          resultat: { status: 'not-additive' },
+          objectif: { status: 'not-additive' },
+        },
+        {
+          dateValeur: '2023-01-01',
+          resultat: { status: 'not-additive' },
+          objectif: { status: 'not-additive' },
+        },
+      ])
+    );
+  });
+
   it('masque à un visiteur le résultat le plus récent d’un parent confidentiel', async () => {
     const { service } = createService({
       readerResult: success('visitor'),
-      parent: { precision: 2, confidentiel: true },
+      parent: {
+        totalEstCumulDesSousIndicateurs: true,
+        precision: 2,
+        confidentiel: true,
+      },
       sousIndicateurs: [
         { id: 7, confidentiel: false },
         { id: 8, confidentiel: false },

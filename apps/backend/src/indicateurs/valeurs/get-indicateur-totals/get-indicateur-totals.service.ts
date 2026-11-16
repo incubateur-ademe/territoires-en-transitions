@@ -76,6 +76,7 @@ export class GetIndicateurTotalsService {
 
     return success(
       calculateIndicateurTotalsByDate({
+        totalEstCumulDesSousIndicateurs: parent.totalEstCumulDesSousIndicateurs,
         reader: readerResult.data,
         precision: parent.precision,
         parentConfidentiel: parent.confidentiel,
