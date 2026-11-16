@@ -86,17 +86,21 @@ type Sections = ReturnType<typeof getSections>;
 
 // génère la liste des paragraphes correspondants à chaque section d'une fiche
 const getParagraphes = (sections: Sections, row: PlanRow): Paragraph[] => {
-  const { path, depth, nom, fiche } = row;
+  const { path, depth, nom, fiche, parentFiche } = row;
   if (!fiche) return [];
+
+  // une sous-action est située par ses axes puis par sa fiche parente
+  const axesPath = depth === 0 ? ['(Action non classée)'] : [...path, nom];
+  const fichePath = parentFiche
+    ? [...axesPath, parentFiche.titre || 'Sans titre']
+    : axesPath;
 
   const paragraphes: Paragraph[] = [
     new Paragraph({
       children: [new TextRun(fiche.titre || 'Sans titre')],
       style: 'Title',
     }),
-    NormalText(
-      depth === 0 ? '(Action non classée)' : [...path, nom].join(' > ')
-    ),
+    NormalText(fichePath.join(' > ')),
   ];
 
   sections.forEach(({ sectionLabel, sousSections }) => {
