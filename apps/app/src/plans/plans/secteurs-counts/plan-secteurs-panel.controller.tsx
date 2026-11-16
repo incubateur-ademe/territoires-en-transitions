@@ -11,9 +11,10 @@ import { usePlanSecteursVue } from './use-plan-secteurs-vue';
 
 /**
  * Ouvre le panneau de vérification des secteurs quand la vue est demandée
- * dans l'URL (bouton des bandeaux), et le ferme une fois tout renseigné.
+ * dans l'URL (bouton des bandeaux), et le ferme une fois tout renseigné. Sans
+ * rendu, pour que la navigation dans le panneau ne re-rende pas tout le plan.
  */
-export const usePlanSecteursPanel = ({
+export const PlanSecteursPanelController = ({
   collectiviteId,
   planId,
   isPlanAVerifier,
@@ -71,4 +72,5 @@ export const usePlanSecteursPanel = ({
       setPanel({ type: 'close' });
     }
   }, [aRenseigner, isOuvert, isPlanAVerifier, setToast, setPanel]);
+  return null;
 };

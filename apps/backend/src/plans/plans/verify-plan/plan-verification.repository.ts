@@ -1,7 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { demarchePlanActionTable } from '@tet/backend/demarches/shared/models/demarche-plan-action.table';
+import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
+import { DemarcheTypeEnum } from '@tet/domain/demarches';
 import { getErrorMessage } from '@tet/domain/utils';
 import { PlanSourceEnum, PlanStatus, PlanStatusEnum } from '@tet/domain/plans';
 import { and, eq, isNull, sql } from 'drizzle-orm';
@@ -67,6 +70,28 @@ export class PlanVerificationRepository {
       fromStatus: PlanStatusEnum.IMPORTING,
       tx,
     });
+  }
+
+  /** Plan transmis avec une démarche PCAET, quel que soit son statut. */
+  async isLinkedToDemarchePcaet(
+    planId: number,
+    tx?: Transaction
+  ): Promise<boolean> {
+    const [row] = await (tx ?? this.databaseService.db)
+      .select({ demarcheId: demarchePlanActionTable.demarcheId })
+      .from(demarchePlanActionTable)
+      .innerJoin(
+        demarcheTable,
+        eq(demarcheTable.id, demarchePlanActionTable.demarcheId)
+      )
+      .where(
+        and(
+          eq(demarchePlanActionTable.planActionId, planId),
+          eq(demarcheTable.type, DemarcheTypeEnum.PCAET)
+        )
+      )
+      .limit(1);
+    return row !== undefined;
   }
 
   /** Plan d'un import qui n'a jamais démarré : il n'a ni axe ni fiche. */

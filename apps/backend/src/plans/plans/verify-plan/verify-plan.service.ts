@@ -27,9 +27,9 @@ export class VerifyPlanService {
   ) {}
 
   /**
-   * Un plan concerné par les secteurs réglementaires ne se valide qu'une fois
-   * chaque action classée : c'est la première des deux étapes de la
-   * vérification. Même drapeau que l'exigence du dépôt pour avis.
+   * Un plan transmis avec une démarche PCAET ne se valide qu'une fois chaque
+   * action classée : le dépôt pour avis exige ses secteurs réglementaires.
+   * Ailleurs, même de type PCAET, les secteurs ne bloquent pas la validation.
    */
   private async hasSecteursARenseigner(
     { planId, collectiviteId }: { planId: number; collectiviteId: number },
@@ -41,7 +41,13 @@ export class VerifyPlanService {
       userId,
       collectiviteId
     );
-    if (!isEnabled) {
+    if (
+      !isEnabled ||
+      !(await this.planVerificationRepository.isLinkedToDemarchePcaet(
+        planId,
+        tx
+      ))
+    ) {
       return false;
     }
     const counts = await this.planSecteursCountsRepository.listCounts(

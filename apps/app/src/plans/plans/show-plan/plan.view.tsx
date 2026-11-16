@@ -3,7 +3,7 @@
 import { DemarcheBanner } from '@/app/demarches/components/banner';
 import { useDemarcheLinkedToPlan } from '@/app/demarches/pcaet/use-demarche-linked-to-plan';
 import { useListPlanSecteursCounts } from '@/app/plans/plans/secteurs-counts/data/use-list-plan-secteurs-counts';
-import { usePlanSecteursPanel } from '@/app/plans/plans/secteurs-counts/use-plan-secteurs-panel';
+import { PlanSecteursPanelController } from '@/app/plans/plans/secteurs-counts/plan-secteurs-panel.controller';
 import { appLabels } from '@/app/labels/catalog';
 import { useCreateFicheResume } from '@/app/plans/fiches/data/use-create-fiche-resume';
 import { EmptyPlanView } from '@/app/plans/plans/show-plan/empty-plan.view';
@@ -138,11 +138,6 @@ const PlanViewContent = () => {
   const secteursARenseigner = secteursCounts
     ? countPlanSecteursARenseigner(secteursCounts)
     : 0;
-  usePlanSecteursPanel({
-    collectiviteId: collectivite.collectiviteId,
-    planId: plan.id,
-    isPlanAVerifier,
-  });
   // Seul un plan transmis avec la démarche doit avoir tous ses secteurs :
   // c'est une condition du dépôt pour avis. Ailleurs, on ne les réclame pas.
   const isSecteursManquantsBannerVisible =
@@ -153,6 +148,11 @@ const PlanViewContent = () => {
 
   return (
     <div className="w-full">
+      <PlanSecteursPanelController
+        collectiviteId={collectivite.collectiviteId}
+        planId={plan.id}
+        isPlanAVerifier={isPlanAVerifier}
+      />
       <VisibleWhen condition={linkedDemarche !== undefined}>
         <div className="mb-6">
           <DemarcheBanner collectiviteId={collectivite.collectiviteId} />
