@@ -1,16 +1,14 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
-import type {
-  PcaetDiagnostic,
-  PcaetDiagnosticIndicateurParentConfig,
+import {
+  buildPcaetDiagnosticIndicateurTables,
+  type PcaetDiagnostic,
+  type PcaetDiagnosticIndicateurParentConfig,
 } from '@tet/domain/demarches';
 import { Fragment, JSX, useMemo } from 'react';
 import { DiagnosticIndicateurValeursTable } from './diagnostic.indicateur-valeurs.table';
-import {
-  attachIndicateurDataToTables,
-  buildIndicateurValeursTables,
-} from './indicateur-tab.layout';
+import { attachIndicateurDataToTables } from './indicateur-tab.layout';
 
 type Props = {
   demarcheId: number;
@@ -29,10 +27,13 @@ export const DiagnosticIndicateurTabContent = ({
 }: Props): JSX.Element => {
   const tables = useMemo(
     () =>
-      attachIndicateurDataToTables(buildIndicateurValeursTables(config), {
-        indicateurs,
-        valeurs,
-      }),
+      attachIndicateurDataToTables(
+        buildPcaetDiagnosticIndicateurTables(config),
+        {
+          indicateurs,
+          valeurs,
+        }
+      ),
     [config, indicateurs, valeurs]
   );
 
