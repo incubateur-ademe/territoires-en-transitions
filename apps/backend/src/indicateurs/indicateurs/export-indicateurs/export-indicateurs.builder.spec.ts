@@ -321,4 +321,30 @@ describe('buildConsolidatedSheet — sans colonnes de métadonnées', () => {
       50,
     ]);
   });
+
+  it('renomme la troisième colonne et y range la catégorie des lignes sans parent', () => {
+    const workbook = new Workbook();
+    buildConsolidatedSheet(
+      workbook,
+      [{ ...parent, categorie: 'Émissions GES', enfants: [] }],
+      [makeValeur({ indicateurId: 1, annee: 2022, resultat: 100 })],
+      new Map(),
+      { withMetaColumns: false, parentColumnHeader: 'Catégorie' }
+    );
+    const ws = workbook.getWorksheet(1);
+    if (!ws) throw new Error('Worksheet not found');
+
+    expect((ws.getRow(1).values as unknown[]).slice(1, 4)).toEqual([
+      'Identifiant',
+      "Nom de l'indicateur",
+      'Catégorie',
+    ]);
+    expect((ws.getRow(2).values as unknown[]).slice(1)).toEqual([
+      'cae_1',
+      'Indicateur test',
+      'Émissions GES',
+      'kg',
+      100,
+    ]);
+  });
 });

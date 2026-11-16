@@ -1,29 +1,36 @@
 import type { ParentRow } from '@tet/backend/indicateurs/indicateurs/export-indicateurs/export-indicateurs.builder';
-import type {
-  PcaetDiagnostic,
-  PcaetDiagnosticIndicateur,
+import {
+  buildPcaetDiagnosticIndicateurTables,
+  type PcaetDiagnostic,
+  type PcaetDiagnosticIndicateurParentConfig,
+  type PcaetDiagnosticIndicateurTableLayout,
+  type PcaetDiagnosticIndicateurTableRow,
 } from '@tet/domain/demarches';
 import type { IndicateurValeurAvecMetadonnesDefinition } from '@tet/domain/indicateurs';
-
-type ConfigNode = {
-  indicateurDefinitionId: string;
-  children?: readonly ConfigNode[];
-};
 
 export type ExportIndicateursInput = {
   parents: ParentRow[];
   valeurs: IndicateurValeurAvecMetadonnesDefinition[];
 };
 
+const CATEGORIE_SEPARATOR = ' – ';
+
 /**
  * Met le diagnostic d'une démarche à la forme du builder de l'export
- * d'indicateurs.
+ * d'indicateurs, en suivant ce que montre l'écran.
  *
- * Le builder ne connaît que deux niveaux (parent, enfants) quand la config du
- * diagnostic en a trois (volet, ligne, sous-ligne). Chaque volet donne une
- * ligne parente portant ses lignes simples ; une ligne qui a ses propres
- * sous-lignes (un polluant et ses secteurs) devient à son tour un parent, placé
- * à la suite. L'ordre est celui des volets de la config, puis de leurs lignes.
+ * Une ligne par ligne saisissable, dans l'ordre des tables de l'écran
+ * (`buildPcaetDiagnosticIndicateurTables`), sous le libellé qu'elle y porte.
+ * Chaque ligne a pour `categorie` les titres sous lesquels l'écran la range :
+ * volet, section, table.
+ *
+ * Les agrégats (indicateur du volet, indicateur d'un polluant) ne sont pas des
+ * lignes de l'écran : ils ne sont pas exportés, leurs éventuelles valeurs non
+ * plus.
+ *
+ * Un indicateur déclaré non applicable par la collectivité le dit dans son
+ * libellé : sa ligne vide ne se confond pas avec une saisie manquante. Ses
+ * éventuelles valeurs, saisies avant la déclaration, ne sont pas exportées.
  *
  * Toutes les valeurs du diagnostic portent la source `pcaet-collectivite` :
  * elles sont la saisie de la collectivité. Leur métadonnée de source est
@@ -39,64 +46,60 @@ export const toExportIndicateurs = (
       definition,
     ])
   );
-  const getDefinition = (node: ConfigNode) =>
-    definitionsParIdentifiant.get(node.indicateurDefinitionId);
-
   const parents: ParentRow[] = [];
-  const dejaExportes = new Set<number>();
+  const exportes = new Set<number>();
+  const nonApplicables = new Set<number>();
 
-  const pushParent = (
-    definition: PcaetDiagnosticIndicateur,
-    enfants: PcaetDiagnosticIndicateur[]
+  const pushLigne = (
+    { indicateurDefinitionId, label }: PcaetDiagnosticIndicateurTableRow,
+    categorie: string
   ) => {
-    const enfantsInedits = enfants.filter(({ id }) => !dejaExportes.has(id));
-    dejaExportes.add(definition.id);
-    enfantsInedits.forEach(({ id }) => dejaExportes.add(id));
+    const definition = definitionsParIdentifiant.get(indicateurDefinitionId);
+    if (!definition || exportes.has(definition.id)) return;
+
+    exportes.add(definition.id);
+    if (definition.isApplicable === false) nonApplicables.add(definition.id);
     parents.push({
-      ...toRow(definition),
+      id: definition.id,
+      identifiantReferentiel: definition.identifiantReferentiel,
+      titre:
+        definition.isApplicable === false ? `${label} (non applicable)` : label,
+      unite: definition.unite,
+      categorie,
       pilotes: [],
       services: [],
       commentaire: null,
-      unite: definition.unite,
-      enfants: enfantsInedits.map(toRow),
+      enfants: [],
     });
   };
 
-  const pushGroupe = (node: ConfigNode) => {
-    const definition = getDefinition(node);
-    const enfants = (node.children ?? [])
-      .filter((child) => !child.children?.length)
-      .map(getDefinition)
-      .filter((child) => child !== undefined);
-
-    // Sans définition pour le volet, ses lignes simples s'exportent chacune
-    // comme un parent : elles ne doivent pas disparaître de l'export.
-    if (definition) {
-      if (!dejaExportes.has(definition.id)) pushParent(definition, enfants);
-    } else {
-      enfants
-        .filter(({ id }) => !dejaExportes.has(id))
-        .forEach((enfant) => pushParent(enfant, []));
+  for (const config of diagnostic.indicateurParentConfigs) {
+    for (const table of buildPcaetDiagnosticIndicateurTables(config)) {
+      const categorie = toCategorie(config, table);
+      table.rows.forEach((row) => pushLigne(row, categorie));
     }
-
-    (node.children ?? [])
-      .filter((child) => child.children?.length)
-      .forEach(pushGroupe);
-  };
-
-  diagnostic.indicateurParentConfigs.forEach(pushGroupe);
+  }
 
   return {
     parents,
-    valeurs: diagnostic.indicateurValeurs.map((valeur) => ({
-      ...valeur,
-      indicateurSourceMetadonnee: null,
-    })),
+    valeurs: diagnostic.indicateurValeurs
+      .filter(
+        ({ indicateurDefinition }) =>
+          indicateurDefinition &&
+          exportes.has(indicateurDefinition.id) &&
+          !nonApplicables.has(indicateurDefinition.id)
+      )
+      .map((valeur) => ({ ...valeur, indicateurSourceMetadonnee: null })),
   };
 };
 
-const toRow = (definition: PcaetDiagnosticIndicateur) => ({
-  id: definition.id,
-  identifiantReferentiel: definition.identifiantReferentiel,
-  titre: definition.titre,
-});
+/** Titres de l'écran au-dessus d'une table : volet, section, table. */
+const toCategorie = (
+  config: PcaetDiagnosticIndicateurParentConfig,
+  table: PcaetDiagnosticIndicateurTableLayout
+) =>
+  [config.label, table.section, table.title]
+    .filter((titre) => titre !== null)
+    // Un volet à table unique donne son nom à sa table : pas de doublon.
+    .filter((titre, index, titres) => titre !== titres[index - 1])
+    .join(CATEGORIE_SEPARATOR);

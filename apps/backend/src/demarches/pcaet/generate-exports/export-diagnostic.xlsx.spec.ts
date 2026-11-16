@@ -48,7 +48,7 @@ const diagnostic = {
         resultat: 120,
         objectif: null,
       },
-      indicateurDefinition: { id: 1, periodicite: 'annuelle' },
+      indicateurDefinition: { id: 2, periodicite: 'annuelle' },
       indicateurSourceMetadonnee: {
         id: 7,
         sourceId: 'pcaet-collectivite',
@@ -66,6 +66,8 @@ const diagnostic = {
       thematique(3, 'Inondations', 2),
       thematique(1, 'Ressource en eau'),
       thematique(2, 'Risques naturels'),
+      // Sous-thématique dont la parente n'est pas servie.
+      thematique(4, 'Submersion', 99),
     ],
     lignes: [
       {
@@ -118,31 +120,25 @@ describe('exportDiagnosticXLSX', () => {
     ]);
   });
 
-  it('range les valeurs sur la ligne principale, sans colonnes de métadonnées', async () => {
+  it('range les valeurs sur la ligne principale, sous leur catégorie, sans colonnes de métadonnées', async () => {
     const workbook = await loadWorkbook();
 
     expect(rowValues(workbook, 'Indicateurs', 1)).toEqual([
       'Identifiant',
       "Nom de l'indicateur",
-      'Indicateur parent',
+      'Catégorie',
       'Unité',
       '2022 Résultat',
     ]);
+    // L'agrégat du volet (cae_1.a) n'est pas une ligne de l'écran.
     expect(rowValues(workbook, 'Indicateurs', 2)).toEqual([
-      'cae_1.a',
+      'cae_1.c',
+      'Résidentiel',
       'GES',
-      null,
       'kteq',
       120,
     ]);
-    expect(rowValues(workbook, 'Indicateurs', 3)).toEqual([
-      'cae_1.c',
-      '  GES résidentiel',
-      'GES',
-      'kteq',
-      null,
-    ]);
-    expect(workbook.getWorksheet('Indicateurs')?.rowCount).toBe(3);
+    expect(workbook.getWorksheet('Indicateurs')?.rowCount).toBe(2);
   });
 
   it('rend la vulnérabilité, chaque sous-thématique sous sa parente', async () => {
@@ -185,6 +181,16 @@ describe('exportDiagnosticXLSX', () => {
       null,
       'Adapter le bâti',
     ]);
-    expect(workbook.getWorksheet('Vulnérabilité')?.rowCount).toBe(4);
+    // Sans parente servie, elle remonte à la racine plutôt que de disparaître.
+    expect(rowValues(workbook, 'Vulnérabilité', 5)).toEqual([
+      'Submersion',
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+    ]);
+    expect(workbook.getWorksheet('Vulnérabilité')?.rowCount).toBe(5);
   });
 });
