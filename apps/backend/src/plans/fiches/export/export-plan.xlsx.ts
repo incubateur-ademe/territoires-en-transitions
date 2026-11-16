@@ -5,6 +5,7 @@ import { FILL } from '@tet/backend/utils/excel/export-excel.utils';
 import { isNotNil } from 'es-toolkit';
 import { Workbook } from 'exceljs';
 import {
+  buildUniqueWorksheetNames,
   normalizeWorksheetName,
   NUM_FORMAT_EURO,
 } from '../../../utils/excel/export-excel.utils';
@@ -20,9 +21,24 @@ const SUB_HEADER_FILL = FILL.grey;
 const HEADER_FONT = { color: { argb: 'FFFFFF' } } as const;
 
 export const exportPlanXLSX = async (plan: Plan) => {
-  // crée le classeur et la feuille
   const workbook = new Workbook();
-  const worksheet = workbook.addWorksheet(normalizeWorksheetName('Plan'));
+  addPlanWorksheet(workbook, plan, 'Plan');
+  return workbook.xlsx.writeBuffer();
+};
+
+/** Un onglet par plan, nommé d'après le plan */
+export const exportPlansXLSX = async (plans: Plan[]) => {
+  const workbook = new Workbook();
+  const names = buildUniqueWorksheetNames(
+    plans.map((plan) => plan.root.nom ?? ''),
+    'Plan'
+  );
+  plans.forEach((plan, i) => addPlanWorksheet(workbook, plan, names[i]));
+  return workbook.xlsx.writeBuffer();
+};
+
+const addPlanWorksheet = (workbook: Workbook, plan: Plan, name: string) => {
+  const worksheet = workbook.addWorksheet(normalizeWorksheetName(name));
 
   // ajoute les sections, colonnes et cellules dans la feuille
   let currentCol = 1;
@@ -65,8 +81,6 @@ export const exportPlanXLSX = async (plan: Plan) => {
     col.width = 60;
     col.alignment = { wrapText: true };
   }
-
-  return workbook.xlsx.writeBuffer();
 };
 
 // génère la liste des sections/colonnes/cellules à partir des données du plan
