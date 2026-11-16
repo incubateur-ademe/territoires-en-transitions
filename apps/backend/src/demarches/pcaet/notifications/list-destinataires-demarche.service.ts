@@ -162,6 +162,8 @@ export class ListDestinatairesDemarcheService {
    *
    * `exclureCollectiviteId` écarte le service à l'origine de l'évènement : la
    * DREAL n'a pas à être prévenue de l'avis qu'elle vient de valider.
+   *
+   * Le dossier d'une collectivité de test ne met aucun service en copie.
    */
   async listEnCopie(
     {
@@ -175,6 +177,9 @@ export class ListDestinatairesDemarcheService {
     },
     tx?: Transaction
   ): Promise<DestinataireEnCopie[]> {
+    if (await this.instructeursRepository.isDossierDeTest(demarcheId, tx)) {
+      return [];
+    }
     const demandes = (
       await this.instructeursRepository.listDemandesAvisDuDossier(
         demarcheId,
