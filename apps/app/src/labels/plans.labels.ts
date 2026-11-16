@@ -1,4 +1,7 @@
-import { OrigineSecteurs, SecteurReglementaire } from '@tet/domain/plans';
+import {
+  OrigineSecteurs,
+  SECTEUR_REGLEMENTAIRE_LABELS,
+} from '@tet/domain/plans';
 import { plural } from '@tet/ui/labels/plural';
 
 type PlanBudgetCalculArgs = {
@@ -142,23 +145,7 @@ export const plansLabels = {
     manuelle: 'Secteurs choisis par la collectivité',
     import_ia: "Secteurs proposés par l'import du plan, d'après le document",
   } satisfies Record<Exclude<OrigineSecteurs, 'indisponible'>, string>,
-  ficheSecteurReglementaireLabels: {
-    residentiel: 'Résidentiel',
-    tertiaire: 'Tertiaire',
-    transport_routier: 'Transport routier',
-    autres_transports: 'Autres transports',
-    agriculture: 'Agriculture',
-    dechets: 'Déchets',
-    industrie_hors_branche_energie: 'Industrie hors branche énergie',
-    branche_energie: 'Branche énergie',
-    amenagement: 'Aménagement',
-    biodiversite: 'Biodiversité',
-    eau: 'Eau',
-    foret_et_sols: 'Forêt et sols',
-    economie: 'Économie',
-    sante: 'Santé',
-    risques_naturels: 'Risques naturels',
-  } satisfies Record<SecteurReglementaire, string>,
+  ficheSecteurReglementaireLabels: SECTEUR_REGLEMENTAIRE_LABELS,
   ficheInstanceGouvernance: plural({
     one: 'Instance de gouvernance',
     other: 'Instances de gouvernance',
