@@ -1,7 +1,7 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
-import { DEBUT_HISTORIQUE_STATUTS } from '@tet/domain/plans';
+import { DEBUT_HISTORIQUE_STATUTS, PlanNode } from '@tet/domain/plans';
 import { Alert, Checkbox, Field, Icon, Input, Select } from '@tet/ui';
 import { useRef } from 'react';
 import { parseAsBoolean, useQueryState } from 'nuqs';
@@ -27,10 +27,12 @@ export const EvolutionStatutsBloc = ({
   collectiviteId,
   planId,
   dateDebutPlan,
+  axes,
 }: {
   collectiviteId: number;
   planId: number;
   dateDebutPlan: string;
+  axes: PlanNode[];
 }) => {
   const filters = useSuiviPlanBlocFilters('evolutionStatutsFiltres');
   const [inclureActionsContinues, setInclureActionsContinues] = useQueryState(
@@ -85,12 +87,13 @@ export const EvolutionStatutsBloc = ({
       })}
       dataTest="plans.suivi.evolution-statuts"
       ref={blocRef}
-      filterBadges={<SuiviPlanFilterBadges filters={filters} />}
+      filterBadges={<SuiviPlanFilterBadges filters={filters} axes={axes} />}
       actions={
         <>
           <SuiviPlanFiltersButton
             filters={filters}
             hiddenKeys={['statuts']}
+            axes={axes}
             dataTest="plans.suivi.evolution-statuts.filtres"
           />
           <ExportBlocButton

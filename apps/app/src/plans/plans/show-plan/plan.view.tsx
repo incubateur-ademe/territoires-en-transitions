@@ -170,6 +170,7 @@ const PlanViewContent = ({ tab }: { tab: PlanTab }) => {
               collectiviteId={collectivite.collectiviteId}
               planId={plan.id}
               dateDebutPlan={plan.dateDebut ?? plan.createdAt}
+              axes={plan.axes.filter((axe) => axe.id !== plan.id)}
             />
           )}
         </PlanTabs>

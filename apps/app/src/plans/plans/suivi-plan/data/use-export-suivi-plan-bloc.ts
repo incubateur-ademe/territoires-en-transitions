@@ -12,6 +12,7 @@ export type SuiviPlanBlocExporte =
 type ExportSuiviPlanBlocInput = {
   planId: number;
   thematiqueIds?: number[];
+  axeIds?: number[];
   filters?: Pick<
     ListFichesRequestFilters,
     | 'statuts'

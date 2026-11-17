@@ -23,6 +23,7 @@ export type SuiviPlanFilters = z.infer<typeof suiviPlanFiltersSchema>;
 export const suiviPlanBlocInputSchema = z.object({
   planId: z.number().int().positive(),
   thematiqueIds: z.array(z.number().int()).optional(),
+  axeIds: z.array(z.number().int()).optional(),
   filters: suiviPlanFiltersSchema.optional(),
 });
 

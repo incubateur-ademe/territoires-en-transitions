@@ -69,7 +69,7 @@ export class ListSuiviPlanFichesService {
   }
 
   private async getPlanAndFilters(
-    { planId, thematiqueIds, filters }: SuiviPlanBlocInput,
+    { planId, thematiqueIds, axeIds, filters }: SuiviPlanBlocInput,
     { user, tx }: ServiceSecondArg
   ): Promise<
     Result<{ plan: Plan; filters: ListFichesRequestFilters }, GetPlanError>
@@ -97,8 +97,19 @@ export class ListSuiviPlanFichesService {
         ...filters,
         planActionIds: [planId],
         thematiqueIds: thematiqueIds?.length ? thematiqueIds : undefined,
+        axesId: axeIds?.length ? this.withSousAxes(plan, axeIds) : undefined,
         restreint: canReadFichesRestreintes ? undefined : false,
       },
     });
+  }
+
+  private withSousAxes(plan: Plan, axeIds: number[]): number[] {
+    const sousAxeIds = plan.axes
+      .filter((axe) => axe.parent !== null && axeIds.includes(axe.parent))
+      .map((axe) => axe.id);
+    const newIds = sousAxeIds.filter((id) => !axeIds.includes(id));
+    return newIds.length
+      ? this.withSousAxes(plan, [...axeIds, ...newIds])
+      : axeIds;
   }
 }

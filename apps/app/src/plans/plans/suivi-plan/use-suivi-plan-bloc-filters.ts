@@ -21,6 +21,7 @@ const blocFiltersSchema = listFichesRequestFiltersObjectSchema
   .extend({
     pilotes: z.array(z.string()).optional(),
     referents: z.array(z.string()).optional(),
+    axeIds: z.array(z.number().int()).optional(),
   });
 
 type BlocFilters = z.infer<typeof blocFiltersSchema>;
@@ -39,7 +40,7 @@ export const useSuiviPlanBlocFilters = (urlKey: string) => {
     urlKey,
     parseAsJson(blocFiltersSchema.parse).withDefault({})
   );
-  const { thematiqueIds = [], ...pilotageFilters } = rawFilters;
+  const { thematiqueIds = [], axeIds = [], ...pilotageFilters } = rawFilters;
 
   const formFilters = formatter.toFilters({
     ...pilotageFilters,
@@ -54,6 +55,7 @@ export const useSuiviPlanBlocFilters = (urlKey: string) => {
   const setFormFilters = (filters: FormFilters) => {
     save({
       thematiqueIds,
+      axeIds,
       ...omit(formatter.splitReferentsAndPilotesIds(filters), [
         'collectiviteId',
         'axes',
@@ -68,6 +70,7 @@ export const useSuiviPlanBlocFilters = (urlKey: string) => {
 
   const filtersCount =
     (thematiqueIds.length > 0 ? 1 : 0) +
+    (axeIds.length > 0 ? 1 : 0) +
     (['pilotes', 'statuts', 'referents', 'priorites', 'suivi'] as const).filter(
       (key) => (formFilters[key]?.length ?? 0) > 0
     ).length;
@@ -75,7 +78,10 @@ export const useSuiviPlanBlocFilters = (urlKey: string) => {
   return {
     thematiqueIds,
     setThematiqueIds: (ids: number[]) =>
-      save({ ...pilotageFilters, thematiqueIds: ids }),
+      save({ ...pilotageFilters, axeIds, thematiqueIds: ids }),
+    axeIds,
+    setAxeIds: (ids: number[]) =>
+      save({ ...pilotageFilters, thematiqueIds, axeIds: ids }),
     formFilters,
     setFormFilters,
     filtersCount,
@@ -83,6 +89,7 @@ export const useSuiviPlanBlocFilters = (urlKey: string) => {
     pilotageFilters: omitEmpty(pilotageFilters),
     queryInput: {
       thematiqueIds,
+      axeIds,
       filters: omitEmpty(queryFilters),
     },
   };

@@ -413,6 +413,7 @@ export const plansLabels = {
   planFiltreSuivi: 'Suivi',
   suiviPlanFiltresBloc: "Les filtres s'appliquent uniquement à cette section",
   suiviPlanThematiques: 'Thématiques',
+  suiviPlanAxe: 'Axe',
   suiviPlanReinitialiserFiltres: 'Réinitialiser les filtres',
   suiviPlanExporterBloc: 'Exporter ce bloc (PNG ou Excel)',
   suiviPlanExporterExcel: 'Télécharger les données (Excel)',
