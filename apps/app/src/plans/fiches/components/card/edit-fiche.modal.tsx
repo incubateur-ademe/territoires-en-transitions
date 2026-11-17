@@ -1,3 +1,4 @@
+import { useIsPlanSuiviEnabled } from '@/app/plans/plans/suivi-plan/use-is-plan-suivi-enabled';
 import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
 import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
 import { appLabels } from '@/app/labels/catalog';
@@ -52,6 +53,8 @@ export const EditFicheModal = ({ initialFiche, isOpen, setIsOpen }: Props) => {
   const [jaugeEnCours, setJaugeEnCours] = useState<number | null>(null);
 
   const isSousAction = initialFiche.parentId !== null;
+  const isPlanSuiviEnabled = useIsPlanSuiviEnabled();
+  const showJauge = !isSousAction && isPlanSuiviEnabled;
 
   const changeJaugeStatut = (change: Partial<JaugeStatut>) => {
     const result = applyJaugeStatutChange({
@@ -113,7 +116,7 @@ export const EditFicheModal = ({ initialFiche, isOpen, setIsOpen }: Props) => {
                   }
                 />
               </Field>
-              {isSousAction ? (
+              {!showJauge ? (
                 prioriteField
               ) : (
                 <Field title={appLabels.ficheJauge}>
@@ -141,10 +144,10 @@ export const EditFicheModal = ({ initialFiche, isOpen, setIsOpen }: Props) => {
                 </Field>
               )}
             </FormSectionGrid>
-            {!isSousAction && isJaugeFigee(fiche.statut) && (
+            {showJauge && isJaugeFigee(fiche.statut) && (
               <JaugeFigeeAlert statut={fiche.statut} />
             )}
-            {!isSousAction && prioriteField}
+            {showJauge && prioriteField}
             <Field title={appLabels.personnePilote()}>
               <PersonneTagDropdown
                 values={fiche.pilotes?.map((p) => getPersonneStringId(p))}
