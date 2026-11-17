@@ -8,6 +8,7 @@ import {
   getTestRouter,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { addUserRoleSupport } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { collectiviteTypeEnum } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
@@ -41,7 +42,11 @@ describe('getContexteInstruction', () => {
 
   const appeler = (
     user: AuthenticatedUser,
-    input: { collectiviteId: number; demandeAvisId?: number; demarcheId?: number }
+    input: {
+      collectiviteId: number;
+      demandeAvisId?: number;
+      demarcheId?: number;
+    }
   ) =>
     router.createCaller({ user }).demarches.pcaet.getContexteInstruction(input);
 
@@ -193,6 +198,43 @@ describe('getContexteInstruction', () => {
     expect(contexte?.demandeAvisId).toBe(demandeAvisId);
   });
 
+  test('le super admin ouvre le dossier désigné sans appartenir au service', async () => {
+    const support = await addUserRoleSupport({
+      databaseService: db,
+      userId: marie.id,
+      isSuperAdminRoleEnabled: true,
+    });
+    try {
+      const input = { collectiviteId: deposanteId, demandeAvisId };
+      const contexte = await appeler(marie, input);
+      expect(contexte?.demandeAvisId).toBe(demandeAvisId);
+      expect(contexte?.instructeur.collectiviteId).toBe(drealId);
+      const dossier = await router
+        .createCaller({ user: marie })
+        .demarches.pcaet.getDossierInstruction({ demandeAvisId });
+      expect(dossier.demarcheId).toBe(contexte?.demarcheId);
+      expect(dossier.collectivite.id).toBe(deposanteId);
+
+      await expect(
+        appeler(marie, { ...input, collectiviteId: autreDeposanteId })
+      ).resolves.toBeNull();
+      await expect(
+        appeler(marie, { ...input, demandeAvisId: 999999999 })
+      ).resolves.toBeNull();
+      await expect(
+        appeler(
+          { ...marie, jwtPayload: { ...marie.jwtPayload, permissions: [] } },
+          input
+        )
+      ).resolves.toBeNull();
+
+      await addUserRoleSupport({ databaseService: db, userId: marie.id });
+      await expect(appeler(marie, input)).resolves.toBeNull();
+    } finally {
+      await support.cleanup();
+    }
+  });
+
   test('refuse une saisine qui porte sur une autre collectivité', async () => {
     // Le cas de l'URL forgée : la saisine est bien celle de l'agent, mais elle
     // n'a rien à voir avec la collectivité dont l'écran afficherait le nom.
@@ -252,7 +294,7 @@ describe('getContexteInstruction', () => {
       };
     });
 
-    test("rend la démarche, sans saisine, au service qui couvre la collectivité", async () => {
+    test('rend la démarche, sans saisine, au service qui couvre la collectivité', async () => {
       const contexte = await appeler(camille, {
         collectiviteId: enElaborationId,
       });
@@ -278,6 +320,40 @@ describe('getContexteInstruction', () => {
       expect(contexte?.demarcheId).toBe(demarcheEnElaborationId);
     });
 
+    test('le super admin consulte aussi un dossier en élaboration sans saisine', async () => {
+      const support = await addUserRoleSupport({
+        databaseService: db,
+        userId: marie.id,
+        isSuperAdminRoleEnabled: true,
+      });
+      try {
+        const input = {
+          collectiviteId: enElaborationId,
+          demarcheId: demarcheEnElaborationId,
+        };
+        const contexte = await appeler(marie, input);
+        expect(contexte).toMatchObject({
+          demandeAvisId: null,
+          demarcheId: demarcheEnElaborationId,
+        });
+        const dossier = await router
+          .createCaller({ user: marie })
+          .demarches.pcaet.getDossierInstruction({
+            demarcheId: demarcheEnElaborationId,
+          });
+        expect(dossier.collectivite.id).toBe(enElaborationId);
+        expect(dossier.titresDeposables).toEqual([]);
+        await expect(
+          appeler(marie, { ...input, collectiviteId: deposanteId })
+        ).resolves.toBeNull();
+
+        await addUserRoleSupport({ databaseService: db, userId: marie.id });
+        await expect(appeler(marie, input)).resolves.toBeNull();
+      } finally {
+        await support.cleanup();
+      }
+    });
+
     test('refuse une démarche qui porte sur une autre collectivité', async () => {
       await expect(
         appeler(camille, {
@@ -293,7 +369,7 @@ describe('getContexteInstruction', () => {
       ).resolves.toBeNull();
     });
 
-    test("ne rend rien à un membre de la collectivité elle-même", async () => {
+    test('ne rend rien à un membre de la collectivité elle-même', async () => {
       await expect(
         appeler(marie, { collectiviteId: enElaborationId })
       ).resolves.toBeNull();

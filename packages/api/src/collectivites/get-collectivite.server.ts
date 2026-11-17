@@ -1,7 +1,10 @@
 import 'server-only';
 
 import { ContexteInstruction, isTypeInstructeur } from '@tet/domain/demarches';
-import { CollectiviteRolesAndPermissions } from '@tet/domain/users';
+import {
+  CollectiviteRolesAndPermissions,
+  hasPermission,
+} from '@tet/domain/users';
 import { cache } from 'react';
 import { getUser } from '../users/user-details.fetch.server';
 import {
@@ -61,10 +64,9 @@ export const getCollectivite = cache(
 /**
  * « Cette collectivité, je la consulte au titre de quel service ? »
  *
- * Court-circuité pour qui n'est membre d'aucun service instructeur, sinon la
- * question coûterait une requête sur chaque page visitée. Une panne rend `null`
- * plutôt que d'emporter le layout : là où le contexte garde une route, `null`
- * ferme l'accès.
+ * Résolu pour les membres d'un service instructeur et pour le super admin qui
+ * ouvre un dossier désigné. Les autres visites évitent cette requête. Une panne
+ * rend `null` : là où le contexte garde une route, `null` ferme l'accès.
  */
 const fetchContexteInstruction = cache(
   async (
@@ -77,7 +79,11 @@ const fetchContexteInstruction = cache(
     const membreDunService = user.collectivites.some((acces) =>
       isTypeInstructeur(acces.collectiviteType)
     );
-    if (!membreDunService) {
+    // Le support ne prend le contexte d'un service que pour un dossier désigné.
+    const consulteEnSuperAdmin =
+      (demandeAvisId !== undefined || demarcheId !== undefined) &&
+      hasPermission(user, 'demarches.pcaet.read_instruction');
+    if (!membreDunService && !consulteEnSuperAdmin) {
       return null;
     }
 

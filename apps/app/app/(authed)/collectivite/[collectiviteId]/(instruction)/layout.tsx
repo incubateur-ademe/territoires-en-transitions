@@ -3,6 +3,7 @@ import { ErreurAccesPage } from '@/app/demarches/pcaet/erreur-acces/erreur-acces
 import { getCollectivite } from '@tet/api/collectivites/index.server';
 import { getUser } from '@tet/api/users/user-details.fetch.server';
 import { isTypeInstructeur } from '@tet/domain/demarches';
+import { hasPermission } from '@tet/domain/users';
 import { ReactNode } from 'react';
 import z from 'zod';
 
@@ -21,16 +22,17 @@ export default async function Layout({
     getUser(),
   ]);
 
-  // Le type de la collectivité ne suffit pas : sans test d'appartenance, le mode
-  // visite ouvrirait l'espace instructeur — et la nav DREAL — de n'importe quel
-  // service déconcentré à tout utilisateur vérifié.
+  // L'espace est réservé aux membres et au support en mode super admin.
   const estMembre = user.collectivites.some(
     (acces) => acces.collectiviteId === collectiviteId
   );
 
   // Instruire, ce n'est pas être un service déconcentré : un conseil régional
   // consulte les dossiers de sa région tout en gardant son espace propre.
-  if (!isTypeInstructeur(collectivite.collectiviteType) || !estMembre) {
+  if (
+    !isTypeInstructeur(collectivite.collectiviteType) ||
+    (!estMembre && !hasPermission(user, 'demarches.pcaet.read_instruction'))
+  ) {
     return (
       <ErreurAccesPage
         dashboardHref={makeTdbCollectiviteUrl({ collectiviteId })}

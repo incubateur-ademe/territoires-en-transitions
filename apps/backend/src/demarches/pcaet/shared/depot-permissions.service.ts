@@ -70,7 +70,7 @@ export type DossierConsultable = {
   perimetre: PcaetPerimetreSaisine;
 };
 
-/** Un service de l'utilisateur qui couvre une collectivité, saisi ou non. */
+/** Un service consultable qui couvre une collectivité, saisi ou non. */
 export type ServiceCouvrant = {
   collectiviteId: number;
   nom: string;
@@ -100,11 +100,28 @@ export class DepotPermissionsService {
       return failure(DepotPermissionsErrorEnum.UNAUTHORIZED);
     }
 
-    if (!(await this.isMembreActif(user.id, instructeurCollectiviteId, tx))) {
+    if (
+      !(await this.isMembreActif(user.id, instructeurCollectiviteId, tx)) &&
+      !(await this.canReadAllInstructions({ user, tx }))
+    ) {
       return failure(DepotPermissionsErrorEnum.UNAUTHORIZED);
     }
 
     return success(undefined);
+  }
+
+  async canReadAllInstructions({
+    user,
+    tx,
+  }: ServiceSecondArg): Promise<boolean> {
+    const permission = await this.permissionService.isAllowed(
+      user,
+      PermissionOperationEnum['DEMARCHES.PCAET.READ_INSTRUCTION'],
+      ResourceType.PLATEFORME,
+      null,
+      tx
+    );
+    return permission.success;
   }
 
   async canConsulterDepot(
@@ -113,6 +130,7 @@ export class DepotPermissionsService {
   ): Promise<Result<void, DepotPermissionsError>> {
     const contexteResult = await this.resolveContexteInstruction(
       demandeAvisId,
+      'read',
       {
         user,
         tx,
@@ -142,6 +160,7 @@ export class DepotPermissionsService {
 
     const contexteResult = await this.resolveContexteInstruction(
       ref.demandeAvisId,
+      'read',
       { user, tx }
     );
     if (!contexteResult.success) {
@@ -162,9 +181,9 @@ export class DepotPermissionsService {
   /**
    * Peut-on lire un dépôt **en élaboration**, qui n'a encore saisi personne ?
    *
-   * Le droit vient du périmètre : l'utilisateur est membre actif d'un service
-   * instructeur qui couvre la déposante — celui-là même que la transmission
-   * saisira. Il lit le dossier tel qu'il est, sans rien y déposer.
+   * Le droit vient du périmètre d'un service dont l'utilisateur est membre,
+   * ou de la permission de consultation du super admin. Le service doit couvrir
+   * la déposante. L'utilisateur lit le dossier sans rien y déposer.
    *
    * Passé la transmission, cette porte se ferme : c'est la saisine qui ouvre le
    * dossier, et un service transmis sans saisine n'a rien à y lire. Sans quoi la
@@ -200,10 +219,8 @@ export class DepotPermissionsService {
     }
 
     const [service] = await this.listServicesCouvrants(
-      user.id,
-      demarche.collectiviteId,
-      tx,
-      demarcheId
+      { collectiviteId: demarche.collectiviteId, demarcheId },
+      { user, tx }
     );
     if (!service) {
       return failure(DepotPermissionsErrorEnum.UNAUTHORIZED);
@@ -220,8 +237,8 @@ export class DepotPermissionsService {
   }
 
   /**
-   * Les services instructeurs dont l'utilisateur est membre actif et qui
-   * couvrent cette collectivité, saisine ou non.
+   * Les services instructeurs qui couvrent cette collectivité, saisine ou non.
+   * Réservés aux membres actifs, sauf consultation en mode super admin.
    *
    * Principal d'abord — le plus favorable, un droit ne se perd pas sur une
    * ambiguïté — puis par identifiant, pour que la réponse ne dépende pas de
@@ -229,16 +246,22 @@ export class DepotPermissionsService {
    * saisines : la règle est la même, elle se lit au même endroit.
    */
   async listServicesCouvrants(
-    userId: string,
-    collectiviteId: number,
-    tx?: Transaction,
-    /** Le dépôt, quand il est connu : il couvre aussi les EPCI d'un Supra. */
-    demarcheId?: number
+    {
+      collectiviteId,
+      demarcheId,
+    }: {
+      collectiviteId: number;
+      /** Le dépôt, quand il est connu : il couvre aussi les EPCI d'un Supra. */
+      demarcheId?: number;
+    },
+    { user, tx }: ServiceSecondArg
   ): Promise<ServiceCouvrant[]> {
     const deposante = alias(collectiviteTable, 'deposante');
     const instructrice = alias(collectiviteTable, 'instructrice');
+    const db = tx ?? this.databaseService.db;
+    const canReadAll = await this.canReadAllInstructions({ user, tx });
 
-    const rows = await (tx ?? this.databaseService.db)
+    const rows = await db
       .select({
         collectiviteId: instructrice.id,
         nom: instructrice.nom,
@@ -248,16 +271,26 @@ export class DepotPermissionsService {
         collectiviteDepartementCode: deposante.departementCode,
         ...perimetreInstructeurColumns(deposante, instructrice, demarcheId),
       })
-      .from(utilisateurCollectiviteAccessTable)
-      .innerJoin(
-        instructrice,
-        eq(instructrice.id, utilisateurCollectiviteAccessTable.collectiviteId)
-      )
+      .from(instructrice)
       .innerJoin(deposante, eq(deposante.id, collectiviteId))
       .where(
         and(
-          eq(utilisateurCollectiviteAccessTable.userId, userId),
-          eq(utilisateurCollectiviteAccessTable.isActive, true),
+          canReadAll
+            ? undefined
+            : inArray(
+                instructrice.id,
+                db
+                  .select({
+                    id: utilisateurCollectiviteAccessTable.collectiviteId,
+                  })
+                  .from(utilisateurCollectiviteAccessTable)
+                  .where(
+                    and(
+                      eq(utilisateurCollectiviteAccessTable.userId, user.id),
+                      eq(utilisateurCollectiviteAccessTable.isActive, true)
+                    )
+                  )
+              ),
           inArray(instructrice.type, [...typesInstructeur])
         )
       );
@@ -383,6 +416,7 @@ export class DepotPermissionsService {
   ): Promise<Result<ContexteDemandeAvis, DepotPermissionsError>> {
     const contexteResult = await this.resolveContexteInstruction(
       demandeAvisId,
+      'write',
       {
         user,
         tx,
@@ -399,9 +433,7 @@ export class DepotPermissionsService {
     // dossier en lecture — et le territoire qui vaut la saisine. Une DREAL
     // atteinte par un périmètre secondaire de la déposante lit le dossier :
     // l'avis du préfet de région revient à celle du siège.
-    if (
-      !peutDeposerAvisSaisine(contexte.instructeurType, contexte.perimetre)
-    ) {
+    if (!peutDeposerAvisSaisine(contexte.instructeurType, contexte.perimetre)) {
       return failure(DepotPermissionsErrorEnum.UNAUTHORIZED);
     }
 
@@ -432,6 +464,7 @@ export class DepotPermissionsService {
   ): Promise<Result<ContexteDemandeAvis, DepotPermissionsError>> {
     const contexteResult = await this.resolveContexteInstruction(
       demandeAvisId,
+      'write',
       { user, tx }
     );
     if (!contexteResult.success) {
@@ -439,9 +472,7 @@ export class DepotPermissionsService {
     }
     const contexte = contexteResult.data;
 
-    if (
-      !peutDeposerAvisSaisine(contexte.instructeurType, contexte.perimetre)
-    ) {
+    if (!peutDeposerAvisSaisine(contexte.instructeurType, contexte.perimetre)) {
       return failure(DepotPermissionsErrorEnum.UNAUTHORIZED);
     }
 
@@ -461,14 +492,15 @@ export class DepotPermissionsService {
 
   /**
    * Barrières communes à toute action d'instruction : la demande existe,
-   * l'utilisateur est membre actif de la collectivité instructrice, et celle-ci
-   * couvre bien le territoire de la collectivité déposante.
+   * l'utilisateur est membre actif de la collectivité instructrice (ou consulte
+   * en mode super admin), et celle-ci couvre le territoire de la déposante.
    *
    * Rend le contexte plutôt que de le jeter : les appelants en ont besoin, et
    * le re-résoudre coûterait un aller-retour de plus.
    */
   private async resolveContexteInstruction(
     demandeAvisId: number,
+    access: 'read' | 'write',
     { user, tx }: ServiceSecondArg
   ): Promise<Result<ContexteDemandeAvis, DepotPermissionsError>> {
     const contexte = await this.getDemandeContexte(demandeAvisId, tx);
@@ -481,7 +513,8 @@ export class DepotPermissionsService {
         user.id,
         contexte.instructeurCollectiviteId,
         tx
-      ))
+      )) &&
+      !(access === 'read' && (await this.canReadAllInstructions({ user, tx })))
     ) {
       return failure(DepotPermissionsErrorEnum.UNAUTHORIZED);
     }

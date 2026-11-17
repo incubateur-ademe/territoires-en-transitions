@@ -83,6 +83,7 @@ export const permissionsByRole: Record<UserRole, PermissionOperation[]> = {
   [PlatformRole.SUPER_ADMIN]: [
     ...collectiviteAdminPermissions,
 
+    'demarches.pcaet.read_instruction',
     'collectivites.mutate',
     'plans.import.mutate',
     'plans.fiches.import_in_parallel',

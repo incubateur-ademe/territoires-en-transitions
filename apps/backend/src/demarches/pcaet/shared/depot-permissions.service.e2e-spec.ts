@@ -10,6 +10,7 @@ import {
   getTestDatabase,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { addUserRoleSupport } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { failure, success } from '@tet/backend/utils/result.type';
 import { CollectiviteRole } from '@tet/domain/users';
@@ -29,6 +30,7 @@ describe('DepotPermissionsService', () => {
   let demarcheId: number;
   let demandeId: number;
   let demandeDrAdemeId: number;
+  let drealId: number;
 
   // Un code région propre à cette spec. L'index unique « une DREAL par région »
   // fait échouer toute spec qui partage le sien avec une autre, ou avec les
@@ -63,6 +65,7 @@ describe('DepotPermissionsService', () => {
       },
     });
     camille = getAuthUserFromUserCredentials(dreal.users[0]);
+    drealId = dreal.collectivite.id;
     lea = getAuthUserFromUserCredentials(dreal.users[1]);
 
     // Même région que la DREAL, mais en lecture. Noé y est admin.
@@ -128,6 +131,49 @@ describe('DepotPermissionsService', () => {
       user: camille,
     });
     expect(result).toEqual(success(undefined));
+  });
+
+  it('ouvre la consultation au support non membre seulement en mode super admin', async () => {
+    const support = await addUserRoleSupport({
+      databaseService: db,
+      userId: marie.id,
+      isSuperAdminRoleEnabled: true,
+    });
+    try {
+      expect(await service.canListerDemandes(drealId, { user: marie })).toEqual(
+        success(undefined)
+      );
+      expect(
+        await service.canConsulterDepot(demandeId, { user: marie })
+      ).toEqual(success(undefined));
+      expect(await service.canDeposerAvis(demandeId, { user: marie })).toEqual(
+        failure(DepotPermissionsErrorEnum.UNAUTHORIZED)
+      );
+      expect(
+        await service.canModifierDateSaisine(demandeId, { user: marie })
+      ).toEqual(failure(DepotPermissionsErrorEnum.UNAUTHORIZED));
+      expect(
+        await service.canListerDemandes(drealId, {
+          user: {
+            ...marie,
+            jwtPayload: { ...marie.jwtPayload, permissions: [] },
+          },
+        })
+      ).toEqual(failure(DepotPermissionsErrorEnum.UNAUTHORIZED));
+      expect(
+        await service.canListerDemandes(999999999, { user: marie })
+      ).toEqual(failure(DepotPermissionsErrorEnum.UNAUTHORIZED));
+
+      await addUserRoleSupport({ databaseService: db, userId: marie.id });
+      expect(await service.canListerDemandes(drealId, { user: marie })).toEqual(
+        failure(DepotPermissionsErrorEnum.UNAUTHORIZED)
+      );
+      expect(
+        await service.canConsulterDepot(demandeId, { user: marie })
+      ).toEqual(failure(DepotPermissionsErrorEnum.UNAUTHORIZED));
+    } finally {
+      await support.cleanup();
+    }
   });
 
   it('et dépose un avis tant que la fenêtre est ouverte', async () => {

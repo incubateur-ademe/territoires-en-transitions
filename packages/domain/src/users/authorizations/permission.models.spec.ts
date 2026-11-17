@@ -3,6 +3,16 @@ import { permissionsByRole } from './permission.models';
 import { CollectiviteRole, PlatformRole } from './user-role.enum.schema';
 
 describe('permissionsByRole', () => {
+  it("réserve la consultation de tous les espaces d'instruction au super admin", () => {
+    const rolesGranting = Object.entries(permissionsByRole)
+      .filter(([, permissions]) =>
+        permissions.includes('demarches.pcaet.read_instruction')
+      )
+      .map(([role]) => role);
+
+    expect(rolesGranting).toEqual([PlatformRole.SUPER_ADMIN]);
+  });
+
   it("n'accorde la désignation des conseillers référents qu'à l'édition et aux admins, pas aux auditeurs", () => {
     const rolesGranting = Object.entries(permissionsByRole)
       .filter(([, permissions]) =>

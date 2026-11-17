@@ -11,7 +11,7 @@ import {
   instructeurCouvreCollectivite,
   type ContexteInstruction,
 } from '@tet/domain/demarches';
-import { and, desc, eq, sql } from 'drizzle-orm';
+import { and, desc, eq, inArray, sql } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
 import { DepotPermissionsService } from '../shared/depot-permissions.service';
 import { pcaetDemandeAvisTable } from '../shared/models/pcaet-demande-avis.table';
@@ -27,7 +27,8 @@ import { GetContexteInstructionInput } from './get-contexte-instruction.input';
  * droit d'y entrer découle de la saisine, comme celui d'un auditeur. Ce service
  * ne donne accès à rien, il dit seulement dans quel contexte l'écran se
  * présente ; le dossier reste servi par `getDossierInstruction`, dont il reprend
- * les conditions (membre actif du service saisi, périmètre couvrant).
+ * les conditions (membre actif ou consultation en mode super admin, périmètre
+ * couvrant).
  *
  * La condition est la saisine, jamais le statut du dossier — `canConsulterDepot`
  * ne le regarde pas non plus, et fermer ici ferait dire « non » à la bannière là
@@ -69,8 +70,11 @@ export class GetContexteInstructionService {
   ): Promise<ContexteInstruction | null> {
     const deposante = alias(collectiviteTable, 'deposante');
     const instructrice = alias(collectiviteTable, 'instructrice');
+    const db = tx ?? this.databaseService.db;
+    const canReadAll =
+      await this.depotPermissionsService.canReadAllInstructions({ user, tx });
 
-    const saisines = await (tx ?? this.databaseService.db)
+    const saisines = await db
       .select({
         demandeAvisId: pcaetDemandeAvisTable.id,
         demarcheId: pcaetDemandeAvisTable.demarcheId,
@@ -94,26 +98,32 @@ export class GetContexteInstructionService {
         instructrice,
         eq(instructrice.id, pcaetDemandeAvisTable.instructeurCollectiviteId)
       )
-      // Membre actif du service saisi : c'est l'appartenance au *service* qui
-      // vaut, pas celle à la collectivité consultée.
-      .innerJoin(
-        utilisateurCollectiviteAccessTable,
-        and(
-          eq(
-            utilisateurCollectiviteAccessTable.collectiviteId,
-            pcaetDemandeAvisTable.instructeurCollectiviteId
-          ),
-          eq(utilisateurCollectiviteAccessTable.userId, user.id),
-          eq(utilisateurCollectiviteAccessTable.isActive, true)
-        )
-      )
       .where(
         and(
+          // Le support consulte en mode super admin sans être membre du service.
+          canReadAll
+            ? undefined
+            : inArray(
+                instructrice.id,
+                db
+                  .select({
+                    id: utilisateurCollectiviteAccessTable.collectiviteId,
+                  })
+                  .from(utilisateurCollectiviteAccessTable)
+                  .where(
+                    and(
+                      eq(utilisateurCollectiviteAccessTable.userId, user.id),
+                      eq(utilisateurCollectiviteAccessTable.isActive, true)
+                    )
+                  )
+              ),
           eq(demarcheTable.collectiviteId, collectiviteId),
           demandeAvisId === undefined
             ? undefined
             : eq(pcaetDemandeAvisTable.id, demandeAvisId),
-          demarcheId === undefined ? undefined : eq(demarcheTable.id, demarcheId)
+          demarcheId === undefined
+            ? undefined
+            : eq(demarcheTable.id, demarcheId)
         )
       )
       // Plusieurs saisines peuvent répondre — un agent membre de la DREAL et de
@@ -125,8 +135,8 @@ export class GetContexteInstructionService {
       // Pas de `limit` : le filtre de couverture ci-dessous s'applique en
       // mémoire, et tronquer avant lui rendrait invisible une saisine valide
       // qu'une poignée de saisines hors périmètre auraient précédée. Le nombre
-      // de lignes est de toute façon borné par les services dont l'utilisateur
-      // est membre, multiplié par les dossiers de cette collectivité.
+      // de lignes est borné par les services consultables, multiplié par les
+      // dossiers de cette collectivité.
       .orderBy(
         sql`${demarcheTable.transmittedAt} desc nulls last`,
         desc(pcaetDemandeAvisTable.id)
@@ -175,7 +185,9 @@ export class GetContexteInstructionService {
           eq(demarcheTable.collectiviteId, collectiviteId),
           eq(demarcheTable.type, DemarcheTypeEnum.PCAET),
           eq(demarcheTable.status, DemarchePcaetStatusEnum.EN_ELABORATION),
-          demarcheId === undefined ? undefined : eq(demarcheTable.id, demarcheId)
+          demarcheId === undefined
+            ? undefined
+            : eq(demarcheTable.id, demarcheId)
         )
       )
       .orderBy(desc(demarcheTable.id))
@@ -187,10 +199,8 @@ export class GetContexteInstructionService {
     }
 
     const [service] = await this.depotPermissionsService.listServicesCouvrants(
-      user.id,
-      collectiviteId,
-      tx,
-      demarche.id
+      { collectiviteId, demarcheId: demarche.id },
+      { user, tx }
     );
     if (!service) {
       return null;

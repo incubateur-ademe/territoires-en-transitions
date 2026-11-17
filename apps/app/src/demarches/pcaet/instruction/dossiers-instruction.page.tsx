@@ -4,7 +4,7 @@ import { appLabels } from '@/app/labels/catalog';
 import PictoDashboard from '@/app/ui/pictogrammes/PictoDashboard';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ErrorCard } from '@/app/utils/error/error.card';
-import { useUser } from '@tet/api/users';
+import type { CollectiviteType } from '@tet/domain/collectivites';
 import { peutDeposerAvisInstructeur } from '@tet/domain/demarches';
 import { useTrackDemarcheView } from '@/app/demarches/use-demarche-tracker';
 import { useSuperAdminMode } from '@/app/users/authorizations/super-admin-mode/super-admin-mode.provider';
@@ -35,10 +35,11 @@ const TRACK_RECHERCHE_DELAY_MS = 2000;
  */
 export const DossiersInstructionPage = ({
   serviceId,
+  serviceType,
 }: {
   serviceId: number;
+  serviceType: CollectiviteType;
 }) => {
-  const user = useUser();
   const {
     data,
     isPlaceholderData,
@@ -78,16 +79,8 @@ export const DossiersInstructionPage = ({
     [collectivitesSuiviesData, isSuperAdminRoleEnabled]
   );
 
-  // La famille du service est lue sur l'accès désigné par l'URL, pour la même
-  // raison que la requête : le store est en retard d'un rendu quand on arrive
-  // d'un dossier. Sans accès identifiable, on retient la formulation de lecture
-  // — ne rien réclamer de l'agent vaut mieux que le dire à tort.
-  const typeDuService = user.collectivites.find(
-    (acces) => acces.collectiviteId === serviceId
-  )?.collectiviteType;
-  const deposeAvis = typeDuService
-    ? peutDeposerAvisInstructeur(typeDuService)
-    : false;
+  // Le serveur résout le service de l'URL, même pour un super admin non membre.
+  const deposeAvis = peutDeposerAvisInstructeur(serviceType);
 
   const tracker = useEventTracker();
   useTrackDemarcheView(Event.demarches.pcaet.instructionListeVue, {
@@ -95,7 +88,7 @@ export const DossiersInstructionPage = ({
     key: String(serviceId),
     enabled: !!data,
     properties: {
-      instructeurType: typeDuService,
+      instructeurType: serviceType,
       deposeAvis,
       nbDossiers: data?.totalPerimetre,
       nbEnInstruction: data?.countByStatut.en_instruction,
@@ -107,7 +100,7 @@ export const DossiersInstructionPage = ({
     () =>
       tracker(Event.demarches.pcaet.instructionFiltre, {
         acteur: 'instructeur',
-        instructeurType: typeDuService,
+        instructeurType: serviceType,
         filtres: ['recherche'],
       }),
     TRACK_RECHERCHE_DELAY_MS
@@ -115,7 +108,7 @@ export const DossiersInstructionPage = ({
   const setFiltresTracked: typeof setFiltres = (nouveauxFiltres) => {
     tracker(Event.demarches.pcaet.instructionFiltre, {
       acteur: 'instructeur',
-      instructeurType: typeDuService,
+      instructeurType: serviceType,
       filtres: Object.keys(nouveauxFiltres).sort(),
     });
     return setFiltres(nouveauxFiltres);
