@@ -501,11 +501,27 @@ describe('Résolution des liens TeT pour un import', () => {
       try {
         await db.db.transaction(async (tx) => {
           await tx.execute(sql`SET LOCAL lock_timeout = '5s'`);
-          const {
-            rows: [first],
-          } = await tx.execute<{ pid: number }>(
-            sql`SELECT pg_backend_pid() AS pid`
-          );
+          // PostgreSQL observe le verrou sans dépendre des timers du worker
+          // Node ni attendre une troisième connexion disponible dans le pool.
+          await tx.execute(sql`
+            CREATE OR REPLACE FUNCTION pg_temp.wait_for_transaction_block(blocked_pid integer)
+            RETURNS void LANGUAGE plpgsql AS $$
+            DECLARE
+              deadline timestamptz := clock_timestamp() + interval '3 seconds';
+            BEGIN
+              LOOP
+                IF pg_backend_pid() = ANY(pg_blocking_pids(blocked_pid)) THEN
+                  RETURN;
+                END IF;
+                IF clock_timestamp() >= deadline THEN
+                  RAISE EXCEPTION 'La transaction % ne bloque pas la transaction %',
+                    pg_backend_pid(), blocked_pid;
+                END IF;
+                PERFORM pg_sleep(0.02);
+              END LOOP;
+            END;
+            $$;
+          `);
           if (operation === 'liaison') {
             expect(
               await permissions.canLinkFicheToCollectivite(
@@ -568,16 +584,8 @@ describe('Résolution des liens TeT pour un import', () => {
             });
 
           const otherPid = await concurrentStarted;
-          await vi.waitFor(
-            async () => {
-              const {
-                rows: [row],
-              } = await db.db.execute<{ blockers: number[] }>(
-                sql`SELECT pg_blocking_pids(${otherPid}) AS blockers`
-              );
-              expect(row.blockers).toContain(first.pid);
-            },
-            { timeout: 3000, interval: 20 }
+          await tx.execute(
+            sql`SELECT pg_temp.wait_for_transaction_block(${otherPid})`
           );
 
           if (operation === 'liaison') {
@@ -592,8 +600,9 @@ describe('Résolution des liens TeT pour un import', () => {
           }
         });
       } finally {
-        expect(await concurrent).toEqual({ success: true, data: undefined });
+        await concurrent;
       }
+      expect(await concurrent).toEqual({ success: true, data: undefined });
 
       const links = await db.db
         .select({ axeId: ficheActionAxeTable.axeId })
