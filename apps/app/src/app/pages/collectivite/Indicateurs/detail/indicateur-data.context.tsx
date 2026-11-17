@@ -2,11 +2,9 @@
 
 import type { IndicateurDetaille } from '@tet/domain/indicateurs';
 import { createContext, type PropsWithChildren, useContext } from 'react';
-import type { IndicateurChartInfo } from '../data/use-indicateur-chart';
 
 export type IndicateurDataValue = {
   indicateur: IndicateurDetaille;
-  chartInfo: IndicateurChartInfo;
   canMutateIndicateur: boolean;
   canMutateValeur: boolean;
 };

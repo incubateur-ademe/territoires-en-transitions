@@ -11,6 +11,7 @@ import FichesLiees from './FichesLiees';
 import IndicateurHeader from './Header/IndicateurHeader';
 import { IndicateurFichesLieesDataProvider } from './indicateur-fiches-liees.data-provider';
 import SousIndicateurs from './SousIndicateurs';
+import { useIndicateurChart } from './indicateur-chart.context';
 import { useIndicateurData } from './indicateur-data.context';
 import { useIndicateurActions } from './indicateur-actions.context';
 
@@ -21,7 +22,8 @@ type IndicateurLayoutViewProps = {
 export const IndicateurLayoutView = ({
   dataTest,
 }: IndicateurLayoutViewProps) => {
-  const { indicateur, chartInfo, canMutateIndicateur } = useIndicateurData();
+  const { indicateur, canMutateIndicateur } = useIndicateurData();
+  const { chartInfo } = useIndicateurChart();
   const { updateIndicateur } = useIndicateurActions();
   const {
     enfants,

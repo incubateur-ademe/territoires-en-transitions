@@ -20,10 +20,7 @@ import { AddIndicateurPeriodeHeader } from './add-indicateur-periode.header';
 import { AddIndicateurPeriodesModal } from './add-indicateur-periodes.modal';
 import { getSourceLabel } from '../data/get-source-label';
 import type { IndicateurChartInfo } from '../data/use-indicateur-chart';
-import {
-  IndicateurDataProvider,
-  type IndicateurDataValue,
-} from '../detail/indicateur-data.context';
+import { IndicateurChartProvider } from '../detail/indicateur-chart.context';
 import { IndicateurValeursTable } from './indicateur-valeurs-table';
 
 const chartInfo = {
@@ -31,8 +28,6 @@ const chartInfo = {
   getSourceLabel: (sourceId: string, libelle: string, type: SourceType) =>
     getSourceLabel(sourceId, libelle, type),
 } as unknown as IndicateurChartInfo;
-
-const dataValue = { chartInfo } as unknown as IndicateurDataValue;
 
 const SaisiePeriodique = ({
   periodicite,
@@ -96,7 +91,7 @@ const SaisiePeriodique = ({
     return true;
   };
   return (
-    <IndicateurDataProvider value={dataValue}>
+    <IndicateurChartProvider value={{ chartInfo }}>
       <div className="flex flex-col gap-6 p-8 bg-white">
         <div className="flex items-center gap-4 text-sm">
           <span>Modifié le 08/10/2026</span>
@@ -161,7 +156,7 @@ const SaisiePeriodique = ({
           />
         )}
       </div>
-    </IndicateurDataProvider>
+    </IndicateurChartProvider>
   );
 };
 
