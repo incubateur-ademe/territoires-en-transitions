@@ -10,6 +10,7 @@ import {
   getTestDatabase,
 } from '@tet/backend/test';
 import ConfigurationService from '@tet/backend/utils/config/configuration.service';
+import SupabaseService from '@tet/backend/utils/database/supabase.service';
 import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
@@ -27,6 +28,10 @@ import { CollectiviteRole } from '@tet/domain/users';
 import { listEnabledTransitions } from '@tet/domain/utils';
 import { eq } from 'drizzle-orm';
 import { onTestFinished, vi } from 'vitest';
+import { failure } from '@tet/backend/utils/result.type';
+import { DemarchePcaetExportRepository } from '../generate-exports/demarche-pcaet-export.repository';
+import { DEMARCHE_PCAET_EXPORTS_BUCKET } from '../generate-exports/demarche-pcaet-exports-storage.service';
+import { DemarchePcaetTransitionRepository } from '../shared/demarche-pcaet-transition.repository';
 import { demarcheStatusHistoryTable } from '@tet/backend/demarches/shared/models/demarche-status-history.table';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import { CloreInstructionService } from '../clore-instruction/clore-instruction.service';
@@ -35,12 +40,17 @@ import { pcaetDemandeAvisTable } from '../shared/models/pcaet-demande-avis.table
 import { PcaetAvisRepository } from '../shared/pcaet-avis.repository';
 import { PcaetInstructeursRepository } from '../shared/pcaet-instructeurs.repository';
 import {
+  addTestFichePcaet,
   attachTestPlanToDemarchePcaet,
   cloreTestInstructionPcaet,
   completeTestDiagnosticIndicateursPcaet,
   completeTestDossierPcaet,
   completeTestVulnerabilitePcaet,
   coverTestDocumentsPcaet,
+  listTestDemarchePcaetExports,
+  listTestWorksheetTexts,
+  loadTestDemarchePcaetExportWorkbook,
+  pickFreeRegionCode,
 } from '../demarches-pcaet.test-fixture';
 
 describe('Cycle de vie de la démarche PCAET (transitions)', () => {
@@ -539,6 +549,306 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
         dateAdoption: '2026-01-15',
       })
     ).rejects.toThrow('TRANSITION_NOT_ALLOWED');
+  });
+
+  describe('Classeurs figés à la transmission', () => {
+    test('fige le plan, sa variante sans fiche restreinte et les indicateurs', async () => {
+      const { caller, collectivite } = await freshEditor();
+      const created = await caller.demarches.pcaet.create({
+        collectiviteId: collectivite.id,
+      });
+      await completeTestDossierPcaet(db, {
+        collectiviteId: collectivite.id,
+        demarcheId: created.id,
+      });
+      const plan = await attachTestPlanToDemarchePcaet(db, {
+        collectiviteId: collectivite.id,
+        demarcheId: created.id,
+        nom: 'Plan climat',
+      });
+      await addTestFichePcaet(caller, {
+        collectiviteId: collectivite.id,
+        titre: 'Rénover les écoles',
+        axeId: plan.id,
+      });
+      const restreinteId = await addTestFichePcaet(caller, {
+        collectiviteId: collectivite.id,
+        titre: 'Fiche confidentielle',
+        restreint: true,
+        axeId: plan.id,
+      });
+      await addTestFichePcaet(caller, {
+        collectiviteId: collectivite.id,
+        titre: 'Sous-action de la fiche confidentielle',
+        parentId: restreinteId,
+      });
+
+      await caller.demarches.pcaet.transmettrePourAvis({
+        collectiviteId: collectivite.id,
+        demarcheId: created.id,
+      });
+
+      const exports = await listTestDemarchePcaetExports(db, created.id);
+      expect(
+        exports.map(({ transition, type, storagePath }) => ({
+          transition,
+          type,
+          storagePath,
+        }))
+      ).toEqual(
+        ['plan', 'plan_expurge', 'indicateurs'].map((type) => ({
+          transition: 'transmettre_pour_avis',
+          type,
+          storagePath: expect.stringMatching(
+            new RegExp(
+              `^${created.id}/transmettre_pour_avis/[0-9a-f-]{36}/${type}\\.xlsx$`
+            )
+          ),
+        }))
+      );
+      const byType = Object.fromEntries(exports.map((row) => [row.type, row]));
+      expect(byType.plan.filename).toMatch(
+        /^PCAET_.+_Plan_transmis-pour-avis_\d{4}-\d{2}-\d{2}\.xlsx$/
+      );
+      // Le lecteur ne reçoit jamais que l'une des deux variantes : même nom.
+      expect(byType.plan_expurge.filename).toBe(byType.plan.filename);
+      expect(byType.indicateurs.filename).toMatch(
+        /^PCAET_.+_Indicateurs_transmis-pour-avis_\d{4}-\d{2}-\d{2}\.xlsx$/
+      );
+
+      // Un onglet par plan lié, dans les deux variantes.
+      const complet = await loadTestDemarchePcaetExportWorkbook(
+        app,
+        byType.plan
+      );
+      expect(complet.worksheets.map(({ name }) => name)).toEqual([
+        'Programme d’actions du PCAET',
+        'Plan climat',
+      ]);
+      const textesComplet = listTestWorksheetTexts(complet, 'Plan climat');
+      expect(textesComplet).toEqual(
+        expect.arrayContaining([
+          'Rénover les écoles',
+          'Fiche confidentielle',
+          'Sous-action de la fiche confidentielle',
+          'Secteurs réglementaires',
+          'Résidentiel',
+        ])
+      );
+
+      const expurge = await loadTestDemarchePcaetExportWorkbook(
+        app,
+        byType.plan_expurge
+      );
+      expect(expurge.worksheets.map(({ name }) => name)).toEqual([
+        'Programme d’actions du PCAET',
+        'Plan climat',
+      ]);
+      const textesExpurge = listTestWorksheetTexts(expurge, 'Plan climat');
+      expect(textesExpurge).toContain('Rénover les écoles');
+      expect(textesExpurge).not.toContain('Fiche confidentielle');
+      expect(textesExpurge).not.toContain(
+        'Sous-action de la fiche confidentielle'
+      );
+
+      const indicateurs = await loadTestDemarchePcaetExportWorkbook(
+        app,
+        byType.indicateurs
+      );
+      expect(indicateurs.worksheets.map(({ name }) => name)).toEqual([
+        'Indicateurs',
+        'Vulnérabilité',
+      ]);
+      const entetes = listTestWorksheetTexts(indicateurs, 'Indicateurs');
+      expect(entetes).toContain('Catégorie');
+      expect(entetes).not.toContain('Pilote');
+      expect(entetes).not.toContain('Commentaire');
+    });
+
+    test('ne produit pas de variante quand aucune fiche n’est restreinte', async () => {
+      const { caller, collectivite } = await freshEditor();
+      const created = await caller.demarches.pcaet.create({
+        collectiviteId: collectivite.id,
+      });
+      await completeTestDossierPcaet(db, {
+        collectiviteId: collectivite.id,
+        demarcheId: created.id,
+      });
+
+      await caller.demarches.pcaet.transmettrePourAvis({
+        collectiviteId: collectivite.id,
+        demarcheId: created.id,
+      });
+
+      const exports = await listTestDemarchePcaetExports(db, created.id);
+      expect(exports.map(({ type }) => type)).toEqual(['plan', 'indicateurs']);
+    });
+
+    test('ne fige pas de classeur indicateurs quand le diagnostic est vide', async () => {
+      const { caller, collectivite } = await freshEditor();
+      const created = await caller.demarches.pcaet.create({
+        collectiviteId: collectivite.id,
+      });
+      // Dossier complet sauf le diagnostic, transmis grâce au contournement de
+      // démonstration : ni valeur d'indicateur, ni ligne de vulnérabilité.
+      await coverTestDocumentsPcaet(db, {
+        collectiviteId: collectivite.id,
+        demarcheId: created.id,
+      });
+      await attachTestPlanToDemarchePcaet(db, {
+        collectiviteId: collectivite.id,
+        demarcheId: created.id,
+      });
+      const configurationService = app.get(ConfigurationService);
+      const get = configurationService.get.bind(configurationService);
+      const spy = vi
+        .spyOn(configurationService, 'get')
+        .mockImplementation((key) =>
+          key === 'DEMARCHE_PCAET_BYPASS_DIAGNOSTIC' ? true : get(key)
+        );
+      onTestFinished(() => spy.mockRestore());
+
+      await caller.demarches.pcaet.transmettrePourAvis({
+        collectiviteId: collectivite.id,
+        demarcheId: created.id,
+      });
+
+      const exports = await listTestDemarchePcaetExports(db, created.id);
+      expect(exports.map(({ type }) => type)).toEqual(['plan']);
+    });
+
+    test('refuse la transmission si les classeurs ne peuvent pas être enregistrés', async () => {
+      // Une DREAL couvre la déposante : sans l'échec, elle serait saisie.
+      const regionCode = await pickFreeRegionCode(db, 'dreal');
+      const { collectivite: dreal, cleanup } = await addTestCollectivite(db, {
+        nom: 'dreal test classeurs',
+        type: 'dreal',
+        regionCode,
+      });
+      onTestFinished(async () => {
+        await db.db
+          .delete(pcaetDemandeAvisTable)
+          .where(eq(pcaetDemandeAvisTable.instructeurCollectiviteId, dreal.id));
+        await cleanup();
+      });
+      const { caller, collectivite } = await freshEditor({ regionCode });
+      const created = await caller.demarches.pcaet.create({
+        collectiviteId: collectivite.id,
+      });
+      await completeTestDossierPcaet(db, {
+        collectiviteId: collectivite.id,
+        demarcheId: created.id,
+      });
+      const listSaisines = () =>
+        db.db
+          .select({ id: pcaetDemandeAvisTable.id })
+          .from(pcaetDemandeAvisTable)
+          .where(eq(pcaetDemandeAvisTable.demarcheId, created.id));
+
+      const stockage = vi
+        .spyOn(app.get(SupabaseService), 'saveInStorage')
+        .mockResolvedValue({ success: false, error: 'UPLOAD_STORAGE_ERROR' });
+      onTestFinished(() => stockage.mockRestore());
+
+      await expect(
+        caller.demarches.pcaet.transmettrePourAvis({
+          collectiviteId: collectivite.id,
+          demarcheId: created.id,
+        })
+      ).rejects.toThrow('EXPORT_GENERATION_ERROR');
+
+      // Rien n'est transmis : ni statut, ni saisine, ni ligne de suivi.
+      const apres = await caller.demarches.pcaet.get({
+        collectiviteId: collectivite.id,
+        demarcheId: created.id,
+      });
+      expect(apres.status).toBe('en_elaboration');
+      expect(apres.transmittedAt).toBeNull();
+      expect(await listSaisines()).toEqual([]);
+      expect(await listTestDemarchePcaetExports(db, created.id)).toEqual([]);
+
+      // Le stockage revenu, la collectivité réessaie et la transmission passe.
+      stockage.mockRestore();
+      const transmise = await caller.demarches.pcaet.transmettrePourAvis({
+        collectiviteId: collectivite.id,
+        demarcheId: created.id,
+      });
+      expect(transmise.status).toBe('transmis_pour_avis');
+      expect((await listSaisines()).length).toBeGreaterThan(0);
+      expect(
+        (await listTestDemarchePcaetExports(db, created.id)).map(
+          ({ type }) => type
+        )
+      ).toEqual(['plan', 'indicateurs']);
+    });
+
+    // Prépare un dossier transmissible et espionne les envois au stockage.
+    const prepareTransmission = async () => {
+      const { caller, collectivite } = await freshEditor();
+      const created = await caller.demarches.pcaet.create({
+        collectiviteId: collectivite.id,
+      });
+      await completeTestDossierPcaet(db, {
+        collectiviteId: collectivite.id,
+        demarcheId: created.id,
+      });
+      const supabase = app.get(SupabaseService);
+      const saveInStorageSpy = vi.spyOn(supabase, 'saveInStorage');
+      onTestFinished(() => saveInStorageSpy.mockRestore());
+      const isStored = async (path: string) =>
+        (
+          await supabase.client.storage
+            .from(DEMARCHE_PCAET_EXPORTS_BUCKET)
+            .download(path)
+        ).data !== null;
+      const transmettre = () =>
+        caller.demarches.pcaet.transmettrePourAvis({
+          collectiviteId: collectivite.id,
+          demarcheId: created.id,
+        });
+      const writtenPaths = () =>
+        saveInStorageSpy.mock.calls.map(([{ path }]) => path);
+      return { created, transmettre, writtenPaths, isStored };
+    };
+
+    test('retire les classeurs écrits quand la transmission est annulée après coup', async () => {
+      const { created, transmettre, writtenPaths, isStored } =
+        await prepareTransmission();
+      // Les classeurs sont écrits, puis l'enregistrement du statut échoue : la
+      // transaction est annulée, rien ne désigne plus ces objets.
+      const persistSpy = vi
+        .spyOn(app.get(DemarchePcaetTransitionRepository), 'persistTransition')
+        .mockResolvedValue(failure('DATABASE_ERROR'));
+      onTestFinished(() => persistSpy.mockRestore());
+
+      await expect(transmettre()).rejects.toThrow();
+
+      expect(writtenPaths()).toHaveLength(2);
+      for (const path of writtenPaths()) {
+        expect(await isStored(path)).toBe(false);
+      }
+      expect(await listTestDemarchePcaetExports(db, created.id)).toEqual([]);
+    });
+
+    test("retire les classeurs écrits quand l'enregistrement de leurs lignes échoue", async () => {
+      const { created, transmettre, writtenPaths, isStored } =
+        await prepareTransmission();
+      const replaceSpy = vi
+        .spyOn(app.get(DemarchePcaetExportRepository), 'replaceForTransition')
+        .mockRejectedValue(new Error('insertion impossible'));
+      onTestFinished(() => replaceSpy.mockRestore());
+
+      await expect(transmettre()).rejects.toThrow('EXPORT_GENERATION_ERROR');
+
+      expect(writtenPaths()).toHaveLength(2);
+      // Retrait en arrière-plan : la transaction ne l'attend pas.
+      await vi.waitFor(async () => {
+        for (const path of writtenPaths()) {
+          expect(await isStored(path)).toBe(false);
+        }
+      });
+      expect(await listTestDemarchePcaetExports(db, created.id)).toEqual([]);
+    });
   });
 
   describe('Saisine des instructeurs à la transmission', () => {

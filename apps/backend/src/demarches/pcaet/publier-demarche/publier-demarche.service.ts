@@ -8,6 +8,7 @@ import {
   isDateAdoptionPcaetRecevable,
   type DemarchePcaet,
 } from '@tet/domain/demarches';
+import { GenerateDemarchePcaetExportsService } from '../generate-exports/generate-demarche-pcaet-exports.service';
 import { ArchiverDemarchePcaetService } from '../archiver-demarche/archiver-demarche.service';
 import { DemarchePcaetSuivantRepository } from '../shared/demarche-pcaet-suivant.repository';
 import { DemarchePcaetTransitionService } from '../shared/demarche-pcaet-transition.service';
@@ -30,6 +31,7 @@ export class PublierDemarchePcaetService {
     private readonly transitionService: DemarchePcaetTransitionService,
     private readonly archiverService: ArchiverDemarchePcaetService,
     private readonly suivantRepository: DemarchePcaetSuivantRepository,
+    private readonly generateExportsService: GenerateDemarchePcaetExportsService,
     private readonly trackingService: DemarchePcaetTrackingService
   ) {}
 
@@ -39,8 +41,10 @@ export class PublierDemarchePcaetService {
    * Effets propres : la date de mise en ligne, que l'interface affiche, et la
    * date de la délibération d'adoption saisie par la collectivité — les deux ne
    * tombent pas le même jour, et c'est l'adoption qui fait foi pour la validité
-   * du PCAET. Le PCAET précédent, remplacé, est archivé dans la même
-   * transaction.
+   * du PCAET. Les classeurs du dossier (plan, indicateurs) sont figés une
+   * seconde fois : le diagnostic se rouvre après les avis, la photo de la
+   * transmission ne vaut plus pour ce qui est publié. Le PCAET précédent,
+   * remplacé, est archivé dans la même transaction.
    */
   async publier(
     input: PublierDemarchePcaetInput,
@@ -60,6 +64,9 @@ export class PublierDemarchePcaetService {
     }
 
     let nbPrecedentesArchivees = 0;
+    // Écrits hors de la base : à retirer si la transaction est annulée, par
+    // exemple quand l'archivage du PCAET remplacé échoue après la photo.
+    let storedPaths: string[] = [];
     const result = await this.transactionManager.executeSingle(
       async (transaction) => {
         await this.suivantRepository.lockSuccession(
@@ -71,10 +78,26 @@ export class PublierDemarchePcaetService {
           input,
           DemarchePcaetTransitionEnum.PUBLIER,
           { user, tx: transaction },
-          () => ({
-            publishedAt: new Date().toISOString(),
-            adoptedAt: input.dateAdoption,
-          })
+          async ({ demarche, transaction: effectsTransaction }) => {
+            // Sans photo, pas de publication : son échec refuse la transition
+            // et annule la transaction.
+            const exports = await this.generateExportsService.generate(
+              {
+                demarche,
+                transition: DemarchePcaetTransitionEnum.PUBLIER,
+                userId: user.id,
+              },
+              effectsTransaction
+            );
+            if (!exports.success) {
+              return failure(exports.error, exports.cause);
+            }
+            storedPaths = exports.data.storedPaths;
+            return success({
+              publishedAt: new Date().toISOString(),
+              adoptedAt: input.dateAdoption,
+            });
+          }
         );
         if (!publication.success) {
           return publication;
@@ -101,7 +124,13 @@ export class PublierDemarchePcaetService {
       tx
     );
 
-    if (result.success) {
+    // Le stockage n'est nettoyé qu'une fois la transaction de ce service
+    // terminée : il ne doit pas recevoir de `tx` englobant, dont l'échec
+    // remonterait en exception (pas de nettoyage) ou dont le rollback
+    // surviendrait après coup.
+    if (!result.success) {
+      await this.generateExportsService.discard(storedPaths);
+    } else {
       const demarche = result.data;
       this.trackingService.track(DemarchePcaetEventEnum.PUBLIEE, demarche, {
         userId: user.id,

@@ -6,18 +6,28 @@ import {
   getTestDatabase,
 } from '@tet/backend/test';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import SupabaseService from '@tet/backend/utils/database/supabase.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { getDateCivileFrance } from '@tet/domain/demarches';
 import { CollectiviteRole } from '@tet/domain/users';
 import { desc, eq } from 'drizzle-orm';
+import { onTestFinished, vi } from 'vitest';
+import { failure } from '@tet/backend/utils/result.type';
+import { ArchiverDemarchePcaetService } from '../archiver-demarche/archiver-demarche.service';
+import { DEMARCHE_PCAET_EXPORTS_BUCKET } from '../generate-exports/demarche-pcaet-exports-storage.service';
+import { GenerateDemarchePcaetExportsService } from '../generate-exports/generate-demarche-pcaet-exports.service';
 import { demarcheStatusHistoryTable } from '@tet/backend/demarches/shared/models/demarche-status-history.table';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
+import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
 import {
   addTestBibliothequeFichier,
+  addTestFichePcaet,
   attachTestPlanToDemarchePcaet,
   cloreTestInstructionPcaet,
   completeTestDiagnosticPcaet,
   completeTestDossierPcaet,
+  listTestDemarchePcaetExports,
+  loadTestDemarchePcaetExportWorkbook,
 } from '../demarches-pcaet.test-fixture';
 
 describe('Publication d’une démarche PCAET', () => {
@@ -209,6 +219,260 @@ describe('Publication d’une démarche PCAET', () => {
       'transmettre_pour_avis',
       'delai_avis_echu',
       'publier',
+    ]);
+  });
+
+  test('Figer les classeurs une seconde fois à la publication, sans toucher à ceux de la transmission', async () => {
+    const { caller, collectivite } = await freshEditor();
+    const created = await caller.demarches.pcaet.create({
+      collectiviteId: collectivite.id,
+    });
+    await instruireDemarche(caller, collectivite.id, created.id);
+    const planIds = (
+      await caller.demarches.pcaet.get({
+        collectiviteId: collectivite.id,
+        demarcheId: created.id,
+      })
+    ).planActionIds;
+
+    // Le plan change entre la transmission et la publication.
+    await db.db
+      .update(axeTable)
+      .set({ nom: 'Plan revu après les avis' })
+      .where(eq(axeTable.id, planIds[0]));
+
+    await deposerDeliberation(caller, collectivite.id, created.id);
+    await caller.demarches.pcaet.publier({
+      collectiviteId: collectivite.id,
+      demarcheId: created.id,
+      dateAdoption: '2026-01-15',
+    });
+
+    const exports = await listTestDemarchePcaetExports(db, created.id);
+    expect(toExportKeys(exports)).toEqual([
+      'transmettre_pour_avis/plan',
+      'transmettre_pour_avis/indicateurs',
+      'publier/plan',
+      'publier/indicateurs',
+    ]);
+    const [planTransmis, , planPublie] = exports;
+    expect(planPublie.filename).toMatch(
+      /^PCAET_.+_Plan_publie_\d{4}-\d{2}-\d{2}\.xlsx$/
+    );
+
+    // Chaque photo garde l'état de son moment.
+    const transmis = await loadTestDemarchePcaetExportWorkbook(
+      app,
+      planTransmis
+    );
+    expect(transmis.worksheets.map(({ name }) => name)).toEqual([
+      'Programme d’actions du PCAET',
+    ]);
+    const publie = await loadTestDemarchePcaetExportWorkbook(app, planPublie);
+    expect(publie.worksheets.map(({ name }) => name)).toEqual([
+      'Plan revu après les avis',
+    ]);
+  });
+
+  /** `transition/type` de chaque classeur figé, dans l'ordre des lignes. */
+  const toExportKeys = (exports: { transition: string; type: string }[]) =>
+    exports.map(({ transition, type }) => `${transition}/${type}`);
+
+  /** La délibération d'adoption, dernière pièce exigée avant de publier. */
+  const deposerDeliberation = async (
+    caller: ReturnType<TrpcRouter['createCaller']>,
+    collectiviteId: number,
+    demarcheId: number
+  ) => {
+    const deliberation = await addTestBibliothequeFichier(db, {
+      collectiviteId,
+      filename: 'deliberation-adoption.pdf',
+    });
+    await caller.demarches.pcaet.documents.add({
+      collectiviteId,
+      demarcheId,
+      documentId: 'pcaet_deliberation_adoption',
+      fichierId: deliberation.id,
+    });
+  };
+
+  test('Refuser la publication si les classeurs ne peuvent pas être enregistrés', async () => {
+    const { caller, collectivite } = await freshEditor();
+    const created = await caller.demarches.pcaet.create({
+      collectiviteId: collectivite.id,
+    });
+    await instruireDemarche(caller, collectivite.id, created.id);
+    await deposerDeliberation(caller, collectivite.id, created.id);
+    const exportsTransmis = await listTestDemarchePcaetExports(db, created.id);
+
+    const stockage = vi
+      .spyOn(app.get(SupabaseService), 'saveInStorage')
+      .mockResolvedValue({ success: false, error: 'UPLOAD_STORAGE_ERROR' });
+    onTestFinished(() => stockage.mockRestore());
+
+    await expect(
+      caller.demarches.pcaet.publier({
+        collectiviteId: collectivite.id,
+        demarcheId: created.id,
+        dateAdoption: '2026-01-15',
+      })
+    ).rejects.toThrow('EXPORT_GENERATION_ERROR');
+
+    // Rien n'est publié, et la photo de la transmission reste intacte.
+    const apres = await caller.demarches.pcaet.get({
+      collectiviteId: collectivite.id,
+      demarcheId: created.id,
+    });
+    expect(apres.status).toBe('instruit');
+    expect(apres.publishedAt).toBeNull();
+    expect(apres.adoptedAt).toBeNull();
+    expect(await listTestDemarchePcaetExports(db, created.id)).toEqual(
+      exportsTransmis
+    );
+
+    // Le stockage revenu, la collectivité réessaie et la publication passe.
+    stockage.mockRestore();
+    const publiee = await caller.demarches.pcaet.publier({
+      collectiviteId: collectivite.id,
+      demarcheId: created.id,
+      dateAdoption: '2026-01-15',
+    });
+    expect(publiee.status).toBe('publie');
+    expect(
+      toExportKeys(await listTestDemarchePcaetExports(db, created.id))
+    ).toEqual([
+      'transmettre_pour_avis/plan',
+      'transmettre_pour_avis/indicateurs',
+      'publier/plan',
+      'publier/indicateurs',
+    ]);
+  });
+
+  test('Retirer du stockage les classeurs figés quand la publication est annulée après coup', async () => {
+    const { caller, collectivite } = await freshEditor();
+    const created = await caller.demarches.pcaet.create({
+      collectiviteId: collectivite.id,
+    });
+    await instruireDemarche(caller, collectivite.id, created.id);
+    await deposerDeliberation(caller, collectivite.id, created.id);
+    const exportsTransmis = await listTestDemarchePcaetExports(db, created.id);
+
+    // Les classeurs sont écrits, puis l'archivage échoue : la transaction est
+    // annulée, rien ne désigne plus ces objets.
+    const supabase = app.get(SupabaseService);
+    const saveInStorageSpy = vi.spyOn(supabase, 'saveInStorage');
+    const archiveReplacedSpy = vi
+      .spyOn(app.get(ArchiverDemarchePcaetService), 'archiverRemplacees')
+      .mockResolvedValue(failure('DATABASE_ERROR'));
+    onTestFinished(() => {
+      saveInStorageSpy.mockRestore();
+      archiveReplacedSpy.mockRestore();
+    });
+
+    await expect(
+      caller.demarches.pcaet.publier({
+        collectiviteId: collectivite.id,
+        demarcheId: created.id,
+        dateAdoption: '2026-01-15',
+      })
+    ).rejects.toThrow();
+
+    const download = (path: string) =>
+      supabase.client.storage
+        .from(DEMARCHE_PCAET_EXPORTS_BUCKET)
+        .download(path);
+    const paths = saveInStorageSpy.mock.calls.map(([{ path }]) => path);
+    expect(paths).toHaveLength(2);
+    for (const path of paths) {
+      expect((await download(path)).data).toBeNull();
+    }
+    // Les classeurs validés de la transmission ne sont pas touchés.
+    expect(await listTestDemarchePcaetExports(db, created.id)).toEqual(
+      exportsTransmis
+    );
+    for (const { storagePath } of exportsTransmis) {
+      expect((await download(storagePath)).data).not.toBeNull();
+    }
+
+    // COMMIT ambigu : la base a pu valider des lignes que le service croit
+    // annulées. Un chemin encore désigné n'est jamais retiré.
+    await app
+      .get(GenerateDemarchePcaetExportsService)
+      .discard(exportsTransmis.map(({ storagePath }) => storagePath));
+    for (const { storagePath } of exportsTransmis) {
+      expect((await download(storagePath)).data).not.toBeNull();
+    }
+  });
+
+  test('Figer la variante sans fiche restreinte quand une fiche le devient après la transmission', async () => {
+    const { caller, collectivite } = await freshEditor();
+    const created = await caller.demarches.pcaet.create({
+      collectiviteId: collectivite.id,
+    });
+    await instruireDemarche(caller, collectivite.id, created.id);
+    const [planId] = (
+      await caller.demarches.pcaet.get({
+        collectiviteId: collectivite.id,
+        demarcheId: created.id,
+      })
+    ).planActionIds;
+
+    // Le programme d'actions se rouvre après les avis : une fiche restreinte y
+    // entre entre la transmission et la publication.
+    await addTestFichePcaet(caller, {
+      collectiviteId: collectivite.id,
+      titre: 'Fiche confidentielle',
+      restreint: true,
+      axeId: planId,
+    });
+
+    await deposerDeliberation(caller, collectivite.id, created.id);
+    await caller.demarches.pcaet.publier({
+      collectiviteId: collectivite.id,
+      demarcheId: created.id,
+      dateAdoption: '2026-01-15',
+    });
+
+    const exports = await listTestDemarchePcaetExports(db, created.id);
+    expect(toExportKeys(exports)).toEqual([
+      'transmettre_pour_avis/plan',
+      'transmettre_pour_avis/indicateurs',
+      'publier/plan',
+      'publier/plan_expurge',
+      'publier/indicateurs',
+    ]);
+    const planExpurge = exports.find(
+      ({ transition, type }) =>
+        transition === 'publier' && type === 'plan_expurge'
+    );
+    expect(planExpurge?.storagePath).toMatch(
+      new RegExp(`^${created.id}/publier/[0-9a-f-]{36}/plan_expurge\\.xlsx$`)
+    );
+  });
+
+  test('Un dépôt hors plateforme n’a que la photo de sa publication', async () => {
+    const { caller, collectivite } = await freshEditor();
+    const created = await caller.demarches.pcaet.create({
+      collectiviteId: collectivite.id,
+      transmittedOffPlatform: true,
+    });
+    await completeTestDossierPcaet(db, {
+      collectiviteId: collectivite.id,
+      demarcheId: created.id,
+    });
+    await deposerDeliberation(caller, collectivite.id, created.id);
+
+    const publiee = await caller.demarches.pcaet.publier({
+      collectiviteId: collectivite.id,
+      demarcheId: created.id,
+      dateAdoption: '2026-01-15',
+    });
+    expect(publiee.status).toBe('publie');
+
+    const exports = await listTestDemarchePcaetExports(db, created.id);
+    expect(toExportKeys(exports)).toEqual([
+      'publier/plan',
+      'publier/indicateurs',
     ]);
   });
 
