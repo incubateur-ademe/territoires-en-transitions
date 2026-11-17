@@ -2,18 +2,10 @@ import { appLabels } from '@/app/labels/catalog';
 import PrioritesFilterDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
 import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
 import { TOption } from '@/app/ui/shared/select/commons';
-import {
-  EN_COURS_SANS_AVANCEMENT_LABEL,
-  NON_MODIFIEE_DEPUIS_PLUS_D_UN_AN_LABEL,
-  SANS_PILOTE_LABEL,
-  SANS_REFERENT_LABEL,
-} from '@tet/domain/plans';
+import { SANS_PILOTE_LABEL, SANS_REFERENT_LABEL } from '@tet/domain/plans';
 import { Field, SelectFilter } from '@tet/ui';
 import { capitalize } from '@tet/ui/labels/plural';
-import {
-  FormFilters,
-  SuiviOption,
-} from '../data/use-fiches-filters-list/types';
+import { FormFilters } from '../data/use-fiches-filters-list/types';
 
 export type PlanFilterKey = Exclude<
   keyof FormFilters,
@@ -104,23 +96,6 @@ export const PlanFiltersFields = ({
           <PrioritesFilterDropdown
             values={filters.priorites}
             onChange={(priorites) => setFilters({ ...filters, priorites })}
-          />
-        </Field>
-      )}
-      {!hiddenKeys.includes('suivi') && (
-        <Field title={getFilterLabel('suivi')}>
-          <SelectFilter
-            values={filters.suivi ?? []}
-            options={[
-              EN_COURS_SANS_AVANCEMENT_LABEL,
-              NON_MODIFIEE_DEPUIS_PLUS_D_UN_AN_LABEL,
-            ].map((option) => ({ value: option, label: option }))}
-            onChange={({ values }) =>
-              setFilters({
-                ...filters,
-                suivi: Array.isArray(values) ? (values as SuiviOption[]) : [],
-              })
-            }
           />
         </Field>
       )}
