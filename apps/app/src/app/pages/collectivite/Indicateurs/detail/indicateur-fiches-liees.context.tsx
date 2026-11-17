@@ -4,7 +4,7 @@ import type { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-
 import { createContext, type PropsWithChildren, useContext } from 'react';
 
 type IndicateurFichesLieesValue = {
-  fiches: FicheListItem[];
+  useListFichesLiees: (indicateurId: number) => FicheListItem[];
 };
 
 const IndicateurFichesLieesContext =

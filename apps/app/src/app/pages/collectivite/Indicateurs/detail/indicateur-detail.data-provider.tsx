@@ -15,6 +15,7 @@ import {
 import { useUser } from '@tet/api/users';
 import type { IndicateurDetaille } from '@tet/domain/indicateurs';
 import { type PropsWithChildren, useMemo } from 'react';
+import { IndicateurFichesLieesDataProvider } from './indicateur-fiches-liees.data-provider';
 import { useDeleteIndicateurValeur } from '../data/use-delete-indicateur-valeur';
 import { useIndicateurChartInfo } from '../data/use-indicateur-chart';
 import { useExportIndicateurs } from '../Indicateur/useExportIndicateurs';
@@ -143,7 +144,9 @@ export const IndicateurDetailDataProvider = ({
   <IndicateurDataQueriesProvider indicateur={indicateur}>
     <IndicateurChartQueriesProvider indicateur={indicateur}>
       <IndicateurActionsMutationsProvider indicateur={indicateur}>
-        {children}
+        <IndicateurFichesLieesDataProvider>
+          {children}
+        </IndicateurFichesLieesDataProvider>
       </IndicateurActionsMutationsProvider>
     </IndicateurChartQueriesProvider>
   </IndicateurDataQueriesProvider>

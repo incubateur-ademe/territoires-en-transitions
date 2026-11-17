@@ -9,7 +9,6 @@ import ActionsLiees from './ActionsLiees';
 import DonneesIndicateur from './DonneesIndicateur';
 import FichesLiees from './FichesLiees';
 import IndicateurHeader from './Header/IndicateurHeader';
-import { IndicateurFichesLieesDataProvider } from './indicateur-fiches-liees.data-provider';
 import SousIndicateurs from './SousIndicateurs';
 import { useIndicateurChart } from './indicateur-chart.context';
 import { useIndicateurData } from './indicateur-data.context';
@@ -128,9 +127,7 @@ export const IndicateurLayoutView = ({
 
             {canReadFiches ? (
               <Tab label={appLabels.actionsLiees}>
-                <IndicateurFichesLieesDataProvider indicateur={indicateur}>
-                  <FichesLiees />
-                </IndicateurFichesLieesDataProvider>
+                <FichesLiees />
               </Tab>
             ) : undefined}
 
