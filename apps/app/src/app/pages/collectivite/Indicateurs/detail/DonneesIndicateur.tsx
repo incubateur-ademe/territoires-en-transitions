@@ -1,18 +1,12 @@
-import {
-  canUpdateIndicateur,
-  canUpdateIndicateurValeur,
-} from '@/app/indicateurs/indicateurs/indicateur-authorization.utils';
-import {
-  type IndicateurDetaille,
-  isIndicateurPerso,
-} from '@tet/domain/indicateurs';
-import { useUser } from '@tet/api';
-import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { isIndicateurPerso } from '@tet/domain/indicateurs';
 import { Divider } from '@tet/ui';
 import { useState } from 'react';
-import { PersonnalisationQuestionsList } from '../../../../../collectivites/personnalisations/personnalisation-questions.list';
-import { IndicateurChartInfo } from '../data/use-indicateur-chart';
-import { useIndicateurPersonnalisation } from '../data/use-indicateur-personnalisation';
+import { useIndicateurChart } from './indicateur-chart.context';
+import { useIndicateurDefinition } from './indicateur-definition.context';
+import {
+  INDICATEUR_PERSONNALISATION_IDENTIFIANT,
+  IndicateurPersonnalisationQuestions,
+} from './indicateur-personnalisation.questions';
 import IndicateurDetailChart from '../Indicateur/detail/IndicateurDetailChart';
 import { IndicateurValuesTabs } from '../Indicateur/detail/IndicateurValuesTabs';
 import { IndicateurCommentaireInput } from './indicateur-commentaire.input';
@@ -22,44 +16,23 @@ import { ThematiquesIndicateurInput } from './ThematiquesIndicateurInput';
 import { TypeSegmentationSelect } from './type-segmentation.select';
 
 type Props = {
-  indicateur: IndicateurDetaille;
-  chartInfo: IndicateurChartInfo;
   updateUnite: (value: string) => void;
   updateCommentaire: (value: string) => void;
 };
 
-const DonneesIndicateur = ({
-  indicateur,
-  chartInfo,
-  updateUnite,
-  updateCommentaire,
-}: Props) => {
+const DonneesIndicateur = ({ updateUnite, updateCommentaire }: Props) => {
+  const { indicateur, canMutateIndicateur, canMutateValeur } =
+    useIndicateurDefinition();
+  const { chartInfo } = useIndicateurChart();
   const [isTableModalOpen, setIsTableModalOpen] = useState(false);
   const { commentaire, unite } = indicateur;
 
   const { sourceFilter, typesSegmentation } = chartInfo;
 
-  const questionReponses = useIndicateurPersonnalisation(
-    indicateur.identifiantReferentiel,
-    chartInfo.sourceFilter.valeursReference?.drom ?? false
-  );
-  const { hasCollectivitePermission } = useCurrentCollectivite();
-
-  const user = useUser();
-
-  const canMutateIndicateur = canUpdateIndicateur(
-    hasCollectivitePermission,
-    indicateur,
-    user.id
-  );
-
-  const canMutateValeur = canUpdateIndicateurValeur(
-    hasCollectivitePermission,
-    indicateur,
-    user.id
-  );
-
   const isPerso = isIndicateurPerso(indicateur);
+  const hasPersonnalisationQuestions =
+    indicateur.identifiantReferentiel ===
+    INDICATEUR_PERSONNALISATION_IDENTIFIANT;
 
   return (
     <div className="flex flex-col gap-7 bg-white p-10 border border-grey-3 rounded-xl">
@@ -85,9 +58,9 @@ const DonneesIndicateur = ({
       </div>
 
       {/** Q/R personnalisation */}
-      {questionReponses && (
-        <PersonnalisationQuestionsList
-          questionReponses={questionReponses}
+      {hasPersonnalisationQuestions && (
+        <IndicateurPersonnalisationQuestions
+          isDrom={chartInfo.sourceFilter.valeursReference?.drom ?? false}
           canEdit={canMutateIndicateur}
         />
       )}
@@ -106,8 +79,6 @@ const DonneesIndicateur = ({
 
         {/* Tableau */}
         <IndicateurValuesTabs
-          indicateur={indicateur}
-          chartInfo={chartInfo}
           isReadonly={!canMutateValeur || indicateur.sansValeurUtilisateur}
           openModalState={{
             isOpen: isTableModalOpen,
@@ -119,10 +90,7 @@ const DonneesIndicateur = ({
       </div>
 
       {isPerso && (
-        <ThematiquesIndicateurInput
-          indicateur={indicateur}
-          disabled={!canMutateIndicateur}
-        />
+        <ThematiquesIndicateurInput disabled={!canMutateIndicateur} />
       )}
 
       <IndicateurCommentaireInput

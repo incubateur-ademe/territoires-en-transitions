@@ -20,10 +20,7 @@ import { memo, useMemo, useRef } from 'react';
 import { getSourceLabel } from '../data/get-source-label';
 import { PreparedData } from '../data/prepare-data';
 import { IndicateurChartInfo } from '../data/use-indicateur-chart';
-import {
-  GetColorBySourceId,
-  useGetColorBySourceId,
-} from '../data/use-indicateur-sources';
+import { GetColorBySourceId } from '../data/use-indicateur-sources';
 import { DataSourceTooltipContent } from '../Indicateur/detail/DataSourceTooltip';
 import { SourceType } from '../types';
 import { LAYERS } from './layer-parameters';
@@ -401,7 +398,7 @@ const IndicateurChart = ({
   const chartContainerRef = useRef<HTMLDivElement>(null);
 
   const { avecSnbc3 } = chartInfo.sourceFilter;
-  const getColorBySourceId = useGetColorBySourceId({ avecSnbc3 });
+  const { getColorBySourceId } = chartInfo;
   const preparedDatasets = useMemo(() => {
     const donneesResultatObjectif = [
       ...prepareDataset(data, 'resultat', getColorBySourceId, avecSnbc3),

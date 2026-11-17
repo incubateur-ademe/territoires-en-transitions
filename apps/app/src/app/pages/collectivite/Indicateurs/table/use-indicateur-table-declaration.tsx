@@ -1,20 +1,16 @@
-import { useUpsertIndicateurValeur } from '@/app/indicateurs/valeurs/use-upsert-indicateur-valeur';
 import {
   IndicateurPeriodes,
   type IndicateurPeriode,
   type SupportedIndicateurPeriodicite,
-  IndicateurDetaille,
 } from '@tet/domain/indicateurs';
 import type { OpenState } from '@tet/ui/utils/types';
 import { useState, type ReactNode } from 'react';
+import { useIndicateurValeurs } from '../detail/indicateur-valeurs.context';
 import { AddIndicateurPeriodeHeader } from './add-indicateur-periode.header';
-import { getIndicateurPeriodeInputOptions } from './indicateur-periode-input.options';
 
 export type IndicateurTableDeclarationProps = {
   canWrite: boolean;
   periodicite: SupportedIndicateurPeriodicite | undefined;
-  collectiviteId: number;
-  indicateur: Pick<IndicateurDetaille, 'id'>;
   existingPeriodes: readonly IndicateurPeriode[];
   openModalState?: OpenState;
 };
@@ -28,19 +24,11 @@ export type IndicateurTableDeclaration = {
 export const useIndicateurTableDeclaration = ({
   canWrite,
   periodicite,
-  collectiviteId,
-  indicateur,
   existingPeriodes,
   openModalState,
 }: IndicateurTableDeclarationProps): IndicateurTableDeclaration => {
   const [periodeToReveal, setPeriodeToReveal] = useState<IndicateurPeriode>();
-  const { mutateAsync: upsertValeur } = useUpsertIndicateurValeur({
-    successMessage:
-      periodicite === undefined
-        ? undefined
-        : getIndicateurPeriodeInputOptions(periodicite).success,
-    disableErrorToast: true,
-  });
+  const { declarePeriode } = useIndicateurValeurs();
   const existingKeys = new Set(existingPeriodes.map(IndicateurPeriodes.key));
 
   const addPeriode = async (
@@ -55,12 +43,7 @@ export const useIndicateurTableDeclaration = ({
       return false;
 
     try {
-      await upsertValeur({
-        collectiviteId,
-        indicateurId: indicateur.id,
-        periodicite: periode.periodicite,
-        dateValeur: periode.dateDebut,
-      });
+      await declarePeriode(periode);
       setPeriodeToReveal(periode);
       return true;
     } catch {

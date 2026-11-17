@@ -1,8 +1,7 @@
 import { useDeleteIndicateur } from '@/app/indicateurs/indicateurs/use-delete-indicateur';
 import type { IndicateurDetaille } from '@tet/domain/indicateurs';
-import { appLabels } from '@/app/labels/catalog';
-import { Modal, ModalFooterOKCancel } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
+import { DeleteIndicateurConfirmModal } from './delete-indicateur-confirmation.modal';
 
 /**
  * Modale pour la suppression d'un indicateur personnalisé
@@ -22,28 +21,10 @@ export const DeleteIndicateurModal = ({
     redirectAfterDelete,
   });
   return (
-    <Modal
+    <DeleteIndicateurConfirmModal
+      titre={indicateur.titre}
       openState={openState}
-      title={appLabels.suppressionIndicateur}
-      subTitle={indicateur.titre}
-      render={() => (
-        <p className="mb-0">{appLabels.suppressionIndicateurDescription}</p>
-      )}
-      renderFooter={({ close }) => (
-        <ModalFooterOKCancel
-          btnCancelProps={{
-            onClick: () => close(),
-          }}
-          btnOKProps={{
-            'aria-label': appLabels.supprimer,
-            children: appLabels.supprimer,
-            onClick: () => {
-              deleteIndicateur();
-              close();
-            },
-          }}
-        />
-      )}
+      onConfirm={() => deleteIndicateur()}
     />
   );
 };

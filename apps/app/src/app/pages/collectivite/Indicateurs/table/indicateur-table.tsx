@@ -1,11 +1,8 @@
 import { getIndicateurPeriodPresentation } from '@/app/indicateurs/valeurs/indicateur-period-presentation';
-import { useUpsertIndicateurValeur } from '@/app/indicateurs/valeurs/use-upsert-indicateur-valeur';
-import { useDeclareIndicateurPeriodes } from '@/app/indicateurs/valeurs/use-declare-indicateur-periodes';
 import {
   IndicateurPeriodes,
   IndicateurPeriodiciteEnum,
   type IndicateurPeriode,
-  IndicateurDetaille,
 } from '@tet/domain/indicateurs';
 import { Button } from '@tet/ui';
 import type { OpenState } from '@tet/ui/utils/types';
@@ -14,9 +11,9 @@ import {
   prepareIndicateurPeriodeData,
   type IndicateurPeriodeValue,
 } from '../data/prepare-indicateur-periode-data';
-import { useDeleteIndicateurValeur } from '../data/use-delete-indicateur-valeur';
-import type { IndicateurChartInfo } from '../data/use-indicateur-chart';
-import { useGetColorBySourceId } from '../data/use-indicateur-sources';
+import { useIndicateurChart } from '../detail/indicateur-chart.context';
+import { useIndicateurDefinition } from '../detail/indicateur-definition.context';
+import { useIndicateurValeurs } from '../detail/indicateur-valeurs.context';
 import { ConfirmDelete } from './confirm-delete';
 import { EditCommentaireModal } from './edit-commentaire-modal';
 import { AddIndicateurPeriodesModal } from './add-indicateur-periodes.modal';
@@ -26,22 +23,18 @@ import { IndicateurValeursTable } from './indicateur-valeurs-table';
 import { PrivateModeSwitch } from './private-mode-switch';
 
 type IndicateurTableProps = {
-  chartInfo: IndicateurChartInfo;
-  collectiviteId: number;
-  indicateur: IndicateurDetaille;
   readonly?: boolean;
   confidentiel?: boolean;
   openModalState?: OpenState;
 };
 
 export const IndicateurTable = ({
-  chartInfo,
-  collectiviteId,
-  indicateur,
   readonly,
   confidentiel,
   openModalState,
 }: IndicateurTableProps) => {
+  const { indicateur } = useIndicateurDefinition();
+  const { chartInfo } = useIndicateurChart();
   const resultats = prepareIndicateurPeriodeData(
     chartInfo.data.valeurs.resultats
   );
@@ -60,14 +53,9 @@ export const IndicateurTable = ({
     periode: IndicateurPeriode;
     commentaires: { resultat: string; objectif: string };
   } | null>(null);
-  const { mutateAsync: upsert } = useUpsertIndicateurValeur();
-  const declarePeriodes = useDeclareIndicateurPeriodes(
-    collectiviteId,
-    indicateur.id
-  );
-  const { mutateAsync: deleteValeur } = useDeleteIndicateurValeur();
+  const { saveValeur, declarePeriodes, deleteValeur } = useIndicateurValeurs();
   const { avecSnbc3 } = chartInfo.sourceFilter;
-  const getColorBySourceId = useGetColorBySourceId({ avecSnbc3 });
+  const { getColorBySourceId } = chartInfo;
   const canWrite =
     !readonly &&
     !indicateur.sansValeurUtilisateur &&
@@ -79,8 +67,6 @@ export const IndicateurTable = ({
   const declaration = useIndicateurTableDeclaration({
     canWrite: canWrite && isAnnual,
     periodicite: indicateur.periodicite,
-    collectiviteId,
-    indicateur,
     existingPeriodes,
     openModalState: isAnnual ? openModalState : undefined,
   });
@@ -96,8 +82,6 @@ export const IndicateurTable = ({
     }
     return {
       id: getExisting(periode)?.id,
-      collectiviteId,
-      indicateurId: indicateur.id,
       dateValeur: periode.dateDebut,
       periodicite: periode.periodicite,
     };
@@ -111,11 +95,7 @@ export const IndicateurTable = ({
       return;
     }
     try {
-      await deleteValeur({
-        id: existing.id,
-        collectiviteId,
-        indicateurId: indicateur.id,
-      });
+      await deleteValeur(existing.id);
     } catch {
       /* The global mutation subscriber reports the failure. */
     }
@@ -146,7 +126,7 @@ export const IndicateurTable = ({
         onSave={async (periode, type, value) => {
           if (!canWrite) return false;
           try {
-            await upsert({ ...getWriteIdentity(periode), [type]: value });
+            await saveValeur({ ...getWriteIdentity(periode), [type]: value });
             return true;
           } catch {
             return false;
@@ -166,7 +146,7 @@ export const IndicateurTable = ({
       />
       {!!resultats.donneesCollectivite?.valeurs.some(
         (value) => value.valeur != null
-      ) && <PrivateModeSwitch indicateur={indicateur} isReadOnly={!canWrite} />}
+      ) && <PrivateModeSwitch isReadOnly={!canWrite} />}
       {comment && (
         <EditCommentaireModal
           periodeLabel={IndicateurPeriodes.format(comment.periode)}
@@ -178,7 +158,7 @@ export const IndicateurTable = ({
           onChange={async (commentaires) => {
             if (!canWrite) return false;
             try {
-              await upsert({
+              await saveValeur({
                 ...getWriteIdentity(comment.periode),
                 resultatCommentaire: commentaires.resultat,
                 objectifCommentaire: commentaires.objectif,
@@ -196,11 +176,7 @@ export const IndicateurTable = ({
           unite={indicateur.unite}
           onDismissConfirm={(confirmed) => {
             if (confirmed) {
-              void deleteValeur({
-                id: toBeDeleted.id,
-                collectiviteId,
-                indicateurId: indicateur.id,
-              }).catch(() => undefined);
+              void deleteValeur(toBeDeleted.id).catch(() => undefined);
             }
             setToBeDeleted(null);
           }}

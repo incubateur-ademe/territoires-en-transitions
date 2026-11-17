@@ -54,7 +54,6 @@ const IndicateurHeader = ({
       {!isReadonly && (
         <PageHeader.Actions>
           <IndicateurToolbar
-            indicateur={indicateur}
             chartInfo={chartInfo}
             isPerso={isPerso}
             hasCollectivitePermission={hasCollectivitePermission}
