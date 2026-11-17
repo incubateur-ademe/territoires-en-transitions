@@ -11,6 +11,7 @@ import { format } from 'date-fns';
 import {
   EN_COURS_SANS_AVANCEMENT_LABEL,
   NON_MODIFIEE_DEPUIS_PLUS_D_UN_AN_LABEL,
+  Plan,
   SANS_PILOTE_LABEL,
   SANS_PRIORITE_LABEL,
   SANS_REFERENT_LABEL,
@@ -96,7 +97,7 @@ export class ExportSuiviPlanService {
   }
 
   private async export(
-    { planId, thematiqueIds, filters = {} }: SuiviPlanBlocInput,
+    { planId, thematiqueIds, axeIds, filters = {} }: SuiviPlanBlocInput,
     titre: string,
     context: ServiceSecondArg,
     build: (entete: SuiviPlanExportEntete) => Promise<ArrayBuffer>
@@ -120,7 +121,10 @@ export class ExportSuiviPlanService {
       titre,
       planNom,
       thematiques: thematiques.map(({ nom }) => nom),
-      filtres: await this.getFiltres(filters, planResult.data.collectiviteId),
+      filtres: [
+        ...this.getAxesFiltre(planResult.data, axeIds),
+        ...(await this.getFiltres(filters, planResult.data.collectiviteId)),
+      ],
       exporteLe: format(now, 'dd/MM/yyyy'),
     });
 
@@ -130,6 +134,13 @@ export class ExportSuiviPlanService {
         `Suivi_${planNom}_${titre}_${format(now, 'yyyy-MM-dd')}.xlsx`
       ),
     });
+  }
+
+  private getAxesFiltre(plan: Plan, axeIds: number[] = []): [string, string][] {
+    const noms = plan.axes
+      .filter((axe) => axeIds.includes(axe.id))
+      .map((axe) => axe.nom || 'Sans titre');
+    return noms.length ? [['Axe', noms.join(', ')]] : [];
   }
 
   private async getFiltres(

@@ -18,6 +18,7 @@ describe('Suivi du plan : avancement par axe', () => {
   let admin: AuthenticatedUser;
   let planId: number;
   let thematiqueId: number;
+  let axeAId: number;
 
   beforeAll(async () => {
     app = await getTestApp();
@@ -49,6 +50,7 @@ describe('Suivi du plan : avancement par axe', () => {
         })
       ).id;
     const axeA = await createAxe('Axe A', planId);
+    axeAId = axeA;
     const sousAxeA1 = await createAxe('Sous-axe A1', axeA);
     const sousAxeA2 = await createAxe('Sous-axe A2', axeA);
     const axeB = await createAxe('Axe B', planId);
@@ -114,10 +116,10 @@ describe('Suivi du plan : avancement par axe', () => {
     };
   });
 
-  const getAvancementParAxe = (thematiqueIds?: number[]) =>
+  const getAvancementParAxe = (thematiqueIds?: number[], axeIds?: number[]) =>
     router
       .createCaller({ user: admin })
-      .plans.suivi.getAvancementParAxe({ planId, thematiqueIds });
+      .plans.suivi.getAvancementParAxe({ planId, thematiqueIds, axeIds });
 
   it('compte les fiches des sous-axes dans l’axe, une seule fois même rangées dans deux de ses sous-axes', async () => {
     const [axeA] = await getAvancementParAxe();
@@ -161,5 +163,12 @@ describe('Suivi du plan : avancement par axe', () => {
       { total: 1, avancement: 100 },
     ]);
     expect(axeB).toMatchObject({ total: 0, realisees: 0, avancement: 0 });
+  });
+
+  it('ne retient que les fiches de l’axe choisi et de ses sous-axes', async () => {
+    const [axeA, axeB] = await getAvancementParAxe(undefined, [axeAId]);
+
+    expect(axeA).toMatchObject({ total: 3, realisees: 1 });
+    expect(axeB).toMatchObject({ total: 1, realisees: 0 });
   });
 });
