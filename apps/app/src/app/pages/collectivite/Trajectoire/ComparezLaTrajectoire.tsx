@@ -1,5 +1,5 @@
-import { appLabels } from '@/app/labels/catalog';
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
+import { appLabels } from '@/app/labels/catalog';
 import { Button, Card } from '@tet/ui';
 
 interface ComparezLaTrajectoireProps {
@@ -34,6 +34,7 @@ export const ComparezLaTrajectoire = ({
         </p>
         <div className="w-full lg:w-1/4 flex justify-end lg:items-center">
           <Button
+            size="xs"
             disabled={readonly}
             href={makeCollectiviteIndicateursUrl({
               collectiviteId,
