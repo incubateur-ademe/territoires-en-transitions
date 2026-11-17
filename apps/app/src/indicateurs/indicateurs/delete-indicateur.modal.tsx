@@ -1,7 +1,7 @@
 import { useDeleteIndicateur } from '@/app/indicateurs/indicateurs/use-delete-indicateur';
 import type { IndicateurDetaille } from '@tet/domain/indicateurs';
 import { OpenState } from '@tet/ui/utils/types';
-import { DeleteIndicateurConfirmModal } from './delete-indicateur-confirmation.modal';
+import { DeleteIndicateurConfirmationModal } from './delete-indicateur-confirmation.modal';
 
 /**
  * Modale pour la suppression d'un indicateur personnalisé
@@ -21,7 +21,7 @@ export const DeleteIndicateurModal = ({
     redirectAfterDelete,
   });
   return (
-    <DeleteIndicateurConfirmModal
+    <DeleteIndicateurConfirmationModal
       titre={indicateur.titre}
       openState={openState}
       onConfirm={() => deleteIndicateur()}

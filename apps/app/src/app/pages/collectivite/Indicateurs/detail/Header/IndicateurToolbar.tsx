@@ -3,7 +3,7 @@ import { ActivityLogModal } from '@/app/ui/shared/activity-log.modal';
 import { PermissionOperation } from '@tet/domain/users';
 import { Button, ButtonMenu, cn, MenuAction, Tooltip } from '@tet/ui';
 import { useState } from 'react';
-import { DeleteIndicateurConfirmModal } from '@/app/indicateurs/indicateurs/delete-indicateur-confirmation.modal';
+import { DeleteIndicateurConfirmationModal } from '@/app/indicateurs/indicateurs/delete-indicateur-confirmation.modal';
 import { IndicateurChartPngExport } from '../../chart/indicateur-chart.png-export';
 import { IndicateurChartInfo } from '../../data/use-indicateur-chart';
 import { useIndicateurActions } from '../indicateur-actions.context';
@@ -101,7 +101,7 @@ const IndicateurToolbar = ({
       )}
 
       {currentModal === 'deleting' && (
-        <DeleteIndicateurConfirmModal
+        <DeleteIndicateurConfirmationModal
           titre={indicateur.titre}
           openState={{ isOpen: true, setIsOpen: closeModal }}
           onConfirm={deleteIndicateur}

@@ -8,7 +8,7 @@ type Props = {
   onConfirm: () => void;
 };
 
-export const DeleteIndicateurConfirmModal = ({
+export const DeleteIndicateurConfirmationModal = ({
   titre,
   openState,
   onConfirm,

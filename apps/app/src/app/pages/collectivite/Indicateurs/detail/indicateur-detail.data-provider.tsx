@@ -23,11 +23,14 @@ import {
   IndicateurActionsProvider,
   type IndicateurActionsValue,
 } from './indicateur-actions.context';
-import { IndicateurDataProvider } from './indicateur-data.context';
+import {
+  IndicateurDataProvider,
+  type IndicateurDataValue,
+} from './indicateur-data.context';
 
 type Props = PropsWithChildren<{ indicateur: IndicateurDetaille }>;
 
-const IndicateurDataSourceProvider = ({ indicateur, children }: Props) => {
+const IndicateurDataQueriesProvider = ({ indicateur, children }: Props) => {
   const chartInfo = useIndicateurChartInfo({ indicateur });
   const { hasCollectivitePermission } = useCurrentCollectivite();
   const { id: userId } = useUser();
@@ -41,7 +44,7 @@ const IndicateurDataSourceProvider = ({ indicateur, children }: Props) => {
     indicateur,
     userId
   );
-  const value = useMemo(
+  const value = useMemo<IndicateurDataValue>(
     () => ({ indicateur, chartInfo, canMutateIndicateur, canMutateValeur }),
     [indicateur, chartInfo, canMutateIndicateur, canMutateValeur]
   );
@@ -51,7 +54,10 @@ const IndicateurDataSourceProvider = ({ indicateur, children }: Props) => {
   );
 };
 
-const IndicateurActionsSourceProvider = ({ indicateur, children }: Props) => {
+const IndicateurActionsMutationsProvider = ({
+  indicateur,
+  children,
+}: Props) => {
   const collectiviteId = useCollectiviteId();
   const { id: indicateurId, periodicite } = indicateur;
   const { mutate: updateIndicateur } = useUpdateIndicateur(indicateurId);
@@ -119,9 +125,9 @@ export const IndicateurDetailDataProvider = ({
   indicateur,
   children,
 }: Props) => (
-  <IndicateurDataSourceProvider indicateur={indicateur}>
-    <IndicateurActionsSourceProvider indicateur={indicateur}>
+  <IndicateurDataQueriesProvider indicateur={indicateur}>
+    <IndicateurActionsMutationsProvider indicateur={indicateur}>
       {children}
-    </IndicateurActionsSourceProvider>
-  </IndicateurDataSourceProvider>
+    </IndicateurActionsMutationsProvider>
+  </IndicateurDataQueriesProvider>
 );
