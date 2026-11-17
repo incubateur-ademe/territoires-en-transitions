@@ -103,8 +103,9 @@ module "coolify" {
 #
 # Projet Scaleway dédié (var.backups_project_id) : les permissions IAM Object
 # Storage valent pour un projet entier, pas pour un bucket. Dans le projet
-# principal, la clé des backups pourrait aussi lire tet-tfstate, qui contient
-# les mots de passe et les clés SSH. Là, elle ne voit que ce bucket.
+# principal, la clé des backups pourrait aussi lire les buckets de Storage API.
+# Là, elle ne voit que ce bucket. Le bucket du state a son propre projet pour
+# la même raison (README, « Bootstrap »).
 #
 # Le projet et la clé IAM sont créés par un admin de l'organisation (droits
 # d'organisation requis, cf. README « Prérequis admin »).

@@ -2,6 +2,10 @@
 # Charge les credentials Scaleway depuis `scw config` et les exporte sous les
 # noms attendus par Terraform :
 #   - AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY → backend S3 (state distant)
+#     L'access key est suffixée par « @<ID du projet tet-tfstate> » : l'API S3
+#     cherche un bucket dans le projet préféré de la clé, et le bucket du state
+#     vit dans un projet à part (README, « Bootstrap »). Ces AWS_* ne valent
+#     donc que pour ce bucket.
 #   - TF_VAR_scaleway_secret_key                 → provider grafana (Cockpit)
 #
 # SCW_ACCESS_KEY / SCW_SECRET_KEY / SCW_DEFAULT_ORGANIZATION_ID ne sont PAS
@@ -20,6 +24,9 @@
 #     cd infra/platform && terraform init
 #
 # Pré-requis : `scw init` exécuté au moins une fois (crée ~/.config/scw/config.yaml).
+#
+# L'ID du projet tet-tfstate est retrouvé par son nom. TFSTATE_PROJECT_ID le
+# fournit directement si l'identité n'a pas le droit de lister les projets.
 
 # Garde-fou : refuse l'exécution directe (sinon les exports sont perdus avec
 # le sous-shell). Détection compatible bash et zsh.
@@ -53,7 +60,17 @@ if [ -z "$_scw_access_key" ] || [ -z "$_scw_secret_key" ]; then
   return 1
 fi
 
-export AWS_ACCESS_KEY_ID="$_scw_access_key"
+_tfstate_project_id="${TFSTATE_PROJECT_ID:-$(scw account project list name=tet-tfstate -o json 2>/dev/null |
+  jq -r '.[] | select(.name == "tet-tfstate") | .id' 2>/dev/null)}"
+
+if [ -z "$_tfstate_project_id" ]; then
+  echo "tf-env.sh : projet Scaleway 'tet-tfstate' introuvable." >&2
+  echo "  Exporte TFSTATE_PROJECT_ID=<ID du projet> (console Scaleway, Project Settings)." >&2
+  unset _scw_access_key _scw_secret_key _tfstate_project_id
+  return 1
+fi
+
+export AWS_ACCESS_KEY_ID="${_scw_access_key}@${_tfstate_project_id}"
 export AWS_SECRET_ACCESS_KEY="$_scw_secret_key"
 export TF_VAR_scaleway_secret_key="$_scw_secret_key"
 
@@ -61,4 +78,4 @@ echo "tf-env.sh : credentials Scaleway exportés (access-key ${_scw_access_key:0
 # Un SCW_DEFAULT_PROJECT_ID hérité du shell écraserait le project_id des stacks.
 unset SCW_DEFAULT_PROJECT_ID
 
-unset _scw_access_key _scw_secret_key
+unset _scw_access_key _scw_secret_key _tfstate_project_id

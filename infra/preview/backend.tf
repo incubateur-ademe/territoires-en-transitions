@@ -8,7 +8,7 @@ terraform {
   # AWS_SECRET_ACCESS_KEY (le backend S3 réutilise les conventions AWS, c'est
   # normal) — voir infra/scripts/tf-env.sh.
   backend "s3" {
-    bucket = "tet-tfstate"
+    bucket = "tet-terraform-state"
     key    = "preview/terraform.tfstate"
     region = "fr-par"
 

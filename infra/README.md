@@ -124,8 +124,8 @@ flowchart LR
 
 Ordre d'application : `platform → nonprod / prod / preview → coolify`.
 
-- **Un state par stack**, dans le bucket `tet-tfstate`, avec locking natif
-  (`use_lockfile`, cf. [Bootstrap](#bootstrap-une-fois)).
+- **Un state par stack**, dans le bucket `tet-terraform-state` (projet `tet-tfstate`), avec
+  locking natif (`use_lockfile`, cf. [Bootstrap](#bootstrap-une-fois)).
 - **Pas de `terraform_remote_state`** : chaque flèche est un report manuel d'outputs
   (IDs de Private Network, IP de Coolify, IPs des serveurs, noms de secrets) dans le
   `terraform.tfvars` du stack suivant. Les stacks restent découplés.
@@ -156,14 +156,17 @@ infra/
 Créer un projet ou une application IAM exige des droits d'organisation, que les
 credentials Terraform n'ont pas. Un admin crée donc, une fois :
 
-1. **Trois projets** : `tet` (principal), `tet-prod` et `tet-backups`. Leurs IDs vont dans
-   `main_project_id`, `prod_project_id` et `backups_project_id` de
-   `platform/terraform.tfvars`.
+1. **Quatre projets** : `tet` (principal), `tet-prod`, `tet-backups` et `tet-tfstate`. Les
+   IDs des trois premiers vont dans `main_project_id`, `prod_project_id` et
+   `backups_project_id` de `platform/terraform.tfvars`.
 2. **Les droits des opérateurs Terraform** sur ces projets :
    - `tet-prod` : serveur, VPC, IPAM, RDB, Redis, secrets et DNS. Le plus simple :
      `AllProductsFullAccess` limité à ce projet ;
    - `tet-backups` : `ObjectStorageFullAccess` limité à ce projet. Le verrou COMPLIANCE
-     empêche quand même toute suppression de version avant l'échéance.
+     empêche quand même toute suppression de version avant l'échéance ;
+   - `tet-tfstate` : `ObjectStorageFullAccess` limité à ce projet, pour les opérateurs
+     **et personne d'autre**. Le state contient les mots de passe et les clés SSH de tous
+     les stacks : aucune application IAM ne doit avoir de droit sur ce projet.
 3. **L'application IAM `tet-coolify-backups`** :
    - une politique limitée à `tet-backups`, avec `ObjectStorageBucketsRead`,
      `ObjectStorageObjectsRead`, `ObjectStorageObjectsWrite` et
@@ -179,12 +182,19 @@ Le bucket de state doit exister avant le premier `terraform init`, avec versioni
 Object Lock : ce dernier active les conditional writes S3 (`If-None-Match: *`) dont dépend
 `use_lockfile`. Un plan ou apply concurrent échoue alors immédiatement.
 
-```sh
-scw object bucket create name=tet-tfstate region=fr-par enable-versioning=true
+Il vit seul dans le projet `tet-tfstate` : les droits IAM Object Storage valent pour un
+projet entier, et le projet `tet` porte des clés applicatives (Storage API) qui liraient
+sinon le state.
 
+```sh
+scw object bucket create name=tet-terraform-state region=fr-par enable-versioning=true \
+  project-id=<ID du projet tet-tfstate>
+
+# tf-env.sh vise le projet tet-tfstate (access key suffixée par @<ID du projet>)
+source infra/scripts/tf-env.sh
 aws s3api put-object-lock-configuration \
   --endpoint-url https://s3.fr-par.scw.cloud \
-  --bucket tet-tfstate \
+  --bucket tet-terraform-state \
   --object-lock-configuration '{
     "ObjectLockEnabled": "Enabled",
     "Rule": { "DefaultRetention": { "Mode": "GOVERNANCE", "Days": 30 } }
@@ -204,9 +214,10 @@ terraform plan -out=tfplan
 terraform apply tfplan
 ```
 
-[`scripts/tf-env.sh`](scripts/tf-env.sh) lit `scw config` et exporte `AWS_*` (backend S3),
-`SCW_*` (provider) et `TF_VAR_scaleway_secret_key` (provider Grafana). Il **retire**
-`SCW_DEFAULT_PROJECT_ID` : le provider le préférerait au `project_id` de chaque stack.
+[`scripts/tf-env.sh`](scripts/tf-env.sh) lit `scw config` et exporte `AWS_*` (backend S3,
+avec le projet `tet-tfstate` pour cible), `SCW_*` (provider) et `TF_VAR_scaleway_secret_key`
+(provider Grafana). Il **retire** `SCW_DEFAULT_PROJECT_ID` : le provider le préférerait au
+`project_id` de chaque stack.
 
 Pour un stack applicatif, reporter les valeurs de `platform` dans son `terraform.tfvars` :
 

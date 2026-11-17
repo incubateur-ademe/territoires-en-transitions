@@ -195,8 +195,10 @@ les flags de métriques Traefik sont toujours dans le `command` du proxy
 Un apply interrompu brutalement peut laisser son `.tflock` dans le bucket de state :
 
 ```sh
+# Les AWS_* de tf-env.sh visent le projet du bucket de state
+source infra/scripts/tf-env.sh
 # Identifier le fichier de lock (adapter le préfixe au stack concerné)
-aws s3 ls --endpoint-url https://s3.fr-par.scw.cloud s3://tet-tfstate/platform/
+aws s3 ls --endpoint-url https://s3.fr-par.scw.cloud s3://tet-terraform-state/platform/
 # Le supprimer après avoir vérifié qu'aucun apply n'est en cours
-aws s3 rm --endpoint-url https://s3.fr-par.scw.cloud s3://tet-tfstate/platform/terraform.tfstate.tflock
+aws s3 rm --endpoint-url https://s3.fr-par.scw.cloud s3://tet-terraform-state/platform/terraform.tfstate.tflock
 ```
