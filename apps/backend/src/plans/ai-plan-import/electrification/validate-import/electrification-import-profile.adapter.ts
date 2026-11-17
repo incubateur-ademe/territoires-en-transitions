@@ -95,10 +95,7 @@ export class ElectrificationImportProfileAdapter
       context
     );
     if (!configuration.success) return configuration;
-    if (
-      options.planType !== undefined &&
-      options.planType !== configuration.data.planType
-    ) {
+    if (options.planType !== configuration.data.planType) {
       return failure('UNKNOWN_PLAN_TYPE');
     }
     return success({
