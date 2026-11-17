@@ -58,6 +58,97 @@ describe('UpdateIndicateurRouter', () => {
     await app.close();
   });
 
+  describe('unité d’un groupe de sous-indicateurs', () => {
+    const createParentWithChild = async () => {
+      const caller = router.createCaller({ user: authenticatedUser });
+      const parentId = await caller.indicateurs.indicateurs.create({
+        collectiviteId: collectivite.id,
+        titre: 'Déchets ménagers',
+        unite: 't',
+      });
+      const childId = await caller.indicateurs.indicateurs.create({
+        collectiviteId: collectivite.id,
+        titre: 'Ordures ménagères',
+        parentId,
+      });
+      return { caller, parentId, childId };
+    };
+
+    const readUnite = async (indicateurId: number) => {
+      const [indicateur] = await databaseService.db
+        .select({ unite: indicateurDefinitionTable.unite })
+        .from(indicateurDefinitionTable)
+        .where(eq(indicateurDefinitionTable.id, indicateurId));
+      return indicateur.unite;
+    };
+
+    test('propage la nouvelle unité du parent à ses sous-indicateurs', async () => {
+      const { caller, parentId, childId } = await createParentWithChild();
+
+      await caller.indicateurs.indicateurs.update({
+        collectiviteId: collectivite.id,
+        indicateurId: parentId,
+        indicateurFields: { unite: 'kg' },
+      });
+
+      expect(await readUnite(parentId)).toBe('kg');
+      expect(await readUnite(childId)).toBe('kg');
+    });
+
+    test('refuse de changer l’unité d’un sous-indicateur', async () => {
+      const { caller, parentId, childId } = await createParentWithChild();
+
+      await expect(
+        caller.indicateurs.indicateurs.update({
+          collectiviteId: collectivite.id,
+          indicateurId: childId,
+          indicateurFields: { unite: 'kg' },
+        })
+      ).rejects.toMatchObject({
+        code: 'BAD_REQUEST',
+        message: expect.stringMatching(/unité.*celle de son parent/),
+      });
+      expect(await readUnite(childId)).toBe('t');
+      expect(await readUnite(parentId)).toBe('t');
+    });
+
+    test('accepte l’unité inchangée et la modification du titre', async () => {
+      const { caller, parentId } = await createParentWithChild();
+
+      await caller.indicateurs.indicateurs.update({
+        collectiviteId: collectivite.id,
+        indicateurId: parentId,
+        indicateurFields: { unite: 't', titre: 'Déchets' },
+      });
+
+      const [indicateur] = await databaseService.db
+        .select({ titre: indicateurDefinitionTable.titre })
+        .from(indicateurDefinitionTable)
+        .where(eq(indicateurDefinitionTable.id, parentId));
+      expect(indicateur.titre).toBe('Déchets');
+    });
+
+    test('autorise le changement d’unité après la suppression du parent', async () => {
+      const { caller, parentId, childId } = await createParentWithChild();
+      await caller.indicateurs.indicateurs.delete({
+        indicateurId: parentId,
+        collectiviteId: collectivite.id,
+      });
+
+      await caller.indicateurs.indicateurs.update({
+        collectiviteId: collectivite.id,
+        indicateurId: childId,
+        indicateurFields: { unite: 'kg' },
+      });
+
+      const [indicateur] = await databaseService.db
+        .select({ unite: indicateurDefinitionTable.unite })
+        .from(indicateurDefinitionTable)
+        .where(eq(indicateurDefinitionTable.id, childId));
+      expect(indicateur.unite).toBe('kg');
+    });
+  });
+
   describe('indicateur perso', () => {
     test('refuse une clé API sans permission de modification malgré le rôle administrateur', async () => {
       const caller = router.createCaller({ user: authenticatedUser });

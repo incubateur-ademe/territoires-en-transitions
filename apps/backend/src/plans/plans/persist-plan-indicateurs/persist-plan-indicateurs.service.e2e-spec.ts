@@ -20,6 +20,7 @@ import { failure } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { CollectiviteRole } from '@tet/domain/users';
 import { eq, inArray } from 'drizzle-orm';
+import { omit } from 'es-toolkit';
 import assert from 'node:assert';
 import {
   afterAll,
@@ -117,13 +118,15 @@ describe('Persistance des indicateurs d’un plan', () => {
     };
   }
 
-  const definition = createIndicateurInputSchema
-    .omit({ collectiviteId: true, ficheId: true })
-    .parse({
+  const definition = omit(
+    createIndicateurInputSchema.parse({
+      collectiviteId: 0,
       titre: 'Consommation annuelle',
       unite: 'MWh',
       periodicite: 'annuelle',
-    });
+    }),
+    ['collectiviteId', 'ficheId']
+  );
   const readDefinitions = (collectiviteId: number) =>
     db.db
       .select()

@@ -9,16 +9,20 @@ export type IndicateurInGroup = Pick<
     hasChildren: boolean;
   }>;
 
+export const sousIndicateurPersoErrors = [
+  'SOUS_INDICATEUR_SELF_REFERENCE',
+  'SOUS_INDICATEUR_PARENT_NOT_PERSO',
+  'SOUS_INDICATEUR_CHILD_NOT_PERSO',
+  'SOUS_INDICATEUR_DIFFERENT_COLLECTIVITE',
+  'SOUS_INDICATEUR_PARENT_ALREADY_CHILD',
+  'SOUS_INDICATEUR_CHILD_HAS_CHILDREN',
+  'SOUS_INDICATEUR_CHILD_ALREADY_ATTACHED',
+  'SOUS_INDICATEUR_DIFFERENT_UNITE',
+  'SOUS_INDICATEUR_DIFFERENT_PERIODICITE',
+] as const;
+
 export type SousIndicateurPersoError =
-  | 'SOUS_INDICATEUR_SELF_REFERENCE'
-  | 'SOUS_INDICATEUR_PARENT_NOT_PERSO'
-  | 'SOUS_INDICATEUR_CHILD_NOT_PERSO'
-  | 'SOUS_INDICATEUR_DIFFERENT_COLLECTIVITE'
-  | 'SOUS_INDICATEUR_PARENT_ALREADY_CHILD'
-  | 'SOUS_INDICATEUR_CHILD_HAS_CHILDREN'
-  | 'SOUS_INDICATEUR_CHILD_ALREADY_ATTACHED'
-  | 'SOUS_INDICATEUR_DIFFERENT_UNITE'
-  | 'SOUS_INDICATEUR_DIFFERENT_PERIODICITE';
+  (typeof sousIndicateurPersoErrors)[number];
 
 export type SousIndicateurPersoResult =
   | Readonly<{ success: true }>
@@ -68,11 +72,21 @@ export const validateSousIndicateurPerso = ({
   return { success: true };
 };
 
-export const listSousIndicateursBecomingAutonomous = ({
+export const canChangeIndicateurUnite = ({
+  indicateur,
+  unite,
+}: {
+  indicateur: Pick<IndicateurInGroup, 'unite' | 'parentId'>;
+  unite: string;
+}): boolean => unite === indicateur.unite || indicateur.parentId === null;
+
+export const listSousIndicateursBecomingAutonomous = <
+  T extends Pick<IndicateurInGroup, 'parentId'>
+>({
   parentId,
   indicateurs,
 }: {
   parentId: number;
-  indicateurs: readonly IndicateurInGroup[];
-}): readonly IndicateurInGroup[] =>
+  indicateurs: readonly T[];
+}): readonly T[] =>
   indicateurs.filter((indicateur) => indicateur.parentId === parentId);

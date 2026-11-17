@@ -1,4 +1,5 @@
 import { INestApplication } from '@nestjs/common';
+import assert from 'node:assert';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { groupementCollectiviteTable } from '@tet/backend/collectivites/shared/models/groupement-collectivite.table';
 import { createGroupement } from '@tet/backend/collectivites/shared/models/groupement.test-fixture';
@@ -594,7 +595,7 @@ describe('Ajout transactionnel des liens d’un indicateur', () => {
           )
         ).success
       ).toBe(true);
-      const createdId = await app
+      const created = await app
         .get(CreateIndicateurService)
         .createIndicateurPerso(
           createIndicateurInputSchema.parse({
@@ -603,6 +604,8 @@ describe('Ajout transactionnel des liens d’un indicateur', () => {
           }),
           { user: context.user, tx }
         );
+      assert(created.success);
+      const createdId = created.data;
       indicateurIds.push(createdId);
       return service.addLinks(
         {

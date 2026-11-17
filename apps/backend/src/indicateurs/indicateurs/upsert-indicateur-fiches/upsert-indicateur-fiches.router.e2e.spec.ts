@@ -215,7 +215,7 @@ describe('indicateurs.indicateurs.update (fiches)', () => {
         collectiviteId: collectivite.id,
         indicateurFields: { ficheIds: [ficheId] },
       })
-    ).rejects.toMatchObject({ cause: { status: 400 } });
+    ).rejects.toMatchObject({ code: 'BAD_REQUEST' });
 
     expect(await listLinkedFicheIds(indicateurId)).toEqual([]);
   });
@@ -251,7 +251,7 @@ describe('indicateurs.indicateurs.update (fiches)', () => {
           collectiviteId: collectivite.id,
           indicateurFields: { ficheIds: [] },
         })
-      ).rejects.toMatchObject({ cause: { status: 403 } });
+      ).rejects.toMatchObject({ code: 'FORBIDDEN' });
       expect(await listLinkedFicheIds(indicateurId)).toEqual([ficheId]);
     } finally {
       await setUserCollectiviteRole(db, {

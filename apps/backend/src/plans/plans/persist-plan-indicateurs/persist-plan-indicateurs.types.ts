@@ -1,3 +1,4 @@
+import { CreateIndicateurError } from '@tet/backend/indicateurs/indicateurs/mutate-indicateur/create-indicateur.errors';
 import { CreateIndicateurInput } from '@tet/backend/indicateurs/indicateurs/mutate-indicateur/mutate-indicateur.input';
 import { IndicateurValeursError } from '@tet/backend/indicateurs/valeurs/indicateur-valeurs.errors';
 import { IndicateurValeurConflict } from '@tet/backend/indicateurs/valeurs/write-indicateur-valeurs/fill-missing-indicateur-valeurs.rules';
@@ -55,6 +56,10 @@ export type PersistPlanIndicateursOutput = {
 };
 
 export type PersistPlanIndicateursError = {
-  code: CommonError | IndicateurValeursError | 'REFERENCES_CHANGED';
+  code:
+    | CommonError
+    | CreateIndicateurError
+    | IndicateurValeursError
+    | 'REFERENCES_CHANGED';
   sourceKey?: string;
 };

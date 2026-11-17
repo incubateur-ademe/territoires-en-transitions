@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { IndicateurLockRepository } from '@tet/backend/indicateurs/indicateur/indicateur-lock.repository';
 import { AddIndicateurLinksService } from '@tet/backend/indicateurs/indicateurs/add-indicateur-links/add-indicateur-links.service';
+import { CreateIndicateurError } from '@tet/backend/indicateurs/indicateurs/mutate-indicateur/create-indicateur.errors';
 import CreateIndicateurService from '@tet/backend/indicateurs/indicateurs/mutate-indicateur/create-indicateur.service';
 import { createIndicateurInputSchema } from '@tet/backend/indicateurs/indicateurs/mutate-indicateur/mutate-indicateur.input';
 import { ReconcileIndicateurValeursService } from '@tet/backend/indicateurs/valeurs/reconcile-indicateur-valeurs/reconcile-indicateur-valeurs.service';
@@ -114,11 +115,14 @@ export class PersistPlanIndicateursService {
       };
       for (const entry of input.indicateurs) {
         sourceKey = entry.sourceKey;
-        const indicateurId = await this.resolveIndicateur(
+        const resolved = await this.resolveIndicateur(
           entry,
           input.collectiviteId,
           context
         );
+        if (!resolved.success)
+          return failure([{ code: resolved.error, sourceKey }], resolved.cause);
+        const indicateurId = resolved.data;
         const targetId = this.resolveTargetId(entry, plan);
         assert(targetId !== undefined);
         const linked = await this.links.addLinks(
@@ -213,8 +217,8 @@ export class PersistPlanIndicateursService {
     entry: PersistPlanIndicateurEntry,
     collectiviteId: number,
     context: PersistPlanIndicateursContext
-  ): Promise<number> {
-    if (entry.indicateurId !== undefined) return entry.indicateurId;
+  ): Promise<Result<number, CreateIndicateurError>> {
+    if (entry.indicateurId !== undefined) return success(entry.indicateurId);
     return this.createIndicateur.createIndicateurPerso(
       createIndicateurInputSchema.parse({
         ...entry.definition,
