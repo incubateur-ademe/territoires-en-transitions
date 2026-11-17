@@ -29,8 +29,8 @@ type Props = PropsWithChildren<{
   completion: DemarchePcaetCompletion;
   activeSection: DemarcheSectionKey;
   onUpdate: (patch: DemarchePcaetUpdatePatch) => void;
-  onTransmettre: () => void;
-  onPublish: (dateAdoption: string) => void;
+  onTransmettre: () => Promise<unknown>;
+  onPublish: (dateAdoption: string) => Promise<unknown>;
 }>;
 
 /**
@@ -191,7 +191,7 @@ export const DemarcheShell = ({
         <TransmettrePourAvisModal
           onConfirm={() => {
             transmettreModale.onConfirm();
-            onTransmettre();
+            return onTransmettre();
           }}
           onClose={() => {
             transmettreModale.onClose();
@@ -205,7 +205,7 @@ export const DemarcheShell = ({
           demarcheType={demarche.type}
           onConfirm={(dateAdoption) => {
             publierModale.onConfirm();
-            onPublish(dateAdoption);
+            return onPublish(dateAdoption);
           }}
           onClose={() => {
             publierModale.onClose();
