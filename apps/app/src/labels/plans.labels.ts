@@ -64,17 +64,17 @@ export const plansLabels = {
   sousActionAjouter: 'Ajouter une sous-action',
 
   ficheStatut: 'Statut',
-  ficheJauge: 'Avancement',
+  ficheJauge: 'Progression',
   ficheJaugeNonRenseignee: '–\u00a0%',
   ficheJaugeInfo: "À 100 %, l'action passe automatiquement au statut",
-  ficheJaugeFigeeTitre: 'Avancement figé',
+  ficheJaugeFigeeTitre: 'Progression figée',
   ficheJaugeFigee: {
     Abandonné:
-      "L'action est abandonnée. Pour modifier son avancement, changez d'abord son statut.",
+      "L'action est abandonnée. Pour modifier sa progression, changez d'abord son statut.",
     'En pause':
-      "L'action est en pause. Pour modifier son avancement, changez d'abord son statut.",
+      "L'action est en pause. Pour modifier sa progression, changez d'abord son statut.",
     Bloqué:
-      "L'action est bloquée. Pour modifier son avancement, changez d'abord son statut.",
+      "L'action est bloquée. Pour modifier sa progression, changez d'abord son statut.",
   } satisfies Record<StatutFigeantJauge, string>,
   ficheJaugeSousActionsRealisees: ({
     realisees,
@@ -408,7 +408,7 @@ export const plansLabels = {
   planImporteValidationErreur: 'La validation du plan a échoué',
 
   planOngletPilotage: 'Plan',
-  planOngletSuivi: 'Avancement',
+  planOngletSuivi: 'Progression',
   suiviPlanACeJour: 'à ce jour',
   planFiltreSuivi: 'Suivi',
   suiviPlanFiltresBloc: "Les filtres s'appliquent uniquement à cette section",
@@ -419,9 +419,9 @@ export const plansLabels = {
   suiviPlanExporterExcel: 'Télécharger les données (Excel)',
   suiviPlanNbActions: plural({ one: 'action', other: 'actions' }),
   suiviPlanAvancementInfoPlan:
-    "Moyenne de l'avancement de toutes les actions qui composent le plan, calculé à partir de leur statut et de leur jauge :",
+    'Moyenne de la progression de toutes les actions qui composent le plan, calculée à partir de leur statut et de leur jauge :',
   suiviPlanAvancementInfoAxe:
-    "Moyenne de l'avancement de toutes les actions qui composent l'axe ou le sous-axe, calculé à partir de leur statut et de leur jauge :",
+    "Moyenne de la progression de toutes les actions qui composent l'axe ou le sous-axe, calculée à partir de leur statut et de leur jauge :",
   suiviPlanAvancementInfoRegles: [
     { statut: 'Réalisé', valeur: ' = 100\u00a0%' },
     { statut: 'À venir', valeur: ' = 0\u00a0%' },
@@ -433,7 +433,7 @@ export const plansLabels = {
   suiviPlanAvancementInfoExclusions:
     'Les actions abandonnées sont exclues. Les jauges peuvent être impactées par le fait que des actions soient récurrentes.',
   vueEnsembleTitre: "Vue d'ensemble",
-  vueEnsembleAvancement: 'Avancement du plan',
+  vueEnsembleAvancement: 'Progression du plan',
   vueEnsembleBaseCalcul: ({
     total,
     abandonnees,
@@ -447,8 +447,8 @@ export const plansLabels = {
   vueEnsembleEnCoursSansAvancement: (count: number): string =>
     `${count} ${
       count > 1
-        ? 'actions en cours sans avancement renseigné, comptées'
-        : 'action en cours sans avancement renseigné, comptée'
+        ? 'actions en cours sans progression renseignée, comptées'
+        : 'action en cours sans progression renseignée, comptée'
     } à 0 %.`,
   vueEnsembleRepartitionParStatut: 'Répartition par statut',
   vueEnsembleRepartitionInfo:
@@ -456,7 +456,7 @@ export const plansLabels = {
   vueEnsembleTrancher: 'Trancher',
   vueEnsembleArbitrer: 'Arbitrer',
   vueEnsembleDebloquer: 'Débloquer',
-  avancementParAxeTitre: 'Avancement par axe',
+  avancementParAxeTitre: 'Progression par axe',
   avancementParAxeRealisees: plural({ one: 'réalisée', other: 'réalisées' }),
   avancementParAxeAfficherSousAxes: 'Afficher les sous-axes',
   avancementParAxeMasquerSousAxes: 'Masquer les sous-axes',
@@ -522,24 +522,24 @@ export const plansLabels = {
     'Certaines actions pourraient impacter négativement le suivi. Les traiter rend les chiffres ci-dessus fiables',
   faireAvancerLePlanNonExporte: "Non inclus dans l'export",
   faireAvancerLePlanVoirLesActions: 'Voir les actions',
-  faireAvancerLePlanRenseignerAvancement: "Renseigner l'avancement",
+  faireAvancerLePlanRenseignerAvancement: 'Renseigner la progression',
   renseignerAvancementSousTitre:
     "Actions « En cours » dont la jauge n'a jamais été renseignée",
   renseignerAvancementMiseAJour: (date: string): string =>
     `dernière mise à jour le ${date}`,
   renseignerAvancementAucuneAction: 'Aucune action à renseigner.',
   renseignerAvancementJauge: (titre: string): string =>
-    `Avancement de ${titre}`,
+    `Progression de ${titre}`,
   faireAvancerLePlanEnCoursSansAvancement: (count: number): string =>
     `${
       count > 1 ? 'actions' : 'action'
-    } « En cours » sans avancement renseigné`,
+    } « En cours » sans progression renseignée`,
   faireAvancerLePlanEnCoursSansAvancementInfo:
-    "Une action « En cours » sans avancement compte pour 0 % dans l'avancement du plan.",
+    'Une action « En cours » sans progression compte pour 0 % dans la progression du plan.',
   faireAvancerLePlanNonModifiees: (count: number): string =>
     `${count > 1 ? 'actions' : 'action'} sans mise à jour depuis plus d'un an`,
   faireAvancerLePlanNonModifieesInfo:
-    "Elles n'ont peut-être plus un statut ou un avancement à jour. Hors actions réalisées, abandonnées, en pause ou bloquées.",
+    "Elles n'ont peut-être plus un statut ou une progression à jour. Hors actions réalisées, abandonnées, en pause ou bloquées.",
   faireAvancerLePlanADecider: (count: number): string =>
     `${count > 1 ? 'actions' : 'action'} en retard, ${
       count > 1 ? 'bloquées' : 'bloquée'

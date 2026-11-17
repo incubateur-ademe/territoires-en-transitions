@@ -78,7 +78,7 @@ export const ficheSchema = z.object({
     .nullable()
     .describe('Budget prévisionnel total'),
   statut: z.enum(statutEnumValues).nullable().describe('Statut'),
-  jauge: z.number().int().describe('Avancement'),
+  jauge: z.number().int().describe('Progression'),
   priorite: z.enum(prioriteEnumValues).nullable().describe('Priorité'),
   dateDebut: z.string().nullable().describe('Date de début'),
   dateFin: z.string().nullable().describe('Date de fin prévisionnelle'),

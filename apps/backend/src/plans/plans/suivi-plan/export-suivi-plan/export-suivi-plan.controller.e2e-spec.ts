@@ -178,10 +178,10 @@ describe('Suivi du plan : exports Excel', () => {
       ['Thématiques', 'Toutes'],
       ['Exporté le', AUJOURDHUI_FR],
       [],
-      ['Avancement du plan', 0.38],
+      ['Progression du plan', 0.38],
       ['Nombre de fiches', 5],
       ['Dont abandonnées', 1],
-      ['En cours sans avancement renseigné', 1],
+      ['En cours sans progression renseignée', 1],
       [],
       ['Statut', 'Nombre de fiches'],
       ['À venir', 1],
@@ -207,10 +207,10 @@ describe('Suivi du plan : exports Excel', () => {
       ['Thématiques', thematique.nom],
       ['Exporté le', AUJOURDHUI_FR],
       [],
-      ['Avancement du plan', 1],
+      ['Progression du plan', 1],
       ['Nombre de fiches', 1],
       ['Dont abandonnées', 0],
-      ['En cours sans avancement renseigné', 0],
+      ['En cours sans progression renseignée', 0],
     ]);
   });
 
@@ -220,11 +220,11 @@ describe('Suivi du plan : exports Excel', () => {
     );
 
     expect(getFilename(response)).toBe(
-      `Suivi_Plan export_Avancement par axe_${AUJOURDHUI}.xlsx`
+      `Suivi_Plan export_Progression par axe_${AUJOURDHUI}.xlsx`
     );
     expect((await readRows(response.body)).slice(4)).toEqual([
       [],
-      ['Axe', 'Avancement', 'Nombre de fiches', 'Fiches réalisées'],
+      ['Axe', 'Progression', 'Nombre de fiches', 'Fiches réalisées'],
       ['Axe A', 0.75, 2, 1],
       ['Sous-axe A1', 1, 1, 1],
       ['Axe B', 0, 3, 0],
@@ -292,10 +292,10 @@ describe('Suivi du plan : exports Excel', () => {
       ['Suivi', 'En cours à jauge 0 %'],
       ['Exporté le', AUJOURDHUI_FR],
       [],
-      ['Avancement du plan', 0],
+      ['Progression du plan', 0],
       ['Nombre de fiches', 1],
       ['Dont abandonnées', 0],
-      ['En cours sans avancement renseigné', 1],
+      ['En cours sans progression renseignée', 1],
     ]);
   });
 
@@ -309,7 +309,7 @@ describe('Suivi du plan : exports Excel', () => {
       ['Statut', 'Réalisé'],
       ['Exporté le', AUJOURDHUI_FR],
       [],
-      ['Axe', 'Avancement', 'Nombre de fiches', 'Fiches réalisées'],
+      ['Axe', 'Progression', 'Nombre de fiches', 'Fiches réalisées'],
       ['Axe A', 1, 1, 1],
       ['Sous-axe A1', 1, 1, 1],
       ['Axe B', 0, 0, 0],

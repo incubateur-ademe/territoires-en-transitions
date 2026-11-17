@@ -278,7 +278,7 @@ describe('Mise à jour de la jauge et du statut d’une fiche', () => {
       await expect(updateFiche(ficheId, { jauge })).rejects.toMatchObject({
         code: 'BAD_REQUEST',
         message:
-          "L'avancement doit être compris entre 0 et 100 %, par pas de 5 %",
+          'La progression doit être comprise entre 0 et 100 %, par pas de 5 %',
       });
       expect((await getFiche(ficheId)).jauge).toBe(20);
     });
@@ -292,7 +292,7 @@ describe('Mise à jour de la jauge et du statut d’une fiche', () => {
           {
             code: 'BAD_REQUEST',
             message:
-              "L'avancement d'une action abandonnée, en pause ou bloquée ne peut pas être modifié",
+              "La progression d'une action abandonnée, en pause ou bloquée ne peut pas être modifiée",
           }
         );
         expect((await getFiche(ficheId)).jauge).toBe(30);
@@ -332,7 +332,7 @@ describe('Mise à jour de la jauge et du statut d’une fiche', () => {
         updateFiche(sousActionId, { jauge: 50 })
       ).rejects.toMatchObject({
         code: 'BAD_REQUEST',
-        message: "Une sous-action n'a pas d'avancement",
+        message: "Une sous-action n'a pas de progression",
       });
     });
 

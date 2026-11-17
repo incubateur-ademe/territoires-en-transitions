@@ -40,7 +40,7 @@ export const updateFicheErrorConfig: TrpcErrorHandlerConfig<SpecificError> = {
     PARENT_COLLECTIVITE_MISMATCH: {
       code: 'BAD_REQUEST',
       message:
-        "La sous-action doit appartenir à la même collectivité que la fiche parente",
+        'La sous-action doit appartenir à la même collectivité que la fiche parente',
     },
     FICHE_NOT_FOUND: {
       code: 'NOT_FOUND',
@@ -67,16 +67,16 @@ export const updateFicheErrorConfig: TrpcErrorHandlerConfig<SpecificError> = {
     JAUGE_INVALIDE: {
       code: 'BAD_REQUEST',
       message:
-        "L'avancement doit être compris entre 0 et 100 %, par pas de 5 %",
+        'La progression doit être comprise entre 0 et 100 %, par pas de 5 %',
     },
     JAUGE_FIGEE: {
       code: 'BAD_REQUEST',
       message:
-        "L'avancement d'une action abandonnée, en pause ou bloquée ne peut pas être modifié",
+        "La progression d'une action abandonnée, en pause ou bloquée ne peut pas être modifiée",
     },
     SOUS_ACTION_SANS_JAUGE: {
       code: 'BAD_REQUEST',
-      message: "Une sous-action n'a pas d'avancement",
+      message: "Une sous-action n'a pas de progression",
     },
     ...referentielNotWritableTrpcErrorEntry,
     ...collectivitePreferencesTrpcErrorEntries,
