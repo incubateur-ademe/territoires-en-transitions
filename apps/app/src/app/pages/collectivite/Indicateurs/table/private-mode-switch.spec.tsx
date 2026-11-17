@@ -1,26 +1,35 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import type { IndicateurDetaille } from '@tet/domain/indicateurs';
 import { describe, expect, it, vi } from 'vitest';
-import { IndicateurDefinitionProvider } from '../detail/indicateur-definition.context';
+import type { IndicateurChartInfo } from '../data/use-indicateur-chart';
+import {
+  IndicateurActionsProvider,
+  type IndicateurActionsValue,
+} from '../detail/indicateur-actions.context';
+import { IndicateurDataProvider } from '../detail/indicateur-data.context';
 import { PrivateModeSwitch } from './private-mode-switch';
 
 const indicateur = { id: 1, estConfidentiel: false } as IndicateurDetaille;
+const chartInfo = {} as IndicateurChartInfo;
 
 describe('PrivateModeSwitch', () => {
-  it('lit l’indicateur et délègue la mise à jour au contexte de définition injecté', () => {
+  it('lit l’indicateur et délègue la mise à jour au contexte d’actions injecté', () => {
     const updateIndicateur = vi.fn();
+    const actions = { updateIndicateur } as unknown as IndicateurActionsValue;
 
     render(
-      <IndicateurDefinitionProvider
+      <IndicateurDataProvider
         value={{
           indicateur,
-          updateIndicateur,
+          chartInfo,
           canMutateIndicateur: true,
           canMutateValeur: true,
         }}
       >
-        <PrivateModeSwitch />
-      </IndicateurDefinitionProvider>
+        <IndicateurActionsProvider value={actions}>
+          <PrivateModeSwitch />
+        </IndicateurActionsProvider>
+      </IndicateurDataProvider>
     );
     fireEvent.click(screen.getByRole('checkbox'));
 

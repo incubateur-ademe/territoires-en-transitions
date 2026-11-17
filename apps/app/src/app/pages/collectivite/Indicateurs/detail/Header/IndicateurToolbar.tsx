@@ -1,5 +1,4 @@
 import { appLabels } from '@/app/labels/catalog';
-import { useIndicateurDefinition } from '../indicateur-definition.context';
 import { ActivityLogModal } from '@/app/ui/shared/activity-log.modal';
 import { PermissionOperation } from '@tet/domain/users';
 import { Button, ButtonMenu, cn, MenuAction, Tooltip } from '@tet/ui';
@@ -8,6 +7,7 @@ import { DeleteIndicateurConfirmModal } from '@/app/indicateurs/indicateurs/dele
 import { IndicateurChartPngExport } from '../../chart/indicateur-chart.png-export';
 import { IndicateurChartInfo } from '../../data/use-indicateur-chart';
 import { useIndicateurActions } from '../indicateur-actions.context';
+import { useIndicateurData } from '../indicateur-data.context';
 
 type ModalType = 'activityLog' | 'deleting' | 'none';
 
@@ -28,9 +28,10 @@ const IndicateurToolbar = ({
   const [isExportingPng, setIsExportingPng] = useState(false);
   const closeModal = () => setCurrentModal('none');
 
-  const { exportIndicateur, deleteIndicateur } = useIndicateurActions();
+  const { updateIndicateur, exportIndicateur, deleteIndicateur } =
+    useIndicateurActions();
 
-  const { indicateur, updateIndicateur } = useIndicateurDefinition();
+  const { indicateur } = useIndicateurData();
   const { estFavori } = indicateur;
 
   const actions: MenuAction[] = [

@@ -5,8 +5,8 @@ import {
 } from '@tet/domain/indicateurs';
 import type { OpenState } from '@tet/ui/utils/types';
 import { useState, type ReactNode } from 'react';
-import { useIndicateurValeurs } from '../detail/indicateur-valeurs.context';
 import { AddIndicateurPeriodeHeader } from './add-indicateur-periode.header';
+import { useIndicateurActions } from '../detail/indicateur-actions.context';
 
 export type IndicateurTableDeclarationProps = {
   canWrite: boolean;
@@ -28,7 +28,7 @@ export const useIndicateurTableDeclaration = ({
   openModalState,
 }: IndicateurTableDeclarationProps): IndicateurTableDeclaration => {
   const [periodeToReveal, setPeriodeToReveal] = useState<IndicateurPeriode>();
-  const { declarePeriode } = useIndicateurValeurs();
+  const { declarePeriode } = useIndicateurActions();
   const existingKeys = new Set(existingPeriodes.map(IndicateurPeriodes.key));
 
   const addPeriode = async (

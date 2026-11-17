@@ -11,9 +11,6 @@ import {
   prepareIndicateurPeriodeData,
   type IndicateurPeriodeValue,
 } from '../data/prepare-indicateur-periode-data';
-import { useIndicateurChart } from '../detail/indicateur-chart.context';
-import { useIndicateurDefinition } from '../detail/indicateur-definition.context';
-import { useIndicateurValeurs } from '../detail/indicateur-valeurs.context';
 import { ConfirmDelete } from './confirm-delete';
 import { EditCommentaireModal } from './edit-commentaire-modal';
 import { AddIndicateurPeriodesModal } from './add-indicateur-periodes.modal';
@@ -21,6 +18,8 @@ import { useIndicateurTableDeclaration } from './use-indicateur-table-declaratio
 import { shouldConfirmValueDeletion } from './indicateur-valeur-deletion.rules';
 import { IndicateurValeursTable } from './indicateur-valeurs-table';
 import { PrivateModeSwitch } from './private-mode-switch';
+import { useIndicateurData } from '../detail/indicateur-data.context';
+import { useIndicateurActions } from '../detail/indicateur-actions.context';
 
 type IndicateurTableProps = {
   readonly?: boolean;
@@ -33,8 +32,7 @@ export const IndicateurTable = ({
   confidentiel,
   openModalState,
 }: IndicateurTableProps) => {
-  const { indicateur } = useIndicateurDefinition();
-  const { chartInfo } = useIndicateurChart();
+  const { indicateur, chartInfo } = useIndicateurData();
   const resultats = prepareIndicateurPeriodeData(
     chartInfo.data.valeurs.resultats
   );
@@ -53,7 +51,7 @@ export const IndicateurTable = ({
     periode: IndicateurPeriode;
     commentaires: { resultat: string; objectif: string };
   } | null>(null);
-  const { saveValeur, declarePeriodes, deleteValeur } = useIndicateurValeurs();
+  const { saveValeur, declarePeriodes, deleteValeur } = useIndicateurActions();
   const canWrite =
     !readonly &&
     !indicateur.sansValeurUtilisateur &&
