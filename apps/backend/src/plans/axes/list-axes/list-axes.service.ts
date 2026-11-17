@@ -1,12 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
-import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
+import CollectivitesService, {
+  type GetCollectiviteError,
+} from '@tet/backend/collectivites/services/collectivites.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
-import { Result, getDataOrThrow } from '@tet/backend/utils/result.type';
+import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { PlanNode } from '@tet/domain/plans';
 import { ResourceType } from '@tet/domain/users';
-import { ListAxesError, ListAxesErrorEnum } from './list-axes.errors';
+import { ListAxesError } from './list-axes.errors';
 import { ListAxesInput } from './list-axes.input';
 import { ListAxesOutput, ListAxesRepository } from './list-axes.repository';
 
@@ -28,11 +30,8 @@ export class ListAxesService {
       input.collectiviteId,
       user
     );
-    if (!permissionResult) {
-      return {
-        success: false,
-        error: ListAxesErrorEnum.UNAUTHORIZED,
-      };
+    if (!permissionResult.success) {
+      return permissionResult;
     }
 
     return this.listAxesRepository.listChildren(input, tx);
@@ -46,11 +45,8 @@ export class ListAxesService {
       input.collectiviteId,
       user
     );
-    if (!permissionResult) {
-      return {
-        success: false,
-        error: ListAxesErrorEnum.UNAUTHORIZED,
-      };
+    if (!permissionResult.success) {
+      return permissionResult;
     }
 
     return this.listAxesRepository.listChildrenRecursively(input, tx);
@@ -59,10 +55,14 @@ export class ListAxesService {
   private async checkPermission(
     collectiviteId: number,
     user: AuthenticatedUser
-  ): Promise<boolean> {
-    const collectivitePrivate = getDataOrThrow(
-      await this.collectivite.isPrivate(collectiviteId)
+  ): Promise<Result<void, 'UNAUTHORIZED' | GetCollectiviteError>> {
+    const collectivitePrivateResult = await this.collectivite.isPrivate(
+      collectiviteId
     );
+    if (!collectivitePrivateResult.success) {
+      return collectivitePrivateResult;
+    }
+    const collectivitePrivate = collectivitePrivateResult.data;
 
     const permissionResult = await this.permissionService.isAllowed(
       user,
@@ -75,8 +75,9 @@ export class ListAxesService {
       this.logger.log(
         `User ${user.id} is not allowed to list axes for collectivité ${collectiviteId}`
       );
+      return failure('UNAUTHORIZED');
     }
 
-    return permissionResult.success;
+    return success(undefined);
   }
 }

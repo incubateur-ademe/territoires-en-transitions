@@ -6,7 +6,7 @@ import { ListAxesService } from '../../axes/list-axes/list-axes.service';
 import { ListFichesBelongingToPlansRepository } from '../../fiches/list-fiches/list-fiches-belonging-to-plans.repository';
 import { GetPlanRepository } from '../get-plan/get-plan.repository';
 import { GetPlanService } from '../get-plan/get-plan.service';
-import { ListPlansError, ListPlansErrorEnum } from './list-plans.errors';
+import { ListPlansError } from './list-plans.errors';
 import { ListPlansInput } from './list-plans.input';
 import { ListPlansOutput } from './list-plans.output';
 import { ListPlansRepository } from './list-plans.repository';
@@ -27,15 +27,12 @@ export class ListPlansService {
     input: ListPlansInput,
     { user, tx }: ServiceSecondArg
   ): Promise<Result<ListPlansOutput, ListPlansError>> {
-    const isAllowed = await this.getPlanService.checkPermission(
+    const permissionResult = await this.getPlanService.checkPermission(
       input.collectiviteId,
       user
     );
-    if (!isAllowed) {
-      return {
-        success: false,
-        error: ListPlansErrorEnum.UNAUTHORIZED,
-      };
+    if (!permissionResult.success) {
+      return permissionResult;
     }
 
     const listResult = await this.listPlansRepository.listPlans(input, tx);

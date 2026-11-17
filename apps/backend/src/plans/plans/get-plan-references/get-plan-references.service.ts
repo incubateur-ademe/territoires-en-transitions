@@ -47,14 +47,19 @@ export class GetPlanReferencesService {
   ): Promise<Result<PlanReferences, PlanError>> {
     const plan = await this.getPlanRepository.lockPlan(planId, 'share', tx);
     if (!plan) return failure(PlanErrorType.PLAN_NOT_FOUND);
-    if (
-      !(await this.getPlanService.checkPermission(
-        plan.collectiviteId,
-        user,
-        tx
-      ))
-    ) {
-      return failure(PlanErrorType.UNAUTHORIZED);
+    const permissionResult = await this.getPlanService.checkPermission(
+      plan.collectiviteId,
+      user,
+      tx
+    );
+    if (!permissionResult.success) {
+      // Le plan existe, donc sa collectivité aussi : seul un refus ou une panne reste.
+      return failure(
+        permissionResult.error === 'UNAUTHORIZED'
+          ? PlanErrorType.UNAUTHORIZED
+          : PlanErrorType.DATABASE_ERROR,
+        permissionResult.cause
+      );
     }
 
     const axes = await tx
