@@ -351,6 +351,12 @@ des définitions annuelles et la recette en préproduction restent à vérifier.
       scénarios Playwright existants (capacités absentes/désactivées,
       retrait du mode super-admin et suivi après fermeture).
 
+- [x] Étendre l'exception super-admin à l'absence de liste publiée, sans
+      contourner une publication invalide ou une panne de stockage. Tracer le
+      rôle dans la décision d'admission, sans source ni version fictive.
+- [ ] Vérifier cette extension dans les e2e d'éligibilité et le parcours complet
+      existants avec faux LLM, puis la déployer pour débloquer la recette sans liste.
+
 **Correction CI du 13 novembre :** les deux assertions de finalisation
 générique utilisent désormais le contrat `{ planId, requiresVerification }`,
 avec vérification humaine requise. Les 35 tests existants du service et le
@@ -948,6 +954,8 @@ admise dans le mapping, ou sur une collectivité lauréate. Depuis la décision
 du 13 novembre, le mode super-admin actif autorise aussi l'import pour une
 collectivité hors liste, sans la déclarer lauréate. Le flag et les validations
 restent requis ; une session ordinaire reste soumise à la liste.
+L'ajustement du 17 novembre permet aussi cette recette sans liste publiée,
+avec une décision super-admin tracée et un catalogue publié valide.
 
 Le flag couvre création manuelle, import Excel, duplication, changement vers
 le type Électrification et nouveaux imports dédiés. Son activation explicite

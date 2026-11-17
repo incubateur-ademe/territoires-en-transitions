@@ -204,6 +204,10 @@ le fait pas passer à la version corrigée.
 
 L'éligibilité suit la liste courante des lauréats, y compris lors d'une reprise.
 Le job conserve néanmoins la provenance de sa décision d'admission initiale.
+L'ajustement du 17 novembre de l'[ADR 0022](0022-initialiser-plan-electrification-depuis-annexe-3.md)
+autorise aussi le mode super-admin actif sans publication de la liste. Cette
+exception est tracée sans source ni version fictive ; les données invalides
+ou illisibles restent bloquantes et le catalogue publié reste obligatoire.
 
 **Organisation des configurations — décision du 12 novembre 2026.** Les paramètres
 Grist, les noms de stockage et les correspondances TeT initiales ont été regroupés
@@ -236,8 +240,9 @@ aux jobs conservés doivent rester disponibles : exporter celles déjà publiée
 ou sauvegarder le catalogue du commit B réellement déployé avant sa bascule.
 Le Grist courant et les fixtures ne peuvent pas remplacer ce contenu historique.
 Une donnée absente ou illisible bloque le parcours concerné avec un diagnostic
-de configuration. La recette hors liste utilise le mode super-admin actif,
-sans variante contenant de faux lauréats.
+de configuration, sauf l'absence de liste des lauréats pour une session
+super-admin active selon l'ajustement du 17 novembre ci-dessus. La recette
+hors liste ne nécessite aucune variante contenant de faux lauréats.
 
 La bascule initiale ferme temporairement le flag de création Électrification,
 laisse les anciens workers terminer les jobs en attente, en cours et leurs

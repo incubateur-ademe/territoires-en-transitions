@@ -42,7 +42,7 @@ import {
   ElectrificationLaureatsConfig,
   PlanStatusEnum,
 } from '@tet/domain/plans';
-import { CollectiviteRole } from '@tet/domain/users';
+import { CollectiviteRole, PlatformRole } from '@tet/domain/users';
 import { and, eq, inArray, or, sql } from 'drizzle-orm';
 import assert from 'node:assert';
 import { randomUUID } from 'node:crypto';
@@ -371,8 +371,11 @@ describe(
       await app.close();
     });
 
-    test('importe pour un non-lauréat en mode super-admin, sans changer la liste des lauréats', async () => {
+    test('importe sans liste publiée en mode super-admin, avec le flag et un catalogue valide', async () => {
       laureats.laureats = [];
+      vi.spyOn(data, 'getLaureats').mockResolvedValue(
+        failure('DATA_UNAVAILABLE')
+      );
       const requester = getAuthUserFromUserCredentials(support.user);
       const isProfileAvailable = async (requester: ReturnType<typeof user>) => {
         const { profiles } = await router
@@ -390,6 +393,11 @@ describe(
       expect(await isProfileAvailable(requester)).toBe(false);
       flagEnabled = true;
 
+      vi.spyOn(data, 'getCatalogue').mockResolvedValueOnce(
+        failure('DATA_UNAVAILABLE')
+      );
+      expect(await isProfileAvailable(requester)).toBe(false);
+
       const jobId = await enqueue({}, requester);
       await worker.generate(jobId);
 
@@ -400,10 +408,42 @@ describe(
       expect((await readJob(jobId)).options.eligibility).toMatchObject({
         eligible: true,
         laureatReference: null,
+        provenance: {
+          role: PlatformRole.SUPER_ADMIN,
+          checkedAt: expect.any(String),
+        },
       });
       expect(laureats.laureats).toEqual([]);
       expect(llm.complete).not.toHaveBeenCalled();
       expect(llm.chat).not.toHaveBeenCalled();
+    });
+
+    test("sans liste publiée, retire l'exception si le mode super-admin est désactivé après admission", async () => {
+      vi.spyOn(data, 'getLaureats').mockResolvedValue(
+        failure('DATA_UNAVAILABLE')
+      );
+      const requester = getAuthUserFromUserCredentials(support.user);
+      const caller = router.createCaller({ user: requester });
+      const jobId = await enqueue({}, requester);
+      await caller.users.authorizations.toggleSuperAdminRole({
+        isEnabled: false,
+      });
+      try {
+        await worker.generate(jobId);
+
+        expect(await readJob(jobId)).toMatchObject({
+          status: 'failed',
+          createdPlanId: null,
+        });
+        expect(await readAxes()).toEqual([]);
+        expect(await readFiches()).toEqual([]);
+        expect(llm.complete).not.toHaveBeenCalled();
+        expect(llm.chat).not.toHaveBeenCalled();
+      } finally {
+        await caller.users.authorizations.toggleSuperAdminRole({
+          isEnabled: true,
+        });
+      }
     });
 
     test('importe les engagements sans cible et les compléments disponibles du catalogue malgré les autres correspondances en attente', async () => {

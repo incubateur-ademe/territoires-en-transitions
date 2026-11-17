@@ -15,10 +15,13 @@ const inputSchema = z.strictObject({ collectiviteId: z.int().positive() });
 export type ElectrificationEligibilityDecision = {
   eligible: boolean;
   laureatReference: string | null;
-  provenance: Pick<
-    ElectrificationLaureatsConfig,
-    'source' | 'version' | 'validFrom' | 'validUntil'
-  > & { checkedAt: string };
+  provenance: (
+    | Pick<
+        ElectrificationLaureatsConfig,
+        'source' | 'version' | 'validFrom' | 'validUntil'
+      >
+    | { role: typeof PlatformRole.SUPER_ADMIN }
+  ) & { checkedAt: string };
 };
 
 /** Vérification métier uniquement ; ne sélectionne pas le groupe de déploiement. */
@@ -54,6 +57,21 @@ export class CheckElectrificationEligibilityService {
     // La publication manquante ne bloque ni le démarrage ni l'import générique.
     const config = await this.data.getLaureats();
     if (!config.success) {
+      // Une absence de publication autorise la recette, pas une liste corrompue
+      // ou une panne de stockage. Aucun rattachement lauréat n'est inventé.
+      if (
+        config.error === 'DATA_UNAVAILABLE' &&
+        (await this.canImportNonLaureat({ user, tx }))
+      ) {
+        return success({
+          eligible: true,
+          laureatReference: null,
+          provenance: {
+            role: PlatformRole.SUPER_ADMIN,
+            checkedAt: new Date(Date.now()).toISOString(),
+          },
+        });
+      }
       return failure(
         config.error === 'INVALID_DATA'
           ? 'INVALID_ELECTRIFICATION_LAUREATS_CONFIG'
