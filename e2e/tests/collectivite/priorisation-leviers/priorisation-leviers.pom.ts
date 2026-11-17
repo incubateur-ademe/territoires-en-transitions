@@ -79,10 +79,6 @@ export class PriorisationLeviersPom {
       .locator('xpath=preceding-sibling::span[1]');
   }
 
-  get analyzedActionsText(): Locator {
-    return this.page.getByText(/^Analyse de \d+ actions?\b/);
-  }
-
   get trajectoireNonDisponibleMessage(): Locator {
     return this.page.getByText(
       "La trajectoire SNBC n'est pas disponible pour votre collectivité"

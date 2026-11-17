@@ -1,7 +1,6 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
-import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
 import { BetaLabel } from '@/app/ui/beta.label';
 import type { MatrixAnchor } from '@/app/ui/charts/matrix/matrix.chart';
 import { LoadingStatus } from '@/app/ui/shared/loading-status';
@@ -55,11 +54,9 @@ import {
   useLevierSidePanel,
 } from './levier-panel/use-levier-side-panel';
 import { LeviersWithoutPotentielList } from './leviers-without-potentiel.list';
-import {
-  PriorisationAnalyse,
-  PriorisationSummary,
-} from './priorisation.summary';
+import { PriorisationSummary } from './priorisation.summary';
 import { PriorisationBlockedCard } from './priorisation-blocked.card';
+import { PriorisationDescription } from './priorisation-description';
 import { SelectLevier } from './select-levier';
 import { LevierNudge, useLevierNudge } from './use-levier-nudge';
 import { useLeviersViewWithTour } from './use-leviers-view-with-tour';
@@ -395,7 +392,6 @@ export const PriorisationLeviersView = (): JSX.Element => {
   const leviersQuery = useLeviersPriorisation();
   const upsertPertinence = useUpsertPertinence();
   const preselection = usePreselection();
-  const plansQuery = useListPlans(collectiviteId, { limit: 1 });
   const { leviers, places, levierToPrioritizeId } =
     useLeviersPlaces(leviersQuery);
   const levierSidePanel = useLevierSidePanel({
@@ -417,7 +413,6 @@ export const PriorisationLeviersView = (): JSX.Element => {
     },
   });
   const isTourReady = isPriorisationOpen && preselection.isReady;
-  const isAnalysisSubtitleVisible = isPriorisationOpen && !plansQuery.isLoading;
   const { Tour, view, setView, restartOnMatrix, isTourOver } =
     useLeviersViewWithTour({
       isTourReady: isTourReady && !isLevierRequestedByUrl,
@@ -432,7 +427,7 @@ export const PriorisationLeviersView = (): JSX.Element => {
       {Tour}
       <PageHeader>
         <PageHeader.Title>
-          <BetaLabel>{appLabels.priorisationLeviersTitre}</BetaLabel>
+          <BetaLabel>{appLabels.priorisationLeviersPageTitre}</BetaLabel>
         </PageHeader.Title>
         <PageHeader.Actions>
           <div className="flex flex-wrap gap-4">
@@ -458,12 +453,9 @@ export const PriorisationLeviersView = (): JSX.Element => {
             </VisibleWhen>
           </div>
         </PageHeader.Actions>
-        {isAnalysisSubtitleVisible && (
+        {isPriorisationOpen && (
           <PageHeader.Subtitle>
-            <PriorisationAnalyse
-              actionsCount={leviersQuery.analyzedFicheCount}
-              plansCount={plansQuery.totalCount}
-            />
+            <PriorisationDescription />
           </PageHeader.Subtitle>
         )}
       </PageHeader>

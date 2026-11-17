@@ -9,7 +9,7 @@ import {
 } from './priorisation-leviers.pom';
 import { PRIORISATION_TOUR_STORAGE } from './priorisation-tour.storage';
 
-const WELCOME_STEP = "Bienvenue dans l'aide à la priorisation";
+const WELCOME_STEP = 'Bienvenue : où agir pour réduire vos GES ?';
 const INTRO_STEP = 'Votre parcours en 3 étapes';
 const MATRIX_STEP = 'La matrice des leviers';
 const POINT_STEP = 'Commencez par le rouge';

@@ -5,11 +5,6 @@ import { Button } from '@tet/ui';
 import { JSX, ReactNode } from 'react';
 import { SelectLevier } from './select-levier';
 
-type PriorisationAnalyseProps = {
-  actionsCount: number;
-  plansCount: number;
-};
-
 type PriorisationSummaryProps = {
   collectiviteId: number;
   blindSpotCount: number;
@@ -41,15 +36,6 @@ const SummaryCard = ({
     {description && <p className="m-0 text-sm text-grey-8">{description}</p>}
     {children}
   </div>
-);
-
-export const PriorisationAnalyse = ({
-  actionsCount,
-  plansCount,
-}: PriorisationAnalyseProps): JSX.Element => (
-  <p className="m-0 text-grey-8">
-    {appLabels.priorisationAnalyse({ actionsCount, plansCount })}
-  </p>
 );
 
 export const PriorisationSummary = ({
