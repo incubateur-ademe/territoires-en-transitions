@@ -1,7 +1,6 @@
 import { Pertinence } from '@tet/domain/collectivites';
 import { CategorieAction, Levier } from '@tet/domain/shared';
 import { capitalize, plural } from '@tet/ui/labels/plural';
-import { compact } from 'es-toolkit';
 
 const pertinenceLabels = {
   non_pertinent: 'non pertinent',
@@ -11,29 +10,6 @@ const pertinenceLabels = {
 const restartTourLabel = 'Comment ça marche ?';
 
 const savedActionsAccessLabel = 'Voir mes actions sauvegardées';
-
-const actionsAnalyseesLabel = plural({ one: 'action', other: 'actions' });
-
-const plansAnalysesLabel = plural({ one: 'plan', other: 'plans' });
-
-const issuesLabel = plural({ one: 'issue', other: 'issues' });
-
-const actionsOriginLabel = ({
-  actionsCount,
-  plansCount,
-}: {
-  actionsCount: number;
-  plansCount: number;
-}): string => {
-  if (plansCount === 0) {
-    return '';
-  }
-  const issues = issuesLabel({ count: actionsCount, withoutCount: true });
-  if (plansCount === 1) {
-    return `${issues} de votre plan`;
-  }
-  return `${issues} de vos ${plansAnalysesLabel({ count: plansCount })}`;
-};
 
 const categorieActionLabels = {
   amenagement: 'Aménagement & infrastructures',
@@ -88,25 +64,27 @@ export const collectivitesLabels = {
     'Je suis la personne référente dans le programme Territoire Engagé Transition Ecologique',
 
   priorisationLeviersTitre: 'Aide à la priorisation',
+  priorisationLeviersPageTitre:
+    'Aide à la priorisation pour votre collectivité',
   priorisationMethodologie: 'Méthodologie',
   priorisationVisiteRelancer: restartTourLabel,
   priorisationVisiteBienvenueBadge: 'Visite guidée · 2 min',
-  priorisationVisiteBienvenueTitre: "Bienvenue dans l'aide à la priorisation",
+  priorisationVisiteBienvenueTitre: 'Bienvenue : où agir pour réduire vos GES ?',
   priorisationVisiteBienvenueDescription:
-    'En une minute, identifiez où votre collectivité peut le plus réduire ses émissions de GES, puis retenez les actions à discuter avec vos élus. Vous pourrez relancer cette visite à tout moment.',
+    'Nous analysons les actions de vos plans pour voir où vous en êtes sur chaque levier de réduction des émissions de GES. Nous vous proposons ensuite de nouvelles actions à engager, que vous gardez pour en discuter avec vos élus.',
   priorisationVisiteParcoursTitre: 'Votre parcours en 3 étapes',
   priorisationVisiteIaTitre: 'Intelligence artificielle.',
   priorisationVisiteIaDescription:
     "L'analyse est basée sur des algorithmes utilisant de l'intelligence artificielle. Les résultats de cette version alpha sont donc à prendre avec prudence.",
-  priorisationVisiteReperageTitre: 'Repérer',
+  priorisationVisiteReperageTitre: 'Situer',
   priorisationVisiteReperageDescription:
-    'Visualisez les leviers à prioriser pour votre collectivité : la zone rouge de la matrice.',
+    'Nous analysons les actions de vos plans pour vous positionner sur chaque levier. La zone rouge montre ceux à fort impact que vous travaillez encore peu.',
   priorisationVisiteExplorationTitre: 'Explorer',
   priorisationVisiteExplorationDescription:
-    'Cliquez un point pour ouvrir le levier et voir les actions de référence qui y répondent.',
+    "Pour chaque levier, nous vous proposons de nouvelles actions : cliquer un point pour l'ouvrir et voir les actions qui y répondent.",
   priorisationVisiteSauvegardeTitre: 'Sauvegarder',
   priorisationVisiteSauvegardeDescription:
-    'Sélectionnez les actions qui vous intéressent pour les sauvegarder',
+    'Gardez les actions qui vous intéressent et retrouvez-les dans votre liste.',
   priorisationVisiteMatriceTitre: 'La matrice des leviers',
   priorisationVisiteMatriceDescription:
     'Un point = un levier. Plus il est haut, plus son potentiel de réduction de GES estimé est fort ; plus il est à droite, plus vous le mobilisez déjà.',
@@ -118,7 +96,7 @@ export const collectivitesLabels = {
   priorisationVisiteOuvrirLevier: 'Ouvrir ce levier',
   priorisationVisiteDetailLevierTitre: 'Le détail du levier',
   priorisationVisiteDetailLevierDescription:
-    'Secteur, impact potentiel estimé et actions de référence, regroupées par catégorie. Si le levier ne concerne pas votre territoire, marquez-le non pertinent.',
+    'Voici les actions que nous vous proposons pour ce levier, regroupées par catégorie. Si ce levier ne concerne pas votre territoire, marquez-le non pertinent.',
   priorisationVisiteActionsTitre: 'Retenez ce qui est pertinent',
   priorisationVisiteActionsDescription: `« Sauvegarder » ajoute l'action à votre liste. « Pas intéressé » la retire des suggestions ; vous pourrez la restaurer.`,
   priorisationVisiteAideTitre: 'Retrouvez la visite ici',
@@ -199,20 +177,11 @@ export const collectivitesLabels = {
   priorisationReserveeAuxEpciTitre: 'Cette vue est réservée aux EPCI',
   priorisationReserveeAuxEpciDescription:
     "L'aide à la priorisation s'appuie sur la trajectoire SNBC, qui n'est calculée que pour les EPCI. Elle ne peut pas être affichée pour votre collectivité.",
-  priorisationAnalyse: ({
-    actionsCount,
-    plansCount,
-  }: {
-    actionsCount: number;
-    plansCount: number;
-  }): string =>
-    `${compact([
-      `Analyse de ${actionsAnalyseesLabel({ count: actionsCount })}`,
-      actionsOriginLabel({ actionsCount, plansCount }),
-    ]).join(' ')}. L'impact GES et la mobilisation sont des estimations.`,
+  priorisationDescription:
+    'Nous analysons les actions de vos plans pour situer votre collectivité sur chaque levier, puis nous vous proposons de nouvelles actions à engager pour réduire vos émissions de GES.',
 
   selectionnerUnLevier:
-    'Cliquez sur un levier de la matrice pour consulter ses actions de référence.',
+    'Cliquez sur un levier de la matrice pour voir les actions que nous vous proposons.',
   matriceDePriorisation: 'Matrice de priorisation',
   carteDesLeviers: 'Carte',
   classementSousLeviers: 'Classement',

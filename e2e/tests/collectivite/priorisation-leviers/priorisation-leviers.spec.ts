@@ -1,5 +1,4 @@
 import { expect } from '@playwright/test';
-import { LevierMobilisation } from '@tet/backend/collectivites/analysis/mobilisation.repository';
 import { LEVIER_NOM_BY_ID } from '@tet/domain/shared';
 import { CollectiviteRole } from '@tet/domain/users';
 import { test } from 'tests/main.fixture';
@@ -7,19 +6,6 @@ import { addMobilisationAvecFiche } from './priorisation-leviers.fixture';
 import { PriorisationLeviersPom } from './priorisation-leviers.pom';
 
 const LEVIER_COUNT = 29;
-
-const toMobilisationCitingInTwoLeviers = (
-  ficheId: number
-): LevierMobilisation[] => [
-  {
-    levierId: 'velo_transport_commun',
-    volets: [{ categorie: 'amenagement', note: 2, ficheIds: [ficheId] }],
-  },
-  {
-    levierId: 'covoiturage',
-    volets: [{ categorie: 'financement', note: 1, ficheIds: [ficheId] }],
-  },
-];
 
 test.describe('Priorisation des leviers', () => {
   test("sans mobilisation, un membre voit les 29 leviers et l'absence d'actions rattachées", async ({
@@ -78,52 +64,6 @@ test.describe('Priorisation des leviers', () => {
       page.getByText("Cette collectivité n'est pas accessible en mode visite.")
     ).toBeVisible();
     await expect(priorisationLeviersPom.levierButtons).toHaveCount(0);
-  });
-
-  test("un membre voit le nombre d'actions analysées, qu'elles soient rattachées à un levier ou non", async ({
-    collectivites,
-    fiches,
-    mobilisations,
-    page,
-  }) => {
-    const { collectivite, user } = await collectivites.addCollectiviteAndUser({
-      userArgs: { autoLogin: true },
-    });
-    const collectiviteId = collectivite.data.id;
-    const [
-      ficheInTwoLeviers,
-      ficheWithoutLevier,
-      ficheModifiedSinceAnalysis,
-      ficheWithFailedAnalysis,
-    ] = await fiches.create(
-      user,
-      ['Pistes cyclables', 'Fête de la ville', 'Covoiturage', 'Archives'].map(
-        (titre) => ({ titre, collectiviteId })
-      )
-    );
-    await mobilisations.add({
-      collectiviteId,
-      leviers: toMobilisationCitingInTwoLeviers(ficheInTwoLeviers),
-    });
-    await mobilisations.addFicheAnalyses({
-      collectiviteId,
-      analyses: [
-        { ficheId: ficheInTwoLeviers, status: 'processed' },
-        { ficheId: ficheWithoutLevier, status: 'processed' },
-        { ficheId: ficheModifiedSinceAnalysis, status: 'stale' },
-        { ficheId: ficheWithFailedAnalysis, status: 'failed' },
-      ],
-    });
-    const priorisationLeviersPom = new PriorisationLeviersPom(page);
-
-    await priorisationLeviersPom.goto(collectiviteId);
-
-    await expect(priorisationLeviersPom.analyzedActionsText).toContainText(
-      'Analyse de 3 actions'
-    );
-    await expect(
-      priorisationLeviersPom.missingMobilisationMessage
-    ).toBeHidden();
   });
 
   test('un membre en lecture est renvoyé vers le tableau de bord de la collectivité', async ({
