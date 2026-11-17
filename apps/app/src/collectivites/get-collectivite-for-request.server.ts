@@ -6,11 +6,10 @@ import {
 } from '@/app/demarches/pcaet/instruction/dossier-instruction-cookie';
 import { extractDossierInstructionRefFromPath } from '@/app/demarches/pcaet/instruction/dossier-instruction-path';
 import type { DossierInstructionRef } from '@/app/demarches/pcaet/instruction/dossier-instruction-ref';
-import { getMovedFicheUrl } from '@/app/plans/fiches/get-fiche/get-moved-fiche-url.server';
 import { getCollectivite } from '@tet/api/collectivites/index.server';
 import { TRPCClientError } from '@trpc/client';
 import { cookies, headers } from 'next/headers';
-import { notFound, redirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { cache } from 'react';
 
 const toIds = (dossier: DossierInstructionRef | null) => ({
@@ -44,8 +43,9 @@ export const getCollectiviteForRequest = cache(
       cookies(),
     ]);
 
-    const currentPath = requestHeaders.get('x-current-path');
-    const dossierFromPath = extractDossierInstructionRefFromPath(currentPath);
+    const dossierFromPath = extractDossierInstructionRefFromPath(
+      requestHeaders.get('x-current-path')
+    );
     const rememberedDossier = dossierFromPath
       ? null
       : parseDossierInstructionCookie(
@@ -63,19 +63,12 @@ export const getCollectiviteForRequest = cache(
       );
     } catch (error) {
       if (
-        !(error instanceof TRPCClientError && error.data?.code === 'NOT_FOUND')
+        error instanceof TRPCClientError &&
+        error.data?.code === 'NOT_FOUND'
       ) {
-        throw error;
+        notFound();
       }
-
-      // Le layout de collectivité est résolu avant celui de la fiche : traiter
-      // ici ses anciens liens, sans modifier ceux des collectivités existantes
-      // qui peuvent consulter des fiches partagées.
-      const movedFicheUrl = await getMovedFicheUrl(collectiviteId, currentPath);
-      if (movedFicheUrl) {
-        redirect(movedFicheUrl);
-      }
-      notFound();
+      throw error;
     }
 
     // Un dossier mémorisé qui ne résout plus rien (saisine close, droits

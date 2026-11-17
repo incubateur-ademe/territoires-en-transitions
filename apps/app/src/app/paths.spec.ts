@@ -1,7 +1,6 @@
 import { ActionTypeEnum, type ActionType } from '@tet/domain/referentiels';
 import {
   makeCollectiviteActionDeReferenceUrl,
-  makeCollectiviteActionUrl,
   makeCollectiviteActionsDeReferenceUrl,
   makeCollectivitePreselectionUrl,
   makeCollectivitePriorisationLevierUrl,
@@ -27,19 +26,6 @@ const hierarchieSansSousAxe: ActionType[] = [
   ActionTypeEnum.SOUS_ACTION,
   ActionTypeEnum.TACHE,
 ];
-
-describe('makeCollectiviteActionUrl', () => {
-  test('conserve le plan explicite sans perdre les autres paramètres du lien', () => {
-    expect(
-      makeCollectiviteActionUrl({
-        collectiviteId: 5499,
-        ficheUid: '17642',
-        planId: 43,
-        searchParams: 'planId=42&onglet=liens',
-      })
-    ).toBe('/collectivite/5499/actions/17642/details?planId=43&onglet=liens');
-  });
-});
 
 describe('makeSignInUrl', () => {
   it('sans destination (ou racine) → /login', () => {
