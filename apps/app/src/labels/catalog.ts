@@ -945,17 +945,17 @@ export const appLabels = {
   confirmationEmailRenvoyerLien:
     "Si vous n'avez pas reçu le lien de confirmation par email, vous pouvez le renvoyer en cliquant sur ce lien :",
   comparezTrajectoireSnbcTitre:
-    'Comparez la trajectoire SNBC à vos objectifs et vos résultats',
-  comparezTrajectoireSnbcIntro: "Pour cela, il faut d'abord ",
+    'Comparez vos résultats et objectifs à la trajectoire SNBC',
+  comparezTrajectoireSnbcIntro:
+    'Vérifiez si vos résultats sont sur la bonne voie et si vos objectifs sont ambitieux. Il faut d’abord ',
   comparezTrajectoireSnbcActionReadonly:
     'faire compléter vos objectifs et vos résultats dans vos Indicateurs par un utilisateur en Edition ou Admin sur le profil de cette collectivité',
   comparezTrajectoireSnbcDetailsReadonly:
     ". L'utilisateur pourra appliquer les données disponibles en open data, ou bien renseigner ses propres données.",
-  comparezTrajectoireSnbcActionEditeur:
-    'compléter vos objectifs et vos résultats dans vos Indicateurs',
+  comparezTrajectoireSnbcActionEditeur: 'les renseigner dans vos indicateurs',
   comparezTrajectoireSnbcDetailsEditeur:
-    ". Vous avez le choix d'appliquer les données disponibles en open data, ou bien de renseigner vos propres données.",
-  completerMesIndicateurs: 'Compléter mes indicateurs',
+    ', à partir des données open data ou de vos propres données.',
+  completerMesIndicateurs: 'Ajouter mes résultats et objectifs',
   fichePartageeTitreSection: ({
     title,
     collectiviteNom,
