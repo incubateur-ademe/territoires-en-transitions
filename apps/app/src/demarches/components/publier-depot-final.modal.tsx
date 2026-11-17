@@ -11,7 +11,8 @@ import { useState } from 'react';
 
 type Props = {
   demarcheType: DemarcheType;
-  onConfirm: (dateAdoption: string) => void;
+  /** Rend la promesse de la transition : la modale attend sa réponse. */
+  onConfirm: (dateAdoption: string) => Promise<unknown>;
   onClose: () => void;
 };
 
@@ -32,6 +33,11 @@ const aujourdhui = (): string => getDateCivileFrance(new Date());
  * Publier vaut adopter, et l'acte est sans retour : la modale dit ce qu'il
  * déclenche, et recueille la seule information que le dossier n'a pas encore —
  * la date de la délibération d'adoption, celle qui fait courir la validité.
+ *
+ * La transition fige les classeurs du dossier et peut prendre quelques
+ * secondes : la modale reste ouverte, bouton en chargement, jusqu'à la
+ * réponse. En échec, elle reste ouverte pour réessayer (le message d'erreur
+ * vient du toast global des mutations).
  */
 export const PublierDepotFinalModal = ({
   demarcheType,
@@ -40,6 +46,7 @@ export const PublierDepotFinalModal = ({
 }: Props) => {
   const [dateAdoption, setDateAdoption] = useState('');
   const [erreur, setErreur] = useState<string | null>(null);
+  const [isPending, setIsPending] = useState(false);
   const typeLabels = { type: appLabels.demarcheTypeLabels[demarcheType] };
 
   // Une délibération déjà prise : une date future décrirait une adoption qui
@@ -60,7 +67,7 @@ export const PublierDepotFinalModal = ({
       openState={{
         isOpen: true,
         setIsOpen: (isOpen) => {
-          if (!isOpen) onClose();
+          if (!isOpen && !isPending) onClose();
         },
       }}
       title={appLabels.demarchePublierConfirmationTitre}
@@ -101,20 +108,27 @@ export const PublierDepotFinalModal = ({
       )}
       renderFooter={({ close }) => (
         <ModalFooterOKCancel
-          btnCancelProps={{ onClick: close }}
+          btnCancelProps={{ onClick: close, disabled: isPending }}
           btnOKProps={{
             children: appLabels.demarchePublierConfirmer,
             icon: 'arrow-right-line',
             iconPosition: 'right',
-            disabled: !dateAdoption,
-            onClick: () => {
+            loading: isPending,
+            disabled: !dateAdoption || isPending,
+            onClick: async () => {
               const message = valider();
               if (message) {
                 setErreur(message);
                 return;
               }
-              onConfirm(dateAdoption);
-              close();
+              setIsPending(true);
+              try {
+                await onConfirm(dateAdoption);
+              } catch {
+                setIsPending(false);
+                return;
+              }
+              onClose();
             },
           }}
         />

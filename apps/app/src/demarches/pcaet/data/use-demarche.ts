@@ -222,10 +222,11 @@ export const useDemarchePcaet = (demarcheId: number) => {
 
   // Chaque transition a sa route : on appelle l'opération, pas un aiguilleur.
   const transitionOptions = useDemarchePcaetTransitionOptions();
-  const { mutate: transmettrePourAvis } = useMutation(
+  // `mutateAsync` : les modales de confirmation attendent la réponse.
+  const { mutateAsync: transmettrePourAvis } = useMutation(
     trpc.demarches.pcaet.transmettrePourAvis.mutationOptions(transitionOptions)
   );
-  const { mutate: publier } = useMutation(
+  const { mutateAsync: publier } = useMutation(
     trpc.demarches.pcaet.publier.mutationOptions(transitionOptions)
   );
   const ids = useMemo(

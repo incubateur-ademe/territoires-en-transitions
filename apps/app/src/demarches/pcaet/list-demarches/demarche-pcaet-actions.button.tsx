@@ -153,7 +153,7 @@ export const DemarchePcaetActionsButton = ({
           demarcheType={demarche.type}
           onConfirm={(dateAdoption) => {
             publierModale.onConfirm();
-            publier.mutate({ ...ids, dateAdoption });
+            return publier.mutateAsync({ ...ids, dateAdoption });
           }}
           onClose={() => {
             publierModale.onClose();
