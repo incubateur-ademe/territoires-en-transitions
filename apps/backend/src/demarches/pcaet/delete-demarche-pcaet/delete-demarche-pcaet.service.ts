@@ -9,6 +9,7 @@ import {
   isDemarchePcaetSuppressionForcee,
 } from '@tet/domain/demarches';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
+import { DemarchePcaetExportsStorageService } from '../generate-exports/demarche-pcaet-exports-storage.service';
 import { DemarchePcaetDemoService } from '../demo/demarche-pcaet-demo.service';
 import {
   DemarchePcaetRefRepository,
@@ -36,7 +37,8 @@ export class DeleteDemarchePcaetService {
     private readonly demarchePcaetRefRepository: DemarchePcaetRefRepository,
     private readonly deleteDemarchePcaetRepository: DeleteDemarchePcaetRepository,
     private readonly trackingService: DemarchePcaetTrackingService,
-    private readonly demoService: DemarchePcaetDemoService
+    private readonly demoService: DemarchePcaetDemoService,
+    private readonly exportsStorageService: DemarchePcaetExportsStorageService
   ) {}
 
   async deleteDemarchePcaet(
@@ -102,6 +104,12 @@ export class DeleteDemarchePcaetService {
       tx
     );
     if (result.success && deleted) {
+      // Suppose que ce service possède sa transaction (pas de `tx` englobant) :
+      // un rollback ultérieur ferait revenir les lignes sans leurs fichiers.
+      // La cascade a retiré les lignes de suivi des classeurs figés, pas les
+      // fichiers, qui contiennent des fiches restreintes. Une fois la
+      // suppression acquise seulement, et au mieux : un échec est journalisé.
+      await this.exportsStorageService.removeAll(deleted.id);
       this.trackingService.track(DemarchePcaetEventEnum.SUPPRIMEE, deleted, {
         userId: user.id,
         acteur: DemarchePcaetActeurEnum.COLLECTIVITE,
