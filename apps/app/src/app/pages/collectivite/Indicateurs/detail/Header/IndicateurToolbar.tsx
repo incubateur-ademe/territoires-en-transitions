@@ -7,8 +7,7 @@ import { useState } from 'react';
 import { DeleteIndicateurConfirmModal } from '@/app/indicateurs/indicateurs/delete-indicateur-confirmation.modal';
 import { IndicateurChartPngExport } from '../../chart/indicateur-chart.png-export';
 import { IndicateurChartInfo } from '../../data/use-indicateur-chart';
-import { useIndicateurDeletion } from '../indicateur-deletion.context';
-import { useIndicateurExport } from '../indicateur-export.context';
+import { useIndicateurActions } from '../indicateur-actions.context';
 
 type ModalType = 'activityLog' | 'deleting' | 'none';
 
@@ -29,8 +28,7 @@ const IndicateurToolbar = ({
   const [isExportingPng, setIsExportingPng] = useState(false);
   const closeModal = () => setCurrentModal('none');
 
-  const { exportIndicateur } = useIndicateurExport();
-  const { deleteIndicateur } = useIndicateurDeletion();
+  const { exportIndicateur, deleteIndicateur } = useIndicateurActions();
 
   const { indicateur, updateIndicateur } = useIndicateurDefinition();
   const { estFavori } = indicateur;

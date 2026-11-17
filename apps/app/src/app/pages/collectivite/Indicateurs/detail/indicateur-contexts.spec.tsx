@@ -2,8 +2,7 @@ import { renderHook } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { useIndicateurChart } from './indicateur-chart.context';
 import { useIndicateurDefinition } from './indicateur-definition.context';
-import { useIndicateurDeletion } from './indicateur-deletion.context';
-import { useIndicateurExport } from './indicateur-export.context';
+import { useIndicateurActions } from './indicateur-actions.context';
 import { useIndicateurFichesLiees } from './indicateur-fiches-liees.context';
 import { useIndicateurValeurs } from './indicateur-valeurs.context';
 
@@ -13,8 +12,7 @@ describe.each([
   ['useIndicateurDefinition', useIndicateurDefinition],
   ['useIndicateurChart', useIndicateurChart],
   ['useIndicateurValeurs', useIndicateurValeurs],
-  ['useIndicateurExport', useIndicateurExport],
-  ['useIndicateurDeletion', useIndicateurDeletion],
+  ['useIndicateurActions', useIndicateurActions],
   ['useIndicateurFichesLiees', useIndicateurFichesLiees],
 ])('%s', (name, useContextValue) => {
   it('échoue hors de son provider', () => {
