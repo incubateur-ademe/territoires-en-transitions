@@ -1,44 +1,37 @@
-import { canUpdateIndicateur } from '@/app/indicateurs/indicateurs/indicateur-authorization.utils';
-import {
-  type IndicateurDetaille,
-  isIndicateurPerso,
-} from '@tet/domain/indicateurs';
-import { useUpdateIndicateur } from '@/app/indicateurs/indicateurs/use-update-indicateur';
+'use client';
+
+import { isIndicateurPerso } from '@tet/domain/indicateurs';
 import Markdown from '@/app/ui/Markdown';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { useUser } from '@tet/api/users';
 import { Tab, Tabs } from '@tet/ui';
 import { appLabels } from '@/app/labels/catalog';
-import { useIndicateurChartInfo } from '../data/use-indicateur-chart';
 import ActionsLiees from './ActionsLiees';
 import DonneesIndicateur from './DonneesIndicateur';
 import FichesLiees from './FichesLiees';
 import IndicateurHeader from './Header/IndicateurHeader';
+import { useIndicateurChart } from './indicateur-chart.context';
+import { IndicateurFichesLieesDataProvider } from './indicateur-fiches-liees.data-provider';
+import { useIndicateurDefinition } from './indicateur-definition.context';
 import SousIndicateurs from './SousIndicateurs';
 
-type IndicateurLayoutProps = {
+type IndicateurLayoutViewProps = {
   dataTest?: string;
-  indicateur: IndicateurDetaille;
 };
 
-const IndicateurLayout = ({ dataTest, indicateur }: IndicateurLayoutProps) => {
+export const IndicateurLayoutView = ({
+  dataTest,
+}: IndicateurLayoutViewProps) => {
+  const { indicateur, updateIndicateur, canMutateIndicateur } =
+    useIndicateurDefinition();
+  const { chartInfo } = useIndicateurChart();
   const {
     enfants,
     sansValeurUtilisateur: sansValeur,
     description,
   } = indicateur;
 
-  const { mutate: updateIndicateur } = useUpdateIndicateur(indicateur.id);
-  const { id } = useUser();
-
   const { collectiviteId, hasCollectivitePermission, isSimplifiedView } =
     useCurrentCollectivite();
-
-  const canMutateIndicateur = canUpdateIndicateur(
-    hasCollectivitePermission,
-    indicateur,
-    id
-  );
 
   const composeSansAgregation = !!enfants && enfants.length > 0 && sansValeur;
   const composeAvecAgregation = !!enfants && enfants.length > 0 && !sansValeur;
@@ -64,8 +57,6 @@ const IndicateurLayout = ({ dataTest, indicateur }: IndicateurLayoutProps) => {
   const handleCommentaireUpdate = (value: string) => {
     handleUpdate('commentaire', value);
   };
-
-  const chartInfo = useIndicateurChartInfo({ indicateur });
 
   const enfantsIds = enfants?.map(({ id }) => id) || [];
 
@@ -104,8 +95,6 @@ const IndicateurLayout = ({ dataTest, indicateur }: IndicateurLayoutProps) => {
             {/* Données */}
             <Tab label="Données">
               <DonneesIndicateur
-                indicateur={indicateur}
-                chartInfo={chartInfo}
                 updateUnite={handleUniteUpdate}
                 updateCommentaire={handleCommentaireUpdate}
               />
@@ -138,7 +127,9 @@ const IndicateurLayout = ({ dataTest, indicateur }: IndicateurLayoutProps) => {
 
             {canReadFiches ? (
               <Tab label={appLabels.actionsLiees}>
-                <FichesLiees indicateur={indicateur} />
+                <IndicateurFichesLieesDataProvider indicateur={indicateur}>
+                  <FichesLiees />
+                </IndicateurFichesLieesDataProvider>
               </Tab>
             ) : undefined}
 
@@ -156,5 +147,3 @@ const IndicateurLayout = ({ dataTest, indicateur }: IndicateurLayoutProps) => {
     </>
   );
 };
-
-export default IndicateurLayout;

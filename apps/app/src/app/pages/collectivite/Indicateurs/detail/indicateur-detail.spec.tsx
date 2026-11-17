@@ -31,7 +31,12 @@ vi.mock('../../Trajectoire/use-trajectoire', () => ({
   useGetTrajectoire: (args: { enabled: boolean }) =>
     mocks.useGetTrajectoire(args),
 }));
-vi.mock('./IndicateurLayout', () => ({ default: () => null }));
+vi.mock('./indicateur-detail.data-provider', () => ({
+  IndicateurDetailDataProvider: () => null,
+}));
+vi.mock('./indicateur-layout.view', () => ({
+  IndicateurLayoutView: () => null,
+}));
 
 const indicateurTrajectoire = {
   id: 1,

@@ -1,16 +1,9 @@
-import type { IndicateurDetaille } from '@tet/domain/indicateurs';
-import { useUpdateIndicateur } from '@/app/indicateurs/indicateurs/use-update-indicateur';
+import { useIndicateurDefinition } from '../detail/indicateur-definition.context';
 import { Checkbox, Tooltip } from '@tet/ui';
 
 /** Affiche le bouton "Résultat récent en mode privé" */
-export const PrivateModeSwitch = ({
-  indicateur,
-  isReadOnly,
-}: {
-  indicateur: Pick<IndicateurDetaille, 'id' | 'estConfidentiel'>;
-  isReadOnly?: boolean;
-}) => {
-  const { mutate: updateIndicateur } = useUpdateIndicateur(indicateur.id);
+export const PrivateModeSwitch = ({ isReadOnly }: { isReadOnly?: boolean }) => {
+  const { indicateur, updateIndicateur } = useIndicateurDefinition();
 
   const { estConfidentiel } = indicateur;
 

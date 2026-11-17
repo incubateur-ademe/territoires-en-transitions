@@ -55,15 +55,8 @@ export const IndicateurInfos = ({
         participationScore={Boolean(participationScore)}
       />
     ),
-    showPilotes && (
-      <IndicateurPilotes indicateur={indicateur} isReadonly={isReadonly} />
-    ),
-    showServices && (
-      <IndicateurServicesPilotes
-        indicateur={indicateur}
-        isReadonly={isReadonly}
-      />
-    ),
+    showPilotes && <IndicateurPilotes isReadonly={isReadonly} />,
+    showServices && <IndicateurServicesPilotes isReadonly={isReadonly} />,
     participationScore && <span>{appLabels.indicateurParticipeAuScore}</span>,
     showBadges && (
       <>

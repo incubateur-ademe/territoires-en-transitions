@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { RouterInput, useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
 
-type DefinitionFieldsInput =
+export type DefinitionFieldsInput =
   RouterInput['indicateurs']['indicateurs']['update']['indicateurFields'];
 
 export const useUpdateIndicateur = (indicateurId: number) => {

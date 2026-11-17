@@ -1,20 +1,18 @@
 import { appLabels } from '@/app/labels/catalog';
-import type { IndicateurDetaille } from '@tet/domain/indicateurs';
-import { useUpdateIndicateur } from '@/app/indicateurs/indicateurs/use-update-indicateur';
+import { useIndicateurDefinition } from '../indicateur-definition.context';
 import { ActivityLogModal } from '@/app/ui/shared/activity-log.modal';
 import { PermissionOperation } from '@tet/domain/users';
-import { Button, ButtonMenu, MenuAction, Tooltip } from '@tet/ui';
-import classNames from 'classnames';
+import { Button, ButtonMenu, cn, MenuAction, Tooltip } from '@tet/ui';
 import { useState } from 'react';
-import { DeleteIndicateurModal } from '@/app/indicateurs/indicateurs/delete-indicateur.modal';
+import { DeleteIndicateurConfirmModal } from '@/app/indicateurs/indicateurs/delete-indicateur-confirmation.modal';
 import { IndicateurChartPngExport } from '../../chart/indicateur-chart.png-export';
 import { IndicateurChartInfo } from '../../data/use-indicateur-chart';
-import { useExportIndicateurs } from '../../Indicateur/useExportIndicateurs';
+import { useIndicateurDeletion } from '../indicateur-deletion.context';
+import { useIndicateurExport } from '../indicateur-export.context';
 
 type ModalType = 'activityLog' | 'deleting' | 'none';
 
 type Props = {
-  indicateur: IndicateurDetaille;
   chartInfo?: IndicateurChartInfo;
   hasCollectivitePermission: (permission: PermissionOperation) => boolean;
   isPerso?: boolean;
@@ -22,7 +20,6 @@ type Props = {
 };
 
 const IndicateurToolbar = ({
-  indicateur,
   chartInfo,
   hasCollectivitePermission,
   isPerso = false,
@@ -32,20 +29,17 @@ const IndicateurToolbar = ({
   const [isExportingPng, setIsExportingPng] = useState(false);
   const closeModal = () => setCurrentModal('none');
 
-  const { mutate: exportIndicateurs } = useExportIndicateurs({
-    mode: 'selection',
-    indicateurIds: [indicateur.id],
-  });
+  const { exportIndicateur } = useIndicateurExport();
+  const { deleteIndicateur } = useIndicateurDeletion();
 
+  const { indicateur, updateIndicateur } = useIndicateurDefinition();
   const { estFavori } = indicateur;
-
-  const { mutate: updateIndicateur } = useUpdateIndicateur(indicateur.id);
 
   const actions: MenuAction[] = [
     {
       icon: 'download-line',
       label: appLabels.indicateurTelechargerExcel,
-      onClick: () => exportIndicateurs(),
+      onClick: exportIndicateur,
     },
     {
       isVisible: !!chartInfo?.hasValeur,
@@ -71,7 +65,7 @@ const IndicateurToolbar = ({
 
   return (
     <>
-      <div className={classNames('flex items-center gap-2', className)}>
+      <div className={cn('flex items-center gap-2', className)}>
         <Tooltip
           label={
             estFavori
@@ -84,9 +78,7 @@ const IndicateurToolbar = ({
             icon={estFavori ? 'star-fill' : 'star-line'}
             size="xs"
             variant="grey"
-            className={classNames({
-              'text-warning-1 hover:text-warning-1': estFavori,
-            })}
+            className={cn(estFavori && 'text-warning-1 hover:text-warning-1')}
             onClick={() => updateIndicateur({ estFavori: !estFavori })}
           />
         </Tooltip>
@@ -110,9 +102,10 @@ const IndicateurToolbar = ({
       )}
 
       {currentModal === 'deleting' && (
-        <DeleteIndicateurModal
-          indicateur={indicateur}
+        <DeleteIndicateurConfirmModal
+          titre={indicateur.titre}
           openState={{ isOpen: true, setIsOpen: closeModal }}
+          onConfirm={deleteIndicateur}
         />
       )}
 

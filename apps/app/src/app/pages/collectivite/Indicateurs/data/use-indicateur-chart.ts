@@ -16,7 +16,11 @@ import {
   PreparedData,
 } from './prepare-data';
 import { IndicateurMoyenneOutput } from './use-indicateur-moyenne';
-import { isSourceTrajectoire } from './use-indicateur-sources';
+import {
+  type GetColorBySourceId,
+  isSourceTrajectoire,
+  useGetColorBySourceId,
+} from './use-indicateur-sources';
 import { type SourceFilter, useSourceFilter } from './use-source-filter';
 
 export const SEGMENTATIONS = [
@@ -55,6 +59,7 @@ export type IndicateurChartInfo = {
   setSegmentation: Dispatch<SetStateAction<string | undefined>>;
   segmentItemParId: Map<number, { id: number; name: string; color: string }>;
   sourceFilter: SourceFilter;
+  getColorBySourceId: GetColorBySourceId;
   data: IndicateurChartData;
   hasValeurCollectivite: boolean;
   hasValeur: boolean;
@@ -253,6 +258,9 @@ export const useIndicateurChartInfo = ({
   ]);
 
   const isLoading = isLoadingValeurs || isLoadingSegments || isLoadingEnfants;
+  const getColorBySourceId = useGetColorBySourceId({
+    avecSnbc3: sourceFilter.avecSnbc3,
+  });
 
   return useMemo(
     () => ({
@@ -260,9 +268,10 @@ export const useIndicateurChartInfo = ({
       ...preparedChart,
       setSegmentation,
       sourceFilter,
+      getColorBySourceId,
       isLoading,
     }),
-    [indicateur, isLoading, preparedChart, sourceFilter]
+    [indicateur, isLoading, preparedChart, sourceFilter, getColorBySourceId]
   );
 };
 

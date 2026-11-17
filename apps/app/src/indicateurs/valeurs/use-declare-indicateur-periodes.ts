@@ -1,5 +1,6 @@
 import { appLabels } from '@/app/labels/catalog';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useCallback } from 'react';
 import { useTRPC } from '@tet/api';
 import type { IndicateurPeriode } from '@tet/domain/indicateurs';
 import { invalidateIndicateurValeursQueries } from './invalidate-indicateur-valeurs-queries';
@@ -25,10 +26,13 @@ export const useDeclareIndicateurPeriodes = (
     })
   );
 
-  return async (periodes: IndicateurPeriode[]): Promise<void> => {
-    await mutateAsync({
-      collectiviteId,
-      valeurs: periodes.map((period) => ({ indicateurId, period })),
-    });
-  };
+  return useCallback(
+    async (periodes: IndicateurPeriode[]): Promise<void> => {
+      await mutateAsync({
+        collectiviteId,
+        valeurs: periodes.map((period) => ({ indicateurId, period })),
+      });
+    },
+    [mutateAsync, collectiviteId, indicateurId]
+  );
 };
