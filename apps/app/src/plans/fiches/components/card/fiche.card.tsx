@@ -183,6 +183,7 @@ export const FicheCard = ({
               <FicheJauge
                 jauge={ficheAction.jauge}
                 statut={ficheAction.statut}
+                jaugeModifiedAt={ficheAction.jaugeModifiedAt}
               />
             )}
 

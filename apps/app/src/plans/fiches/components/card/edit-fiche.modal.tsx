@@ -121,6 +121,7 @@ export const EditFicheModal = ({ initialFiche, isOpen, setIsOpen }: Props) => {
                     <JaugeBadge
                       value={jaugeEnCours ?? fiche.jauge}
                       statut={fiche.statut}
+                      jaugeModifiedAt={fiche.jaugeModifiedAt}
                       isDisabled={isJaugeFigee(fiche.statut)}
                       isLarge
                     />

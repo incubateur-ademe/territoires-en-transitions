@@ -39,6 +39,20 @@ export const isJaugeFigee = (
 ): statut is StatutFigeantJauge =>
   statutsFigeantJauge.some((statutFigeant) => statutFigeant === statut);
 
+export const isJaugeNonRenseignee = ({
+  statut,
+  jauge,
+  jaugeModifiedAt,
+}: {
+  statut: Statut | null;
+  jauge: number;
+  jaugeModifiedAt?: string | null;
+}): boolean =>
+  statut !== StatutEnum.A_VENIR &&
+  statut !== StatutEnum.REALISE &&
+  jauge === JAUGE_MIN &&
+  !jaugeModifiedAt;
+
 export const isValidJauge = (jauge: number): boolean =>
   Number.isInteger(jauge) &&
   jauge >= JAUGE_MIN &&

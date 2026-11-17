@@ -84,7 +84,11 @@ export const FicheARenseignerCard = ({
         ) : (
           fiche.statut && <FicheStatutBadge statut={fiche.statut} size="sm" />
         )}
-        <JaugeBadge value={jauge} statut={fiche.statut} />
+        <JaugeBadge
+          value={jauge}
+          statut={fiche.statut}
+          jaugeModifiedAt={fiche.jaugeModifiedAt}
+        />
         <JaugeSlider
           ariaLabel={appLabels.renseignerAvancementJauge(titre)}
           value={jauge}
