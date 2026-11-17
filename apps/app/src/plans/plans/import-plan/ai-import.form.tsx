@@ -80,12 +80,9 @@ export const AiImportForm = ({
 }) => {
   const collectiviteId = useCollectiviteId();
   const { data: planTypes, isLoading: isLoadingPlanTypes } = useListPlanTypes();
-  const { profiles } = useAvailableAiImportProfiles();
-  const planTypesOptions = planTypesToOptions(
-    planTypes.filter((type) =>
-      profiles.includes(getAiImportFormConfig(type).profile)
-    )
-  );
+  const { profiles, isLoading: isLoadingProfiles } =
+    useAvailableAiImportProfiles();
+  const planTypesOptions = planTypesToOptions(planTypes);
   const getConfig = (planTypeId: number | null) =>
     getAiImportFormConfig(planTypes.find(({ id }) => id === planTypeId));
   const schema = aiImportFormSchema.superRefine((values, context) => {
@@ -231,7 +228,7 @@ export const AiImportForm = ({
           )}
         />
       </Field>
-      {!isLoadingPlanTypes && !isProfileAvailable && (
+      {!isLoadingPlanTypes && !isLoadingProfiles && !isProfileAvailable && (
         <Alert
           state="info"
           description={appLabels.importPlanIaProfilIndisponible}

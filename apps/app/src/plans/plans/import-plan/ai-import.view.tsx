@@ -14,9 +14,7 @@ import { aiImportQueryState } from './ai-import.query-state';
 import { BetaLabel } from '@/app/ui/beta.label';
 import { AiImportFlow } from './ai-import.flow';
 import { AiImportHistoryView } from './ai-import-history.view';
-import { RequestPlanImportView } from './request-plan-import-view';
 import { useAvailableAiImportProfiles } from './data/use-available-ai-import-profiles';
-import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 
 const BackButton = () => {
   const router = useRouter();
@@ -78,17 +76,11 @@ const AiImportContent = () => {
 };
 
 export const AiImportView = () => {
-  const { profiles, isLoading } = useAvailableAiImportProfiles();
+  const { profiles } = useAvailableAiImportProfiles();
   const [{ importJobId }] = useQueryStates(aiImportQueryState);
 
-  if (profiles.length === 0) {
-    if (isLoading && importJobId === null)
-      return <SpinnerLoader className="mx-auto my-10 w-8 h-8" />;
-    return importJobId === null ? (
-      <RequestPlanImportView />
-    ) : (
-      <AiImportHistoryView />
-    );
+  if (profiles.length === 0 && importJobId !== null) {
+    return <AiImportHistoryView />;
   }
 
   return <AiImportContent />;

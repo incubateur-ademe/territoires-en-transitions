@@ -341,8 +341,15 @@ des définitions annuelles et la recette en préproduction restent à vérifier.
       e2e complet avec faux LLM et les scénarios d'éligibilité existants :
       47 tests réussis sur B. Invalider les requêtes du frontend lors du
       changement de mode pour recalculer les capacités du formulaire : un
-      scénario Playwright vérifie leur rechargement et le retrait du formulaire
+      scénario Playwright vérifiait leur rechargement et le retrait du formulaire
       sans reload manuel. Typages backend/API/frontend/specs et lint vérifiés.
+
+- [x] Ajustement du 17 novembre : garder le formulaire et tous ses types
+      accessibles depuis la création et l'historique. En cas d'indisponibilité,
+      afficher le message et désactiver le lancement, y compris après retrait
+      du mode super-admin. Conserver les contrôles backend ; adapter les
+      scénarios Playwright existants (capacités absentes/désactivées,
+      retrait du mode super-admin et suivi après fermeture).
 
 **Correction CI du 13 novembre :** les deux assertions de finalisation
 générique utilisent désormais le contrat `{ planId, requiresVerification }`,

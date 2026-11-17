@@ -1145,10 +1145,15 @@ remplace le refus côté serveur.
 Le contrat public des profils est partagé dans `@tet/domain/plans`. L’app
 sélectionne le profil selon le type exact, affiche le DOCX officiel V4 comme
 seul format pour Électrification et impose la conservation des sous-actions.
-La capacité serveur positive reste obligatoire, indépendamment du flag UI
-historique et du mode super-admin. Une API sans cette capacité n’affiche pas
-ce choix. Le suivi et le compte rendu ajoutés dans B restent accessibles après
-fermeture de l’admission.
+La capacité serveur positive reste obligatoire pour lancer l'import,
+indépendamment du flag UI historique et du mode super-admin.
+**Ajustement du 17 novembre 2026 :** le formulaire reste accessible depuis
+"Ajouter un plan" et l'historique, et propose tous les types même lorsqu'aucun
+profil n'est autorisé. La sélection d'un type indisponible affiche un message
+et désactive le lancement. Cette décision remplace le masquage initial des
+types sans capacité positive ; elle ne modifie pas les contrôles d'admission.
+Le suivi et le compte rendu ajoutés dans B restent accessibles après fermeture
+de l'admission.
 
 La lecture ordinaire du plan expose sa métadonnée de source exacte. Les cartes
 d'indicateurs d'axe conservent le graphique ordinaire et excluent la source
