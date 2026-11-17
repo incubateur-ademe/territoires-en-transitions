@@ -18,7 +18,8 @@ Renseigner ces secrets séparément dans les environnements `staging`, `preprod`
 | --------------------------------- | ---------------------------------------------------------------------------------- |
 | `DB_URL`                          | Connexion PostgreSQL de la cible, pour les validations et métadonnées du stockage. |
 | `API_URL`                         | URL Supabase de la même cible.                                                     |
-| `SUPABASE_SERVICE_ROLE_KEY`       | Accès au stockage privé de cette cible.                                            |
+| `PROD_SUPABASE_SERVICE_ROLE_KEY`  | Accès au stockage privé en `prod`, comme pour le workflow d'analyse des actions.    |
+| `SUPABASE_SERVICE_ROLE_KEY`       | Accès au stockage privé en `staging` et `preprod`.                                |
 | `SUPABASE_DATABASE_SSL_ROOT_CERT` | CA PEM, uniquement si la base exige un certificat propre.                          |
 | `GRIST_API_KEY`                   | Clé d'un compte ayant accès en lecture aux deux documents Grist.                   |
 
@@ -37,7 +38,9 @@ nécessaire pour cette synchronisation.
 Les endpoints d'administration conservent leur contrôle `SUPER_ADMIN`.
 Ne pas copier les identifiants prod dans les secrets staging ou préprod.
 Le dépôt possède aussi un secret `SUPABASE_SERVICE_ROLE_KEY` : le définir dans
-chaque environnement pour utiliser la clé de cette cible, sans hériter de celle du dépôt.
+les environnements `staging` et `preprod` pour utiliser la clé de la cible.
+En `prod`, le workflow utilise uniquement `PROD_SUPABASE_SERVICE_ROLE_KEY` ;
+si ce secret manque, il s'arrête sans utiliser la clé partagée du dépôt.
 
 ## Préparer les sources
 

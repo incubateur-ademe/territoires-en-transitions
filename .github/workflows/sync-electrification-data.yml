@@ -54,7 +54,8 @@ jobs:
           SUPABASE_DATABASE_URL: ${{ secrets.DB_URL }}
           SUPABASE_DATABASE_SSL_ROOT_CERT: ${{ secrets.SUPABASE_DATABASE_SSL_ROOT_CERT }}
           SUPABASE_URL: ${{ secrets.API_URL }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          # Choisir le nom du secret, sans repli vers la clé du dépôt si la clé prod manque.
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets[inputs.target == 'prod' && 'PROD_SUPABASE_SERVICE_ROLE_KEY' || 'SUPABASE_SERVICE_ROLE_KEY'] }}
           GRIST_API_KEY: ${{ secrets.GRIST_API_KEY }}
           ELECTRIFICATION_LAUREATS_GRIST_DOCUMENT_ID: ${{ vars.ELECTRIFICATION_LAUREATS_GRIST_DOCUMENT_ID }}
           DATA_KIND: ${{ inputs.kind }}
