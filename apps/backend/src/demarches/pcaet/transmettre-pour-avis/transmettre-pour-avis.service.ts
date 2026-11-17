@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
-import { Result } from '@tet/backend/utils/result.type';
+import { failure, Result, success } from '@tet/backend/utils/result.type';
 import {
   computeAvisDeadline,
   DemarchePcaetTransitionEnum,
   type DemarchePcaet,
 } from '@tet/domain/demarches';
+import { GenerateDemarchePcaetExportsService } from '../generate-exports/generate-demarche-pcaet-exports.service';
 import { NotifyDossierTransmisService } from '../notifications/notify-dossier-transmis/notify-dossier-transmis.service';
 import type { ServiceSansCompte } from '../notifications/notify-dossier-transmis/notify-support-services-sans-compte.props';
 import { DemarchePcaetTransitionInput } from '../shared/demarche-pcaet-transition.input';
@@ -24,6 +25,7 @@ export class TransmettrePourAvisDemarchePcaetService {
     private readonly transitionService: DemarchePcaetTransitionService,
     private readonly instructeursRepository: PcaetInstructeursRepository,
     private readonly notifyDossierTransmisService: NotifyDossierTransmisService,
+    private readonly generateExportsService: GenerateDemarchePcaetExportsService,
     private readonly trackingService: DemarchePcaetTrackingService
   ) {}
 
@@ -31,8 +33,9 @@ export class TransmettrePourAvisDemarchePcaetService {
    * Transmet le dossier aux instances consultatives (préfet de région, conseil
    * régional, MRAe).
    *
-   * Deux effets propres à cette transition : les instructeurs qui couvrent la
-   * collectivité sont saisis, l'échéance de remise des avis est figée.
+   * Trois effets propres à cette transition : les instructeurs qui couvrent la
+   * collectivité sont saisis, les classeurs du dossier (plan, indicateurs)
+   * sont figés, l'échéance de remise des avis est figée.
    */
   async transmettre(
     input: DemarchePcaetTransitionInput,
@@ -42,6 +45,8 @@ export class TransmettrePourAvisDemarchePcaetService {
     // rejoue pas à l'envers, il attend que la transmission soit acquise.
     let servicesSansCompte: ServiceSansCompte[] = [];
     let saisines: { type: string; perimetre: string }[] = [];
+    // Écrits hors de la base : à retirer si la transaction est annulée.
+    let storedPaths: string[] = [];
 
     const result = await this.transitionService.apply(
       input,
@@ -69,17 +74,40 @@ export class TransmettrePourAvisDemarchePcaetService {
             transaction
           );
 
+        // La photo du dossier tel qu'il est transmis, dans la même
+        // transaction : sans photo, pas de transmission — la saisine et les
+        // notifications sont annulées avec elle. En dernier : c'est l'étape
+        // la plus longue, et la seule à écrire hors de la base.
+        const exports = await this.generateExportsService.generate(
+          {
+            demarche,
+            transition: DemarchePcaetTransitionEnum.TRANSMETTRE_POUR_AVIS,
+            userId: user.id,
+          },
+          transaction
+        );
+        if (!exports.success) {
+          return failure(exports.error, exports.cause);
+        }
+        storedPaths = exports.data.storedPaths;
+
         // L'échéance est figée maintenant : si le délai légal change, les
         // dossiers déjà transmis gardent celle qui s'appliquait à eux.
         const now = new Date();
-        return {
+        return success({
           transmittedAt: now.toISOString(),
           avisDeadlineAt: computeAvisDeadline(now).toISOString(),
-        };
+        });
       }
     );
 
-    if (result.success) {
+    // Le stockage n'est nettoyé qu'une fois la transaction de ce service
+    // terminée : il ne doit pas recevoir de `tx` englobant, dont l'échec
+    // remonterait en exception (pas de nettoyage) ou dont le rollback
+    // surviendrait après coup.
+    if (!result.success) {
+      await this.generateExportsService.discard(storedPaths);
+    } else {
       await this.notifyDossierTransmisService.alerterSupport({
         demarche: result.data,
         services: servicesSansCompte,

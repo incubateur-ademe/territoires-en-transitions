@@ -19,6 +19,7 @@ import type { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { buildConflictUpdateColumns } from '@tet/backend/utils/database/conflict.utils';
 import { DatabaseServiceInterface } from '@tet/backend/utils/database/database-service.interface';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import SupabaseService from '@tet/backend/utils/database/supabase.service';
 import type { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite, CollectiviteType } from '@tet/domain/collectivites';
 import {
@@ -30,8 +31,16 @@ import {
 } from '@tet/domain/demarches';
 import { CollectiviteRole } from '@tet/domain/users';
 import { and, eq, inArray, sql } from 'drizzle-orm';
+import { Workbook } from 'exceljs';
 import { getAuthUserFromUserCredentials } from '../../../test/get-auth-user-from-credentials';
 import { CloreInstructionService } from './clore-instruction/clore-instruction.service';
+import { DEMARCHE_PCAET_EXPORTS_BUCKET } from './generate-exports/demarche-pcaet-exports-storage.service';
+import {
+  DEMARCHE_PCAET_EXPORT_TRANSITIONS,
+  DEMARCHE_PCAET_EXPORT_TYPES,
+  demarchePcaetExportTable,
+  type DemarchePcaetExportRow,
+} from './shared/models/demarche-pcaet-export.table';
 import { demarchePcaetSourceMetadonneeTable } from './shared/models/demarche-pcaet-source-metadonnee.table';
 
 /**
@@ -553,4 +562,101 @@ export async function publierTestDemarchePcaet(
     demarcheId,
     dateAdoption: '2026-01-15',
   });
+}
+
+/**
+ * Les classeurs figés d'un dépôt, dans l'ordre métier : transition (transmission
+ * puis publication), puis type, dans l'ordre des constantes du modèle. Trié
+ * ici : ni l'ordre d'insertion ni l'ordre alphabétique ne le garantissent.
+ */
+export async function listTestDemarchePcaetExports(
+  db: DatabaseService,
+  demarcheId: number
+): Promise<DemarchePcaetExportRow[]> {
+  const rows = await db.db
+    .select()
+    .from(demarchePcaetExportTable)
+    .where(eq(demarchePcaetExportTable.demarcheId, demarcheId));
+  return rows.sort(
+    (a, b) =>
+      DEMARCHE_PCAET_EXPORT_TRANSITIONS.indexOf(a.transition) -
+        DEMARCHE_PCAET_EXPORT_TRANSITIONS.indexOf(b.transition) ||
+      DEMARCHE_PCAET_EXPORT_TYPES.indexOf(a.type) -
+        DEMARCHE_PCAET_EXPORT_TYPES.indexOf(b.type)
+  );
+}
+
+/** Relit un classeur figé depuis le stockage, tel qu'il sera servi. */
+export async function loadTestDemarchePcaetExportWorkbook(
+  app: INestApplication,
+  { storagePath }: Pick<DemarchePcaetExportRow, 'storagePath'>
+): Promise<Workbook> {
+  const { data, error } = await app
+    .get(SupabaseService)
+    .client.storage.from(DEMARCHE_PCAET_EXPORTS_BUCKET)
+    .download(storagePath);
+  if (error || !data) {
+    throw new Error(
+      `Classeur ${storagePath} introuvable dans le stockage : ${
+        error?.message ?? 'objet absent'
+      }`
+    );
+  }
+  const workbook = new Workbook();
+  await workbook.xlsx.load(await data.arrayBuffer());
+  return workbook;
+}
+
+/** Tous les textes d'un onglet, pour chercher un titre ou un en-tête. */
+export function listTestWorksheetTexts(
+  workbook: Workbook,
+  worksheetName: string
+): string[] {
+  const worksheet = workbook.getWorksheet(worksheetName);
+  if (!worksheet) {
+    throw new Error(`Onglet « ${worksheetName} » absent du classeur`);
+  }
+  const texts: string[] = [];
+  worksheet.eachRow((row) => {
+    row.eachCell((cell) => {
+      texts.push(cell.text);
+    });
+  });
+  return texts;
+}
+
+/**
+ * Une action d'un plan de dépôt (`axeId`) ou une sous-action (`parentId`),
+ * avec son secteur réglementaire : sans lui, l'action retiendrait le dossier.
+ *
+ * Sans nettoyage : la collectivité est fraîche, et le plan d'un dépôt transmis
+ * n'a pas à être défait après coup.
+ *
+ * N'utilise pas `fiches.test-fixture` : ce fichier est aussi chargé par les
+ * specs Playwright, qui ne peuvent pas importer vitest.
+ */
+export async function addTestFichePcaet(
+  caller: ReturnType<TrpcRouter['createCaller']>,
+  ficheInput: {
+    collectiviteId: number;
+    titre: string;
+    restreint?: boolean;
+  } & ({ axeId: number } | { parentId: number })
+): Promise<number> {
+  const { axeId, ...ficheProps } =
+    'axeId' in ficheInput ? ficheInput : { ...ficheInput, axeId: undefined };
+  const { id: ficheId } = await caller.plans.fiches.create({
+    fiche: ficheProps,
+  });
+  if (axeId) {
+    await caller.plans.fiches.update({
+      ficheId,
+      ficheFields: { axes: [{ id: axeId }] },
+    });
+  }
+  await caller.plans.fiches.upsertSecteurs({
+    ficheId,
+    secteurs: ['residentiel'],
+  });
+  return ficheId;
 }

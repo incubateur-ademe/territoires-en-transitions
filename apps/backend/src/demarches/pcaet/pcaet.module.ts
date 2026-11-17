@@ -132,6 +132,10 @@ import { SetVulnerabiliteLigneService } from './set-vulnerabilite-ligne/set-vuln
 import { CollectiviteContactsRepository } from './shared/collectivite-contacts.repository';
 import { DemarchePcaetAccessService } from './shared/demarche-pcaet-access.service';
 import { DemarchePcaetDiagnosticService } from './shared/demarche-pcaet-diagnostic.service';
+import { BuildDemarchePcaetWorkbooksService } from './generate-exports/build-demarche-pcaet-workbooks.service';
+import { DemarchePcaetExportRepository } from './generate-exports/demarche-pcaet-export.repository';
+import { DemarchePcaetExportsStorageService } from './generate-exports/demarche-pcaet-exports-storage.service';
+import { GenerateDemarchePcaetExportsService } from './generate-exports/generate-demarche-pcaet-exports.service';
 import { DemarchePcaetGuardsService } from './shared/demarche-pcaet-guards.service';
 import { DemarchePcaetLectureService } from './shared/demarche-pcaet-lecture.service';
 import { DemarchePcaetPerimetreRepository } from './shared/demarche-pcaet-perimetre.repository';
@@ -230,6 +234,10 @@ import { TrackSnapshotService } from './track-snapshot/track-snapshot.service';
     GetDemarchePcaetRouter,
     DemarchePcaetVulnerabiliteReadService,
     DemarchePcaetDiagnosticService,
+    BuildDemarchePcaetWorkbooksService,
+    DemarchePcaetExportsStorageService,
+    DemarchePcaetExportRepository,
+    GenerateDemarchePcaetExportsService,
     GetDiagnosticService,
     GetDiagnosticRouter,
     DemarchePcaetVulnerabiliteRepository,

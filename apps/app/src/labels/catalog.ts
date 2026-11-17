@@ -472,6 +472,8 @@ export const appLabels = {
       'La démarche ne peut être archivée qu’à l’adoption du PCAET suivant.',
     DOCUMENTS_AVAL_INCOMPLETS:
       'Les pièces attendues après les avis (délibération d’adoption…) doivent être déposées pour publier la démarche.',
+    EXPORT_GENERATION_ERROR:
+      'L’export des données n’a pas pu être généré, réessayez.',
     DEMARCHE_PCAET_NON_MODIFIABLE:
       'Cette partie du dossier n’est plus modifiable au statut actuel de la démarche.',
     JOB_NOT_RESUMABLE:

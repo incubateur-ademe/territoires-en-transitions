@@ -6,12 +6,24 @@ import {
   demarchePcaetTransitionErrorConfig,
   demarchePcaetTransitionErrors,
 } from '../shared/demarche-pcaet-transition.errors';
+import {
+  demarchePcaetExportErrorConfig,
+  demarchePcaetExportErrors,
+} from '../generate-exports/generate-demarche-pcaet-exports.errors';
 
-const specificErrors = [...demarchePcaetTransitionErrors] as const;
+const specificErrors = [
+  ...demarchePcaetTransitionErrors,
+  ...demarchePcaetExportErrors,
+] as const;
 type SpecificError = (typeof specificErrors)[number];
 
 export const transmettreDemarchePcaetErrorConfig: TrpcErrorHandlerConfig<SpecificError> =
-  { specificErrors: demarchePcaetTransitionErrorConfig };
+  {
+    specificErrors: {
+      ...demarchePcaetTransitionErrorConfig,
+      ...demarchePcaetExportErrorConfig,
+    },
+  };
 
 export const TransmettrePourAvisDemarchePcaetErrorEnum =
   createErrorsEnum(specificErrors);
