@@ -18,20 +18,20 @@ const methodologieParSecteurSnbc3: Record<
 > = {
   Résidentiel: {
     snbc3: [
-      "La SNBC 3 prévoit une forte baisse des émissions de GES du résidentiel d'ici 2050.",
-      "Les consommations d'énergie baissent moins : la baisse des émissions repose surtout sur le passage à des énergies décarbonées.",
+      'La SNBC 3 prévoit une forte baisse des émissions GES et une moindre baisse des consommations d’énergie du résidentiel d’ici 2050.',
+      'La baisse des émissions est principalement liée à la substitution des énergies fossiles par des énergies décarbonées.',
     ],
     pivots: [
       "Le chauffage est réparti entre les territoires selon le nombre de maisons et d'appartements occupés en résidence principale, corrigé de la rigueur climatique locale.",
-      'La climatisation suit le nombre de résidences principales, corrigé des besoins de rafraîchissement. Les autres usages suivent le nombre de ménages.',
+      'Le chauffage et la climatisation sont territorialisés en fonction du nombre de résidences principales et sont corrigés de la rigueur climatique. Les autres usages sont territorialisés par rapport au nombre de ménages.',
       'La démographie du territoire est prise en compte, et le point de départ est ajusté sur les données observées en 2021.',
     ],
     precisions: ['La climatisation est comptée dans « Autres usages ».'],
   },
   Tertiaire: {
     snbc3: [
-      "La SNBC 3 prévoit une forte baisse des émissions de GES du tertiaire d'ici 2050.",
-      "Les consommations d'énergie évoluent peu : la baisse des émissions repose surtout sur le passage à des énergies décarbonées.",
+      'La SNBC 3 prévoit une forte baisse des émissions GES et peu d’évolution des consommations d’énergie du tertiaire d’ici 2050.',
+      'La baisse des émissions est principalement liée à la substitution des énergies fossiles par des énergies décarbonées.',
     ],
     pivots: [
       "La trajectoire nationale est répartie selon le nombre d'emplois tertiaires du territoire (commerce, services, administration, enseignement, santé).",
@@ -56,8 +56,7 @@ const methodologieParSecteurSnbc3: Record<
   },
   Agriculture: {
     snbc3: [
-      "La SNBC 3 prévoit une baisse des émissions de GES de l'agriculture, moins marquée que dans les autres secteurs.",
-      "L'essentiel de ces émissions ne vient pas de l'énergie, mais de l'élevage et des pratiques culturales (méthane et protoxyde d'azote, convertis en équivalent CO2).",
+      "La SNBC 3 prévoit une baisse des émissions de GES de l'agriculture, moins marquée que dans les autres secteurs. L'essentiel de ces émissions ne vient pas de l'énergie, mais de l'élevage et des pratiques culturales (méthane et protoxyde d'azote, convertis en équivalent CO2).",
     ],
     pivots: [
       "Les émissions agricoles dépendent surtout de l'orientation du territoire, élevage ou cultures, qui n'évoluent pas au même rythme dans la SNBC 3.",
@@ -70,7 +69,8 @@ const methodologieParSecteurSnbc3: Record<
   },
   Transports: {
     snbc3: [
-      "La SNBC 3 prévoit la quasi-disparition des émissions de GES des transports d'ici 2050, avec une forte baisse des consommations d'énergie.",
+      'La SNBC 3 prévoit la quasi-disparition des émissions GES et une forte baisse des consommations d’énergie des transports d’ici 2050.',
+      'La baisse des émissions est liée à la fois à la baisse des consommations d’énergie et à la décarbonation des transports.',
     ],
     pivots: [
       'Les trajets domicile-travail en voiture sont répartis selon les déplacements réels des habitants du territoire.',
@@ -80,7 +80,7 @@ const methodologieParSecteurSnbc3: Record<
     ],
     precisions: [
       '« Routier / mobilité locale » regroupe les trajets domicile-travail en voiture, les deux-roues, les bus et les cars ; « Routier / autre » regroupe les autres trajets en voiture, les utilitaires et les poids lourds.',
-      "Le poste « Autres » est compté là où se trouvent les infrastructures : l'essentiel de l'aérien et du maritime revient au territoire qui porte l'aéroport ou le port principal. Dans les DROM, il peut représenter une part importante des émissions de l'EPCI concerné.",
+      "« Autres » considère les infrastructure : ainsi, les émissions et consommations du transport aérien et maritime sont pour l'essentiel comptabilisées sur le territoire de l'aéroport ou du port.",
     ],
   },
   Déchets: {
@@ -89,17 +89,16 @@ const methodologieParSecteurSnbc3: Record<
       "Dans l'Hexagone, les consommations d'énergie des déchets évoluent comme celles de l'industrie.",
     ],
     pivots: [
-      "Les émissions des déchets dépendent de l'emplacement de quelques installations de traitement : la trajectoire nationale est répartie selon les émissions observées du territoire en 2021.",
+      "La trajectoire est répartie selon les émissions et consommations observées sur le territoire en 2021, qui reflètent notamment la présence d'installations de traitement des déchets.",
       'La démographie est prise en compte.',
     ],
   },
   'Branche énergie': {
     snbc3: [
-      "La SNBC 3 prévoit une forte baisse des émissions de GES de la branche énergie d'ici 2050.",
-      'La branche énergie regroupe le raffinage, la transformation et le transport des produits énergétiques. Les émissions des centrales électriques et des réseaux de chaleur sont comptées dans les secteurs qui consomment cette électricité et cette chaleur.',
+      "La SNBC 3 prévoit une forte baisse des émissions de GES de la branche énergie d'ici 2050. La branche énergie regroupe le raffinage, la transformation et le transport des produits énergétiques. Les émissions des centrales électriques et des réseaux de chaleur sont comptées dans les secteurs qui consomment cette électricité et cette chaleur.",
     ],
     pivots: [
-      "Les émissions dépendent de l'emplacement de quelques installations (raffineries, dépôts) : la trajectoire nationale est répartie selon les émissions observées du territoire en 2021.",
+      "La trajectoire des émissions est répartie selon les émissions observées sur le territoire en 2021, qui dépendent principalement de la présence d'installations de transformation et de transport des produits énergétiques (raffineries, dépôts…).",
       "Seules les émissions sont territorialisées : la branche énergie n'a pas de trajectoire de consommation.",
     ],
   },
@@ -115,7 +114,7 @@ const methodologieParSecteurSnbc3: Record<
     precisions: [
       'Les sols forestiers hors inventaire sont comptés avec les forêts.',
       'Une valeur négative correspond à une séquestration nette, une valeur positive à une émission nette, cas fréquent des cultures et des sols artificiels.',
-      "L'UTCATF n'est pas modélisé dans les DROM.",
+      "L'UTCATF n'est pas modélisé dans les collectivités d’Outre-Mer.",
     ],
   },
   CSC: {
@@ -130,7 +129,7 @@ const methodologieParSecteurSnbc3: Record<
     ],
     precisions: [
       "La consommation d'énergie des procédés de captage est comptée dans « Autres industries ».",
-      "Aucun captage n'est prévu dans les DROM.",
+      "Aucun captage n'est prévu dans les collectivités d’Outre-Mer.",
     ],
   },
 };
