@@ -265,7 +265,9 @@ export default class UpdateFicheService {
         );
         if (!updatedFiche.success) {
           return failure(
-            UpdateFicheErrorEnum.FICHE_NOT_FOUND,
+            updatedFiche.error === UpdateFicheErrorEnum.DATABASE_ERROR
+              ? UpdateFicheErrorEnum.DATABASE_ERROR
+              : UpdateFicheErrorEnum.FICHE_NOT_FOUND,
             updatedFiche.cause
           );
         }
