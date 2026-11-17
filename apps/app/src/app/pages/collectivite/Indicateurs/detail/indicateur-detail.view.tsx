@@ -8,8 +8,8 @@ import { isIndicateurPredefini } from '@tet/domain/indicateurs';
 import { useIsTrajectoireSnbc3Enabled } from '../../Trajectoire/trajectoire-snbc3/data/use-is-trajectoire-snbc3-enabled';
 import { useGetStatutTrajectoire } from '../../Trajectoire/use-get-statut-trajectoire';
 import { useGetTrajectoire } from '../../Trajectoire/use-trajectoire';
-import { IndicateurDetailDataProvider } from './indicateur-detail.data-provider';
-import { IndicateurLayoutView } from './indicateur-layout.view';
+import { IndicateurDetailDataProvider } from './data/indicateur-detail.data-provider';
+import { IndicateurLayout } from './indicateur-layout.view';
 
 type Props = {
   dataTest?: string;
@@ -57,7 +57,7 @@ export const IndicateurDetail = ({ dataTest, indicateurId }: Props) => {
 
   return (
     <IndicateurDetailDataProvider indicateur={indicateur}>
-      <IndicateurLayoutView dataTest={dataTest} />
+      <IndicateurLayout dataTest={dataTest} />
     </IndicateurDetailDataProvider>
   );
 };

@@ -8,7 +8,7 @@ type Props = {
   actionsIds: string[];
 };
 
-const ActionsLiees = ({ actionsIds, isReadonly }: Props) => {
+export const IndicateurMesuresLiees = ({ actionsIds, isReadonly }: Props) => {
   const isEmpty = actionsIds.length === 0;
 
   if (isEmpty) {
@@ -32,5 +32,3 @@ const ActionsLiees = ({ actionsIds, isReadonly }: Props) => {
     </div>
   );
 };
-
-export default ActionsLiees;

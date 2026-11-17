@@ -4,8 +4,8 @@ import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { MetadataItem, MetadataItemPersonne } from '@/app/ui/metadata-line';
 import { SANS_PILOTE_LABEL } from '@tet/domain/plans';
 import { InlineEditWrapper } from '@tet/ui';
-import { useIndicateurData } from '../indicateur-data.context';
-import { useIndicateurActions } from '../indicateur-actions.context';
+import { useIndicateurData } from '../context/indicateur-data.context';
+import { useIndicateurActions } from '../context/indicateur-actions.context';
 
 type Props = {
   isReadonly: boolean;

@@ -1,29 +1,26 @@
 import { isIndicateurPerso } from '@tet/domain/indicateurs';
 import { Divider } from '@tet/ui';
 import { useState } from 'react';
+import { useIndicateurActions } from '../../context/indicateur-actions.context';
+import { useIndicateurChart } from '../../context/indicateur-chart.context';
+import { useIndicateurData } from '../../context/indicateur-data.context';
 import {
   INDICATEUR_PERSONNALISATION_IDENTIFIANT,
   IndicateurPersonnalisationQuestions,
 } from './indicateur-personnalisation.questions';
-import IndicateurDetailChart from '../Indicateur/detail/IndicateurDetailChart';
-import { IndicateurValuesTabs } from '../Indicateur/detail/IndicateurValuesTabs';
+import IndicateurDetailChart from '../../../Indicateur/detail/IndicateurDetailChart';
+import { IndicateurValuesTabs } from '../../../Indicateur/detail/IndicateurValuesTabs';
 import { IndicateurCommentaireInput } from './indicateur-commentaire.input';
 import { IndicateurSourcesSelect } from './indicateur-sources.select';
 import { IndicateurUniteInput } from './indicateur-unite.input';
-import { ThematiquesIndicateurInput } from './ThematiquesIndicateurInput';
+import { ThematiquesIndicateurInput } from './thematiques-indicateur.input';
 import { TypeSegmentationSelect } from './type-segmentation.select';
-import { useIndicateurChart } from './indicateur-chart.context';
-import { useIndicateurData } from './indicateur-data.context';
 
-type Props = {
-  updateUnite: (value: string) => void;
-  updateCommentaire: (value: string) => void;
-};
-
-const DonneesIndicateur = ({ updateUnite, updateCommentaire }: Props) => {
+export const IndicateurDonnees = () => {
   const { indicateur, canMutateIndicateur, canMutateValeur } =
     useIndicateurData();
   const { chartInfo } = useIndicateurChart();
+  const { updateUnite, updateCommentaire } = useIndicateurActions();
   const [isTableModalOpen, setIsTableModalOpen] = useState(false);
   const { commentaire, unite } = indicateur;
 
@@ -102,5 +99,3 @@ const DonneesIndicateur = ({ updateUnite, updateCommentaire }: Props) => {
     </div>
   );
 };
-
-export default DonneesIndicateur;

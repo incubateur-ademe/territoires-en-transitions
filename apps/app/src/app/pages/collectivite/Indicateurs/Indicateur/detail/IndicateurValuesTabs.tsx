@@ -1,7 +1,7 @@
 import { Alert } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import { IndicateurTable } from '../../table/indicateur-table';
-import { useIndicateurData } from '../../detail/indicateur-data.context';
+import { useIndicateurData } from '../../detail/context/indicateur-data.context';
 
 // un message spécifique doit être affiché pour les indicateurs de la séquestration carbone
 const ID_SEQUESTRATION = 'cae_63.';

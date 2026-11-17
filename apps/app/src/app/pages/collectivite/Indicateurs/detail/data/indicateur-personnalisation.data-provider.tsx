@@ -3,7 +3,7 @@
 import { useListPersonnalisationQuestionsReponses } from '@/app/collectivites/personnalisations/data/use-list-personnalisation-questions-reponses';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import type { PropsWithChildren } from 'react';
-import { IndicateurPersonnalisationProvider } from './indicateur-personnalisation.context';
+import { IndicateurPersonnalisationProvider } from '../context/indicateur-personnalisation.context';
 
 const PERSONNALISATION_QUESTION_ID = 'potentiel_eolien_ou_hydro';
 

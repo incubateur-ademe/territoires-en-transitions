@@ -6,8 +6,8 @@ import { useState } from 'react';
 import { DeleteIndicateurConfirmationModal } from '@/app/indicateurs/indicateurs/delete-indicateur-confirmation.modal';
 import { IndicateurChartPngExport } from '../../chart/indicateur-chart.png-export';
 import { IndicateurChartInfo } from '../../data/use-indicateur-chart';
-import { useIndicateurActions } from '../indicateur-actions.context';
-import { useIndicateurData } from '../indicateur-data.context';
+import { useIndicateurActions } from '../context/indicateur-actions.context';
+import { useIndicateurData } from '../context/indicateur-data.context';
 
 type ModalType = 'activityLog' | 'deleting' | 'none';
 

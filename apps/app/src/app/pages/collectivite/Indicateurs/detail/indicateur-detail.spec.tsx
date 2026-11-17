@@ -1,7 +1,7 @@
 import { INDICATEUR_TRAJECTOIRE_IDENTFIANTS } from '@/app/indicateurs/trajectoires/trajectoire-constants';
 import { render } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { IndicateurDetail } from './IndicateurDetail';
+import { IndicateurDetail } from './indicateur-detail.view';
 
 const mocks = vi.hoisted(() => ({
   snbc3Enabled: undefined as boolean | undefined,
@@ -31,11 +31,11 @@ vi.mock('../../Trajectoire/use-trajectoire', () => ({
   useGetTrajectoire: (args: { enabled: boolean }) =>
     mocks.useGetTrajectoire(args),
 }));
-vi.mock('./indicateur-detail.data-provider', () => ({
+vi.mock('./data/indicateur-detail.data-provider', () => ({
   IndicateurDetailDataProvider: () => null,
 }));
 vi.mock('./indicateur-layout.view', () => ({
-  IndicateurLayoutView: () => null,
+  IndicateurLayout: () => null,
 }));
 
 const indicateurTrajectoire = {

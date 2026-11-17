@@ -6,7 +6,7 @@ import {
 import type { OpenState } from '@tet/ui/utils/types';
 import { useState, type ReactNode } from 'react';
 import { AddIndicateurPeriodeHeader } from './add-indicateur-periode.header';
-import { useIndicateurActions } from '../detail/indicateur-actions.context';
+import { useIndicateurActions } from '../detail/context/indicateur-actions.context';
 
 export type IndicateurTableDeclarationProps = {
   canWrite: boolean;

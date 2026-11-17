@@ -2,7 +2,7 @@
 
 import { PersonnalisationQuestionsList } from '@/app/collectivites/personnalisations/personnalisation-questions.list';
 import { VisibleWhen } from '@tet/ui';
-import { useIndicateurPersonnalisation } from './indicateur-personnalisation.context';
+import { useIndicateurPersonnalisation } from '../../context/indicateur-personnalisation.context';
 
 export const INDICATEUR_PERSONNALISATION_IDENTIFIANT = 'cae_25.b';
 

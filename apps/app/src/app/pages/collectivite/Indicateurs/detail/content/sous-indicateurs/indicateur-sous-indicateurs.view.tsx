@@ -1,12 +1,15 @@
 import { useIndicateursListParams } from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list/use-indicateurs-list-params';
-import IndicateursListe from '../lists/indicateurs-list';
+import IndicateursListe from '../../../lists/indicateurs-list';
 
 type Props = {
   enfantsIds: number[];
   isReadonly: boolean;
 };
 
-const SousIndicateurs = ({ enfantsIds, isReadonly }: Props) => {
+export const IndicateurSousIndicateurs = ({
+  enfantsIds,
+  isReadonly,
+}: Props) => {
   const { searchParams, setSearchParams } = useIndicateursListParams(
     { indicateurIds: enfantsIds },
     { sortBy: 'titre' }
@@ -25,5 +28,3 @@ const SousIndicateurs = ({ enfantsIds, isReadonly }: Props) => {
     </div>
   );
 };
-
-export default SousIndicateurs;

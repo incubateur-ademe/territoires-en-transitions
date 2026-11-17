@@ -9,8 +9,8 @@ import {
   isValidElement,
 } from 'react';
 import { describe, expect, it, vi } from 'vitest';
-import { IndicateurActionsProvider } from '../detail/indicateur-actions.context';
-import { toIndicateurActions } from '../detail/to-indicateur-actions.fixture';
+import { IndicateurActionsProvider } from '../detail/context/indicateur-actions.context';
+import { toIndicateurActions } from './to-indicateur-actions.fixture';
 import { useIndicateurTableDeclaration } from './use-indicateur-table-declaration';
 
 type OnAdd = (

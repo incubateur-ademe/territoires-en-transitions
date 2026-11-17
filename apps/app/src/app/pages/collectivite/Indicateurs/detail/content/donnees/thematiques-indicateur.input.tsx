@@ -1,7 +1,7 @@
 import ThematiquesDropdown from '@/app/shared/thematiques/thematiques.dropdown';
 import { Field } from '@tet/ui';
-import { useIndicateurData } from './indicateur-data.context';
-import { useIndicateurActions } from './indicateur-actions.context';
+import { useIndicateurData } from '../../context/indicateur-data.context';
+import { useIndicateurActions } from '../../context/indicateur-actions.context';
 
 type Props = {
   disabled?: boolean;

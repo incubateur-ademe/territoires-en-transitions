@@ -1,4 +1,4 @@
-import { IndicateurDetail } from '@/app/app/pages/collectivite/Indicateurs/detail/IndicateurDetail';
+import { IndicateurDetail } from '@/app/app/pages/collectivite/Indicateurs/detail/indicateur-detail.view';
 
 export default async function Page({
   params,

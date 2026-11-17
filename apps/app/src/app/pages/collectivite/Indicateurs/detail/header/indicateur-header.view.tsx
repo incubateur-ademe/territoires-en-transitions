@@ -2,10 +2,11 @@ import type { IndicateurDetaille } from '@tet/domain/indicateurs';
 import { PermissionOperation } from '@tet/domain/users';
 import { PageHeader } from '@tet/ui';
 import { IndicateurChartInfo } from '../../data/use-indicateur-chart';
+import { useIndicateurActions } from '../context/indicateur-actions.context';
 import { ReactElement, useState } from 'react';
-import CheminIndicateur from './CheminIndicateur';
-import { hasIndicateurInfos, IndicateurInfos } from './IndicateurInfos';
-import IndicateurToolbar from './IndicateurToolbar';
+import CheminIndicateur from './chemin-indicateur.view';
+import { hasIndicateurInfos, IndicateurInfos } from './indicateur-infos.view';
+import IndicateurToolbar from './indicateur-toolbar.view';
 
 type Props = {
   collectiviteId: number;
@@ -15,7 +16,6 @@ type Props = {
   isReadonly: boolean;
   isPerso: boolean;
   composeSansAgregation: boolean;
-  onUpdate?: (value: string) => void;
 };
 
 const IndicateurHeader = ({
@@ -26,8 +26,8 @@ const IndicateurHeader = ({
   isReadonly,
   isPerso,
   composeSansAgregation,
-  onUpdate,
 }: Props): ReactElement => {
+  const { updateTitre } = useIndicateurActions();
   const { titre, unite } = indicateur;
   const isTitleReadonly = isReadonly || !isPerso;
   const uniteSuffix = composeSansAgregation ? null : (
@@ -47,7 +47,7 @@ const IndicateurHeader = ({
       <PageHeader.EditableTitle
         title={titre}
         isReadonly={isTitleReadonly || isSticky}
-        onUpdate={(value) => onUpdate?.(value ?? '')}
+        onUpdate={(value) => updateTitre(value ?? '')}
         suffix={uniteSuffix}
       />
 

@@ -20,7 +20,7 @@ import { AddIndicateurPeriodeHeader } from './add-indicateur-periode.header';
 import { AddIndicateurPeriodesModal } from './add-indicateur-periodes.modal';
 import { getSourceLabel } from '../data/get-source-label';
 import type { IndicateurChartInfo } from '../data/use-indicateur-chart';
-import { IndicateurChartProvider } from '../detail/indicateur-chart.context';
+import { IndicateurChartProvider } from '../detail/context/indicateur-chart.context';
 import { IndicateurValeursTable } from './indicateur-valeurs-table';
 
 const chartInfo = {
