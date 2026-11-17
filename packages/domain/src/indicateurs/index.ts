@@ -31,6 +31,7 @@ export * from './valeurs/indicateur-period-presentation';
 export * from './valeurs/indicateur-reference-objectif.rules';
 export * from './valeurs/indicateur-valeur.schema';
 export * from './valeurs/iso-date.utils';
+export * from './valeurs/mask-dernier-resultat.rules';
 export * from './valeurs/values.constants';
 export * from './verification-trajectoire-status';
 export * from './vues/indicateur-vue-filters.rules';
