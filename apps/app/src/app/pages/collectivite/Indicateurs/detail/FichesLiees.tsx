@@ -14,11 +14,12 @@ const FichesLiees = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const { fiches } = useIndicateurFichesLiees();
+  const { indicateur, canMutateIndicateur } = useIndicateurData();
+  const { useListFichesLiees } = useIndicateurFichesLiees();
+  const fiches = useListFichesLiees(indicateur.id);
 
   const ficheIds = fiches.map((f) => f.id);
 
-  const { canMutateIndicateur } = useIndicateurData();
   const { updateIndicateur } = useIndicateurActions();
 
   const isEmpty = ficheIds.length === 0;
