@@ -14,7 +14,7 @@ import { test } from 'tests/main.fixture';
 import { databaseService } from 'tests/shared/database.service';
 
 /**
- * Vidéo de démo de l'outil « Gestion des labellisations » — pas un test.
+ * Vidéo de démo de l'outil « Gestion des audits et des labellisations » — pas un test.
  * Ignorée hors démo ; pour la générer :
  *   DEMO=1 pnpm exec playwright test --config ./e2e/playwright.config.mjs labellisations-admin.demo
  * La vidéo (.webm) atterrit dans e2e/test-results/.
@@ -260,11 +260,17 @@ test('démo : gestion des labellisations par le programme TETE', async ({
   await page.waitForURL(/\/admin$/);
   await caption(
     page,
-    'Le programme TETE y trouve l’outil « Gestion des labellisations »'
+    'Le programme TETE y trouve l’outil « Gestion des audits et des labellisations »'
   );
-  await page.getByText('Gestion des labellisations').first().hover();
+  await page
+    .getByText('Gestion des audits et des labellisations')
+    .first()
+    .hover();
   await pause(page, 1500);
-  await page.getByText('Gestion des labellisations').first().click();
+  await page
+    .getByText('Gestion des audits et des labellisations')
+    .first()
+    .click();
   await page.getByTestId(`${T}.onglet-en-attente`).waitFor();
 
   // --- 2. Vue d'ensemble ---------------------------------------------
@@ -466,7 +472,10 @@ test('captures : menu Administration et outils du super-admin', async ({
 
   await page.getByRole('link', { name: 'Administration' }).click();
   await page.waitForURL(/\/admin$/);
-  await page.getByText('Gestion des labellisations').first().waitFor();
+  await page
+    .getByText('Gestion des audits et des labellisations')
+    .first()
+    .waitFor();
   await page.waitForTimeout(800);
   await masquerFlottants();
   await page.screenshot({
