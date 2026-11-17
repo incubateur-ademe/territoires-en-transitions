@@ -3,6 +3,7 @@
 import { AvancementParAxeBloc } from './avancement-par-axe/avancement-par-axe.bloc';
 import { EvolutionStatutsBloc } from './evolution-statuts/evolution-statuts.bloc';
 import { FaireAvancerLePlanBloc } from './faire-avancer-le-plan/faire-avancer-le-plan.bloc';
+import { IndicateursObjectifsBloc } from './indicateurs-objectifs/indicateurs-objectifs.bloc';
 import { RenseignerAvancementSidePanel } from './faire-avancer-le-plan/renseigner-avancement.side-panel';
 import { VueEnsembleBloc } from './vue-ensemble/vue-ensemble.bloc';
 
@@ -23,6 +24,7 @@ export const SuiviPlanView = ({
       planId={planId}
       dateDebutPlan={dateDebutPlan}
     />
+    <IndicateursObjectifsBloc collectiviteId={collectiviteId} planId={planId} />
     <FaireAvancerLePlanBloc collectiviteId={collectiviteId} planId={planId} />
     <RenseignerAvancementSidePanel
       collectiviteId={collectiviteId}

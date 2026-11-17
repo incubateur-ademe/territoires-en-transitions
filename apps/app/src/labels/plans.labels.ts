@@ -486,6 +486,18 @@ export const plansLabels = {
     'La date de début doit précéder la date de fin.',
   evolutionStatutsErreurChargement:
     "Impossible de charger l'évolution des statuts",
+  indicateursObjectifsTitre: 'Indicateurs et objectifs',
+  indicateursObjectifsIndicateur: 'Indicateur',
+  indicateursObjectifsDerniereValeur: 'Dernière valeur',
+  indicateursObjectifsObjectif: 'Objectif',
+  indicateursObjectifsSansValeur: '—',
+  indicateursObjectifsAucun:
+    "Aucun indicateur n'est lié aux actions ou aux axes de ce plan.",
+  indicateursObjectifsVoirTout: (count: number): string =>
+    `Voir tout (${count} ${count > 1 ? 'indicateurs' : 'indicateur'})`,
+  indicateursObjectifsVoirMoins: 'Voir moins',
+  indicateursObjectifsErreurChargement:
+    'Impossible de charger les indicateurs du plan',
   faireAvancerLePlanTitre: 'Fiabiliser le suivi',
   faireAvancerLePlanDescription:
     'Certaines actions pourraient impacter négativement le suivi. Les traiter rend les chiffres ci-dessus fiables',
