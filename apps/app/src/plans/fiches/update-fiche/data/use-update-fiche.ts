@@ -53,6 +53,10 @@ export const useUpdateFiche = (args?: Args) => {
           };
         });
 
+        await queryClient.cancelQueries(
+          trpc.plans.fiches.listFiches.queryFilter({ collectiviteId })
+        );
+
         // Optimistically update all caches of list of fiches
         queryClient.setQueriesData(
           trpc.plans.fiches.listFiches.queryFilter({
@@ -199,12 +203,19 @@ export const useUpdateFiche = (args?: Args) => {
         //   });
         // }
 
+        const isLastPendingUpdate =
+          queryClient.isMutating({
+            mutationKey: trpc.plans.fiches.update.mutationKey(),
+          }) === 1;
+
         // Dans le cas où on update la fiche depuis la liste des fiches
-        queryClient.invalidateQueries({
-          queryKey: trpc.plans.fiches.listFiches.queryKey({
-            collectiviteId,
-          }),
-        });
+        if (isLastPendingUpdate) {
+          queryClient.invalidateQueries({
+            queryKey: trpc.plans.fiches.listFiches.queryKey({
+              collectiviteId,
+            }),
+          });
+        }
 
         /**
          * Invalide le cache de la query countBy des fiches
