@@ -9,6 +9,7 @@ import { DeleteAvisRouter } from './delete-avis/delete-avis.router';
 import { DeleteDemarchePcaetRouter } from './delete-demarche-pcaet/delete-demarche-pcaet.router';
 import { PcaetDiagnosticRouter } from './diagnostic/pcaet-diagnostic.router';
 import { PcaetDocumentsRouter } from './documents/pcaet-documents.router';
+import { DemarchePcaetExportsRouter } from './exports/demarche-pcaet-exports.router';
 import { GetAvisFileUrlRouter } from './get-avis-file-url/get-avis-file-url.router';
 import { GetContexteInstructionRouter } from './get-contexte-instruction/get-contexte-instruction.router';
 import { GetDepotContextRouter } from './get-depot-context/get-depot-context.router';
@@ -69,6 +70,7 @@ export class PcaetRouter {
     private readonly publierDemarchePcaetRouter: PublierDemarchePcaetRouter,
     private readonly pcaetDiagnosticRouter: PcaetDiagnosticRouter,
     private readonly pcaetDocumentsRouter: PcaetDocumentsRouter,
+    private readonly demarchePcaetExportsRouter: DemarchePcaetExportsRouter,
     private readonly listContactsRouter: ListContactsRouter,
     private readonly referentsPcaetRouter: ReferentsPcaetRouter,
     private readonly trackSnapshotRouter: TrackSnapshotRouter,
@@ -110,6 +112,7 @@ export class PcaetRouter {
     this.trpc.router({
       diagnostic: this.pcaetDiagnosticRouter.router,
       documents: this.pcaetDocumentsRouter.router,
+      exports: this.demarchePcaetExportsRouter.router,
       referents: this.referentsPcaetRouter.router,
       demo: this.demoRouter.router,
     })

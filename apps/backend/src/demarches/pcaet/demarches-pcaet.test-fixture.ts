@@ -29,6 +29,7 @@ import {
   PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS,
   type PcaetDiagnosticIndicateurParentConfig,
 } from '@tet/domain/demarches';
+import type { PlanStatus } from '@tet/domain/plans';
 import { CollectiviteRole } from '@tet/domain/users';
 import { and, eq, inArray, sql } from 'drizzle-orm';
 import { Workbook } from 'exceljs';
@@ -217,11 +218,18 @@ export async function attachTestPlanToDemarchePcaet(
     collectiviteId,
     demarcheId,
     nom = 'Programme d’actions du PCAET',
-  }: { collectiviteId: number; demarcheId: number; nom?: string }
+    status,
+  }: {
+    collectiviteId: number;
+    demarcheId: number;
+    nom?: string;
+    /** Le statut par défaut de la table (`active`) si omis. */
+    status?: PlanStatus;
+  }
 ): Promise<{ id: number }> {
   const [plan] = await db.db
     .insert(axeTable)
-    .values({ nom, collectiviteId })
+    .values({ nom, collectiviteId, ...(status ? { status } : {}) })
     .returning({ id: axeTable.id });
 
   await db.db

@@ -223,7 +223,8 @@ export async function addTestCollectivite(
     throw new Error(
       `Error adding collectivite on database ${
         process.env.SUPABASE_DATABASE_URL
-      }: ${getErrorMessage(err)}`
+      }: ${getErrorMessage(err)}`,
+      { cause: err }
     );
   }
 }

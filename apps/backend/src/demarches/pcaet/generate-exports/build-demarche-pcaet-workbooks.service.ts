@@ -5,6 +5,7 @@ import PlanActionsService, {
   type PlanSnapshot,
 } from '@tet/backend/plans/fiches/plan-actions.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { getErrorMessage } from '@tet/domain/utils';
 import { DemarchePcaetDiagnosticService } from '../shared/demarche-pcaet-diagnostic.service';
@@ -40,35 +41,55 @@ export class BuildDemarchePcaetWorkbooksService {
     private readonly diagnosticService: DemarchePcaetDiagnosticService
   ) {}
 
+  /** Les trois classeurs d'un coup : la génération à la soumission. */
   async build(
     {
       demarcheId,
       collectiviteId,
-      activePlansOnly = false,
-    }: {
-      demarcheId: number;
-      collectiviteId: number;
-      /**
-       * Écarte les plans encore en import, à vérifier ou en échec, comme la
-       * lecture publique. Pour l'export du jour : une photo n'a pas ce cas, la
-       * transmission exige des plans vérifiés.
-       */
-      activePlansOnly?: boolean;
-    },
+    }: { demarcheId: number; collectiviteId: number },
     tx?: Transaction
   ): Promise<Result<DemarchePcaetWorkbooks, DemarchePcaetExportError>> {
+    const plans = await this.buildPlanWorkbooks(
+      { demarcheId, collectiviteId },
+      tx
+    );
+    if (!plans.success) {
+      return plans;
+    }
+    const indicateurs = await this.buildIndicateursWorkbook(
+      { demarcheId, collectiviteId },
+      tx
+    );
+    if (!indicateurs.success) {
+      return indicateurs;
+    }
+    return success({ ...plans.data, indicateurs: indicateurs.data });
+  }
+
+  /**
+   * Le plan et sa variante sans fiche restreinte, sans lire le diagnostic :
+   * tous les plans liés, la transmission ayant exigé qu'ils soient vérifiés.
+   */
+  async buildPlanWorkbooks(
+    {
+      demarcheId,
+      collectiviteId,
+    }: { demarcheId: number; collectiviteId: number },
+    tx?: Transaction
+  ): Promise<
+    Result<
+      Pick<DemarchePcaetWorkbooks, 'plan' | 'plan_expurge'>,
+      DemarchePcaetExportError
+    >
+  > {
     try {
       const snapshots = await this.loadPlanSnapshots(
-        { demarcheId, collectiviteId, activePlansOnly },
+        { demarcheId, collectiviteId, activePlansOnly: false },
         tx
       );
       if (!snapshots.success) {
         return snapshots;
       }
-      const diagnostic = await this.diagnosticService.loadPayload(
-        { demarcheId, collectiviteId },
-        tx
-      );
 
       const hasFicheRestreinte = snapshots.data.some(
         (snapshot) => snapshot.planWithoutFichesRestreintes !== null
@@ -91,46 +112,136 @@ export class BuildDemarchePcaetWorkbooksService {
               )
             )
           : null,
-        indicateurs: hasPcaetDiagnosticData(diagnostic)
-          ? toBuffer(await exportDiagnosticXLSX(diagnostic))
-          : null,
       });
     } catch (error) {
-      this.logger.error(
-        `Échec de la construction des classeurs de la démarche PCAET ${demarcheId} : ${getErrorMessage(
-          error
-        )}`
+      return this.toGenerationFailure(demarcheId, error);
+    }
+  }
+
+  /**
+   * Une seule variante du plan, pour l'export du jour : la variante sans fiche
+   * restreinte reprend tels quels les plans qui n'en ont pas, comme dans
+   * `buildPlanWorkbooks`. `null` sans plan lié.
+   */
+  async buildPlanWorkbook(
+    {
+      demarcheId,
+      collectiviteId,
+      withoutFichesRestreintes,
+    }: {
+      demarcheId: number;
+      collectiviteId: number;
+      withoutFichesRestreintes: boolean;
+    },
+    tx?: Transaction
+  ): Promise<Result<Buffer | null, DemarchePcaetExportError>> {
+    try {
+      // Plans aboutis seulement, comme la lecture publique : une photo n'a
+      // pas ce cas, la transmission exige des plans vérifiés.
+      const snapshots = await this.loadPlanSnapshots(
+        { demarcheId, collectiviteId, activePlansOnly: true },
+        tx
       );
-      return failure(
-        DemarchePcaetExportErrorEnum.EXPORT_GENERATION_ERROR,
-        error instanceof Error ? error : undefined
+      if (!snapshots.success) {
+        return snapshots;
+      }
+      if (snapshots.data.length === 0) {
+        return success(null);
+      }
+      return success(
+        toBuffer(
+          await exportPlansXLSX(
+            snapshots.data.map(({ plan, planWithoutFichesRestreintes }) =>
+              withoutFichesRestreintes
+                ? planWithoutFichesRestreintes ?? plan
+                : plan
+            )
+          )
+        )
       );
+    } catch (error) {
+      return this.toGenerationFailure(demarcheId, error);
+    }
+  }
+
+  /** Le classeur des indicateurs, sans lire les plans. */
+  async buildIndicateursWorkbook(
+    {
+      demarcheId,
+      collectiviteId,
+    }: { demarcheId: number; collectiviteId: number },
+    tx?: Transaction
+  ): Promise<
+    Result<DemarchePcaetWorkbooks['indicateurs'], DemarchePcaetExportError>
+  > {
+    try {
+      const diagnostic = await this.diagnosticService.loadPayload(
+        { demarcheId, collectiviteId },
+        tx
+      );
+      return success(
+        hasPcaetDiagnosticData(diagnostic)
+          ? toBuffer(await exportDiagnosticXLSX(diagnostic))
+          : null
+      );
+    } catch (error) {
+      return this.toGenerationFailure(demarcheId, error);
     }
   }
 
   /**
    * Le dépôt a-t-il de quoi remplir chaque classeur, sans les construire ? Un
    * plan lié abouti pour le plan, un diagnostic non vide pour les indicateurs :
-   * mêmes critères que `build({ activePlansOnly: true })`.
+   * mêmes critères que `buildPlanWorkbook` et `buildIndicateursWorkbook`. Aucun
+   * contrôle d'accès ici, à l'appelant de l'avoir fait.
    */
   async hasContent(
     {
       demarcheId,
       collectiviteId,
     }: { demarcheId: number; collectiviteId: number },
-    tx?: Transaction
-  ): Promise<{ plan: boolean; indicateurs: boolean }> {
-    const [planIds, diagnostic] = await Promise.all([
-      this.demarchePlanActionsRepository.listActivePlanActionIds(
-        demarcheId,
-        tx
-      ),
-      this.diagnosticService.loadPayload({ demarcheId, collectiviteId }, tx),
-    ]);
-    return {
-      plan: planIds.length > 0,
-      indicateurs: hasPcaetDiagnosticData(diagnostic),
-    };
+    { tx }: ServiceSecondArg
+  ): Promise<
+    Result<{ plan: boolean; indicateurs: boolean }, 'DATABASE_ERROR'>
+  > {
+    try {
+      const [planIds, diagnostic] = await Promise.all([
+        this.demarchePlanActionsRepository.listActivePlanActionIds(
+          demarcheId,
+          tx
+        ),
+        this.diagnosticService.loadPayload({ demarcheId, collectiviteId }, tx),
+      ]);
+      return success({
+        plan: planIds.length > 0,
+        indicateurs: hasPcaetDiagnosticData(diagnostic),
+      });
+    } catch (error) {
+      this.logger.error(
+        `Lecture du contenu de la démarche PCAET ${demarcheId} impossible : ${getErrorMessage(
+          error
+        )}`
+      );
+      return failure(
+        'DATABASE_ERROR',
+        error instanceof Error ? error : undefined
+      );
+    }
+  }
+
+  private toGenerationFailure(
+    demarcheId: number,
+    error: unknown
+  ): Result<never, DemarchePcaetExportError> {
+    this.logger.error(
+      `Échec de la construction des classeurs de la démarche PCAET ${demarcheId} : ${getErrorMessage(
+        error
+      )}`
+    );
+    return failure(
+      DemarchePcaetExportErrorEnum.EXPORT_GENERATION_ERROR,
+      error instanceof Error ? error : undefined
+    );
   }
 
   /** Les plans liés, dans l'ordre de rattachement. */
