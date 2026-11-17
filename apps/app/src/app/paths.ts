@@ -548,17 +548,24 @@ export const makeCollectiviteActionUrl = ({
   ficheUid,
   content,
   planId,
+  searchParams,
 }: {
   collectiviteId: number;
   ficheUid: string;
   content?: FicheSectionId;
   planId?: number;
-}) =>
-  collectiviteActionPath
+  searchParams?: string;
+}) => {
+  const params = new URLSearchParams(searchParams);
+  if (planId) {
+    params.set('planId', String(planId));
+  }
+  return collectiviteActionPath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
     .replace(`:${ficheParam}`, ficheUid)
     .replace(':content', content ?? 'details')
-    .concat(planId ? `?planId=${planId}` : '');
+    .concat(params.size ? `?${params}` : '');
+};
 
 export const OPEN_AXES_KEY_SEARCH_PARAMETER = 'openAxes';
 export const PLAN_DISPLAY_OPTIONS_PARAMETER = 'options';
