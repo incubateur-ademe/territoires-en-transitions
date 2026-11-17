@@ -720,13 +720,13 @@ describe(
     });
     afterAll(async () => app.close());
 
-    const enqueue = (buffer = docx, planType?: number) => {
+    const enqueue = (buffer = docx, planType: number | null = typeId) => {
       const req = request(app.getHttpServer())
         .post(makeEnqueueUrl(fixture.collectivite.id))
         .set('Authorization', `Bearer ${token}`)
         .field('profile', AiPlanImportProfileEnum.ELECTRIFICATION)
         .field('planName', 'Plan Électrification');
-      if (planType !== undefined) req.field('planType', String(planType));
+      if (planType !== null) req.field('planType', String(planType));
       return req.attach('file', buffer, {
         filename: 'convention.docx',
         contentType: DOCX_MIME,
@@ -894,6 +894,13 @@ describe(
     it('refuse un CSV déclaré DOCX et un autre type de plan avant upload', async () => {
       expect((await enqueue(csvFile())).status).toBe(400);
       expect((await enqueue(docx, typeId + 100000)).status).toBe(400);
+      await expectNoWrites();
+    });
+
+    it('refuse une admission Électrification sans type de plan', async () => {
+      const response = await enqueue(docx, null);
+      expect(response.status).toBe(400);
+      expect(response.body.message).toBe('Type de plan inconnu');
       await expectNoWrites();
     });
 
