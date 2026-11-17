@@ -54,8 +54,6 @@ export const IndicateurTable = ({
     commentaires: { resultat: string; objectif: string };
   } | null>(null);
   const { saveValeur, declarePeriodes, deleteValeur } = useIndicateurValeurs();
-  const { avecSnbc3 } = chartInfo.sourceFilter;
-  const { getColorBySourceId } = chartInfo;
   const canWrite =
     !readonly &&
     !indicateur.sansValeurUtilisateur &&
@@ -121,8 +119,6 @@ export const IndicateurTable = ({
         periodeToReveal={declaration.periodeToReveal}
         readonly={!canWrite}
         confidentiel={confidentiel}
-        getColorBySourceId={getColorBySourceId}
-        avecSnbc3={avecSnbc3}
         onSave={async (periode, type, value) => {
           if (!canWrite) return false;
           try {

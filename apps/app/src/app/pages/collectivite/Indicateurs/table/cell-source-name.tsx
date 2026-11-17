@@ -2,9 +2,8 @@ import { appLabels } from '@/app/labels/catalog';
 import { getIndicateurPeriodPresentation } from '@/app/indicateurs/valeurs/indicateur-period-presentation';
 import { DashedLineSymbol, SolidLineSymbol } from '@/app/ui/charts/ChartLegend';
 import { Icon, TableHeaderCell } from '@tet/ui';
-import { getSourceLabel } from '../data/get-source-label';
 import { PreparedData } from '../data/prepare-data';
-import { GetColorBySourceId } from '../data/use-indicateur-sources';
+import { useIndicateurChart } from '../detail/indicateur-chart.context';
 import { DataSourceTooltip } from '../Indicateur/detail/DataSourceTooltip';
 import { SourceType } from '../types';
 
@@ -12,14 +11,13 @@ import { SourceType } from '../types';
 export const CellSourceName = ({
   source,
   type,
-  getColorBySourceId,
-  avecSnbc3 = false,
 }: {
   source: Omit<PreparedData['sources'][number], 'valeurs'>;
   type: SourceType;
-  getColorBySourceId: GetColorBySourceId;
-  avecSnbc3?: boolean;
 }) => {
+  const {
+    chartInfo: { getColorBySourceId, getSourceLabel },
+  } = useIndicateurChart();
   const metadonnee = source.metadonnees?.[0];
   const color = getColorBySourceId(source.source, type);
   const isLocal = source.source === 'collectivite';
@@ -28,8 +26,7 @@ export const CellSourceName = ({
     : getSourceLabel(
         source.source,
         metadonnee?.producteur || source.libelle,
-        type,
-        { avecSnbc3 }
+        type
       );
 
   return (

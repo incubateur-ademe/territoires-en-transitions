@@ -17,7 +17,7 @@ import {
 import { IndicateurPeriodes } from '@tet/domain/indicateurs';
 import type { GridComponentOption } from 'echarts/components';
 import { memo, useMemo, useRef } from 'react';
-import { getSourceLabel } from '../data/get-source-label';
+import type { GetSourceLabel } from '../data/get-source-label';
 import { PreparedData } from '../data/prepare-data';
 import { IndicateurChartInfo } from '../data/use-indicateur-chart';
 import { GetColorBySourceId } from '../data/use-indicateur-sources';
@@ -67,7 +67,7 @@ const prepareDataset = (
   data: IndicateurChartInfo['data'],
   type: SourceType,
   getColorBySourceId: GetColorBySourceId,
-  avecSnbc3: boolean
+  getSourceLabel: GetSourceLabel
 ): IndicateurDataset[] =>
   data.valeurs[`${type}s`].sources
     // Une période incomplète reste un trou dans la courbe.
@@ -85,8 +85,7 @@ const prepareDataset = (
         const label = getSourceLabel(
           source,
           metadonnee?.producteur || libelle,
-          type,
-          { avecSnbc3 }
+          type
         );
         return {
           color: getColorBySourceId(source, type),
@@ -397,12 +396,11 @@ const IndicateurChart = ({
   const { data } = chartInfo;
   const chartContainerRef = useRef<HTMLDivElement>(null);
 
-  const { avecSnbc3 } = chartInfo.sourceFilter;
-  const { getColorBySourceId } = chartInfo;
+  const { getColorBySourceId, getSourceLabel } = chartInfo;
   const preparedDatasets = useMemo(() => {
     const donneesResultatObjectif = [
-      ...prepareDataset(data, 'resultat', getColorBySourceId, avecSnbc3),
-      ...prepareDataset(data, 'objectif', getColorBySourceId, avecSnbc3),
+      ...prepareDataset(data, 'resultat', getColorBySourceId, getSourceLabel),
+      ...prepareDataset(data, 'objectif', getColorBySourceId, getSourceLabel),
     ];
     const donneesSegments = prepareSegmentsDataset(chartInfo);
     const references = prepareReferenceDataset(chartInfo);
@@ -415,7 +413,7 @@ const IndicateurChart = ({
         donneesSegments.length +
         references.length,
     };
-  }, [avecSnbc3, chartInfo, data, getColorBySourceId]);
+  }, [chartInfo, data, getColorBySourceId, getSourceLabel]);
 
   useResizeGraphOnContainerSizeUpdate({
     containerRef: chartContainerRef,

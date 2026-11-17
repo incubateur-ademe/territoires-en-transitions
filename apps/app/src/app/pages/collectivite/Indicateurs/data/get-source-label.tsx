@@ -1,6 +1,12 @@
 import { SOURCE_TYPE_LABEL } from '../constants';
 import { SourceType } from '../types';
 
+export type GetSourceLabel = (
+  sourceId: string,
+  libelle: string,
+  type: SourceType
+) => string;
+
 /**
  * `avecSnbc3` : la source `snbc3` est servie pour l'indicateur (le backend ne
  * la sert qu'avec le flag SNBC 3). La SNBC 2 devient alors « SNBC2 », pour la
