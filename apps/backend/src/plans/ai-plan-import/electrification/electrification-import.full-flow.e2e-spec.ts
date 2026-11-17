@@ -43,6 +43,7 @@ import {
   PlanStatusEnum,
 } from '@tet/domain/plans';
 import { CollectiviteRole, PlatformRole } from '@tet/domain/users';
+import { FeatureFlagEnum } from '@tet/domain/utils';
 import { and, eq, inArray, or, sql } from 'drizzle-orm';
 import assert from 'node:assert';
 import { randomUUID } from 'node:crypto';
@@ -99,7 +100,7 @@ describe(
     let repository: AiPlanImportJobRepository;
     let typeId: number;
     let validatedCatalogue: ElectrificationConfig;
-    let flagEnabled: boolean;
+    let flagsEnabled: boolean;
     let fixture: Awaited<ReturnType<typeof addTestCollectiviteAndUser>>;
     let support: Awaited<ReturnType<typeof addTestCollectiviteAndUser>>;
     let disableSupport: () => Promise<void>;
@@ -280,14 +281,16 @@ describe(
       ];
       Object.assign(catalogue, structuredClone(validatedCatalogue));
       data.catalogues.clear();
-      flagEnabled = true;
+      flagsEnabled = true;
       queue.add.mockClear();
       vi.spyOn(app.get(TrackingService), 'capture').mockImplementation(
         () => undefined
       );
       vi.spyOn(app.get(TrackingService), 'isFeatureEnabled').mockImplementation(
         async (key) =>
-          key === 'is-electrification-plan-creation-enabled' && flagEnabled
+          flagsEnabled &&
+          (key === FeatureFlagEnum['IS-AI-PLAN-IMPORT-ENABLED'] ||
+            key === FeatureFlagEnum['IS-ELECTRIFICATION-PLAN-CREATION-ENABLED'])
       );
       vi.spyOn(
         app.get(ImportPlanService),
@@ -371,7 +374,7 @@ describe(
       await app.close();
     });
 
-    test('importe sans liste publiée en mode super-admin, avec le flag et un catalogue valide', async () => {
+    test('importe sans liste publiée en mode super-admin, avec les flags fermés et un catalogue valide', async () => {
       laureats.laureats = [];
       vi.spyOn(data, 'getLaureats').mockResolvedValue(
         failure('DATA_UNAVAILABLE')
@@ -389,9 +392,8 @@ describe(
       };
       expect(await isProfileAvailable(user())).toBe(false);
       expect(await isProfileAvailable(requester)).toBe(true);
-      flagEnabled = false;
-      expect(await isProfileAvailable(requester)).toBe(false);
-      flagEnabled = true;
+      flagsEnabled = false;
+      expect(await isProfileAvailable(requester)).toBe(true);
 
       vi.spyOn(data, 'getCatalogue').mockResolvedValueOnce(
         failure('DATA_UNAVAILABLE')
@@ -754,7 +756,7 @@ describe(
       expect(llm.chat).not.toHaveBeenCalled();
     });
 
-    test('crée le plan après admission malgré la fermeture du flag, conserve le compte rendu et ne crée aucun doublon', async () => {
+    test('crée le plan après admission malgré la fermeture des flags, conserve le compte rendu et ne crée aucun doublon', async () => {
       const jobId = await enqueue({ cibleGaz: '' });
       expect(await readAxes()).toEqual([]);
       expect(await readJob(jobId)).toMatchObject({
@@ -772,7 +774,7 @@ describe(
           qualitativeReview: 'skipped',
         },
       });
-      flagEnabled = false;
+      flagsEnabled = false;
       let committedAtNotification = false;
       const notification = vi
         .mocked(app.get(NotifyPlanImportedService).notifyPlanImported)
@@ -1010,7 +1012,7 @@ describe(
         data.catalogues.set(catalogue.version, structuredClone(catalogue));
         catalogue.version = `${catalogue.version}-next`;
         catalogue.fiches.actions = [];
-        flagEnabled = false;
+        flagsEnabled = false;
         await router
           .createCaller({ user: getAuthUserFromUserCredentials(support.user) })
           .plans.aiImport.resumeAiImport({ jobId });

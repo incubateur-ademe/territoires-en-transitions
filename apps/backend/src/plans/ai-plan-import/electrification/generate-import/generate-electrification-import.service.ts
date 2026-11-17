@@ -12,7 +12,7 @@ import {
   aiPlanImportJobErrorMessages,
 } from '../../ai-plan-import.errors';
 import { ImportJobTelemetry } from '../../generate-import-draft/import-job-telemetry';
-import { ValidateElectrificationImportService } from '../validate-import/validate-electrification-import.service';
+import { ElectrificationImportProfileAdapter } from '../validate-import/electrification-import-profile.adapter';
 import { AiPlanImportJob } from '../../models/ai-plan-import-job';
 import {
   GeneratedImport,
@@ -44,7 +44,7 @@ export class GenerateElectrificationImportService implements ImportGenerator {
     private readonly persistence: PersistElectrificationImportService,
     private readonly verification: PlanVerificationRepository,
     private readonly transactions: TransactionManager,
-    private readonly authorization: ValidateElectrificationImportService,
+    private readonly authorization: ElectrificationImportProfileAdapter,
     private readonly completion: CompletePlanImportService
   ) {}
 

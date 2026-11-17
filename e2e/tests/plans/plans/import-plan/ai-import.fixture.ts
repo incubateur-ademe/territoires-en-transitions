@@ -1,5 +1,6 @@
 import { expect, Page } from '@playwright/test';
 import type { RouterOutput } from '@tet/api';
+import { PCAET_PLAN_TYPE_KEY } from '@tet/domain/demarches';
 
 type ImportStatus = RouterOutput['plans']['aiImport']['getAiImportStatus'];
 type ImportCapabilities =
@@ -36,7 +37,7 @@ export class AiImportFixture {
   status = structuredClone(importStatus);
   capabilities: ImportCapabilities = {
     profiles: [
-      { profile: 'generic', available: true },
+      { profile: 'generic', available: false },
       { profile: 'pcaet', available: true },
       { profile: 'annexe-3-electrification', available: false },
     ],
@@ -52,17 +53,7 @@ export class AiImportFixture {
   statusNotFound = false;
 
   async install(page: Page) {
-    // Le mode dev/CI active tous les flags. Reproduire le parcours hors flag ;
-    // les utilisateurs support gardent leur accès via le mode super-admin.
-    await page.addInitScript(() => {
-      let publicEnv: Record<string, string>;
-      Object.defineProperty(window, '__TET_PUBLIC_ENV__', {
-        get: () => publicEnv,
-        set: (value: Record<string, string>) => {
-          publicEnv = { ...value, ENV_NAME: 'test' };
-        },
-      });
-    });
+    // Les capacités serveur incluent déjà les flags et les droits.
     await page.route('**/collectivites/*/plans/import-ia', async (route) => {
       this.enqueueCalls++;
       const request = route.request();
@@ -155,6 +146,13 @@ export class AiImportFixture {
 
 export async function submitImport(page: Page) {
   await page.getByRole('textbox', { name: 'Nom du plan' }).fill('Plan de test');
+  const typeSelect = page.getByTestId('ai-import.plan-type');
+  if (await typeSelect.isEnabled()) {
+    await typeSelect.click();
+    await page
+      .getByRole('button', { name: PCAET_PLAN_TYPE_KEY.type, exact: true })
+      .click();
+  }
   await page.locator('input[type="file"]').setInputFiles({
     name: 'plan.csv',
     mimeType: 'text/csv',

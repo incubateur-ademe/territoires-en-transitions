@@ -160,24 +160,18 @@ describe("Test import Plan d'action", { timeout: 30_000 }, () => {
     await app.close();
   });
 
-  test('refuse un import Excel Électrification lorsque la création est fermée sans créer de plan ou de fiche', async () => {
+  test("refuse l'import Excel Électrification sans mode super-admin si le flag est fermé, sans création", async () => {
     const fixture = await addTestCollectiviteAndUser(databaseService, {
       user: { role: CollectiviteRole.ADMIN },
     });
     const caller = router.createCaller({
       user: getAuthUserFromUserCredentials(fixture.user),
     });
-    const { cleanup } = await addAndEnableUserSuperAdminMode({
-      app,
-      caller,
-      userId: fixture.user.id,
-    });
     const flag = vi
       .spyOn(app.get(TrackingService), 'isFeatureEnabled')
       .mockResolvedValue(false);
     onTestFinished(async () => {
       flag.mockRestore();
-      await cleanup();
       await fixture.cleanup();
     });
     await databaseService.db

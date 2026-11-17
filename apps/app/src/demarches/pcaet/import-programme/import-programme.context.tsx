@@ -12,7 +12,7 @@ import { appLabels } from '@/app/labels/catalog';
 import { isAiImportVerifiable } from '@/app/plans/plans/import-plan/ai-import.form';
 import { useEnqueueAiImport } from '@/app/plans/plans/import-plan/data/use-enqueue-ai-import';
 import { useGetOngoingAiImport } from '@/app/plans/plans/import-plan/data/use-get-ongoing-ai-import';
-import { useIsAiPlanImportEnabled } from '@/app/plans/plans/import-plan/use-is-ai-plan-import-enabled';
+import { useAvailableAiImportProfiles } from '@/app/plans/plans/import-plan/data/use-available-ai-import-profiles';
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
 import { useToastContext } from '@/app/utils/toast/toast-context';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -35,6 +35,7 @@ type ImportStatus = RouterOutput['plans']['aiImport']['getAiImportStatus'];
 
 type ImportProgrammeContextValue = {
   isEnabled: boolean;
+  isCheckingAvailability: boolean;
   isOngoing: boolean;
   /** Statut de l'import courant de la collectivité, suivi jusqu'à son terme. */
   ongoingStatus: ImportStatus | undefined;
@@ -72,7 +73,8 @@ export const useImportProgramme = () => {
  * que la collectivité est ailleurs dans la démarche.
  */
 export const ImportProgrammeProvider = ({ children }: PropsWithChildren) => {
-  const { collectiviteId, nom: collectiviteNom } = useCurrentCollectivite();
+  const collectivite = useCurrentCollectivite();
+  const { collectiviteId, nom: collectiviteNom } = collectivite;
   const demarcheId = useDemarcheId();
   const trpc = useTRPC();
   const trpcClient = useTRPCClient();
@@ -84,13 +86,17 @@ export const ImportProgrammeProvider = ({ children }: PropsWithChildren) => {
     () => trpc.demarches.pcaet.get.queryOptions({ collectiviteId, demarcheId }),
     [trpc, collectiviteId, demarcheId]
   );
-  const isEnabled = useIsAiPlanImportEnabled();
+  const { profiles, isLoading: isCheckingAvailability } =
+    useAvailableAiImportProfiles();
+  const isEnabled = profiles.includes(AiPlanImportProfileEnum.PCAET);
 
   const {
     jobId: ongoingJobId,
     status: ongoingStatus,
     isOngoing,
-  } = useGetOngoingAiImport(collectiviteId, { enabled: isEnabled });
+  } = useGetOngoingAiImport(collectiviteId, {
+    enabled: collectivite.hasCollectivitePermission('plans.fiches.import'),
+  });
 
   const [, setImportQuery] = useQueryStates(aiImportQueryState);
   const [startedJobId, setStartedJobId] = useState<string | null>(null);
@@ -263,6 +269,7 @@ export const ImportProgrammeProvider = ({ children }: PropsWithChildren) => {
   const value = useMemo(
     () => ({
       isEnabled,
+      isCheckingAvailability,
       isOngoing,
       ongoingStatus,
       startProgrammeImport,
@@ -274,6 +281,7 @@ export const ImportProgrammeProvider = ({ children }: PropsWithChildren) => {
     }),
     [
       isEnabled,
+      isCheckingAvailability,
       isOngoing,
       ongoingStatus,
       startProgrammeImport,

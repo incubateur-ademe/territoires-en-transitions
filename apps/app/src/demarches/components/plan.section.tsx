@@ -325,6 +325,7 @@ const useCreatePlanAction = ({
   // son contenu à la fermeture. Ouverte, elle affiche déjà l'échec en détail.
   const {
     isEnabled: isAiPlanImportEnabled,
+    isCheckingAvailability,
     isOngoing: isImportOngoing,
     trackImport,
     setIsProgressDisplayed,
@@ -341,11 +342,11 @@ const useCreatePlanAction = ({
       className="shrink-0"
       icon={<Icon icon="import-line" />}
       onClick={() =>
-        isAiPlanImportEnabled
+        isAiPlanImportEnabled || isImportOngoing
           ? openPlanModal('importer_ia', setIsImportPlanModalOpen)
           : openPlanModal('demander_import', setIsRequestPlanImportModalOpen)
       }
-      disabled={isReadonly}
+      disabled={isReadonly || (isCheckingAvailability && !isImportOngoing)}
       dataTest="demarches.plan.importer-plan-button"
       menuDataTest="demarches.plan.creer-plan-menu"
       menuActions={[

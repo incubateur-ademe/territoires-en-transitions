@@ -39,6 +39,7 @@ import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
 import { PostHogEventTracker } from '@tet/backend/utils/tracking/posthog-event-tracker';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { CollectiviteRole } from '@tet/domain/users';
+import { PCAET_PLAN_TYPE_KEY } from '@tet/domain/demarches';
 import {
   ELECTRIFICATION_PLAN_TYPE_KEY,
   ElectrificationLaureatsConfig,
@@ -78,6 +79,7 @@ import { GenerateImportDraftWorker } from '../generate-import-draft/generate-imp
 import { AiPlanImportProfileEnum } from '../models/import-profile';
 import { buildInMemoryDocumentStorage } from '../pipeline/__fixtures__/in-memory-document-storage';
 import { DOCX_MIME } from './detect-source-mime-type';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 
 const TEST_COLLECTIVITE_ID = 1;
 const makeEnqueueUrl = (collectiviteId: number) =>
@@ -102,9 +104,12 @@ describe('Enqueue import IA (controller)', { timeout: 30_000 }, () => {
   let readerToken: string;
   let freshEnqueueUrl: string;
   let freshCollectiviteId: number;
+  let pcaetTypeId: number;
+  let otherPlanTypeId: number;
   let otherCollectiviteId: number;
   let supportUserId: string;
   let editorId: string;
+  let editorUser: AuthenticatedUser;
   let readerId: string;
   let cleanupFreshCollectivite: () => Promise<void>;
   let cleanupOtherCollectivite: () => Promise<void>;
@@ -141,15 +146,17 @@ describe('Enqueue import IA (controller)', { timeout: 30_000 }, () => {
     });
   };
 
-  const enqueue = (token: string) =>
-    request(app.getHttpServer())
+  const enqueue = (token: string, planType: number | null = pcaetTypeId) => {
+    const req = request(app.getHttpServer())
       .post(freshEnqueueUrl)
       .set('Authorization', `Bearer ${token}`)
-      .field('planName', 'Plan import IA e2e')
-      .attach('file', csvFile(), {
-        filename: 'plan.csv',
-        contentType: 'text/csv',
-      });
+      .field('planName', 'Plan import IA e2e');
+    if (planType !== null) req.field('planType', String(planType));
+    return req.attach('file', csvFile(), {
+      filename: 'plan.csv',
+      contentType: 'text/csv',
+    });
+  };
 
   beforeAll(async () => {
     app = await getDisposableTestApp({
@@ -168,6 +175,21 @@ describe('Enqueue import IA (controller)', { timeout: 30_000 }, () => {
     });
     db = await getTestDatabase(app);
     router = await getTestRouter(app);
+    const types = await app.get(ListPlanTypesService).listPlanTypes();
+    const pcaet = types.find(
+      ({ categorie, type }) =>
+        categorie === PCAET_PLAN_TYPE_KEY.categorie &&
+        type === PCAET_PLAN_TYPE_KEY.type
+    );
+    const otherType = types.find(
+      ({ type }) =>
+        type !== PCAET_PLAN_TYPE_KEY.type &&
+        type !== ELECTRIFICATION_PLAN_TYPE_KEY.type
+    );
+    if (!pcaet || !otherType)
+      throw new Error('Types de plans manquants dans la base de test');
+    pcaetTypeId = pcaet.id;
+    otherPlanTypeId = otherType.id;
     const secret = app.get(ConfigurationService).get('SUPABASE_JWT_SECRET');
     // Ces cas vérifient les quotas utilisateur/collectivité, indépendamment
     // des jobs laissés dans la base par d'autres suites.
@@ -227,6 +249,7 @@ describe('Enqueue import IA (controller)', { timeout: 30_000 }, () => {
     freshEnqueueUrl = makeEnqueueUrl(freshCollectivite.id);
     freshCollectiviteId = freshCollectivite.id;
     editorId = editor.id;
+    editorUser = getAuthUserFromUserCredentials(editor);
     readerId = reader.id;
     cleanupFreshCollectivite = cleanupFresh;
 
@@ -275,6 +298,79 @@ describe('Enqueue import IA (controller)', { timeout: 30_000 }, () => {
       .where(eq(aiPlanImportJobTable.collectiviteId, TEST_COLLECTIVITE_ID));
     expect(jobs).toHaveLength(0);
   });
+
+  it.each(['absent', 'autre type'])(
+    'refuse un nouveau plan hors PCAET/Électrification, même en super-admin : %s',
+    async (type) => {
+      const uploadCalls = uploadBuffer.mock.calls.length;
+      const queue = app.get(getQueueToken(AI_PLAN_IMPORT_QUEUE_NAME));
+      const queued = queue.add.mock.calls.length;
+      const response = await enqueue(
+        supportToken,
+        type === 'absent' ? null : otherPlanTypeId
+      );
+
+      expect(response.status).toBe(400);
+      expect(response.body.message).toBe(
+        "L'import IA est réservé aux plans PCAET et Électrification."
+      );
+      expect(uploadBuffer.mock.calls).toHaveLength(uploadCalls);
+      expect(queue.add.mock.calls).toHaveLength(queued);
+      const jobs = await db.db
+        .select()
+        .from(aiPlanImportJobTable)
+        .where(eq(aiPlanImportJobTable.collectiviteId, freshCollectiviteId));
+      expect(jobs).toHaveLength(0);
+    }
+  );
+
+  it.each([
+    { profile: 'generic', flag: 'disabled' },
+    { profile: 'pcaet', flag: 'disabled' },
+    { profile: 'pcaet', flag: 'error' },
+  ])(
+    'applique le flag global aux capacités et au lancement ($profile, $flag)',
+    async ({ profile, flag }) => {
+      const tracking = vi.spyOn(app.get(TrackingService), 'isFeatureEnabled');
+      if (flag === 'error')
+        tracking.mockRejectedValue(new Error('PostHog indisponible'));
+      // Le flag global doit rester nécessaire même si la création est ouverte.
+      else
+        tracking.mockImplementation(
+          async (key) => key !== FeatureFlagEnum['IS-AI-PLAN-IMPORT-ENABLED']
+        );
+      onTestFinished(() => tracking.mockRestore());
+      // Le rôle support seul n'ouvre pas l'import hors flag.
+      const { cleanup } = await addUserRoleSupport({
+        databaseService: db,
+        userId: editorId,
+      });
+      onTestFinished(cleanup);
+      const capabilities = await router
+        .createCaller({ user: editorUser })
+        .plans.aiImport.getAiImportCapabilities({
+          collectiviteId: freshCollectiviteId,
+        });
+      expect(capabilities.profiles).toContainEqual({
+        profile: 'pcaet',
+        available: false,
+      });
+      const uploadCalls = uploadBuffer.mock.calls.length;
+      const queue = app.get(getQueueToken(AI_PLAN_IMPORT_QUEUE_NAME));
+      const queued = queue.add.mock.calls.length;
+
+      const response = await enqueue(editorToken).field('profile', profile);
+
+      expect(response.status).toBe(412);
+      expect(uploadBuffer.mock.calls).toHaveLength(uploadCalls);
+      expect(queue.add.mock.calls).toHaveLength(queued);
+      const jobs = await db.db
+        .select()
+        .from(aiPlanImportJobTable)
+        .where(eq(aiPlanImportJobTable.collectiviteId, freshCollectiviteId));
+      expect(jobs).toHaveLength(0);
+    }
+  );
 
   it('rejette un utilisateur sans droit sur la collectivité (403)', async () => {
     const response = await request(app.getHttpServer())
@@ -396,7 +492,11 @@ describe('Enqueue import IA (controller)', { timeout: 30_000 }, () => {
     }
   );
 
-  it('autorise le super-admin au-delà du quota journalier sans supprimer les imports précédents', async () => {
+  it('autorise le super-admin hors flag et au-delà du quota journalier sans supprimer les imports précédents', async () => {
+    const tracking = vi
+      .spyOn(app.get(TrackingService), 'isFeatureEnabled')
+      .mockResolvedValue(false);
+    onTestFinished(() => tracking.mockRestore());
     await insertJobs(AI_PLAN_IMPORT_MAX_JOBS_PER_COLLECTIVITE_PER_DAY, {
       collectiviteId: freshCollectiviteId,
       createdBy: readerId,
@@ -652,6 +752,7 @@ describe(
     };
 
     it.each([
+      'flag global fermé',
       'flag fermé',
       'évaluation du flag en erreur',
       'liste des actions absente',
@@ -665,13 +766,26 @@ describe(
       const capture = vi
         .spyOn(app.get(TrackingService), 'capture')
         .mockImplementation(() => undefined);
+      if (reason === 'flag global fermé')
+        vi.mocked(app.get(TrackingService).isFeatureEnabled).mockImplementation(
+          async (key) => key !== FeatureFlagEnum['IS-AI-PLAN-IMPORT-ENABLED']
+        );
       if (reason === 'flag fermé')
-        vi.mocked(app.get(TrackingService).isFeatureEnabled).mockResolvedValue(
-          false
+        // Le flag global ne suffit pas à ouvrir Électrification.
+        vi.mocked(app.get(TrackingService).isFeatureEnabled).mockImplementation(
+          async (key) =>
+            key !== FeatureFlagEnum['IS-ELECTRIFICATION-PLAN-CREATION-ENABLED']
         );
       if (reason === 'évaluation du flag en erreur')
-        vi.mocked(app.get(TrackingService).isFeatureEnabled).mockRejectedValue(
-          new Error('PostHog indisponible')
+        vi.mocked(app.get(TrackingService).isFeatureEnabled).mockImplementation(
+          async (key) => {
+            if (
+              key ===
+              FeatureFlagEnum['IS-ELECTRIFICATION-PLAN-CREATION-ENABLED']
+            )
+              throw new Error('PostHog indisponible');
+            return true;
+          }
         );
       if (reason === 'liste des actions absente')
         catalogue.fiches.actions = null;
@@ -683,6 +797,15 @@ describe(
       if (reason === 'catalogue vide') {
         catalogue.axes = [];
         catalogue.engagements = [];
+        const { cleanup } = await addUserRoleSupport({
+          databaseService: db,
+          userId: fixture.user.id,
+          isSuperAdminRoleEnabled: true,
+        });
+        onTestFinished(cleanup);
+        vi.mocked(app.get(TrackingService).isFeatureEnabled).mockResolvedValue(
+          false
+        );
       }
       if (reason === 'non lauréat') laureats.laureats = [];
       if (reason === 'type absent')
@@ -712,6 +835,40 @@ describe(
       });
       await expectNoWrites();
     });
+
+    it.each([false, true])(
+      'contourne les deux flags seulement en mode super-admin actif : %s',
+      async (isSuperAdminRoleEnabled) => {
+        const { cleanup } = await addUserRoleSupport({
+          databaseService: db,
+          userId: fixture.user.id,
+          isSuperAdminRoleEnabled,
+        });
+        onTestFinished(cleanup);
+        vi.mocked(app.get(TrackingService).isFeatureEnabled).mockResolvedValue(
+          false
+        );
+        const caller = (await getTestRouter(app)).createCaller({
+          user: getAuthUserFromUserCredentials(fixture.user),
+        });
+        const capabilities =
+          await caller.plans.aiImport.getAiImportCapabilities({
+            collectiviteId: fixture.collectivite.id,
+          });
+        expect(capabilities.profiles).toContainEqual({
+          profile: AiPlanImportProfileEnum.ELECTRIFICATION,
+          available: isSuperAdminRoleEnabled,
+        });
+        const response = await enqueue();
+        expect(response.status).toBe(isSuperAdminRoleEnabled ? 201 : 412);
+        if (isSuperAdminRoleEnabled) {
+          expect(response.body.profile).toBe(
+            AiPlanImportProfileEnum.ELECTRIFICATION
+          );
+          expect(addToQueue).toHaveBeenCalledOnce();
+        } else await expectNoWrites();
+      }
+    );
 
     it.each([undefined, AiPlanImportProfileEnum.GENERIC])(
       'refuse le type Électrification sans son profil dédié : %s',

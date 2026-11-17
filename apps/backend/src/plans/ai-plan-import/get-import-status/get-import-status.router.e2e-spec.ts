@@ -767,7 +767,7 @@ describe('Suivi des imports IA', () => {
       })
     ).toEqual({
       profiles: [
-        { profile: 'generic', available: true },
+        { profile: 'generic', available: false },
         { profile: 'pcaet', available: true },
         { profile: 'annexe-3-electrification', available: false },
       ],

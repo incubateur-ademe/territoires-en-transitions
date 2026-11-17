@@ -1,7 +1,7 @@
 import { PrepareElectrificationImportService } from './electrification/extract-plan/prepare-electrification-import.service';
 import { PersistElectrificationImportService } from './electrification/persist-import/persist-electrification-import.service';
 import { GenerateElectrificationImportService } from './electrification/generate-import/generate-electrification-import.service';
-import { ValidateElectrificationImportService } from './electrification/validate-import/validate-electrification-import.service';
+import { ElectrificationImportProfileAdapter } from './electrification/validate-import/electrification-import-profile.adapter';
 import { ResolveElectrificationFichesService } from './electrification/resolve-fiches/resolve-electrification-fiches.service';
 import { ResolveElectrificationIndicateursService } from './electrification/resolve-fiches/resolve-electrification-indicateurs.service';
 import { FichesModule } from '../fiches/fiches.module';
@@ -42,6 +42,12 @@ import { NotifyPlanImportedService } from './notify-plan-imported/notify-plan-im
 import { ResumeImportRouter } from './resume-import/resume-import.router';
 import { ResolveElectrificationEngagementsService } from './electrification/resolve-engagements/resolve-electrification-engagements.service';
 import { ResumeImportService } from './resume-import/resume-import.service';
+import { PcaetImportProfileAdapter } from './pcaet/pcaet-import-profile.adapter';
+import { AiPlanImportProfileEnum } from '@tet/domain/plans';
+import {
+  IMPORT_PROFILE_ADAPTERS,
+  type ImportProfileAdapters,
+} from './validate-import-profile/import-profile-adapter.interface';
 
 @Module({
   imports: [
@@ -69,7 +75,7 @@ import { ResumeImportService } from './resume-import/resume-import.service';
     PrepareElectrificationImportService,
     PersistElectrificationImportService,
     GenerateElectrificationImportService,
-    ValidateElectrificationImportService,
+    ElectrificationImportProfileAdapter,
     ResolveElectrificationFichesService,
     ResolveElectrificationIndicateursService,
     ResolveImportReferenceService,
@@ -83,6 +89,20 @@ import { ResumeImportService } from './resume-import/resume-import.service';
     GetImportStatusService,
     GetImportStatusRouter,
     ValidateImportProfileService,
+    PcaetImportProfileAdapter,
+    {
+      provide: IMPORT_PROFILE_ADAPTERS,
+      inject: [PcaetImportProfileAdapter, ElectrificationImportProfileAdapter],
+      useFactory: (
+        pcaet: PcaetImportProfileAdapter,
+        electrification: ElectrificationImportProfileAdapter
+      ): ImportProfileAdapters => ({
+        [AiPlanImportProfileEnum.PCAET]: pcaet,
+        [AiPlanImportProfileEnum.ELECTRIFICATION]: electrification,
+        // Lecture des anciens jobs et protocole des clients PCAET existants.
+        [AiPlanImportProfileEnum.GENERIC]: pcaet,
+      }),
+    },
     GetImportCapabilitiesRouter,
     FindPreviousImportService,
     FindPreviousImportRouter,

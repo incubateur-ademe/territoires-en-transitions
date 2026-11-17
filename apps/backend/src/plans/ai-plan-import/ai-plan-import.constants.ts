@@ -1,3 +1,14 @@
+import {
+  AiPlanImportProfile,
+  AiPlanImportProfileEnum,
+} from '@tet/domain/plans';
+
+/** Profils ouverts aux nouveaux imports, sous réserve des flags et des droits. */
+export const AI_PLAN_IMPORT_ALLOWED_PROFILES: readonly AiPlanImportProfile[] = [
+  AiPlanImportProfileEnum.PCAET,
+  AiPlanImportProfileEnum.ELECTRIFICATION,
+];
+
 export const AI_PLAN_IMPORT_SOURCE_BUCKET = 'ai-plan-import-sources';
 
 export const AI_PLAN_IMPORT_MAX_SOURCE_BYTES = 25 * 1024 * 1024;

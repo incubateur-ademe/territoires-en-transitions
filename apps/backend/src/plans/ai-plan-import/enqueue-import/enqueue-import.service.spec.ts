@@ -24,7 +24,7 @@ import {
 } from '../ai-plan-import-job.repository';
 import { AiPlanImportErrorEnum } from '../ai-plan-import.errors';
 import { AiPlanImportJobData } from '../ai-plan-import.queue';
-import { ValidateElectrificationImportService } from '../electrification/validate-import/validate-electrification-import.service';
+import { ElectrificationImportProfileAdapter } from '../electrification/validate-import/electrification-import-profile.adapter';
 import { ValidateImportProfileService } from '../validate-import-profile/validate-import-profile.service';
 import {
   AiPlanImportJob,
@@ -33,6 +33,7 @@ import {
 } from '../models/ai-plan-import-job';
 import { initialStepStates } from '../pipeline/run-import-pipeline';
 import { EnqueueImportService } from './enqueue-import.service';
+import { PcaetImportProfileAdapter } from '../pcaet/pcaet-import-profile.adapter';
 
 const jobId = '9d760311-40ad-4d81-b1f7-1bd5666b09d2';
 
@@ -41,6 +42,7 @@ const user = { id: 'user-1' } as AuthenticatedUser;
 const options: AiPlanImportJobOptions = {
   instructions: '',
   planName: 'Plan importé',
+  planType: 4,
   withVerifications: true,
   withSousActions: true,
   disabledFields: [],
@@ -203,15 +205,20 @@ const buildService = (overrides: MockOverrides = {}) => {
   const add = vi.fn(overrides.queueAdd ?? (async () => undefined));
   const queue = { add } as unknown as Queue<AiPlanImportJobData>;
 
-  const listPlanTypes = vi.fn(async () => overrides.planTypes ?? []);
+  const listPlanTypes = vi.fn(
+    async () => overrides.planTypes ?? [{ id: 4, ...PCAET_PLAN_TYPE_KEY }]
+  );
   const listPlanTypesService = {
     listPlanTypes,
   } as unknown as ListPlanTypesService;
 
   const capture = vi.fn();
-  const trackingService = { capture } as unknown as TrackingService;
-  const electrification = new ValidateElectrificationImportService(
-    new CheckElectrificationCreationService(trackingService),
+  const trackingService = {
+    capture,
+    isFeatureEnabled: vi.fn().mockResolvedValue(true),
+  } as unknown as TrackingService;
+  const electrification = new ElectrificationImportProfileAdapter(
+    new CheckElectrificationCreationService(trackingService, permissions),
     {} as CheckElectrificationEligibilityService,
     listPlanTypesService,
     {} as ElectrificationDataService
@@ -219,10 +226,16 @@ const buildService = (overrides: MockOverrides = {}) => {
   vi.spyOn(electrification, 'authorizeAdmission').mockResolvedValue(
     failure(AiPlanImportErrorEnum.IMPORT_PROFILE_UNAVAILABLE)
   );
+  const pcaet = new PcaetImportProfileAdapter();
   const capabilities = new ValidateImportProfileService(
     permissions,
     listPlanTypesService,
-    electrification
+    {
+      [AiPlanImportProfileEnum.PCAET]: pcaet,
+      [AiPlanImportProfileEnum.ELECTRIFICATION]: electrification,
+      [AiPlanImportProfileEnum.GENERIC]: pcaet,
+    },
+    trackingService
   );
 
   const service = new EnqueueImportService(
@@ -303,7 +316,7 @@ describe('EnqueueImportService', () => {
   );
 
   it.each([undefined, 'generic'] as const)(
-    'enregistre explicitement le contrat générique pour le profil %s',
+    'enregistre le contrat du PCAET pour le profil %s sans reprendre les métadonnées client',
     async (profile) => {
       const { service, createWithinQuotas } = buildService();
       const result = await service.enqueue({
@@ -317,7 +330,7 @@ describe('EnqueueImportService', () => {
           catalogueVersion: 'catalogue-client',
           schemaVersion: 999,
           templateVersion: 'canevas-client',
-          withSecteurs: true,
+          withSecteurs: false,
           origine: 'etape_documents',
           demarcheId: 42,
         } as unknown as AiPlanImportJobOptions,
@@ -328,7 +341,7 @@ describe('EnqueueImportService', () => {
         profile: 'generic',
         contractVersion: 1,
         catalogueVersion: null,
-        withSecteurs: false,
+        withSecteurs: true,
         origine: 'etape_documents',
         demarcheId: 42,
       });
@@ -435,7 +448,6 @@ describe('EnqueueImportService', () => {
   });
 
   it.each([
-    { profile: undefined, planType: { id: 4 }, withSecteurs: false },
     {
       profile: undefined,
       planType: { id: 4, ...PCAET_PLAN_TYPE_KEY },
