@@ -8,8 +8,8 @@ import {
   COLLECTIVITE_SOURCE_ID,
   IndicateurSourceMetadonnee,
   IndicateurValeurAvecMetadonnesDefinition,
+  maskDernierResultat,
 } from '@tet/domain/indicateurs';
-import { isNil } from 'es-toolkit';
 import { ListCollectiviteIndicateursRepository } from '../../indicateurs/list-collectivite-indicateurs/list-collectivite-indicateurs.repository';
 import { TrajectoireSnbc3FeatureFlagService } from '../../trajectoires/trajectoire-snbc3-feature-flag.service';
 import { IndicateurValeursReadAccessService } from '../indicateur-valeurs-read-access.service';
@@ -200,24 +200,9 @@ export class ListIndicateurValeursService {
       indicateurValeurGroupeesParSource.forEach((indicateur) => {
         const sourceCollectivite = indicateur.sources[COLLECTIVITE_SOURCE_ID];
         if (sourceCollectivite?.valeurs?.[0]?.confidentiel) {
-          // recherche la date la plus récente avec un résultat
-          const timeDerniereValeur = Math.max(
-            ...sourceCollectivite.valeurs
-              .filter((v) => !isNil(v.resultat))
-              .map((v) =>
-                v.dateValeur ? new Date(v.dateValeur as string).getTime() : 0
-              )
+          sourceCollectivite.valeurs = maskDernierResultat(
+            sourceCollectivite.valeurs
           );
-          sourceCollectivite.valeurs = sourceCollectivite.valeurs.map((v) => ({
-            ...v,
-            // masque le résultat si nécessaire
-            resultat:
-              !isNil(v.resultat) &&
-              v.dateValeur &&
-              new Date(v.dateValeur as string).getTime() === timeDerniereValeur
-                ? null
-                : v.resultat,
-          }));
         }
       });
     }
