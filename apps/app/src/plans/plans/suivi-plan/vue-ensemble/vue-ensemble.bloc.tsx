@@ -74,25 +74,27 @@ export const VueEnsembleBloc = ({
               </span>
             </div>
             {data.enCoursSansAvancement > 0 && (
-              <Alert
-                state="warning"
-                customIcon="progress-1-line"
-                className="gap-2.5 px-3 py-2.5 rounded-md ring-1 ring-inset ring-warning-3"
-                description={
-                  <span className="text-sm leading-5 text-grey-9">
-                    {appLabels.vueEnsembleEnCoursSansAvancement(
-                      data.enCoursSansAvancement
-                    )}
-                  </span>
-                }
-                action={
-                  <RenseignerAvancementButton
-                    collectiviteId={collectiviteId}
-                    planId={planId}
-                    dataTest="plans.suivi.vue-ensemble.renseigner-avancement"
-                  />
-                }
-              />
+              <div className="[container-type:inline-size]">
+                <Alert
+                  state="warning"
+                  customIcon="progress-1-line"
+                  className="gap-2.5 px-3 py-2.5 rounded-md ring-1 ring-inset ring-warning-3"
+                  description={
+                    <div className="flex flex-col items-start gap-2 [@container(min-width:30rem)]:flex-row [@container(min-width:30rem)]:items-center [@container(min-width:30rem)]:justify-between">
+                      <span className="text-sm leading-5 text-grey-9">
+                        {appLabels.vueEnsembleEnCoursSansAvancement(
+                          data.enCoursSansAvancement
+                        )}
+                      </span>
+                      <RenseignerAvancementButton
+                        collectiviteId={collectiviteId}
+                        planId={planId}
+                        dataTest="plans.suivi.vue-ensemble.renseigner-avancement"
+                      />
+                    </div>
+                  }
+                />
+              </div>
             )}
           </div>
           <div className="flex flex-col gap-3 p-5 rounded-lg bg-grey-1 ring-1 ring-inset ring-grey-3">
