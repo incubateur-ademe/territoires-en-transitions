@@ -44,12 +44,22 @@ export class BuildDemarchePcaetWorkbooksService {
     {
       demarcheId,
       collectiviteId,
-    }: { demarcheId: number; collectiviteId: number },
+      activePlansOnly = false,
+    }: {
+      demarcheId: number;
+      collectiviteId: number;
+      /**
+       * Écarte les plans encore en import, à vérifier ou en échec, comme la
+       * lecture publique. Pour l'export du jour : une photo n'a pas ce cas, la
+       * transmission exige des plans vérifiés.
+       */
+      activePlansOnly?: boolean;
+    },
     tx?: Transaction
   ): Promise<Result<DemarchePcaetWorkbooks, DemarchePcaetExportError>> {
     try {
       const snapshots = await this.loadPlanSnapshots(
-        { demarcheId, collectiviteId },
+        { demarcheId, collectiviteId, activePlansOnly },
         tx
       );
       if (!snapshots.success) {
@@ -98,18 +108,49 @@ export class BuildDemarchePcaetWorkbooksService {
     }
   }
 
-  /** Les plans liés, dans l'ordre de rattachement. */
-  private async loadPlanSnapshots(
+  /**
+   * Le dépôt a-t-il de quoi remplir chaque classeur, sans les construire ? Un
+   * plan lié abouti pour le plan, un diagnostic non vide pour les indicateurs :
+   * mêmes critères que `build({ activePlansOnly: true })`.
+   */
+  async hasContent(
     {
       demarcheId,
       collectiviteId,
     }: { demarcheId: number; collectiviteId: number },
     tx?: Transaction
-  ): Promise<Result<PlanSnapshot[], DemarchePcaetExportError>> {
-    const planIds = await this.demarchePlanActionsRepository.listPlanActionIds(
+  ): Promise<{ plan: boolean; indicateurs: boolean }> {
+    const [planIds, diagnostic] = await Promise.all([
+      this.demarchePlanActionsRepository.listActivePlanActionIds(
+        demarcheId,
+        tx
+      ),
+      this.diagnosticService.loadPayload({ demarcheId, collectiviteId }, tx),
+    ]);
+    return {
+      plan: planIds.length > 0,
+      indicateurs: hasPcaetDiagnosticData(diagnostic),
+    };
+  }
+
+  /** Les plans liés, dans l'ordre de rattachement. */
+  private async loadPlanSnapshots(
+    {
       demarcheId,
-      tx
-    );
+      collectiviteId,
+      activePlansOnly,
+    }: { demarcheId: number; collectiviteId: number; activePlansOnly: boolean },
+    tx?: Transaction
+  ): Promise<Result<PlanSnapshot[], DemarchePcaetExportError>> {
+    const planIds = activePlansOnly
+      ? await this.demarchePlanActionsRepository.listActivePlanActionIds(
+          demarcheId,
+          tx
+        )
+      : await this.demarchePlanActionsRepository.listPlanActionIds(
+          demarcheId,
+          tx
+        );
     const snapshots: PlanSnapshot[] = [];
     // L'un après l'autre : dans une transaction, les lectures partagent une
     // seule connexion.
