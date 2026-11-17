@@ -8,6 +8,6 @@ export type ElectrificationImportOptions = {
   catalogueVersion?: string | null;
   templateVersion?: string;
   contractVersion?: never;
-  /** Décision d'admission et provenance du mapping des lauréats. */
+  /** Décision d'admission : liste des lauréats ou exception super-admin sans liste. */
   eligibility?: ElectrificationEligibilityDecision;
 };

@@ -154,9 +154,11 @@ Pour couvrir tous les groupements, la source doit désigner leurs porteurs
 avec un identifiant public ; voir les [dépendances dans l'ADR 0024](../adr/0024-publier-donnees-electrification-sans-deploiement.md#couverture-des-lauréats--décision-du-13-novembre-2026).
 
 Pour tester sur une collectivité non lauréate, activer le mode super-admin dans
-TeT. Le flag de création doit cibler cette collectivité et les données publiées
-rester valides. Aucun ajout de collectivité de démonstration à Grist ou à la
-liste publiée n'est nécessaire. Garder le mode actif jusqu'à la fin de l'import.
+TeT. Le catalogue doit être publié et valide, et le flag de création doit cibler
+cette collectivité. La liste des lauréats peut ne pas être publiée ; si elle
+existe, elle doit rester valide et lisible. Les sessions ordinaires restent
+bloquées sans liste. Aucun ajout de collectivité de démonstration à Grist ou
+à la liste publiée n'est nécessaire. Garder le mode actif jusqu'à la fin de l'import.
 
 ## Lancer une synchronisation
 

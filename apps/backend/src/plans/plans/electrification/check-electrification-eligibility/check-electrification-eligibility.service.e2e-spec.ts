@@ -13,7 +13,7 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { FakeLlmRepository } from '@tet/backend/utils/llm/repositories/fake/fake-llm.repository';
 import { ElectrificationLaureatsConfig } from '@tet/domain/plans';
-import { CollectiviteRole } from '@tet/domain/users';
+import { CollectiviteRole, PlatformRole } from '@tet/domain/users';
 import { count, eq } from 'drizzle-orm';
 import {
   afterAll,
@@ -177,6 +177,14 @@ describe('Éligibilité au programme Électrification', () => {
       success: true,
       data: { eligible: false, laureatReference: null },
     });
+
+    vi.spyOn(data, 'getLaureats').mockResolvedValue(
+      failure('DATA_UNAVAILABLE')
+    );
+    expect(await check()).toEqual({
+      success: false,
+      error: 'ELECTRIFICATION_LAUREATS_UNAVAILABLE',
+    });
   });
 
   test('un super-admin reste soumis à la validité de la liste publiée', async () => {
@@ -216,6 +224,55 @@ describe('Éligibilité au programme Électrification', () => {
       error: 'ELECTRIFICATION_LAUREATS_UNAVAILABLE',
     });
   });
+
+  test.each([true, false])(
+    'sans liste publiée, le mode super-admin doit être actif (%s)',
+    async (isSuperAdminRoleEnabled) => {
+      vi.spyOn(data, 'getLaureats').mockResolvedValue(
+        failure('DATA_UNAVAILABLE')
+      );
+      const { cleanup } = await addUserRoleSupport({
+        databaseService: db,
+        userId: context.user.id,
+        isSuperAdminRoleEnabled,
+      });
+      onTestFinished(cleanup);
+
+      expect(await check()).toEqual(
+        isSuperAdminRoleEnabled
+          ? {
+              success: true,
+              data: {
+                eligible: true,
+                laureatReference: null,
+                provenance: { role: PlatformRole.SUPER_ADMIN, checkedAt },
+              },
+            }
+          : {
+              success: false,
+              error: 'ELECTRIFICATION_LAUREATS_UNAVAILABLE',
+            }
+      );
+    }
+  );
+
+  test.each([
+    ['INVALID_DATA', 'INVALID_ELECTRIFICATION_LAUREATS_CONFIG'],
+    ['STORAGE_ERROR', 'ELECTRIFICATION_LAUREATS_UNAVAILABLE'],
+  ] as const)(
+    'ne contourne pas une erreur de publication en mode super-admin : %s',
+    async (error, expectedError) => {
+      vi.spyOn(data, 'getLaureats').mockResolvedValue(failure(error));
+      const { cleanup } = await addUserRoleSupport({
+        databaseService: db,
+        userId: context.user.id,
+        isSuperAdminRoleEnabled: true,
+      });
+      onTestFinished(cleanup);
+
+      expect(await check()).toEqual({ success: false, error: expectedError });
+    }
+  );
 
   test.each([
     ['source absente', { source: '' }],

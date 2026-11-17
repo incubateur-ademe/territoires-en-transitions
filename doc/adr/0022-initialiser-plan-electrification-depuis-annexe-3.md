@@ -201,6 +201,17 @@ Le worker et la reprise revérifient les droits du demandeur initial : désactiv
 son mode super-admin avant la création retire l'exception. Cette décision
 complète la dispense de quota sans ouvrir l'import aux non-lauréats ordinaires.
 
+**Ajustement du 17 novembre 2026 - recette sans liste publiée.** L'exception
+super-admin couvre aussi l'absence de publication des lauréats. Elle remplace
+uniquement l'obligation de disposer d'une liste dans ce cas : une liste invalide,
+inactive ou illisible reste bloquante. La décision conserve `laureatReference`
+à `null` et trace `provenance.role = SUPER_ADMIN` avec la date du contrôle,
+sans inventer de source ni de version de liste. Le rôle actif est revérifié
+à chaque autorisation, y compris dans le worker et à la création finale.
+Le catalogue publié, le flag à l'admission, les permissions et la validation
+du document restent obligatoires. Les sessions ordinaires ou limitées restent
+refusées sans liste.
+
 Les règles propres au programme utilisent le nom `Electrification` ; "annexe 3"
 désigne la section du document officiel. L'identifiant de profil déjà livré
 reste inchangé pour préserver les contrats des jobs et de l'API.
