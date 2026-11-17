@@ -57,33 +57,32 @@ export const EditFicheModal = ({ initialFiche, isOpen, setIsOpen }: Props) => {
   const isPlanSuiviEnabled = useIsPlanSuiviEnabled();
   const showJauge = !isSousAction && isPlanSuiviEnabled;
 
-  const getJaugeStatut = (change: Partial<JaugeStatut>): JaugeStatut => {
-    const result = applyJaugeStatutChange({
+  const applySaisie = (saisie: Partial<JaugeStatut>) =>
+    applyJaugeStatutChange({
       before: { statut: initialFiche.statut, jauge: initialFiche.jauge },
-      change,
+      change: saisie,
       isSousAction,
     });
-    return result.success
-      ? result.data
-      : { statut: initialFiche.statut, jauge: initialFiche.jauge };
-  };
 
-  const saisie: Partial<JaugeStatut> = {
-    ...(fiche.statut !== initialFiche.statut && { statut: fiche.statut }),
-    ...(jaugeSaisie !== undefined && { jauge: jaugeSaisie }),
-  };
-  const { statut, jauge } = getJaugeStatut(saisie);
+  const getSaisie = (
+    nouveauStatut: JaugeStatut['statut'],
+    nouvelleJauge: number | undefined
+  ): Partial<JaugeStatut> => ({
+    ...(nouveauStatut !== initialFiche.statut && { statut: nouveauStatut }),
+    ...(nouvelleJauge !== undefined && { jauge: nouvelleJauge }),
+  });
+
+  const resultat = applySaisie(getSaisie(fiche.statut, jaugeSaisie));
+  const { statut, jauge } = resultat.success
+    ? resultat.data
+    : { statut: initialFiche.statut, jauge: initialFiche.jauge };
 
   const changeStatut = (nouveauStatut: JaugeStatut['statut']) => {
-    const result = applyJaugeStatutChange({
-      before: { statut, jauge },
-      change: { statut: nouveauStatut },
-      isSousAction,
-    });
-    if (!result.success) return;
     setFiche({ ...fiche, statut: nouveauStatut });
-    if (jaugeSaisie !== undefined || result.data.jauge !== initialFiche.jauge) {
-      setJaugeSaisie(result.data.jauge);
+    if (jaugeSaisie === undefined) return;
+    const result = applySaisie(getSaisie(nouveauStatut, jaugeSaisie));
+    if (!result.success || result.data.statut !== nouveauStatut) {
+      setJaugeSaisie(undefined);
     }
   };
 
