@@ -129,13 +129,11 @@ describe('TrajectoireSnbc3Service.checkStatus : collectivité de rattachement', 
 });
 
 describe('TrajectoireSnbc3Service.getMethodologie', () => {
-  const user = { id: 'user-id' } as AuthenticatedUser;
-  const featureFlag = { isTrajectoireSnbc3Enabled: vi.fn() };
   const releaseStorage = { getMethodologie: vi.fn() };
 
   const service = new TrajectoireSnbc3Service(
     {} as never,
-    featureFlag as never,
+    {} as never,
     {} as never,
     {} as never,
     {} as never,
@@ -143,12 +141,10 @@ describe('TrajectoireSnbc3Service.getMethodologie', () => {
     releaseStorage as never
   );
 
-  const getMethodologie = () =>
-    service.getMethodologie({ collectiviteId: 1 }, { user });
+  const getMethodologie = () => service.getMethodologie();
 
   beforeEach(() => {
     vi.clearAllMocks();
-    featureFlag.isTrajectoireSnbc3Enabled.mockResolvedValue(true);
   });
 
   it('renvoie le flux et le nom du PDF de la release importée', async () => {
@@ -177,12 +173,4 @@ describe('TrajectoireSnbc3Service.getMethodologie', () => {
     expect(await getMethodologie()).toEqual(failure('SERVER_ERROR'));
   });
 
-  it('refuse sans le flag, sans lire le bucket', async () => {
-    featureFlag.isTrajectoireSnbc3Enabled.mockResolvedValue(false);
-
-    expect(await getMethodologie()).toEqual(
-      failure('TRAJECTOIRE_SNBC3_NON_OUVERTE')
-    );
-    expect(releaseStorage.getMethodologie).not.toHaveBeenCalled();
-  });
 });

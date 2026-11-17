@@ -6,7 +6,7 @@ import { useTelechargementSnbc3 } from './use-telechargement-snbc3';
  */
 export const useTelechargementMethodologieSnbc3 = () =>
   useTelechargementSnbc3({
-    route: '/trajectoires/snbc3/methodologie',
+    route: '/trajectoires/snbc3/public/methodologie',
     file: 'methodo-snbc3',
     defaultFileName: 'Méthodologie trajectoire SNBC3.pdf',
   });

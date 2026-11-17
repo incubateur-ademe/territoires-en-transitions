@@ -9,7 +9,6 @@ import {
   TrajectoireSnbc3ErrorEnum,
 } from '../snbc3/trajectoire-snbc3.errors';
 import { TrajectoireSnbc3Service } from '../snbc3/trajectoire-snbc3.service';
-import { TrajectoireSnbc3FeatureFlagService } from '../trajectoire-snbc3-feature-flag.service';
 import { selectTerritoireInSnbc3Workbook } from './select-territoire-in-snbc3-workbook';
 
 export type Snbc3Workbook = { content: Buffer; fileName: string };
@@ -17,7 +16,7 @@ export type Snbc3Workbook = { content: Buffer; fileName: string };
 /**
  * Export du classeur standalone SNBC 3 stocké par l'import (lot 5 du plan
  * SNBC 3) : tel qu'il est publié (« Outil Excel SNBC 3 »), ou ouvert sur le
- * territoire de la collectivité (« Mes données »). Réservé aux utilisateurs
+ * territoire de la collectivité (« Mes données »), réservé aux utilisateurs
  * qui ont le flag `is-trajectoire-snbc3-enabled`.
  */
 @Injectable()
@@ -34,24 +33,17 @@ export class ExportTrajectoireSnbc3Service {
   } | null = null;
 
   constructor(
-    private readonly featureFlag: TrajectoireSnbc3FeatureFlagService,
     private readonly trajectoireSnbc3Service: TrajectoireSnbc3Service,
     private readonly releaseStorage: Snbc3ReleaseStorageService
   ) {}
 
   /**
-   * Le classeur tel qu'il est publié, sous son nom d'origine. Le fichier est
-   * public, la collectivité ne sert qu'à évaluer le flag.
+   * Le classeur tel qu'il est publié, sous son nom d'origine. Fichier public,
+   * sans flag ni utilisateur (page Trajectoire de l'app et du site).
    */
-  async getWorkbook(
-    { collectiviteId }: { collectiviteId: number },
-    { user }: ServiceSecondArg
-  ): Promise<Result<Snbc3Workbook, TrajectoireSnbc3Error>> {
-    if (
-      !(await this.featureFlag.isTrajectoireSnbc3Enabled(user, collectiviteId))
-    ) {
-      return failure(TrajectoireSnbc3ErrorEnum.TRAJECTOIRE_SNBC3_NON_OUVERTE);
-    }
+  async getWorkbook(): Promise<
+    Result<Snbc3Workbook, TrajectoireSnbc3Error>
+  > {
     return this.readWorkbook();
   }
 
