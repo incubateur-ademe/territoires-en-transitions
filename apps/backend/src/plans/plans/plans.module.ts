@@ -47,6 +47,9 @@ import { GetEvolutionStatutsRouter } from './suivi-plan/get-evolution-statuts/ge
 import { GetEvolutionStatutsService } from './suivi-plan/get-evolution-statuts/get-evolution-statuts.service';
 import { GetFaireAvancerLePlanRouter } from './suivi-plan/get-faire-avancer-le-plan/get-faire-avancer-le-plan.router';
 import { GetFaireAvancerLePlanService } from './suivi-plan/get-faire-avancer-le-plan/get-faire-avancer-le-plan.service';
+import { GetIndicateursObjectifsRepository } from './suivi-plan/get-indicateurs-objectifs/get-indicateurs-objectifs.repository';
+import { GetIndicateursObjectifsRouter } from './suivi-plan/get-indicateurs-objectifs/get-indicateurs-objectifs.router';
+import { GetIndicateursObjectifsService } from './suivi-plan/get-indicateurs-objectifs/get-indicateurs-objectifs.service';
 import { GetVueEnsembleRouter } from './suivi-plan/get-vue-ensemble/get-vue-ensemble.router';
 import { GetVueEnsembleService } from './suivi-plan/get-vue-ensemble/get-vue-ensemble.service';
 import { ListSuiviPlanFichesService } from './suivi-plan/list-suivi-plan-fiches.service';
@@ -117,6 +120,9 @@ import { VerifyPlanService } from './verify-plan/verify-plan.service';
     GetEvolutionStatutsRouter,
     GetFaireAvancerLePlanService,
     GetFaireAvancerLePlanRouter,
+    GetIndicateursObjectifsRepository,
+    GetIndicateursObjectifsService,
+    GetIndicateursObjectifsRouter,
     SuiviPlanRouter,
     ExportSuiviPlanService,
   ],
