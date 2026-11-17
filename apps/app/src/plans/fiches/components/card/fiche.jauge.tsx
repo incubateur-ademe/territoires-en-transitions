@@ -7,9 +7,14 @@ import { JSX } from 'react';
 type FicheJaugeProps = {
   jauge: number;
   statut: Statut | null;
+  jaugeModifiedAt?: string | null;
 };
 
-export const FicheJauge = ({ jauge, statut }: FicheJaugeProps): JSX.Element => (
+export const FicheJauge = ({
+  jauge,
+  statut,
+  jaugeModifiedAt,
+}: FicheJaugeProps): JSX.Element => (
   <Tooltip
     label={`${appLabels.ficheStatut} : ${statut ?? appLabels.filtreNoStatut}`}
   >
@@ -17,6 +22,7 @@ export const FicheJauge = ({ jauge, statut }: FicheJaugeProps): JSX.Element => (
       <JaugeBar
         value={jauge}
         statut={statut}
+        jaugeModifiedAt={jaugeModifiedAt}
         isDisabled={isJaugeFigee(statut)}
       />
     </div>

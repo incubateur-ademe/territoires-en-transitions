@@ -1701,10 +1701,25 @@ export default class ListFichesService {
       conditions.push(arrayOverlaps(ficheActionTable.cibles, filters.cibles));
     }
     if (filters.enCoursSansAvancement) {
+      const historiqueJauge = aliasedTable(
+        historiqueFicheActionTable,
+        'historique_jauge_renseignee'
+      );
       conditions.push(
         and(
           eq(ficheActionTable.statut, StatutEnum.EN_COURS),
-          eq(ficheActionTable.jauge, 0)
+          eq(ficheActionTable.jauge, 0),
+          notExists(
+            this.databaseService.db
+              .select({ ficheId: historiqueJauge.ficheId })
+              .from(historiqueJauge)
+              .where(
+                and(
+                  eq(historiqueJauge.ficheId, ficheActionTable.id),
+                  sql`${historiqueJauge.jauge} <> coalesce(${historiqueJauge.previousJauge}, 0)`
+                )
+              )
+          )
         )
       );
     }

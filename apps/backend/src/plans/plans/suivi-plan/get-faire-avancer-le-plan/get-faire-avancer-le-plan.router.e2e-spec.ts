@@ -96,6 +96,14 @@ describe('Suivi du plan : faire avancer le plan', () => {
       statut: StatutEnum.EN_COURS,
       jauge: 40,
     });
+    fiches.enCoursRameneeAZero = await createFiche({
+      statut: StatutEnum.EN_COURS,
+      jauge: 20,
+    });
+    await db.db
+      .update(ficheActionTable)
+      .set({ jauge: 0 })
+      .where(eq(ficheActionTable.id, fiches.enCoursRameneeAZero));
     fiches.enCoursSansAvancementRestreinte = await createFiche({
       statut: StatutEnum.EN_COURS,
       restreint: true,
@@ -183,7 +191,7 @@ describe('Suivi du plan : faire avancer le plan', () => {
     return data.map((fiche) => fiche.id).sort();
   };
 
-  it('filtre les fiches En cours à jauge 0 %', async () => {
+  it('filtre les fiches En cours dont la jauge n’a jamais été renseignée', async () => {
     expect(await listFicheIds({ enCoursSansAvancement: true })).toEqual(
       [
         fiches.enCoursSansAvancement,

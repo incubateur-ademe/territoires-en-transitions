@@ -42,6 +42,7 @@ export const Jauge = (): JSX.Element => {
           <JaugeBadge
             value={jauge}
             statut={statut}
+            jaugeModifiedAt={fiche.jaugeModifiedAt}
             isDisabled={isDisabled}
             isLarge
           />

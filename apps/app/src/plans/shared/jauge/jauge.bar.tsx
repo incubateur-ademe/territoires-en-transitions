@@ -7,6 +7,7 @@ import { JaugeBadge } from './jauge.badge';
 type JaugeBarProps = {
   value: number;
   statut?: Statut | null;
+  jaugeModifiedAt?: string | null;
   isDisabled?: boolean;
   hideBadge?: boolean;
   isBadgeLarge?: boolean;
@@ -16,6 +17,7 @@ type JaugeBarProps = {
 export const JaugeBar = ({
   value,
   statut,
+  jaugeModifiedAt,
   isDisabled = false,
   hideBadge = false,
   isBadgeLarge = false,
@@ -29,6 +31,7 @@ export const JaugeBar = ({
         <JaugeBadge
           value={value}
           statut={statut}
+          jaugeModifiedAt={jaugeModifiedAt}
           isDisabled={isDisabled}
           isLarge={isBadgeLarge}
         />

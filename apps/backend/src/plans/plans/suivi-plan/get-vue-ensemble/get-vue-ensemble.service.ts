@@ -1,7 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { Result, success } from '@tet/backend/utils/result.type';
-import { Statut, statutEnumValues, StatutEnum } from '@tet/domain/plans';
+import {
+  isJaugeNonRenseignee,
+  Statut,
+  statutEnumValues,
+  StatutEnum,
+} from '@tet/domain/plans';
 import { GetPlanError } from '../../get-plan/get-plan.errors';
 import { PlanProgressRules } from '../../progress/plan-progress.rules';
 import { ListSuiviPlanFichesService } from '../list-suivi-plan-fiches.service';
@@ -43,7 +48,13 @@ export class GetVueEnsembleService {
       total: fiches.length,
       abandonnees: countStatut(StatutEnum.ABANDONNE),
       enCoursSansAvancement: fiches.filter(
-        (fiche) => fiche.statut === StatutEnum.EN_COURS && fiche.jauge === 0
+        (fiche) =>
+          fiche.statut === StatutEnum.EN_COURS &&
+          isJaugeNonRenseignee({
+            statut: fiche.statut,
+            jauge: fiche.jauge,
+            jaugeModifiedAt: fiche.jaugeModifiedAt,
+          })
       ).length,
       repartitionParStatut: [...statutEnumValues, null].map((statut) => ({
         statut,
