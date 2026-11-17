@@ -299,7 +299,7 @@ export const plansLabels = {
   importElectrificationDescription:
     'Importez l’annexe 3 remplie de votre convention Électrification. Le plan sera créé après validation du document. Les sous-actions sont conservées et les actions référencées par un lien TeT sont rattachées sans modifier leurs données. Les budgets et financements ne sont pas importés.',
   importPlanIaProfilIndisponible:
-    'L’import n’est pas disponible pour ce type de plan. Vous pouvez créer un plan directement sur la plateforme.',
+    "L'import de ce type de plan n'est pas disponible pour votre collectivité ou avec vos droits actuels.",
   importPlanIaFichierSuggere:
     "Programme d'actions déposé à l'étape Documents, pré-sélectionné pour vous.",
   importPlanIaFichierSuggereChargement:

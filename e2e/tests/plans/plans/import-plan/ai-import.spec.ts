@@ -63,12 +63,16 @@ test('recharge les capacités d’import après désactivation du mode super-adm
     .click();
   await refreshedCapabilities;
 
-  await expect(page.getByTestId('ai-import.plan-type')).toHaveCount(0);
+  await expect(page.getByTestId('ai-import.plan-type')).toBeVisible();
+  await expect(
+    page.getByText(/L'import de ce type de plan n'est pas disponible/)
+  ).toBeVisible();
+  await expect(page.getByTestId('ai-import.lancer')).toBeDisabled();
   expect(mock.enqueueCalls).toBe(0);
 });
 
 for (const capability of ['disabled', 'missing'] as const) {
-  test(`ne propose pas le type Électrification si sa capacité est ${
+  test(`explique l'indisponibilité du type Électrification si sa capacité est ${
     capability === 'disabled' ? 'désactivée' : 'absente'
   }`, async ({ page, collectivites }) => {
     const mock = new AiImportFixture();
@@ -84,7 +88,21 @@ for (const capability of ['disabled', 'missing'] as const) {
     await expect(
       page.getByRole('button', { name: 'Plan Climat Air Énergie Territorial' })
     ).toBeVisible();
-    await expect(electrificationOption(page)).toHaveCount(0);
+    await electrificationOption(page).click();
+    await expect(
+      page.getByText(/L'import de ce type de plan n'est pas disponible/)
+    ).toBeVisible();
+    await expect(page.getByTestId('ai-import.lancer')).toBeDisabled();
+
+    // Un type autorisé reste utilisable après avoir consulté le refus.
+    await page.getByTestId('ai-import.plan-type').click();
+    await page
+      .getByRole('button', { name: PCAET_PLAN_TYPE_KEY.type, exact: true })
+      .click();
+    await expect(page.getByTestId('ai-import.lancer')).toBeEnabled();
+    await expect(
+      page.getByText(/L'import de ce type de plan n'est pas disponible/)
+    ).toHaveCount(0);
     await expect(page).not.toHaveURL(/importJobId=/);
     expect(mock.enqueueCalls).toBe(0);
   });
@@ -445,7 +463,7 @@ test('ouvre le plan Électrification terminé quand seul ce profil est disponibl
       name: PCAET_PLAN_TYPE_KEY.type,
       exact: true,
     })
-  ).toHaveCount(0);
+  ).toBeVisible();
   await electrificationOption(page).click();
   await page.locator('input[type="file"]').setInputFiles({
     name: 'plan-electrification.docx',
@@ -549,9 +567,7 @@ test('retrouve les imports paginés sans activer le lancement et ne redirige pas
   await page
     .getByRole('link', { name: 'Historique des imports', exact: true })
     .click();
-  await expect(page.getByRole('link', { name: 'Nouvel import' })).toHaveCount(
-    0
-  );
+  await expect(page.getByRole('link', { name: 'Nouvel import' })).toBeVisible();
   await expect(
     page.getByTestId('plans.import-ia.historique').getByRole('listitem')
   ).toHaveCount(20);
@@ -600,7 +616,7 @@ test('retrouve les imports paginés sans activer le lancement et ne redirige pas
   expect(mock.enqueueCalls).toBe(0);
 });
 
-test('garde le suivi accessible sans permettre un nouvel import quand le lancement est désactivé', async ({
+test("garde le formulaire et le suivi accessibles sans autoriser l'import quand le lancement est désactivé", async ({
   page,
   collectivites,
 }) => {
@@ -610,6 +626,17 @@ test('garde le suivi accessible sans permettre un nouvel import quand le lanceme
   const { collectivite } = await collectivites.addCollectiviteAndUser({
     userArgs: { autoLogin: true },
   });
+  await page.goto(`/collectivite/${collectivite.data.id}/plans`);
+  await page
+    .getByRole('button', { name: 'Ajouter un plan', exact: true })
+    .click();
+  await page.getByTestId('choix-creation-plan.importer-ia').click();
+  await selectElectrification(page);
+  await expect(
+    page.getByText(/L'import de ce type de plan n'est pas disponible/)
+  ).toBeVisible();
+  await expect(page.getByTestId('ai-import.lancer')).toBeDisabled();
+
   await page.goto(
     `/collectivite/${collectivite.data.id}/plans/importer-ia?importJobId=${mock.status.jobId}`
   );
@@ -623,14 +650,12 @@ test('garde le suivi accessible sans permettre un nouvel import quand le lanceme
   await page.getByRole('button', { name: 'Réessayer', exact: true }).click();
   await expect(page).not.toHaveURL(/importJobId=/);
   await expect(
-    page.getByRole('link', { name: 'contact@territoiresentransitions.fr' })
+    page.getByRole('textbox', { name: 'Nom du plan' })
   ).toBeVisible();
-  await expect(page.getByRole('textbox', { name: 'Nom du plan' })).toHaveCount(
-    0
-  );
   await expect(
-    page.getByRole('button', { name: "Lancer l'import" })
-  ).toHaveCount(0);
+    page.getByText(/L'import de ce type de plan n'est pas disponible/)
+  ).toBeVisible();
+  await expect(page.getByTestId('ai-import.lancer')).toBeDisabled();
   expect(mock.enqueueCalls).toBe(0);
 });
 
@@ -681,9 +706,7 @@ test('retrouve les détails depuis le menu du plan importé, sans URL de suivi n
   ]);
   await details.click();
   await expect(page.getByTestId('plans.import-ia.rapport')).toBeVisible();
-  await expect(page.getByRole('link', { name: 'Nouvel import' })).toHaveCount(
-    0
-  );
+  await expect(page.getByRole('link', { name: 'Nouvel import' })).toBeVisible();
 
   await page.goto(
     `/collectivite/${collectivite.data.id}/plans/${manualPlanId}`

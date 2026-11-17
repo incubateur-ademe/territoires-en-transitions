@@ -11,7 +11,7 @@ import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ErrorCard } from '@/app/utils/error/error.card';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
-import { useCollectiviteId } from '@tet/api/collectivites';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import {
   Badge,
   Breadcrumbs,
@@ -30,18 +30,17 @@ import {
   isInaccessibleAiImportError,
   useGetAiImportStatus,
 } from './data/use-get-ai-import-status';
-import { useAvailableAiImportProfiles } from './data/use-available-ai-import-profiles';
 
 export const AiImportHistoryView = () => {
   const tracker = useEventTracker();
-  const collectiviteId = useCollectiviteId();
+  const { collectiviteId, hasCollectivitePermission } =
+    useCurrentCollectivite();
   const trpc = useTRPC();
   const router = useRouter();
   const [{ importJobId }, setImportQuery] = useQueryStates(aiImportQueryState, {
     history: 'push',
   });
-  const { profiles } = useAvailableAiImportProfiles();
-  const canStartImport = profiles.length > 0;
+  const canAccessImportForm = hasCollectivitePermission('plans.fiches.import');
   const statusQuery = useGetAiImportStatus(importJobId);
   const planId = statusQuery.data?.createdPlanId;
   const openPlanDisabledReason = statusQuery.error
@@ -94,7 +93,7 @@ export const AiImportHistoryView = () => {
             ? appLabels.importPlanIaDetails
             : appLabels.importPlanIaHistorique}
         </PageHeader.Title>
-        {(importJobId !== null || canStartImport) && (
+        {(importJobId !== null || canAccessImportForm) && (
           <PageHeader.Actions>
             <div className="flex flex-wrap items-center gap-2">
               {importJobId !== null && (
@@ -132,7 +131,7 @@ export const AiImportHistoryView = () => {
                   </span>
                 </Tooltip>
               )}
-              {canStartImport && (
+              {canAccessImportForm && (
                 <Button
                   size="sm"
                   icon="add-line"
