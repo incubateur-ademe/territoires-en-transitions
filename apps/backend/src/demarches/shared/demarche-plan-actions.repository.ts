@@ -86,7 +86,10 @@ export class DemarchePlanActionsRepository {
         planActionId: demarchePlanActionTable.planActionId,
       })
       .from(demarchePlanActionTable)
-      .innerJoin(axeTable, eq(axeTable.id, demarchePlanActionTable.planActionId))
+      .innerJoin(
+        axeTable,
+        eq(axeTable.id, demarchePlanActionTable.planActionId)
+      )
       .where(
         and(
           inArray(demarchePlanActionTable.demarcheId, demarcheIds),
@@ -148,6 +151,35 @@ export class DemarchePlanActionsRepository {
   ): Promise<number[]> {
     const byDemarcheId = await this.listByDemarcheIds([demarcheId], tx);
     return byDemarcheId.get(demarcheId) ?? [];
+  }
+
+  /**
+   * Plans rattachés et aboutis (`active`), dans l'ordre de rattachement : ceux
+   * qu'une lecture du jour montre, sans les plans encore en import, à vérifier
+   * ou en échec.
+   */
+  async listActivePlanActionIds(
+    demarcheId: number,
+    tx?: Transaction
+  ): Promise<number[]> {
+    const rows = await (tx ?? this.databaseService.db)
+      .select({ planActionId: demarchePlanActionTable.planActionId })
+      .from(demarchePlanActionTable)
+      .innerJoin(
+        axeTable,
+        eq(axeTable.id, demarchePlanActionTable.planActionId)
+      )
+      .where(
+        and(
+          eq(demarchePlanActionTable.demarcheId, demarcheId),
+          eq(axeTable.status, PlanStatusEnum.ACTIVE)
+        )
+      )
+      .orderBy(
+        asc(demarchePlanActionTable.createdAt),
+        asc(demarchePlanActionTable.planActionId)
+      );
+    return rows.map(({ planActionId }) => planActionId);
   }
 
   /**

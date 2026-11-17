@@ -4,6 +4,7 @@ import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { and, eq, inArray } from 'drizzle-orm';
 import {
   demarchePcaetExportTable,
+  type DemarchePcaetExportRow,
   type DemarchePcaetExportTransition,
   type DemarchePcaetExportType,
 } from '../shared/models/demarche-pcaet-export.table';
@@ -26,6 +27,17 @@ export class DemarchePcaetExportRepository {
       .from(demarchePcaetExportTable)
       .where(inArray(demarchePcaetExportTable.storagePath, paths));
     return rows.map(({ storagePath }) => storagePath);
+  }
+
+  /** Toutes les photos d'un dépôt, toutes transitions confondues. */
+  async listByDemarcheId(
+    demarcheId: number,
+    tx?: Transaction
+  ): Promise<DemarchePcaetExportRow[]> {
+    return (tx ?? this.databaseService.db)
+      .select()
+      .from(demarchePcaetExportTable)
+      .where(eq(demarchePcaetExportTable.demarcheId, demarcheId));
   }
 
   /**
