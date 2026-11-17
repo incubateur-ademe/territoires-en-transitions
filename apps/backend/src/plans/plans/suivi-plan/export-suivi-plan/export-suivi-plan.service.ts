@@ -71,7 +71,7 @@ export class ExportSuiviPlanService {
     if (!result.success) {
       return result;
     }
-    return this.export(input, 'Avancement par axe', context, (entete) =>
+    return this.export(input, 'Progression par axe', context, (entete) =>
       buildAvancementParAxeXlsx(entete, result.data)
     );
   }

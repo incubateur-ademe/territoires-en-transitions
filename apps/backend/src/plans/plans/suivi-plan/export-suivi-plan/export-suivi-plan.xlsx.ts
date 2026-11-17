@@ -72,14 +72,14 @@ export const buildVueEnsembleXlsx = (
   const { workbook, worksheet } = createWorksheet(entete);
 
   setNumValue(
-    worksheet.addRow(['Avancement du plan']).getCell(2),
+    worksheet.addRow(['Progression du plan']).getCell(2),
     toPercent(data.avancement),
     FORMAT_PERCENT
   );
   worksheet.addRow(['Nombre de fiches', data.total]);
   worksheet.addRow(['Dont abandonnées', data.abandonnees]);
   worksheet.addRow([
-    'En cours sans avancement renseigné',
+    'En cours sans progression renseignée',
     data.enCoursSansAvancement,
   ]);
   worksheet.addRow([]);
@@ -101,7 +101,7 @@ export const buildAvancementParAxeXlsx = (
 
   addHeaderRow(worksheet, [
     'Axe',
-    'Avancement',
+    'Progression',
     'Nombre de fiches',
     'Fiches réalisées',
   ]);
