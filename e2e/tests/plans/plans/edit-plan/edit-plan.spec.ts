@@ -168,7 +168,8 @@ test.describe("Édition d'un plan d'action", () => {
     await editPlanPom.expectPlanType(planTypeModifie);
   });
 
-  test('Ajouter une fiche action à un plan', async ({
+  test("Ajouter une fiche action à un plan et modifier son titre depuis l'aperçu", async ({
+    page,
     collectivites,
     plans,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -193,6 +194,24 @@ test.describe("Édition d'un plan d'action", () => {
     await editPlanPom.addFiche();
 
     await ficheCardPom.expectSansTitre();
+    await ficheCardPom.expectStatut('À venir');
+
+    await ficheCardPom.edit();
+    const modal = page.getByTestId('ModifierFicheModale');
+    const titre = 'Rénover les bâtiments communaux';
+    await modal.getByTestId('FicheNomInput').fill(titre);
+    const updateResponse = page.waitForResponse(
+      (response) =>
+        response.request().method() === 'POST' &&
+        response.url().includes('/trpc/plans.fiches.update')
+    );
+    await modal.getByRole('button', { name: 'Valider' }).click();
+    expect((await updateResponse).ok()).toBe(true);
+    await expect(modal).toBeHidden();
+    await ficheCardPom.expectTitre(titre);
+
+    await page.reload();
+    await ficheCardPom.expectTitre(titre);
     await ficheCardPom.expectStatut('À venir');
   });
 

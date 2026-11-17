@@ -226,7 +226,18 @@ export const EditFicheModal = ({ initialFiche, isOpen, setIsOpen }: Props) => {
             <ModalFooterOKCancel
               btnOKProps={{
                 onClick: () => {
-                  updateFiche({ ficheId: fiche.id, ficheFields: fiche });
+                  updateFiche({
+                    ficheId: fiche.id,
+                    ficheFields: {
+                      titre: fiche.titre,
+                      statut: fiche.statut,
+                      priorite: fiche.priorite,
+                      pilotes: fiche.pilotes,
+                      dateDebut: fiche.dateDebut,
+                      dateFin: fiche.dateFin,
+                      ameliorationContinue: fiche.ameliorationContinue,
+                    },
+                  });
                   tracker(Event.fiches.updateModaleValidation);
                   close();
                 },
