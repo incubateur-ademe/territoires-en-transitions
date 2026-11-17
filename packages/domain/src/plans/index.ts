@@ -33,6 +33,7 @@ export * from './plans/generate-report/report-generation.schema';
 export * from './plans/generate-report/report-templates.enum';
 export * from './plans/plan-source.enum.schema';
 export * from './plans/plan-reference.schema';
+export * from './plans/indicateurs-objectifs.rules';
 export * from './plans/plan-status.enum.schema';
 export * from './plans/plan-type.schema';
 export * from './plans/plan-import-profile.enum.schema';
