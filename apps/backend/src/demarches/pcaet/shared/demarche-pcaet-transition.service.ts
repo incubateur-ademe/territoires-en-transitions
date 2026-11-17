@@ -4,7 +4,10 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result } from '@tet/backend/utils/result.type';
-import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
+import {
+  isFailedResult,
+  TransactionManager,
+} from '@tet/backend/utils/transaction/transaction-manager.service';
 import {
   applyTransition,
   type DemarchePcaet,
@@ -57,24 +60,39 @@ export type DemarchePcaetTransitionStamps = {
 };
 
 /**
+ * Ce que rendent les effets : leurs tampons, ou un `Result` quand un effet peut
+ * refuser la transition avec une erreur typée.
+ */
+type DemarchePcaetTransitionEffectsOutput<EffectError> =
+  | DemarchePcaetTransitionStamps
+  | Result<DemarchePcaetTransitionStamps, EffectError>;
+
+/**
  * Les effets propres à une transition, exécutés dans la transaction qui la
  * persiste. Chaque opération écrit les siens : ils ne sont pas dérivés d'une
  * table, pour rester lisibles là où ils comptent.
+ *
+ * Un effet qui rend un `Result` en échec annule la transition : la transaction
+ * est annulée, l'erreur remonte telle quelle à l'appelant et aucun événement
+ * `TRANSITION` n'est émis.
  */
-export type DemarchePcaetTransitionEffects = (context: {
+export type DemarchePcaetTransitionEffects<EffectError = never> = (context: {
   demarche: DemarchePcaetRef;
   /** Ce que les guards ont lu — évite de relire pour les effets. */
   guardContext: DemarchePcaetGuardContext;
   user: AuthenticatedUser;
   transaction: Transaction;
-}) => Promise<DemarchePcaetTransitionStamps> | DemarchePcaetTransitionStamps;
+}) =>
+  | Promise<DemarchePcaetTransitionEffectsOutput<EffectError>>
+  | DemarchePcaetTransitionEffectsOutput<EffectError>;
 
-export type DemarchePcaetTransitionResult = Result<
+export type DemarchePcaetTransitionResult<EffectError = never> = Result<
   DemarchePcaet,
   | DemarchePcaetTransitionError
   | 'UNAUTHORIZED'
   | 'DATABASE_ERROR'
   | 'SERVER_ERROR'
+  | EffectError
 >;
 
 /**
@@ -98,12 +116,12 @@ export class DemarchePcaetTransitionService {
     private readonly trackingService: DemarchePcaetTrackingService
   ) {}
 
-  async apply(
+  async apply<EffectError = never>(
     input: DemarchePcaetTransitionInput,
     transition: DemarchePcaetTransition,
     { user, tx }: ServiceSecondArg,
-    effects?: DemarchePcaetTransitionEffects
-  ): Promise<DemarchePcaetTransitionResult> {
+    effects?: DemarchePcaetTransitionEffects<EffectError>
+  ): Promise<DemarchePcaetTransitionResult<EffectError>> {
     return this.applyWithActor(input, transition, user, tx, effects);
   }
 
@@ -126,17 +144,17 @@ export class DemarchePcaetTransitionService {
     return this.applyWithActor(input, transition, null, tx);
   }
 
-  private async applyWithActor(
+  private async applyWithActor<EffectError = never>(
     input: DemarchePcaetTransitionInput,
     transition: DemarchePcaetTransition,
     user: AuthenticatedUser | null,
     tx: Transaction | undefined,
-    effects?: DemarchePcaetTransitionEffects
-  ): Promise<DemarchePcaetTransitionResult> {
+    effects?: DemarchePcaetTransitionEffects<EffectError>
+  ): Promise<DemarchePcaetTransitionResult<EffectError>> {
     let outcome: TransitionOutcome | undefined;
     const executeInTransaction = async (
       transaction: Transaction
-    ): Promise<DemarchePcaetTransitionResult> => {
+    ): Promise<DemarchePcaetTransitionResult<EffectError>> => {
       // Le verrou de ligne tient jusqu'à la fin : les guards sont évalués et le
       // statut écrit sur le même état, sans transition concurrente entre les deux.
       const demarche = await this.refRepository.findRef(
@@ -189,10 +207,18 @@ export class DemarchePcaetTransitionService {
 
       // `user` conditionne l'appel autant que `effects` : les effets tamponnent
       // au nom de quelqu'un, et une transition système n'en déclare aucun.
-      const stamps =
+      const effectsOutput =
         effects && user
           ? await effects({ demarche, guardContext, user, transaction })
           : {};
+      // Un effet en échec refuse la transition : rendu tel quel, il annule la
+      // transaction (`executeTransaction` relance tout `Result` en échec), et
+      // `outcome` reste vide, donc aucun événement n'est émis.
+      if ('success' in effectsOutput && !effectsOutput.success) {
+        return failure(effectsOutput.error, effectsOutput.cause);
+      }
+      const stamps =
+        'success' in effectsOutput ? effectsOutput.data : effectsOutput;
 
       outcome = {
         applied: true,
@@ -241,19 +267,30 @@ export class DemarchePcaetTransitionService {
       };
     };
 
-    const result = await this.transactionManager.executeSingle(
-      executeInTransaction,
-      tx
-    );
+    let result: DemarchePcaetTransitionResult<EffectError>;
+    try {
+      result = await this.transactionManager.executeSingle(
+        executeInTransaction,
+        tx
+      );
+    } catch (error) {
+      // Dans une transaction partagée, un échec est relancé pour l'annuler
+      // (cf. `executeTransaction`) : le refus d'un guard reste un fait à
+      // tracer, même si l'appelant ne récupère le `Result` qu'en exception.
+      if (isFailedResult<EffectError>(error)) {
+        this.trackOutcome(transition, user, outcome, error);
+      }
+      throw error;
+    }
     this.trackOutcome(transition, user, outcome, result);
     return result;
   }
 
-  private trackOutcome(
+  private trackOutcome<EffectError>(
     transition: DemarchePcaetTransition,
     user: AuthenticatedUser | null,
     outcome: TransitionOutcome | undefined,
-    result: DemarchePcaetTransitionResult
+    result: DemarchePcaetTransitionResult<EffectError>
   ) {
     const context = {
       userId: user?.id,
