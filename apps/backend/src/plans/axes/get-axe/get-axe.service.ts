@@ -1,14 +1,21 @@
 import { Injectable, Logger } from '@nestjs/common';
-import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
+import CollectivitesService, {
+  type GetCollectiviteError,
+} from '@tet/backend/collectivites/services/collectivites.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
-import { Result, getDataOrThrow } from '@tet/backend/utils/result.type';
+import {
+  failure,
+  isFailure,
+  Result,
+  success,
+} from '@tet/backend/utils/result.type';
 import { ResourceType } from '@tet/domain/users';
 import { AxeLight } from '@tet/domain/plans';
-import { GetAxeError, GetAxeErrorEnum } from './get-axe.errors';
+import { GetAxeError } from './get-axe.errors';
 import { GetAxeInput } from './get-axe.input';
 import { GetAxeOutput } from './get-axe.output';
 import { GetAxeRepository } from './get-axe.repository';
@@ -43,12 +50,9 @@ export class GetAxeService {
 
       // vérifier les permissions
       const collectiviteId = axeResult.data.collectiviteId;
-      const isAllowed = await this.checkPermission(collectiviteId, user);
-      if (!isAllowed) {
-        return {
-          success: false,
-          error: GetAxeErrorEnum.UNAUTHORIZED,
-        };
+      const permissionResult = await this.checkPermission(collectiviteId, user);
+      if (!permissionResult.success) {
+        return permissionResult;
       }
 
       const [indicateursResult, cheminResult] = await Promise.all([
@@ -103,13 +107,14 @@ export class GetAxeService {
       )
     );
 
-    const allowed = await Promise.all(
+    const permissionResults = await Promise.all(
       distinctCollectiviteIds.map((collectiviteId) =>
         this.checkPermission(collectiviteId, user)
       )
     );
-    if (allowed.some((r) => !r)) {
-      return { success: false, error: GetAxeErrorEnum.UNAUTHORIZED };
+    const deniedResult = permissionResults.find(isFailure);
+    if (deniedResult) {
+      return deniedResult;
     }
 
     return cheminsResult;
@@ -118,10 +123,14 @@ export class GetAxeService {
   private async checkPermission(
     collectiviteId: number,
     user: AuthenticatedUser
-  ): Promise<boolean> {
-    const collectivitePrivate = getDataOrThrow(
-      await this.collectivite.isPrivate(collectiviteId)
+  ): Promise<Result<void, 'UNAUTHORIZED' | GetCollectiviteError>> {
+    const collectivitePrivateResult = await this.collectivite.isPrivate(
+      collectiviteId
     );
+    if (!collectivitePrivateResult.success) {
+      return collectivitePrivateResult;
+    }
+    const collectivitePrivate = collectivitePrivateResult.data;
 
     const permissionResult = await this.permissionService.isAllowed(
       user,
@@ -134,8 +143,9 @@ export class GetAxeService {
       this.logger.log(
         `User ${user.id} is not allowed to get axe for collectivité ${collectiviteId}`
       );
+      return failure('UNAUTHORIZED');
     }
 
-    return permissionResult.success;
+    return success(undefined);
   }
 }

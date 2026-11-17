@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
-import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
+import CollectivitesService, {
+  type GetCollectiviteError,
+} from '@tet/backend/collectivites/services/collectivites.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
@@ -8,7 +10,7 @@ import {
   ServiceSecondArg,
   UnsafeServiceSecondArg,
 } from '@tet/backend/utils/nest/service-second-arg.utils';
-import { Result, getDataOrThrow } from '@tet/backend/utils/result.type';
+import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { TransactionOperation } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { Plan } from '@tet/domain/plans';
 import { ResourceType } from '@tet/domain/users';
@@ -17,7 +19,7 @@ import FicheActionPermissionsService from '../../fiches/fiche-action-permissions
 import { toFichesWithReadableBudget } from '../../fiches/list-fiches/fiches-restreintes.rules';
 import { ListFichesBudgetRepository } from '../../fiches/list-fiches/list-fiches-budget.repository';
 import { ComputeBudgetRules } from '../compute-budget/compute-budget.rules';
-import { GetPlanError, GetPlanErrorEnum } from './get-plan.errors';
+import { GetPlanError } from './get-plan.errors';
 import { GetPlanInput } from './get-plan.input';
 import { GetPlanOutput, GetPlanRepository } from './get-plan.repository';
 
@@ -50,12 +52,12 @@ export class GetPlanService {
       }
       const plan = planResult.data;
 
-      const isAllowed = await this.checkPermission(plan.collectiviteId, user);
-      if (!isAllowed) {
-        return {
-          success: false,
-          error: GetPlanErrorEnum.UNAUTHORIZED,
-        };
+      const permissionResult = await this.checkPermission(
+        plan.collectiviteId,
+        user
+      );
+      if (!permissionResult.success) {
+        return permissionResult;
       }
 
       const canReadFichesRestreintes =
@@ -155,10 +157,15 @@ export class GetPlanService {
     collectiviteId: number,
     user: AuthenticatedUser,
     tx?: Transaction
-  ): Promise<boolean> {
-    const collectivitePrivate = getDataOrThrow(
-      await this.collectivite.isPrivate(collectiviteId, tx)
+  ): Promise<Result<void, 'UNAUTHORIZED' | GetCollectiviteError>> {
+    const collectivitePrivateResult = await this.collectivite.isPrivate(
+      collectiviteId,
+      tx
     );
+    if (!collectivitePrivateResult.success) {
+      return collectivitePrivateResult;
+    }
+    const collectivitePrivate = collectivitePrivateResult.data;
 
     const permissionResult = await this.permissionService.isAllowed(
       user,
@@ -172,8 +179,9 @@ export class GetPlanService {
       this.logger.log(
         `User ${user.id} is not allowed to get axe for collectivité ${collectiviteId}`
       );
+      return failure('UNAUTHORIZED');
     }
 
-    return permissionResult.success;
+    return success(undefined);
   }
 }

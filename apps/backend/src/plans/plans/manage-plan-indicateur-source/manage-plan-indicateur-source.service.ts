@@ -168,12 +168,12 @@ export class ManagePlanIndicateurSourceService {
     if (!plan) return failure('NOT_FOUND');
 
     if (mode === 'share') {
-      const canReadPlan = await this.getPlanService.checkPermission(
+      const readPlanResult = await this.getPlanService.checkPermission(
         plan.collectiviteId,
         user,
         tx
       );
-      if (!canReadPlan) return failure('UNAUTHORIZED');
+      if (!readPlanResult.success) return readPlanResult;
     } else {
       const planAccess = await this.permissions.isAllowed(
         user,
