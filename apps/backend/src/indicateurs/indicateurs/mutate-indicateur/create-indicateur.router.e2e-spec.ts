@@ -17,9 +17,10 @@ import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { createFiche } from '@tet/backend/plans/fiches/fiches.test-fixture';
 import { Collectivite } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
-import { eq } from 'drizzle-orm';
+import { eq, isNull } from 'drizzle-orm';
 import { describe, expect, onTestFinished } from 'vitest';
 import z from 'zod';
+import { indicateurGroupeTable } from '../../shared/models/indicateur-groupe.table';
 import { indicateurThematiqueTable } from '../../shared/models/indicateur-thematique.table';
 import { indicateurCollectiviteTable } from '../../indicateur/indicateur-collectivite.table';
 import { indicateurDefinitionTable } from '../../indicateur/indicateur-definition.table';
@@ -337,7 +338,7 @@ describe('createIndicateurPerso', () => {
 
     await expect(
       caller.indicateurs.indicateurs.create(data)
-    ).rejects.toThrowError(/Droits insuffisants/);
+    ).rejects.toThrowError(/permissions nécessaires/);
   });
 
   test('should reject a fiche owned by another collectivite and roll back creation', async () => {
@@ -396,10 +397,14 @@ describe('createIndicateurPerso', () => {
 
     await expect(
       databaseService.db.transaction(async (tx) => {
-        indicateurId = await createService.createIndicateurPerso(input, {
+        const created = await createService.createIndicateurPerso(input, {
           user: authenticatedUser,
           tx,
         });
+        if (!created.success) {
+          throw new Error('La création aurait dû réussir');
+        }
+        indicateurId = created.data;
         const rows = await loadIndicateurRows(indicateurId, tx);
         expect(rows.map((tableRows) => tableRows.length)).toEqual([1, 2, 1, 1]);
         throw outerError;
@@ -422,10 +427,14 @@ describe('createIndicateurPerso', () => {
     });
 
     const indicateurId = await databaseService.db.transaction(async (tx) => {
-      const createdId = await createService.createIndicateurPerso(input, {
+      const created = await createService.createIndicateurPerso(input, {
         user: authenticatedUser,
         tx,
       });
+      if (!created.success) {
+        throw new Error('La création aurait dû réussir');
+      }
+      const createdId = created.data;
       const rowsBeforeCommit = await loadIndicateurRows(createdId);
       expect(rowsBeforeCommit.map((rows) => rows.length)).toEqual([0, 0, 0, 0]);
       return createdId;
@@ -460,7 +469,7 @@ describe('createIndicateurPerso', () => {
           tx,
         })
       )
-    ).rejects.toThrow(/Droits insuffisants/);
+    ).resolves.toEqual({ success: false, error: 'UNAUTHORIZED' });
 
     const definitions = await databaseService.db
       .select()
@@ -469,5 +478,112 @@ describe('createIndicateurPerso', () => {
         eq(indicateurDefinitionTable.collectiviteId, fixture.collectivite.id)
       );
     expect(definitions).toEqual([]);
+  });
+
+  describe('sous-indicateur', () => {
+    const createParentMensuel = async () => {
+      const caller = router.createCaller({ user: authenticatedUser });
+      return caller.indicateurs.indicateurs.create({
+        collectiviteId: collectivite.id,
+        titre: 'Déchets ménagers',
+        unite: 't',
+        periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
+      });
+    };
+
+    test('rattache le nouvel indicateur à son parent en reprenant unité et périodicité', async () => {
+      const caller = router.createCaller({ user: authenticatedUser });
+      const parentId = await createParentMensuel();
+
+      const childId = await caller.indicateurs.indicateurs.create({
+        collectiviteId: collectivite.id,
+        titre: 'Ordures ménagères',
+        parentId,
+      });
+
+      const [child] = await databaseService.db
+        .select()
+        .from(indicateurDefinitionTable)
+        .where(eq(indicateurDefinitionTable.id, childId));
+      expect(child).toMatchObject({
+        titre: 'Ordures ménagères',
+        unite: 't',
+        periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
+        collectiviteId: collectivite.id,
+      });
+
+      const links = await databaseService.db
+        .select()
+        .from(indicateurGroupeTable)
+        .where(eq(indicateurGroupeTable.enfant, childId));
+      expect(links).toEqual([{ parent: parentId, enfant: childId }]);
+    });
+
+    test('refuse un sous-indicateur sous un indicateur prédéfini', async () => {
+      const caller = router.createCaller({ user: authenticatedUser });
+      const [predefini] = await databaseService.db
+        .select({ id: indicateurDefinitionTable.id })
+        .from(indicateurDefinitionTable)
+        .where(isNull(indicateurDefinitionTable.collectiviteId))
+        .limit(1);
+      const titre = `Sous-indicateur refusé ${crypto.randomUUID()}`;
+
+      await expect(
+        caller.indicateurs.indicateurs.create({
+          collectiviteId: collectivite.id,
+          titre,
+          parentId: predefini.id,
+        })
+      ).rejects.toThrow(/indicateur personnalisé/);
+
+      const created = await databaseService.db
+        .select({ id: indicateurDefinitionTable.id })
+        .from(indicateurDefinitionTable)
+        .where(eq(indicateurDefinitionTable.titre, titre));
+      expect(created).toHaveLength(0);
+    });
+
+    test('refuse un troisième niveau', async () => {
+      const caller = router.createCaller({ user: authenticatedUser });
+      const parentId = await createParentMensuel();
+      const childId = await caller.indicateurs.indicateurs.create({
+        collectiviteId: collectivite.id,
+        titre: 'Tri sélectif',
+        parentId,
+      });
+
+      await expect(
+        caller.indicateurs.indicateurs.create({
+          collectiviteId: collectivite.id,
+          titre: 'Verre',
+          parentId: childId,
+        })
+      ).rejects.toThrow(/deux niveaux maximum/);
+    });
+
+    test('ne révèle pas un indicateur d’une autre collectivité', async () => {
+      const other = await addTestCollectiviteAndUser(databaseService, {
+        user: { role: CollectiviteRole.ADMIN },
+      });
+      onTestFinished(other.cleanup);
+      const [foreignParent] = await databaseService.db
+        .insert(indicateurDefinitionTable)
+        .values({
+          collectiviteId: other.collectivite.id,
+          titre: 'Indicateur d’une autre collectivité',
+          unite: 't',
+          periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+        })
+        .returning({ id: indicateurDefinitionTable.id });
+      const caller = router.createCaller({ user: authenticatedUser });
+
+      await expect(
+        caller.indicateurs.indicateurs.create({
+          collectiviteId: collectivite.id,
+          titre: 'Enfant sans parent accessible',
+          parentId: foreignParent.id,
+        })
+      ).rejects.toThrow(/parent n'a pas été trouvé/);
+    });
   });
 });

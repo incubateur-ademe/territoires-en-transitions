@@ -1,4 +1,3 @@
-import { BadRequestException, ForbiddenException } from '@nestjs/common';
 import FicheActionPermissionsService from '@tet/backend/plans/fiches/fiche-action-permissions.service';
 import { FicheAccessModeEnum } from '@tet/backend/plans/fiches/share-fiches/fiche-access-mode.enum';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
@@ -56,7 +55,7 @@ describe('UpsertIndicateurFichesService', () => {
       { indicateurId: 1, collectiviteId: 2 },
       tx
     );
-    expect(permissions.canWriteFiche).toHaveBeenCalledWith(3, user, tx);
+    expect(permissions.canWriteFiche).toHaveBeenCalledWith(3, user, tx, true);
     expect(repository.upsertIndicateurFiches).toHaveBeenCalledWith(
       { ...input, ficheIdsToUnlink: [], createdBy: user.id },
       tx
@@ -69,7 +68,7 @@ describe('UpsertIndicateurFichesService', () => {
 
     await expect(
       service.upsertIndicateurFiches(input, { user })
-    ).rejects.toBeInstanceOf(BadRequestException);
+    ).resolves.toEqual({ success: false, error: 'FICHES_OUT_OF_SCOPE' });
 
     expect(permissions.canWriteFiche).not.toHaveBeenCalled();
     expect(repository.upsertIndicateurFiches).not.toHaveBeenCalled();
@@ -77,10 +76,9 @@ describe('UpsertIndicateurFichesService', () => {
 
   it('only authorizes changed links and preserves a retained read-only fiche', async () => {
     const { service, repository, permissions } = setup([3, 4]);
-    permissions.canWriteFiche.mockImplementation(async (ficheId) => {
-      if (ficheId === 3) throw new ForbiddenException();
-      return FicheAccessModeEnum.SHARED;
-    });
+    permissions.canWriteFiche.mockImplementation(async (ficheId) =>
+      ficheId === 3 ? null : FicheAccessModeEnum.SHARED
+    );
 
     await service.upsertIndicateurFiches(
       { ...input, ficheIds: [3, 5, 5] },
@@ -88,8 +86,8 @@ describe('UpsertIndicateurFichesService', () => {
     );
 
     expect(permissions.canWriteFiche.mock.calls).toEqual([
-      [5, user, tx],
-      [4, user, tx],
+      [5, user, tx, true],
+      [4, user, tx, true],
     ]);
     expect(repository.upsertIndicateurFiches).toHaveBeenCalledWith(
       { ...input, ficheIds: [5], ficheIdsToUnlink: [4], createdBy: user.id },
@@ -103,14 +101,14 @@ describe('UpsertIndicateurFichesService', () => {
       const { service, repository, permissions } = setup(
         operation === 'unlink' ? [3] : []
       );
-      permissions.canWriteFiche.mockRejectedValue(new ForbiddenException());
+      permissions.canWriteFiche.mockResolvedValue(null);
 
       await expect(
         service.upsertIndicateurFiches(
           { ...input, ficheIds: operation === 'unlink' ? [] : [3] },
           { user }
         )
-      ).rejects.toBeInstanceOf(ForbiddenException);
+      ).resolves.toEqual({ success: false, error: 'UNAUTHORIZED' });
 
       expect(repository.upsertIndicateurFiches).not.toHaveBeenCalled();
     }

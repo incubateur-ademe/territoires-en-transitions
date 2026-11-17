@@ -1,4 +1,5 @@
 import { AuthRole } from '@tet/backend/users/models/auth.models';
+import { success } from '@tet/backend/utils/result.type';
 import { describe, expect, it, vi } from 'vitest';
 import { ResourceType } from '@tet/domain/users';
 import CreateIndicateurService from './create-indicateur.service';
@@ -19,11 +20,13 @@ describe('CreateIndicateurService', () => {
       const repository = {
         createIndicateurPerso: vi.fn(async () => {
           events.push('insert-definition');
-          return 42;
+          return success(42);
         }),
       };
       const permissionService = {
-        assertAllowed: vi.fn().mockResolvedValue(undefined),
+        isAllowed: vi
+          .fn()
+          .mockResolvedValue({ success: true, data: undefined }),
       };
       const indicateurLockRepository = {
         lockForIndicateurMutation: vi.fn(async () => {
@@ -31,7 +34,7 @@ describe('CreateIndicateurService', () => {
         }),
       };
       const upsertIndicateurFichesService = {
-        upsertIndicateurFiches: vi.fn().mockResolvedValue(undefined),
+        upsertIndicateurFiches: vi.fn().mockResolvedValue(success(undefined)),
       };
       const service = new CreateIndicateurService(
         transactionManager as never,
@@ -62,13 +65,13 @@ describe('CreateIndicateurService', () => {
             ...(sharedTransaction && { tx }),
           } as never
         )
-      ).resolves.toBe(42);
+      ).resolves.toEqual({ success: true, data: 42 });
 
       expect(transactionManager.executeSingle).toHaveBeenCalledWith(
         expect.any(Function),
         sharedTransaction ? tx : undefined
       );
-      expect(permissionService.assertAllowed).toHaveBeenCalledWith(
+      expect(permissionService.isAllowed).toHaveBeenCalledWith(
         expect.objectContaining({ id: '00000000-0000-0000-0000-000000000001' }),
         'indicateurs.indicateurs.create',
         ResourceType.COLLECTIVITE,

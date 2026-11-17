@@ -1,13 +1,30 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
-import { success } from '@tet/backend/utils/result.type';
+import type { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import type { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
+import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
+import { CommonErrorEnum } from '@tet/backend/utils/trpc/common-errors';
+import {
+  validateSousIndicateurPerso,
+  type IndicateurInGroup,
+  type IndicateurPeriodicite,
+} from '@tet/domain/indicateurs';
 import { ResourceType } from '@tet/domain/users';
-import { UpsertIndicateurFichesService } from '../upsert-indicateur-fiches/upsert-indicateur-fiches.service';
 import { IndicateurLockRepository } from '../../indicateur/indicateur-lock.repository';
+import { UpsertIndicateurFichesService } from '../upsert-indicateur-fiches/upsert-indicateur-fiches.service';
+import {
+  CreateIndicateurError,
+  CreateIndicateurErrorEnum,
+} from './create-indicateur.errors';
 import { CreateIndicateurInput } from './mutate-indicateur.input';
 import { MutateIndicateurRepository } from './mutate-indicateur.repository';
+
+type IndicateurShape = Readonly<{
+  unite: string;
+  periodicite: IndicateurPeriodicite;
+  parent: IndicateurInGroup | null;
+}>;
 
 @Injectable()
 export default class CreateIndicateurService {
@@ -21,36 +38,30 @@ export default class CreateIndicateurService {
     private readonly upsertIndicateurFichesService: UpsertIndicateurFichesService
   ) {}
 
-  // ajoute un indicateur personnalisé
   async createIndicateurPerso(
-    {
-      collectiviteId,
-      titre,
-      unite,
-      periodicite,
-      thematiques,
-      commentaire,
-      estFavori,
-      estConfidentiel,
-      isApplicable,
-      ficheId,
-    }: CreateIndicateurInput,
+    input: CreateIndicateurInput,
     { user, tx }: ServiceSecondArg
-  ) {
-    await this.permissionService.assertAllowed(
+  ): Promise<Result<number, CreateIndicateurError>> {
+    const { collectiviteId } = input;
+
+    const permissionResult = await this.permissionService.isAllowed(
       user,
       'indicateurs.indicateurs.create',
       ResourceType.COLLECTIVITE,
       { collectiviteId },
       tx
     );
+    if (!permissionResult.success) {
+      return failure(CommonErrorEnum.UNAUTHORIZED);
+    }
+
     this.logger.log(
       `Insère un indicateur personnalisé pour la collectivité "${collectiviteId}"`
     );
 
     const transactionResult = await this.transactionManager.executeSingle<
       number,
-      unknown
+      CreateIndicateurError | Error
     >(async (transaction) => {
       // PostgreSQL verrouille la table avant d'exécuter un trigger
       // statement-level. L'application doit donc prendre le verrou de
@@ -59,45 +70,108 @@ export default class CreateIndicateurService {
         transaction
       );
 
-      const indicateurId = await this.repository.createIndicateurPerso(
+      const shapeResult = await this.resolveIndicateurShape(input, transaction);
+      if (!shapeResult.success) {
+        return failure(shapeResult.error);
+      }
+      const { unite, periodicite, parent } = shapeResult.data;
+
+      const createdResult = await this.repository.createIndicateurPerso(
         {
           collectiviteId,
-          titre,
-          unite: unite ?? '',
+          titre: input.titre,
+          unite,
           periodicite,
-          thematiqueIds: thematiques.map(({ id }) => id),
-          commentaire,
-          estFavori,
-          estConfidentiel,
-          isApplicable,
+          thematiqueIds: input.thematiques.map(({ id }) => id),
+          commentaire: input.commentaire,
+          estFavori: input.estFavori,
+          estConfidentiel: input.estConfidentiel,
+          isApplicable: input.isApplicable,
           modifiedBy: user.id,
         },
         transaction
       );
+      if (!createdResult.success) {
+        return failure(createdResult.error, createdResult.cause);
+      }
+      const indicateurId = createdResult.data;
 
-      if (ficheId !== undefined) {
-        await this.upsertIndicateurFichesService.upsertIndicateurFiches(
-          {
-            indicateurId,
+      if (parent) {
+        const validation = validateSousIndicateurPerso({
+          parent,
+          child: {
+            id: indicateurId,
             collectiviteId,
-            ficheIds: [ficheId],
+            unite,
+            periodicite,
+            parentId: null,
+            hasChildren: false,
           },
-          { user, tx: transaction }
+        });
+        if (!validation.success) {
+          return failure(validation.error);
+        }
+        await this.repository.attachSousIndicateur(
+          { parentId: parent.id, enfantId: indicateurId },
+          transaction
         );
+      }
+
+      if (input.ficheId !== undefined) {
+        const fichesResult =
+          await this.upsertIndicateurFichesService.upsertIndicateurFiches(
+            {
+              indicateurId,
+              collectiviteId,
+              ficheIds: [input.ficheId],
+            },
+            { user, tx: transaction }
+          );
+        if (!fichesResult.success) {
+          return failure(fichesResult.error);
+        }
       }
 
       return success(indicateurId);
     }, tx);
 
-    if (!transactionResult.success) {
+    if (transactionResult.success) {
+      this.logger.log(
+        `Indicateur personnalisé "${transactionResult.data}" pour la collectivité "${collectiviteId}" inséré`
+      );
+      return success(transactionResult.data);
+    }
+    if (transactionResult.error instanceof Error) {
       throw transactionResult.cause ?? transactionResult.error;
     }
-    const indicateurId = transactionResult.data;
+    return failure(transactionResult.error, transactionResult.cause);
+  }
 
-    this.logger.log(
-      `Indicateur personnalisé "${indicateurId}" pour la collectivité "${collectiviteId}" inséré`
+  private async resolveIndicateurShape(
+    input: CreateIndicateurInput,
+    tx: Transaction
+  ): Promise<Result<IndicateurShape, CreateIndicateurError>> {
+    const isSousIndicateur = input.parentId !== undefined;
+    if (!isSousIndicateur) {
+      return success({
+        unite: input.unite ?? '',
+        periodicite: input.periodicite,
+        parent: null,
+      });
+    }
+
+    const parent = await this.repository.getIndicateurInGroup(
+      { indicateurId: input.parentId, collectiviteId: input.collectiviteId },
+      tx
     );
+    if (!parent) {
+      return failure(CreateIndicateurErrorEnum.PARENT_NOT_FOUND);
+    }
 
-    return indicateurId;
+    return success({
+      unite: parent.unite,
+      periodicite: parent.periodicite,
+      parent,
+    });
   }
 }
