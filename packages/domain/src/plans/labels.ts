@@ -1,3 +1,14 @@
+import {
+  AiPlanImportProfile,
+  AiPlanImportProfileEnum,
+} from './plans/plan-import-profile.enum.schema';
+
+export const AI_PLAN_IMPORT_PROFILE_LABELS = {
+  [AiPlanImportProfileEnum.GENERIC]: 'Générique',
+  [AiPlanImportProfileEnum.PCAET]: 'PCAET',
+  [AiPlanImportProfileEnum.ELECTRIFICATION]: 'Électrification',
+} as const satisfies Record<AiPlanImportProfile, string>;
+
 export const SANS_PRIORITE_LABEL = 'Sans priorité' as const;
 export const SANS_STATUT_LABEL = 'Sans statut' as const;
 export const SANS_FINANCEUR_TAG_LABEL = 'Sans financeur';

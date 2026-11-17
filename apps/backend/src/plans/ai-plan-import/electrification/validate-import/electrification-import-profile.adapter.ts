@@ -12,8 +12,10 @@ import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { AiPlanImportProfileEnum, PlanType } from '@tet/domain/plans';
 import { AiPlanImportError } from '../../ai-plan-import.errors';
 import { DOCX_MIME } from '../../enqueue-import/detect-source-mime-type';
-import { ImportAdmission } from '../../validate-import-profile/import-admission.types';
-import { AiPlanImportJobOptions } from '../../models/ai-plan-import-job';
+import {
+  ImportAdmission,
+  ImportAdmissionInput,
+} from '../../validate-import-profile/import-admission.types';
 import {
   ELECTRIFICATION_CHECKPOINT_VERSION,
   ElectrificationExtractionCheckpoint,
@@ -21,6 +23,7 @@ import {
 import { electrificationDocumentTemplate } from '@tet/backend/plans/plans/electrification/config/electrification-document-template.constants';
 import { ResolveElectrificationFichesRules } from '../resolve-fiches/resolve-electrification-fiches.rules';
 import { ElectrificationImportContractRules } from './electrification-import-contract.rules';
+import type { ImportProfileAdapter } from '../../validate-import-profile/import-profile-adapter.interface';
 
 type ElectrificationImportConfiguration = {
   profile: typeof AiPlanImportProfileEnum.ELECTRIFICATION;
@@ -31,17 +34,33 @@ type ElectrificationImportConfiguration = {
   eligibility: ElectrificationEligibilityDecision;
 };
 
-type ImportInput = { collectiviteId: number; options: AiPlanImportJobOptions };
-
 /** Règles du profil, partagées par l'admission et la revalidation des jobs. */
 @Injectable()
-export class ValidateElectrificationImportService {
+export class ElectrificationImportProfileAdapter
+  implements ImportProfileAdapter
+{
+  readonly profile = AiPlanImportProfileEnum.ELECTRIFICATION;
+  readonly profileMismatchError =
+    'ELECTRIFICATION_REQUIRES_DEDICATED_IMPORT' as const;
+
   constructor(
     private readonly creation: CheckElectrificationCreationService,
     private readonly eligibility: CheckElectrificationEligibilityService,
     private readonly listPlanTypes: ListPlanTypesService,
     private readonly data: ElectrificationDataService
   ) {}
+
+  appliesTo(planType: PlanType): boolean {
+    return this.creation.appliesTo(planType);
+  }
+
+  async checkAvailability(
+    input: { collectiviteId: number },
+    context: ServiceSecondArg
+  ): Promise<Result<void, AiPlanImportError>> {
+    const configuration = await this.getAdmissionConfiguration(input, context);
+    return configuration.success ? success(undefined) : configuration;
+  }
 
   isSupportedImport(options: unknown): boolean {
     return ElectrificationImportContractRules.isSupportedImport(options);
@@ -57,7 +76,7 @@ export class ValidateElectrificationImportService {
     );
   }
 
-  async getAdmissionConfiguration(
+  private async getAdmissionConfiguration(
     input: { collectiviteId: number },
     context: ServiceSecondArg
   ): Promise<Result<ElectrificationImportConfiguration, AiPlanImportError>> {
@@ -68,7 +87,7 @@ export class ValidateElectrificationImportService {
   }
 
   async authorizeAdmission(
-    { collectiviteId, options }: ImportInput,
+    { collectiviteId, options }: ImportAdmissionInput,
     context: ServiceSecondArg
   ): Promise<Result<ImportAdmission, AiPlanImportError>> {
     const configuration = await this.getAdmissionConfiguration(
@@ -94,12 +113,6 @@ export class ValidateElectrificationImportService {
     });
   }
 
-  validateGenericPlanType(planType: PlanType): Result<void, AiPlanImportError> {
-    return this.creation.appliesTo(planType)
-      ? failure('ELECTRIFICATION_REQUIRES_DEDICATED_IMPORT')
-      : success(undefined);
-  }
-
   validateSource(mimeType: string): Result<void, AiPlanImportError> {
     return mimeType === DOCX_MIME
       ? success(undefined)
@@ -108,7 +121,7 @@ export class ValidateElectrificationImportService {
 
   /** Une fermeture du flag ne révoque pas les jobs déjà admis. */
   async authorizeExistingImport(
-    { collectiviteId, options }: ImportInput,
+    { collectiviteId, options }: ImportAdmissionInput,
     context: ServiceSecondArg
   ): Promise<Result<void, AiPlanImportError>> {
     if (!this.isSupportedImport(options) || !options.catalogueVersion)

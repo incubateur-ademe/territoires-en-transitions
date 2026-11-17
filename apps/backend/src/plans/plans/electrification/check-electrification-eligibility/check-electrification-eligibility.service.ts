@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { GetUserRolesAndPermissionsService } from '@tet/backend/users/authorizations/get-user-roles-and-permissions/get-user-roles-and-permissions.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { ElectrificationLaureatsConfig } from '@tet/domain/plans';
-import { hasRole, PlatformRole, ResourceType } from '@tet/domain/users';
+import { PlatformRole, ResourceType } from '@tet/domain/users';
 import z from 'zod';
 import { CheckElectrificationEligibilityError } from './check-electrification-eligibility.errors';
 import { ElectrificationDataService } from '../publish-electrification-data/electrification-data.service';
@@ -29,8 +28,7 @@ export type ElectrificationEligibilityDecision = {
 export class CheckElectrificationEligibilityService {
   constructor(
     private readonly data: ElectrificationDataService,
-    private readonly permissions: PermissionService,
-    private readonly roles: GetUserRolesAndPermissionsService
+    private readonly permissions: PermissionService
   ) {}
 
   async check(
@@ -61,7 +59,7 @@ export class CheckElectrificationEligibilityService {
       // ou une panne de stockage. Aucun rattachement lauréat n'est inventé.
       if (
         config.error === 'DATA_UNAVAILABLE' &&
-        (await this.canImportNonLaureat({ user, tx }))
+        (await this.permissions.hasSuperAdminRole(user, tx))
       ) {
         return success({
           eligible: true,
@@ -93,7 +91,8 @@ export class CheckElectrificationEligibilityService {
     );
     return success({
       eligible:
-        laureat !== undefined || (await this.canImportNonLaureat({ user, tx })),
+        laureat !== undefined ||
+        (await this.permissions.hasSuperAdminRole(user, tx)),
       laureatReference: laureat?.reference ?? null,
       provenance: {
         source,
@@ -103,20 +102,5 @@ export class CheckElectrificationEligibilityService {
         checkedAt: new Date(checkedAt).toISOString(),
       },
     });
-  }
-
-  /** Exception de recette : ne transforme pas la collectivité en lauréate. */
-  private async canImportNonLaureat({ user, tx }: ServiceSecondArg) {
-    if (
-      user.jwtPayload.client_id !== undefined ||
-      user.jwtPayload.permissions !== undefined
-    ) {
-      return false;
-    }
-    const roles = await this.roles.getUserRolesAndPermissions({
-      userId: user.id,
-      tx,
-    });
-    return roles.success && hasRole(roles.data, PlatformRole.SUPER_ADMIN);
   }
 }

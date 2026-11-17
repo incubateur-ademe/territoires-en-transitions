@@ -1,9 +1,9 @@
 # Import IA d'un plan d'actions
 
-Une collectivité dépose son plan (PCAET, plan climat, plan de transition…) en
-PDF, Word, Excel ou CSV. L'import IA en tire les axes, sous-axes, actions et
+Une collectivité dépose son PCAET en PDF, Word, Excel ou CSV, ou son document
+Électrification en DOCX. L'import en tire les axes, sous-axes, actions et
 sous-actions, puis crée le plan dans Territoires en Transitions. Le plan créé
-est marqué « importé par l'IA » et reste à relire.
+est marqué "importé par l'IA" et reste à relire.
 
 Deux fournisseurs de modèles sont branchés derrière `LlmService`, au choix par
 `LLM_PROVIDER` :
@@ -62,6 +62,13 @@ sequenceDiagram
 
 Garde-fous à l'entrée (`enqueue-import/`, `ai-plan-import.constants.ts`) :
 
+- le type du plan doit être PCAET ou Électrification, y compris en super-admin ;
+  les droits et conditions d'accès propres à chaque import restent applicables ;
+- le serveur combine la liste `AI_PLAN_IMPORT_ALLOWED_PROFILES` et le flag
+  global `is-ai-plan-import-enabled`, pour les capacités et le lancement.
+  Électrification exige aussi `is-electrification-plan-creation-enabled`.
+  Le mode super-admin actif contourne les deux flags ; la liste des profils
+  autorisés, les droits et les validations métier restent applicables ;
 - un seul import en cours par utilisateur (409), dix par collectivité et par
   24 heures (429), vingt en cours au total ;
 - le type du fichier est vérifié sur son contenu, pas sur son extension ; une

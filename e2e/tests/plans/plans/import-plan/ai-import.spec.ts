@@ -36,6 +36,49 @@ async function selectElectrification(page: Page) {
   await electrificationOption(page).click();
 }
 
+test('réserve les nouveaux imports aux types PCAET et Électrification, même en super-admin', async ({
+  page,
+  collectivites,
+}) => {
+  const mock = new AiImportFixture();
+  await mock.install(page);
+  const { collectivite, user } = await collectivites.addCollectiviteAndUser({
+    userArgs: supportUser,
+  });
+  const types = await user.getTrpcClient().plans.plans.listTypes.query();
+  const otherType = types.find(
+    ({ type, detail }) =>
+      type !== PCAET_PLAN_TYPE_KEY.type &&
+      type !== ELECTRIFICATION_PLAN_TYPE_KEY.type &&
+      !detail
+  );
+  assert(otherType);
+  await page.goto(`/collectivite/${collectivite.data.id}/plans/importer-ia`);
+  const restriction = page.getByText(
+    "L'import IA est disponible pour les plans PCAET. Sélectionnez un type disponible pour continuer.",
+    { exact: true }
+  );
+  await expect(restriction).toBeVisible();
+  await expect(page.getByTestId('ai-import.lancer')).toBeDisabled();
+  await expect(
+    page.getByRole('link', { name: 'contact@territoiresentransitions.fr' })
+  ).toHaveCount(0);
+  await page.getByTestId('ai-import.plan-type').click();
+  await page
+    .getByTestId('ai-import.plan-type-options')
+    .getByRole('button', { name: otherType.type, exact: true })
+    .click();
+  await expect(restriction).toBeVisible();
+  await expect(page.getByTestId('ai-import.lancer')).toBeDisabled();
+  await expect(
+    page.getByRole('link', { name: 'contact@territoiresentransitions.fr' })
+  ).toHaveAttribute('href', 'mailto:contact@territoiresentransitions.fr');
+  await submitImport(page);
+  await expect(page).toHaveURL(/importJobId=/);
+  expect(mock.enqueuedForms[0].get('profile')).toBe('pcaet');
+  expect(mock.enqueueCalls).toBe(1);
+});
+
 test('recharge les capacités d’import après désactivation du mode super-admin', async ({
   page,
   collectivites,
@@ -49,6 +92,12 @@ test('recharge les capacités d’import après désactivation du mode super-adm
     userArgs: supportUser,
   });
   await page.goto(`/collectivite/${collectivite.data.id}/plans/importer-ia`);
+  await expect(
+    page.getByText(
+      "L'import IA est disponible pour les plans Électrification. Sélectionnez un type disponible pour continuer.",
+      { exact: true }
+    )
+  ).toBeVisible();
   await selectElectrification(page);
   mock.capabilities.profiles = [
     { profile: 'annexe-3-electrification', available: false },
@@ -65,7 +114,7 @@ test('recharge les capacités d’import après désactivation du mode super-adm
 
   await expect(page.getByTestId('ai-import.plan-type')).toBeVisible();
   await expect(
-    page.getByText(/L'import de ce type de plan n'est pas disponible/)
+    page.getByText(/L'import IA n'est pas disponible/)
   ).toBeVisible();
   await expect(page.getByTestId('ai-import.lancer')).toBeDisabled();
   expect(mock.enqueueCalls).toBe(0);
@@ -77,7 +126,7 @@ for (const capability of ['disabled', 'missing'] as const) {
   }`, async ({ page, collectivites }) => {
     const mock = new AiImportFixture();
     if (capability === 'missing') {
-      mock.capabilities.profiles = [{ profile: 'generic', available: true }];
+      mock.capabilities.profiles = [{ profile: 'pcaet', available: true }];
     }
     await mock.install(page);
     const { collectivite } = await collectivites.addCollectiviteAndUser({
@@ -93,6 +142,9 @@ for (const capability of ['disabled', 'missing'] as const) {
       page.getByText(/L'import de ce type de plan n'est pas disponible/)
     ).toBeVisible();
     await expect(page.getByTestId('ai-import.lancer')).toBeDisabled();
+    await expect(
+      page.getByRole('link', { name: 'contact@territoiresentransitions.fr' })
+    ).toBeVisible();
 
     // Un type autorisé reste utilisable après avoir consulté le refus.
     await page.getByTestId('ai-import.plan-type').click();
@@ -100,6 +152,9 @@ for (const capability of ['disabled', 'missing'] as const) {
       .getByRole('button', { name: PCAET_PLAN_TYPE_KEY.type, exact: true })
       .click();
     await expect(page.getByTestId('ai-import.lancer')).toBeEnabled();
+    await expect(
+      page.getByRole('link', { name: 'contact@territoiresentransitions.fr' })
+    ).toHaveCount(0);
     await expect(
       page.getByText(/L'import de ce type de plan n'est pas disponible/)
     ).toHaveCount(0);
@@ -127,7 +182,7 @@ test('importe le DOCX avec le profil Électrification et conserve le rapport apr
     qualitativeReview: 'skipped',
   };
   mock.capabilities.profiles = [
-    { profile: 'generic', available: true },
+    { profile: 'pcaet', available: true },
     { profile: 'annexe-3-electrification', available: true },
   ];
   await mock.install(page);
@@ -210,7 +265,7 @@ test('importe le DOCX avec le profil Électrification et conserve le rapport apr
   await expect(steps.nth(2)).toContainText('Création du plan');
   await expect(steps).toHaveCount(3);
 
-  mock.capabilities.profiles = [{ profile: 'generic', available: true }];
+  mock.capabilities.profiles = [{ profile: 'pcaet', available: true }];
   await page.reload();
   await expect(page.getByTestId('plans.import-ia.suivi')).toBeVisible();
   mock.status = {
@@ -440,7 +495,7 @@ test('ouvre le plan Électrification terminé quand seul ce profil est disponibl
   mock.status.profile = 'annexe-3-electrification';
   mock.capabilities.profiles = [
     { profile: 'generic', available: false },
-    { profile: 'pcaet', available: true },
+    { profile: 'pcaet', available: false },
     { profile: 'annexe-3-electrification', available: true },
   ];
   await mock.install(page);
@@ -494,7 +549,7 @@ test('conserve le suivi sans plan au rechargement et affiche le rapport après �
   await page.goto(`/collectivite/${collectivite.data.id}/plans/importer-ia`);
   await submitImport(page);
   await expect(page).toHaveURL(new RegExp(`importJobId=${mock.status.jobId}`));
-  expect(mock.enqueuedForms[0].get('profile')).toBe('generic');
+  expect(mock.enqueuedForms[0].get('profile')).toBe('pcaet');
   await expect(page.getByTestId('plans.import-ia.suivi')).toBeVisible();
   await expect(page.getByTestId('plans.import-ia.ouvrir-plan')).toHaveCount(0);
   await page.reload();
@@ -622,6 +677,7 @@ test("garde le formulaire et le suivi accessibles sans autoriser l'import quand 
 }) => {
   const mock = new AiImportFixture();
   mock.status.status = 'failed';
+  mock.capabilities.profiles = [];
   await mock.install(page);
   const { collectivite } = await collectivites.addCollectiviteAndUser({
     userArgs: { autoLogin: true },
@@ -633,7 +689,7 @@ test("garde le formulaire et le suivi accessibles sans autoriser l'import quand 
   await page.getByTestId('choix-creation-plan.importer-ia').click();
   await selectElectrification(page);
   await expect(
-    page.getByText(/L'import de ce type de plan n'est pas disponible/)
+    page.getByText(/L'import IA n'est pas disponible/)
   ).toBeVisible();
   await expect(page.getByTestId('ai-import.lancer')).toBeDisabled();
 
@@ -653,9 +709,33 @@ test("garde le formulaire et le suivi accessibles sans autoriser l'import quand 
     page.getByRole('textbox', { name: 'Nom du plan' })
   ).toBeVisible();
   await expect(
-    page.getByText(/L'import de ce type de plan n'est pas disponible/)
+    page.getByText(/L'import IA n'est pas disponible/)
   ).toBeVisible();
   await expect(page.getByTestId('ai-import.lancer')).toBeDisabled();
+  const contact = page.getByRole('link', {
+    name: 'contact@territoiresentransitions.fr',
+  });
+  await expect(contact).toHaveAttribute(
+    'href',
+    'mailto:contact@territoiresentransitions.fr'
+  );
+  await page.getByTestId('ai-import.plan-type').click();
+  await page
+    .getByRole('button', { name: PCAET_PLAN_TYPE_KEY.type, exact: true })
+    .click();
+  await expect(page.getByTestId('ai-import.lancer')).toBeDisabled();
+  await expect(contact).toBeVisible();
+
+  // Le parcours PCAET reprend la même décision, même si les flags UI sont actifs en CI.
+  const demarche = new DemarchePcaetPom(page);
+  await demarche.gotoCreatePage(collectivite.data.id);
+  await demarche.createDemarche(collectivite.data.id);
+  await demarche.gotoPlanActions();
+  await demarche.importPlanButton.click();
+  await expect(
+    page.getByTestId('demarches.plan.request-plan-import-modal')
+  ).toBeVisible();
+  await expect(contact).toBeVisible();
   expect(mock.enqueueCalls).toBe(0);
 });
 
@@ -938,6 +1018,7 @@ test('importe avec le profil PCAET, rattache immédiatement le plan et retrouve 
   await expect(
     page.getByTestId('demarches.plan.row').filter({ hasText: 'Plan de test' })
   ).toHaveAttribute('data-linked', 'true');
+  mock.capabilities.profiles = [{ profile: 'pcaet', available: false }];
   await page.reload();
   await demarche.importPlanButton.click();
   await expect(page.getByTestId('plans.import-ia.suivi')).toBeVisible();
@@ -956,7 +1037,7 @@ test('importe avec le profil PCAET, rattache immédiatement le plan et retrouve 
   await expect(page).not.toHaveURL(/importJobId=/);
   await demarche.importPlanButton.click();
   await expect(
-    page.getByRole('textbox', { name: 'Nom du plan' })
+    page.getByTestId('demarches.plan.request-plan-import-modal')
   ).toBeVisible();
   expect(mock.enqueueCalls).toBe(1);
 });

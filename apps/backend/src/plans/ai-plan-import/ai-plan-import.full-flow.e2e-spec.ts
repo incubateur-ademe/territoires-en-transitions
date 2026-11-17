@@ -267,6 +267,7 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
   let db: DatabaseService;
   let router: TrpcRouter;
   let collectiviteId: number;
+  let pcaetTypeId: number;
   let user: AuthenticatedUser;
   let userEmail: string;
   let userToken: string;
@@ -423,6 +424,16 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
     });
     db = await getTestDatabase(app);
     router = await getTestRouter(app);
+    const [pcaet] = await db.db
+      .select({ id: planActionTypeTable.id })
+      .from(planActionTypeTable)
+      .where(
+        and(
+          eq(planActionTypeTable.categorie, PCAET_PLAN_TYPE_KEY.categorie),
+          eq(planActionTypeTable.type, PCAET_PLAN_TYPE_KEY.type)
+        )
+      );
+    pcaetTypeId = pcaet.id;
     // Le parcours ne dépend pas des jobs en cours hors de cette application de test.
     globalQuota = vi
       .spyOn(app.get(AiPlanImportJobRepository), 'countInFlight')
@@ -525,7 +536,10 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
         }/plans/import-ia`
       )
       .set('Authorization', `Bearer ${asOther ? otherUserToken : userToken}`);
-    for (const [name, value] of Object.entries(fields)) {
+    for (const [name, value] of Object.entries({
+      planType: String(pcaetTypeId),
+      ...fields,
+    })) {
       pending = pending.field(name, value);
     }
     const response = await pending.attach('file', source, {
@@ -557,7 +571,6 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
 
   test.each([
     { profile: 'unknown', status: 400 },
-    { profile: 'pcaet', status: 400 },
     { profile: 'annexe-3-electrification', status: 412 },
   ])(
     'refuse le profil $profile avant tout upload, plan ou job, même en super-admin',
@@ -1162,6 +1175,20 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
           asOther: true,
         }
       );
+      if (extraFields.profile === 'generic') {
+        // État d'un import admis avant la restriction de type, toujours reprenable.
+        const stored = await readJob(enqueued.jobId);
+        await db.db
+          .update(aiPlanImportJobTable)
+          .set({
+            options: {
+              ...stored.options,
+              planType: undefined,
+              withSecteurs: false,
+            },
+          })
+          .where(eq(aiPlanImportJobTable.id, enqueued.jobId));
+      }
       fakeLlmControl.failing = 'scoring';
       // Une coupure, sans statut HTTP : abandonnée après trois tentatives,
       // là où un 429 ou un 503 attendrait de longues relances.
@@ -1176,7 +1203,7 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
     };
 
     test.each(['generic', 'pcaet'] as const)(
-      'reprend le profil %s après extraction sans refaire cette étape ni changer de profil',
+      "reprend le profil %s, y compris un ancien générique sans type, sans refaire l'extraction",
       async (profile) => {
         const [pcaetType] = await db.db
           .select({ id: planActionTypeTable.id })
@@ -1205,6 +1232,10 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
         });
 
         fakeLlmControl.calls = [];
+        const closedFlag = vi
+          .spyOn(app.get(TrackingService), 'isFeatureEnabled')
+          .mockResolvedValue(false);
+        onTestFinished(() => closedFlag.mockRestore());
         expect(await resume(jobId)).toEqual({ jobId });
         await generate(jobId);
 

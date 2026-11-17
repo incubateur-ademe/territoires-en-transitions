@@ -351,6 +351,30 @@ des définitions annuelles et la recette en préproduction restent à vérifier.
       scénarios Playwright existants (capacités absentes/désactivées,
       retrait du mode super-admin et suivi après fermeture).
 
+- [x] Réserver les nouveaux imports aux types PCAET et Électrification,
+      y compris en super-admin. Appliquer le refus côté serveur et les
+      capacités dans le formulaire, avec un message pour les autres types.
+      Conserver le suivi et la reprise des imports génériques déjà admis.
+- [x] Centraliser la liste des profils autorisés, les flags et les droits
+      côté serveur, pour les capacités comme pour le lancement. Réutiliser
+      cette décision dans le formulaire et le parcours PCAET ; proposer
+      l'import accompagné par mail/chat si l'import IA n'est pas disponible.
+- [x] Construire les messages à partir des profils autorisés côté API et des
+      profils disponibles dans le formulaire, avec des libellés partagés.
+- [x] Regrouper les règles PCAET dans son validateur (type, disponibilité et
+      options d'admission). Garder les permissions, la liste autorisée et le
+      routage dans le validateur commun.
+- [x] Faire implémenter `ImportProfileAdapter` aux adapters PCAET et
+      Électrification. Injecter leur registre dans le coordinateur ; déléguer
+      disponibilité, admission, format source et reprise sans branchement par
+      profil. Les contrôles de flags suivent la règle unifiée ci-dessous.
+- [x] Appliquer le flag global d'import à tous les profils et ajouter le flag
+      de création pour Électrification. Unifier le contournement super-admin
+      actif via les autorisations existantes, sans ouvrir les profils exclus ni
+      lever les contrôles métier ; conserver la reprise après fermeture.
+- [ ] Valider les scénarios HTTP et navigateur de cette restriction, puis
+      déployer le backend et le frontend. Les flags existants restent inchangés.
+
 - [x] Étendre l'exception super-admin à l'absence de liste publiée, sans
       contourner une publication invalide ou une panne de stockage. Tracer le
       rôle dans la décision d'admission, sans source ni version fictive.
@@ -918,7 +942,7 @@ avec une date invalide est refusée sans créer de plan. Les preuves sont consig
    à vérifier. Les anciens jobs PCAET `generic` gardent leurs contrats de reprise.
 3. Vérifier les éventuels jobs de préproduction et traiter les versions non
    compatibles avec leur code/catalogue d'origine. Ne pas réétiqueter les jobs.
-4. Activer le flag pour la collectivité de démonstration `5460`, puis les autres
+4. Activer les flags global d'import et de création Électrification pour la collectivité de démonstration `5460`, puis les autres
    collectivités de recette retenues, et tester d'abord un DOCX synthétique
    avec des références résolubles (E03/E12 et
    `1.4.1`). Vérifier aussi le refus d'une action avec un indicateur `pending`,
@@ -938,7 +962,7 @@ groupe `collectivite`. Reprendre le principe du
 [contournement du diagnostic PCAET](https://eu.posthog.com/project/12975/feature_flags/275614),
 avec une règle `collectivite_id` contenant `5460`, puis les autres collectivités
 retenues pour cette recette, et un déploiement à 100 % de ce groupe ciblé.
-Ne pas reprendre automatiquement la liste du flag PCAET ni ajouter de règle
+Ne pas reprendre automatiquement la liste du flag global d'import ni ajouter de règle
 ouverte à tous. Conserver le runtime `all`, sans contexte d'environnement.
 **Vérification du 11 novembre :** le
 [flag créé par Émilien](https://eu.posthog.com/project/12975/feature_flags/355720)
@@ -952,8 +976,10 @@ courante et l'app lit ses capacités. Après déploiement de B, l'import dédié
 peut être testé sur la collectivité de démonstration `5460`, explicitement
 admise dans le mapping, ou sur une collectivité lauréate. Depuis la décision
 du 13 novembre, le mode super-admin actif autorise aussi l'import pour une
-collectivité hors liste, sans la déclarer lauréate. Le flag et les validations
-restent requis ; une session ordinaire reste soumise à la liste.
+collectivité hors liste, sans la déclarer lauréate. Depuis la précision du
+17 novembre, cette session contourne aussi les deux flags. Les validations
+métier restent requises ; une session ordinaire reste soumise à la liste et aux
+deux flags.
 L'ajustement du 17 novembre permet aussi cette recette sans liste publiée,
 avec une décision super-admin tracée et un catalogue publié valide.
 

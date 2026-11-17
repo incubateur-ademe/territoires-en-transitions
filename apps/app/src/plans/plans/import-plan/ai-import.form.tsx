@@ -6,7 +6,10 @@ import { Colon } from '@/app/ui/colon';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSuperAdminMode } from '@/app/users/authorizations/super-admin-mode/super-admin-mode.provider';
-import { type AiPlanImportProfile } from '@tet/domain/plans';
+import {
+  AiPlanImportProfileEnum,
+  type AiPlanImportProfile,
+} from '@tet/domain/plans';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { Alert, Button, Checkbox, Field, Input, Select } from '@tet/ui';
 import { ReactElement, useCallback, useEffect, useRef } from 'react';
@@ -21,6 +24,7 @@ import {
 import { useAvailableAiImportProfiles } from './data/use-available-ai-import-profiles';
 import { PreviousAiImportAlert } from './previous-ai-import.alert';
 import { useFindPreviousAiImport } from './data/use-find-previous-ai-import';
+import { RequestPlanImportInfo } from './request-plan-import.info';
 
 // Filtre sur l'extension : le MIME d'un CSV varie selon l'OS (text/plain,
 // application/vnd.ms-excel sous Windows avec Excel…). Le serveur tranche
@@ -231,7 +235,20 @@ export const AiImportForm = ({
       {!isLoadingPlanTypes && !isLoadingProfiles && !isProfileAvailable && (
         <Alert
           state="info"
-          description={appLabels.importPlanIaProfilIndisponible}
+          description={
+            <>
+              <p className="mb-0">
+                {profiles.length === 0
+                  ? appLabels.importPlanIaIndisponible
+                  : config.profile === AiPlanImportProfileEnum.GENERIC
+                  ? appLabels.importPlanIaTypesAutorises(profiles)
+                  : appLabels.importPlanIaProfilIndisponible}
+              </p>
+              {(selectedPlanTypeId !== null || profiles.length === 0) && (
+                <RequestPlanImportInfo />
+              )}
+            </>
+          }
         />
       )}
       <Field

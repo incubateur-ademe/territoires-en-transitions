@@ -170,6 +170,51 @@ existants ; aucun job n'est réétiqueté et aucun fichier n'est ré-extrait pou
 le faire passer au nouveau profil. B doit vérifier admission, type exact et
 reprise du nouveau profil sans dupliquer le moteur documentaire.
 
+**Décision du 17 novembre 2026 - limiter les nouveaux imports aux types PCAET
+et Électrification.** L'admission HTTP refuse les autres types et les demandes
+sans type, y compris en mode super-admin. Le profil `generic` est annoncé
+indisponible pour un nouvel import dans le formulaire ; les clients qui
+l'utilisent encore doivent fournir le type PCAET exact. Un profil PCAET
+déclaré avec un autre type reste refusé. Le moteur documentaire commun et
+les contrats des jobs existants ne changent pas.
+
+Le serveur combine la liste `AI_PLAN_IMPORT_ALLOWED_PROFILES`, les droits
+et le flag global `is-ai-plan-import-enabled`, à la lecture des capacités
+comme au lancement de tout profil. Électrification exige en complément
+`is-electrification-plan-creation-enabled`. Le mode super-admin actif d'une
+session humaine contourne ces deux flags, y compris le flag de création hors
+import ; les clés API restreintes et le support sans mode actif ne les
+contournent pas. Les droits, la liste des profils autorisés et les contrôles
+métier restent requis. Un échec d'évaluation ferme l'accès aux autres sessions.
+L'interface et le parcours PCAET utilisent les capacités serveur sans réévaluer
+les flags côté navigateur.
+
+Cette précision du 17 novembre remplace la politique initiale de flags
+indépendants et de contournement réservé au PCAET.
+
+`ValidateImportProfileService` coordonne les contrôles communs (permission,
+liste autorisée et cohérence du routage) via l'interface `ImportProfileAdapter`.
+`PcaetImportProfileAdapter` et `ElectrificationImportProfileAdapter` portent
+chacun la disponibilité, l'admission, le format source et la reprise. Le module
+Nest injecte leur correspondance avec les profils ; le coordinateur ne contient
+aucun branchement PCAET ou Électrification. `generic` est rattaché à l'adapter
+PCAET pour les contrats conservés, sans être annoncé disponible pour un nouvel
+import générique. Le coordinateur porte le flag global ; l'adapter
+Électrification réutilise le contrôle de création pour son flag supplémentaire.
+Le rôle super-admin est lu par le contrôle d'autorisation commun existant.
+Les flags ne sont pas réévalués pour la reprise d'un job déjà admis.
+
+Les types restent visibles et un message explique la restriction, avec le
+lancement désactivé. Le message de l'API dérive de la liste des profils autorisés ;
+le formulaire indique les profils effectivement disponibles après les contrôles
+d'accès. Ils partagent les libellés des profils, sans liste répétée dans le texte.
+Le composant d'import accompagné existant propose le mail
+et le chat si le type choisi est indisponible ou si aucun profil n'est ouvert.
+L'historique, les plans existants et
+la poursuite ou la reprise des jobs déjà admis restent accessibles, même pour
+un ancien import générique sans type. "Réessayer" crée un nouvel import et
+demande donc désormais un type autorisé. Aucun flag PostHog n'est modifié.
+
 Le déploiement de B met à jour tous les workers avant l'admission du nouveau
 profil `pcaet` par l'API et le frontend. A ne sait pas le traiter ; un rollback
 vers A doit donc attendre la fin des jobs PCAET admis avec B. Les anciens jobs
@@ -195,8 +240,9 @@ exception à l'affichage du profil, à l'admission et à la création finale ;
 `laureatReference` reste nul et aucune entrée n'est ajoutée à la liste.
 Un changement de mode invalide les requêtes du frontend pour recalculer les
 capacités du formulaire. Le support sans mode actif et les jetons clients
-ou à permissions limitées ne bénéficient pas de cette exception. Le flag doit rester actif à l'admission,
-la liste doit être valide et le catalogue et le document restent contrôlés.
+ou à permissions limitées ne bénéficient pas de cette exception. La règle
+initiale imposait le flag actif à l'admission ; elle est remplacée par la
+politique de contournement du 17 novembre ci-dessus. La liste doit être valide et le catalogue et le document restent contrôlés.
 Le worker et la reprise revérifient les droits du demandeur initial : désactiver
 son mode super-admin avant la création retire l'exception. Cette décision
 complète la dispense de quota sans ouvrir l'import aux non-lauréats ordinaires.
@@ -1279,17 +1325,21 @@ indicateur. Faux LLM et lancements navigateur interceptés ; aucun appel IA rée
 profils. Les règles métier sont regroupées dans
 `ValidateElectrificationImportService`, sous `electrification/validate-import/` :
 disponibilité, admission, format DOCX et revalidation des jobs existants.
+Le 17 novembre, ce validateur devient `ElectrificationImportProfileAdapter`,
+implémentation du contrat commun `ImportProfileAdapter` avec l'adapter PCAET.
 Les règles de compatibilité du catalogue, du canevas et du checkpoint restent
 dans ce même dossier. Le repository appelle le validateur de profils, y compris
 sur la ligne verrouillée avant reprise ; il ne connaît ni catalogue ni schéma métier.
 L'enfilement consomme les options validées et la décision de créer un plan
 provisoire ; il ne connaît pas les règles Électrification. La reprise et le
 worker réutilisent la même autorisation métier.
-L'admission exige le flag serveur de création, fermé par défaut, les droits ordinaires,
-l'éligibilité, le type exact et un catalogue structurellement valide. Les
-correspondances utilisées sont ensuite contrôlées avant toute création. Ce flag
-n'hérite ni de l'activation automatique en dev/test/CI ni d'un contournement
-super-admin. Sa fermeture empêche toutes les nouvelles créations du type
+L'admission ordinaire exige le flag global d'import et le flag serveur de
+création, fermé par défaut, les droits ordinaires, l'éligibilité, le type exact
+et un catalogue structurellement valide. Les correspondances utilisées sont
+ensuite contrôlées avant toute création. Le flag de création n'hérite pas de
+l'activation automatique en dev/test/CI. Le mode super-admin actif contourne
+les deux flags depuis la décision du 17 novembre. Pour les autres sessions,
+la fermeture du flag de création empêche les nouvelles créations du type
 Électrification, dont les nouveaux imports ; les jobs admis et
 leurs reprises continuent, sous réserve de droits, d'éligibilité et de contrats
 toujours valides. Le support relance le job au nom de son demandeur initial.

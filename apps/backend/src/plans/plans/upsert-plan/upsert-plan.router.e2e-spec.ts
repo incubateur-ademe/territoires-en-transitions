@@ -7,7 +7,10 @@ import {
   getTestDatabase,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
-import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
+import {
+  addTestUser,
+  addUserRoleSupport,
+} from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import ConfigurationService from '@tet/backend/utils/config/configuration.service';
 import { PostHogEventTracker } from '@tet/backend/utils/tracking/posthog-event-tracker';
@@ -290,26 +293,41 @@ describe('Créer ou modifier un plan', () => {
       return plan;
     };
 
-    test('Crée un plan Électrification ordinaire sans initialisation conventionnelle', async () => {
-      openCreation();
-      const caller = router.createCaller({ user: editorUser });
-      const created = await caller.plans.plans.create({
-        collectiviteId: collectivite.id,
-        nom: 'Plan Électrification ordinaire',
-        typeId: electrificationTypeId,
-      });
-      const [stored] = await db.db
-        .select()
-        .from(axeTable)
-        .where(eq(axeTable.id, created.id));
-      expect(stored).toMatchObject({
-        typeId: electrificationTypeId,
-        referenceProgramme: null,
-        referenceCode: null,
-        engagementsCodes: null,
-        indicateurSourceMetadonneeId: null,
-      });
-    });
+    test.each([false, true])(
+      'Crée un plan Électrification ordinaire sans initialisation conventionnelle, avec contournement super-admin : %s',
+      async (asSuperAdmin) => {
+        if (asSuperAdmin) {
+          const { cleanup } = await addUserRoleSupport({
+            databaseService: db,
+            userId: editorUser.id,
+            isSuperAdminRoleEnabled: true,
+          });
+          onTestFinished(cleanup);
+        } else openCreation();
+        const caller = router.createCaller({ user: editorUser });
+        expect(
+          await caller.plans.plans.getCreationCapabilities({
+            collectiviteId: collectivite.id,
+          })
+        ).toEqual({ unavailableTypeIds: [] });
+        const created = await caller.plans.plans.create({
+          collectiviteId: collectivite.id,
+          nom: 'Plan Électrification ordinaire',
+          typeId: electrificationTypeId,
+        });
+        const [stored] = await db.db
+          .select()
+          .from(axeTable)
+          .where(eq(axeTable.id, created.id));
+        expect(stored).toMatchObject({
+          typeId: electrificationTypeId,
+          referenceProgramme: null,
+          referenceCode: null,
+          engagementsCodes: null,
+          indicateurSourceMetadonneeId: null,
+        });
+      }
+    );
 
     test('Autorise un type portant le même libellé dans une autre catégorie', async () => {
       const caller = router.createCaller({ user: editorUser });

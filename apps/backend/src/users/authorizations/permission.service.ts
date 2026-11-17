@@ -10,12 +10,14 @@ import {
 import type { ReferentielId } from '@tet/domain/referentiels';
 import {
   hasPermission,
+  hasRole,
+  PlatformRole,
   isReferentielOperationAllowed,
   PermissionOperation,
   ResourceType,
   type UserRolesAndPermissions,
 } from '@tet/domain/users';
-import { AuthRole, AuthUser } from '../models/auth.models';
+import { AuthRole, AuthUser, isAuthenticatedUser } from '../models/auth.models';
 import { withSupportSuperAdminRole } from './get-user-roles-and-permissions/get-user-roles-and-permissions.adapter';
 import { GetUserRolesAndPermissionsService } from './get-user-roles-and-permissions/get-user-roles-and-permissions.service';
 import { PermissionRepository } from './permission.repository';
@@ -122,6 +124,22 @@ export class PermissionService {
     private readonly collectivitePreferencesRepository: CollectivitePreferencesRepository,
     private readonly permissionRepository: PermissionRepository
   ) {}
+
+  /** Mode super-admin actif d'une session humaine, sans élévation des clés API. */
+  async hasSuperAdminRole(user: AuthUser, tx?: Transaction): Promise<boolean> {
+    if (
+      !isAuthenticatedUser(user) ||
+      user.jwtPayload.client_id !== undefined ||
+      user.jwtPayload.permissions !== undefined
+    )
+      return false;
+    const roles =
+      await this.getUserPermissionsService.getUserRolesAndPermissions({
+        userId: user.id,
+        tx,
+      });
+    return roles.success && hasRole(roles.data, PlatformRole.SUPER_ADMIN);
+  }
 
   hasServiceRole(
     user: AuthUser | null | undefined,

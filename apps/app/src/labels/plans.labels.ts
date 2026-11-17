@@ -2,6 +2,8 @@ import {
   StatutFigeantJauge,
   OrigineSecteurs,
   SECTEUR_REGLEMENTAIRE_LABELS,
+  AiPlanImportProfile,
+  AI_PLAN_IMPORT_PROFILE_LABELS,
 } from '@tet/domain/plans';
 import { plural } from '@tet/ui/labels/plural';
 
@@ -322,6 +324,14 @@ export const plansLabels = {
     'Importez l’annexe 3 remplie de votre convention Électrification. Le plan sera créé après validation du document. Les sous-actions sont conservées et les actions référencées par un lien TeT sont rattachées sans modifier leurs données. Les budgets et financements ne sont pas importés.',
   importPlanIaProfilIndisponible:
     "L'import de ce type de plan n'est pas disponible pour votre collectivité ou avec vos droits actuels.",
+  importPlanIaIndisponible:
+    "L'import IA n'est pas disponible pour votre collectivité avec vos droits actuels.",
+  importPlanIaTypesAutorises: (profiles: readonly AiPlanImportProfile[]) =>
+    `L'import IA est disponible pour les plans ${new Intl.ListFormat(
+      'fr'
+    ).format(
+      profiles.map((profile) => AI_PLAN_IMPORT_PROFILE_LABELS[profile])
+    )}. Sélectionnez un type disponible pour continuer.`,
   importPlanIaFichierSuggere:
     "Programme d'actions déposé à l'étape Documents, pré-sélectionné pour vous.",
   importPlanIaFichierSuggereChargement:
