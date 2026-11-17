@@ -29,8 +29,8 @@ export const RenseignerAvancementButton = ({
   planId,
   dataTest,
 }: Props & { dataTest?: string }) => {
-  const [, setIsOuvert] = useIsRenseignerAvancementOuvert();
-  const { setPanel } = useSidePanel();
+  const [isOuvert, setIsOuvert] = useIsRenseignerAvancementOuvert();
+  const { panel, setPanel } = useSidePanel();
 
   return (
     <Button
@@ -40,6 +40,10 @@ export const RenseignerAvancementButton = ({
       icon="side-bar-line"
       iconPosition="right"
       onClick={() => {
+        if (isOuvert && panel.isOpen) {
+          setPanel({ type: 'close' });
+          return;
+        }
         setIsOuvert(true);
         setPanel(renseignerAvancementPanel({ collectiviteId, planId }));
       }}
