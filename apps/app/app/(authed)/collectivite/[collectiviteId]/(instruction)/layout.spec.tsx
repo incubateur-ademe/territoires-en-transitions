@@ -19,7 +19,7 @@ vi.mock('@tet/api/users/user-details.fetch.server', () => ({
   getUser: vi.fn(),
 }));
 vi.mock('@/app/demarches/pcaet/erreur-acces/erreur-acces.page', () => ({
-  ErreurAccesPage: () => <p>Accès refusé</p>,
+  ErreurAccesPage: () => <p>{'Accès refusé'}</p>,
 }));
 
 afterEach(cleanup);
@@ -82,7 +82,7 @@ it.each([
     render(
       await Layout({
         params: Promise.resolve({ collectiviteId: '13722' }),
-        children: <p>Dossiers à consulter</p>,
+        children: <p>{'Dossiers à consulter'}</p>,
       })
     );
 
