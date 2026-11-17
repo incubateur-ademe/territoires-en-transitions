@@ -226,6 +226,7 @@ const DEFINITIONS_PROVIDERS = [
     IndicateurSourcesService,
     ReconcileIndicateurValeursService,
     ListIndicateurValeursService,
+    IndicateurValeursReadAccessService,
     ListIndicateursPredefinisService,
     ListIndicateursPredefinisRepository,
     ListIndicateursService,
