@@ -136,6 +136,12 @@ import { BuildDemarchePcaetWorkbooksService } from './generate-exports/build-dem
 import { DemarchePcaetExportRepository } from './generate-exports/demarche-pcaet-export.repository';
 import { DemarchePcaetExportsStorageService } from './generate-exports/demarche-pcaet-exports-storage.service';
 import { GenerateDemarchePcaetExportsService } from './generate-exports/generate-demarche-pcaet-exports.service';
+import { DemarchePcaetExportsRouter } from './exports/demarche-pcaet-exports.router';
+import { OnDemandPcaetExportController } from './exports/on-demand-pcaet-export.controller';
+import { BuildOnDemandPcaetExportService } from './exports/build-on-demand-pcaet-export.service';
+import { GetDemarchePcaetExportUrlService } from './exports/get-demarche-pcaet-export-url.service';
+import { ListDemarchePcaetExportsService } from './exports/list-demarche-pcaet-exports.service';
+import { ResolveDemarchePcaetExportsService } from './exports/resolve-demarche-pcaet-exports.service';
 import { DemarchePcaetGuardsService } from './shared/demarche-pcaet-guards.service';
 import { DemarchePcaetLectureService } from './shared/demarche-pcaet-lecture.service';
 import { DemarchePcaetPerimetreRepository } from './shared/demarche-pcaet-perimetre.repository';
@@ -193,6 +199,7 @@ import { TrackSnapshotService } from './track-snapshot/track-snapshot.service';
   controllers: [
     DownloadDossierDocumentsController,
     DownloadAvisPiecesController,
+    OnDemandPcaetExportController,
   ],
   providers: [
     DemarchePcaetDemoService,
@@ -238,6 +245,11 @@ import { TrackSnapshotService } from './track-snapshot/track-snapshot.service';
     DemarchePcaetExportsStorageService,
     DemarchePcaetExportRepository,
     GenerateDemarchePcaetExportsService,
+    ResolveDemarchePcaetExportsService,
+    ListDemarchePcaetExportsService,
+    GetDemarchePcaetExportUrlService,
+    BuildOnDemandPcaetExportService,
+    DemarchePcaetExportsRouter,
     GetDiagnosticService,
     GetDiagnosticRouter,
     DemarchePcaetVulnerabiliteRepository,

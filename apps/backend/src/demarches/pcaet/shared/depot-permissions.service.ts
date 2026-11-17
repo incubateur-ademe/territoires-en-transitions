@@ -158,6 +158,18 @@ export class DepotPermissionsService {
       return this.canConsulterDemarche(ref.demarcheId, { user, tx });
     }
 
+    // La saisine ne passe pas par `isAllowed`, qui vérifierait la liste
+    // d'opérations d'une clé d'API restreinte : on la vérifie ici. Une session
+    // humaine, sans liste, passe.
+    if (
+      !this.permissionService.isApiKeyAllowed(
+        user,
+        PermissionOperationEnum['DEMARCHES.PCAET.READ']
+      ).success
+    ) {
+      return failure(DepotPermissionsErrorEnum.UNAUTHORIZED);
+    }
+
     const contexteResult = await this.resolveContexteInstruction(
       ref.demandeAvisId,
       'read',
