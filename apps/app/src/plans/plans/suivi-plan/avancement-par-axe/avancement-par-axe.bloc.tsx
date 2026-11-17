@@ -1,5 +1,6 @@
 'use client';
 
+import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import { Button, Icon } from '@tet/ui';
 import { useRef, useState } from 'react';
@@ -15,7 +16,13 @@ import { AvancementAxeRow } from './avancement-axe.row';
 
 const NB_AXES_VISIBLES = 5;
 
-export const AvancementParAxeBloc = ({ planId }: { planId: number }) => {
+export const AvancementParAxeBloc = ({
+  collectiviteId,
+  planId,
+}: {
+  collectiviteId: number;
+  planId: number;
+}) => {
   const filters = useSuiviPlanBlocFilters('avancementParAxeFiltres');
   const input = { planId, ...filters.queryInput };
   const [isAllVisible, setIsAllVisible] = useState(false);
@@ -67,7 +74,17 @@ export const AvancementParAxeBloc = ({ planId }: { planId: number }) => {
         <div className="flex flex-col">
           <div className="flex flex-col border-t border-grey-3">
             {axesVisibles?.map((axe) => (
-              <AvancementAxeRow key={axe.id} axe={axe} />
+              <AvancementAxeRow
+                key={axe.id}
+                axe={axe}
+                getHref={(openAxes) =>
+                  makeCollectivitePlanActionUrl({
+                    collectiviteId,
+                    planActionUid: planId.toString(),
+                    openAxes,
+                  })
+                }
+              />
             ))}
           </div>
           {nbAxesMasques > 0 && (

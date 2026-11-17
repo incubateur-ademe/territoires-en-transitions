@@ -3,6 +3,7 @@ import { JaugeBar } from '@/app/plans/shared/jauge/jauge.bar';
 import { RouterOutput } from '@tet/api';
 import { Button } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
+import Link from 'next/link';
 import { ReactNode, useState } from 'react';
 
 export type AvancementAxe =
@@ -10,10 +11,12 @@ export type AvancementAxe =
 
 const AvancementAxeLigne = ({
   axe,
+  href,
   isSousAxe = false,
   chevron,
 }: {
   axe: AvancementAxe;
+  href: string;
   isSousAxe?: boolean;
   chevron?: ReactNode;
 }) => (
@@ -34,7 +37,13 @@ const AvancementAxeLigne = ({
           className="shrink-0 w-4 h-3.5 mt-px border-l border-b border-grey-5"
         />
       )}
-      {axe.nom || appLabels.sansTitre}
+      <Link
+        href={href}
+        className="text-primary-9 bg-none hover:underline"
+        data-test="plans.suivi.avancement-par-axe.lien-axe"
+      >
+        {axe.nom || appLabels.sansTitre}
+      </Link>
     </span>
     <span className="text-xs text-grey-8">
       {isSousAxe
@@ -53,7 +62,13 @@ const AvancementAxeLigne = ({
   </div>
 );
 
-export const AvancementAxeRow = ({ axe }: { axe: AvancementAxe }) => {
+export const AvancementAxeRow = ({
+  axe,
+  getHref,
+}: {
+  axe: AvancementAxe;
+  getHref: (openAxes: number[]) => string;
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const hasSousAxes = axe.sousAxes.length > 0;
 
@@ -61,6 +76,7 @@ export const AvancementAxeRow = ({ axe }: { axe: AvancementAxe }) => {
     <>
       <AvancementAxeLigne
         axe={axe}
+        href={getHref([axe.id])}
         chevron={
           hasSousAxes && (
             <Button
@@ -81,7 +97,12 @@ export const AvancementAxeRow = ({ axe }: { axe: AvancementAxe }) => {
       />
       {isOpen &&
         axe.sousAxes.map((sousAxe) => (
-          <AvancementAxeLigne key={sousAxe.id} axe={sousAxe} isSousAxe />
+          <AvancementAxeLigne
+            key={sousAxe.id}
+            axe={sousAxe}
+            href={getHref([axe.id, sousAxe.id])}
+            isSousAxe
+          />
         ))}
     </>
   );

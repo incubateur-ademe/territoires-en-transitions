@@ -20,7 +20,7 @@ export const SuiviPlanView = ({
 }) => (
   <div className="flex flex-col gap-6">
     <VueEnsembleBloc collectiviteId={collectiviteId} planId={planId} />
-    <AvancementParAxeBloc planId={planId} />
+    <AvancementParAxeBloc collectiviteId={collectiviteId} planId={planId} />
     <EvolutionStatutsBloc
       collectiviteId={collectiviteId}
       planId={planId}
