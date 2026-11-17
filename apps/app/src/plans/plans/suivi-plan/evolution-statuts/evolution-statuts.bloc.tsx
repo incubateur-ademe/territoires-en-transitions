@@ -2,9 +2,8 @@
 
 import { appLabels } from '@/app/labels/catalog';
 import { DEBUT_HISTORIQUE_STATUTS } from '@tet/domain/plans';
-import { Alert, Checkbox, Input, Select } from '@tet/ui';
-import { cn } from '@tet/ui/utils/cn';
-import { ReactNode, useRef } from 'react';
+import { Alert, Checkbox, Field, Icon, Input, Select } from '@tet/ui';
+import { useRef } from 'react';
 import { parseAsBoolean, useQueryState } from 'nuqs';
 import { useExportSuiviPlanBloc } from '../data/use-export-suivi-plan-bloc';
 import { useGetEvolutionStatuts } from '../data/use-get-evolution-statuts';
@@ -23,21 +22,6 @@ import {
 import { makePilotageParStatutUrl } from '../make-pilotage-par-statut-url';
 import { StatutsBar } from './statuts.bar';
 import { usePeriodeEvolution } from './use-periode-evolution';
-
-const PeriodeField = ({
-  titre,
-  className,
-  children,
-}: {
-  titre: string;
-  className?: string;
-  children: ReactNode;
-}) => (
-  <div className={cn('flex flex-col gap-1', className)}>
-    <span className="text-sm font-medium text-primary-9">{titre}</span>
-    {children}
-  </div>
-);
 
 export const EvolutionStatutsBloc = ({
   collectiviteId,
@@ -120,9 +104,9 @@ export const EvolutionStatutsBloc = ({
       }
     >
       <div className="flex flex-wrap items-end gap-4" data-html2canvas-ignore>
-        <PeriodeField
-          titre={appLabels.evolutionStatutsPeriode}
-          className="w-72"
+        <Field
+          title={appLabels.evolutionStatutsPeriode}
+          className="flex-grow-0 w-72"
         >
           <Select
             options={periodeEvolutionOptions}
@@ -135,10 +119,10 @@ export const EvolutionStatutsBloc = ({
             }}
             dataTest="plans.suivi.evolution-statuts.periode"
           />
-        </PeriodeField>
+        </Field>
         {periode === 'personnalisee' && (
-          <>
-            <PeriodeField titre={appLabels.evolutionStatutsDu} className="w-44">
+          <div className="flex items-end gap-2">
+            <Field title={appLabels.evolutionStatutsDu} className="flex-grow-0">
               <Input
                 type="date"
                 value={dateDebut}
@@ -148,8 +132,12 @@ export const EvolutionStatutsBloc = ({
                 }
                 data-test="plans.suivi.evolution-statuts.date-debut"
               />
-            </PeriodeField>
-            <PeriodeField titre={appLabels.evolutionStatutsAu} className="w-44">
+            </Field>
+            <Icon
+              icon="arrow-right-line"
+              className="text-grey-6 shrink-0 mb-4"
+            />
+            <Field title={appLabels.evolutionStatutsAu} className="flex-grow-0">
               <Input
                 type="date"
                 value={dateFin}
@@ -160,8 +148,8 @@ export const EvolutionStatutsBloc = ({
                 }
                 data-test="plans.suivi.evolution-statuts.date-fin"
               />
-            </PeriodeField>
-          </>
+            </Field>
+          </div>
         )}
       </div>
 
