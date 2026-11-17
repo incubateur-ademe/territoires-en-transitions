@@ -21,81 +21,6 @@ import {
 
 const METHODOLOGIE_NAME = 'ADEME-Methodo-Outil-trajectoire-référence-V2.pdf';
 
-describe('GET /trajectoires/snbc3/methodologie', () => {
-  let app: INestApplication;
-  let authToken: string;
-  let collectiviteId: number;
-  const pdf = randomBytes(256);
-
-  beforeAll(async () => {
-    app = await getTestApp();
-    const db = await getTestDatabase(app);
-    const { user } = await addTestUser(db);
-    authToken = await getAuthToken({
-      email: user.email ?? '',
-      password: user.password,
-    });
-    const { collectivite } = await addTestCollectivite(db, { type: 'epci' });
-    collectiviteId = collectivite.id;
-
-    // Le stockage est simulé : le bucket `trajectoires-snbc3` est celui de
-    // l'app, une spec qui y écrirait remplacerait le PDF de l'import local.
-    // La lecture du bucket est testée par snbc3-release-storage.service.spec.
-    const spy = vi
-      .spyOn(app.get(Snbc3ReleaseStorageService), 'getMethodologie')
-      .mockImplementation(async () =>
-        success({ stream: Readable.from([pdf]), fileName: METHODOLOGIE_NAME })
-      );
-
-    return async () => {
-      spy.mockRestore();
-      await app.close();
-    };
-  }, 30000);
-
-  test('sert le PDF stocké par le dernier import, sous son nom d’origine', async () => {
-    const response = await request(app.getHttpServer())
-      .get(`/trajectoires/snbc3/methodologie?collectiviteId=${collectiviteId}`)
-      .set('Authorization', `Bearer ${authToken}`)
-      .responseType('blob')
-      .expect(200);
-
-    expect(response.headers['content-type']).toMatch(/^application\/pdf/);
-    // « é » tient en Latin-1 : Express garde le nom tel quel, sans `filename*`.
-    expect(response.headers['content-disposition']).toContain(
-      `filename="${METHODOLOGIE_NAME}"`
-    );
-    expect(Buffer.compare(response.body as Buffer, pdf)).toBe(0);
-  });
-
-  test('répond 404 tant qu’aucun import n’a stocké la méthodologie', async () => {
-    vi.mocked(
-      app.get(Snbc3ReleaseStorageService).getMethodologie
-    ).mockResolvedValueOnce(success(null));
-
-    await request(app.getHttpServer())
-      .get(`/trajectoires/snbc3/methodologie?collectiviteId=${collectiviteId}`)
-      .set('Authorization', `Bearer ${authToken}`)
-      .expect(404);
-  });
-
-  test('refuse sans le flag SNBC 3', async () => {
-    const restoreFlag = mockTrajectoireSnbc3Flag(app, false);
-    onTestFinished(restoreFlag);
-
-    await request(app.getHttpServer())
-      .get(`/trajectoires/snbc3/methodologie?collectiviteId=${collectiviteId}`)
-      .set('Authorization', `Bearer ${authToken}`)
-      .expect(403);
-  });
-
-  test('refuse sans utilisateur authentifié', async () => {
-    await request(app.getHttpServer())
-      .get(`/trajectoires/snbc3/methodologie?collectiviteId=${collectiviteId}`)
-      .expect(401);
-  });
-});
-
 const WORKBOOK_NAME = 'Trajectoire GES de référence-V2.xlsx';
 
 /** Nom de fichier UTF-8 de `filename*`. */
@@ -110,7 +35,7 @@ const randomSiren = () =>
     .toString()
     .padStart(8, '0')}`;
 
-describe('GET /trajectoires/snbc3/telechargement et /trajectoires/snbc3/outil', () => {
+describe('GET /trajectoires/snbc3/telechargement et /trajectoires/snbc3/public/outil', () => {
   let app: INestApplication;
   let authToken: string;
   const cleanups: (() => Promise<unknown>)[] = [];
@@ -130,13 +55,18 @@ describe('GET /trajectoires/snbc3/telechargement et /trajectoires/snbc3/outil', 
   /** Import complet commencé et pas allé au bout, simulé. */
   let unfinishedImport = false;
 
+  /** `outil` : la route publique, appelée comme l'app (jeton et collectivité ignorés). */
   const get = (
     route: 'telechargement' | 'outil',
     collectiviteId: number,
     token = authToken
   ) =>
     request(app.getHttpServer())
-      .get(`/trajectoires/snbc3/${route}?collectiviteId=${collectiviteId}`)
+      .get(
+        route === 'outil'
+          ? '/trajectoires/snbc3/public/outil'
+          : `/trajectoires/snbc3/telechargement?collectiviteId=${collectiviteId}`
+      )
       .set('Authorization', `Bearer ${token}`)
       .responseType('blob');
 
@@ -343,17 +273,98 @@ describe('GET /trajectoires/snbc3/telechargement et /trajectoires/snbc3/outil', 
     expect(Buffer.compare(response.body as Buffer, newContent)).toBe(0);
   });
 
-  test('refuse les deux routes sans le flag SNBC 3', async () => {
+  test('`telechargement` refuse sans le flag SNBC 3, `outil` sert le classeur', async () => {
     const restoreFlag = mockTrajectoireSnbc3Flag(app, false);
     onTestFinished(restoreFlag);
 
     await get('telechargement', epci.id).expect(403);
-    await get('outil', epci.id).expect(403);
+    await get('outil', epci.id).expect(200);
   });
 
-  test('refuse sans utilisateur authentifié', async () => {
+  test('`telechargement` refuse sans utilisateur authentifié', async () => {
     await request(app.getHttpServer())
-      .get(`/trajectoires/snbc3/outil?collectiviteId=${epci.id}`)
+      .get(`/trajectoires/snbc3/telechargement?collectiviteId=${epci.id}`)
       .expect(401);
+  });
+});
+
+describe('GET /trajectoires/snbc3/public/methodologie et /trajectoires/snbc3/public/outil', () => {
+  let app: INestApplication;
+  const pdf = randomBytes(256);
+  const workbook = randomBytes(256);
+  let storage: Snbc3ReleaseStorageService;
+
+  beforeAll(async () => {
+    app = await getTestApp();
+    storage = app.get(Snbc3ReleaseStorageService);
+
+    // Stockage simulé, comme pour les routes de l'app.
+    const spies = [
+      vi
+        .spyOn(storage, 'getMethodologie')
+        .mockImplementation(async () =>
+          success({ stream: Readable.from([pdf]), fileName: METHODOLOGIE_NAME })
+        ),
+      vi.spyOn(storage, 'getWorkbookInfo').mockImplementation(async () => ({
+        fileName: WORKBOOK_NAME,
+        version: randomBytes(8).toString('hex'),
+      })),
+      vi
+        .spyOn(storage, 'downloadWorkbook')
+        .mockImplementation(async () => success(workbook)),
+    ];
+
+    return async () => {
+      spies.forEach((spy) => spy.mockRestore());
+      await app.close();
+    };
+  }, 30000);
+
+  test('`public/methodologie` sert le PDF stocké, sans authentification ni flag', async () => {
+    const restoreFlag = mockTrajectoireSnbc3Flag(app, false);
+    onTestFinished(restoreFlag);
+
+    const response = await request(app.getHttpServer())
+      .get('/trajectoires/snbc3/public/methodologie')
+      .responseType('blob')
+      .expect(200);
+
+    expect(response.headers['content-type']).toMatch(/^application\/pdf/);
+    expect(response.headers['content-disposition']).toContain(
+      `filename="${METHODOLOGIE_NAME}"`
+    );
+    expect(response.headers['cache-control']).toBe('public, max-age=3600');
+    expect(Buffer.compare(response.body as Buffer, pdf)).toBe(0);
+  });
+
+  test('`public/outil` sert le classeur stocké, sans authentification ni flag', async () => {
+    const restoreFlag = mockTrajectoireSnbc3Flag(app, false);
+    onTestFinished(restoreFlag);
+
+    const response = await request(app.getHttpServer())
+      .get('/trajectoires/snbc3/public/outil')
+      .responseType('blob')
+      .expect(200);
+
+    expect(response.headers['content-type']).toMatch(
+      new RegExp(`^${XLSX_MIME_TYPE}`)
+    );
+    expect(getFileName(response.headers['content-disposition'])).toBe(
+      WORKBOOK_NAME
+    );
+    expect(response.headers['cache-control']).toBe('public, max-age=3600');
+    expect(Buffer.compare(response.body as Buffer, workbook)).toBe(0);
+  });
+
+  test('répondent 404 tant qu’aucun import n’a stocké les fichiers', async () => {
+    vi.mocked(storage.getMethodologie).mockResolvedValueOnce(success(null));
+    vi.mocked(storage.getWorkbookInfo).mockResolvedValueOnce(null);
+
+    await request(app.getHttpServer())
+      .get('/trajectoires/snbc3/public/methodologie')
+      .expect(404);
+    await request(app.getHttpServer())
+      .get('/trajectoires/snbc3/public/outil')
+      .expect(404);
   });
 });

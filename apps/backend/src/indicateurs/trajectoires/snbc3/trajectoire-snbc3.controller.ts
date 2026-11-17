@@ -1,6 +1,7 @@
 import { Controller, Get, Logger, Query, Res } from '@nestjs/common';
 import { ApiBearerAuth, ApiExcludeController, ApiTags } from '@nestjs/swagger';
 import { collectiviteIdInputSchemaCoerce } from '@tet/backend/collectivites/collectivite-id.input';
+import { AllowPublicAccess } from '@tet/backend/users/decorators/allow-public-access.decorator';
 import { TokenInfo } from '@tet/backend/users/decorators/token-info.decorators';
 import type { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { ApiUsageEnum } from '@tet/backend/utils/api/api-usage-type.enum';
@@ -22,10 +23,15 @@ class TrajectoireSnbc3CollectiviteQueryClass extends createZodDto(
   collectiviteIdInputSchemaCoerce
 ) {}
 
+/** Cache navigateur et CDN des routes publiques : un réimport est rare. */
+const PUBLIC_CACHE_CONTROL = 'public, max-age=3600';
+
 /**
- * Fichiers de la release SNBC 3 importée, réservés aux utilisateurs qui ont le
- * flag `is-trajectoire-snbc3-enabled` : PDF de méthodologie et classeur
- * standalone (`telechargement`, `outil`).
+ * Fichiers de la release SNBC 3 importée. Les fichiers publiés (PDF de
+ * méthodologie et classeur brut, `public/*`) sont servis sans authentification
+ * ni flag, à l'app comme au site public. Le classeur ouvert sur un territoire
+ * (`telechargement`) est réservé aux utilisateurs qui ont le flag
+ * `is-trajectoire-snbc3-enabled`.
  */
 @ApiTags('Trajectoires')
 @ApiBearerAuth()
@@ -62,23 +68,6 @@ export class TrajectoireSnbc3Controller {
     this.sendWorkbook(res, workbook);
   }
 
-  /** « Outil Excel SNBC 3 » : le classeur tel qu'il est publié. */
-  @ApiUsage([ApiUsageEnum.APP])
-  @Get('outil')
-  async downloadWorkbook(
-    @Query() { collectiviteId }: TrajectoireSnbc3CollectiviteQueryClass,
-    @TokenInfo() user: AuthenticatedUser,
-    @Res() res: Response
-  ) {
-    const workbook = this.getResultDataOrThrowError(
-      await this.exportService.getWorkbook({ collectiviteId }, { user })
-    );
-    this.logger.log(
-      `Téléchargement de l'outil Excel SNBC 3 (${workbook.fileName})`
-    );
-    this.sendWorkbook(res, workbook);
-  }
-
   private sendWorkbook(res: Response, { content, fileName }: Snbc3Workbook) {
     // `filename*` UTF-8 : `res.attachment` met un nom Latin-1 tel quel, que
     // `res.send` abîme (« é » → « ý »).
@@ -88,21 +77,34 @@ export class TrajectoireSnbc3Controller {
     res.send(content);
   }
 
-  /** PDF de méthodologie de la release dont les valeurs sont en base. */
+  /** « Outil Excel SNBC 3 » : le classeur tel qu'il est publié. */
+  @AllowPublicAccess()
   @ApiUsage([ApiUsageEnum.APP])
-  @Get('methodologie')
-  async downloadMethodologie(
-    @Query() { collectiviteId }: TrajectoireSnbc3CollectiviteQueryClass,
-    @TokenInfo() user: AuthenticatedUser,
-    @Res() res: Response
-  ) {
+  @Get('public/outil')
+  async downloadWorkbook(@Res() res: Response) {
+    const workbook = this.getResultDataOrThrowError(
+      await this.exportService.getWorkbook()
+    );
+    this.logger.log(
+      `Téléchargement de l'outil Excel SNBC 3 (${workbook.fileName})`
+    );
+    res.set('Cache-Control', PUBLIC_CACHE_CONTROL);
+    this.sendWorkbook(res, workbook);
+  }
+
+  /** PDF de méthodologie de la release dont les valeurs sont en base. */
+  @AllowPublicAccess()
+  @ApiUsage([ApiUsageEnum.APP])
+  @Get('public/methodologie')
+  async downloadMethodologie(@Res() res: Response) {
     const { stream, fileName } = this.getResultDataOrThrowError(
-      await this.service.getMethodologie({ collectiviteId }, { user })
+      await this.service.getMethodologie()
     );
     this.logger.log(`Téléchargement de la méthodologie SNBC 3 (${fileName})`);
 
     res.attachment(fileName);
     res.set('Access-Control-Expose-Headers', 'Content-Disposition');
+    res.set('Cache-Control', PUBLIC_CACHE_CONTROL);
     res.type('application/pdf');
     try {
       await pipeline(stream, res);

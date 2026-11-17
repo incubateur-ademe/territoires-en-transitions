@@ -56,20 +56,12 @@ export class TrajectoireSnbc3Service {
 
   /**
    * PDF de méthodologie de la release importée : le même millésime que les
-   * valeurs affichées. Réservé aux utilisateurs qui ont le flag ; le document
-   * est public, la collectivité ne sert qu'à évaluer le flag.
+   * valeurs affichées. Document public, sans flag ni utilisateur (page
+   * Trajectoire de l'app et du site).
    */
-  async getMethodologie(
-    { collectiviteId }: { collectiviteId: number },
-    { user }: ServiceSecondArg
-  ): Promise<
+  async getMethodologie(): Promise<
     Result<{ stream: Readable; fileName: string }, TrajectoireSnbc3Error>
   > {
-    if (
-      !(await this.featureFlag.isTrajectoireSnbc3Enabled(user, collectiviteId))
-    ) {
-      return failure(TrajectoireSnbc3ErrorEnum.TRAJECTOIRE_SNBC3_NON_OUVERTE);
-    }
     const methodologie = await this.releaseStorage.getMethodologie();
     if (!methodologie.success) {
       return failure(TrajectoireSnbc3ErrorEnum.SERVER_ERROR);

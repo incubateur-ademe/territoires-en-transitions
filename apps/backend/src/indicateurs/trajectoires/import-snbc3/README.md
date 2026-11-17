@@ -23,10 +23,13 @@ Importe une release du dépôt `snbc3` comme source d'indicateur `snbc3`
   totaux sont recalculés par les formules du catalogue.
 - Le bucket privé `trajectoires-snbc3` (créé par l'import s'il n'existe pas) garde la release
   importée, chaque import complet écrasant le précédent :
-  - `standalone.xlsx` : le classeur standalone, servi par l'export ; son nom d'origine, le commit et
-    la version sont dans les métadonnées de l'objet ;
-  - `methodologie.pdf` : le PDF de méthodologie, servi par `GET /trajectoires/snbc3/methodologie`
-    (page Trajectoire) ; son nom d'origine, le commit et la version sont dans les métadonnées ;
+  - `standalone.xlsx` : le classeur standalone, servi tel quel sans authentification par
+    `GET /trajectoires/snbc3/public/outil`, et ouvert sur un territoire par
+    `GET /trajectoires/snbc3/telechargement` ; son nom d'origine, le commit et la version sont dans
+    les métadonnées de l'objet ;
+  - `methodologie.pdf` : le PDF de méthodologie, servi sans authentification par
+    `GET /trajectoires/snbc3/public/methodologie` (pages Trajectoire de l'app et du site) ; son nom
+    d'origine, le commit et la version sont dans les métadonnées ;
   - `manifest.json` : le manifeste de la release, copié tel quel ; le commit et la version de ses
     métadonnées désignent la release en base ;
   - `pending-release.json` : le commit et la version (métadonnées de l'objet) du dernier import
