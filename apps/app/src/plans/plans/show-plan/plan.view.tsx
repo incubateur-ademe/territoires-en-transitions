@@ -175,7 +175,7 @@ const PlanViewContent = ({ tab }: { tab: PlanTab }) => {
           )}
         </PlanTabs>
       ) : (
-        tab === 'pilotage' && <PlanPilotage />
+        <PlanPilotage />
       )}
     </div>
   );
