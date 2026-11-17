@@ -5,10 +5,17 @@ import {
   getTestApp,
   getTestDatabase,
 } from '@tet/backend/test';
+import { addAndEnableUserSuperAdminMode } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import SupabaseService from '@tet/backend/utils/database/supabase.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { CollectiviteRole } from '@tet/domain/users';
-import { completeTestDossierPcaet } from '../demarches-pcaet.test-fixture';
+import { onTestFinished } from 'vitest';
+import {
+  completeTestDossierPcaet,
+  listTestDemarchePcaetExports,
+} from '../demarches-pcaet.test-fixture';
+import { DEMARCHE_PCAET_EXPORTS_BUCKET } from '../generate-exports/demarche-pcaet-exports-storage.service';
 
 describe('Supprimer une démarche PCAET', () => {
   let app: INestApplication;
@@ -81,6 +88,58 @@ describe('Supprimer une démarche PCAET', () => {
     ).rejects.toThrow(
       'Une démarche transmise ou publiée ne peut pas être supprimée'
     );
+  });
+
+  test('La suppression forcée retire les classeurs figés du stockage', async () => {
+    const fixture = await addTestCollectiviteAndUser(db, {
+      user: { role: CollectiviteRole.ADMIN },
+    });
+    const user = getAuthUserFromUserCredentials(fixture.user);
+    const caller = router.createCaller({ user });
+    const collectiviteId = fixture.collectivite.id;
+    const created = await caller.demarches.pcaet.create({ collectiviteId });
+    await completeTestDossierPcaet(db, {
+      collectiviteId,
+      demarcheId: created.id,
+    });
+    await caller.demarches.pcaet.transmettrePourAvis({
+      collectiviteId,
+      demarcheId: created.id,
+    });
+    // Un dossier par essai sous la transition : on descend d'un niveau.
+    const listNames = async (dir: string) => {
+      const { data, error } = await app
+        .get(SupabaseService)
+        .client.storage.from(DEMARCHE_PCAET_EXPORTS_BUCKET)
+        .list(dir);
+      if (error) {
+        throw error;
+      }
+      return data.map(({ name }) => name);
+    };
+    const listObjects = async () => {
+      const transitionDir = `${created.id}/transmettre_pour_avis`;
+      const attempts = await listNames(transitionDir);
+      const files = await Promise.all(
+        attempts.map((attemptId) => listNames(`${transitionDir}/${attemptId}`))
+      );
+      return files.flat().sort();
+    };
+    expect(await listObjects()).toEqual(['indicateurs.xlsx', 'plan.xlsx']);
+
+    const { cleanup } = await addAndEnableUserSuperAdminMode({
+      app,
+      caller,
+      userId: user.id,
+    });
+    onTestFinished(cleanup);
+    await caller.demarches.pcaet.delete({
+      collectiviteId,
+      demarcheId: created.id,
+    });
+
+    expect(await listTestDemarchePcaetExports(db, created.id)).toEqual([]);
+    expect(await listObjects()).toEqual([]);
   });
 
   test("IDOR : une démarche n'est pas supprimable via une autre collectivité", async () => {
