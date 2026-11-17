@@ -5,7 +5,7 @@ terraform {
   # Scaleway exige que l'appli tourne (poule-œuf au premier boot).
   # Même bucket, clé différente.
   backend "s3" {
-    bucket = "tet-tfstate"
+    bucket = "tet-terraform-state"
     key    = "coolify/terraform.tfstate"
     region = "fr-par"
 
