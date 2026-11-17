@@ -1,3 +1,4 @@
+import { useIsPlanSuiviEnabled } from '@/app/plans/plans/suivi-plan/use-is-plan-suivi-enabled';
 import {
   Completion,
   FicheListItem,
@@ -91,7 +92,9 @@ export const FicheCard = ({
   footerBadges,
 }: FicheCardProps): JSX.Element => {
   const carteId = `fiche-${ficheAction.id}`;
+  const isPlanSuiviEnabled = useIsPlanSuiviEnabled();
   const hasJauge =
+    isPlanSuiviEnabled &&
     ficheAction.parentId === null &&
     ficheAction.statut !== StatutEnum.ABANDONNE;
 

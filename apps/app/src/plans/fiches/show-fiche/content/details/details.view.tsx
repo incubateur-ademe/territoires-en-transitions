@@ -1,3 +1,4 @@
+import { useIsPlanSuiviEnabled } from '@/app/plans/plans/suivi-plan/use-is-plan-suivi-enabled';
 import { appLabels } from '@/app/labels/catalog';
 import { DetailedAction } from '@/app/ui/detailed-action/detailed-action.layout';
 import { capitalize } from '@tet/ui/labels/plural';
@@ -11,6 +12,7 @@ import { Planning } from './planning';
 export const DetailsView = () => {
   const { fiche } = useFicheContext();
   const isFicheParente = fiche.parentId === null;
+  const isPlanSuiviEnabled = useIsPlanSuiviEnabled();
 
   return (
     <DetailedAction.Root>
@@ -20,7 +22,7 @@ export const DetailsView = () => {
         </FormSection>
       </DetailedAction.Main>
       <DetailedAction.Aside>
-        {isFicheParente && <Jauge />}
+        {isFicheParente && isPlanSuiviEnabled && <Jauge />}
         <FormSection title="Calendrier">
           <Planning />
         </FormSection>
