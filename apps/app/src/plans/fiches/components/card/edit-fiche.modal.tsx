@@ -239,6 +239,9 @@ export const EditFicheModal = ({ initialFiche, isOpen, setIsOpen }: Props) => {
                       dateDebut: fiche.dateDebut,
                       dateFin: fiche.dateFin,
                       ameliorationContinue: fiche.ameliorationContinue,
+                      ...(fiche.jauge !== initialFiche.jauge && {
+                        jauge: fiche.jauge,
+                      }),
                     },
                   });
                   tracker(Event.fiches.updateModaleValidation);
