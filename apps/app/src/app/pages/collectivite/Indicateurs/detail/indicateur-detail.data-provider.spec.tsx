@@ -3,7 +3,7 @@ import type { IndicateurDetaille } from '@tet/domain/indicateurs';
 import type { PropsWithChildren } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { IndicateurDetailDataProvider } from './indicateur-detail.data-provider';
-import { useIndicateurValeurs } from './indicateur-valeurs.context';
+import { useIndicateurActions } from './indicateur-actions.context';
 
 const mocks = vi.hoisted(() => ({
   upsertValeur: vi.fn(),
@@ -64,7 +64,7 @@ describe('IndicateurDetailDataProvider : valeurs', () => {
   });
 
   it('ajoute la collectivité et l’indicateur à la saisie d’une valeur', async () => {
-    const { result } = renderHook(() => useIndicateurValeurs(), { wrapper });
+    const { result } = renderHook(() => useIndicateurActions(), { wrapper });
 
     await result.current.saveValeur({
       periodicite: 'annuelle',
@@ -82,7 +82,7 @@ describe('IndicateurDetailDataProvider : valeurs', () => {
   });
 
   it('déclare une période avec sa date de début, sans toast d’erreur', async () => {
-    const { result } = renderHook(() => useIndicateurValeurs(), { wrapper });
+    const { result } = renderHook(() => useIndicateurActions(), { wrapper });
 
     await result.current.declarePeriode({
       periodicite: 'annuelle',
@@ -101,7 +101,7 @@ describe('IndicateurDetailDataProvider : valeurs', () => {
   });
 
   it('supprime une valeur de l’indicateur de la collectivité courante', async () => {
-    const { result } = renderHook(() => useIndicateurValeurs(), { wrapper });
+    const { result } = renderHook(() => useIndicateurActions(), { wrapper });
 
     await result.current.deleteValeur(5);
 

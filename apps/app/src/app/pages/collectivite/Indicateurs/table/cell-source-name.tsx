@@ -3,9 +3,9 @@ import { getIndicateurPeriodPresentation } from '@/app/indicateurs/valeurs/indic
 import { DashedLineSymbol, SolidLineSymbol } from '@/app/ui/charts/ChartLegend';
 import { Icon, TableHeaderCell } from '@tet/ui';
 import { PreparedData } from '../data/prepare-data';
-import { useIndicateurChart } from '../detail/indicateur-chart.context';
 import { DataSourceTooltip } from '../Indicateur/detail/DataSourceTooltip';
 import { SourceType } from '../types';
+import { useIndicateurData } from '../detail/indicateur-data.context';
 
 /** Affiche le nom d'une source de données. */
 export const CellSourceName = ({
@@ -17,7 +17,7 @@ export const CellSourceName = ({
 }) => {
   const {
     chartInfo: { getColorBySourceId, getSourceLabel },
-  } = useIndicateurChart();
+  } = useIndicateurData();
   const metadonnee = source.metadonnees?.[0];
   const color = getColorBySourceId(source.source, type);
   const isLocal = source.source === 'collectivite';

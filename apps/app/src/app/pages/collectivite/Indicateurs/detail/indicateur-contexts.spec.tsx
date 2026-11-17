@@ -1,17 +1,13 @@
 import { renderHook } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { useIndicateurChart } from './indicateur-chart.context';
-import { useIndicateurDefinition } from './indicateur-definition.context';
+import { useIndicateurData } from './indicateur-data.context';
 import { useIndicateurActions } from './indicateur-actions.context';
 import { useIndicateurFichesLiees } from './indicateur-fiches-liees.context';
-import { useIndicateurValeurs } from './indicateur-valeurs.context';
 
 afterEach(() => vi.restoreAllMocks());
 
 describe.each([
-  ['useIndicateurDefinition', useIndicateurDefinition],
-  ['useIndicateurChart', useIndicateurChart],
-  ['useIndicateurValeurs', useIndicateurValeurs],
+  ['useIndicateurData', useIndicateurData],
   ['useIndicateurActions', useIndicateurActions],
   ['useIndicateurFichesLiees', useIndicateurFichesLiees],
 ])('%s', (name, useContextValue) => {

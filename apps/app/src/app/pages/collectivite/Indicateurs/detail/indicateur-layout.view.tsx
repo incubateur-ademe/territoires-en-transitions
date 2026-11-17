@@ -9,10 +9,10 @@ import ActionsLiees from './ActionsLiees';
 import DonneesIndicateur from './DonneesIndicateur';
 import FichesLiees from './FichesLiees';
 import IndicateurHeader from './Header/IndicateurHeader';
-import { useIndicateurChart } from './indicateur-chart.context';
 import { IndicateurFichesLieesDataProvider } from './indicateur-fiches-liees.data-provider';
-import { useIndicateurDefinition } from './indicateur-definition.context';
 import SousIndicateurs from './SousIndicateurs';
+import { useIndicateurData } from './indicateur-data.context';
+import { useIndicateurActions } from './indicateur-actions.context';
 
 type IndicateurLayoutViewProps = {
   dataTest?: string;
@@ -21,9 +21,8 @@ type IndicateurLayoutViewProps = {
 export const IndicateurLayoutView = ({
   dataTest,
 }: IndicateurLayoutViewProps) => {
-  const { indicateur, updateIndicateur, canMutateIndicateur } =
-    useIndicateurDefinition();
-  const { chartInfo } = useIndicateurChart();
+  const { indicateur, chartInfo, canMutateIndicateur } = useIndicateurData();
+  const { updateIndicateur } = useIndicateurActions();
   const {
     enfants,
     sansValeurUtilisateur: sansValeur,

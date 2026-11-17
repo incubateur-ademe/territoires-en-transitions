@@ -1,5 +1,9 @@
 'use client';
 
+import {
+  canUpdateIndicateur,
+  canUpdateIndicateurValeur,
+} from '@/app/indicateurs/indicateurs/indicateur-authorization.utils';
 import { useDeleteIndicateur } from '@/app/indicateurs/indicateurs/use-delete-indicateur';
 import { useUpdateIndicateur } from '@/app/indicateurs/indicateurs/use-update-indicateur';
 import { useDeclareIndicateurPeriodes } from '@/app/indicateurs/valeurs/use-declare-indicateur-periodes';
@@ -11,26 +15,20 @@ import {
 import { useUser } from '@tet/api/users';
 import type { IndicateurDetaille } from '@tet/domain/indicateurs';
 import { type PropsWithChildren, useMemo } from 'react';
-import {
-  canUpdateIndicateur,
-  canUpdateIndicateurValeur,
-} from '@/app/indicateurs/indicateurs/indicateur-authorization.utils';
 import { useDeleteIndicateurValeur } from '../data/use-delete-indicateur-valeur';
 import { useIndicateurChartInfo } from '../data/use-indicateur-chart';
 import { useExportIndicateurs } from '../Indicateur/useExportIndicateurs';
 import { getIndicateurPeriodeInputOptions } from '../table/indicateur-periode-input.options';
-import { IndicateurChartProvider } from './indicateur-chart.context';
-import { IndicateurDefinitionProvider } from './indicateur-definition.context';
-import { IndicateurActionsProvider } from './indicateur-actions.context';
 import {
-  IndicateurValeursProvider,
-  type IndicateurValeursValue,
-} from './indicateur-valeurs.context';
+  IndicateurActionsProvider,
+  type IndicateurActionsValue,
+} from './indicateur-actions.context';
+import { IndicateurDataProvider } from './indicateur-data.context';
 
 type Props = PropsWithChildren<{ indicateur: IndicateurDetaille }>;
 
-const IndicateurDefinitionDataProvider = ({ indicateur, children }: Props) => {
-  const { mutate: updateIndicateur } = useUpdateIndicateur(indicateur.id);
+const IndicateurDataSourceProvider = ({ indicateur, children }: Props) => {
+  const chartInfo = useIndicateurChartInfo({ indicateur });
   const { hasCollectivitePermission } = useCurrentCollectivite();
   const { id: userId } = useUser();
   const canMutateIndicateur = canUpdateIndicateur(
@@ -44,34 +42,24 @@ const IndicateurDefinitionDataProvider = ({ indicateur, children }: Props) => {
     userId
   );
   const value = useMemo(
-    () => ({
-      indicateur,
-      updateIndicateur,
-      canMutateIndicateur,
-      canMutateValeur,
-    }),
-    [indicateur, updateIndicateur, canMutateIndicateur, canMutateValeur]
+    () => ({ indicateur, chartInfo, canMutateIndicateur, canMutateValeur }),
+    [indicateur, chartInfo, canMutateIndicateur, canMutateValeur]
   );
 
   return (
-    <IndicateurDefinitionProvider value={value}>
-      {children}
-    </IndicateurDefinitionProvider>
+    <IndicateurDataProvider value={value}>{children}</IndicateurDataProvider>
   );
 };
 
-const IndicateurChartDataProvider = ({ indicateur, children }: Props) => {
-  const chartInfo = useIndicateurChartInfo({ indicateur });
-  const value = useMemo(() => ({ chartInfo }), [chartInfo]);
-
-  return (
-    <IndicateurChartProvider value={value}>{children}</IndicateurChartProvider>
-  );
-};
-
-const IndicateurValeursDataProvider = ({ indicateur, children }: Props) => {
+const IndicateurActionsSourceProvider = ({ indicateur, children }: Props) => {
   const collectiviteId = useCollectiviteId();
   const { id: indicateurId, periodicite } = indicateur;
+  const { mutate: updateIndicateur } = useUpdateIndicateur(indicateurId);
+  const { mutate: exportIndicateurs } = useExportIndicateurs({
+    mode: 'selection',
+    indicateurIds: [indicateurId],
+  });
+  const { mutate: removeIndicateur } = useDeleteIndicateur(indicateurId);
   const { mutateAsync: upsertValeur } = useUpsertIndicateurValeur();
   const { mutateAsync: upsertPeriode } = useUpsertIndicateurValeur({
     successMessage:
@@ -86,8 +74,11 @@ const IndicateurValeursDataProvider = ({ indicateur, children }: Props) => {
   );
   const { mutateAsync: removeValeur } = useDeleteIndicateurValeur();
 
-  const value = useMemo<IndicateurValeursValue>(
+  const value = useMemo<IndicateurActionsValue>(
     () => ({
+      updateIndicateur,
+      exportIndicateur: () => exportIndicateurs(),
+      deleteIndicateur: () => removeIndicateur(),
       saveValeur: async (input) => {
         await upsertValeur({ ...input, collectiviteId, indicateurId });
       },
@@ -105,6 +96,9 @@ const IndicateurValeursDataProvider = ({ indicateur, children }: Props) => {
       },
     }),
     [
+      updateIndicateur,
+      exportIndicateurs,
+      removeIndicateur,
       upsertValeur,
       upsertPeriode,
       declarePeriodes,
@@ -112,27 +106,6 @@ const IndicateurValeursDataProvider = ({ indicateur, children }: Props) => {
       collectiviteId,
       indicateurId,
     ]
-  );
-
-  return (
-    <IndicateurValeursProvider value={value}>
-      {children}
-    </IndicateurValeursProvider>
-  );
-};
-
-const IndicateurActionsDataProvider = ({ indicateur, children }: Props) => {
-  const { mutate: exportIndicateurs } = useExportIndicateurs({
-    mode: 'selection',
-    indicateurIds: [indicateur.id],
-  });
-  const { mutate: deleteIndicateur } = useDeleteIndicateur(indicateur.id);
-  const value = useMemo(
-    () => ({
-      exportIndicateur: () => exportIndicateurs(),
-      deleteIndicateur: () => deleteIndicateur(),
-    }),
-    [exportIndicateurs, deleteIndicateur]
   );
 
   return (
@@ -146,13 +119,9 @@ export const IndicateurDetailDataProvider = ({
   indicateur,
   children,
 }: Props) => (
-  <IndicateurDefinitionDataProvider indicateur={indicateur}>
-    <IndicateurChartDataProvider indicateur={indicateur}>
-      <IndicateurValeursDataProvider indicateur={indicateur}>
-        <IndicateurActionsDataProvider indicateur={indicateur}>
-          {children}
-        </IndicateurActionsDataProvider>
-      </IndicateurValeursDataProvider>
-    </IndicateurChartDataProvider>
-  </IndicateurDefinitionDataProvider>
+  <IndicateurDataSourceProvider indicateur={indicateur}>
+    <IndicateurActionsSourceProvider indicateur={indicateur}>
+      {children}
+    </IndicateurActionsSourceProvider>
+  </IndicateurDataSourceProvider>
 );

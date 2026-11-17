@@ -1,13 +1,15 @@
-import { useIndicateurDefinition } from './indicateur-definition.context';
 import ThematiquesDropdown from '@/app/shared/thematiques/thematiques.dropdown';
 import { Field } from '@tet/ui';
+import { useIndicateurData } from './indicateur-data.context';
+import { useIndicateurActions } from './indicateur-actions.context';
 
 type Props = {
   disabled?: boolean;
 };
 
 export const ThematiquesIndicateurInput = ({ disabled }: Props) => {
-  const { indicateur, updateIndicateur } = useIndicateurDefinition();
+  const { indicateur } = useIndicateurData();
+  const { updateIndicateur } = useIndicateurActions();
   const thematiques = indicateur.thematiques || [];
 
   const handleOnChange = (selectedThematiqueIds: number[]) => {

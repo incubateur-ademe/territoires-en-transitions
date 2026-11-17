@@ -1,4 +1,3 @@
-import { useIndicateurDefinition } from './indicateur-definition.context';
 import { appLabels } from '@/app/labels/catalog';
 import { FichesListTable } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.table/fiches-list.table';
 import { useIndicateurFichesLiees } from './indicateur-fiches-liees.context';
@@ -7,6 +6,8 @@ import { Button, EmptyCard } from '@tet/ui';
 import { useState } from 'react';
 import { FichePicto } from './fiche.picto';
 import { FichesLieesModal } from './fiches-liees.modal';
+import { useIndicateurData } from './indicateur-data.context';
+import { useIndicateurActions } from './indicateur-actions.context';
 
 const FichesLiees = () => {
   const collectivite = useCurrentCollectivite();
@@ -17,7 +18,8 @@ const FichesLiees = () => {
 
   const ficheIds = fiches.map((f) => f.id);
 
-  const { updateIndicateur, canMutateIndicateur } = useIndicateurDefinition();
+  const { canMutateIndicateur } = useIndicateurData();
+  const { updateIndicateur } = useIndicateurActions();
 
   const isEmpty = ficheIds.length === 0;
 

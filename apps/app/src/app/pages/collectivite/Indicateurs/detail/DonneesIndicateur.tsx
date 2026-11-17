@@ -1,8 +1,6 @@
 import { isIndicateurPerso } from '@tet/domain/indicateurs';
 import { Divider } from '@tet/ui';
 import { useState } from 'react';
-import { useIndicateurChart } from './indicateur-chart.context';
-import { useIndicateurDefinition } from './indicateur-definition.context';
 import {
   INDICATEUR_PERSONNALISATION_IDENTIFIANT,
   IndicateurPersonnalisationQuestions,
@@ -14,6 +12,7 @@ import { IndicateurSourcesSelect } from './indicateur-sources.select';
 import { IndicateurUniteInput } from './indicateur-unite.input';
 import { ThematiquesIndicateurInput } from './ThematiquesIndicateurInput';
 import { TypeSegmentationSelect } from './type-segmentation.select';
+import { useIndicateurData } from './indicateur-data.context';
 
 type Props = {
   updateUnite: (value: string) => void;
@@ -21,9 +20,8 @@ type Props = {
 };
 
 const DonneesIndicateur = ({ updateUnite, updateCommentaire }: Props) => {
-  const { indicateur, canMutateIndicateur, canMutateValeur } =
-    useIndicateurDefinition();
-  const { chartInfo } = useIndicateurChart();
+  const { indicateur, chartInfo, canMutateIndicateur, canMutateValeur } =
+    useIndicateurData();
   const [isTableModalOpen, setIsTableModalOpen] = useState(false);
   const { commentaire, unite } = indicateur;
 

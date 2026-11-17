@@ -1,17 +1,19 @@
 import ServiceTagDropdown from '@/app/collectivites/tags/service-tag.dropdown';
-import { useIndicateurDefinition } from '../indicateur-definition.context';
 import { appLabels } from '@/app/labels/catalog';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { MetadataItem, MetadataItemPersonne } from '@/app/ui/metadata-line';
 import { SANS_PILOTE_LABEL } from '@tet/domain/plans';
 import { InlineEditWrapper } from '@tet/ui';
+import { useIndicateurData } from '../indicateur-data.context';
+import { useIndicateurActions } from '../indicateur-actions.context';
 
 type Props = {
   isReadonly: boolean;
 };
 
 export const IndicateurPilotes = ({ isReadonly }: Props) => {
-  const { indicateur, updateIndicateur } = useIndicateurDefinition();
+  const { indicateur } = useIndicateurData();
+  const { updateIndicateur } = useIndicateurActions();
 
   return (
     <MetadataItemPersonne
@@ -41,7 +43,8 @@ export const IndicateurPilotes = ({ isReadonly }: Props) => {
 };
 
 export const IndicateurServicesPilotes = ({ isReadonly }: Props) => {
-  const { indicateur, updateIndicateur } = useIndicateurDefinition();
+  const { indicateur } = useIndicateurData();
+  const { updateIndicateur } = useIndicateurActions();
 
   const services = indicateur.services ?? [];
 
