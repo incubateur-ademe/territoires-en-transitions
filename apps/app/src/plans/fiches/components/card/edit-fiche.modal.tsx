@@ -51,18 +51,51 @@ export const EditFicheModal = ({ initialFiche, isOpen, setIsOpen }: Props) => {
 
   const [fiche, setFiche] = useState(initialFiche);
   const [jaugeEnCours, setJaugeEnCours] = useState<number | null>(null);
+  const [jaugeSaisie, setJaugeSaisie] = useState<number | undefined>();
 
   const isSousAction = initialFiche.parentId !== null;
   const isPlanSuiviEnabled = useIsPlanSuiviEnabled();
   const showJauge = !isSousAction && isPlanSuiviEnabled;
 
-  const changeJaugeStatut = (change: Partial<JaugeStatut>) => {
+  const getJaugeStatut = (change: Partial<JaugeStatut>): JaugeStatut => {
     const result = applyJaugeStatutChange({
-      before: { statut: fiche.statut, jauge: fiche.jauge },
+      before: { statut: initialFiche.statut, jauge: initialFiche.jauge },
       change,
       isSousAction,
     });
-    if (result.success) setFiche({ ...fiche, ...result.data });
+    return result.success
+      ? result.data
+      : { statut: initialFiche.statut, jauge: initialFiche.jauge };
+  };
+
+  const saisie: Partial<JaugeStatut> = {
+    ...(fiche.statut !== initialFiche.statut && { statut: fiche.statut }),
+    ...(jaugeSaisie !== undefined && { jauge: jaugeSaisie }),
+  };
+  const { statut, jauge } = getJaugeStatut(saisie);
+
+  const changeStatut = (nouveauStatut: JaugeStatut['statut']) => {
+    const result = applyJaugeStatutChange({
+      before: { statut, jauge },
+      change: { statut: nouveauStatut },
+      isSousAction,
+    });
+    if (!result.success) return;
+    setFiche({ ...fiche, statut: nouveauStatut });
+    if (jaugeSaisie !== undefined || result.data.jauge !== initialFiche.jauge) {
+      setJaugeSaisie(result.data.jauge);
+    }
+  };
+
+  const changeJauge = (nouvelleJauge: number) => {
+    const result = applyJaugeStatutChange({
+      before: { statut, jauge },
+      change: { jauge: nouvelleJauge },
+      isSousAction,
+    });
+    if (!result.success) return;
+    setFiche({ ...fiche, statut: result.data.statut });
+    setJaugeSaisie(nouvelleJauge);
   };
 
   const refDateDebut = useRef<HTMLInputElement>(null);
@@ -77,7 +110,10 @@ export const EditFicheModal = ({ initialFiche, isOpen, setIsOpen }: Props) => {
         isOpen,
         setIsOpen,
       }}
-      onClose={() => setFiche(initialFiche)}
+      onClose={() => {
+        setFiche(initialFiche);
+        setJaugeSaisie(undefined);
+      }}
       title={appLabels.modifierAction}
       render={({ close }) => {
         const prioriteField = (
@@ -110,9 +146,9 @@ export const EditFicheModal = ({ initialFiche, isOpen, setIsOpen }: Props) => {
             <FormSectionGrid>
               <Field title={appLabels.ficheStatut}>
                 <StatutsSelectDropdown
-                  values={fiche.statut}
-                  onChange={(statut) =>
-                    changeJaugeStatut({ statut: statut ?? null })
+                  values={statut}
+                  onChange={(nouveauStatut) =>
+                    changeStatut(nouveauStatut ?? null)
                   }
                 />
               </Field>
@@ -122,21 +158,21 @@ export const EditFicheModal = ({ initialFiche, isOpen, setIsOpen }: Props) => {
                 <Field title={appLabels.ficheJauge}>
                   <div className="flex items-center gap-3 h-10">
                     <JaugeBadge
-                      value={jaugeEnCours ?? fiche.jauge}
-                      statut={fiche.statut}
+                      value={jaugeEnCours ?? jauge}
+                      statut={statut}
                       jaugeModifiedAt={fiche.jaugeModifiedAt}
-                      isDisabled={isJaugeFigee(fiche.statut)}
+                      isDisabled={isJaugeFigee(statut)}
                       isLarge
                     />
                     <JaugeSlider
                       ariaLabel={appLabels.ficheJauge}
-                      value={jaugeEnCours ?? fiche.jauge}
-                      isDisabled={isJaugeFigee(fiche.statut)}
+                      value={jaugeEnCours ?? jauge}
+                      isDisabled={isJaugeFigee(statut)}
                       className="flex-1"
                       onValueChange={setJaugeEnCours}
-                      onValueCommit={(jauge) => {
+                      onValueCommit={(nouvelleJauge) => {
                         setJaugeEnCours(null);
-                        changeJaugeStatut({ jauge });
+                        changeJauge(nouvelleJauge);
                       }}
                       dataTest="ModifierFicheModale.jauge"
                     />
@@ -144,8 +180,8 @@ export const EditFicheModal = ({ initialFiche, isOpen, setIsOpen }: Props) => {
                 </Field>
               )}
             </FormSectionGrid>
-            {showJauge && isJaugeFigee(fiche.statut) && (
-              <JaugeFigeeAlert statut={fiche.statut} />
+            {showJauge && isJaugeFigee(statut) && (
+              <JaugeFigeeAlert statut={statut} />
             )}
             {showJauge && prioriteField}
             <Field title={appLabels.personnePilote()}>
@@ -239,8 +275,8 @@ export const EditFicheModal = ({ initialFiche, isOpen, setIsOpen }: Props) => {
                       dateDebut: fiche.dateDebut,
                       dateFin: fiche.dateFin,
                       ameliorationContinue: fiche.ameliorationContinue,
-                      ...(fiche.jauge !== initialFiche.jauge && {
-                        jauge: fiche.jauge,
+                      ...(jaugeSaisie !== undefined && {
+                        jauge: jaugeSaisie,
                       }),
                     },
                   });
