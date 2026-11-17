@@ -21,8 +21,7 @@ import { useExportIndicateurs } from '../Indicateur/useExportIndicateurs';
 import { getIndicateurPeriodeInputOptions } from '../table/indicateur-periode-input.options';
 import { IndicateurChartProvider } from './indicateur-chart.context';
 import { IndicateurDefinitionProvider } from './indicateur-definition.context';
-import { IndicateurDeletionProvider } from './indicateur-deletion.context';
-import { IndicateurExportProvider } from './indicateur-export.context';
+import { IndicateurActionsProvider } from './indicateur-actions.context';
 import {
   IndicateurValeursProvider,
   type IndicateurValeursValue,
@@ -122,34 +121,24 @@ const IndicateurValeursDataProvider = ({ indicateur, children }: Props) => {
   );
 };
 
-const IndicateurExportDataProvider = ({ indicateur, children }: Props) => {
+const IndicateurActionsDataProvider = ({ indicateur, children }: Props) => {
   const { mutate: exportIndicateurs } = useExportIndicateurs({
     mode: 'selection',
     indicateurIds: [indicateur.id],
   });
-  const value = useMemo(
-    () => ({ exportIndicateur: () => exportIndicateurs() }),
-    [exportIndicateurs]
-  );
-
-  return (
-    <IndicateurExportProvider value={value}>
-      {children}
-    </IndicateurExportProvider>
-  );
-};
-
-const IndicateurDeletionDataProvider = ({ indicateur, children }: Props) => {
   const { mutate: deleteIndicateur } = useDeleteIndicateur(indicateur.id);
   const value = useMemo(
-    () => ({ deleteIndicateur: () => deleteIndicateur() }),
-    [deleteIndicateur]
+    () => ({
+      exportIndicateur: () => exportIndicateurs(),
+      deleteIndicateur: () => deleteIndicateur(),
+    }),
+    [exportIndicateurs, deleteIndicateur]
   );
 
   return (
-    <IndicateurDeletionProvider value={value}>
+    <IndicateurActionsProvider value={value}>
       {children}
-    </IndicateurDeletionProvider>
+    </IndicateurActionsProvider>
   );
 };
 
@@ -160,11 +149,9 @@ export const IndicateurDetailDataProvider = ({
   <IndicateurDefinitionDataProvider indicateur={indicateur}>
     <IndicateurChartDataProvider indicateur={indicateur}>
       <IndicateurValeursDataProvider indicateur={indicateur}>
-        <IndicateurExportDataProvider indicateur={indicateur}>
-          <IndicateurDeletionDataProvider indicateur={indicateur}>
-            {children}
-          </IndicateurDeletionDataProvider>
-        </IndicateurExportDataProvider>
+        <IndicateurActionsDataProvider indicateur={indicateur}>
+          {children}
+        </IndicateurActionsDataProvider>
       </IndicateurValeursDataProvider>
     </IndicateurChartDataProvider>
   </IndicateurDefinitionDataProvider>
