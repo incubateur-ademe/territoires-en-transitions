@@ -1,13 +1,10 @@
 'use client';
 
 import { PersonnalisationQuestionsList } from '@/app/collectivites/personnalisations/personnalisation-questions.list';
-import { useListPersonnalisationQuestionsReponses } from '@/app/collectivites/personnalisations/data/use-list-personnalisation-questions-reponses';
-import { useCollectiviteId } from '@tet/api/collectivites';
 import { VisibleWhen } from '@tet/ui';
+import { useIndicateurPersonnalisation } from './indicateur-personnalisation.context';
 
 export const INDICATEUR_PERSONNALISATION_IDENTIFIANT = 'cae_25.b';
-
-const PERSONNALISATION_QUESTION_ID = 'potentiel_eolien_ou_hydro';
 
 export const IndicateurPersonnalisationQuestions = ({
   isDrom,
@@ -16,11 +13,8 @@ export const IndicateurPersonnalisationQuestions = ({
   isDrom: boolean;
   canEdit: boolean;
 }) => {
-  const collectiviteId = useCollectiviteId();
-  const questionReponses = useListPersonnalisationQuestionsReponses(
-    collectiviteId,
-    { questionIds: [PERSONNALISATION_QUESTION_ID] }
-  );
+  const { useListQuestionsReponses } = useIndicateurPersonnalisation();
+  const questionReponses = useListQuestionsReponses();
 
   return (
     <VisibleWhen condition={!isDrom && questionReponses.length > 0}>
