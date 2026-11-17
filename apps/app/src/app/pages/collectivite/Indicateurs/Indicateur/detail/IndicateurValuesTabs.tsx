@@ -31,7 +31,6 @@ export const IndicateurValuesTabs = ({
       )}
       <IndicateurTable
         key={indicateur.id}
-        confidentiel={indicateur.estConfidentiel || false}
         readonly={isReadonly}
         openModalState={openModalState}
       />

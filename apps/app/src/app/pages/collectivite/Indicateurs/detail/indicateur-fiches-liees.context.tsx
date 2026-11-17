@@ -3,7 +3,7 @@
 import type { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { createContext, type PropsWithChildren, useContext } from 'react';
 
-export type IndicateurFichesLieesValue = {
+type IndicateurFichesLieesValue = {
   fiches: FicheListItem[];
 };
 

@@ -12,10 +12,22 @@ import { PrivateModeSwitch } from './private-mode-switch';
 const indicateur = { id: 1, estConfidentiel: false } as IndicateurDetaille;
 const chartInfo = {} as IndicateurChartInfo;
 
+const toActions = (
+  overrides: Partial<IndicateurActionsValue>
+): IndicateurActionsValue => ({
+  updateIndicateur: vi.fn(),
+  exportIndicateur: vi.fn(),
+  deleteIndicateur: vi.fn(),
+  saveValeur: vi.fn().mockResolvedValue(undefined),
+  declarePeriode: vi.fn().mockResolvedValue(undefined),
+  declarePeriodes: vi.fn().mockResolvedValue(undefined),
+  deleteValeur: vi.fn().mockResolvedValue(undefined),
+  ...overrides,
+});
+
 describe('PrivateModeSwitch', () => {
   it('lit l’indicateur et délègue la mise à jour au contexte d’actions injecté', () => {
     const updateIndicateur = vi.fn();
-    const actions = { updateIndicateur } as unknown as IndicateurActionsValue;
 
     render(
       <IndicateurDataProvider
@@ -26,7 +38,7 @@ describe('PrivateModeSwitch', () => {
           canMutateValeur: true,
         }}
       >
-        <IndicateurActionsProvider value={actions}>
+        <IndicateurActionsProvider value={toActions({ updateIndicateur })}>
           <PrivateModeSwitch />
         </IndicateurActionsProvider>
       </IndicateurDataProvider>

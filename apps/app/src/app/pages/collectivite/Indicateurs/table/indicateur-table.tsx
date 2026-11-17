@@ -23,13 +23,11 @@ import { useIndicateurActions } from '../detail/indicateur-actions.context';
 
 type IndicateurTableProps = {
   readonly?: boolean;
-  confidentiel?: boolean;
   openModalState?: OpenState;
 };
 
 export const IndicateurTable = ({
   readonly,
-  confidentiel,
   openModalState,
 }: IndicateurTableProps) => {
   const { indicateur, chartInfo } = useIndicateurData();
@@ -116,7 +114,7 @@ export const IndicateurTable = ({
         }
         periodeToReveal={declaration.periodeToReveal}
         readonly={!canWrite}
-        confidentiel={confidentiel}
+        confidentiel={indicateur.estConfidentiel ?? false}
         onSave={async (periode, type, value) => {
           if (!canWrite) return false;
           try {

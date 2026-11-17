@@ -17,7 +17,7 @@ export const getSourceLabel = (
   libelle: string,
   type: SourceType,
   { avecSnbc3 = false }: { avecSnbc3?: boolean } = {}
-) => {
+): string => {
   const label =
     SOURCE_TYPE_LABEL[type][0].toUpperCase() + SOURCE_TYPE_LABEL[type].slice(1);
   switch (sourceId) {
