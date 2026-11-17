@@ -70,10 +70,11 @@ export const plansLabels = {
   ficheJaugeFigeeTitre: 'Avancement figé',
   ficheJaugeFigee: {
     Abandonné:
-      "L'action est abandonnée. Changer de statut pour modifier la barre.",
+      "L'action est abandonnée. Pour modifier son avancement, changez d'abord son statut.",
     'En pause':
-      "L'action est en pause. Changer de statut pour modifier la barre.",
-    Bloqué: "L'action est bloquée. Changer de statut pour modifier la barre.",
+      "L'action est en pause. Pour modifier son avancement, changez d'abord son statut.",
+    Bloqué:
+      "L'action est bloquée. Pour modifier son avancement, changez d'abord son statut.",
   } satisfies Record<StatutFigeantJauge, string>,
   ficheJaugeSousActionsRealisees: ({
     realisees,
@@ -406,8 +407,8 @@ export const plansLabels = {
   planRevenirALaDemarche: 'Revenir à la démarche',
   planImporteValidationErreur: 'La validation du plan a échoué',
 
-  planOngletPilotage: 'Pilotage Plan',
-  planOngletSuivi: 'Suivi Avancement',
+  planOngletPilotage: 'Plan',
+  planOngletSuivi: 'Avancement',
   suiviPlanACeJour: 'à ce jour',
   planFiltreSuivi: 'Suivi',
   suiviPlanFiltresBloc: "Les filtres s'appliquent uniquement à cette section",
@@ -439,7 +440,9 @@ export const plansLabels = {
     total: number;
     abandonnees: number;
   }): string =>
-    `Sur ${total - abandonnees} actions, hors ${abandonnees} abandonnée(s).`,
+    `Sur ${total - abandonnees} ${
+      total - abandonnees > 1 ? 'actions' : 'action'
+    }, hors ${abandonnees} ${abandonnees > 1 ? 'abandonnées' : 'abandonnée'}.`,
   vueEnsembleEnCoursSansAvancement: (count: number): string =>
     `${count} ${
       count > 1
@@ -495,15 +498,17 @@ export const plansLabels = {
     creees: number;
     date: string;
   }): string =>
-    `${total} ${
-      total > 1 ? 'actions' : 'action'
-    } (+${creees} créée(s) depuis le ${date})`,
+    `${total} ${total > 1 ? 'actions' : 'action'} (+${creees} ${
+      creees > 1 ? 'créées' : 'créée'
+    } depuis le ${date})`,
   evolutionStatutsHistoriqueRamene:
     'Historique disponible depuis décembre 2023 : la comparaison part du 11/12/2023.',
   evolutionStatutsInclureActionsContinues:
     'Inclure les actions continues (qui se répètent tous les ans)',
   evolutionStatutsActionsContinuesInfo: (count: number): string =>
-    `${count} action(s) continue(s) dans le plan. Leur statut reste souvent « En cours » par nature : les exclure évite de fausser l'évolution.`,
+    `${count} ${
+      count > 1 ? 'actions continues' : 'action continue'
+    } dans le plan. Leur statut reste souvent « En cours » par nature : les exclure évite de fausser l'évolution.`,
   evolutionStatutsStatut: 'Statut',
   evolutionStatutsEvolution: 'Évolution',
   evolutionStatutsTotal: 'Total',
