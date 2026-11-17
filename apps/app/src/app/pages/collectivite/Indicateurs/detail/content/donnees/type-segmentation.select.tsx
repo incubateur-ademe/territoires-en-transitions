@@ -2,7 +2,7 @@ import { Select } from '@tet/ui';
 import {
   IndicateurChartInfo,
   SEGMENTATIONS,
-} from '../data/use-indicateur-chart';
+} from '../../../data/use-indicateur-chart';
 
 const SegmentationNames: Record<(typeof SEGMENTATIONS)[number], string> = {
   secteur: 'Indicateurs sectoriels',

@@ -5,7 +5,7 @@ import { Icon, TableHeaderCell } from '@tet/ui';
 import { PreparedData } from '../data/prepare-data';
 import { DataSourceTooltip } from '../Indicateur/detail/DataSourceTooltip';
 import { SourceType } from '../types';
-import { useIndicateurChart } from '../detail/indicateur-chart.context';
+import { useIndicateurChart } from '../detail/context/indicateur-chart.context';
 
 /** Affiche le nom d'une source de données. */
 export const CellSourceName = ({

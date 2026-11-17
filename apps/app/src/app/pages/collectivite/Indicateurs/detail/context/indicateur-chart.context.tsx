@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, type PropsWithChildren, useContext } from 'react';
-import type { IndicateurChartInfo } from '../data/use-indicateur-chart';
+import type { IndicateurChartInfo } from '../../data/use-indicateur-chart';
 
 export type IndicateurChartValue = {
   chartInfo: IndicateurChartInfo;

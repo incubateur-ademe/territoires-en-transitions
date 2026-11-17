@@ -14,25 +14,29 @@ import {
 } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
 import type { IndicateurDetaille } from '@tet/domain/indicateurs';
-import { type PropsWithChildren, useMemo } from 'react';
+import { type PropsWithChildren, useCallback, useMemo } from 'react';
+import {
+  type IndicateurTexteField,
+  toTexteUpdate,
+} from './indicateur-texte.rules';
 import { IndicateurFichesLieesDataProvider } from './indicateur-fiches-liees.data-provider';
 import { IndicateurPersonnalisationDataProvider } from './indicateur-personnalisation.data-provider';
-import { useDeleteIndicateurValeur } from '../data/use-delete-indicateur-valeur';
-import { useIndicateurChartInfo } from '../data/use-indicateur-chart';
-import { useExportIndicateurs } from '../Indicateur/useExportIndicateurs';
-import { getIndicateurPeriodeInputOptions } from '../table/indicateur-periode-input.options';
+import { useDeleteIndicateurValeur } from '../../data/use-delete-indicateur-valeur';
+import { useIndicateurChartInfo } from '../../data/use-indicateur-chart';
+import { useExportIndicateurs } from '../../Indicateur/useExportIndicateurs';
+import { getIndicateurPeriodeInputOptions } from '../../table/indicateur-periode-input.options';
 import {
   IndicateurActionsProvider,
   type IndicateurActionsValue,
-} from './indicateur-actions.context';
+} from '../context/indicateur-actions.context';
 import {
   IndicateurChartProvider,
   type IndicateurChartValue,
-} from './indicateur-chart.context';
+} from '../context/indicateur-chart.context';
 import {
   IndicateurDataProvider,
   type IndicateurDataValue,
-} from './indicateur-data.context';
+} from '../context/indicateur-data.context';
 
 type Props = PropsWithChildren<{ indicateur: IndicateurDetaille }>;
 
@@ -78,6 +82,15 @@ const IndicateurActionsMutationsProvider = ({
   const collectiviteId = useCollectiviteId();
   const { id: indicateurId, periodicite } = indicateur;
   const { mutate: updateIndicateur } = useUpdateIndicateur(indicateurId);
+  const updateTexte = useCallback(
+    (field: IndicateurTexteField, texte: string) => {
+      const update = toTexteUpdate({ indicateur, field, texte });
+      if (update) {
+        updateIndicateur(update);
+      }
+    },
+    [indicateur, updateIndicateur]
+  );
   const { mutate: exportIndicateurs } = useExportIndicateurs({
     mode: 'selection',
     indicateurIds: [indicateurId],
@@ -100,6 +113,10 @@ const IndicateurActionsMutationsProvider = ({
   const value = useMemo<IndicateurActionsValue>(
     () => ({
       updateIndicateur,
+      updateTitre: (titre) => updateTexte('titre', titre),
+      updateUnite: (unite) => updateTexte('unite', unite),
+      updateCommentaire: (commentaire) =>
+        updateTexte('commentaire', commentaire),
       exportIndicateur: () => exportIndicateurs(),
       deleteIndicateur: () => removeIndicateur(),
       saveValeur: async (input) => {
@@ -120,6 +137,7 @@ const IndicateurActionsMutationsProvider = ({
     }),
     [
       updateIndicateur,
+      updateTexte,
       exportIndicateurs,
       removeIndicateur,
       upsertValeur,

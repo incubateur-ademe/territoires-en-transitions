@@ -12,6 +12,9 @@ type SaveIndicateurValeurInput = Omit<
 
 export type IndicateurActionsValue = {
   updateIndicateur: (fields: DefinitionFieldsInput) => void;
+  updateTitre: (titre: string) => void;
+  updateUnite: (unite: string) => void;
+  updateCommentaire: (commentaire: string) => void;
   exportIndicateur: () => void;
   deleteIndicateur: () => void;
   saveValeur: (input: SaveIndicateurValeurInput) => Promise<void>;

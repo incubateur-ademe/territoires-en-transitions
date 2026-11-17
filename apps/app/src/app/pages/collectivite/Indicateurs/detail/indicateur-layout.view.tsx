@@ -1,72 +1,25 @@
 'use client';
 
-import { isIndicateurPerso } from '@tet/domain/indicateurs';
-import Markdown from '@/app/ui/Markdown';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { Tab, Tabs } from '@tet/ui';
-import { appLabels } from '@/app/labels/catalog';
-import ActionsLiees from './ActionsLiees';
-import DonneesIndicateur from './DonneesIndicateur';
-import FichesLiees from './FichesLiees';
-import IndicateurHeader from './Header/IndicateurHeader';
-import SousIndicateurs from './SousIndicateurs';
-import { useIndicateurChart } from './indicateur-chart.context';
-import { useIndicateurData } from './indicateur-data.context';
-import { useIndicateurActions } from './indicateur-actions.context';
+import { isIndicateurPerso } from '@tet/domain/indicateurs';
+import IndicateurHeader from './header/indicateur-header.view';
+import { useIndicateurChart } from './context/indicateur-chart.context';
+import { useIndicateurData } from './context/indicateur-data.context';
+import { IndicateurSousIndicateurs } from './content/sous-indicateurs/indicateur-sous-indicateurs.view';
+import { IndicateurTabs } from './indicateur-tabs.view';
 
-type IndicateurLayoutViewProps = {
+type IndicateurLayoutProps = {
   dataTest?: string;
 };
 
-export const IndicateurLayoutView = ({
-  dataTest,
-}: IndicateurLayoutViewProps) => {
+export const IndicateurLayout = ({ dataTest }: IndicateurLayoutProps) => {
   const { indicateur, canMutateIndicateur } = useIndicateurData();
   const { chartInfo } = useIndicateurChart();
-  const { updateIndicateur } = useIndicateurActions();
-  const {
-    enfants,
-    sansValeurUtilisateur: sansValeur,
-    description,
-  } = indicateur;
-
-  const { collectiviteId, hasCollectivitePermission, isSimplifiedView } =
+  const { collectiviteId, hasCollectivitePermission } =
     useCurrentCollectivite();
 
-  const composeSansAgregation = !!enfants && enfants.length > 0 && sansValeur;
-  const composeAvecAgregation = !!enfants && enfants.length > 0 && !sansValeur;
-
-  const handleUpdate = (
-    fieldName: 'commentaire' | 'unite' | 'titre',
-    fieldValue: string
-  ) => {
-    const trimmedFieldValue = fieldValue.trim();
-    const hasValueChanged = trimmedFieldValue !== indicateur[fieldName];
-
-    if (!hasValueChanged) {
-      return;
-    }
-
-    updateIndicateur({
-      [fieldName]: trimmedFieldValue,
-    });
-  };
-
-  const handleTitreUpdate = (value: string) => handleUpdate('titre', value);
-  const handleUniteUpdate = (value: string) => handleUpdate('unite', value);
-  const handleCommentaireUpdate = (value: string) => {
-    handleUpdate('commentaire', value);
-  };
-
-  const enfantsIds = enfants?.map(({ id }) => id) || [];
-
-  const canReadFiches = hasCollectivitePermission('plans.fiches.read');
-  const isPerso = isIndicateurPerso(indicateur);
-
-  const displayMesuresLieesVisiteOrPermissionForReferenceIndicateur =
-    !isPerso &&
-    hasCollectivitePermission('referentiels.read') &&
-    !isSimplifiedView;
+  const { enfants = [], sansValeurUtilisateur } = indicateur;
+  const composeSansAgregation = enfants.length > 0 && sansValeurUtilisateur;
 
   return (
     <>
@@ -76,70 +29,18 @@ export const IndicateurLayoutView = ({
         indicateur={indicateur}
         chartInfo={composeSansAgregation ? undefined : chartInfo}
         isReadonly={!canMutateIndicateur}
-        isPerso={isPerso}
+        isPerso={isIndicateurPerso(indicateur)}
         composeSansAgregation={composeSansAgregation}
-        onUpdate={handleTitreUpdate}
       />
 
       <div data-test={dataTest} className="pt-6">
         {composeSansAgregation ? (
-          // Groupe d'indicateurs sans agrégation
-          <SousIndicateurs
-            enfantsIds={enfantsIds}
+          <IndicateurSousIndicateurs
+            enfantsIds={enfants.map(({ id }) => id)}
             isReadonly={!canMutateIndicateur}
           />
         ) : (
-          // Indicateur sans enfant, groupe d'indicateurs avec agrégation,
-          // ou indicateur personnalisé
-          <Tabs tabsListClassName="!justify-start flex-nowrap overflow-x-auto">
-            {/* Données */}
-            <Tab label="Données">
-              <DonneesIndicateur
-                updateUnite={handleUniteUpdate}
-                updateCommentaire={handleCommentaireUpdate}
-              />
-            </Tab>
-
-            {/* Sous indicateurs */}
-            {composeAvecAgregation ? (
-              <Tab
-                label={`${enfants.length} sous-indicateur${
-                  enfants.length > 1 ? 's' : ''
-                }`}
-              >
-                <SousIndicateurs
-                  enfantsIds={enfantsIds}
-                  isReadonly={!canMutateIndicateur}
-                />
-              </Tab>
-            ) : undefined}
-
-            {displayMesuresLieesVisiteOrPermissionForReferenceIndicateur ? (
-              <Tab label="Mesures des référentiels">
-                <ActionsLiees
-                  isReadonly={!canMutateIndicateur}
-                  actionsIds={
-                    indicateur.mesures?.map((mesure) => mesure.id) ?? []
-                  }
-                />
-              </Tab>
-            ) : undefined}
-
-            {canReadFiches ? (
-              <Tab label={appLabels.actionsLiees}>
-                <FichesLiees />
-              </Tab>
-            ) : undefined}
-
-            {!isPerso && !!description ? (
-              <Tab label="Informations sur l’indicateur">
-                <Markdown
-                  content={description}
-                  className="bg-white p-10 border border-grey-3 rounded-xl paragraphe-16 paragraphe-primary-9"
-                />
-              </Tab>
-            ) : undefined}
-          </Tabs>
+          <IndicateurTabs />
         )}
       </div>
     </>

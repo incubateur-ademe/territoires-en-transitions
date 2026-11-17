@@ -3,7 +3,7 @@
 import { useListFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import type { PropsWithChildren } from 'react';
-import { IndicateurFichesLieesProvider } from './indicateur-fiches-liees.context';
+import { IndicateurFichesLieesProvider } from '../context/indicateur-fiches-liees.context';
 
 const useListFichesLiees = (indicateurId: number) => {
   const collectiviteId = useCollectiviteId();

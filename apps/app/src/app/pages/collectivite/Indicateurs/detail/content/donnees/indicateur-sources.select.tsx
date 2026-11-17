@@ -1,5 +1,5 @@
 import { SelectMultiple } from '@tet/ui';
-import { FiltresSource, SourceFilter } from '../data/use-source-filter';
+import { FiltresSource, SourceFilter } from '../../../data/use-source-filter';
 
 type Props = {
   sourceFilter: SourceFilter;

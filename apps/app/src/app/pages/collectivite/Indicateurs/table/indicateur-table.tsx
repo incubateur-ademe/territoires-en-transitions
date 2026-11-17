@@ -18,9 +18,9 @@ import { useIndicateurTableDeclaration } from './use-indicateur-table-declaratio
 import { shouldConfirmValueDeletion } from './indicateur-valeur-deletion.rules';
 import { IndicateurValeursTable } from './indicateur-valeurs-table';
 import { PrivateModeSwitch } from './private-mode-switch';
-import { useIndicateurChart } from '../detail/indicateur-chart.context';
-import { useIndicateurData } from '../detail/indicateur-data.context';
-import { useIndicateurActions } from '../detail/indicateur-actions.context';
+import { useIndicateurChart } from '../detail/context/indicateur-chart.context';
+import { useIndicateurData } from '../detail/context/indicateur-data.context';
+import { useIndicateurActions } from '../detail/context/indicateur-actions.context';
 
 type IndicateurTableProps = {
   readonly?: boolean;

@@ -20,6 +20,12 @@ export const indicateursLabels = {
   indicateurTelechargerExcel: "Télécharger l'indicateur (Excel)",
 
   indicateur: plural({ one: 'indicateur', other: 'indicateurs' }),
+  sousIndicateur: plural({
+    one: 'sous-indicateur',
+    other: 'sous-indicateurs',
+  }),
+  indicateurOngletDonnees: 'Données',
+  indicateurOngletInformations: 'Informations sur l’indicateur',
 
   indicateurResultat: plural({ one: 'résultat', other: 'résultats' }),
   indicateurObjectif: plural({ one: 'objectif', other: 'objectifs' }),

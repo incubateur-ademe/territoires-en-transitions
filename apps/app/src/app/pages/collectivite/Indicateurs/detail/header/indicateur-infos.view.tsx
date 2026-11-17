@@ -8,7 +8,7 @@ import BadgeOpenData from '../../components/BadgeOpenData';
 import {
   IndicateurPilotes,
   IndicateurServicesPilotes,
-} from './IndicateurPilotes';
+} from './indicateur-pilotes.view';
 
 type Props = {
   indicateur: IndicateurDetaille;

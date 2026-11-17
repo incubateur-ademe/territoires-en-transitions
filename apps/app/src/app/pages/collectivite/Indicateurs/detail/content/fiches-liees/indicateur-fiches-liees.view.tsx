@@ -1,15 +1,15 @@
 import { appLabels } from '@/app/labels/catalog';
 import { FichesListTable } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.table/fiches-list.table';
-import { useIndicateurFichesLiees } from './indicateur-fiches-liees.context';
+import { useIndicateurFichesLiees } from '../../context/indicateur-fiches-liees.context';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button, EmptyCard } from '@tet/ui';
 import { useState } from 'react';
 import { FichePicto } from './fiche.picto';
 import { FichesLieesModal } from './fiches-liees.modal';
-import { useIndicateurData } from './indicateur-data.context';
-import { useIndicateurActions } from './indicateur-actions.context';
+import { useIndicateurData } from '../../context/indicateur-data.context';
+import { useIndicateurActions } from '../../context/indicateur-actions.context';
 
-const FichesLiees = () => {
+export const IndicateurFichesLiees = () => {
   const collectivite = useCurrentCollectivite();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -83,5 +83,3 @@ const FichesLiees = () => {
     </>
   );
 };
-
-export default FichesLiees;

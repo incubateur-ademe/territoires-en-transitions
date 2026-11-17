@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { IndicateurChartProvider } from '../detail/indicateur-chart.context';
-import { toIndicateurChartInfo } from '../detail/to-indicateur-chart-info.fixture';
+import { IndicateurChartProvider } from '../detail/context/indicateur-chart.context';
+import type { IndicateurChartInfo } from '../data/use-indicateur-chart';
 import { CellSourceName } from './cell-source-name';
 
 type Source = Parameters<typeof CellSourceName>[0]['source'];
@@ -15,8 +15,12 @@ const toSource = (overrides: Partial<Source>): Source =>
     ...overrides,
   } as Source);
 
+const toChartInfo = (
+  overrides: Pick<IndicateurChartInfo, 'getColorBySourceId' | 'getSourceLabel'>
+): IndicateurChartInfo => overrides as IndicateurChartInfo;
+
 const renderCell = (source: Source, getSourceLabel = vi.fn()) => {
-  const chartInfo = toIndicateurChartInfo({
+  const chartInfo = toChartInfo({
     getColorBySourceId: vi.fn(() => '#123456'),
     getSourceLabel: getSourceLabel.mockReturnValue('Libellé injecté'),
   });

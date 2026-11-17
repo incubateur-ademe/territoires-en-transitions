@@ -1,9 +1,9 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import type { IndicateurDetaille } from '@tet/domain/indicateurs';
 import { describe, expect, it, vi } from 'vitest';
-import { IndicateurActionsProvider } from '../detail/indicateur-actions.context';
-import { IndicateurDataProvider } from '../detail/indicateur-data.context';
-import { toIndicateurActions } from '../detail/to-indicateur-actions.fixture';
+import { IndicateurActionsProvider } from '../detail/context/indicateur-actions.context';
+import { IndicateurDataProvider } from '../detail/context/indicateur-data.context';
+import { toIndicateurActions } from './to-indicateur-actions.fixture';
 import { PrivateModeSwitch } from './private-mode-switch';
 
 const indicateur = { id: 1, estConfidentiel: false } as IndicateurDetaille;
