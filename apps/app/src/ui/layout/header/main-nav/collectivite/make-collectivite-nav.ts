@@ -5,7 +5,7 @@ import {
   getReferentielDisplayMap,
 } from '@tet/domain/collectivites';
 import { isTypeInstructeur } from '@tet/domain/demarches';
-import { isUserVisitor } from '@tet/domain/users';
+import { hasPermission, isUserVisitor } from '@tet/domain/users';
 import { isNavDropdown, NavItem, NavLink } from '@tet/ui';
 import { generateCollectiviteNavItem } from './generate-collectivite-nav-item';
 import { generateEdlDropdown } from './generate-edl-dropdown';
@@ -45,11 +45,6 @@ export const makeCollectiviteNav: MakeCollectiviteNav = ({
 }) => {
   const { collectiviteId, collectiviteAccesRestreint } = currentCollectivite;
   const isVisitor = isUserVisitor(user, { collectiviteId });
-  /**
-   * Membre de cette collectivité, au sens strict du layout d'instruction — un
-   * super-admin qui n'en est pas membre n'y accède pas davantage, la nav ne doit
-   * donc pas le lui proposer.
-   */
   const estMembreCollectivite = user.collectivites.some(
     (acces) => acces.collectiviteId === collectiviteId
   );
@@ -97,11 +92,10 @@ export const makeCollectiviteNav: MakeCollectiviteNav = ({
       // conseil régional — garde cette nav et atteint l'instruction par ici.
       // Une DREAL ou une DDT n'a pas cette nav du tout.
       //
-      // L'appartenance est reprise telle quelle du layout d'instruction, qui
-      // refuse les non-membres : le type de collectivité ne suffit pas, sinon le
-      // lien mènerait un visiteur droit sur une page d'erreur.
+      // Même accès que le layout : membre ou support en mode super admin.
       isVisible:
-        estMembreCollectivite &&
+        (estMembreCollectivite ||
+          hasPermission(user, 'demarches.pcaet.read_instruction')) &&
         isTypeInstructeur(currentCollectivite.collectiviteType),
       children: appLabels.instructionTitre,
       href: makeDemandesAvisUrl({ collectiviteId }),

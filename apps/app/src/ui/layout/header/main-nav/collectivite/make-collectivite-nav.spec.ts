@@ -276,6 +276,27 @@ describe('aide-a-la-priorisation-dans-la-nav', () => {
 });
 
 describe('menu-super-admin', () => {
+  it.each([
+    { roles: superAdminRoles, visible: true },
+    { roles: [...connectedRoles, PlatformRole.SUPPORT], visible: false },
+  ])(
+    "affiche l'instruction du conseil régional à un non-membre selon son mode ($visible)",
+    ({ roles, visible }) => {
+      const startItems = makeStartItemsWithPriorisation({
+        user: toUserWithPlatformPermissions(otherCollectiviteAccess, roles),
+        currentAccess: {
+          ...epciAccess,
+          collectiviteType: collectiviteTypeEnum.REGION,
+          role: null,
+        },
+      });
+
+      expect(
+        startItems.some((item) => item.children === appLabels.instructionTitre)
+      ).toBe(visible);
+    }
+  );
+
   it("un super admin n'a plus de menu Super Admin : ses outils sont dans l'espace Administration", () => {
     const dropdowns = toCollectiviteStartItems(superAdminRoles)
       .filter(isNavDropdown)
