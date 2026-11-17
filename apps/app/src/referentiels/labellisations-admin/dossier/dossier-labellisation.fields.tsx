@@ -135,8 +135,11 @@ export const AuditeursEditor = ({
   // Email saisi hors de la liste : l'ajout donne le rôle auditeur, il est confirmé
   const [pendingEmail, setPendingEmail] = useState<string | null>(null);
 
-  const toLabel = (p: { prenom: string; nom: string; email: string }) =>
-    `${p.prenom} ${p.nom}`.trim() || p.email;
+  // L'email distingue deux comptes portant le même nom
+  const toLabel = (p: { prenom: string; nom: string; email: string }) => {
+    const nom = `${p.prenom} ${p.nom}`.trim();
+    return nom ? `${nom} (${p.email})` : p.email;
+  };
 
   // Les auditeurs déjà attribués restent affichés même s'ils ont perdu le rôle
   const options = uniqBy(
