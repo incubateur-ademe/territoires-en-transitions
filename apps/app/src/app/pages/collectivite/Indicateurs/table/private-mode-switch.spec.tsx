@@ -1,7 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import type { IndicateurDetaille } from '@tet/domain/indicateurs';
 import { describe, expect, it, vi } from 'vitest';
-import type { IndicateurChartInfo } from '../data/use-indicateur-chart';
 import {
   IndicateurActionsProvider,
   type IndicateurActionsValue,
@@ -10,7 +9,6 @@ import { IndicateurDataProvider } from '../detail/indicateur-data.context';
 import { PrivateModeSwitch } from './private-mode-switch';
 
 const indicateur = { id: 1, estConfidentiel: false } as IndicateurDetaille;
-const chartInfo = {} as IndicateurChartInfo;
 
 const toActions = (
   overrides: Partial<IndicateurActionsValue>
@@ -33,7 +31,6 @@ describe('PrivateModeSwitch', () => {
       <IndicateurDataProvider
         value={{
           indicateur,
-          chartInfo,
           canMutateIndicateur: true,
           canMutateValeur: true,
         }}

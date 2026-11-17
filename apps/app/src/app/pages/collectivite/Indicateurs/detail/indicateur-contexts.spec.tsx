@@ -1,5 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { useIndicateurChart } from './indicateur-chart.context';
 import { useIndicateurData } from './indicateur-data.context';
 import { useIndicateurActions } from './indicateur-actions.context';
 import { useIndicateurFichesLiees } from './indicateur-fiches-liees.context';
@@ -8,6 +9,7 @@ afterEach(() => vi.restoreAllMocks());
 
 describe.each([
   ['useIndicateurData', useIndicateurData],
+  ['useIndicateurChart', useIndicateurChart],
   ['useIndicateurActions', useIndicateurActions],
   ['useIndicateurFichesLiees', useIndicateurFichesLiees],
 ])('%s', (name, useContextValue) => {

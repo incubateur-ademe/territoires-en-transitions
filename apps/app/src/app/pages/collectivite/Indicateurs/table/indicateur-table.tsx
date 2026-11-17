@@ -18,6 +18,7 @@ import { useIndicateurTableDeclaration } from './use-indicateur-table-declaratio
 import { shouldConfirmValueDeletion } from './indicateur-valeur-deletion.rules';
 import { IndicateurValeursTable } from './indicateur-valeurs-table';
 import { PrivateModeSwitch } from './private-mode-switch';
+import { useIndicateurChart } from '../detail/indicateur-chart.context';
 import { useIndicateurData } from '../detail/indicateur-data.context';
 import { useIndicateurActions } from '../detail/indicateur-actions.context';
 
@@ -30,7 +31,8 @@ export const IndicateurTable = ({
   readonly,
   openModalState,
 }: IndicateurTableProps) => {
-  const { indicateur, chartInfo } = useIndicateurData();
+  const { indicateur } = useIndicateurData();
+  const { chartInfo } = useIndicateurChart();
   const resultats = prepareIndicateurPeriodeData(
     chartInfo.data.valeurs.resultats
   );

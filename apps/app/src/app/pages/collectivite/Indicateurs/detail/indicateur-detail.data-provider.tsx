@@ -24,6 +24,10 @@ import {
   type IndicateurActionsValue,
 } from './indicateur-actions.context';
 import {
+  IndicateurChartProvider,
+  type IndicateurChartValue,
+} from './indicateur-chart.context';
+import {
   IndicateurDataProvider,
   type IndicateurDataValue,
 } from './indicateur-data.context';
@@ -31,7 +35,6 @@ import {
 type Props = PropsWithChildren<{ indicateur: IndicateurDetaille }>;
 
 const IndicateurDataQueriesProvider = ({ indicateur, children }: Props) => {
-  const chartInfo = useIndicateurChartInfo({ indicateur });
   const { hasCollectivitePermission } = useCurrentCollectivite();
   const { id: userId } = useUser();
   const canMutateIndicateur = canUpdateIndicateur(
@@ -45,12 +48,24 @@ const IndicateurDataQueriesProvider = ({ indicateur, children }: Props) => {
     userId
   );
   const value = useMemo<IndicateurDataValue>(
-    () => ({ indicateur, chartInfo, canMutateIndicateur, canMutateValeur }),
-    [indicateur, chartInfo, canMutateIndicateur, canMutateValeur]
+    () => ({ indicateur, canMutateIndicateur, canMutateValeur }),
+    [indicateur, canMutateIndicateur, canMutateValeur]
   );
 
   return (
     <IndicateurDataProvider value={value}>{children}</IndicateurDataProvider>
+  );
+};
+
+const IndicateurChartQueriesProvider = ({ indicateur, children }: Props) => {
+  const chartInfo = useIndicateurChartInfo({ indicateur });
+  const value = useMemo<IndicateurChartValue>(
+    () => ({ chartInfo }),
+    [chartInfo]
+  );
+
+  return (
+    <IndicateurChartProvider value={value}>{children}</IndicateurChartProvider>
   );
 };
 
@@ -126,8 +141,10 @@ export const IndicateurDetailDataProvider = ({
   children,
 }: Props) => (
   <IndicateurDataQueriesProvider indicateur={indicateur}>
-    <IndicateurActionsMutationsProvider indicateur={indicateur}>
-      {children}
-    </IndicateurActionsMutationsProvider>
+    <IndicateurChartQueriesProvider indicateur={indicateur}>
+      <IndicateurActionsMutationsProvider indicateur={indicateur}>
+        {children}
+      </IndicateurActionsMutationsProvider>
+    </IndicateurChartQueriesProvider>
   </IndicateurDataQueriesProvider>
 );

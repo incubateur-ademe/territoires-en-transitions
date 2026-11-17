@@ -12,6 +12,7 @@ import { IndicateurSourcesSelect } from './indicateur-sources.select';
 import { IndicateurUniteInput } from './indicateur-unite.input';
 import { ThematiquesIndicateurInput } from './ThematiquesIndicateurInput';
 import { TypeSegmentationSelect } from './type-segmentation.select';
+import { useIndicateurChart } from './indicateur-chart.context';
 import { useIndicateurData } from './indicateur-data.context';
 
 type Props = {
@@ -20,8 +21,9 @@ type Props = {
 };
 
 const DonneesIndicateur = ({ updateUnite, updateCommentaire }: Props) => {
-  const { indicateur, chartInfo, canMutateIndicateur, canMutateValeur } =
+  const { indicateur, canMutateIndicateur, canMutateValeur } =
     useIndicateurData();
+  const { chartInfo } = useIndicateurChart();
   const [isTableModalOpen, setIsTableModalOpen] = useState(false);
   const { commentaire, unite } = indicateur;
 
