@@ -5,6 +5,8 @@ import {
   IndicateurDetaille,
 } from '@tet/domain/indicateurs';
 
+import { getSourceLabel } from '../../data/get-source-label';
+import { LAYERS } from '../../../Trajectoire/graphes/layer-parameters';
 import { IndicateurCardBase } from './IndicateurCard';
 import type { IndicateurCardBaseProps } from './IndicateurCard';
 
@@ -62,6 +64,8 @@ const props = {
     typesSegmentation: [],
     segmentation: undefined,
     setSegmentation: () => undefined,
+    getColorBySourceId: (_sourceId, type) => LAYERS[`${type}s`].color,
+    getSourceLabel,
     segmentItemParId: new Map(),
     sourceFilter: {
       isLoading: false,

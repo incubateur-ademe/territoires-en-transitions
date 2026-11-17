@@ -8,7 +8,6 @@ import type {
 import { TableCell } from '@tet/ui';
 import { useRef, type ReactNode } from 'react';
 import type { IndicateurPeriodeData } from '../data/prepare-indicateur-periode-data';
-import type { GetColorBySourceId } from '../data/use-indicateur-sources';
 import type { SourceType } from '../types';
 import { IndicateurValeursTableCommentairesFooter } from './indicateur-valeurs-table-commentaires.footer';
 import { IndicateurValeursTableSourceRow } from './indicateur-valeurs-table-source.row';
@@ -24,9 +23,6 @@ type Props = {
   confidentiel?: boolean;
   addPeriode?: ReactNode;
   periodeToReveal?: IndicateurPeriode;
-  getColorBySourceId: GetColorBySourceId;
-  /** La source `snbc3` est servie : la SNBC 2 s'affiche « SNBC2 ». */
-  avecSnbc3?: boolean;
   onSave: (
     periode: IndicateurPeriode,
     type: SourceType,
@@ -45,8 +41,6 @@ export const IndicateurValeursTable = ({
   confidentiel,
   addPeriode,
   periodeToReveal,
-  getColorBySourceId,
-  avecSnbc3 = false,
   onSave,
   onDelete,
   onComment,
@@ -97,8 +91,6 @@ export const IndicateurValeursTable = ({
                 readonly={readonly}
                 periodicite={indicateur.periodicite}
                 showAddPeriodeColumn={showAddPeriodeColumn}
-                getColorBySourceId={getColorBySourceId}
-                avecSnbc3={avecSnbc3}
                 onSave={onSave}
               />
             ))

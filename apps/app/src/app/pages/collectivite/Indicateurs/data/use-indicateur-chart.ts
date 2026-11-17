@@ -8,7 +8,13 @@ import {
   IndicateurDetaille,
 } from '@tet/domain/indicateurs';
 import { intersection } from 'es-toolkit';
-import { type Dispatch, type SetStateAction, useMemo, useState } from 'react';
+import {
+  type Dispatch,
+  type SetStateAction,
+  useCallback,
+  useMemo,
+  useState,
+} from 'react';
 import { typeCollectiviteOptions } from '../../../CollectivitesEngagees/data/filtreOptions';
 import {
   ListIndicateurValeursOutput,
@@ -22,6 +28,7 @@ import {
   useGetColorBySourceId,
 } from './use-indicateur-sources';
 import { type SourceFilter, useSourceFilter } from './use-source-filter';
+import { type GetSourceLabel, getSourceLabel } from './get-source-label';
 
 export const SEGMENTATIONS = [
   'vecteur_filiere',
@@ -60,6 +67,7 @@ export type IndicateurChartInfo = {
   segmentItemParId: Map<number, { id: number; name: string; color: string }>;
   sourceFilter: SourceFilter;
   getColorBySourceId: GetColorBySourceId;
+  getSourceLabel: GetSourceLabel;
   data: IndicateurChartData;
   hasValeurCollectivite: boolean;
   hasValeur: boolean;
@@ -258,9 +266,13 @@ export const useIndicateurChartInfo = ({
   ]);
 
   const isLoading = isLoadingValeurs || isLoadingSegments || isLoadingEnfants;
-  const getColorBySourceId = useGetColorBySourceId({
-    avecSnbc3: sourceFilter.avecSnbc3,
-  });
+  const { avecSnbc3 } = sourceFilter;
+  const getColorBySourceId = useGetColorBySourceId({ avecSnbc3 });
+  const getSourceLabelOfIndicateur = useCallback<GetSourceLabel>(
+    (sourceId, libelle, type) =>
+      getSourceLabel(sourceId, libelle, type, { avecSnbc3 }),
+    [avecSnbc3]
+  );
 
   return useMemo(
     () => ({
@@ -269,9 +281,17 @@ export const useIndicateurChartInfo = ({
       setSegmentation,
       sourceFilter,
       getColorBySourceId,
+      getSourceLabel: getSourceLabelOfIndicateur,
       isLoading,
     }),
-    [indicateur, isLoading, preparedChart, sourceFilter, getColorBySourceId]
+    [
+      indicateur,
+      isLoading,
+      preparedChart,
+      sourceFilter,
+      getColorBySourceId,
+      getSourceLabelOfIndicateur,
+    ]
   );
 };
 

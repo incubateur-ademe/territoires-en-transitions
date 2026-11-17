@@ -18,7 +18,16 @@ import {
 import type { SourceType } from '../types';
 import { AddIndicateurPeriodeHeader } from './add-indicateur-periode.header';
 import { AddIndicateurPeriodesModal } from './add-indicateur-periodes.modal';
+import { getSourceLabel } from '../data/get-source-label';
+import type { IndicateurChartInfo } from '../data/use-indicateur-chart';
+import { IndicateurChartProvider } from '../detail/indicateur-chart.context';
 import { IndicateurValeursTable } from './indicateur-valeurs-table';
+
+const chartInfo = {
+  getColorBySourceId: () => '#6a6af4',
+  getSourceLabel: (sourceId: string, libelle: string, type: SourceType) =>
+    getSourceLabel(sourceId, libelle, type),
+} as unknown as IndicateurChartInfo;
 
 const SaisiePeriodique = ({
   periodicite,
@@ -82,71 +91,72 @@ const SaisiePeriodique = ({
     return true;
   };
   return (
-    <div className="flex flex-col gap-6 p-8 bg-white">
-      <div className="flex items-center gap-4 text-sm">
-        <span>Modifié le 08/10/2026</span>
-        <IndicateurPeriodiciteBadge
-          periodicite={periodicite}
-          participationScore={periodicite === 'annuelle'}
-        />
-      </div>
-      <IndicateurValeursTable
-        indicateur={{
-          titre: 'Part électrique du parc de véhicules',
-          unite: '%',
-          periodicite,
-        }}
-        resultats={prepareIndicateurPeriodeData(prepare('resultat'))}
-        objectifs={prepareIndicateurPeriodeData(prepare('objectif'))}
-        readonly={readonly}
-        getColorBySourceId={() => '#6a6af4'}
-        addPeriode={
-          !readonly &&
-          (periodicite === 'annuelle' ? (
-            <AddIndicateurPeriodeHeader
-              periodicite={periodicite}
-              existingPeriodes={periods}
-              onAdd={(periode) => add([periode])}
-            />
-          ) : (
-            <Button size="sm" onClick={() => setIsOpen(true)}>
-              {getIndicateurPeriodPresentation(periodicite).editor.addLabel}
-            </Button>
-          ))
-        }
-        onSave={async (period, type, value) => {
-          const key = IndicateurPeriodes.key(period);
-          setValues((previous) => ({
-            ...previous,
-            [key]: {
-              ...(previous[key] ?? { resultat: null, objectif: null }),
-              [type]: value,
-            },
-          }));
-          return true;
-        }}
-        onDelete={(period) =>
-          setPeriods((previous) =>
-            previous.filter(
-              (candidate) =>
-                IndicateurPeriodes.key(candidate) !==
-                IndicateurPeriodes.key(period)
-            )
-          )
-        }
-        onComment={() => undefined}
-      />
-      {isOpen && periodicite !== 'annuelle' && (
-        <AddIndicateurPeriodesModal
-          periodicite={periodicite}
-          existingPeriodes={periods}
-          onAdd={async (periodes) => {
-            await add(periodes);
+    <IndicateurChartProvider value={{ chartInfo }}>
+      <div className="flex flex-col gap-6 p-8 bg-white">
+        <div className="flex items-center gap-4 text-sm">
+          <span>Modifié le 08/10/2026</span>
+          <IndicateurPeriodiciteBadge
+            periodicite={periodicite}
+            participationScore={periodicite === 'annuelle'}
+          />
+        </div>
+        <IndicateurValeursTable
+          indicateur={{
+            titre: 'Part électrique du parc de véhicules',
+            unite: '%',
+            periodicite,
           }}
-          openState={{ isOpen, setIsOpen }}
+          resultats={prepareIndicateurPeriodeData(prepare('resultat'))}
+          objectifs={prepareIndicateurPeriodeData(prepare('objectif'))}
+          readonly={readonly}
+          addPeriode={
+            !readonly &&
+            (periodicite === 'annuelle' ? (
+              <AddIndicateurPeriodeHeader
+                periodicite={periodicite}
+                existingPeriodes={periods}
+                onAdd={(periode) => add([periode])}
+              />
+            ) : (
+              <Button size="sm" onClick={() => setIsOpen(true)}>
+                {getIndicateurPeriodPresentation(periodicite).editor.addLabel}
+              </Button>
+            ))
+          }
+          onSave={async (period, type, value) => {
+            const key = IndicateurPeriodes.key(period);
+            setValues((previous) => ({
+              ...previous,
+              [key]: {
+                ...(previous[key] ?? { resultat: null, objectif: null }),
+                [type]: value,
+              },
+            }));
+            return true;
+          }}
+          onDelete={(period) =>
+            setPeriods((previous) =>
+              previous.filter(
+                (candidate) =>
+                  IndicateurPeriodes.key(candidate) !==
+                  IndicateurPeriodes.key(period)
+              )
+            )
+          }
+          onComment={() => undefined}
         />
-      )}
-    </div>
+        {isOpen && periodicite !== 'annuelle' && (
+          <AddIndicateurPeriodesModal
+            periodicite={periodicite}
+            existingPeriodes={periods}
+            onAdd={async (periodes) => {
+              await add(periodes);
+            }}
+            openState={{ isOpen, setIsOpen }}
+          />
+        )}
+      </div>
+    </IndicateurChartProvider>
   );
 };
 

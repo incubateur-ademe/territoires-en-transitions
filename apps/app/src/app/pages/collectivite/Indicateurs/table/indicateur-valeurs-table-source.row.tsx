@@ -5,7 +5,6 @@ import {
   type IndicateurPeriode,
 } from '@tet/domain/indicateurs';
 import { TableCell } from '@tet/ui';
-import type { GetColorBySourceId } from '../data/use-indicateur-sources';
 import type { SourceType } from '../types';
 import { CellSourceName } from './cell-source-name';
 import { ADD_PERIODE_CELL_CLASSNAME } from './indicateur-valeurs-table.styles';
@@ -17,8 +16,6 @@ type Props = {
   readonly?: boolean;
   periodicite: IndicateurPeriode['periodicite'];
   showAddPeriodeColumn: boolean;
-  getColorBySourceId: GetColorBySourceId;
-  avecSnbc3: boolean;
   onSave: (
     periode: IndicateurPeriode,
     type: SourceType,
@@ -32,8 +29,6 @@ export const IndicateurValeursTableSourceRow = ({
   readonly,
   periodicite,
   showAddPeriodeColumn,
-  getColorBySourceId,
-  avecSnbc3,
   onSave,
 }: Props) => {
   const isLocal = row.source.source === 'collectivite';
@@ -43,8 +38,6 @@ export const IndicateurValeursTableSourceRow = ({
       <CellSourceName
         source={row.source}
         type={row.resultats ? 'resultat' : 'objectif'}
-        getColorBySourceId={getColorBySourceId}
-        avecSnbc3={avecSnbc3}
       />
       {periodes.map((periode) => {
         const key = IndicateurPeriodes.key(periode);
