@@ -17,8 +17,10 @@ import {
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
 import type { RouterOutput } from '@tet/api';
 import {
+  DemarchePcaetStatusEnum,
   PcaetDemandeAvisEtatEnum,
   PcaetStatutInstructionEnum,
+  type PcaetStatutInstruction,
 } from '@tet/domain/demarches';
 import { Badge, cn, PageHeader } from '@tet/ui';
 import { ReactNode, useState } from 'react';
@@ -31,6 +33,22 @@ import {
 
 type Dossier = RouterOutput['demarches']['pcaet']['getDossierInstruction'];
 
+const getStatutDeLaListe = ({
+  etat,
+  status,
+}: Pick<Dossier, 'etat' | 'status'>): PcaetStatutInstruction | null => {
+  if (status === DemarchePcaetStatusEnum.PUBLIE) {
+    return PcaetStatutInstructionEnum.ADOPTE;
+  }
+  if (status === DemarchePcaetStatusEnum.ARCHIVE) {
+    return PcaetStatutInstructionEnum.ARCHIVE;
+  }
+  if (etat === null) {
+    return PcaetStatutInstructionEnum.EN_ELABORATION;
+  }
+  return null;
+};
+
 export const DossierInstructionHeader = ({
   dossier,
   action,
@@ -39,6 +57,7 @@ export const DossierInstructionHeader = ({
   action: ReactNode;
 }) => {
   const [nowMs] = useState(() => Date.now());
+  const statutDeLaListe = getStatutDeLaListe(dossier);
   const echeance =
     dossier.avisDeadlineAt && dossier.transmittedAt
       ? getEcheanceAvis({
@@ -139,27 +158,27 @@ export const DossierInstructionHeader = ({
             </>
           ) : null}
           <MetadataSeparator />
-          {dossier.etat === null ? (
-            // Sans saisine, pas d'état à lire : le dossier est en élaboration,
-            // et c'est le statut de la liste qui le dit — le même badge qu'y
-            // porte la ligne.
+          {statutDeLaListe !== null ? (
+            // Dépôt en élaboration, adopté ou archivé : c'est le statut de la
+            // liste qui le dit, le même badge qu'y porte la ligne.
             <Badge
-              title={statutInstructionLabel(
-                PcaetStatutInstructionEnum.EN_ELABORATION,
-                { deposeAvis: dossier.titresDeposables.length > 0 }
-              )}
-              variant={STATUT_INSTRUCTION_VARIANTS.en_elaboration}
+              title={statutInstructionLabel(statutDeLaListe, {
+                deposeAvis: dossier.titresDeposables.length > 0,
+              })}
+              variant={STATUT_INSTRUCTION_VARIANTS[statutDeLaListe]}
               size="sm"
             />
           ) : (
-            <Badge
-              title={demandeAvisEtatLabel(dossier.etat, {
-                // Aucun titre à déposer : le dossier se suit, il ne s'instruit pas.
-                deposeAvis: dossier.titresDeposables.length > 0,
-              })}
-              variant={DEMANDE_AVIS_ETAT_VARIANTS[dossier.etat]}
-              size="sm"
-            />
+            dossier.etat !== null && (
+              <Badge
+                title={demandeAvisEtatLabel(dossier.etat, {
+                  // Aucun titre à déposer : le dossier se suit, il ne s'instruit pas.
+                  deposeAvis: dossier.titresDeposables.length > 0,
+                })}
+                variant={DEMANDE_AVIS_ETAT_VARIANTS[dossier.etat]}
+                size="sm"
+              />
+            )
           )}
         </MetadataLine>
       </PageHeader.Metadata>
