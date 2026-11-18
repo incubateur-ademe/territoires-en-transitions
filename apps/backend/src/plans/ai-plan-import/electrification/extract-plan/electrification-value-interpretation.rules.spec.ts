@@ -129,6 +129,11 @@ describe('Preuves des cibles interprétées', () => {
         value('parc', '2030', 'parc : 2030 en 2030', '2030'),
       ])
     ).toBe('2030');
+    expect(
+      Rules.normalize(request('parc en 2030', [targets[0]]), [
+        value('parc', '2030', 'parc en 2030'),
+      ])
+    ).toBeNull();
   });
 
   it("n'ignore pas une quantité non citée égale à une année déclarée", () => {
