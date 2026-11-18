@@ -130,4 +130,66 @@ describe('Preuves des cibles interprétées', () => {
       ])
     ).toBe('2030');
   });
+
+  it("n'ignore pas une quantité non citée égale à une année déclarée", () => {
+    const text =
+      'parc communal prévu : 8 bâtiments en 2030 ; écoles prévues : 2030 bâtiments';
+    const parc = value(
+      'parc',
+      '8',
+      'parc communal prévu : 8 bâtiments en 2030',
+      '2030'
+    );
+    expect(Rules.normalize(request(text), [parc])).toBeNull();
+    expect(
+      Rules.normalize(request(text), [
+        parc,
+        value('ecoles', '2030', 'écoles prévues : 2030 bâtiments'),
+      ])
+    ).toBe('parc: 8; ecoles: 2030');
+    for (const withoutYear of [
+      'parc : 8 bâtiments, écoles : 2030 bâtiments',
+      'parc : 8 bâtiments, écoles prévues pour 2030 bâtiments',
+    ]) {
+      expect(
+        Rules.normalize(request(withoutYear), [
+          value('parc', '8', withoutYear, '2030'),
+        ])
+      ).toBeNull();
+    }
+  });
+
+  it('exige des occurrences entières et distinctes pour les quantités', () => {
+    expect(Rules.hasEvidence('parc : 18', [value('parc', '1', '1')])).toBe(
+      false
+    );
+    expect(
+      Rules.hasEvidence('parc : 8', [
+        value('parc', '8', 'parc : 8'),
+        value('ecoles', '8', 'parc : 8'),
+      ])
+    ).toBe(false);
+    expect(
+      Rules.normalize(request('parc : 8 ; écoles : 8'), [
+        value('parc', '8', 'parc : 8'),
+        value('ecoles', '8', 'écoles : 8'),
+      ])
+    ).toBe('parc: 8; ecoles: 8');
+  });
+
+  it('autorise une année partagée, citée par deux cibles dans le même segment', () => {
+    const text = 'parc : 8 en 2030, écoles : 2';
+    expect(
+      Rules.normalize(
+        request(
+          text,
+          targets.map((target) => ({ ...target, year: 2030 }))
+        ),
+        [
+          value('parc', '8', 'parc : 8 en 2030', '2030'),
+          value('ecoles', '2', '2030, écoles : 2', '2030'),
+        ]
+      )
+    ).toBe('parc: 8; ecoles: 2');
+  });
 });

@@ -11,6 +11,7 @@ const numberLiteralPattern = new RegExp(
   `(?<![\\p{L}\\p{N}])${Values.NUMBER_LITERAL}(?![\\p{L}\\p{N}])`,
   'gu'
 );
+const unitAfterNumberPattern = new RegExp(`^\\s*(${Values.UNIT_TOKEN})`, 'u');
 
 /** Contrôles de l'aide à la lecture ; ils ne prouvent pas la justesse sémantique. */
 export class ElectrificationValueInterpretationRules {
@@ -79,47 +80,68 @@ export class ElectrificationValueInterpretationRules {
       new Set(values.map(({ key }) => key)).size !== values.length
     )
       return false;
-    const expectedNumbers: string[] = [];
-    const years = new Set<string>();
+    const sourceNumbers = new Map(
+      [...text.matchAll(numberLiteralPattern)].map((match) => [
+        match.index,
+        match[0],
+      ])
+    );
+    const quantities = new Set<number>();
+    const years = new Set<number>();
     for (const value of values) {
+      const quoted = this.readQuotedNumbers(text, value);
       if (
-        !text.includes(value.quote) ||
+        !quoted ||
         !value.quote.includes(value.number) ||
         Values.number(value.number) === null ||
-        !this.numbers(value.quote).includes(
-          Values.numericLiteral(value.number)
-        ) ||
-        (value.unit !== null && !value.quote.includes(value.unit)) ||
-        (value.year !== null &&
-          (!/^[1-9]\d{3}$/.test(value.year) ||
-            !this.numbers(value.quote).includes(value.year)))
+        (value.unit !== null && !value.quote.includes(value.unit))
       )
         return false;
-      const quotedNumbers = this.numbers(value.quote);
-      const justifiedNumbers = [
-        Values.numericLiteral(value.number),
-        ...(value.year === null ? [] : [value.year]),
-      ];
+      const quantityPosition = quoted.quoteStart + quoted.number.index;
       if (
-        JSON.stringify(quotedNumbers.sort()) !==
-        JSON.stringify(justifiedNumbers.sort())
+        sourceNumbers.get(quantityPosition) !== quoted.number[0] ||
+        quantities.has(quantityPosition) ||
+        years.has(quantityPosition)
       )
         return false;
-      expectedNumbers.push(Values.numericLiteral(value.number));
-      if (value.year !== null) years.add(value.year);
+      quantities.add(quantityPosition);
+      if (quoted.year) {
+        const yearPosition = quoted.quoteStart + quoted.year.index;
+        if (
+          sourceNumbers.get(yearPosition) !== quoted.year[0] ||
+          quantities.has(yearPosition)
+        )
+          return false;
+        years.add(yearPosition);
+      }
     }
-    // Retirer d'abord les quantités, même si leur littéral est égal à une année.
-    const remaining = this.numbers(text);
-    for (const number of expectedNumbers) {
-      const index = remaining.indexOf(number);
-      if (index < 0) return false;
-      remaining.splice(index, 1);
-    }
-    // Une même année peut qualifier plusieurs valeurs, mais ne peut pas être inventée.
-    return (
-      remaining.every((number) => years.has(number)) &&
-      [...years].every((year) => remaining.includes(year))
+    // Une année peut être partagée, mais chaque quantité a sa propre occurrence.
+    return quantities.size + years.size === sourceNumbers.size;
+  }
+
+  private static readQuotedNumbers(text: string, value: InterpretedValue) {
+    const quoteStart = text.indexOf(value.quote);
+    if (quoteStart < 0) return null;
+    const numbers = [...value.quote.matchAll(numberLiteralPattern)];
+    if (numbers.length !== (value.year === null ? 1 : 2)) return null;
+    const year =
+      value.year === null
+        ? undefined
+        : numbers.find(
+            (match) =>
+              match[0] === value.year &&
+              /^[1-9]\d{3}$/.test(match[0]) &&
+              /(?:\b(?:en|pour|annee|d'ici)|\()\s*$/.test(
+                Values.normalize(text.slice(0, quoteStart + match.index))
+              )
+          );
+    if (value.year !== null && !year) return null;
+    const number = numbers.find(
+      (match) =>
+        match !== year &&
+        Values.numericLiteral(match[0]) === Values.numericLiteral(value.number)
     );
+    return number ? { quoteStart, number, year } : null;
   }
 
   static normalize(
@@ -165,12 +187,9 @@ export class ElectrificationValueInterpretationRules {
     text: string,
     value: InterpretedValue
   ): ValueSegment | null {
-    const number = [...value.quote.matchAll(numberLiteralPattern)].find(
-      ([literal]) =>
-        Values.numericLiteral(literal) === Values.numericLiteral(value.number)
-    );
-    if (!number) return null;
-    const quoteStart = text.indexOf(value.quote);
+    const quoted = this.readQuotedNumbers(text, value);
+    if (!quoted) return null;
+    const { quoteStart, number } = quoted;
     const numberStart = quoteStart + number.index;
     const before = text.slice(0, numberStart);
     const segmentStart =
@@ -220,11 +239,20 @@ export class ElectrificationValueInterpretationRules {
         this.numbers(segment.quote).length !== this.numbers(value.quote).length)
     )
       return false;
+    const units = (
+      request.kind === 'target'
+        ? request.targets.flatMap(({ unit, units }) => [unit, ...units])
+        : [request.unit]
+    ).flatMap((unit) => (unit === null ? [] : [Values.normalize(unit)]));
+    const text = Values.normalize(segment.text);
     return [
-      ...Values.normalize(segment.text).matchAll(
-        /(?:\b(?:en|pour|annee|d'ici)\s+|\()([1-9]\d{3})\b/g
-      ),
-    ].every(([, year]) => Number(year) === expected);
+      ...text.matchAll(/(?:\b(?:en|pour|annee|d'ici)\s+|\()([1-9]\d{3})\b/g),
+    ].every((match) => {
+      const unit = text
+        .slice(match.index + match[0].length)
+        .match(unitAfterNumberPattern)?.[1];
+      return Number(match[1]) === expected && (!unit || !units.includes(unit));
+    });
   }
 
   /** Une citation tronquée ne doit pas faire disparaître l'unité accolée au nombre. */
@@ -233,9 +261,7 @@ export class ElectrificationValueInterpretationRules {
     value: InterpretedValue,
     segment: ValueSegment
   ): boolean {
-    const unit = segment.afterNumber.match(
-      new RegExp(`^\\s*(${Values.UNIT_TOKEN})`, 'u')
-    )?.[1];
+    const unit = segment.afterNumber.match(unitAfterNumberPattern)?.[1];
     // Ces mots relient une quantité à son contexte ; ils ne sont pas des unités.
     if (
       !unit ||

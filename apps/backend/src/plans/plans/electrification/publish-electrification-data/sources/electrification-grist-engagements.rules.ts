@@ -109,7 +109,11 @@ export class ElectrificationGristEngagementsRules {
         : child;
       // Un qualificatif simple hérite de l'unité du total. Une autre unité
       // explicite ("% rapides", "kW rapides"...) ne décrit pas un sous-ensemble.
-      if (!/^(?:\p{Lu}?\p{Ll}+)(?:-\p{Ll}+)*$/u.test(qualifier)) {
+      if (
+        !/^(?:\p{Lu}?\p{Ll}+|\p{Lu}+)(?:-(?:\p{Ll}+|\p{Lu}+))*$/u.test(
+          qualifier
+        )
+      ) {
         throw new Error('Unité ou qualificatif de sous-cible Grist ambigu');
       }
     }
