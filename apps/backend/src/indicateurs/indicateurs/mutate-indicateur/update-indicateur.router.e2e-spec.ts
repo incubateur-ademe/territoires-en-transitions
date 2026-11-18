@@ -24,7 +24,7 @@ import { createThematique } from '@tet/backend/shared/shared.test-fixture';
 import { thematiqueTable } from '@tet/backend/shared/thematiques/thematique.table';
 import { Collectivite } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
-import { and, eq, isNull } from 'drizzle-orm';
+import { and, eq, isNull, sql } from 'drizzle-orm';
 import { describe, expect, onTestFinished, test } from 'vitest';
 import { createIndicateurPerso } from '../indicateur-perso.test-fixture';
 import { indicateurCollectiviteTable } from '../../indicateur/indicateur-collectivite.table';
@@ -82,6 +82,13 @@ describe('UpdateIndicateurRouter', () => {
       return indicateur.unite;
     };
 
+    const readRowVersion = async (indicateurId: number) => {
+      const { rows } = await databaseService.db.execute<{ version: string }>(
+        sql`SELECT xmin::text AS version FROM ${indicateurDefinitionTable} WHERE ${indicateurDefinitionTable.id} = ${indicateurId}`
+      );
+      return rows[0].version;
+    };
+
     test('propage la nouvelle unité du parent à ses sous-indicateurs', async () => {
       const { caller, parentId, childId } = await createParentWithChild();
 
@@ -93,6 +100,69 @@ describe('UpdateIndicateurRouter', () => {
 
       expect(await readUnite(parentId)).toBe('kg');
       expect(await readUnite(childId)).toBe('kg');
+    });
+
+    test('réaligne un sous-indicateur dont l’unité a dérivé quand le parent est réenregistré avec la même unité', async () => {
+      const { caller, parentId, childId } = await createParentWithChild();
+      await databaseService.db
+        .update(indicateurDefinitionTable)
+        .set({ unite: 'kg' })
+        .where(eq(indicateurDefinitionTable.id, childId));
+
+      await caller.indicateurs.indicateurs.update({
+        collectiviteId: collectivite.id,
+        indicateurId: parentId,
+        indicateurFields: { unite: 't' },
+      });
+
+      expect(await readUnite(parentId)).toBe('t');
+      expect(await readUnite(childId)).toBe('t');
+    });
+
+    test('ne réécrit pas un sous-indicateur déjà aligné quand le parent est réenregistré avec la même unité', async () => {
+      const { caller, parentId, childId } = await createParentWithChild();
+      const alignedSousIndicateurId =
+        await caller.indicateurs.indicateurs.create({
+          collectiviteId: collectivite.id,
+          titre: 'Biodéchets',
+          parentId,
+        });
+      await databaseService.db
+        .update(indicateurDefinitionTable)
+        .set({ unite: 'kg' })
+        .where(eq(indicateurDefinitionTable.id, childId));
+      const versionBefore = await readRowVersion(alignedSousIndicateurId);
+
+      await caller.indicateurs.indicateurs.update({
+        collectiviteId: collectivite.id,
+        indicateurId: parentId,
+        indicateurFields: { unite: 't' },
+      });
+
+      expect(await readUnite(childId)).toBe('t');
+      expect(await readRowVersion(alignedSousIndicateurId)).toBe(versionBefore);
+    });
+
+    test('ne propage pas l’unité d’un sous-indicateur désaligné à ses propres sous-indicateurs', async () => {
+      const { caller, childId } = await createParentWithChild();
+      const grandChildId = await caller.indicateurs.indicateurs.create({
+        collectiviteId: collectivite.id,
+        titre: 'Verre',
+        parentId: childId,
+      });
+      await databaseService.db
+        .update(indicateurDefinitionTable)
+        .set({ unite: 'kg' })
+        .where(eq(indicateurDefinitionTable.id, childId));
+
+      await caller.indicateurs.indicateurs.update({
+        collectiviteId: collectivite.id,
+        indicateurId: childId,
+        indicateurFields: { unite: 'kg' },
+      });
+
+      expect(await readUnite(childId)).toBe('kg');
+      expect(await readUnite(grandChildId)).toBe('t');
     });
 
     test('propage la nouvelle unité de la racine jusqu’au petit-enfant', async () => {

@@ -701,8 +701,19 @@ describe('UpdateIndicateurService — unité d’un groupe', () => {
     expect(repository.updateDescendantsUnite).not.toHaveBeenCalled();
   });
 
-  it('ne propage rien quand l’unité du parent est inchangée', async () => {
+  it('propage aussi une unité inchangée pour réaligner les sous-indicateurs', async () => {
     const { service, repository } = setup({ hasChildren: true });
+
+    await service.updateIndicateur(changeUnite('kg'), { user });
+
+    expect(repository.updateDescendantsUnite).toHaveBeenCalledWith(
+      { indicateurId: 42, collectiviteId: 1, unite: 'kg' },
+      expect.anything()
+    );
+  });
+
+  it('ne propage rien depuis un sous-indicateur qui a lui-même des sous-indicateurs', async () => {
+    const { service, repository } = setup({ parentId: 7, hasChildren: true });
 
     await service.updateIndicateur(changeUnite('kg'), { user });
 
