@@ -1,0 +1,105 @@
+{
+  "source": "https://grist.numerique.gouv.fr/o/100te/m4aC9Epwz7ot/Referentiel-dactions-feuilles-de-routes/p/78",
+  "readOn": "2026-11-18",
+  "records": [
+    {
+      "id": 1,
+      "fields": {
+        "Numero": 1,
+        "Titre": "Logements privés : sortie du fioul et du gaz",
+        "Code_signe": "E01+E02",
+        "Parametre_signe": "Électrifier d'ici 2030 ___ % des logements chauffés au fioul (E01) et ___ % des logements chauffés au gaz (E02)"
+      }
+    },
+    {
+      "id": 2,
+      "fields": {
+        "Numero": 2,
+        "Titre": "Logements sociaux : sortie du gaz",
+        "Code_signe": "E04",
+        "Parametre_signe": "Électrifier d'ici 2030 ___ % des logements sociaux chauffés au gaz"
+      }
+    },
+    {
+      "id": 3,
+      "fields": {
+        "Numero": 3,
+        "Titre": "Bâtiments publics : sortie du fioul et du gaz",
+        "Code_signe": "E05",
+        "Parametre_signe": "Électrifier d'ici 2030 ___ % des bâtiments publics chauffés au gaz ou au fioul"
+      }
+    },
+    {
+      "id": 4,
+      "fields": {
+        "Numero": 4,
+        "Titre": "Réseau de gaz : décommissionnement de certaines portions",
+        "Code_signe": "E03",
+        "Parametre_signe": "Travailler au décommissionnement de certaines portions du réseau de gaz (non chiffré)"
+      }
+    },
+    {
+      "id": 5,
+      "fields": {
+        "Numero": 5,
+        "Titre": "Véhicules particuliers électriques",
+        "Code_signe": "E06",
+        "Parametre_signe": "Électrifier d'ici 2030 ___ % du parc de voitures particulières immatriculées sur le territoire"
+      }
+    },
+    {
+      "id": 6,
+      "fields": {
+        "Numero": 6,
+        "Titre": "Bornes de recharge",
+        "Code_signe": "E07",
+        "Parametre_signe": "Installer d'ici 2030 ___ bornes de recharge publiques, dont ___ rapides"
+      }
+    },
+    {
+      "id": 7,
+      "fields": {
+        "Numero": 7,
+        "Titre": "Recharge des poids lourds",
+        "Code_signe": "E12",
+        "Parametre_signe": "Identifier ___ site clés en main pour la recharge des poids lourds électriques"
+      }
+    },
+    {
+      "id": 8,
+      "fields": {
+        "Numero": 8,
+        "Titre": "Autobus électriques",
+        "Code_signe": "E08",
+        "Parametre_signe": "Électrifier d'ici 2030 ___ % du parc d'autobus"
+      }
+    },
+    {
+      "id": 9,
+      "fields": {
+        "Numero": 9,
+        "Titre": "Artisans",
+        "Code_signe": "E09",
+        "Parametre_signe": "Accompagner d'ici 2030 ___ artisans dans l'électrification de leurs équipements"
+      }
+    },
+    {
+      "id": 10,
+      "fields": {
+        "Numero": 10,
+        "Titre": "Industrie",
+        "Code_signe": "E10",
+        "Parametre_signe": "Électrifier d'ici 2030 ___ MWh de consommation des sites industriels"
+      }
+    },
+    {
+      "id": 11,
+      "fields": {
+        "Numero": 11,
+        "Titre": "Agriculture",
+        "Code_signe": "E11",
+        "Parametre_signe": "Électrifier d'ici 2030 ___ MWh de consommation des exploitations agricoles"
+      }
+    }
+  ]
+}

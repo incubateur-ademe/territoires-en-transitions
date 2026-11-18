@@ -4,6 +4,7 @@ import assert from 'node:assert';
 import { ElectrificationCatalogueRules } from '../electrification-catalogue.rules';
 import { ElectrificationGristAdapter } from './electrification-grist.adapter';
 import type { ElectrificationGristData } from './electrification-grist.schema';
+import gristAxes from './__fixtures__/electrification-grist-axes.json';
 
 const source: ElectrificationGristData = {
   Axes: [
@@ -12,8 +13,17 @@ const source: ElectrificationGristData = {
       fields: {
         Numero: 13,
         Titre: 'Nouvel axe',
-        Code_signe: 'E42+E99',
-        Parametre_signe: 'Action qualitative',
+        Code_signe: 'E42',
+        Parametre_signe: "Rénover d'ici 2040 ___ bâtiments, dont ___ écoles",
+      },
+    },
+    {
+      id: 2,
+      fields: {
+        Numero: 14,
+        Titre: 'Diagnostic',
+        Code_signe: 'E99',
+        Parametre_signe: 'Préparer un diagnostic (non chiffré)',
       },
     },
   ],
@@ -33,69 +43,38 @@ const reference = (
   unite: null,
   periodicite: null,
   version: 'test',
-  lienSource: 'https://grist.numerique.gouv.fr/doc-test',
-  libelleSource: null,
-  uniteImport: null,
-  typeImport: null,
-  ciblesImport: null,
-  anneeCible: null,
-  valeurMin: null,
-  valeurMax: null,
-  plafondCible: null,
-  libellesCible: null,
-  unitesAcceptees: null,
+  lienSource: gristAxes.source,
   ...fields,
 });
 const references = () => [
-  reference('E42', {
-    libelleSource: 'Rénover le parc et ses écoles',
-    typeImport: 'cibles',
-    ciblesImport: 'parc|ecoles',
-  }),
-  reference('E42.parc', {
+  reference('E42.total', {
     identifiantReferentiel: 'parc-test',
     unite: 'nb',
     periodicite: 'annuelle',
-    uniteImport: 'bâtiments',
-    anneeCible: 2040,
-    valeurMin: 0,
-    libellesCible: 'parc|ensemble',
-    unitesAcceptees: 'bâtiment',
-  }),
-  reference('E42.ecoles', {
-    libelleSource: 'Écoles rénovées',
-    uniteImport: 'bâtiments',
-    anneeCible: 2040,
-    valeurMin: 0,
-    plafondCible: 'parc',
-    libellesCible: 'écoles|école',
-    unitesAcceptees: 'bâtiment',
-  }),
-  reference('E99', {
-    typeImport: 'action',
-    libelleSource: 'Préparer un diagnostic',
   }),
 ];
-const build = (engagementReferences = references()) =>
+const build = (engagementReferences = references(), data = source) =>
   ElectrificationGristAdapter.build({
-    source,
-    sourceUrl: 'https://grist.numerique.gouv.fr/doc-test',
+    source: data,
+    sourceUrl: gristAxes.source,
     indicateurReferences: [],
     engagementReferences,
   });
 
-describe('Définitions publiées des engagements', () => {
+describe('Engagements publiés depuis Grist', () => {
   it('refuse les libellés équivalents dans un axe, mais les autorise dans des axes distincts', () => {
     const catalogue = { ...build(), version: 'test' };
-    catalogue.engagements[1].libelleSource = 'RENOVER LE PARC, ET SES ECOLES !';
+    const label = catalogue.engagements[0].libelleSource;
+    assert(label);
+    catalogue.engagements[1].libelleSource = label.toUpperCase();
+    catalogue.engagements[1].axeNumero = 13;
     expect(ElectrificationCatalogueRules.isValid(catalogue)).toBe(false);
-    catalogue.axes.push({ numero: 14, titre: 'Autre axe' });
     catalogue.engagements[1].axeNumero = 14;
     expect(ElectrificationCatalogueRules.isValid(catalogue)).toBe(true);
   });
 
-  it.each(['cycle', 'unite', 'annee'])(
-    'refuse une relation entre cibles incohérente : %s',
+  it.each(['cycle', 'unite', 'annee', 'bornes'])(
+    'refuse des règles incohérentes à la validation du catalogue : %s',
     (scenario) => {
       const catalogue = { ...build(), version: 'test' };
       expect(ElectrificationCatalogueRules.isValid(catalogue)).toBe(true);
@@ -104,22 +83,26 @@ describe('Définitions publiées des engagements', () => {
       if (scenario === 'cycle') parent.reglesImport.plafondCible = child.key;
       if (scenario === 'unite') child.uniteImport = '%';
       if (scenario === 'annee') child.reglesImport.annee = 2050;
+      if (scenario === 'bornes') {
+        child.reglesImport.minimum = 10;
+        child.reglesImport.maximum = 5;
+      }
       expect(ElectrificationCatalogueRules.isValid(catalogue)).toBe(false);
     }
   );
 
-  it('publie des codes, cibles et années hors du canevas initial, avec une correspondance TeT encore en attente', () => {
+  it('lit de nouveaux codes, cibles et années depuis Grist sans ligne de définition ni mapping obligatoire', () => {
     const catalogue = build();
     expect(catalogue.engagementsFormat).toBe(2);
     expect(catalogue.engagements).toHaveLength(2);
     expect(catalogue.engagements[0]).toMatchObject({
       code: 'E42',
       axeNumero: 13,
-      libelleSource: 'Rénover le parc et ses écoles',
+      libelleSource: source.Axes[0].fields.Parametre_signe,
       actionTitre: null,
       cibles: [
         {
-          key: 'parc',
+          key: 'total',
           identifiantReferentiel: 'parc-test',
           unite: 'nb',
           uniteImport: 'bâtiments',
@@ -129,40 +112,106 @@ describe('Définitions publiées des engagements', () => {
             minimum: 0,
             maximum: null,
             plafondCible: null,
-            libelles: ['parc', 'ensemble'],
-            unites: ['bâtiment'],
           },
         },
         {
           key: 'ecoles',
           identifiantReferentiel: null,
           validation: 'pending',
-          libelleSource: 'Écoles rénovées',
-          reglesImport: { annee: 2040, plafondCible: 'parc' },
+          libelleSource: 'écoles',
+          reglesImport: { annee: 2040, plafondCible: 'total' },
         },
       ],
     });
-    expect(catalogue.engagements[1]).toEqual({
+    expect(catalogue.engagements[1]).toMatchObject({
       code: 'E99',
-      axeNumero: 13,
-      libelleSource: 'Préparer un diagnostic',
-      actionTitre: 'Action qualitative',
+      actionTitre: 'Préparer un diagnostic',
       cibles: [],
     });
+    expect(build([]).engagements[0].cibles).toHaveLength(2);
   });
 
-  it.each(['definition', 'cible', 'plafond', 'orpheline'])(
-    'refuse une configuration incomplète ou incohérente : %s',
-    (scenario) => {
-      const rows = references();
-      if (scenario === 'definition') rows.splice(0, 1);
-      if (scenario === 'cible') rows.splice(1, 1);
-      if (scenario === 'plafond') rows[2].plafondCible = 'absente';
-      if (scenario === 'orpheline')
-        rows.push(
-          reference('E123', { typeImport: 'action', libelleSource: 'Sans axe' })
-        );
-      expect(() => build(rows)).toThrow();
+  it('lit les colonnes existantes du Grist : engagements regroupés, pourcentages, énergie et actions non datées', () => {
+    const data = structuredClone(source);
+    data.Axes = structuredClone(gristAxes.records);
+    data.Axes[0].fields.Code_signe = 'E02 + E01';
+    const catalogue = build(
+      [
+        reference('E07.total', {
+          identifiantReferentiel: 's_26',
+          unite: 'Nombre',
+          periodicite: 'annuelle',
+        }),
+        reference('E07.rapides', {
+          identifiantReferentiel: 'elec_6_b',
+          unite: 'Nombre',
+          periodicite: 'annuelle',
+        }),
+      ],
+      data
+    );
+    expect(
+      ElectrificationCatalogueRules.isValid({
+        ...catalogue,
+        version: 'grist-test',
+      })
+    ).toBe(true);
+    expect(catalogue.engagements).toHaveLength(12);
+    const [fioul, gaz] = catalogue.engagements;
+    expect(fioul.libelleSource).toBe(
+      "Électrifier d'ici 2030 ___ % des logements chauffés au fioul"
+    );
+    expect(gaz.libelleSource).toBe(
+      "Électrifier d'ici 2030 ___ % des logements chauffés au gaz"
+    );
+    expect(fioul.cibles[0]).toMatchObject({
+      key: 'principale',
+      uniteImport: '%',
+      reglesImport: { annee: 2030, maximum: 100 },
+    });
+    expect(
+      catalogue.engagements.find(({ code }) => code === 'E07')?.cibles
+    ).toMatchObject([
+      { key: 'total', identifiantReferentiel: 's_26', uniteImport: 'bornes' },
+      {
+        key: 'rapides',
+        identifiantReferentiel: 'elec_6_b',
+        reglesImport: { plafondCible: 'total' },
+      },
+    ]);
+    expect(
+      catalogue.engagements.find(({ code }) => code === 'E10')?.cibles[0]
+    ).toMatchObject({
+      uniteImport: 'MWh',
+      reglesImport: { annee: 2030, maximum: null, unites: ['MWh'] },
+    });
+    expect(
+      catalogue.engagements.find(({ code }) => code === 'E12')
+    ).toMatchObject({ actionTitre: 'Recharge des poids lourds', cibles: [] });
+  });
+
+  it.each(['E42.inconnue', 'E99.principale', 'E123.principale', 'E42'])(
+    'refuse une référence sans cible Grist : %s',
+    (code) => {
+      expect(() => build([...references(), reference(code)])).toThrow();
+    }
+  );
+
+  it.each([
+    ['E42+E43', "Rénover d'ici 2040 ___ bâtiments et ___ écoles"],
+    ['E42', "Rénover d'ici 2040 ___ bâtiments (E42) et ___ écoles (E43)"],
+    ['E42', "Rénover d'ici 2040 ___ bâtiments, dont ___ écoles en 2050"],
+    ['E42', "Rénover d'ici 2040 ___ bâtiments et ___ écoles"],
+    ['E42', "Rénover d'ici demain ___ bâtiments"],
+  ])(
+    'refuse une formulation ambiguë sans remplacer les données manquantes : %s / %s',
+    (code, label) => {
+      const data = structuredClone(source);
+      Object.assign(data.Axes[0].fields, {
+        Code_signe: code,
+        Parametre_signe: label,
+      });
+      expect(() => build([], data)).toThrow();
     }
   );
 });

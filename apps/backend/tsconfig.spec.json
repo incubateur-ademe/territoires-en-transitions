@@ -27,6 +27,7 @@
     "src/**/*.live-spec.ts",
     "src/utils/assistant/eval/baseline.json",
     "src/plans/ai-plan-import/electrification/extract-plan/__fixtures__/electrification-v4.template.json",
+    "src/plans/plans/electrification/publish-electrification-data/sources/__fixtures__/electrification-grist-axes.json",
     "test/**/*.d.ts",
     "test/**/*.ts"
   ],
