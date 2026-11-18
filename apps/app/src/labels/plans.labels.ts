@@ -487,6 +487,8 @@ export const plansLabels = {
     `Voir plus (${count} ${count > 1 ? 'axes' : 'axe'})`,
   avancementParAxeVoirMoins: 'Voir moins',
   avancementParAxeAucunAxe: "Ce plan n'a pas encore d'axe.",
+  avancementParAxeAucunAxeCorrespondant:
+    'Aucun axe ne correspond à votre recherche.',
   evolutionStatutsTitre: 'Évolution des statuts sur la période',
   evolutionStatutsPeriodeTitre: ({
     debut,
