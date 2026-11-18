@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  ForbiddenException,
-  HttpException,
-} from '@nestjs/common';
+import { BadRequestException, ForbiddenException } from '@nestjs/common';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { isFailedResult } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { CommonError } from '@tet/backend/utils/trpc/common-errors';
@@ -80,31 +76,9 @@ export async function captureIndicateurValeursResultOf<Data>(
   return captured.success ? captured.data : captured;
 }
 
-/** Compatibility boundary for callers still using the historical throwing API. */
 export function getIndicateurValeursDataOrThrow<T>(
   result: Result<T, IndicateurValeursError>
 ): T {
   if (result.success) return result.data;
-  throw toThrowable(result);
-}
-
-function toThrowable({
-  error,
-  cause,
-}: {
-  error: IndicateurValeursError;
-  cause?: Error;
-}): unknown {
-  if (cause instanceof HttpException) return cause;
-  return match(error)
-    .with(
-      'UNAUTHORIZED',
-      () => new ForbiddenException(cause?.message ?? error, { cause })
-    )
-    .with(
-      'INVALID_VALUE',
-      () => new BadRequestException(cause?.message ?? error, { cause })
-    )
-    .with('USER_VALUE_NOT_ALLOWED', 'DATABASE_ERROR', () => cause ?? error)
-    .exhaustive();
+  throw result;
 }
