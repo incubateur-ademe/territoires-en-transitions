@@ -10,11 +10,11 @@ import { useQueryStates } from 'nuqs';
 import { ReactElement, useEffect, useState } from 'react';
 import { AiImportStatusView } from './ai-import-status.view';
 import { aiImportQueryState } from './ai-import.query-state';
-import {
+import { AiImportForm } from './ai-import.form';
+import type {
   AiImportDefaults,
-  AiImportForm,
   AiImportSubmission,
-} from './ai-import.form';
+} from './ai-import-form.rules';
 import {
   useEnqueueAiImport,
   type AiImportOrigine,

@@ -16,7 +16,7 @@ import { appLabels } from '@/app/labels/catalog';
 import { useListDemarchePlanLinks } from '@/app/demarches/data/use-list-plan-links';
 import { DeleteFailedImportPlanButton } from '@/app/plans/plans/components/delete-failed-import-plan.button';
 import { PlanImportStatusBadge } from '@/app/plans/plans/components/plan-import-status.badge';
-import type { AiImportDefaults } from '@/app/plans/plans/import-plan/ai-import.form';
+import type { AiImportDefaults } from '@/app/plans/plans/import-plan/ai-import-form.rules';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import {
   PlanListItem,

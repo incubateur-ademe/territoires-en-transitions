@@ -1,7 +1,7 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
-import { isAiImportAcceptedFilename } from '@/app/plans/plans/import-plan/ai-import.form';
+import { isAiImportAcceptedFilename } from '@/app/plans/plans/import-plan/ai-import-form.rules';
 import {
   getCurrentImportStage,
   getImportProgressPercent,

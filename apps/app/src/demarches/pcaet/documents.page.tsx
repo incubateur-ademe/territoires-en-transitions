@@ -22,7 +22,7 @@ import {
 } from '@/app/demarches/use-demarche-tracker';
 import { appLabels } from '@/app/labels/catalog';
 import { useDownloadDocument } from '@/app/collectivites/documents/data/use-download-document';
-import { isAiImportAcceptedFilename } from '@/app/plans/plans/import-plan/ai-import.form';
+import { isAiImportAcceptedFilename } from '@/app/plans/plans/import-plan/ai-import-form.rules';
 import PictoDocument from '@/app/ui/pictogrammes/PictoDocument';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ErrorCard } from '@/app/utils/error/error.card';

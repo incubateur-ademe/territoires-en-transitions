@@ -5,7 +5,7 @@ import { appLabels } from '@/app/labels/catalog';
 import { BetaLabel } from '@/app/ui/beta.label';
 import { useDemarcheId } from '@/app/demarches/use-demarche-id';
 import { AiImportFlow } from '@/app/plans/plans/import-plan/ai-import.flow';
-import type { AiImportDefaults } from '@/app/plans/plans/import-plan/ai-import.form';
+import type { AiImportDefaults } from '@/app/plans/plans/import-plan/ai-import-form.rules';
 import { useGetPlan } from '@/app/plans/plans/show-plan/data/use-get-plan';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { Alert, Button, Event, Modal, useEventTracker } from '@tet/ui';
