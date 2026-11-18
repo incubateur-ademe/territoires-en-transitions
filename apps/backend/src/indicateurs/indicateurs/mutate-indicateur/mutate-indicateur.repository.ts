@@ -238,7 +238,8 @@ export class MutateIndicateurRepository {
       .where(
         and(
           eq(indicateurDefinitionTable.collectiviteId, collectiviteId),
-          inArray(indicateurDefinitionTable.id, descendantIdsQuery)
+          inArray(indicateurDefinitionTable.id, descendantIdsQuery),
+          sql`${indicateurDefinitionTable.unite} IS DISTINCT FROM ${unite}`
         )
       );
   }

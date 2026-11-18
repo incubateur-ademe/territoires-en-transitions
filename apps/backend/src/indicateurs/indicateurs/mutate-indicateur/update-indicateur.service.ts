@@ -60,16 +60,22 @@ const hasDefinitionFieldsToUpdate = ({
   unite !== undefined ||
   totalEstCumulDesSousIndicateurs !== undefined;
 
-const hasChildrenToUpdate = ({
+const getUniteToPropagate = ({
   indicateurInGroup,
   unite,
 }: {
   indicateurInGroup: IndicateurInGroup | null;
-  unite: string;
-}): boolean =>
-  indicateurInGroup !== null &&
-  indicateurInGroup.hasChildren &&
-  indicateurInGroup.unite !== unite;
+  unite?: string;
+}): string | null => {
+  const isRootWithSousIndicateurs =
+    indicateurInGroup !== null &&
+    indicateurInGroup.parentId === null &&
+    indicateurInGroup.hasChildren;
+  if (unite === undefined || !isRootWithSousIndicateurs) {
+    return null;
+  }
+  return unite;
+};
 
 const isUniteLocked = ({
   indicateurInGroup,
@@ -357,12 +363,13 @@ export class UpdateIndicateurService {
         }
       }
 
-      if (
-        unite !== undefined &&
-        hasChildrenToUpdate({ indicateurInGroup, unite })
-      ) {
+      const uniteToPropagate = getUniteToPropagate({
+        indicateurInGroup,
+        unite,
+      });
+      if (uniteToPropagate !== null) {
         await this.repository.updateDescendantsUnite(
-          { indicateurId, collectiviteId, unite },
+          { indicateurId, collectiviteId, unite: uniteToPropagate },
           tx
         );
       }
