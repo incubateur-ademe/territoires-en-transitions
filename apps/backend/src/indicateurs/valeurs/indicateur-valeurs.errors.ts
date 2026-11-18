@@ -1,6 +1,11 @@
-import { BadRequestException, ForbiddenException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  HttpException,
+} from '@nestjs/common';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { isFailedResult } from '@tet/backend/utils/transaction/transaction-manager.service';
+import { match } from 'ts-pattern';
 import { UserIndicateurValeurNotAllowedException } from './write-indicateur-valeurs/user-indicateur-valeur.errors';
 
 export type IndicateurValeursError =
@@ -43,6 +48,27 @@ export async function captureIndicateurValeursResultOf<Data>(
 export function getIndicateurValeursDataOrThrow<T>(
   result: Result<T, IndicateurValeursError>
 ): T {
-  if (!result.success) throw result.cause ?? result.error;
-  return result.data;
+  if (result.success) return result.data;
+  throw toThrowable(result);
+}
+
+function toThrowable({
+  error,
+  cause,
+}: {
+  error: IndicateurValeursError;
+  cause?: Error;
+}): unknown {
+  if (cause instanceof HttpException) return cause;
+  return match(error)
+    .with(
+      'UNAUTHORIZED',
+      () => new ForbiddenException(cause?.message ?? error, { cause })
+    )
+    .with(
+      'INVALID_VALUE',
+      () => new BadRequestException(cause?.message ?? error, { cause })
+    )
+    .with('USER_VALUE_NOT_ALLOWED', 'DATABASE_ERROR', () => cause ?? error)
+    .exhaustive();
 }
