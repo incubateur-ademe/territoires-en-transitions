@@ -7,12 +7,24 @@ import {
   buildSousIndicateursTableData,
   type SousIndicateurDatedValeur,
   type SousIndicateurNode,
+  type SousIndicateursSource,
   type SousIndicateursTableData,
 } from './sous-indicateurs-table.rules';
 
-export type SousIndicateursTableState =
+export type SousIndicateursNotReadyState =
   | Readonly<{ status: 'loading' }>
-  | Readonly<{ status: 'error' }>
+  | Readonly<{ status: 'error' }>;
+
+export type SousIndicateursSourceState =
+  | SousIndicateursNotReadyState
+  | Readonly<{
+      status: 'ready';
+      collectiviteId: number;
+      source: SousIndicateursSource;
+    }>;
+
+export type SousIndicateursTableState =
+  | SousIndicateursNotReadyState
   | Readonly<{
       status: 'ready';
       collectiviteId: number;
@@ -29,7 +41,14 @@ export type ParentTotals = Readonly<{
   totals: readonly IndicateurTotalAtDate[];
 }>;
 
-type ValeursIndicateurs = ListIndicateurValeurOuput['indicateurs'];
+export type ValeursIndicateurs = ListIndicateurValeurOuput['indicateurs'];
+
+export type SousIndicateursOutcomes = Readonly<{
+  collectiviteId: number;
+  nodes: QueryOutcome<readonly SousIndicateurNode[]>;
+  valeurs: QueryOutcome<ValeursIndicateurs>;
+  totals: QueryOutcome<readonly ParentTotals[]>;
+}>;
 
 const NO_VALEURS: ValeursIndicateurs = [];
 
@@ -85,19 +104,14 @@ export const toValeursByIndicateurId = (
     ])
   );
 
-export const toSousIndicateursTableState = ({
+export const toSousIndicateursSourceState = ({
   indicateurId,
   collectiviteId,
   nodes,
   valeurs,
   totals,
-}: {
-  indicateurId: number;
-  collectiviteId: number;
-  nodes: QueryOutcome<readonly SousIndicateurNode[]>;
-  valeurs: QueryOutcome<ValeursIndicateurs>;
-  totals: QueryOutcome<readonly ParentTotals[]>;
-}): SousIndicateursTableState => {
+}: SousIndicateursOutcomes &
+  Readonly<{ indicateurId: number }>): SousIndicateursSourceState => {
   if (
     nodes.status === 'error' ||
     valeurs.status === 'error' ||
@@ -120,8 +134,7 @@ export const toSousIndicateursTableState = ({
   return {
     status: 'ready',
     collectiviteId,
-    data: buildSousIndicateursTableData({
-      rootId: indicateurId,
+    source: {
       nodesById: new Map(nodes.data.map((node) => [node.id, node])),
       valeursByIndicateurId: toValeursByIndicateurId(resolvedValeurs.data),
       totalsByIndicateurId: new Map(
@@ -130,6 +143,30 @@ export const toSousIndicateursTableState = ({
           parentTotals.totals,
         ])
       ),
+    },
+  };
+};
+
+export const toSousIndicateursTableState = ({
+  indicateurId,
+  ...queries
+}: SousIndicateursOutcomes &
+  Readonly<{
+    indicateurId: number;
+  }>): SousIndicateursTableState => {
+  const sourceState = toSousIndicateursSourceState({
+    indicateurId,
+    ...queries,
+  });
+  if (sourceState.status !== 'ready') {
+    return sourceState;
+  }
+  return {
+    status: 'ready',
+    collectiviteId: sourceState.collectiviteId,
+    data: buildSousIndicateursTableData({
+      rootId: indicateurId,
+      ...sourceState.source,
     }),
   };
 };

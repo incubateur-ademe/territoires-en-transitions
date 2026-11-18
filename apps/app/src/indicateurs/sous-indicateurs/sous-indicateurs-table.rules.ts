@@ -64,7 +64,7 @@ type TableNode = Readonly<{
 
 type CellsByDate = ReadonlyMap<string, SousIndicateurPeriodCells>;
 
-type BuildContext = Readonly<{
+export type SousIndicateursSource = Readonly<{
   nodesById: ReadonlyMap<number, SousIndicateurNode>;
   valeursByIndicateurId: ReadonlyMap<
     number,
@@ -143,7 +143,7 @@ const toCellsByDateFromTotals = (
     ])
   );
 
-const listChildNodes = ({
+export const listChildNodes = ({
   enfantIds,
   visitedIds,
   nodesById,
@@ -229,7 +229,7 @@ const toCellsByDateOfNode = ({
   context,
 }: {
   node: SousIndicateurNode;
-  context: BuildContext;
+  context: SousIndicateursSource;
 }): CellsByDate =>
   node.enfantIds.length > 0
     ? toCellsByDateFromTotals(context.totalsByIndicateurId.get(node.id) ?? [])
@@ -263,7 +263,8 @@ export const hasNotAdditiveObjectif = (
 export const buildSousIndicateursTableData = ({
   rootId,
   ...context
-}: BuildContext & Readonly<{ rootId: number }>): SousIndicateursTableData => {
+}: SousIndicateursSource &
+  Readonly<{ rootId: number }>): SousIndicateursTableData => {
   const tableNodes = listRootTableNodes({
     rootId,
     nodesById: context.nodesById,
