@@ -15,6 +15,29 @@ export const indicateursLabels = {
     `Supprimer la période ${periode}`,
   indicateurValeurAbsente: 'Non renseigné',
   indicateurDonneeIndisponible: 'Donnée indisponible',
+  indicateurSousIndicateursTotal: 'Total',
+  indicateurSousIndicateursTotalSomme: 'Total (somme)',
+  indicateurSousIndicateursObjectifDe: ({ label }: { label: string }) =>
+    `Objectif – ${label}`,
+  indicateurValeurMasquee: 'Valeur masquée',
+  indicateurTotalIncomplet: ({
+    filledCount,
+    expectedCount,
+  }: {
+    filledCount: number;
+    expectedCount: number;
+  }) => `incomplet (${filledCount}/${expectedCount})`,
+  indicateurSousIndicateursValeurs: 'Valeurs des sous-indicateurs',
+  indicateurSousIndicateursChargement: 'Chargement des sous-indicateurs',
+  indicateurSousIndicateursErreur: 'Impossible de charger les sous-indicateurs',
+  indicateurSousIndicateursGraphiqueAlternativeTableau:
+    'Les mêmes valeurs sont dans le tableau sous le graphique',
+  indicateurSousIndicateurNiveau: ({ niveau }: { niveau: number }) =>
+    `niveau ${niveau}`,
+  indicateurSousIndicateurDeplier: ({ label }: { label: string }) =>
+    `Déplier ${label}`,
+  indicateurSousIndicateurReplier: ({ label }: { label: string }) =>
+    `Replier ${label}`,
   indicateurTableDefilement: 'Défilement horizontal du tableau',
   indicateurOptions: "Plus d'options",
   indicateurTelechargerExcel: "Télécharger l'indicateur (Excel)",
