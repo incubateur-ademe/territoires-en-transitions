@@ -9,6 +9,7 @@ import { Event, Icon, useEventTracker } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
 import { BetaLabel } from '@/app/ui/beta.label';
 import { useAvailableAiImportProfiles } from '@/app/plans/plans/import-plan/data/use-available-ai-import-profiles';
+import { useSuperAdminMode } from '@/app/users/authorizations/super-admin-mode/super-admin-mode.provider';
 import CreatePlanPicto from './create.svg';
 import ImportPlanPicto from './import.svg';
 import { Link } from './link';
@@ -20,11 +21,13 @@ export const CreatePlanOptionLinksList = ({
 }) => {
   const tracker = useEventTracker();
   const { profiles } = useAvailableAiImportProfiles();
+  const { isSuperAdminRoleEnabled } = useSuperAdminMode();
+  const showAiImport = isSuperAdminRoleEnabled && profiles.length > 0;
   return (
     <div
       data-test="choix-creation-plan"
       className={cn('grid grid-cols-1 gap-4 sm:grid-cols-2', {
-        'sm:grid-cols-3': profiles.length > 0,
+        'sm:grid-cols-3': showAiImport,
       })}
     >
       <Link
@@ -39,7 +42,7 @@ export const CreatePlanOptionLinksList = ({
           tracker(Event.plans.createPlan);
         }}
       />
-      {profiles.length > 0 ? (
+      {showAiImport ? (
         <Link
           dataTest="choix-creation-plan.importer-ia"
           title={<BetaLabel>{appLabels.importPlanIaChoixTitre}</BetaLabel>}
