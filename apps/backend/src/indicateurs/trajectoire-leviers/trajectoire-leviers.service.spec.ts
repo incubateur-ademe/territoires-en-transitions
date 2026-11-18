@@ -3,7 +3,10 @@ import ListCollectivitesService from '@tet/backend/collectivites/list-collectivi
 import { TrajectoireSnbc3FeatureFlagService } from '@tet/backend/indicateurs/trajectoires/trajectoire-snbc3-feature-flag.service';
 import TrajectoiresDataService from '@tet/backend/indicateurs/trajectoires/trajectoires-data.service';
 import ManageIndicateurValeursService from '@tet/backend/indicateurs/valeurs/manage-indicateur-valeurs/manage-indicateur-valeurs.service';
+import { IndicateurValeursError } from '@tet/backend/indicateurs/valeurs/indicateur-valeurs.errors';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { buildRequesterUser } from '@tet/backend/users/models/auth.models';
+import { failure, success } from '@tet/backend/utils/result.type';
 import { GetTrajectoireLeviersDataResponse } from './get-trajectoire-leviers-data.response';
 import { TrajectoireLeviersService } from './trajectoire-leviers.service';
 
@@ -241,5 +244,89 @@ describe('TrajectoireLeviersService', () => {
 
       expect(response.secteurs[0].leviers[0].objectifReduction).toBeNull();
     });
+  });
+
+  describe('getData : échec de lecture des valeurs', () => {
+    const user = buildRequesterUser('00000000-0000-0000-0000-000000000001');
+    const input = { collectiviteId: 1 };
+    const collectivite = {
+      id: 1,
+      nom: 'Test',
+      type: 'epci',
+      regionCode: '11',
+    };
+
+    const toServiceWithFailingListing = ({
+      isSnbc3Enabled,
+      error,
+      cause,
+    }: {
+      isSnbc3Enabled: boolean;
+      error: IndicateurValeursError;
+      cause: Error;
+    }) =>
+      new TrajectoireLeviersService(
+        {
+          getCollectiviteByAnyIdentifiant: vi
+            .fn()
+            .mockResolvedValue(collectivite),
+        } as never,
+        { isAllowed: vi.fn().mockResolvedValue(success(undefined)) } as never,
+        {
+          listIndicateurValeurs: vi
+            .fn()
+            .mockResolvedValue(failure(error, cause)),
+        } as never,
+        { SNBC_SOURCE: { id: 'snbc' } } as never,
+        {
+          isTrajectoireSnbc3Enabled: vi.fn().mockResolvedValue(isSnbc3Enabled),
+        } as never
+      );
+
+    it.each([
+      { isSnbc3Enabled: false, chemin: 'SNBC' },
+      { isSnbc3Enabled: true, chemin: 'SNBC 3' },
+    ])(
+      'chemin $chemin : un refus de lecture ressort en UNAUTHORIZED avec sa cause',
+      async ({ isSnbc3Enabled }) => {
+        const cause = new Error('Droits insuffisants');
+
+        const result = await toServiceWithFailingListing({
+          isSnbc3Enabled,
+          error: 'UNAUTHORIZED',
+          cause,
+        }).getData(input, user);
+
+        expect(result).toEqual({
+          success: false,
+          error: 'UNAUTHORIZED',
+          cause,
+        });
+      }
+    );
+
+    it.each([
+      { isSnbc3Enabled: false, chemin: 'SNBC' },
+      { isSnbc3Enabled: true, chemin: 'SNBC 3' },
+    ])(
+      'chemin $chemin : une valeur invalide ressort en SERVER_ERROR avec sa cause',
+      async ({ isSnbc3Enabled }) => {
+        const cause = new Error(
+          'indicateurIds or identifiantsReferentiel required'
+        );
+
+        const result = await toServiceWithFailingListing({
+          isSnbc3Enabled,
+          error: 'INVALID_VALUE',
+          cause,
+        }).getData(input, user);
+
+        expect(result).toEqual({
+          success: false,
+          error: 'SERVER_ERROR',
+          cause,
+        });
+      }
+    );
   });
 });

@@ -17,8 +17,10 @@ import {
 } from '@tet/backend/indicateurs/trajectoire-leviers/trajectoire-leviers.config';
 import { TrajectoireSnbc3FeatureFlagService } from '@tet/backend/indicateurs/trajectoires/trajectoire-snbc3-feature-flag.service';
 import TrajectoiresDataService from '@tet/backend/indicateurs/trajectoires/trajectoires-data.service';
+import { toCommonFailure } from '@tet/backend/indicateurs/valeurs/indicateur-valeurs.errors';
 import ManageIndicateurValeursService from '@tet/backend/indicateurs/valeurs/manage-indicateur-valeurs/manage-indicateur-valeurs.service';
 import { GetIndicateursValeursResponse } from '@tet/backend/indicateurs/valeurs/list-indicateur-valeurs/get-indicateur-valeurs.response';
+import { ListIndicateurValeursInput } from '@tet/backend/indicateurs/valeurs/list-indicateur-valeurs/list-indicateur-valeurs.input';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
@@ -223,6 +225,16 @@ export class TrajectoireLeviersService {
     };
   }
 
+  private async listValeursOrCommonError(
+    input: ListIndicateurValeursInput,
+    user: AuthUser
+  ): Promise<Result<GetIndicateursValeursResponse, TrajectoireLeviersError>> {
+    const result = await this.indicateursService.listIndicateurValeurs(input, {
+      user,
+    });
+    return result.success ? result : toCommonFailure(result);
+  }
+
   private hasSourceValeurs(
     indicateurValeurs: GetIndicateursValeursResponse,
     sourceId: string
@@ -324,31 +336,37 @@ export class TrajectoireLeviersService {
     this.logger.log(
       `Récupération des indicateurs de la trajectoire de la collectivité ${input.collectiviteId} (source SNBC)`
     );
-    const indicateurValeursObjectifs2030 =
-      await this.indicateursService.listIndicateurValeurs(
-        {
-          periodicite: 'annuelle',
-          collectiviteId: collectivite.id,
-          identifiantsReferentiel: TRAJECTOIRE_LEVIERS_INDICATEURS_IDENTIFIANTS,
-          sources: [this.trajectoiresDataService.SNBC_SOURCE.id],
-          dateDebut: `${this.TARGET_YEAR}-01-01`,
-          dateFin: `${this.TARGET_YEAR}-12-31`,
-        },
-        { user }
-      );
+    const objectifs2030Result = await this.listValeursOrCommonError(
+      {
+        periodicite: 'annuelle',
+        collectiviteId: collectivite.id,
+        identifiantsReferentiel: TRAJECTOIRE_LEVIERS_INDICATEURS_IDENTIFIANTS,
+        sources: [this.trajectoiresDataService.SNBC_SOURCE.id],
+        dateDebut: `${this.TARGET_YEAR}-01-01`,
+        dateFin: `${this.TARGET_YEAR}-12-31`,
+      },
+      user
+    );
+    if (!objectifs2030Result.success) {
+      return objectifs2030Result;
+    }
+    const indicateurValeursObjectifs2030 = objectifs2030Result.data;
 
-    const indicateurValeursObjectifs2019 =
-      await this.indicateursService.listIndicateurValeurs(
-        {
-          periodicite: 'annuelle',
-          collectiviteId: collectivite.id,
-          identifiantsReferentiel: TRAJECTOIRE_LEVIERS_INDICATEURS_IDENTIFIANTS,
-          sources: [this.trajectoiresDataService.SNBC_SOURCE.id],
-          dateDebut: `${this.REFERENCE_YEAR}-01-01`,
-          dateFin: `${this.REFERENCE_YEAR}-12-31`,
-        },
-        { user }
-      );
+    const objectifs2019Result = await this.listValeursOrCommonError(
+      {
+        periodicite: 'annuelle',
+        collectiviteId: collectivite.id,
+        identifiantsReferentiel: TRAJECTOIRE_LEVIERS_INDICATEURS_IDENTIFIANTS,
+        sources: [this.trajectoiresDataService.SNBC_SOURCE.id],
+        dateDebut: `${this.REFERENCE_YEAR}-01-01`,
+        dateFin: `${this.REFERENCE_YEAR}-12-31`,
+      },
+      user
+    );
+    if (!objectifs2019Result.success) {
+      return objectifs2019Result;
+    }
+    const indicateurValeursObjectifs2019 = objectifs2019Result.data;
 
     const isTrajectoireComputed = this.hasSourceValeurs(
       indicateurValeursObjectifs2030,
@@ -377,31 +395,30 @@ export class TrajectoireLeviersService {
     );
 
     // Maintenant on récupère les valeurs résultats pour ces sources
-    const indicateurValeursResultats2019 =
-      await this.indicateursService.listIndicateurValeurs(
-        {
-          periodicite: 'annuelle',
-          collectiviteId: collectivite.id,
-          identifiantsReferentiel: TRAJECTOIRE_LEVIERS_INDICATEURS_IDENTIFIANTS,
-          sources: getTrajectoireLeviersDataResponse.sourcesResultats,
-          dateDebut: `${this.REFERENCE_YEAR}-01-01`,
-          dateFin: `${this.REFERENCE_YEAR}-12-31`,
-        },
-        { user }
-      );
+    const resultats2019Result = await this.listValeursOrCommonError(
+      {
+        periodicite: 'annuelle',
+        collectiviteId: collectivite.id,
+        identifiantsReferentiel: TRAJECTOIRE_LEVIERS_INDICATEURS_IDENTIFIANTS,
+        sources: getTrajectoireLeviersDataResponse.sourcesResultats,
+        dateDebut: `${this.REFERENCE_YEAR}-01-01`,
+        dateFin: `${this.REFERENCE_YEAR}-12-31`,
+      },
+      user
+    );
+    if (!resultats2019Result.success) {
+      return resultats2019Result;
+    }
 
     return success(
-      this.buildResponse(
-        `${collectivite.regionCode}` as RegionCode,
-        {
-          trajectoireSourceId: this.trajectoiresDataService.SNBC_SOURCE.id,
-          objectifsCible: indicateurValeursObjectifs2030,
-          objectifsReference: indicateurValeursObjectifs2019,
-          resultatsReference: indicateurValeursResultats2019,
-          resultatSourcesByPriority:
-            getTrajectoireLeviersDataResponse.sourcesResultats,
-        }
-      )
+      this.buildResponse(`${collectivite.regionCode}` as RegionCode, {
+        trajectoireSourceId: this.trajectoiresDataService.SNBC_SOURCE.id,
+        objectifsCible: indicateurValeursObjectifs2030,
+        objectifsReference: indicateurValeursObjectifs2019,
+        resultatsReference: resultats2019Result.data,
+        resultatSourcesByPriority:
+          getTrajectoireLeviersDataResponse.sourcesResultats,
+      })
     );
   }
 
@@ -429,7 +446,7 @@ export class TrajectoireLeviersService {
     }
 
     const listObjectifs = (annee: number) =>
-      this.indicateursService.listIndicateurValeurs(
+      this.listValeursOrCommonError(
         {
           periodicite: 'annuelle',
           collectiviteId: collectivite.id,
@@ -438,12 +455,20 @@ export class TrajectoireLeviersService {
           dateDebut: `${annee}-01-01`,
           dateFin: `${annee}-12-31`,
         },
-        { user }
+        user
       );
-    const [objectifsCible, objectifsReference] = await Promise.all([
+    const [objectifsCibleResult, objectifsReferenceResult] = await Promise.all([
       listObjectifs(this.TARGET_YEAR),
       listObjectifs(ANNEE_REFERENCE_SNBC_V3),
     ]);
+    if (!objectifsCibleResult.success) {
+      return objectifsCibleResult;
+    }
+    if (!objectifsReferenceResult.success) {
+      return objectifsReferenceResult;
+    }
+    const objectifsCible = objectifsCibleResult.data;
+    const objectifsReference = objectifsReferenceResult.data;
 
     if (!this.hasSourceValeurs(objectifsCible, IndicateurSourceEnum.SNBC3)) {
       // Même règle que la page Trajectoire : seul un EPCI à fiscalité propre

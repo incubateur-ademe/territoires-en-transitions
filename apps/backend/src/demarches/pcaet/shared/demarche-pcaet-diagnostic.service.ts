@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ListIndicateursPredefinisRepository } from '@tet/backend/indicateurs/indicateurs/list-indicateurs-predefinis/list-indicateurs-predefinis.repository';
 import ManageIndicateurValeursService from '@tet/backend/indicateurs/valeurs/manage-indicateur-valeurs/manage-indicateur-valeurs.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { getDataOrThrow } from '@tet/backend/utils/result.type';
 import {
   ALL_PCAET_DIAGNOSTIC_INDICATEUR_IDS,
   isDemarchePcaetDiagnosticComplet,
@@ -94,16 +95,18 @@ export class DemarchePcaetDiagnosticService {
       return [];
     }
 
-    return this.crudValeursService.getIndicateursValeurs(
-      {
-        collectiviteId,
-        periodicite: 'annuelle',
-        identifiantsReferentiel: ALL_PCAET_DIAGNOSTIC_INDICATEUR_IDS,
-        sources: [PCAET_COLLECTIVITE_SOURCE_ID],
-        metadonneeId,
-      },
-      undefined,
-      tx
+    return getDataOrThrow(
+      await this.crudValeursService.getIndicateursValeurs(
+        {
+          collectiviteId,
+          periodicite: 'annuelle',
+          identifiantsReferentiel: ALL_PCAET_DIAGNOSTIC_INDICATEUR_IDS,
+          sources: [PCAET_COLLECTIVITE_SOURCE_ID],
+          metadonneeId,
+        },
+        undefined,
+        tx
+      )
     );
   }
 

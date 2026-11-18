@@ -12,12 +12,14 @@ import {
 } from '@tet/backend/indicateurs/valeurs/write-indicateur-valeurs/upsert-indicateurs-valeurs.response';
 import { ApiUsageEnum } from '@tet/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@tet/backend/utils/api/api-usage.decorator';
+import { createControllerErrorHandler } from '@tet/backend/utils/nest/controller-error-handler';
 import { createZodDto } from 'nestjs-zod';
 import { TokenInfo } from '../../users/decorators/token-info.decorators';
 import type {
   AuthenticatedOrServiceRoleUser,
   AuthenticatedUser,
 } from '../../users/models/auth.models';
+import { indicateurValeursErrorConfig } from './indicateur-valeurs.errors';
 import ManageIndicateurValeursService from './manage-indicateur-valeurs/manage-indicateur-valeurs.service';
 import { getIndicateursValeursApiRequestSchema } from './list-indicateur-valeurs/get-indicateur-valeurs.api-request';
 import { getIndicateursValeursResponseSchema } from './list-indicateur-valeurs/get-indicateur-valeurs.response';
@@ -44,6 +46,9 @@ class UpsertIndicateursValeursResponseClass extends createZodDto(
 export class IndicateursValeursController {
   constructor(private readonly service: ManageIndicateurValeursService) {}
 
+  private readonly getIndicateurValeursResultOrThrow =
+    createControllerErrorHandler(indicateurValeursErrorConfig);
+
   @ApiUsage([ApiUsageEnum.EXTERNAL_API])
   @Get('indicateurs/valeurs')
   @ApiOperation({
@@ -61,7 +66,10 @@ export class IndicateursValeursController {
     @Query() request: GetIndicateursValeursApiRequestClass,
     @TokenInfo() tokenInfo: AuthenticatedUser
   ): Promise<GetIndicateursValeursResponseClass> {
-    return this.service.listIndicateurValeurs(request, { user: tokenInfo });
+    const result = await this.service.listIndicateurValeurs(request, {
+      user: tokenInfo,
+    });
+    return this.getIndicateurValeursResultOrThrow(result);
   }
 
   @ApiUsage([ApiUsageEnum.EXTERNAL_API])

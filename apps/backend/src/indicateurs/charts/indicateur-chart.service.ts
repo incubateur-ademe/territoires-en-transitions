@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
+import { getDataOrThrow } from '@tet/backend/utils/result.type';
 import {
   CollectiviteAvecType,
   PersonnalisationReponsesPayload,
@@ -86,7 +87,7 @@ export class IndicateurChartService {
       return null;
     }
 
-    const indicateursEnfantValeurs = (
+    const indicateursEnfantValeurs = getDataOrThrow(
       await this.indicateurValeursService.listIndicateurValeurs(
         {
           collectiviteId,
@@ -186,7 +187,7 @@ export class IndicateurChartService {
           },
           { isUserTrusted: true, trajectoireSnbc3Enabled }
         )
-        .then((result) => result.indicateurs[0]),
+        .then((result) => getDataOrThrow(result).indicateurs[0]),
       // Conditionally fetch reference valeurs
       includeReferenceValeurs
         ? this.valeurReferenceService.getValeursReferenceForDefinition({

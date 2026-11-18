@@ -28,6 +28,7 @@ import {
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { flatten, isNil, maxBy, uniq } from 'es-toolkit';
 import { DateTime } from 'luxon';
+import { getDataOrThrow } from '@tet/backend/utils/result.type';
 import { AuthUser } from '../../users/models/auth.models';
 import IndicateurSourcesService from '../sources/indicateur-sources.service';
 import ManageIndicateurValeursService from '../valeurs/manage-indicateur-valeurs/manage-indicateur-valeurs.service';
@@ -351,7 +352,7 @@ export default class TrajectoiresDataService {
       dateFin?: string;
     }
   ): Promise<IndicateurValeurAvecMetadonnesDefinition[]> {
-    const indicateursSourceCollectivite =
+    const indicateursSourceCollectivite = getDataOrThrow(
       await this.valeursService.getIndicateursValeurs({
         periodicite: 'annuelle',
         collectiviteId,
@@ -359,7 +360,8 @@ export default class TrajectoiresDataService {
         sources: [sourceId],
         dateDebut: options?.dateDebut,
         dateFin: options?.dateFin,
-      });
+      })
+    );
 
     return indicateursSourceCollectivite;
   }
@@ -817,11 +819,13 @@ export default class TrajectoiresDataService {
       epci.siren = this.TEST_COLLECTIVITE_VALID_SIREN;
     }
 
-    const valeurs = await this.valeursService.getIndicateursValeurs({
-      periodicite: 'annuelle',
-      collectiviteId: request.collectiviteId,
-      sources: [this.SNBC_SOURCE.id],
-    });
+    const valeurs = getDataOrThrow(
+      await this.valeursService.getIndicateursValeurs({
+        periodicite: 'annuelle',
+        collectiviteId: request.collectiviteId,
+        sources: [this.SNBC_SOURCE.id],
+      })
+    );
 
     const valeursResponse = valeurs.map((v) => v.indicateurValeur);
     const existingTrajectoireData =

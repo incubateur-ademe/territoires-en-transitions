@@ -10,6 +10,7 @@ import {
   IndicateurPeriodiciteEnum,
   IndicateurPredefini,
   IndicateurValeur,
+  IndicateurValeurAvecMetadonnesDefinition,
   IndicateurValeurCreate,
 } from '@tet/domain/indicateurs';
 import { hasPermission, ResourceType } from '@tet/domain/users';
@@ -32,6 +33,7 @@ import {
   getIndicateurValeursDataOrThrow,
   IndicateurValeursError,
 } from '../indicateur-valeurs.errors';
+import { GetIndicateursValeursResponse } from '../list-indicateur-valeurs/get-indicateur-valeurs.response';
 import {
   deduplicateIndicateurValeursBySource,
   groupIndicateurValeurs,
@@ -165,26 +167,24 @@ export default class ManageIndicateurValeursService {
   groupeIndicateursValeursParIndicateurEtSource =
     groupIndicateurValeursBySource;
 
-  async getIndicateursValeurs(
+  getIndicateursValeurs(
     options: ListIndicateurValeursInput,
     ignoreDedoublonnage?: boolean,
     tx?: Transaction
-  ) {
-    return getIndicateurValeursDataOrThrow(
-      await this.reader.get(
-        { ...options, ignoreDedoublonnage },
-        { isUserTrusted: true, tx }
-      )
+  ): Promise<
+    Result<IndicateurValeurAvecMetadonnesDefinition[], IndicateurValeursError>
+  > {
+    return this.reader.get(
+      { ...options, ignoreDedoublonnage },
+      { isUserTrusted: true, tx }
     );
   }
 
-  async listIndicateurValeurs(
+  listIndicateurValeurs(
     options: ListIndicateurValeursInput,
     context: IndicateurValeursContext
-  ) {
-    return getIndicateurValeursDataOrThrow(
-      await this.reader.list(options, context)
-    );
+  ): Promise<Result<GetIndicateursValeursResponse, IndicateurValeursError>> {
+    return this.reader.list(options, context);
   }
 
   async upsertIndicateurValeurs(

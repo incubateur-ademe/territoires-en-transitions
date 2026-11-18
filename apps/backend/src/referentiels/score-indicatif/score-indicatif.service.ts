@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { toCommonFailure } from '@tet/backend/indicateurs/valeurs/indicateur-valeurs.errors';
 import ManageIndicateurValeursService from '@tet/backend/indicateurs/valeurs/manage-indicateur-valeurs/manage-indicateur-valeurs.service';
 import IndicateurExpressionService, {
   EvaluationContext,
@@ -90,7 +91,7 @@ export class ScoreIndicatifService {
       );
       return success([]);
     }
-    const valeursGroupees =
+    const valeursGroupeesResult =
       await this.indicateurValeursService.listIndicateurValeurs(
         {
           collectiviteId: input.collectiviteId,
@@ -99,6 +100,10 @@ export class ScoreIndicatifService {
         },
         { user }
       );
+    if (!valeursGroupeesResult.success) {
+      return toCommonFailure(valeursGroupeesResult);
+    }
+    const valeursGroupees = valeursGroupeesResult.data;
 
     const valeursUtiliseesResult =
       await this.repository.listValeursUtiliseesParActionId(input);
