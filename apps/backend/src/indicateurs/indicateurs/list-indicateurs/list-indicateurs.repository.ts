@@ -13,7 +13,10 @@ import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { sqlToDateTimeISO } from '@tet/backend/utils/column.utils';
 import { escapeLikePattern } from '@tet/backend/utils/database/like-pattern.utils';
 import { PersonneTagOrUser, Tag } from '@tet/domain/collectivites';
-import { SOURCES_TRAJECTOIRE } from '@tet/domain/indicateurs';
+import {
+  SOURCES_TRAJECTOIRE,
+  type IndicateurAncestor,
+} from '@tet/domain/indicateurs';
 import { normalizeIdentifiantReferentiel } from '@tet/domain/referentiels';
 import {
   aliasedTable,
@@ -26,6 +29,7 @@ import {
   inArray,
   isNotNull,
   isNull,
+  notExists,
   notInArray,
   or,
   SQL,
@@ -50,22 +54,6 @@ import { indicateurGroupeTable } from '../../shared/models/indicateur-groupe.tab
 import { indicateurServiceTagTable } from '../upsert-indicateur-services/indicateur-service-tag.table';
 import { ListIndicateursInput } from './list-indicateurs.input';
 
-type IndicateurDefinitionGrandParent = {
-  id: number;
-  identifiantReferentiel: string | null;
-  titre: string;
-  titreCourt: string | null;
-  parent: null;
-};
-
-type IndicateurDefinitionParent = {
-  id: number;
-  identifiantReferentiel: string | null;
-  titre: string;
-  titreCourt: string | null;
-  parent: IndicateurDefinitionGrandParent | null;
-};
-
 @Injectable()
 export class ListIndicateursRepository {
   constructor(
@@ -73,60 +61,27 @@ export class ListIndicateursRepository {
     private readonly listIndicateursPredefinisRepository: ListIndicateursPredefinisRepository
   ) {}
 
-  private getIndicateurDefinitionParentsQuery() {
-    const parentDefinition = aliasedTable(
-      indicateurDefinitionTable,
-      'parentDefinition'
-    );
-    const grandParentDefinition = aliasedTable(
-      indicateurDefinitionTable,
-      'grandParentDefinition'
-    );
-
-    const groupeParent = aliasedTable(indicateurGroupeTable, 'groupeParent');
-    const groupeGrandParent = aliasedTable(
-      indicateurGroupeTable,
-      'groupeGrandParent'
-    );
-
-    const parentJson = sql<IndicateurDefinitionParent>`json_build_object(
-      'id', ${groupeParent.parent},
-      'identifiantReferentiel', ${parentDefinition.identifiantReferentiel},
-      'titre', ${parentDefinition.titre},
-      'titreCourt', ${parentDefinition.titreCourt},
-      'parent', CASE WHEN ${groupeGrandParent.parent} IS NULL THEN NULL ELSE json_build_object(
-        'id', ${groupeGrandParent.parent},
-        'identifiantReferentiel', ${grandParentDefinition.identifiantReferentiel},
-        'titre', ${grandParentDefinition.titre},
-        'titreCourt', ${grandParentDefinition.titreCourt},
-        'parent', NULL
-      ) END
+  private getIndicateurAncestorsSql(indicateurId: SQLWrapper) {
+    return sql<IndicateurAncestor[]>`(
+      WITH RECURSIVE ancestors AS (
+        SELECT groupe.parent AS id, 1 AS depth
+        FROM ${indicateurGroupeTable} AS groupe
+        WHERE groupe.enfant = ${indicateurId}
+        UNION ALL
+        SELECT groupe.parent, ancestors.depth + 1
+        FROM ${indicateurGroupeTable} AS groupe
+        INNER JOIN ancestors ON groupe.enfant = ancestors.id
+      )
+      SELECT COALESCE(json_agg(json_build_object(
+        'id', ancestor_definition.id,
+        'identifiantReferentiel', ancestor_definition.identifiant_referentiel,
+        'titre', ancestor_definition.titre,
+        'titreCourt', ancestor_definition.titre_court
+      ) ORDER BY ancestors.depth DESC), '[]'::json)
+      FROM ancestors
+      INNER JOIN ${indicateurDefinitionTable} AS ancestor_definition
+        ON ancestor_definition.id = ancestors.id
     )`;
-
-    return this.databaseService.db
-      .select({
-        indicateurId: groupeParent.enfant,
-        parentId: groupeParent.parent,
-        parentJson: parentJson.as('parentJson'),
-      })
-      .from(groupeParent)
-      .leftJoin(parentDefinition, eq(parentDefinition.id, groupeParent.parent))
-      .leftJoin(
-        groupeGrandParent,
-        eq(groupeGrandParent.enfant, groupeParent.parent)
-      )
-      .leftJoin(
-        grandParentDefinition,
-        eq(grandParentDefinition.id, groupeGrandParent.parent)
-      )
-      .groupBy(
-        groupeParent.enfant,
-        groupeParent.parent,
-        parentDefinition.id,
-        groupeGrandParent.parent,
-        grandParentDefinition.id
-      )
-      .as('indicateurParents');
   }
 
   private getIndicateurDefinitionEnfantsQuery(collectiviteId: number) {
@@ -474,7 +429,6 @@ export class ListIndicateursRepository {
       this.getIndicateurDefinitionAxePlansQuery(collectiviteId);
     const indicateurEnfants =
       this.getIndicateurDefinitionEnfantsQuery(collectiviteId);
-    const indicateurParents = this.getIndicateurDefinitionParentsQuery();
     const indicateurPilotes =
       this.getIndicateurDefinitionPilotesQuery(collectiviteId);
     const indicateurServices =
@@ -504,7 +458,16 @@ export class ListIndicateursRepository {
 
     if (!withChildrenActive) {
       // Exclure les enfants revient à filtrer les indicateurs sans parent
-      whereConditions.push(isNull(indicateurParents.parentId));
+      whereConditions.push(
+        notExists(
+          this.databaseService.db
+            .select({ one: sql`1` })
+            .from(indicateurGroupeTable)
+            .where(
+              eq(indicateurGroupeTable.enfant, indicateurDefinitionTable.id)
+            )
+        )
+      );
     }
 
     if (filters.ficheIds?.length) {
@@ -761,7 +724,7 @@ export class ListIndicateursRepository {
         mesures: sql<
           { id: string; nom: string }[]
         >`COALESCE(${indicateurMesures.mesures}, '{}')`,
-        parent: sql<IndicateurDefinitionParent | null>`COALESCE(${indicateurParents.parentJson}, NULL)`,
+        ancestors: this.getIndicateurAncestorsSql(indicateurDefinitionTable.id),
         hasOpenData: sql<boolean>`${indicateurOpenData.hasOpenData} is true`,
         estRempli: sql<boolean>`${indicateurCompleted.estRempli} is true`,
         estAgregation: sql<boolean>`${indicateurCategories.estAgregation} is true`,
@@ -785,11 +748,6 @@ export class ListIndicateursRepository {
       .leftJoin(
         indicateurEnfants,
         eq(indicateurEnfants.indicateurId, indicateurDefinitionTable.id)
-      )
-      // parents
-      .leftJoin(
-        indicateurParents,
-        eq(indicateurParents.indicateurId, indicateurDefinitionTable.id)
       )
       // catégories
       .leftJoin(

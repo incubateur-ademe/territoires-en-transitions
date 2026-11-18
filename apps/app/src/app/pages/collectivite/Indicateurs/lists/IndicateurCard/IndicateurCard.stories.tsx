@@ -50,7 +50,7 @@ const indicateur = {
   services: [],
   groupementCollectivites: [],
   enfants: [],
-  parent: null,
+  ancestors: [],
   fiches: [],
   mesures: [],
   hasOpenData: false,

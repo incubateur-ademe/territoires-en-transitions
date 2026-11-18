@@ -17,6 +17,7 @@ import { createZodDto } from 'nestjs-zod';
 import z from 'zod';
 import { TokenInfo } from '../../../users/decorators/token-info.decorators';
 import type { AuthenticatedUser } from '../../../users/models/auth.models';
+import { toPublicApiParents } from './list-indicateurs.adapter';
 import { listIndicateursApiRequestSchema } from './list-indicateurs.api-request';
 import { listIndicateursInputSchema } from './list-indicateurs.input';
 import { ListIndicateursService } from './list-indicateurs.service';
@@ -74,13 +75,18 @@ export class ListIndicateursController {
     const mapToNonBreakingPublicApiOutput = (
       indicateur: IndicateurDetaille
     ) => ({
-      ...omit(indicateur, ['estFavori', 'estConfidentiel', 'fiches', 'parent']),
+      ...omit(indicateur, [
+        'estFavori',
+        'estConfidentiel',
+        'fiches',
+        'ancestors',
+      ]),
 
       estPerso: isIndicateurPerso(indicateur),
       favoris: indicateur.estFavori,
       confidentiel: indicateur.estConfidentiel,
       ficheActions: indicateur.fiches,
-      parents: indicateur.parent ? [indicateur.parent] : [],
+      parents: toPublicApiParents(indicateur.ancestors),
     });
 
     return {

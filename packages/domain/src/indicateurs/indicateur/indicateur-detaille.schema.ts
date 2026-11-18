@@ -10,18 +10,13 @@ import {
   indicateurPredefiniSchema,
 } from './indicateur.schema';
 
-const indicateurEnfantSchema = z.object({
+const indicateurLieSchema = z.object({
   id: indicateurCommonSchema.shape.id,
   identifiantReferentiel: z.nullable(
     indicateurPredefiniNatureSchema.shape.identifiantReferentiel
   ),
   titre: indicateurCommonSchema.shape.titre,
   titreCourt: indicateurCommonSchema.shape.titreCourt,
-});
-
-const indicateurParentSchema = z.object({
-  ...indicateurEnfantSchema.shape,
-  parent: z.nullable(indicateurEnfantSchema),
 });
 
 const indicateurSuiviCollectiviteSchema = z.object({
@@ -39,8 +34,8 @@ const indicateurSuiviCollectiviteSchema = z.object({
 
 const indicateurRelationsSchema = z.object({
   thematiques: z.array(tagSchema),
-  enfants: z.array(indicateurEnfantSchema),
-  parent: z.nullable(indicateurParentSchema),
+  enfants: z.array(indicateurLieSchema),
+  ancestors: z.array(indicateurLieSchema),
   fiches: z.array(z.object({ id: z.number(), titre: z.string() })),
   mesures: z.array(z.object({ id: z.string(), nom: z.string() })),
   groupementCollectivites: z.array(
@@ -78,3 +73,5 @@ type IndicateurPredefiniDetaille = z.infer<
 export type IndicateurDetaille =
   | IndicateurPersoDetaille
   | IndicateurPredefiniDetaille;
+
+export type IndicateurAncestor = IndicateurDetaille['ancestors'][number];
