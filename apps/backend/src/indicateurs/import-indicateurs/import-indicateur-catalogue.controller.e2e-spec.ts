@@ -239,6 +239,8 @@ describe('import-indicateur catalogue', () => {
         lienSource,
         codeExterne: 'nouveau',
         identifiantReferentiel: identifiants[1],
+        libelleSource: 'Compteur dans la source',
+        uniteImport: 'Nombre',
       },
     ];
     categoriesToImport = [];
@@ -264,6 +266,8 @@ describe('import-indicateur catalogue', () => {
       {
         codeExterne: 'nouveau',
         identifiantReferentiel: identifiants[1],
+        libelleSource: 'Compteur dans la source',
+        uniteImport: 'Nombre',
         version,
       },
     ]);

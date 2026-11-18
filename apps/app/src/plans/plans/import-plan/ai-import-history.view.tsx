@@ -32,15 +32,20 @@ import {
 } from './data/use-get-ai-import-status';
 import { useGetOngoingAiImport } from './data/use-get-ongoing-ai-import';
 
-export const AiImportHistoryView = () => {
+export const AiImportHistoryView = ({
+  showDetails = true,
+}: {
+  showDetails?: boolean;
+}) => {
   const tracker = useEventTracker();
   const { collectiviteId, hasCollectivitePermission } =
     useCurrentCollectivite();
   const trpc = useTRPC();
   const router = useRouter();
-  const [{ importJobId }, setImportQuery] = useQueryStates(aiImportQueryState, {
+  const [queryState, setImportQuery] = useQueryStates(aiImportQueryState, {
     history: 'push',
   });
+  const importJobId = showDetails ? queryState.importJobId : null;
   const canAccessImportForm = hasCollectivitePermission('plans.fiches.import');
   const { isOngoing: isOngoingImport } = useGetOngoingAiImport(collectiviteId);
   const statusQuery = useGetAiImportStatus(importJobId);
@@ -51,7 +56,7 @@ export const AiImportHistoryView = () => {
       : appLabels.importPlanIaSuiviErreur
     : statusQuery.isPending
     ? appLabels.chargementEnCours
-    : planId == null
+    : statusQuery.data?.status !== 'done' || planId == null
     ? appLabels.importPlanIaPlanIndisponible
     : undefined;
   const newImportDisabledReason = isOngoingImport

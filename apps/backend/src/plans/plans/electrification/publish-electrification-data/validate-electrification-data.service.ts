@@ -71,7 +71,7 @@ export class ValidateElectrificationDataService {
       issues.push({
         location: 'catalogue',
         message:
-          'Le catalogue doit contenir tous les engagements et les listes des sous-axes, actions et indicateurs.',
+          'Le catalogue doit contenir au moins un engagement et les listes des sous-axes, actions et indicateurs.',
       });
     }
     if (issues.length) return issues;

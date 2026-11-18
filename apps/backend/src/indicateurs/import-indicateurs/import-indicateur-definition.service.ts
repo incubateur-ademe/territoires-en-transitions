@@ -223,7 +223,9 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
       )
     ) {
       throw new BadRequestException(
-        'La feuille "Références externes" doit contenir une seule colonne identifiantReferentiel, source, codeExterne et lienSource.'
+        `La feuille "Références externes" doit contenir une seule colonne pour chaque champ : ${indicateurReferencesSheet.headers.join(
+          ', '
+        )}.`
       );
     }
     return data;

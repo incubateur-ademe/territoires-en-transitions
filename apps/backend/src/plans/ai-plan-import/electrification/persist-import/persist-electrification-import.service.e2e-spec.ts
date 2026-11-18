@@ -1,3 +1,4 @@
+import { ElectrificationEngagementCodeEnum as EngagementCode } from '@tet/backend/plans/plans/electrification/publish-electrification-data/electrification-data.test-fixture';
 import {
   electrificationCatalogueFixture as electrificationConfig,
   buildInMemoryElectrificationData,
@@ -31,7 +32,6 @@ import { ELECTRIFICATION_SOURCE_ID } from '@tet/domain/indicateurs';
 import {
   ELECTRIFICATION_PLAN_TYPE_KEY,
   ElectrificationConfig,
-  ElectrificationEngagementCodeEnum as EngagementCode,
   ElectrificationLaureatsConfig,
   PlanReferenceProgrammeEnum,
   StatutEnum,

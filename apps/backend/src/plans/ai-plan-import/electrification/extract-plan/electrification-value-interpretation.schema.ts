@@ -1,5 +1,9 @@
 import { z } from 'zod';
 import type { ElectrificationDocumentSource } from './electrification-extraction.schema';
+import type {
+  ElectrificationEngagementInterpretation,
+  ElectrificationEngagementMatchRequest,
+} from './electrification-engagement-interpretation.schema';
 
 const interpretedValueSchema = z.strictObject({
   key: z.string().min(1),
@@ -11,7 +15,7 @@ const interpretedValueSchema = z.strictObject({
 
 /** Des littéraux du document, jamais une valeur calculée ou une unité déduite. */
 export const electrificationValueResponseSchema = z.strictObject({
-  values: z.array(interpretedValueSchema).max(2),
+  values: z.array(interpretedValueSchema).max(100),
 });
 export type ElectrificationValueResponse = z.infer<
   typeof electrificationValueResponseSchema
@@ -29,12 +33,26 @@ export type ElectrificationValueRequest = {
   unit: string | null;
   year: number | null;
 } & (
-  | { kind: 'target'; keys: ('principale' | 'total' | 'rapides')[] }
+  | {
+      kind: 'target';
+      keys: string[];
+      targets: {
+        key: string;
+        unit: string;
+        year: number;
+        labels: string[];
+        units: string[];
+      }[];
+    }
   | { kind: 'observation'; keys: ['valeur'] }
 );
 
 /** Contexte interne : seuls les lecteurs de cellules numériques y accèdent. */
 export type ElectrificationValueContext = {
+  engagementInterpretations?: ElectrificationEngagementInterpretation[];
+  onUnmatchedEngagement?: (
+    request: ElectrificationEngagementMatchRequest
+  ) => void;
   interpretations?: ElectrificationValueInterpretation[];
   onUnparsedValue?: (request: ElectrificationValueRequest) => void;
 };

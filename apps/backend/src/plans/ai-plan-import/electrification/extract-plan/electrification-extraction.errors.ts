@@ -16,6 +16,11 @@ const extractionErrors = {
     message:
       "L'aide à la lecture de cette valeur n'a pas abouti. Réessayez l'import ou simplifiez la cellule indiquée.",
   },
+  AI_ENGAGEMENT_INTERPRETATION_FAILED: {
+    kind: 'processing-error',
+    message:
+      "Le rapprochement de cet engagement avec le catalogue n'a pas abouti. Réessayez l'import.",
+  },
   INVALID_ELECTRIFICATION_VALUE_INTERPRETATION: {
     kind: 'document-error',
     message:
@@ -52,7 +57,8 @@ const extractionErrors = {
   },
   INVALID_ELECTRIFICATION_ENGAGEMENT: {
     kind: 'document-error',
-    message: "L'engagement du tableau A ne correspond pas au canevas Word.",
+    message:
+      "L'engagement du tableau A ne correspond pas à un engagement du catalogue dans cet axe.",
   },
   INVALID_ELECTRIFICATION_SELECTION: {
     kind: 'document-error',
@@ -62,7 +68,7 @@ const extractionErrors = {
   INVALID_ELECTRIFICATION_TARGET: {
     kind: 'document-error',
     message:
-      'La cible renseignée est ambiguë. Vérifiez sa valeur et, pour les bornes, distinguez le total des bornes rapides.',
+      'La cible renseignée est ambiguë. Vérifiez sa valeur et distinguez chaque cible lorsque plusieurs sont attendues.',
   },
   INCOMPATIBLE_ELECTRIFICATION_CHECKPOINT: {
     kind: 'processing-error',

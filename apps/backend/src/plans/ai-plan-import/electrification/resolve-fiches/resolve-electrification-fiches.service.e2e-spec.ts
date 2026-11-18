@@ -1,3 +1,4 @@
+import { ElectrificationEngagementCodeEnum as EngagementCode } from '@tet/backend/plans/plans/electrification/publish-electrification-data/electrification-data.test-fixture';
 import {
   electrificationCatalogueFixture as electrificationConfig,
   buildInMemoryElectrificationData,
@@ -31,11 +32,7 @@ import {
   TableCell,
   TableRow,
 } from 'docx';
-import {
-  ElectrificationConfig,
-  ElectrificationEngagementCodeEnum as EngagementCode,
-  StatutEnum,
-} from '@tet/domain/plans';
+import { ElectrificationConfig, StatutEnum } from '@tet/domain/plans';
 import { CollectiviteRole } from '@tet/domain/users';
 import { count, eq } from 'drizzle-orm';
 import assert from 'node:assert';

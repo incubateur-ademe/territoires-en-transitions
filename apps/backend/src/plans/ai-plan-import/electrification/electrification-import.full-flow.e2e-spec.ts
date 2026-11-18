@@ -1,3 +1,4 @@
+import { ElectrificationEngagementCodeEnum as EngagementCode } from '@tet/backend/plans/plans/electrification/publish-electrification-data/electrification-data.test-fixture';
 import { deleteSyntheticStorageObjects } from '@tet/backend/collectivites/documents/documents.test-fixture';
 import { annexeTable } from '@tet/backend/collectivites/documents/models/annexe.table';
 import {
@@ -38,7 +39,6 @@ import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import {
   ELECTRIFICATION_PLAN_TYPE_KEY,
   ElectrificationConfig,
-  ElectrificationEngagementCodeEnum as EngagementCode,
   ElectrificationLaureatsConfig,
   PlanStatusEnum,
 } from '@tet/domain/plans';

@@ -8,7 +8,7 @@ import {
   IndicateurDetaille,
   IndicateurPeriodes,
 } from '@tet/domain/indicateurs';
-import { ElectrificationEngagementCodeEnum as EngagementCode } from '@tet/domain/plans';
+import { ReadElectrificationV4Snapshot } from '@tet/backend/plans/plans/electrification/config/read-electrification-v4-snapshot';
 import { ResourceType } from '@tet/domain/users';
 import assert from 'node:assert';
 import {
@@ -21,6 +21,7 @@ import {
   resolveElectrificationEngagementsInputSchema,
 } from './electrification-engagements.schema';
 import { ElectrificationIssue } from '../electrification-issue';
+import { ElectrificationImportLocations } from '../electrification-import-locations';
 import { ResolveElectrificationStructureRules } from './resolve-electrification-structure.rules';
 
 /** Prépare uniquement des identités et des cibles ; aucune écriture métier. */
@@ -77,18 +78,23 @@ export class ResolveElectrificationEngagementsService {
         ),
       ]);
     }
+    const config = ReadElectrificationV4Snapshot.adapt(catalogue.data);
     const structure = ResolveElectrificationStructureRules.resolve(
       draft,
-      catalogue.data
+      config
     );
     if (!structure.success) return structure;
 
     const expected = draft.engagements.flatMap((engagement) => {
-      const definition = catalogue.data.engagements.find(
+      const definition = config.engagements.find(
         ({ code }) => code === engagement.code
       );
       assert(definition); // La structure a déjà validé chaque code.
-      return definition.cibles.map((cible) => ({ engagement, cible }));
+      return definition.cibles.map((cible) => ({
+        engagement,
+        definition,
+        cible,
+      }));
     });
     if (!expected.length) return structure;
 
@@ -125,11 +131,25 @@ export class ResolveElectrificationEngagementsService {
     }
 
     const issues: ElectrificationIssue[] = [];
-    for (const { engagement, cible } of expected) {
+    for (const {
+      engagement,
+      definition: engagementDefinition,
+      cible,
+    } of expected) {
       const extracted = engagement.cibles.find(({ key }) => key === cible.key);
+      const rules = cible.reglesImport;
+      if (!rules)
+        return failure([
+          electrificationEngagementsIssue('INVALID_ENGAGEMENT_MAPPING'),
+        ]);
       const source = extracted?.source ?? engagement.source;
+      const location = ElectrificationImportLocations.field(
+        source.location,
+        cible.libelleSource ??
+          (engagementDefinition.cibles.length > 1 ? cible.key : undefined)
+      );
       const issue = (code: ElectrificationEngagementsErrorCode) =>
-        issues.push(electrificationEngagementsIssue(code, source.location));
+        issues.push(electrificationEngagementsIssue(code, location));
       if (
         cible.validation !== 'validated' ||
         cible.periodicite === null ||
@@ -156,22 +176,36 @@ export class ResolveElectrificationEngagementsService {
         issue('INCOMPATIBLE_ENGAGEMENT_INDICATEUR');
         continue;
       }
-      if (extracted?.unite != null && extracted.unite !== cible.unite) {
+      if (
+        extracted?.unite != null &&
+        extracted.unite !== cible.unite &&
+        extracted.unite !== (cible.uniteImport ?? cible.unite)
+      ) {
         issue('INVALID_ENGAGEMENT_UNIT');
       }
       if (
         (extracted?.valeur != null &&
           (extracted.unite === null || extracted.annee === null)) ||
-        (extracted?.annee != null && extracted.annee !== 2030)
+        (extracted?.annee != null && extracted.annee !== rules.annee)
       ) {
         issue('INVALID_ENGAGEMENT_PERIOD');
       }
       if (
         extracted?.valeur != null &&
-        (extracted.valeur < 0 ||
-          (cible.unite === '%' && extracted.valeur > 100))
+        ((rules.minimum !== null && extracted.valeur < rules.minimum) ||
+          (rules.maximum !== null && extracted.valeur > rules.maximum))
       ) {
         issue('INVALID_ENGAGEMENT_VALUE');
+      }
+      const plafond = engagement.cibles.find(
+        ({ key }) => key === rules.plafondCible
+      );
+      if (
+        extracted?.valeur != null &&
+        plafond?.valeur != null &&
+        extracted.valeur > plafond.valeur
+      ) {
+        issue('INCONSISTENT_ENGAGEMENT_TARGETS');
       }
       if (extracted?.valeur == null) {
         issue('EMPTY_ENGAGEMENT_TARGET');
@@ -189,26 +223,11 @@ export class ResolveElectrificationEngagementsService {
         unite: cible.unite,
         periodicite: 'annuelle',
         dateValeur: IndicateurPeriodes.toDateValeur(
-          IndicateurPeriodes.parse('annuelle', '2030')
+          IndicateurPeriodes.parse('annuelle', String(rules.annee))
         ),
         objectif: extracted?.valeur ?? null,
         source,
       });
-    }
-    const bornesRecharge = draft.engagements.find(
-      ({ code }) => code === EngagementCode.BORNES_RECHARGE_PUBLIQUES
-    );
-    const total = bornesRecharge?.cibles.find(
-      ({ key }) => key === 'total'
-    )?.valeur;
-    const rapides = bornesRecharge?.cibles.find(({ key }) => key === 'rapides');
-    if (total != null && rapides?.valeur != null && rapides.valeur > total) {
-      issues.push(
-        electrificationEngagementsIssue(
-          'INCONSISTENT_E07_TARGETS',
-          rapides.source.location
-        )
-      );
     }
     if (issues.some(({ kind }) => kind !== 'warning')) return failure(issues);
     structure.data.report.issues.push(...issues);

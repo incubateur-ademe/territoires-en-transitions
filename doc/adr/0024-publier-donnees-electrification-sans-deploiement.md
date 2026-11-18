@@ -660,3 +660,64 @@ normal et de test, trois environnements, source absente, valide et deux identifi
 invalides. Les autres arguments de déploiement sont identiques à ceux du workflow
 précédent ; build, déclencheurs et déploiement Coolify ne changent pas. Actionlint
 et le formatage YAML passent. Ces contrôles ne valent pas déploiement distant.
+
+## Métadonnées des cibles importées - 18 novembre 2026
+
+Le retour TT-67 révèle deux correspondances E07 absentes du Sheets. La colonne
+Notion v2 désigne `s_26` pour le total et `elec_6_b` pour les bornes rapides.
+Ce choix métier est confirmé, même si le canevas emploie "bornes rapides"
+et la définition TeT précise "150 kW et plus".
+
+Les correspondances sont corrigées dans "Références externes". Les colonnes
+facultatives `libelleSource` et `uniteImport` portent le libellé du compte rendu
+et l'unité attendue dans le brouillon pour chaque référence. Elles suivent
+la publication transactionnelle des définitions puis la version du catalogue.
+Sans `uniteImport`, la comparaison avec l'unité TeT reste exacte. Cette décision
+écarte les alias globaux entre unités de comptage et les libellés E07 dans le
+resolver. Elle n'autorise aucune conversion numérique ; la correspondance
+doit porter sur la même mesure et la même échelle.
+
+L'interprétation IA existante reste réservée aux cellules numériques complexes,
+avec citations vérifiables et validation déterministe des valeurs. Elle ne
+choisit ni l'indicateur TeT ni une équivalence d'unité. Les règles du canevas,
+dont l'année cible et la cohérence entre total et bornes rapides, restent
+explicites. Cette séparation conserve les checkpoints des imports existants.
+
+La migration `indicateur/references-externes-import` et le backend doivent être
+déployés avant de republier les indicateurs puis le catalogue. Les corrections
+du Sheets seules ne modifient aucune version déjà publiée.
+
+
+## Définitions importables des engagements - 18 novembre 2026
+
+Cette décision remplace la liste fermée et les branches par code décrites dans
+"Engagements depuis les colonnes Grist existantes" et complète "Métadonnées
+des cibles importées". Le code partagé n'énumère plus E01-E12. Chaque engagement
+est défini dans "Références externes", sous le code Grist, avec son libellé,
+son type (`action` ou `cibles`) et ses clés de cible. Chaque cible conserve sa
+ligne de correspondance et déclare année, bornes, plafond et variantes de lecture.
+Le contrat physique du Word reste dans son adapter ; ses engagements viennent
+du catalogue publié.
+
+Le choix d'étendre l'onglet existant conserve une publication transactionnelle
+unique avec les définitions TeT et évite une lecture directe des sources pendant
+l'import. Une ligne de définition n'a pas d'identifiant d'indicateur. Une ligne
+de cible peut rester sans correspondance TeT, mais doit fournir ses règles de
+lecture. Les références orphelines et les définitions incomplètes bloquent une
+nouvelle publication. Une suppression de mapping laisse la définition en place.
+
+L'IA peut rapprocher une formulation des engagements publiés du même axe et
+extraire des valeurs complexes. Les codes, clés, citations, nombres, unités
+et années sont vérifiés ensuite. Les réponses et citations sont conservées
+dans le checkpoint pour ne pas refaire ces appels à la reprise. Ce champ
+facultatif conserve le contrat des jobs et checkpoints déjà admis. Une citation
+prouve la provenance, pas la justesse sémantique ; cette limite impose une
+validation humaine du comportement sur les documents représentatifs.
+
+Les nouvelles publications portent `engagementsFormat=2` et ne récupèrent aucun
+paramètre manquant depuis le code. Un adapter séparé restitue uniquement les
+règles V4 des snapshots immuables déjà publiés, afin de préserver les jobs qui
+les ont admis. Il ne participe jamais à la publication depuis Sheets/Grist.
+Les tests des nouveaux catalogues emploient des codes, clés et années distincts
+des douze engagements initiaux. Aucun appel à un modèle payant n'est nécessaire
+pour vérifier ces contrats avec le fake LLM.

@@ -49,7 +49,7 @@ const toStageStatus = (steps: ImportStepView[]): ImportStageView['status'] => {
 
 export const toImportStageViews = (
   stepStates?: ImportStepStates,
-  options: { failed?: boolean } = {}
+  options: Parameters<typeof toImportStepViews>[1] = {}
 ): ImportStageView[] => {
   const steps = toImportStepViews(stepStates, options);
   return importStageValues.map((stage) => ({

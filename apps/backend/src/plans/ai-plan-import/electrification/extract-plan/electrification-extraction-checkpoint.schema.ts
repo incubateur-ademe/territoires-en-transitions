@@ -8,6 +8,7 @@ import {
 import { electrificationDocumentTemplate } from '@tet/backend/plans/plans/electrification/config/electrification-document-template.constants';
 import { electrificationValueInterpretationSchema } from './electrification-value-interpretation.schema';
 import { ElectrificationValueInterpretationRules } from './electrification-value-interpretation.rules';
+import { electrificationEngagementInterpretationSchema } from './electrification-engagement-interpretation.schema';
 
 /** À incrémenter si le format ou son interprétation rend une reprise incompatible. */
 export const ELECTRIFICATION_CHECKPOINT_VERSION = 1;
@@ -23,24 +24,46 @@ export const electrificationExtractionCheckpointSchema = z
     response: electrificationExtractionResponseSchema,
     sources: z.array(electrificationDocumentSourceSchema).min(1),
     interpretations: z.array(electrificationValueInterpretationSchema),
+    engagementInterpretations: z
+      .array(electrificationEngagementInterpretationSchema)
+      .optional(),
     tokens: tokenUsageSchema,
   })
-  .refine(({ sources, interpretations }) => {
-    const ids = interpretations.map(({ sourceId }) => sourceId);
-    return (
-      new Set(ids).size === ids.length &&
-      interpretations.every(({ sourceId, values }) => {
-        const source = sources.find(({ id }) => id === sourceId);
-        return (
-          source &&
-          ElectrificationValueInterpretationRules.hasEvidence(
-            source.text,
-            values
-          )
-        );
-      })
-    );
-  }, 'Les interprétations doivent citer les valeurs originales du document.');
+  .refine(
+    ({
+      sources,
+      interpretations,
+      engagementInterpretations = [],
+      response,
+    }) => {
+      const ids = interpretations.map(({ sourceId }) => sourceId);
+      return (
+        new Set(ids).size === ids.length &&
+        new Set(engagementInterpretations.map(({ sourceId }) => sourceId))
+          .size === engagementInterpretations.length &&
+        engagementInterpretations.every(
+          ({ sourceId, quote, code }) =>
+            code !== null &&
+            sources.some(({ id, text }) => id === sourceId && text === quote) &&
+            response.engagements.some(
+              (engagement) =>
+                engagement.source === sourceId && engagement.code === code
+            )
+        ) &&
+        interpretations.every(({ sourceId, values }) => {
+          const source = sources.find(({ id }) => id === sourceId);
+          return (
+            source &&
+            ElectrificationValueInterpretationRules.hasEvidence(
+              source.text,
+              values
+            )
+          );
+        })
+      );
+    },
+    'Les interprétations doivent citer les valeurs originales du document.'
+  );
 export type ElectrificationExtractionCheckpoint = z.infer<
   typeof electrificationExtractionCheckpointSchema
 >;

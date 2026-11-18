@@ -103,21 +103,20 @@ export const electrificationEngagementsErrors = {
   INVALID_ENGAGEMENT_PERIOD: {
     kind: 'document-error',
     message:
-      "La cible renseignée doit inclure son unité et l'année 2030 (exemple : 120 MWh en 2030).",
+      "La cible doit utiliser l'unité et l'année attendues dans le catalogue.",
   },
   INVALID_ENGAGEMENT_VALUE: {
     kind: 'document-error',
     message:
-      'La cible doit être positive ou nulle, et ne peut pas dépasser 100 % pour un pourcentage.',
+      'La valeur doit respecter les bornes définies pour cette cible dans le catalogue.',
   },
   EMPTY_ENGAGEMENT_TARGET: {
     kind: 'warning',
     message: "La cible de cet engagement n'est pas renseignée.",
   },
-  INCONSISTENT_E07_TARGETS: {
+  INCONSISTENT_ENGAGEMENT_TARGETS: {
     kind: 'document-error',
-    message:
-      'Le nombre de bornes rapides ne peut pas dépasser le nombre total de bornes.',
+    message: 'La valeur dépasse celle de la cible qui définit son plafond.',
   },
 } as const satisfies Record<
   string,

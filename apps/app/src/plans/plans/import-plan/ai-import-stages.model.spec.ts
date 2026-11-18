@@ -53,12 +53,17 @@ describe('toImportStageViews', () => {
     });
   });
 
-  it('tout est fini quand toutes les etapes sont ok ou sautees', () => {
+  it("attend la création du plan avant d'afficher toutes les étapes terminées", () => {
     const stepStates = Object.fromEntries(
       Object.keys(allPending).map((name) => [name, 'ok'])
     ) as ImportStepStates;
 
-    const stages = toImportStageViews(stepStates);
+    expect(
+      toImportStageViews(stepStates, { jobStatus: 'running' }).find(
+        ({ stage }) => stage === 'actions'
+      )
+    ).toEqual({ stage: 'actions', status: 'current' });
+    const stages = toImportStageViews(stepStates, { jobStatus: 'done' });
     expect(stages.every(({ status }) => status === 'done')).toBe(true);
     expect(getCurrentImportStage(stages)).toBe('secteurs');
   });
