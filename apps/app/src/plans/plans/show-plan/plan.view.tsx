@@ -140,14 +140,12 @@ const PlanViewContent = ({ tab }: { tab: PlanTab }) => {
       <VisibleWhen condition={isImportedPlanBannerVisible}>
         <div className="mb-6">
           <ImportedPlanBanner
-            planId={plan.id}
             isSecteursConcerne={
               isSecteursEnabled &&
               secteursCounts !== undefined &&
               linkedDemarche !== undefined
             }
             secteursARenseigner={secteursARenseigner}
-            demarcheUrl={linkedDemarche?.planActionsUrl}
           />
         </div>
       </VisibleWhen>

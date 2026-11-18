@@ -1,4 +1,3 @@
-import { electrificationCatalogueErrors } from '@tet/backend/plans/plans/electrification/publish-electrification-data/electrification-catalogue.rules';
 import {
   createIssueFactory,
   type ElectrificationIssue,
@@ -7,15 +6,18 @@ import {
 export const electrificationEngagementsErrors = {
   DUPLICATE_CATALOGUE_REFERENCE: {
     kind: 'configuration-error',
-    message: electrificationCatalogueErrors.DUPLICATE_CATALOGUE_REFERENCE,
+    message:
+      "Le catalogue Électrification contient des références dupliquées. Aucune modification de votre document n'est attendue : contactez le support TeT, puis relancez l'import avec le même document.",
   },
   INVALID_CATALOGUE_PARENT: {
     kind: 'configuration-error',
-    message: electrificationCatalogueErrors.INVALID_CATALOGUE_PARENT,
+    message:
+      "Le catalogue Électrification contient un rattachement axe/sous-axe invalide. Aucune modification de votre document n'est attendue : contactez le support TeT, puis relancez l'import avec le même document.",
   },
   INVALID_ENGAGEMENT_MAPPING: {
     kind: 'configuration-error',
-    message: electrificationCatalogueErrors.INVALID_ENGAGEMENT_MAPPING,
+    message:
+      "La configuration des engagements est incohérente dans le catalogue Électrification. Aucune modification de votre document n'est attendue : contactez le support TeT, puis relancez l'import avec le même document.",
   },
   DUPLICATE_SOURCE_KEY: {
     kind: 'document-error',
@@ -50,7 +52,7 @@ export const electrificationEngagementsErrors = {
   UNKNOWN_SUB_AXIS: {
     kind: 'document-error',
     message:
-      "Le numéro de sous-axe ne figure pas dans le catalogue. Vérifiez le numéro dans le champ Sous-axe de l'action à partir du référentiel fourni avec le canevas.",
+      "Le numéro de sous-axe ne figure pas dans le catalogue. Vérifiez le numéro dans le champ Sous-axe de l'action à partir du référentiel fourni avec le canevas (format attendu : 1.1).",
   },
   INVALID_SUB_AXIS_PARENT: {
     kind: 'document-error',
@@ -101,7 +103,7 @@ export const electrificationEngagementsErrors = {
   INVALID_ENGAGEMENT_PERIOD: {
     kind: 'document-error',
     message:
-      "Une cible renseignée doit avoir son unité et l'échéance 2030 de l'annexe.",
+      "La cible renseignée doit inclure son unité et l'année 2030 (exemple : 120 MWh en 2030).",
   },
   INVALID_ENGAGEMENT_VALUE: {
     kind: 'document-error',

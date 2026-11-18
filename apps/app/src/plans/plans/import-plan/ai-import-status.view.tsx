@@ -15,7 +15,7 @@ import { AiImportStagesList } from './ai-import-stages';
 import { toImportStageViews } from './ai-import-stages.model';
 import type { AiImportOrigine } from './data/use-enqueue-ai-import';
 import { toImportStepViews } from './ai-import-steps.model';
-import { importIssueLabels } from './ai-import.labels';
+import { importIssueHintLabels, importIssueLabels } from './ai-import.labels';
 import {
   isInaccessibleAiImportError,
   type useGetAiImportStatus,
@@ -171,7 +171,10 @@ export const AiImportStatusView = ({
                   {issue.location && (
                     <p className="mb-1 font-bold">{issue.location}</p>
                   )}
-                  {issue.message}
+                  <p className="mb-0">{issue.message}</p>
+                  {importIssueHintLabels[issue.kind] && (
+                    <p className="mt-2 mb-0">{importIssueHintLabels[issue.kind]}</p>
+                  )}
                 </div>
               }
             />

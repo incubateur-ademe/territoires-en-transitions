@@ -31,7 +31,7 @@ export const CreatePlanOptionLinksList = ({
         variant="primary"
         title={appLabels.creerPlan}
         subTitle={appLabels.creerPlanSousTitre}
-        icon={<CreatePlanPicto />}
+        icon={<CreatePlanPicto className="w-16 h-16" />}
         url={makeCollectivitePlansActionsCreerUrl({
           collectiviteId,
         })}
@@ -44,7 +44,7 @@ export const CreatePlanOptionLinksList = ({
           dataTest="choix-creation-plan.importer-ia"
           title={<BetaLabel>{appLabels.importPlanIaChoixTitre}</BetaLabel>}
           subTitle={appLabels.importPlanIaTypesCompatiblesSousTitre(profiles)}
-          icon={<ImportPlanPicto />}
+          icon={<ImportPlanPicto className="w-16 h-16" />}
           url={makeCollectivitePlansActionsImporterIaUrl({
             collectiviteId,
           })}
@@ -57,7 +57,7 @@ export const CreatePlanOptionLinksList = ({
         dataTest="choix-creation-plan.demander-import"
         title={appLabels.importPlanSupportTitre}
         subTitle={appLabels.importPlanSupportSousTitre}
-        icon={<Icon icon="mail-send-line" className="w-16 h-16 my-3" />}
+        icon={<Icon icon="mail-send-line" className="w-16 h-16" />}
         url={makeCollectivitePlansActionsImporterUrl({
           collectiviteId,
         })}

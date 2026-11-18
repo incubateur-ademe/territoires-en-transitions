@@ -305,7 +305,7 @@ export const plansLabels = {
   creerPlanSousTitre: 'directement sur la plateforme',
   importPlanSupportTitre: 'Demander un import au support',
   importPlanSupportSousTitre:
-    'en envoyant votre document pour les autres types de plans',
+    "Envoyez-nous votre plan d'actions (PDF, Excel) via le support en ligne ou à l'adresse contact@territoiresentransitions.fr",
   importPlanSupportEnvoyez: 'Envoyez-nous votre document (PDF ou Excel) via le',
   importPlanSupportChat: 'chat en ligne',
   importPlanSupportOuAdresse: 'ou à l’adresse',
@@ -313,7 +313,7 @@ export const plansLabels = {
   importPlanSupportPriseEnCharge:
     'Notre équipe se chargera de l’importer pour vous sur la plateforme.',
   importPlanIaDescription:
-    'À partir de votre fichier, nous importons la structure de votre plan et ses actions. Notre outil détecte automatiquement : axes, sous-axes, titres des actions, description, statut, pilotes, dates, objectifs…',
+    'Nous reprenons de votre fichier la structure de votre plan et ses actions : axes, sous-axes, titres, descriptions, statuts, pilotes, dates, objectifs…',
   importPlanIaChoixTitre: "Importer un plan avec l'IA",
   importPlanIaTypesCompatiblesSousTitre: (
     profiles: readonly AiPlanImportProfile[]
@@ -382,14 +382,20 @@ export const plansLabels = {
   importPlanIaRapportSansRemarque: 'Aucune remarque signalée.',
   importPlanIaDocumentErreur: 'Document à corriger',
   importPlanIaConfigurationErreur: 'Erreur',
-  importPlanIaAvertissementRapport: 'Avertissement',
+  importPlanIaAvertissementRapport: 'Point d’attention',
+  importPlanIaDocumentErreurHint:
+    'Corrigez votre document puis relancez l’import.',
+  importPlanIaConfigurationErreurHint:
+    'Notre équipe doit corriger la configuration du catalogue. Aucune modification de votre document n’est attendue.',
+  importPlanIaErreurTechniqueHint:
+    'Réessayez avec un autre document. Si le problème persiste, contactez-nous via le support en ligne.',
   importPlanIaEtapeCreation: 'Création du plan',
   importPlanIaDonneesConservees: 'Données existantes conservées',
   importPlanIaSuiviIndisponible:
     'Cet import est introuvable ou vous n’y avez pas accès.',
   importPlanIaSuiviErreur: 'Impossible de charger le suivi de cet import.',
   importPlanIaSuiviRetrouvable:
-    'Vous pouvez quitter cette page et retrouver le suivi dans l’historique des imports.',
+    'La création se fait en arrière-plan : vous pouvez fermer cette fenêtre et continuer à naviguer. Votre plan devrait être prêt dans quelques minutes.',
   importPlanIaPlanIndisponible: 'Aucun plan n’est associé à cet import.',
   importPlanIaReprendre: "Reprendre l'import",
   importPlanIaRepriseLancee: 'Import repris depuis sa dernière étape terminée',
@@ -415,12 +421,12 @@ export const plansLabels = {
   planImporteSupportFin: ').',
   planImporteBandeauTitre: ({ etapes }: { etapes: number }) =>
     etapes > 1
-      ? `Plan généré par l’IA : ${etapes} étapes avant de le valider`
-      : 'Plan généré par l’IA : vérifiez-le avant de le valider',
+      ? `Plan généré par l’IA : ${etapes} points à vérifier`
+      : 'Plan généré par l’IA : vérifiez-le avant publication',
   planImporteEtapeStructureTitre:
-    'Vérifier la structure globale du plan puis le valider',
+    'Vérifier la structure globale du plan',
   planImporteEtapeStructureDescription:
-    'Vérifiez la structure globale de votre plan (axes et sous-axes), corrigez-la si besoin, puis validez le plan.',
+    'Vérifiez la structure globale de votre plan (axes et sous-axes), puis corrigez-la si besoin.',
   planImporteValider: 'Valider le plan',
   planImporteValide: 'Plan validé.',
   planRevenirALaDemarche: 'Revenir à la démarche',

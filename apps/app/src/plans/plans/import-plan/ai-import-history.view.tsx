@@ -30,6 +30,7 @@ import {
   isInaccessibleAiImportError,
   useGetAiImportStatus,
 } from './data/use-get-ai-import-status';
+import { useGetOngoingAiImport } from './data/use-get-ongoing-ai-import';
 
 export const AiImportHistoryView = () => {
   const tracker = useEventTracker();
@@ -41,6 +42,7 @@ export const AiImportHistoryView = () => {
     history: 'push',
   });
   const canAccessImportForm = hasCollectivitePermission('plans.fiches.import');
+  const { isOngoing: isOngoingImport } = useGetOngoingAiImport(collectiviteId);
   const statusQuery = useGetAiImportStatus(importJobId);
   const planId = statusQuery.data?.createdPlanId;
   const openPlanDisabledReason = statusQuery.error
@@ -51,6 +53,9 @@ export const AiImportHistoryView = () => {
     ? appLabels.chargementEnCours
     : planId == null
     ? appLabels.importPlanIaPlanIndisponible
+    : undefined;
+  const newImportDisabledReason = isOngoingImport
+    ? appLabels.erreursApi.IN_FLIGHT_JOB_EXISTS
     : undefined;
   const imports = useInfiniteQuery(
     trpc.plans.aiImport.listRecentAiImports.infiniteQueryOptions(
@@ -96,50 +101,50 @@ export const AiImportHistoryView = () => {
         {(importJobId !== null || canAccessImportForm) && (
           <PageHeader.Actions>
             <div className="flex flex-wrap items-center gap-2">
-              {importJobId !== null && (
-                <Tooltip label={openPlanDisabledReason}>
+              {importJobId !== null && !openPlanDisabledReason && (
+                <Button
+                  size="sm"
+                  variant="outlined"
+                  href={
+                    planId != null
+                      ? makeCollectivitePlanActionUrl({
+                          collectiviteId,
+                          planActionUid: String(planId),
+                        })
+                      : undefined
+                  }
+                  onClick={() =>
+                    tracker(Event.plans.importIa.ouvrirPlan, {
+                      origine: 'detail_import',
+                      jobId: importJobId,
+                      planId,
+                      profile: statusQuery.data?.profile,
+                      status: statusQuery.data?.status,
+                    })
+                  }
+                  dataTest="plans.import-ia.ouvrir-plan"
+                >
+                  {appLabels.importPlanIaOuvrirPlan}
+                </Button>
+              )}
+              {canAccessImportForm && (
+                <Tooltip label={newImportDisabledReason}>
                   <span
                     className="inline-flex"
-                    tabIndex={openPlanDisabledReason ? 0 : undefined}
+                    tabIndex={newImportDisabledReason ? 0 : undefined}
                   >
                     <Button
                       size="sm"
-                      variant="outlined"
+                      icon="add-line"
+                      href={!newImportDisabledReason ? newImportUrl : undefined}
+                      disabled={!!newImportDisabledReason}
                       className="disabled:pointer-events-none"
-                      disabled={!!openPlanDisabledReason}
-                      href={
-                        !openPlanDisabledReason && planId != null
-                          ? makeCollectivitePlanActionUrl({
-                              collectiviteId,
-                              planActionUid: String(planId),
-                            })
-                          : undefined
-                      }
-                      onClick={() =>
-                        tracker(Event.plans.importIa.ouvrirPlan, {
-                          origine: 'detail_import',
-                          jobId: importJobId,
-                          planId,
-                          profile: statusQuery.data?.profile,
-                          status: statusQuery.data?.status,
-                        })
-                      }
-                      dataTest="plans.import-ia.ouvrir-plan"
+                      dataTest="plans.import-ia.nouveau-button"
                     >
-                      {appLabels.importPlanIaOuvrirPlan}
+                      {appLabels.importPlanIaNouveau}
                     </Button>
                   </span>
                 </Tooltip>
-              )}
-              {canAccessImportForm && (
-                <Button
-                  size="sm"
-                  icon="add-line"
-                  href={newImportUrl}
-                  dataTest="plans.import-ia.nouveau-button"
-                >
-                  {appLabels.importPlanIaNouveau}
-                </Button>
               )}
             </div>
           </PageHeader.Actions>

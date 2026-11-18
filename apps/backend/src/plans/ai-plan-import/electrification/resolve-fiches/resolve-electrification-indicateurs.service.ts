@@ -13,6 +13,7 @@ import { ElectrificationImportLocations as Locations } from '../electrification-
 import { ImportReferenceRules } from '../../resolve-import-reference/import-reference.rules';
 import { ResolveImportReferenceService } from '../../resolve-import-reference/resolve-import-reference.service';
 import { ElectrificationFichesErrors as Errors } from './electrification-fiches.errors';
+import { electrificationDocumentTemplate } from '@tet/backend/plans/plans/electrification/config/electrification-document-template.constants';
 import {
   ElectrificationIndicateurInput,
   PreparedElectrificationIndicateur,
@@ -29,6 +30,11 @@ export class ResolveElectrificationIndicateursService {
     private readonly indicateurs: ListIndicateursService,
     private readonly references: ResolveImportReferenceService
   ) {}
+
+  private static readonly RESULT_PERIOD_FIELD_LABEL =
+    electrificationDocumentTemplate.fiches.indicateurs.columns[2];
+  private static readonly TARGET_PERIOD_FIELD_LABEL =
+    electrificationDocumentTemplate.fiches.indicateurs.columns[3];
 
   /** Appelé après validation de la structure, des sources et des droits d'import. */
   async resolveAll(
@@ -155,9 +161,19 @@ export class ResolveElectrificationIndicateursService {
         input.titre ?? (mapping?.type === 'booleen' ? mapping.titre : null);
       if (!titre) return failure([issue('MISSING_FICHE_TITLE')]);
       if (input.resultat !== null && input.anneeResultat === null)
-        return failure([issue('MISSING_INDICATEUR_YEAR', 'Résultat')]);
+        return failure([
+          issue(
+            'MISSING_INDICATEUR_YEAR',
+            ResolveElectrificationIndicateursService.RESULT_PERIOD_FIELD_LABEL
+          ),
+        ]);
       if (input.objectif !== null && input.anneeObjectif === null)
-        return failure([issue('MISSING_INDICATEUR_YEAR', 'Objectif')]);
+        return failure([
+          issue(
+            'MISSING_INDICATEUR_YEAR',
+            ResolveElectrificationIndicateursService.TARGET_PERIOD_FIELD_LABEL
+          ),
+        ]);
       return success({
         indicateur: {
           mode: 'sous-action',
@@ -246,7 +262,10 @@ export class ResolveElectrificationIndicateursService {
     const valeurs = new Map<string, PreparedElectrificationIndicateurValeur>();
     for (const field of ['resultat', 'objectif'] as const) {
       const valeur = input[field];
-      const fieldLabel = field === 'resultat' ? 'Résultat' : 'Objectif';
+      const fieldLabel =
+        field === 'resultat'
+          ? ResolveElectrificationIndicateursService.RESULT_PERIOD_FIELD_LABEL
+          : ResolveElectrificationIndicateursService.TARGET_PERIOD_FIELD_LABEL;
       if (valeur.valeur === null) continue;
       if (input.unite === null)
         return failure([issue('MISSING_INDICATEUR_UNIT', fieldLabel)]);
