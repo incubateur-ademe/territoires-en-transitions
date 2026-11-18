@@ -576,6 +576,9 @@ export const plansLabels = {
   faireAvancerLePlanSansPiloteInfo:
     "Elles n'ont pas de responsable désigné pour les faire avancer.",
   suiviPlanModulesPersonnalises: 'Modules personnalisés',
+  suiviPlanModulesPersonnalisesVide: 'Aucun module personnalisé',
+  suiviPlanModulesPersonnalisesVideDescription:
+    'Ajoutez un module pour suivre la répartition de vos actions selon le critère de votre choix.',
   moduleCountByNom: 'Nom du module :',
   moduleCountByNomPlaceholder: 'Ajouter un titre',
   moduleCountByCritere: 'Répartition des actions par :',
