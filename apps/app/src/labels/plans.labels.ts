@@ -303,7 +303,9 @@ export const plansLabels = {
   ajouterPlan: 'Ajouter un plan',
   creerPlan: 'Créer un plan',
   creerPlanSousTitre: 'directement sur la plateforme',
-  importPlanSupportSousTitre: 'en envoyant votre document à notre équipe',
+  importPlanSupportTitre: 'Demander un import au support',
+  importPlanSupportSousTitre:
+    'en envoyant votre document pour les autres types de plans',
   importPlanSupportEnvoyez: 'Envoyez-nous votre document (PDF ou Excel) via le',
   importPlanSupportChat: 'chat en ligne',
   importPlanSupportOuAdresse: 'ou à l’adresse',
@@ -312,6 +314,9 @@ export const plansLabels = {
     'Notre équipe se chargera de l’importer pour vous sur la plateforme.',
   importPlanIaDescription:
     'À partir de votre fichier, nous importons la structure de votre plan et ses actions. Notre outil détecte automatiquement : axes, sous-axes, titres des actions, description, statut, pilotes, dates, objectifs…',
+  importPlanIaChoixTitre: "Importer un plan avec l'IA",
+  importPlanIaTypesCompatiblesSousTitre:
+    'depuis un fichier, pour les PCAET et plans d’Électrification',
   importPlanIaEtapeReperage: 'Repérage des actions',
   importPlanIaContact:
     'L’import ne vous convient pas ? Contactez-nous via le live chat en joignant votre fichier et quelques mots de contexte, cela nous aide à l’améliorer.',

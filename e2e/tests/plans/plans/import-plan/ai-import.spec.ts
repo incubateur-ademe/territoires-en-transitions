@@ -510,6 +510,12 @@ test('ouvre le plan Électrification terminé quand seul ce profil est disponibl
   await page
     .getByRole('button', { name: 'Ajouter un plan', exact: true })
     .click();
+  await expect(
+    page.getByTestId('choix-creation-plan.demander-import')
+  ).toHaveAttribute(
+    'href',
+    `/collectivite/${collectivite.data.id}/plans/importer`
+  );
   await page.getByTestId('choix-creation-plan.importer-ia').click();
   await page.getByRole('textbox', { name: 'Nom du plan' }).fill('Plan de test');
   await page.getByTestId('ai-import.plan-type').click();

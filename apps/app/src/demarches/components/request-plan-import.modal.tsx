@@ -13,7 +13,7 @@ export const DemarcheRequestPlanImportModal = ({
 }) => (
   <Modal
     size="lg"
-    title={appLabels.importerUnPlan}
+    title={appLabels.importPlanSupportTitre}
     openState={openState}
     dataTest="demarches.plan.request-plan-import-modal"
     render={() => <RequestPlanImportInfo />}

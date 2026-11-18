@@ -13,7 +13,7 @@ export const RequestPlanImportView = () => {
   return (
     <>
       <PageHeader>
-        <PageHeader.Title>{appLabels.importerUnPlan}</PageHeader.Title>
+        <PageHeader.Title>{appLabels.importPlanSupportTitre}</PageHeader.Title>
       </PageHeader>
       <div className="flex flex-col mt-2 mb-10 py-14 px-24 bg-white rounded-lg">
         <RequestPlanImportInfo />
