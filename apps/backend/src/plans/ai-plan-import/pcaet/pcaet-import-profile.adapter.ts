@@ -12,7 +12,7 @@ import {
   type ImportCheckpoint,
 } from '../models/import-checkpoint';
 import { genericImportContractSchema } from '../pipeline/pipeline-checkpoint';
-import type { ImportProfileAdapter } from '../validate-import-profile/import-profile-adapter.interface';
+import { BaseImportProfileAdapter } from '../validate-import-profile/base-import-profile.adapter';
 import {
   ImportAdmission,
   ImportAdmissionInput,
@@ -21,7 +21,7 @@ import { PcaetImportRules } from './pcaet-import.rules';
 
 /** Règles du profil PCAET, partagées par les capacités et le lancement. */
 @Injectable()
-export class PcaetImportProfileAdapter implements ImportProfileAdapter {
+export class PcaetImportProfileAdapter extends BaseImportProfileAdapter {
   readonly profile = AiPlanImportProfileEnum.PCAET;
 
   appliesTo(planType: PlanType): boolean {
@@ -64,15 +64,7 @@ export class PcaetImportProfileAdapter implements ImportProfileAdapter {
     });
   }
 
-  /** Aucun prérequis supplémentaire au contrôle d'accès commun. */
-  async checkAvailability(): Promise<Result<void, AiPlanImportError>> {
-    return success(undefined);
-  }
-
-  validateSource(): Result<void, AiPlanImportError> {
-    return success(undefined);
-  }
-
+  /** Aucun prérequis supplémentaire : disponibilité, source et reprise par défaut. */
   isSupportedImport(options: unknown): boolean {
     return isSupportedGenericImport(options);
   }
@@ -89,10 +81,5 @@ export class PcaetImportProfileAdapter implements ImportProfileAdapter {
         resolveImportProfile(contract.data.profile)
       ? success(parsed.data)
       : failure('INVALID_CHECKPOINT');
-  }
-
-  /** Les jobs génériques/PCAET admis peuvent reprendre sans recontrôle du flag. */
-  async authorizeExistingImport(): Promise<Result<void, AiPlanImportError>> {
-    return success(undefined);
   }
 }

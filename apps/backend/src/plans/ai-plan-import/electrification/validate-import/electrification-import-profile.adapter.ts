@@ -23,7 +23,7 @@ import {
 import { electrificationDocumentTemplate } from '@tet/backend/plans/plans/electrification/config/electrification-document-template.constants';
 import { ResolveElectrificationFichesRules } from '../resolve-fiches/resolve-electrification-fiches.rules';
 import { ElectrificationImportContractRules } from './electrification-import-contract.rules';
-import type { ImportProfileAdapter } from '../../validate-import-profile/import-profile-adapter.interface';
+import { BaseImportProfileAdapter } from '../../validate-import-profile/base-import-profile.adapter';
 
 type ElectrificationImportConfiguration = {
   profile: typeof AiPlanImportProfileEnum.ELECTRIFICATION;
@@ -36,9 +36,7 @@ type ElectrificationImportConfiguration = {
 
 /** Règles du profil, partagées par l'admission et la revalidation des jobs. */
 @Injectable()
-export class ElectrificationImportProfileAdapter
-  implements ImportProfileAdapter
-{
+export class ElectrificationImportProfileAdapter extends BaseImportProfileAdapter {
   readonly profile = AiPlanImportProfileEnum.ELECTRIFICATION;
   readonly profileMismatchError =
     'ELECTRIFICATION_REQUIRES_DEDICATED_IMPORT' as const;
@@ -48,7 +46,9 @@ export class ElectrificationImportProfileAdapter
     private readonly eligibility: CheckElectrificationEligibilityService,
     private readonly listPlanTypes: ListPlanTypesService,
     private readonly data: ElectrificationDataService
-  ) {}
+  ) {
+    super();
+  }
 
   appliesTo(planType: PlanType): boolean {
     return this.creation.appliesTo(planType);
