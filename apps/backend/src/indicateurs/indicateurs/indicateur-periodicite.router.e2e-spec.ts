@@ -26,6 +26,7 @@ import { indicateurSourceTable } from '../shared/models/indicateur-source.table'
 import ManageIndicateurValeursService from '../valeurs/manage-indicateur-valeurs/manage-indicateur-valeurs.service';
 import { IndicateurChartService } from '../charts/indicateur-chart.service';
 import type { DatasetComponentOption } from 'echarts/types/dist/echarts';
+import { getDataOrThrow } from '@tet/backend/utils/result.type';
 
 describe('Périodicité de déclaration des indicateurs', () => {
   let app: INestApplication;
@@ -377,18 +378,20 @@ describe('Périodicité de déclaration des indicateurs', () => {
         .delete(indicateurSourceTable)
         .where(eq(indicateurSourceTable.id, sourceId));
     });
-    await app.get(ManageIndicateurValeursService).upsertIndicateurValeurs(
-      [
-        {
-          collectiviteId,
-          indicateurId,
-          periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
-          dateValeur: '2026-01-01',
-          metadonneeId: metadata.id,
-          resultat: 120,
-        },
-      ],
-      { isUserTrusted: true }
+    getDataOrThrow(
+      await app.get(ManageIndicateurValeursService).upsertIndicateurValeurs(
+        [
+          {
+            collectiviteId,
+            indicateurId,
+            periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+            dateValeur: '2026-01-01',
+            metadonneeId: metadata.id,
+            resultat: 120,
+          },
+        ],
+        { isUserTrusted: true }
+      )
     );
     await caller.indicateurs.valeurs.upsert({
       collectiviteId,

@@ -12,6 +12,7 @@ import {
   IndicateurValeur,
   IndicateurValeurAvecMetadonnesDefinition,
   IndicateurValeurCreate,
+  IndicateurValeurWithIdentifiant,
 } from '@tet/domain/indicateurs';
 import { hasPermission, ResourceType } from '@tet/domain/users';
 import { GetUserRolesAndPermissionsService } from '../../../users/authorizations/get-user-roles-and-permissions/get-user-roles-and-permissions.service';
@@ -190,14 +191,19 @@ export default class ManageIndicateurValeursService {
   async upsertIndicateurValeurs(
     valeurs: IndicateurValeurCreate[],
     context: IndicateurValeursContext<AuthenticatedOrServiceRoleUser>
-  ) {
-    const saved = getIndicateurValeursDataOrThrow(
-      await this.reconciliation.upsert(valeurs, context)
-    );
-    if (!context.tx && context.user && isAuthenticatedUser(context.user)) {
-      await this.publishValeurUpsertedEvents(saved, context.user);
+  ): Promise<
+    Result<IndicateurValeurWithIdentifiant[], IndicateurValeursError>
+  > {
+    const result = await this.reconciliation.upsert(valeurs, context);
+    const canPublishEvents =
+      result.success &&
+      !context.tx &&
+      context.user &&
+      isAuthenticatedUser(context.user);
+    if (canPublishEvents) {
+      await this.publishValeurUpsertedEvents(result.data, context.user);
     }
-    return saved;
+    return result;
   }
 
   /**
@@ -329,11 +335,9 @@ export default class ManageIndicateurValeursService {
     indicateursPredefinis: IndicateurPredefini[],
     tx: Transaction
   ) {
-    return getIndicateurValeursDataOrThrow(
-      await this.reconciliation.reconcileCollectivite(
-        { collectiviteId, indicateurs: indicateursPredefinis },
-        { isUserTrusted: true, tx }
-      )
+    return this.reconciliation.reconcileCollectivite(
+      { collectiviteId, indicateurs: indicateursPredefinis },
+      { isUserTrusted: true, tx }
     );
   }
 
@@ -347,14 +351,12 @@ export default class ManageIndicateurValeursService {
   ) {
     if (!options.skipPermissionCheck)
       this.permissionService.hasServiceRole(user);
-    return getIndicateurValeursDataOrThrow(
-      await this.reconciliation.recomputeAll(
-        {
-          collectiviteId: onlyForCollectiviteId,
-          indicateurs: options.indicateurs,
-        },
-        { isUserTrusted: true }
-      )
+    return this.reconciliation.recomputeAll(
+      {
+        collectiviteId: onlyForCollectiviteId,
+        indicateurs: options.indicateurs,
+      },
+      { isUserTrusted: true }
     );
   }
   private async executeTransaction<T>(

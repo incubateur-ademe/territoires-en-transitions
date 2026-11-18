@@ -108,11 +108,13 @@ export class IndicateurValeursRouter {
       }),
     recompute: this.trpc.serviceRoleProcedure
       .input(collectiviteIdInputSchemaPartial)
-      .mutation(({ ctx, input }) => {
-        return this.service.recomputeAllCalculatedIndicateurValeurs(
-          input.collectiviteId,
-          ctx.user
-        );
+      .mutation(async ({ ctx, input }) => {
+        const result =
+          await this.service.recomputeAllCalculatedIndicateurValeurs(
+            input.collectiviteId,
+            ctx.user
+          );
+        return this.getIndicateurValeursResultOrThrow(result);
       }),
   });
 }
