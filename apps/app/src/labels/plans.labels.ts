@@ -3,6 +3,7 @@ import {
   OrigineSecteurs,
   SECTEUR_REGLEMENTAIRE_LABELS,
   AiPlanImportProfile,
+  AiPlanImportProfileEnum,
   AI_PLAN_IMPORT_PROFILE_LABELS,
 } from '@tet/domain/plans';
 import { plural } from '@tet/ui/labels/plural';
@@ -318,9 +319,11 @@ export const plansLabels = {
   importPlanIaTypesCompatiblesSousTitre: (
     profiles: readonly AiPlanImportProfile[]
   ) =>
-    `depuis un fichier, pour ${new Intl.ListFormat('fr').format(
-      profiles.map((profile) => AI_PLAN_IMPORT_PROFILE_LABELS[profile])
-    )}`,
+    profiles.includes(AiPlanImportProfileEnum.GENERIC)
+      ? 'depuis un fichier, pour tous les types de plan'
+      : `depuis un fichier, pour ${new Intl.ListFormat('fr').format(
+          profiles.map((profile) => AI_PLAN_IMPORT_PROFILE_LABELS[profile])
+        )}`,
   importPlanIaEtapeReperage: 'Repérage des actions',
   importPlanIaContact:
     'Un résultat qui ne correspond pas à votre fichier ? Écrivez-nous via le live chat avec votre fichier et quelques mots de contexte.',

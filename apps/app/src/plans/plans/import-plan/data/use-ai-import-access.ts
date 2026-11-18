@@ -30,6 +30,6 @@ export const useAiImportAccess = () => {
     isAvailable: profiles.length > 0,
     isProfileAvailable,
     isSuperAdminRoleEnabled,
-    isEntryPointVisible: isSuperAdminRoleEnabled && profiles.length > 0,
+    isEntryPointVisible: profiles.length > 0,
   };
 };

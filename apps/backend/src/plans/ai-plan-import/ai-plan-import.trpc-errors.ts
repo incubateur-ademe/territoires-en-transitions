@@ -1,9 +1,5 @@
 import { TrpcErrorHandlerConfig } from '@tet/backend/utils/trpc/trpc-error-handler';
-import { AI_PLAN_IMPORT_PROFILE_LABELS } from '@tet/domain/plans';
-import {
-  AI_PLAN_IMPORT_ALLOWED_PROFILES,
-  AI_PLAN_IMPORT_MAX_JOBS_PER_COLLECTIVITE_PER_DAY,
-} from './ai-plan-import.constants';
+import { AI_PLAN_IMPORT_MAX_JOBS_PER_COLLECTIVITE_PER_DAY } from './ai-plan-import.constants';
 import {
   aiPlanImportErrorMessages,
   type AiPlanImportSpecificError,
@@ -79,18 +75,6 @@ export const aiPlanImportErrorConfig: TrpcErrorHandlerConfig<AiPlanImportSpecifi
       IMPORT_PROFILE_UNAVAILABLE: {
         code: 'PRECONDITION_FAILED',
         message: "Ce profil d'import n'est pas encore disponible",
-      },
-      IMPORT_PLAN_TYPE_NOT_SUPPORTED: {
-        code: 'BAD_REQUEST',
-        message: AI_PLAN_IMPORT_ALLOWED_PROFILES.length
-          ? `L'import IA est réservé aux plans ${new Intl.ListFormat(
-              'fr'
-            ).format(
-              AI_PLAN_IMPORT_ALLOWED_PROFILES.map(
-                (profile) => AI_PLAN_IMPORT_PROFILE_LABELS[profile]
-              )
-            )}.`
-          : "L'import IA n'est pas disponible actuellement.",
       },
       UNSUPPORTED_IMPORT_CONTRACT: {
         code: 'PRECONDITION_FAILED',

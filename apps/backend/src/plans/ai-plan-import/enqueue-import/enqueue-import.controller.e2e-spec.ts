@@ -298,28 +298,46 @@ describe('Enqueue import IA (controller)', { timeout: 30_000 }, () => {
     expect(jobs).toHaveLength(0);
   });
 
-  it.each(['absent', 'autre type'])(
-    'refuse un nouveau plan hors PCAET/Électrification, même en super-admin : %s',
-    async (type) => {
-      const uploadCalls = uploadBuffer.mock.calls.length;
-      const queue = app.get(getQueueToken(AI_PLAN_IMPORT_QUEUE_NAME));
-      const queued = queue.add.mock.calls.length;
-      const response = await enqueue(
-        supportToken,
-        type === 'absent' ? null : otherPlanTypeId
-      );
+  it.each([
+    { type: 'absent', withSecteurs: false },
+    { type: 'autre type', withSecteurs: false },
+    { type: 'PCAET', withSecteurs: true },
+  ])(
+    'admet tout type de plan par le profil générique, secteurs réservés au PCAET : $type',
+    async ({ type, withSecteurs }) => {
+      const planType =
+        type === 'absent'
+          ? null
+          : type === 'PCAET'
+          ? pcaetTypeId
+          : otherPlanTypeId;
+      onTestFinished(async () => {
+        await db.db
+          .delete(aiPlanImportJobTable)
+          .where(eq(aiPlanImportJobTable.collectiviteId, freshCollectiviteId));
+      });
 
-      expect(response.status).toBe(400);
-      expect(response.body.message).toBe(
-        "L'import IA est réservé aux plans PCAET et Électrification."
-      );
-      expect(uploadBuffer.mock.calls).toHaveLength(uploadCalls);
-      expect(queue.add.mock.calls).toHaveLength(queued);
-      const jobs = await db.db
+      const response = await enqueue(editorToken, planType);
+
+      expect(response.status).toBe(201);
+      onTestFinished(async () => {
+        await db.db
+          .delete(axeTable)
+          .where(eq(axeTable.id, response.body.planId));
+      });
+      const [plan] = await db.db
+        .select({ typeId: axeTable.typeId })
+        .from(axeTable)
+        .where(eq(axeTable.id, response.body.planId));
+      expect(plan.typeId).toBe(planType);
+      const [job] = await db.db
         .select()
         .from(aiPlanImportJobTable)
-        .where(eq(aiPlanImportJobTable.collectiviteId, freshCollectiviteId));
-      expect(jobs).toHaveLength(0);
+        .where(eq(aiPlanImportJobTable.id, response.body.jobId));
+      expect(job.options).toMatchObject({
+        profile: AiPlanImportProfileEnum.GENERIC,
+        withSecteurs,
+      });
     }
   );
 

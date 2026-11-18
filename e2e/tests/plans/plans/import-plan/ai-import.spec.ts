@@ -36,11 +36,61 @@ async function selectElectrification(page: Page) {
   await electrificationOption(page).click();
 }
 
-test('réserve les nouveaux imports aux types PCAET et Électrification, même en super-admin', async ({
+test('importe un plan de n’importe quel type par le profil générique, sans mode super-admin', async ({
   page,
   collectivites,
 }) => {
   const mock = new AiImportFixture();
+  await mock.install(page);
+  const { collectivite, user } = await collectivites.addCollectiviteAndUser({
+    userArgs: { autoLogin: true },
+  });
+  const types = await user.getTrpcClient().plans.plans.listTypes.query();
+  const otherType = types.find(
+    ({ type, detail }) =>
+      type !== PCAET_PLAN_TYPE_KEY.type &&
+      type !== ELECTRIFICATION_PLAN_TYPE_KEY.type &&
+      !detail
+  );
+  assert(otherType);
+  await page.goto(`/collectivite/${collectivite.data.id}/plans`);
+  await page
+    .getByRole('button', { name: 'Ajouter un plan', exact: true })
+    .click();
+  const tile = page.getByTestId('choix-creation-plan.importer-ia');
+  await expect(tile).toContainText('pour tous les types de plan');
+  await tile.click();
+  await expect(page.getByText(/L'import IA est disponible pour/)).toHaveCount(
+    0
+  );
+  await page.getByRole('textbox', { name: 'Nom du plan' }).fill('Plan de test');
+  await page.getByTestId('ai-import.plan-type').click();
+  await page
+    .getByTestId('ai-import.plan-type-options')
+    .getByRole('button', { name: otherType.type, exact: true })
+    .click();
+  await page.locator('input[type="file"]').setInputFiles({
+    name: 'plan.csv',
+    mimeType: 'text/csv',
+    buffer: Buffer.from('Axe,Action\nMobilité,Piste cyclable'),
+  });
+  await page.getByTestId('ai-import.lancer').click();
+  await expect(page).toHaveURL(/importJobId=/);
+  expect(mock.enqueuedForms[0].get('profile')).toBe('generic');
+  expect(mock.enqueuedForms[0].get('planType')).toBe(String(otherType.id));
+  expect(mock.enqueueCalls).toBe(1);
+});
+
+test('explique la restriction quand le profil générique est fermé', async ({
+  page,
+  collectivites,
+}) => {
+  const mock = new AiImportFixture();
+  mock.capabilities.profiles = [
+    { profile: 'generic', available: false },
+    { profile: 'pcaet', available: true },
+    { profile: 'annexe-3-electrification', available: false },
+  ];
   await mock.install(page);
   const { collectivite, user } = await collectivites.addCollectiviteAndUser({
     userArgs: supportUser,
