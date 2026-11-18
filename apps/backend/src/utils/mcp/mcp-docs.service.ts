@@ -2,6 +2,10 @@ import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { Injectable } from '@nestjs/common';
 import { z } from 'zod';
 import { BASE_ANALYTIQUE_DOC } from './resources/base-analytique.doc';
+import {
+  CARTE_DU_DEPOT_DOC,
+  REPO_FULL_NAME,
+} from './resources/carte-du-depot.doc';
 import { ESQUISSE_MODELE_DOC } from './resources/esquisse-modele.doc';
 import { POSTHOG_HOGQL_DOC } from './resources/posthog-hogql.doc';
 import { REGLES_METIER_DOC } from './resources/regles-metier.doc';
@@ -60,18 +64,48 @@ const SUPPORT_CRISP: McpDoc = {
   text: SUPPORT_CRISP_DOC,
 };
 
+const CARTE_DU_DEPOT: McpDoc = {
+  name: 'carte-du-depot',
+  uri: 'tet://docs/carte-du-depot',
+  title: 'Carte du dépôt de code',
+  description:
+    "Où chercher dans le code source pour vérifier le fonctionnement de la plateforme : dossiers par domaine, suffixes de fichiers, droits, textes d'interface.",
+  text: CARTE_DU_DEPOT_DOC,
+};
+
 export const MCP_DOCS: readonly McpDoc[] = [
   REGLES_METIER,
   BASE_ANALYTIQUE,
   POSTHOG_HOGQL,
   ESQUISSE_MODELE,
   SUPPORT_CRISP,
+  CARTE_DU_DEPOT,
 ];
 
 export const MCP_ANALYSE_STATS_PROMPT_NAME = 'analyse-stats';
 export const MCP_ESQUISSE_PROMPT_NAME = 'esquisse-shape-up';
 export const MCP_SUPPORT_PROMPT_NAME = 'support-conversation';
 export const MCP_APP_PROMPT_NAME = 'assistant-app';
+
+const INSTALL_GITHUB_CONNECTOR = `Pour vérifier dans tout le code source, installe le connecteur GitHub (Paramètres > Connecteurs) et autorise le dépôt ${REPO_FULL_NAME}.`;
+
+/**
+ * Lues par les clients MCP à la connexion (Claude.ai, ChatGPT), qui n'utilisent
+ * pas nos prompts : c'est ici que se joue le refus de répondre de mémoire.
+ */
+export const MCP_SERVER_INSTRUCTIONS = `Serveur de l'équipe Territoires en Transitions : état des collectivités, plans, démarches PCAET, scores, statistiques d'usage et activité du support.
+
+Deux natures de questions, deux façons de répondre.
+
+Chiffres, état d'une collectivité, d'un utilisateur ou du support : outils de ce serveur. N'annonce aucun chiffre qui ne vient pas d'un résultat d'outil.
+
+Fonctionnement de la plateforme (comment faire quelque chose, qui a le droit, pourquoi une action est bloquée, ce que fait un écran, comment un chiffre est calculé, ce qui existe ou non) : ne réponds jamais de mémoire ni par déduction.
+1. Appelle get_repo_map.
+2. Lis les fichiers concernés dans le dépôt public ${REPO_FULL_NAME} avec le connecteur GitHub : c'est l'accès le plus complet au code.
+3. Si le connecteur GitHub n'est pas disponible dans la conversation, écris-le : « ${INSTALL_GITHUB_CONNECTOR} » En attendant, vérifie avec search_code, list_repo_files et read_code de ce serveur.
+4. Cite le chemin des fichiers lus. Ce que tu n'as pas vérifié dans le code, présente-le comme non vérifié ; ne donne jamais de réponse supposée.
+
+Réponds en français.`;
 
 const ANALYSE_STATS_INSTRUCTIONS = `Tu assistes l'équipe de Territoires en Transitions pour répondre à des questions chiffrées sur l'usage de la plateforme, les collectivités, les plans d'action, les indicateurs et les référentiels.
 
@@ -83,7 +117,8 @@ Méthode :
 5. Privilégie le schéma public (statistiques déjà calculées) ; passe par prod pour le détail, en excluant les collectivités de test.
 6. N'annonce aucun chiffre qui ne vient pas d'un résultat d'outil ; si tu ne sais pas, dis-le.
 7. Cite la requête ou l'outil qui a produit chaque chiffre, pour qu'un lecteur puisse le retrouver.
-8. Réponds en français, de façon factuelle et concise.`;
+8. Réponds en français, de façon factuelle et concise.
+9. Question sur le fonctionnement de la plateforme (comment faire, qui a le droit, pourquoi un blocage, ce que fait un écran, comment un chiffre est calculé) : jamais de mémoire ni par déduction. Repère le dossier dans la carte du dépôt ci-dessous, trouve le fichier avec search_code ou list_repo_files (filtre sur le nom de la fonctionnalité), lis-le avec read_code, puis réponds en citant le chemin des fichiers lus. Deux ou trois lectures suffisent le plus souvent : commence par le fichier .rules.ts ou .service.ts. Si tu n'as rien pu lire, dis que tu n'as pas pu vérifier dans le code source et indique les dossiers à consulter, sans décrire le comportement.`;
 
 const SUPPORT_INSTRUCTIONS = `${ANALYSE_STATS_INSTRUCTIONS}
 
@@ -196,9 +231,13 @@ export class McpDocsService {
             role: 'user',
             content: { type: 'text', text: ANALYSE_STATS_INSTRUCTIONS },
           },
-          ...[REGLES_METIER, BASE_ANALYTIQUE, POSTHOG_HOGQL, SUPPORT_CRISP].map(
-            toResourceMessage
-          ),
+          ...[
+            REGLES_METIER,
+            BASE_ANALYTIQUE,
+            POSTHOG_HOGQL,
+            SUPPORT_CRISP,
+            CARTE_DU_DEPOT,
+          ].map(toResourceMessage),
         ],
       })
     );
@@ -216,7 +255,9 @@ export class McpDocsService {
             role: 'user',
             content: { type: 'text', text: SUPPORT_INSTRUCTIONS },
           },
-          ...[REGLES_METIER, POSTHOG_HOGQL].map(toResourceMessage),
+          ...[REGLES_METIER, POSTHOG_HOGQL, CARTE_DU_DEPOT].map(
+            toResourceMessage
+          ),
         ],
       })
     );
@@ -234,9 +275,13 @@ export class McpDocsService {
             role: 'user',
             content: { type: 'text', text: APP_INSTRUCTIONS },
           },
-          ...[REGLES_METIER, BASE_ANALYTIQUE, POSTHOG_HOGQL, SUPPORT_CRISP].map(
-            toResourceMessage
-          ),
+          ...[
+            REGLES_METIER,
+            BASE_ANALYTIQUE,
+            POSTHOG_HOGQL,
+            SUPPORT_CRISP,
+            CARTE_DU_DEPOT,
+          ].map(toResourceMessage),
         ],
       })
     );

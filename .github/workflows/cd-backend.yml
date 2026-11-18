@@ -166,7 +166,8 @@ jobs:
             --env POSTHOG_PERSONAL_API_KEY=@POSTHOG_PERSONAL_API_KEY \
             --env ANALYTICS_DATABASE_URL=@ANALYTICS_DATABASE_URL \
             --env CRISP_API_IDENTIFIER=@CRISP_API_IDENTIFIER \
-            --env CRISP_API_KEY=@CRISP_API_KEY
+            --env CRISP_API_KEY=@CRISP_API_KEY \
+            --env GITHUB_API_TOKEN=@GITHUB_API_TOKEN
 
       - id: deployment-url
         uses: ./.github/actions/providers/koyeb/get-app-url

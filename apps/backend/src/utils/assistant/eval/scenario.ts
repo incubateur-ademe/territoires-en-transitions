@@ -33,7 +33,8 @@ export type Scenario = {
   id: string;
   /** `metier` (fixtures locales), `analytique` (base de l'équipe data),
    * `posthog`, `refus`, `esquisse`, `support` (`/tet` dans Crisp), `crisp`
-   * (conversations du support, API Crisp), `app` (assistant de l'app). */
+   * (conversations du support, API Crisp), `app` (assistant de l'app),
+   * `produit` (fonctionnement de la plateforme, à vérifier dans le code). */
   tags: string[];
   viewer?: Viewer;
   /** `app` : assistant de l'application (choix cliquables, écritures préparées). */

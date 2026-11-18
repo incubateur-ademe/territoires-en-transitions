@@ -22,6 +22,10 @@ Réservé à l'équipe : utilisateurs **support** (`utilisateur_support`) et sup
 | outil | `sample_support_conversations` | Extraits de ces conversations (demande, dernière réponse du support), e-mails et téléphones masqués, pour synthétiser les retours. |
 | outil | `list_user_support_conversations` | Historique Crisp d'un usager par e-mail : ses 10 conversations les plus récentes (date, segments, demande, dernière réponse du support), masquées. |
 | outil | `list_support_segments` | Segments Crisp utilisés sur une période, par type de retour, avec leurs variantes d'orthographe. |
+| outil | `get_repo_map` | Carte du dépôt de code : dossiers par domaine, sens des suffixes de fichiers, où lire les droits, les règles et les textes d'interface. À appeler avant toute réponse sur le fonctionnement de la plateforme. |
+| outil | `search_code` | Cherche des mots dans le code du dépôt (API de recherche GitHub, branche `main`) : fichiers et extraits. Exige `GITHUB_API_TOKEN`. |
+| outil | `list_repo_files` | Fichiers d'un dossier du dépôt, ou du sous-arbre dont le chemin contient un filtre. |
+| outil | `read_code` | Lit un fichier du dépôt par tranche de lignes numérotées (120 par défaut, 200 au plus). |
 | outil (app) | `propose_choices` | Assistant de l'app seulement : affiche une question et des réponses cliquables quand la demande est floue. |
 | outil (app) | `prepare_segment_tagging` | Assistant de l'app seulement, rôle support : prépare l'ajout d'un segment aux conversations d'un filtre, sans rien écrire ; l'utilisateur confirme d'un clic. |
 | ressource | `tet://docs/regles-metier` | Règles métier, filtres obligatoires, glossaire. |
@@ -29,6 +33,7 @@ Réservé à l'équipe : utilisateurs **support** (`utilisateur_support`) et sup
 | ressource | `tet://docs/posthog-hogql` | Guide HogQL. |
 | ressource | `tet://docs/support-crisp` | Taxonomie des segments Crisp du support et méthode d'estimation du temps passé. |
 | ressource | `tet://docs/esquisse-modele` | Le modèle d'esquisse (pitch Shape Up) de l'équipe et son vocabulaire. |
+| ressource | `tet://docs/carte-du-depot` | La même carte du dépôt, pour les clients qui lisent les ressources. |
 | prompt | `analyse-stats` | Méthode de travail + les ressources de données. |
 | prompt | `assistant-app` | Assistant de l'app : clarifier la demande (choix cliquables), proposer une suite, préparer les ajouts de segments. |
 | prompt | `esquisse-shape-up` | Arguments `sujet`, `appetit`, `contexte` : rédige un premier jet d'esquisse au format de l'équipe, chiffres sourcés par les outils, précédents lus dans Notion quand un connecteur est disponible dans la conversation. |
@@ -43,6 +48,21 @@ Les ressources sont des fichiers TypeScript dans `resources/`, repris du dashboa
 4. Coller le texte dans la page Notion de l'esquisse. L'assistant n'écrit pas dans Notion.
 
 Les décisions d'architecture (hébergement dans l'API, authentification, permissions, anatomie d'un outil, données personnelles) sont dans l'ADR [0021](../../../../../doc/adr/0021-serveur-mcp-dans-l-api.md).
+
+## Questions sur le fonctionnement : vérifier dans le code
+
+Le serveur ne sait rien du fonctionnement de la plateforme (parcours, droits, écrans) : ses outils lisent des données. Pour qu'un assistant ne réponde pas de mémoire, le champ `instructions` du serveur (`MCP_SERVER_INSTRUCTIONS`, lu par le client à la connexion) impose, pour ce type de question :
+
+1. appeler `get_repo_map` ;
+2. lire les fichiers concernés dans le dépôt public `incubateur-ademe/territoires-en-transitions` avec le connecteur GitHub ;
+3. sans connecteur, suggérer à l'utilisateur de l'installer, et vérifier en attendant avec `search_code`, `list_repo_files` et `read_code` ;
+4. citer les fichiers lus, et présenter comme non vérifié ce qui ne l'a pas été.
+
+**Installer le connecteur GitHub dans Claude.ai** : Paramètres > Connecteurs > GitHub, puis autoriser le dépôt `incubateur-ademe/territoires-en-transitions`. Il se cumule avec le connecteur Territoires en Transitions dans la même conversation.
+
+L'agent Albert n'a pas de connecteur : la carte du dépôt est jointe à ses prompts (`analyse-stats`, `support-conversation`, `assistant-app`) et le point 9 de sa méthode lui fait chercher puis lire le code avec les trois outils du serveur (`tools/repo-code/`). Ces outils lisent la branche `main` par l'API GitHub, en lecture seule ; fichiers d'environnement, lockfile et binaires sont refusés. La recherche de code est limitée par GitHub à 10 requêtes par minute pour tout le backend : les résultats sont gardés 10 minutes en mémoire.
+
+La carte (`resources/carte-du-depot.doc.ts`) ne cite que des chemins existants : `carte-du-depot.doc.spec.ts` échoue si un dossier cité est renommé ou supprimé.
 
 ## Outils métier et mode super admin
 
@@ -63,6 +83,7 @@ Les outils par collectivité ou par utilisateur vérifient les permissions de l'
 | `ANALYTICS_DATABASE_URL` | URL Postgres de la base analytique (Neon, `?sslmode=verify-full`), avec le rôle lecture seule. Sans elle, les outils SQL répondent `ANALYTICS_DATABASE_NOT_CONFIGURED`. |
 | `POSTHOG_PERSONAL_API_KEY` | Clé API personnelle PostHog en lecture. Sans elle, `run_hogql_query` répond `POSTHOG_NOT_CONFIGURED`. |
 | `CRISP_API_IDENTIFIER`, `CRISP_API_KEY` | Jeton REST Crisp de niveau `website` (portée `website:conversation:sessions` et `website:conversation:messages`). Sans lui, les outils support répondent `CRISP_NOT_CONFIGURED`. `CRISP_WEBSITE_ID` a pour défaut l'espace de TeT. |
+| `GITHUB_API_TOKEN` | Jeton GitHub en lecture seule (aucune permission au-delà du dépôt public). Sans lui, `search_code` répond `GITHUB_NOT_CONFIGURED` ; `list_repo_files` et `read_code` fonctionnent avec le quota anonyme de GitHub. |
 | `POSTHOG_PROJECT_ID`, `POSTHOG_API_HOST` | Projet et hôte PostHog (défauts : 12975, `https://eu.posthog.com`). |
 | `BACKEND_PUBLIC_URL` | URL publique de l'API pour les métadonnées OAuth ; à défaut, l'en-tête Host. |
 

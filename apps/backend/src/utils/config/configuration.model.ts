@@ -320,6 +320,12 @@ export const backendConfigurationSchema = z
       .string()
       .optional()
       .describe('Clé du jeton API Crisp (lecture des conversations)'),
+    GITHUB_API_TOKEN: z
+      .string()
+      .optional()
+      .describe(
+        "Jeton GitHub en lecture seule (dépôt public) pour les outils de lecture du code de l'assistant ; sans lui, la recherche de code répond GITHUB_NOT_CONFIGURED"
+      ),
     CRISP_WEBSITE_ID: z
       .string()
       .prefault('582ff50a-5ac4-4f38-a8bc-62f51beeef89')
