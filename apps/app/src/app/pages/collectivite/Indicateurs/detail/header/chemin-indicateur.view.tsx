@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import {
   makeCollectiviteIndicateursUrl,
   makeCollectiviteTousLesIndicateursUrl,
@@ -23,7 +24,7 @@ const CheminIndicateur = ({ collectiviteId, indicateur }: Props) => {
 
   const items =
     parentChain.map(({ id, titre, titreCourt, identifiantReferentiel }) => ({
-      label: titreCourt || titre || 'Sans titre',
+      label: titreCourt || titre || appLabels.sansTitre,
       url:
         id !== indicateur.id
           ? makeCollectiviteIndicateursUrl({
@@ -40,7 +41,7 @@ const CheminIndicateur = ({ collectiviteId, indicateur }: Props) => {
       size="sm"
       items={[
         {
-          label: 'Tous les indicateurs',
+          label: appLabels.indicateurTous,
           onClick: () =>
             router.push(
               makeCollectiviteTousLesIndicateursUrl({

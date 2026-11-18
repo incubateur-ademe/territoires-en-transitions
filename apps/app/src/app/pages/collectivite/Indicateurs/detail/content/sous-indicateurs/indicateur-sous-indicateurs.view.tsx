@@ -15,8 +15,6 @@ export const IndicateurSousIndicateurs = ({
     { sortBy: 'titre' }
   );
 
-  if (!enfantsIds?.length) return null;
-
   return (
     <div className="bg-white p-10 border border-grey-3 rounded-xl">
       <IndicateursListe

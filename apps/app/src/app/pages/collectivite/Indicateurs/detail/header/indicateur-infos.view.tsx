@@ -13,51 +13,58 @@ import {
 type Props = {
   indicateur: IndicateurDetaille;
   isPerso: boolean;
-  composeSansAgregation: boolean;
+  isComposeSansAgregation: boolean;
   isReadonly: boolean;
 };
 
-export const hasIndicateurInfos = ({
-  indicateur,
-  isPerso,
-  composeSansAgregation,
-  isReadonly,
-}: Props): boolean => {
-  const { participationScore, hasOpenData } = indicateur;
-  const pilotes = indicateur.pilotes ?? [];
-  const services = indicateur.services ?? [];
-  return (
-    !isReadonly ||
-    !composeSansAgregation ||
-    pilotes.length > 0 ||
-    services.length > 0 ||
-    Boolean(participationScore) ||
-    (!composeSansAgregation && (isPerso || Boolean(hasOpenData)))
-  );
+type InfosVisibility = {
+  showPeriodicite: boolean;
+  showPilotes: boolean;
+  showServices: boolean;
+  showParticipationScore: boolean;
+  showBadges: boolean;
 };
 
-export const IndicateurInfos = ({
+export const getInfosVisibility = ({
   indicateur,
   isPerso,
-  composeSansAgregation,
+  isComposeSansAgregation,
   isReadonly,
-}: Props) => {
-  const { participationScore, hasOpenData } = indicateur;
+}: Props): InfosVisibility => ({
+  showPeriodicite: !isComposeSansAgregation,
+  showPilotes: !isReadonly || (indicateur.pilotes ?? []).length > 0,
+  showServices: !isReadonly || (indicateur.services ?? []).length > 0,
+  showParticipationScore: Boolean(indicateur.participationScore),
+  showBadges:
+    !isComposeSansAgregation && (isPerso || Boolean(indicateur.hasOpenData)),
+});
 
-  const showPilotes = !isReadonly || (indicateur.pilotes ?? []).length > 0;
-  const showServices = !isReadonly || (indicateur.services ?? []).length > 0;
-  const showBadges = !composeSansAgregation && (isPerso || hasOpenData);
+export const hasIndicateurInfos = (props: Props): boolean =>
+  Object.values(getInfosVisibility(props)).some(Boolean);
+
+export const IndicateurInfos = (props: Props) => {
+  const { indicateur, isPerso, isReadonly } = props;
+  const { hasOpenData } = indicateur;
+  const {
+    showPeriodicite,
+    showPilotes,
+    showServices,
+    showParticipationScore,
+    showBadges,
+  } = getInfosVisibility(props);
 
   const items: ReactNode[] = [
-    !composeSansAgregation && (
+    showPeriodicite && (
       <IndicateurPeriodiciteBadge
         periodicite={indicateur.periodicite}
-        participationScore={Boolean(participationScore)}
+        participationScore={showParticipationScore}
       />
     ),
     showPilotes && <IndicateurPilotes isReadonly={isReadonly} />,
     showServices && <IndicateurServicesPilotes isReadonly={isReadonly} />,
-    participationScore && <span>{appLabels.indicateurParticipeAuScore}</span>,
+    showParticipationScore && (
+      <span>{appLabels.indicateurParticipeAuScore}</span>
+    ),
     showBadges && (
       <>
         {isPerso && <BadgeIndicateurPerso />}
