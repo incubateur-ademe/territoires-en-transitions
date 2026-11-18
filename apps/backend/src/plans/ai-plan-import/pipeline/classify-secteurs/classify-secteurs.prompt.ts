@@ -11,6 +11,8 @@ export type SecteursPromptInput = {
   text: string;
   withSecteurs: boolean;
   effetsAttendus: EffetAttendu[];
+  /** Type du plan, hors PCAET : précise le cadrage du prompt. */
+  planTypeLabel?: string;
 };
 
 export const buildSecteursPrompt = ({
@@ -18,6 +20,7 @@ export const buildSecteursPrompt = ({
   text,
   withSecteurs,
   effetsAttendus,
+  planTypeLabel,
 }: SecteursPromptInput): string => {
   const withEffets = effetsAttendus.length > 0;
   const exempleIds = effetsAttendus.slice(0, 1).map(({ id }) => id);
@@ -66,7 +69,9 @@ export const buildSecteursPrompt = ({
   return generatePrompt(SECTEURS_PROMPT, {
     plan: withSecteurs
       ? 'un plan climat-air-énergie territorial (PCAET)'
-      : 'un plan d’action territorial',
+      : planTypeLabel === undefined
+      ? 'un plan d’action territorial'
+      : `un plan d’action territorial de type « ${planTypeLabel} »`,
     contexte: withSecteurs
       ? 'Le programme d’actions d’un PCAET porte sur les secteurs d’activité définis par la réglementation (article R. 229-52 du code de l’environnement, arrêté du 4 août 2016) et sur des thématiques d’aménagement, d’environnement, d’économie, de santé et de risques. '
       : '',

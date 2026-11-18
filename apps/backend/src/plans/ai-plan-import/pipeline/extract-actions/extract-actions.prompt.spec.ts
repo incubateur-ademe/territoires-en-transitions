@@ -12,7 +12,10 @@ import {
   PILOTES_RULE,
   SOUS_ACTIONS_RULE,
 } from '../../prompts/field-rules';
-import { STRUCTURATION_SYSTEM_PROMPT } from '../../prompts/structuration.prompt';
+import {
+  STRUCTURATION_PLAN_SCOPE,
+  STRUCTURATION_SYSTEM_PROMPT,
+} from '../../prompts/structuration.prompt';
 import { buildConsolidationPrompt } from '../consolidate-actions/consolidate-actions.prompt';
 import { buildExtractionPrompt } from './extract-actions.prompt';
 
@@ -68,6 +71,7 @@ describe('buildExtractionPrompt', () => {
       currentDate: '08/06/2026',
     });
     const structuration = generatePrompt(STRUCTURATION_SYSTEM_PROMPT, {
+      cadrage: STRUCTURATION_PLAN_SCOPE,
       dateDuJour: '08/06/2026',
       regleTableur: '',
     });

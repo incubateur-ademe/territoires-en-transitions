@@ -5,6 +5,7 @@ import {
   ImportPlanService,
 } from '@tet/backend/plans/plans/import-plan-aggregate/import-plan.service';
 import { PlanCreationError } from '@tet/backend/plans/plans/import-plan-aggregate/import.errors';
+import { ListPlanTypesService } from '@tet/backend/plans/plans/list-plan-types/list-plan-types.service';
 import { PlanVerificationRepository } from '@tet/backend/plans/plans/verify-plan/plan-verification.repository';
 import { NotifyPlanImportedService } from '../notify-plan-imported/notify-plan-imported.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
@@ -276,7 +277,8 @@ const buildService = (mocks: ReturnType<typeof buildMocks>) =>
       new CompletePlanImportService(
         mocks.jobRepository,
         mocks.planVerificationRepository
-      )
+      ),
+      { listPlanTypes: async () => [] } as unknown as ListPlanTypesService
     ),
     {} as GenerateElectrificationImportService,
     {

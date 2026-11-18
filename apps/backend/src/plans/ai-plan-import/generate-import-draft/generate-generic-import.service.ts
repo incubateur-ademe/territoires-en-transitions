@@ -10,6 +10,7 @@ import {
   ImportPlanOutput,
   ImportPlanService,
 } from '@tet/backend/plans/plans/import-plan-aggregate/import-plan.service';
+import { ListPlanTypesService } from '@tet/backend/plans/plans/list-plan-types/list-plan-types.service';
 import { PlanVerificationRepository } from '@tet/backend/plans/plans/verify-plan/plan-verification.repository';
 import { EffetAttenduService } from '@tet/backend/shared/effet-attendu/effet-attendu.service';
 import { buildRequesterUser } from '@tet/backend/users/models/auth.models';
@@ -41,6 +42,7 @@ import {
 } from '../models/import-checkpoint';
 import { PlanDraft } from '../models/plan-draft';
 import { AiPlanImportProfileEnum } from '../models/import-profile';
+import { describePlanType } from '../prompts/plan-framing';
 import { countPlanContent } from './count-plan-content';
 import { draftToImportPlanInput } from './draft-to-import-plan-input';
 import { buildLlmOcrPage } from '../pipeline/read-document/llm-ocr-page';
@@ -73,7 +75,8 @@ export class GenerateGenericImportService implements ImportGenerator {
     private readonly transactionManager: TransactionManager,
     private readonly effetAttenduService: EffetAttenduService,
     private readonly enqueueCompletePlanSecteursService: EnqueueCompletePlanSecteursService,
-    private readonly completion: CompletePlanImportService
+    private readonly completion: CompletePlanImportService,
+    private readonly listPlanTypes: ListPlanTypesService
   ) {}
 
   async generate(
@@ -162,6 +165,7 @@ export class GenerateGenericImportService implements ImportGenerator {
     }
 
     const effetsAttendus = await this.effetAttenduService.getEffetAttendu();
+    const planTypeLabel = await this.readPlanTypeLabel(job);
     const outcome = await runImportPipeline(this.llm, {
       ...start,
       profile:
@@ -173,6 +177,7 @@ export class GenerateGenericImportService implements ImportGenerator {
       withVerifications: job.options.withVerifications,
       withSousActions: job.options.withSousActions,
       withSecteurs: job.options.withSecteurs ?? false,
+      planTypeLabel,
       effetsAttendus,
       onStepStatesChange: async (stepStates) => {
         await this.jobRepository.updateStepStates(job.id, attempt, stepStates);
@@ -230,6 +235,24 @@ export class GenerateGenericImportService implements ImportGenerator {
       );
     }
     return imported;
+  }
+
+  /** Le cadrage est un plus : sa lecture en échec ne bloque pas l'import. */
+  private async readPlanTypeLabel(
+    job: AiPlanImportJob
+  ): Promise<string | undefined> {
+    const planTypeId = job.options.planType;
+    if (planTypeId === undefined) return undefined;
+    try {
+      const planTypes = await this.listPlanTypes.listPlanTypes();
+      return describePlanType(planTypes.find(({ id }) => id === planTypeId));
+    } catch (error) {
+      this.logger.warn(
+        `Import ${job.id}: type de plan illisible, cadrage par défaut`,
+        error
+      );
+      return undefined;
+    }
   }
 
   private async persistDraftAsPlan(

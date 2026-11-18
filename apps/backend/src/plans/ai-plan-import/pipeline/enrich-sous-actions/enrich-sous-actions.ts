@@ -31,6 +31,8 @@ export type EnrichSousActionsInput = {
   actions: ExtractedAction[];
   source: SourceChunks;
   disabledFields: DisableableField[];
+  /** Type du plan, hors PCAET : précise le cadrage du prompt. */
+  planTypeLabel?: string;
   signal?: AbortSignal;
 };
 
@@ -45,7 +47,13 @@ type BatchOutcome = { entries: EnrichmentEntry[]; tokens: TokenUsage };
 
 export const enrichSousActions = async (
   llm: Pick<LlmService, 'generateStructured'>,
-  { actions, source, disabledFields, signal }: EnrichSousActionsInput
+  {
+    actions,
+    source,
+    disabledFields,
+    planTypeLabel,
+    signal,
+  }: EnrichSousActionsInput
 ): Promise<Result<EnrichSousActionsResult, LlmError>> => {
   const indexed = indexSousActions(actions);
   if (indexed.length === 0) {
@@ -69,7 +77,13 @@ export const enrichSousActions = async (
     batches,
     ENRICHMENT_CONCURRENCY,
     ({ batch, text }) =>
-      enrichBatch(llm, { batch, text, disabledFields, signal })
+      enrichBatch(llm, {
+        batch,
+        text,
+        disabledFields,
+        planTypeLabel,
+        signal,
+      })
   );
 
   // Les sous-actions d'un lot en échec restent telles qu'extraites.
@@ -105,11 +119,13 @@ const enrichBatch = async (
     batch,
     text,
     disabledFields,
+    planTypeLabel,
     signal,
   }: {
     batch: IndexedSousAction[];
     text: string;
     disabledFields: DisableableField[];
+    planTypeLabel?: string;
     signal?: AbortSignal;
   }
 ): Promise<Result<BatchOutcome, LlmError>> => {
@@ -118,6 +134,7 @@ const enrichBatch = async (
       renderedSousActions: renderSousActionsToEnrich(batch),
       text,
       disabledFields,
+      planTypeLabel,
     }),
     schema: enrichmentResponseSchema,
     thinkingLevel: 'low',

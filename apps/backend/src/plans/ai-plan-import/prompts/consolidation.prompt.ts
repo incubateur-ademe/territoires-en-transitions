@@ -7,12 +7,13 @@ import {
   SOUS_ACTIONS_RULE,
 } from './field-rules';
 
+const cadrage = '{cadrage}';
 const actionsAAmeliorer = '{actions_a_ameliorer}';
 const textePdfAAnalyser = '{texte_pdf_a_analyser}';
 
 export const CONSOLIDATION_PROMPT = definePrompt({
   template: `
-Vous êtes un agent d’extraction documentaire spécialisé dans les plans d’actions de transition écologique des collectivités, y compris les PCAET.
+Vous êtes un agent d’extraction documentaire spécialisé dans les plans d’actions ${cadrage}.
 
 Contexte
 On vous fournit :
@@ -93,5 +94,5 @@ Sortie attendue
 3) Ne pas utiliser de balises Markdown
 4) Le tableau ne doit contenir QUE les actions demandées qui ont pu être retrouvées dans le texte source
 `,
-  placeholders: { actionsAAmeliorer, textePdfAAnalyser },
+  placeholders: { cadrage, actionsAAmeliorer, textePdfAAnalyser },
 });

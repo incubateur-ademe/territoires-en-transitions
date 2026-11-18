@@ -30,6 +30,8 @@ export type ConsolidateActionsInput = {
   actions: ExtractedAction[];
   source: SourceChunks;
   disabledFields: DisableableField[];
+  /** Type du plan, hors PCAET : précise le cadrage du prompt. */
+  planTypeLabel?: string;
   signal?: AbortSignal;
 };
 
@@ -44,7 +46,13 @@ type BatchOutcome = { entries: ConsolidationEntry[]; tokens: TokenUsage };
 
 export const consolidateActions = async (
   llm: Pick<LlmService, 'generateStructured'>,
-  { actions, source, disabledFields, signal }: ConsolidateActionsInput
+  {
+    actions,
+    source,
+    disabledFields,
+    planTypeLabel,
+    signal,
+  }: ConsolidateActionsInput
 ): Promise<Result<ConsolidateActionsResult, LlmError>> => {
   const lowScoreActions = selectLowScoreActions(actions);
   if (lowScoreActions.length === 0) {
@@ -68,7 +76,13 @@ export const consolidateActions = async (
     batches,
     CONSOLIDATION_CONCURRENCY,
     ({ batch, text }) =>
-      consolidateBatch(llm, { batch, text, disabledFields, signal })
+      consolidateBatch(llm, {
+        batch,
+        text,
+        disabledFields,
+        planTypeLabel,
+        signal,
+      })
   );
 
   // Les actions d'un lot en échec restent telles qu'extraites.
@@ -102,11 +116,13 @@ const consolidateBatch = async (
     batch,
     text,
     disabledFields,
+    planTypeLabel,
     signal,
   }: {
     batch: IndexedAction[];
     text: string;
     disabledFields: DisableableField[];
+    planTypeLabel?: string;
     signal?: AbortSignal;
   }
 ): Promise<Result<BatchOutcome, LlmError>> => {
@@ -115,6 +131,7 @@ const consolidateBatch = async (
       renderedActionsToImprove: renderActionsToImprove(batch),
       text,
       disabledFields,
+      planTypeLabel,
     }),
     schema: consolidationResponseSchema,
     signal,

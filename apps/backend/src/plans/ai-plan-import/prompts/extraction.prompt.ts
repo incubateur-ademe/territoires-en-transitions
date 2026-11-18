@@ -12,14 +12,18 @@ import {
   SOUS_ACTIONS_RULE,
 } from './field-rules';
 
+const cadrage = '{cadrage}';
 const instructions = '{instructions}';
 const textePdfAAnalyser = '{texte_pdf_a_analyser}';
 const dateDuJour = '{date_du_jour}';
 const regleTableur = '{regle_tableur}';
 
+export const EXTRACTION_PLAN_SCOPE =
+  'de transition écologique des collectivités, y compris les PCAET';
+
 export const EXTRACTION_PROMPT = definePrompt({
   template: `
-Vous êtes un agent d’extraction documentaire spécialisé dans les plans d’actions de transition écologique des collectivités, y compris les PCAET.
+Vous êtes un agent d’extraction documentaire spécialisé dans les plans d’actions ${cadrage}.
 
 Contexte du fichier en entrée
 Le texte fourni est un document de plan d’actions d’une collectivité. Un plan est structuré en axes, sous axes, actions et parfois sous actions. Le contenu peut être issu d’un PDF converti avec des artefacts de mise en page. Certaines rubriques comme budget, service pilote ou statut ne sont pas toujours explicites.${regleTableur}
@@ -210,5 +214,11 @@ Voici le texte à analyser :
 ${textePdfAAnalyser}
 `,
   // La règle passe avant le texte : un « {regle_tableur} » du document reste tel quel.
-  placeholders: { regleTableur, instructions, textePdfAAnalyser, dateDuJour },
+  placeholders: {
+    cadrage,
+    regleTableur,
+    instructions,
+    textePdfAAnalyser,
+    dateDuJour,
+  },
 });

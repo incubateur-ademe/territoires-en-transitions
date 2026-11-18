@@ -25,6 +25,7 @@ const DECLARED_MIME_BY_EXTENSION: Record<string, string> = {
 const USAGE = `Usage : run-ai-import-eval --file <pdf|docx|xlsx|csv> [--out <json>] [--ref <json>]
   [--instructions "<consignes>"] [--no-verifications] [--no-sous-actions]
   [--profile generic|pcaet|annexe-3-electrification] [--catalogue <json>]
+  [--type-plan "<libellé>"]   (hors PCAET : type du plan donné au modèle, ex. "Plan Mobilité")
        --profile annexe-3-electrification --catalogue <json> : DOCX V4, aide IA ciblée si nécessaire, références non résolues
        (appels réels possibles : lancement humain uniquement)
        (incompatible avec --ref, --instructions, --no-verifications, --no-sous-actions et --lecture-seule)
@@ -45,6 +46,7 @@ export type GenericEvalInput = EvalFile & {
       | typeof AiPlanImportProfileEnum.GENERIC
       | typeof AiPlanImportProfileEnum.PCAET;
     withSecteurs: boolean;
+    planTypeLabel: string | undefined;
     instructions: string;
     withVerifications: boolean;
     withSousActions: boolean;
@@ -68,6 +70,7 @@ export const readEvalInput = async (): Promise<EvalInput | EvalExit> => {
       ref: { type: 'string' },
       profile: { type: 'string', default: AiPlanImportProfileEnum.GENERIC },
       instructions: { type: 'string', default: '' },
+      'type-plan': { type: 'string' },
       'no-verifications': { type: 'boolean', default: false },
       'no-sous-actions': { type: 'boolean', default: false },
       'lecture-seule': { type: 'boolean', default: false },
@@ -91,6 +94,7 @@ export const readEvalInput = async (): Promise<EvalInput | EvalExit> => {
     electrification &&
     (values.ref !== undefined ||
       values.instructions !== '' ||
+      values['type-plan'] !== undefined ||
       values['no-verifications'] ||
       values['no-sous-actions'] ||
       values['lecture-seule'])
@@ -158,6 +162,10 @@ export const readEvalInput = async (): Promise<EvalInput | EvalExit> => {
     options: {
       profile: profile.data,
       withSecteurs: profile.data === AiPlanImportProfileEnum.PCAET,
+      planTypeLabel:
+        profile.data === AiPlanImportProfileEnum.PCAET
+          ? undefined
+          : values['type-plan'],
       instructions: values.instructions,
       withVerifications: !values['no-verifications'],
       withSousActions: !values['no-sous-actions'],

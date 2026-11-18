@@ -1,10 +1,13 @@
 import { definePrompt } from '@tet/backend/utils/llm/prompt-template';
 
+const cadrage = '{cadrage}';
 const reponseIa = '{reponse_ia}';
+
+export const QUALITATIVE_REVIEW_PLAN_SCOPE = 'de transition écologique';
 
 export const QUALITATIVE_REVIEW_PROMPT = definePrompt({
   template: `
-Vous êtes un auditeur qualité spécialisé dans les plans d'actions de transition écologique.
+Vous êtes un auditeur qualité spécialisé dans les plans d'actions ${cadrage}.
 
 Contexte
 On vous fournit une extraction déjà structurée avec les éléments suivants :
@@ -44,5 +47,5 @@ Exemple de format attendu
   "avis": "Extraction globalement cohérente avec quelques points à surveiller. 1.2.4 description trop générale."
 }
 `,
-  placeholders: { reponseIa },
+  placeholders: { cadrage, reponseIa },
 });
