@@ -255,6 +255,11 @@ export const Event = {
       planModale: 'demarches:pcaet:plan:modale',
       /** Un avis téléchargé, pièce unique ou archive (`format`). */
       avisTelecharge: 'demarches:pcaet:avis:telecharge',
+      /**
+       * Classeur d'une étape enregistré par le navigateur (`type`, `source`,
+       * `transition`) ; ni les échecs ni les annulations.
+       */
+      classeurTelecharge: 'demarches:pcaet:classeur:telecharge',
       instructionListeVue: 'demarches:pcaet:instruction:liste_vue',
       instructionFiltre: 'demarches:pcaet:instruction:filtre',
       instructionDossierVu: 'demarches:pcaet:instruction:dossier_vu',

@@ -2,7 +2,7 @@
 
 import { appLabels } from '@/app/labels/catalog';
 import { DemarchePcaetTransitionEnum } from '@tet/domain/demarches';
-import { Button } from '@tet/ui';
+import { Button, Event, useEventTracker } from '@tet/ui';
 import { useDownloadDemarcheExport } from './data/use-download-demarche-export';
 import {
   useListDemarcheExports,
@@ -40,10 +40,22 @@ export const DownloadDemarcheExportButton = ({
 }) => {
   const { data } = useListDemarcheExports(dossierRef);
   const entry = data?.[type] ?? null;
+  const tracker = useEventTracker();
   const { download, isDownloading } = useDownloadDemarcheExport({
-    ref: dossierRef,
+    dossierRef,
     type,
     source: entry?.source,
+    onDownloaded: () => {
+      if (entry === null) {
+        return;
+      }
+      tracker(Event.demarches.pcaet.classeurTelecharge, {
+        acteur: 'demandeAvisId' in dossierRef ? 'instructeur' : 'collectivite',
+        type,
+        source: entry.source,
+        transition: entry.source === 'snapshot' ? entry.transition : undefined,
+      });
+    },
   });
 
   if (entry === null) {
