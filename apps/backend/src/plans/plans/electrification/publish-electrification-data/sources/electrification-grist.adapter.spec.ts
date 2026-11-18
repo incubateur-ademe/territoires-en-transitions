@@ -197,16 +197,18 @@ describe('Engagements publiés depuis Grist', () => {
     }
   );
 
-  it("accepte l'unité du total répétée devant le qualificatif de la sous-cible", () => {
-    const data = structuredClone(source);
-    data.Axes[0].fields.Parametre_signe =
-      "Rénover d'ici 2040 ___ bâtiments, dont ___ bâtiments scolaires";
-    expect(build([], data).engagements[0].cibles[1]).toMatchObject({
-      key: 'batiments-scolaires',
-      uniteImport: 'bâtiments',
-      reglesImport: { plafondCible: 'total', annee: 2040 },
-    });
-  });
+  it.each(['bâtiments scolaires', 'SCOLAIRES'])(
+    'accepte une sous-cible qualifiée par %s',
+    (qualifier) => {
+      const data = structuredClone(source);
+      data.Axes[0].fields.Parametre_signe = `Rénover d'ici 2040 ___ bâtiments, dont ___ ${qualifier}`;
+      expect(build([], data).engagements[0].cibles[1]).toMatchObject({
+        key: qualifier === 'SCOLAIRES' ? 'scolaires' : 'batiments-scolaires',
+        uniteImport: 'bâtiments',
+        reglesImport: { plafondCible: 'total', annee: 2040 },
+      });
+    }
+  );
 
   it.each([
     ['E42+E43', "Rénover d'ici 2040 ___ bâtiments et ___ écoles"],
