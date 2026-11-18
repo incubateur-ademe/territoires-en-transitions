@@ -6,6 +6,7 @@ import { useIndicateurActions } from './indicateur-actions.context';
 import { useIndicateurFichesLiees } from './indicateur-fiches-liees.context';
 import { useIndicateurMesuresLiees } from './indicateur-mesures-liees.context';
 import { useIndicateurPersonnalisation } from './indicateur-personnalisation.context';
+import { useIndicateurSousIndicateursTable } from './indicateur-sous-indicateurs-table.context';
 
 afterEach(() => vi.restoreAllMocks());
 
@@ -16,6 +17,7 @@ describe.each([
   ['useIndicateurFichesLiees', useIndicateurFichesLiees],
   ['useIndicateurMesuresLiees', useIndicateurMesuresLiees],
   ['useIndicateurPersonnalisation', useIndicateurPersonnalisation],
+  ['useIndicateurSousIndicateursTable', useIndicateurSousIndicateursTable],
 ])('%s', (name, useContextValue) => {
   it('échoue hors de son provider', () => {
     vi.spyOn(console, 'error').mockImplementation(() => undefined);
