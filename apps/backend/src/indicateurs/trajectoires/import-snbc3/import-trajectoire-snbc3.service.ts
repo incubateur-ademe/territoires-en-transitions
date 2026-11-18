@@ -1,7 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import ManageIndicateurValeursService from '@tet/backend/indicateurs/valeurs/manage-indicateur-valeurs/manage-indicateur-valeurs.service';
 import { IndicateurValeursError } from '@tet/backend/indicateurs/valeurs/indicateur-valeurs.errors';
-import { failure, Result, success } from '@tet/backend/utils/result.type';
+import {
+  failure,
+  getDataOrThrow,
+  Result,
+  success,
+} from '@tet/backend/utils/result.type';
 import { IndicateurValeurCreate } from '@tet/domain/indicateurs';
 import { getErrorMessage } from '@tet/domain/utils';
 import { chunk } from 'es-toolkit';
@@ -525,10 +530,12 @@ export class ImportTrajectoireSnbc3Service {
       ({ collectiviteId }) => !importedCollectiviteIds.has(collectiviteId)
     );
     for (const { collectiviteId, importedCount } of missing) {
-      await this.valeursService.deleteIndicateurValeurs({
-        collectiviteId,
-        metadonneeId,
-      });
+      getDataOrThrow(
+        await this.valeursService.deleteIndicateurValeurs({
+          collectiviteId,
+          metadonneeId,
+        })
+      );
       report.valeurs.deleted += importedCount;
       report.clearedCollectiviteIds.push(collectiviteId);
     }

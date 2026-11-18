@@ -366,7 +366,7 @@ export default class ManageIndicateurValeursService {
       async (tx) => success(await operation(tx))
     );
     if (!result.success) {
-      throw result.cause ?? result.error;
+      throw typeof result.error === 'string' ? result : result.error;
     }
     return result.data;
   }
@@ -438,7 +438,19 @@ export default class ManageIndicateurValeursService {
     );
   }
 
-  async upsertValeur(data: UpsertValeurIndicateur, user: AuthenticatedUser) {
+  upsertValeur(
+    data: UpsertValeurIndicateur,
+    user: AuthenticatedUser
+  ): Promise<Result<IndicateurValeur | undefined, IndicateurValeursError>> {
+    return captureIndicateurValeursResult(() =>
+      this.executeUpsertValeur(data, user)
+    );
+  }
+
+  private async executeUpsertValeur(
+    data: UpsertValeurIndicateur,
+    user: AuthenticatedUser
+  ) {
     const { collectiviteId, indicateurId } = data;
     const indicateur = await this.listIndicateursService.getIndicateur({
       collectiviteId,
@@ -468,7 +480,16 @@ export default class ManageIndicateurValeursService {
     return saved;
   }
 
-  async deleteValeurIndicateur(
+  deleteValeurIndicateur(
+    data: DeleteValeurIndicateur,
+    user: AuthenticatedUser
+  ): Promise<Result<void, IndicateurValeursError>> {
+    return captureIndicateurValeursResult(() =>
+      this.executeDeleteValeurIndicateur(data, user)
+    );
+  }
+
+  private async executeDeleteValeurIndicateur(
     data: DeleteValeurIndicateur,
     user: AuthenticatedUser
   ) {
@@ -529,7 +550,22 @@ export default class ManageIndicateurValeursService {
       )
     );
   }
-  async deleteIndicateurValeurs(options: DeleteIndicateursValeursRequestType) {
+  deleteIndicateurValeurs(
+    options: DeleteIndicateursValeursRequestType
+  ): Promise<
+    Result<
+      { indicateurValeurIdsSupprimes: { id: number }[] },
+      IndicateurValeursError
+    >
+  > {
+    return captureIndicateurValeursResult(() =>
+      this.executeDeleteIndicateurValeurs(options)
+    );
+  }
+
+  private async executeDeleteIndicateurValeurs(
+    options: DeleteIndicateursValeursRequestType
+  ) {
     this.logger.log(
       `Suppression des valeurs des indicateurs selon ces options : ${JSON.stringify(
         options

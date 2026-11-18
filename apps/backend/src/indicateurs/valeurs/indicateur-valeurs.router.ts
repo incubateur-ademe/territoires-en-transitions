@@ -1,5 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { TRPCError } from '@trpc/server';
+import { Injectable } from '@nestjs/common';
 import { collectiviteIdInputSchemaPartial } from '@tet/backend/collectivites/collectivite-id.input';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
@@ -61,18 +60,8 @@ export class IndicateurValeursRouter {
     upsert: this.trpc.authedProcedure
       .input(upsertValeurIndicateurSchema)
       .mutation(async ({ input, ctx }) => {
-        try {
-          return await this.service.upsertValeur(input, ctx.user);
-        } catch (error) {
-          if (error instanceof BadRequestException) {
-            throw new TRPCError({
-              code: 'BAD_REQUEST',
-              message: error.message,
-              cause: error,
-            });
-          }
-          throw error;
-        }
+        const result = await this.service.upsertValeur(input, ctx.user);
+        return this.getIndicateurValeursResultOrThrow(result);
       }),
     upsertMany: this.trpc.authedProcedure
       .input(upsertGridValeursInputSchema)
@@ -85,8 +74,12 @@ export class IndicateurValeursRouter {
       }),
     delete: this.trpc.authedProcedure
       .input(deleteValeurIndicateurSchema)
-      .mutation(({ input, ctx }) => {
-        return this.service.deleteValeurIndicateur(input, ctx.user);
+      .mutation(async ({ input, ctx }) => {
+        const result = await this.service.deleteValeurIndicateur(
+          input,
+          ctx.user
+        );
+        return this.getIndicateurValeursResultOrThrow(result);
       }),
     average: this.trpc.authedProcedure
       .input(getMoyenneCollectivitesRequestSchema)
