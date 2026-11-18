@@ -17,16 +17,22 @@ import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { createFiche } from '@tet/backend/plans/fiches/fiches.test-fixture';
 import { Collectivite } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
-import { eq, isNull } from 'drizzle-orm';
-import { describe, expect, onTestFinished } from 'vitest';
+import { and, asc, eq, isNull } from 'drizzle-orm';
+import { describe, expect, onTestFinished, vi } from 'vitest';
 import z from 'zod';
 import { indicateurGroupeTable } from '../../shared/models/indicateur-groupe.table';
 import { indicateurThematiqueTable } from '../../shared/models/indicateur-thematique.table';
 import { indicateurCollectiviteTable } from '../../indicateur/indicateur-collectivite.table';
 import { indicateurDefinitionTable } from '../../indicateur/indicateur-definition.table';
+import { indicateurValeurTable } from '../../valeurs/indicateur-valeur.table';
+import { indicateurSourceMetadonneeTable } from '../../shared/models/indicateur-source-metadonnee.table';
 import CreateIndicateurService from './create-indicateur.service';
 import { createIndicateurInputSchema } from './mutate-indicateur.input';
-import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
+import { MutateIndicateurRepository } from './mutate-indicateur.repository';
+import {
+  IndicateurPeriodiciteEnum,
+  PCAET_COLLECTIVITE_SOURCE_ID,
+} from '@tet/domain/indicateurs';
 
 // On prend le typage en entrée, avant parsing zod du router trpc
 type CreateIndicateurInput = z.input<typeof createIndicateurInputSchema>;
@@ -602,6 +608,304 @@ describe('createIndicateurPerso', () => {
           parentId: foreignParent.id,
         })
       ).rejects.toThrow(/parent n'a pas été trouvé/);
+    });
+  });
+
+  describe('premier sous-indicateur', () => {
+    const createParentWithValeurs = async ({
+      estConfidentiel = false,
+    }: { estConfidentiel?: boolean } = {}) => {
+      const caller = router.createCaller({ user: authenticatedUser });
+      const parentId = await caller.indicateurs.indicateurs.create({
+        collectiviteId: collectivite.id,
+        titre: 'Déchets ménagers',
+        unite: 't',
+        estConfidentiel,
+      });
+      await caller.indicateurs.valeurs.upsert({
+        collectiviteId: collectivite.id,
+        indicateurId: parentId,
+        dateValeur: '2022-01-01',
+        resultat: 500,
+        resultatCommentaire: 'Résultat 2022',
+        objectif: 480,
+        objectifCommentaire: 'Objectif 2022',
+      });
+      await caller.indicateurs.valeurs.upsert({
+        collectiviteId: collectivite.id,
+        indicateurId: parentId,
+        dateValeur: '2023-01-01',
+        resultat: 520,
+        objectif: 490,
+      });
+      return { caller, parentId };
+    };
+
+    const createSousIndicateur = ({
+      caller,
+      parentId,
+      titre,
+      estConfidentiel,
+    }: {
+      caller: ReturnType<TrpcRouter['createCaller']>;
+      parentId: number;
+      titre: string;
+      estConfidentiel?: boolean;
+    }) =>
+      caller.indicateurs.indicateurs.create({
+        collectiviteId: collectivite.id,
+        titre,
+        parentId,
+        estConfidentiel,
+      });
+
+    const listValeurs = (indicateurId: number) =>
+      databaseService.db
+        .select({
+          dateValeur: indicateurValeurTable.dateValeur,
+          resultat: indicateurValeurTable.resultat,
+          resultatCommentaire: indicateurValeurTable.resultatCommentaire,
+          objectif: indicateurValeurTable.objectif,
+          objectifCommentaire: indicateurValeurTable.objectifCommentaire,
+        })
+        .from(indicateurValeurTable)
+        .where(eq(indicateurValeurTable.indicateurId, indicateurId))
+        .orderBy(asc(indicateurValeurTable.dateValeur));
+
+    const readConfidentiel = async (indicateurId: number) => {
+      const [indicateurCollectivite] = await databaseService.db
+        .select({ confidentiel: indicateurCollectiviteTable.confidentiel })
+        .from(indicateurCollectiviteTable)
+        .where(eq(indicateurCollectiviteTable.indicateurId, indicateurId));
+      return indicateurCollectivite.confidentiel;
+    };
+
+    test('reprend les résultats, objectifs et commentaires du parent qui n’en garde aucun', async () => {
+      const { caller, parentId } = await createParentWithValeurs();
+
+      const sousIndicateurId = await createSousIndicateur({
+        caller,
+        parentId,
+        titre: 'Sous-indicateur 1',
+      });
+
+      expect(await listValeurs(parentId)).toEqual([]);
+      expect(await listValeurs(sousIndicateurId)).toEqual([
+        {
+          dateValeur: '2022-01-01',
+          resultat: 500,
+          resultatCommentaire: 'Résultat 2022',
+          objectif: 480,
+          objectifCommentaire: 'Objectif 2022',
+        },
+        {
+          dateValeur: '2023-01-01',
+          resultat: 520,
+          resultatCommentaire: null,
+          objectif: 490,
+          objectifCommentaire: null,
+        },
+      ]);
+    });
+
+    test('ne déplace rien quand le parent n’a aucune valeur', async () => {
+      const caller = router.createCaller({ user: authenticatedUser });
+      const parentId = await caller.indicateurs.indicateurs.create({
+        collectiviteId: collectivite.id,
+        titre: 'Parent sans valeur',
+        unite: 't',
+      });
+
+      const sousIndicateurId = await createSousIndicateur({
+        caller,
+        parentId,
+        titre: 'Sous-indicateur 1',
+      });
+
+      expect(await listValeurs(parentId)).toEqual([]);
+      expect(await listValeurs(sousIndicateurId)).toEqual([]);
+    });
+
+    test('ne déplace rien vers un deuxième sous-indicateur', async () => {
+      const { caller, parentId } = await createParentWithValeurs();
+      const firstId = await createSousIndicateur({
+        caller,
+        parentId,
+        titre: 'Sous-indicateur 1',
+      });
+
+      const secondId = await createSousIndicateur({
+        caller,
+        parentId,
+        titre: 'Sous-indicateur 2',
+      });
+
+      expect(await listValeurs(firstId)).toHaveLength(2);
+      expect(await listValeurs(secondId)).toEqual([]);
+    });
+
+    test('reprend la confidentialité du parent qui a des valeurs quand la création n’en demande aucune', async () => {
+      const { caller, parentId } = await createParentWithValeurs({
+        estConfidentiel: true,
+      });
+
+      const sousIndicateurId = await createSousIndicateur({
+        caller,
+        parentId,
+        titre: 'Sous-indicateur 1',
+      });
+
+      expect(await readConfidentiel(sousIndicateurId)).toBe(true);
+    });
+
+    test('ne reprend pas la confidentialité du parent pour un deuxième sous-indicateur sans choix explicite', async () => {
+      const { caller, parentId } = await createParentWithValeurs({
+        estConfidentiel: true,
+      });
+      await createSousIndicateur({
+        caller,
+        parentId,
+        titre: 'Sous-indicateur 1',
+      });
+
+      const secondId = await createSousIndicateur({
+        caller,
+        parentId,
+        titre: 'Sous-indicateur 2',
+      });
+
+      expect(await readConfidentiel(secondId)).toBe(false);
+    });
+
+    test('garde la confidentialité demandée explicitement plutôt que celle du parent', async () => {
+      const { caller, parentId } = await createParentWithValeurs({
+        estConfidentiel: true,
+      });
+
+      const sousIndicateurId = await createSousIndicateur({
+        caller,
+        parentId,
+        titre: 'Sous-indicateur 1',
+        estConfidentiel: false,
+      });
+
+      expect(await readConfidentiel(sousIndicateurId)).toBe(false);
+    });
+
+    test('rend confidentiel un sous-indicateur demandé confidentiel sous un parent public qui a des valeurs', async () => {
+      const { caller, parentId } = await createParentWithValeurs();
+
+      const sousIndicateurId = await createSousIndicateur({
+        caller,
+        parentId,
+        titre: 'Sous-indicateur 1',
+        estConfidentiel: true,
+      });
+
+      expect(await readConfidentiel(sousIndicateurId)).toBe(true);
+    });
+
+    test('garde la confidentialité demandée quand le parent confidentiel n’a aucune valeur', async () => {
+      const caller = router.createCaller({ user: authenticatedUser });
+      const parentId = await caller.indicateurs.indicateurs.create({
+        collectiviteId: collectivite.id,
+        titre: 'Parent confidentiel sans valeur',
+        unite: 't',
+        estConfidentiel: true,
+      });
+
+      const sousIndicateurId = await createSousIndicateur({
+        caller,
+        parentId,
+        titre: 'Sous-indicateur 1',
+        estConfidentiel: false,
+      });
+
+      expect(await readConfidentiel(sousIndicateurId)).toBe(false);
+    });
+
+    test('laisse sur le parent les valeurs issues d’une source importée', async () => {
+      const { caller, parentId } = await createParentWithValeurs();
+      const [metadonnee] = await databaseService.db
+        .insert(indicateurSourceMetadonneeTable)
+        .values({
+          sourceId: PCAET_COLLECTIVITE_SOURCE_ID,
+          dateVersion: new Date().toISOString(),
+          nomDonnees: `source-${crypto.randomUUID()}`,
+        })
+        .returning({ id: indicateurSourceMetadonneeTable.id });
+      onTestFinished(async () => {
+        await databaseService.db
+          .delete(indicateurValeurTable)
+          .where(eq(indicateurValeurTable.metadonneeId, metadonnee.id));
+        await databaseService.db
+          .delete(indicateurSourceMetadonneeTable)
+          .where(eq(indicateurSourceMetadonneeTable.id, metadonnee.id));
+      });
+      await databaseService.db.insert(indicateurValeurTable).values({
+        collectiviteId: collectivite.id,
+        indicateurId: parentId,
+        dateValeur: '2024-01-01',
+        periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+        metadonneeId: metadonnee.id,
+        resultat: 900,
+      });
+
+      const sousIndicateurId = await createSousIndicateur({
+        caller,
+        parentId,
+        titre: 'Sous-indicateur 1',
+      });
+
+      expect(await listValeurs(parentId)).toMatchObject([
+        { dateValeur: '2024-01-01', resultat: 900 },
+      ]);
+      expect(await listValeurs(sousIndicateurId)).toHaveLength(2);
+    });
+
+    test('reprend les valeurs d’un parent sans préférences de collectivité en le considérant non confidentiel', async () => {
+      const { caller, parentId } = await createParentWithValeurs();
+      await databaseService.db
+        .delete(indicateurCollectiviteTable)
+        .where(eq(indicateurCollectiviteTable.indicateurId, parentId));
+
+      const sousIndicateurId = await createSousIndicateur({
+        caller,
+        parentId,
+        titre: 'Sous-indicateur 1',
+      });
+
+      expect(await listValeurs(sousIndicateurId)).toHaveLength(2);
+      expect(await readConfidentiel(sousIndicateurId)).toBe(false);
+    });
+
+    test('annule la création du sous-indicateur quand le déplacement des valeurs échoue', async () => {
+      const { caller, parentId } = await createParentWithValeurs();
+      const repository = app.get(MutateIndicateurRepository);
+      const moveSpy = vi
+        .spyOn(repository, 'moveValeursSaisies')
+        .mockRejectedValueOnce(new Error('déplacement en échec'));
+      onTestFinished(() => moveSpy.mockRestore());
+
+      await expect(
+        createSousIndicateur({
+          caller,
+          parentId,
+          titre: 'Sous-indicateur annulé',
+        })
+      ).rejects.toThrow(/déplacement en échec/);
+
+      const definitions = await databaseService.db
+        .select({ id: indicateurDefinitionTable.id })
+        .from(indicateurDefinitionTable)
+        .where(
+          and(
+            eq(indicateurDefinitionTable.collectiviteId, collectivite.id),
+            eq(indicateurDefinitionTable.titre, 'Sous-indicateur annulé')
+          )
+        );
+      expect(definitions).toEqual([]);
+      expect(await listValeurs(parentId)).toHaveLength(2);
     });
   });
 });

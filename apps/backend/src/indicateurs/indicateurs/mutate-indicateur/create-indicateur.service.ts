@@ -12,6 +12,7 @@ import {
 } from '@tet/domain/indicateurs';
 import { ResourceType } from '@tet/domain/users';
 import { IndicateurLockRepository } from '../../indicateur/indicateur-lock.repository';
+import { IndicateurValeurLockRepository } from '../../valeurs/indicateur-valeur-lock.repository';
 import { UpsertIndicateurFichesService } from '../upsert-indicateur-fiches/upsert-indicateur-fiches.service';
 import {
   CreateIndicateurError,
@@ -24,6 +25,8 @@ type IndicateurShape = Readonly<{
   unite: string;
   periodicite: IndicateurPeriodicite;
   parent: IndicateurInGroup | null;
+  estConfidentiel: boolean;
+  datesToMove: readonly string[];
 }>;
 
 @Injectable()
@@ -35,7 +38,8 @@ export default class CreateIndicateurService {
     private readonly repository: MutateIndicateurRepository,
     private readonly permissionService: PermissionService,
     private readonly indicateurLockRepository: IndicateurLockRepository,
-    private readonly upsertIndicateurFichesService: UpsertIndicateurFichesService
+    private readonly upsertIndicateurFichesService: UpsertIndicateurFichesService,
+    private readonly indicateurValeurLockRepository: IndicateurValeurLockRepository
   ) {}
 
   async createIndicateurPerso(
@@ -74,7 +78,8 @@ export default class CreateIndicateurService {
       if (!shapeResult.success) {
         return failure(shapeResult.error);
       }
-      const { unite, periodicite, parent } = shapeResult.data;
+      const { unite, periodicite, parent, estConfidentiel, datesToMove } =
+        shapeResult.data;
 
       const createdResult = await this.repository.createIndicateurPerso(
         {
@@ -85,7 +90,7 @@ export default class CreateIndicateurService {
           thematiqueIds: input.thematiques.map(({ id }) => id),
           commentaire: input.commentaire,
           estFavori: input.estFavori,
-          estConfidentiel: input.estConfidentiel,
+          estConfidentiel,
           isApplicable: input.isApplicable,
           modifiedBy: user.id,
         },
@@ -113,6 +118,15 @@ export default class CreateIndicateurService {
         }
         await this.repository.attachSousIndicateur(
           { parentId: parent.id, enfantId: indicateurId },
+          transaction
+        );
+        await this.lockThenMoveValeursSaisies(
+          {
+            fromIndicateurId: parent.id,
+            toIndicateurId: indicateurId,
+            collectiviteId,
+            dates: datesToMove,
+          },
           transaction
         );
       }
@@ -157,6 +171,8 @@ export default class CreateIndicateurService {
         unite: input.unite ?? '',
         periodicite: input.periodicite,
         parent: null,
+        estConfidentiel: input.estConfidentiel ?? false,
+        datesToMove: [],
       });
     }
 
@@ -168,10 +184,95 @@ export default class CreateIndicateurService {
       return failure(CreateIndicateurErrorEnum.PARENT_NOT_FOUND);
     }
 
+    const datesToMove = await this.listDatesValeursToTake(
+      { parent, collectiviteId: input.collectiviteId },
+      tx
+    );
+    const estConfidentiel = await this.resolveEstConfidentiel(
+      {
+        requested: input.estConfidentiel,
+        parent,
+        collectiviteId: input.collectiviteId,
+        hasValeursToTake: datesToMove.length > 0,
+      },
+      tx
+    );
+
     return success({
       unite: parent.unite,
       periodicite: parent.periodicite,
       parent,
+      estConfidentiel,
+      datesToMove,
     });
+  }
+
+  private async listDatesValeursToTake(
+    {
+      parent,
+      collectiviteId,
+    }: { parent: IndicateurInGroup; collectiviteId: number },
+    tx: Transaction
+  ): Promise<string[]> {
+    if (parent.hasChildren) {
+      return [];
+    }
+    return this.repository.listDatesValeursSaisies(
+      { indicateurId: parent.id, collectiviteId },
+      tx
+    );
+  }
+
+  private async resolveEstConfidentiel(
+    {
+      requested,
+      parent,
+      collectiviteId,
+      hasValeursToTake,
+    }: {
+      requested: boolean | undefined;
+      parent: IndicateurInGroup;
+      collectiviteId: number;
+      hasValeursToTake: boolean;
+    },
+    tx: Transaction
+  ): Promise<boolean> {
+    if (requested !== undefined) {
+      return requested;
+    }
+    if (!hasValeursToTake) {
+      return false;
+    }
+    return this.repository.isConfidentiel(
+      { indicateurId: parent.id, collectiviteId },
+      tx
+    );
+  }
+
+  private async lockThenMoveValeursSaisies(
+    {
+      fromIndicateurId,
+      toIndicateurId,
+      collectiviteId,
+      dates,
+    }: {
+      fromIndicateurId: number;
+      toIndicateurId: number;
+      collectiviteId: number;
+      dates: readonly string[];
+    },
+    tx: Transaction
+  ): Promise<void> {
+    if (dates.length === 0) {
+      return;
+    }
+    await this.indicateurValeurLockRepository.lock(
+      dates.map((dateValeur) => ({ collectiviteId, dateValeur })),
+      tx
+    );
+    await this.repository.moveValeursSaisies(
+      { fromIndicateurId, toIndicateurId, collectiviteId },
+      tx
+    );
   }
 }

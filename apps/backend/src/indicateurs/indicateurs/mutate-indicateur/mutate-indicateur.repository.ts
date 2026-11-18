@@ -16,6 +16,7 @@ import { indicateurGroupeTable } from '../../shared/models/indicateur-groupe.tab
 import { indicateurThematiqueTable } from '../../shared/models/indicateur-thematique.table';
 import { indicateurCollectiviteTable } from '../../indicateur/indicateur-collectivite.table';
 import { indicateurDefinitionTable } from '../../indicateur/indicateur-definition.table';
+import { indicateurValeurTable } from '../../valeurs/indicateur-valeur.table';
 
 type IndicateurPersoKey = Readonly<{
   indicateurId: number;
@@ -240,6 +241,66 @@ export class MutateIndicateurRepository {
           eq(indicateurDefinitionTable.collectiviteId, collectiviteId),
           inArray(indicateurDefinitionTable.id, descendantIdsQuery),
           sql`${indicateurDefinitionTable.unite} IS DISTINCT FROM ${unite}`
+        )
+      );
+  }
+
+  async isConfidentiel(
+    { indicateurId, collectiviteId }: IndicateurPersoKey,
+    tx: Transaction
+  ): Promise<boolean> {
+    const [indicateurCollectivite] = await tx
+      .select({ confidentiel: indicateurCollectiviteTable.confidentiel })
+      .from(indicateurCollectiviteTable)
+      .where(
+        and(
+          eq(indicateurCollectiviteTable.indicateurId, indicateurId),
+          eq(indicateurCollectiviteTable.collectiviteId, collectiviteId)
+        )
+      )
+      .limit(1);
+
+    return indicateurCollectivite?.confidentiel ?? false;
+  }
+
+  async listDatesValeursSaisies(
+    { indicateurId, collectiviteId }: IndicateurPersoKey,
+    tx: Transaction
+  ): Promise<string[]> {
+    const rows = await tx
+      .selectDistinct({ dateValeur: indicateurValeurTable.dateValeur })
+      .from(indicateurValeurTable)
+      .where(
+        and(
+          eq(indicateurValeurTable.indicateurId, indicateurId),
+          eq(indicateurValeurTable.collectiviteId, collectiviteId),
+          isNull(indicateurValeurTable.metadonneeId)
+        )
+      );
+
+    return rows.map(({ dateValeur }) => dateValeur);
+  }
+
+  async moveValeursSaisies(
+    {
+      fromIndicateurId,
+      toIndicateurId,
+      collectiviteId,
+    }: {
+      fromIndicateurId: number;
+      toIndicateurId: number;
+      collectiviteId: number;
+    },
+    tx: Transaction
+  ): Promise<void> {
+    await tx
+      .update(indicateurValeurTable)
+      .set({ indicateurId: toIndicateurId })
+      .where(
+        and(
+          eq(indicateurValeurTable.indicateurId, fromIndicateurId),
+          eq(indicateurValeurTable.collectiviteId, collectiviteId),
+          isNull(indicateurValeurTable.metadonneeId)
         )
       );
   }

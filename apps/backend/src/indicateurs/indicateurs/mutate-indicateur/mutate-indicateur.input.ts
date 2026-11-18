@@ -64,6 +64,12 @@ const createSousIndicateurPersoInputSchema =
       .describe(
         "Indicateur personnalisé auquel rattacher le nouvel indicateur. L'unité et la périodicité sont reprises du parent."
       ),
+    estConfidentiel: z
+      .boolean()
+      .optional()
+      .describe(
+        "Si absent, le sous-indicateur qui reprend les valeurs de son parent reprend aussi sa confidentialité ; sinon il n'est pas confidentiel."
+      ),
     unite: z.never().optional(),
     periodicite: z.never().optional(),
   });
