@@ -3,7 +3,12 @@ import { ListIndicateursPredefinisRepository } from '@tet/backend/indicateurs/in
 import ManageIndicateurValeursService from '@tet/backend/indicateurs/valeurs/manage-indicateur-valeurs/manage-indicateur-valeurs.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
-import { failure, Result, success } from '@tet/backend/utils/result.type';
+import {
+  failure,
+  getDataOrThrow,
+  Result,
+  success,
+} from '@tet/backend/utils/result.type';
 import { getCodeCommuneOfArrondissement } from '@tet/domain/collectivites';
 import {
   getStatutTrajectoireSnbc3,
@@ -198,7 +203,7 @@ export class TrajectoireSnbc3Service {
       return success(empty);
     }
 
-    const valeurs = (
+    const valeurs = getDataOrThrow(
       await this.valeursService.getIndicateursValeurs({
         periodicite: 'annuelle',
         collectiviteId,

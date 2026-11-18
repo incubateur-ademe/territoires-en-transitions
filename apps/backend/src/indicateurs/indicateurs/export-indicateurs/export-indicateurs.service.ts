@@ -162,10 +162,12 @@ export default class ExportIndicateursService {
     // comme sur les fiches indicateurs.
     const indicateursValeurs =
       await this.trajectoireSnbc3FeatureFlag.filterSourcesSnbc3(
-        await this.valeursService.getIndicateursValeurs({
-          collectiviteId: options.collectiviteId,
-          indicateurIds: allIndicateurIds,
-        }),
+        getDataOrThrow(
+          await this.valeursService.getIndicateursValeurs({
+            collectiviteId: options.collectiviteId,
+            indicateurIds: allIndicateurIds,
+          })
+        ),
         (v) => v.indicateurSourceMetadonnee?.sourceId,
         tokenInfo,
         options.collectiviteId

@@ -231,7 +231,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
           { collectiviteId: 3, indicateurIds: [10] },
           { isUserTrusted: true }
         )
-      ).resolves.toEqual({ count: 0, indicateurs: [] });
+      ).resolves.toEqual(success({ count: 0, indicateurs: [] }));
 
       expect(
         collectiviteIndicateursRepository.listCollectiviteIndicateurs

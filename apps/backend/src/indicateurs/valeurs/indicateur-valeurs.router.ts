@@ -15,6 +15,7 @@ import { upsertValeurIndicateurSchema } from './write-indicateur-valeurs/upsert-
 import ValeursMoyenneService from './get-moyenne-indicateur-valeurs/valeurs-moyenne.service';
 import ValeursReferenceService from './get-valeurs-reference/valeurs-reference.service';
 import { createTrpcErrorHandler } from '@tet/backend/utils/trpc/trpc-error-handler';
+import { indicateurValeursErrorConfig } from './indicateur-valeurs.errors';
 import { upsertGridValeursInputSchema } from './upsert-grid-valeurs.input';
 import { upsertGridValeursErrorConfig } from './upsert-grid-valeurs.errors';
 import { UpsertGridValeursService } from './upsert-grid-valeurs.service';
@@ -35,6 +36,9 @@ export class IndicateurValeursRouter {
     upsertGridValeursErrorConfig
   );
   private readonly getIndicateurTotalsResultOrThrow = createTrpcErrorHandler();
+  private readonly getIndicateurValeursResultOrThrow = createTrpcErrorHandler(
+    indicateurValeursErrorConfig
+  );
 
   router = this.trpc.router({
     totals: this.trpc.authedProcedure
@@ -48,8 +52,11 @@ export class IndicateurValeursRouter {
       }),
     list: this.trpc.authedOrServiceRoleProcedure
       .input(listIndicateurValeursInputSchema)
-      .query(({ ctx, input }) => {
-        return this.service.listIndicateurValeurs(input, { user: ctx.user });
+      .query(async ({ ctx, input }) => {
+        const result = await this.service.listIndicateurValeurs(input, {
+          user: ctx.user,
+        });
+        return this.getIndicateurValeursResultOrThrow(result);
       }),
     upsert: this.trpc.authedProcedure
       .input(upsertValeurIndicateurSchema)

@@ -5,6 +5,8 @@ import {
 } from '@nestjs/common';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { isFailedResult } from '@tet/backend/utils/transaction/transaction-manager.service';
+import { CommonError } from '@tet/backend/utils/trpc/common-errors';
+import { TrpcErrorHandlerConfig } from '@tet/backend/utils/trpc/trpc-error-handler';
 import { match } from 'ts-pattern';
 import { UserIndicateurValeurNotAllowedException } from './write-indicateur-valeurs/user-indicateur-valeur.errors';
 
@@ -13,6 +15,37 @@ export type IndicateurValeursError =
   | 'INVALID_VALUE'
   | 'USER_VALUE_NOT_ALLOWED'
   | 'DATABASE_ERROR';
+
+export const indicateurValeursErrorConfig: TrpcErrorHandlerConfig<
+  Extract<IndicateurValeursError, 'INVALID_VALUE' | 'USER_VALUE_NOT_ALLOWED'>
+> = {
+  commonErrors: {
+    UNAUTHORIZED: { code: 'FORBIDDEN', messageFromCause: true },
+  },
+  specificErrors: {
+    INVALID_VALUE: { code: 'BAD_REQUEST', messageFromCause: true },
+    USER_VALUE_NOT_ALLOWED: { code: 'BAD_REQUEST', messageFromCause: true },
+  },
+};
+
+export const toCommonError = (error: IndicateurValeursError): CommonError =>
+  match(error)
+    .with('UNAUTHORIZED', () => 'UNAUTHORIZED' as const)
+    .with('DATABASE_ERROR', () => 'DATABASE_ERROR' as const)
+    .with(
+      'INVALID_VALUE',
+      'USER_VALUE_NOT_ALLOWED',
+      () => 'SERVER_ERROR' as const
+    )
+    .exhaustive();
+
+export const toCommonFailure = ({
+  error,
+  cause,
+}: Extract<Result<never, IndicateurValeursError>, { success: false }>): Result<
+  never,
+  CommonError
+> => failure(toCommonError(error), cause);
 
 /** Preserve the legacy cause while application services expose typed results. */
 export async function captureIndicateurValeursResult<T>(
