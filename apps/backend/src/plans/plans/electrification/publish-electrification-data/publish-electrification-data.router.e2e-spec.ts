@@ -730,10 +730,6 @@ describe('Publication des données Électrification', () => {
           [
             ...pending,
             ...codes.map((codeExterne, index) => ({
-              ...buildElectrificationReferencesFixture(catalogueUrl).find(
-                (row) =>
-                  row.source === source && row.codeExterne === codeExterne
-              ),
               source,
               codeExterne,
               lienSource: catalogueUrl,

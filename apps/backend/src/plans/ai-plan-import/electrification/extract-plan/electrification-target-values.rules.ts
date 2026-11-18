@@ -1,9 +1,9 @@
 import { ElectrificationConfig } from '@tet/domain/plans';
+import { escapeRegExp } from 'es-toolkit';
 import { ElectrificationDocumentValues as Values } from './electrification-document-values.rules';
 
 type Target = ElectrificationConfig['engagements'][number]['cibles'][number];
 const number = `(${Values.NUMBER_LITERAL})`;
-const escape = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 /** Grammaire des cellules simples ; les identités, unités et années viennent du catalogue. */
 export class ElectrificationTargetValuesRules {
@@ -58,9 +58,9 @@ export class ElectrificationTargetValuesRules {
     if (!target.reglesImport || !target.uniteImport) return null;
     const rules = target.reglesImport;
     const units = [...new Set([target.uniteImport, ...rules.unites])]
-      .map(escape)
+      .map(escapeRegExp)
       .join('|');
-    const labels = [target.key, ...rules.libelles].map(escape).join('|');
+    const labels = [target.key, ...rules.libelles].map(escapeRegExp).join('|');
     const quantity = `${number}(?:\\s*(?:${units}))?`;
     const year = `(?:\\s+(?:en|d'ici)\\s+${rules.annee})?`;
     // Les unités restent sensibles à la casse (MWh n'est pas mWh).

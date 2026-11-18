@@ -1,5 +1,5 @@
-import { ElectrificationEngagementCodeEnum as EngagementCode } from '@tet/backend/plans/plans/electrification/publish-electrification-data/electrification-data.test-fixture';
 import {
+  ElectrificationEngagementCodeEnum as EngagementCode,
   electrificationCatalogueFixture as electrificationConfig,
   buildInMemoryElectrificationData,
 } from '@tet/backend/plans/plans/electrification/publish-electrification-data/electrification-data.test-fixture';

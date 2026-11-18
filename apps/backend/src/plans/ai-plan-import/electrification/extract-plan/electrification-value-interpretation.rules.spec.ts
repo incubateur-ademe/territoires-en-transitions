@@ -92,6 +92,25 @@ describe('Preuves des cibles interprétées', () => {
     ).toBeNull();
   });
 
+  it.each([' ; ', '\n'])(
+    'refuse un libellé emprunté au segment voisin (séparateur %j)',
+    (separator) => {
+      const text = ['Parc : 8', 'écoles : 2', 'bilan du parc'].join(separator);
+      expect(
+        Rules.normalize(request(text), [
+          value('ecoles', '8', `8${separator}écoles`),
+          value('parc', '2', `2${separator}bilan du parc`),
+        ])
+      ).toBeNull();
+      expect(
+        Rules.normalize(request(text), [
+          value('parc', '8', 'Parc : 8'),
+          value('ecoles', '2', 'écoles : 2'),
+        ])
+      ).toBe('parc: 8; ecoles: 2');
+    }
+  );
+
   it('conserve une année explicite pour sa cible et les années absentes fournies par le catalogue', () => {
     expect(
       Rules.normalize(request('parc : 8 en 2030 ; écoles : 2'), [
@@ -105,5 +124,10 @@ describe('Preuves des cibles interprétées', () => {
         value('ecoles', '2', 'écoles : 2'),
       ])
     ).toBe('parc: 8; ecoles: 2');
+    expect(
+      Rules.normalize(request('parc : 2030 en 2030', [targets[0]]), [
+        value('parc', '2030', 'parc : 2030 en 2030', '2030'),
+      ])
+    ).toBe('2030');
   });
 });

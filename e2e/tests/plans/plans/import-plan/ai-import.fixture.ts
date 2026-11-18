@@ -51,7 +51,15 @@ export class AiImportFixture {
   enqueuedForms: FormData[] = [];
   statusCalls = 0;
   statusNotFound = false;
-  enqueueResponse?: Promise<void>;
+  private enqueueResponse?: Promise<void>;
+
+  pauseEnqueueResponse(): () => void {
+    let release!: () => void;
+    this.enqueueResponse = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    return release;
+  }
 
   async install(page: Page) {
     // Les capacités serveur incluent déjà les flags et les droits.

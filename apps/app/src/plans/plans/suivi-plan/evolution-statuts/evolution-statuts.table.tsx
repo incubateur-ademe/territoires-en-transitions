@@ -81,7 +81,7 @@ export const EvolutionStatutsTable = ({
       {rows.map(({ statut, debut, fin }) => (
         <tr
           key={statut ?? SANS_STATUT_LABEL}
-          className="relative border-b border-grey-3 transition-colors hover:bg-primary-1"
+          className="border-b border-grey-3"
         >
           <td className="py-2">
             <Link
@@ -91,7 +91,7 @@ export const EvolutionStatutsTable = ({
                 statut,
                 filters: pilotageFilters,
               })}
-              className="flex items-center gap-2 text-primary-9 bg-none after:absolute after:inset-0 hover:underline"
+              className="flex items-center gap-2 text-primary-9 bg-none hover:underline"
               data-test="plans.suivi.evolution-statuts.lien-statut"
             >
               <span

@@ -1,5 +1,5 @@
-import { ElectrificationEngagementCodeEnum as EngagementCode } from '@tet/backend/plans/plans/electrification/publish-electrification-data/electrification-data.test-fixture';
 import {
+  ElectrificationEngagementCodeEnum as EngagementCode,
   electrificationCatalogueFixture as electrificationConfig,
   buildInMemoryElectrificationData,
 } from '@tet/backend/plans/plans/electrification/publish-electrification-data/electrification-data.test-fixture';
@@ -123,13 +123,14 @@ describe('Résolution des engagements Électrification', () => {
   const resolve = () => service.resolve(input, { user: context.user });
   const expectIssue = async (
     code: string,
-    kind: ElectrificationIssue['kind'] = 'document-error'
+    kind: ElectrificationIssue['kind'] = 'document-error',
+    message?: string
   ) => {
     const result = await resolve();
     expect(result.success).toBe(false);
     assert(!result.success);
     expect(result.error).toContainEqual(
-      expect.objectContaining({ code, kind })
+      expect.objectContaining({ code, kind, ...(message ? { message } : {}) })
     );
   };
 
@@ -366,7 +367,18 @@ describe('Résolution des engagements Électrification', () => {
       }),
     ]);
     input.engagements[0].cibles[0].valeur = 90;
-    await expectIssue('INVALID_ENGAGEMENT_VALUE');
+    await expectIssue(
+      'INVALID_ENGAGEMENT_VALUE',
+      'document-error',
+      'Renseignez une valeur entre 10 et 80 %.'
+    );
+    input.engagements[0].cibles[0].valeur = 40;
+    input.engagements[0].cibles[0].annee = 2030;
+    await expectIssue(
+      'INVALID_ENGAGEMENT_PERIOD',
+      'document-error',
+      "Renseignez la cible en % pour l'année 2040."
+    );
   });
 
   test('accepte une unité différente seulement si la référence publiée la déclare', async () => {
