@@ -14,7 +14,7 @@ import { aiImportQueryState } from './ai-import.query-state';
 import { BetaLabel } from '@/app/ui/beta.label';
 import { AiImportFlow } from './ai-import.flow';
 import { AiImportHistoryView } from './ai-import-history.view';
-import { useAvailableAiImportProfiles } from './data/use-available-ai-import-profiles';
+import { useAiImportAccess } from './data/use-ai-import-access';
 
 const BackButton = () => {
   const router = useRouter();
@@ -76,10 +76,10 @@ const AiImportContent = () => {
 };
 
 export const AiImportView = () => {
-  const { profiles } = useAvailableAiImportProfiles();
+  const { isAvailable } = useAiImportAccess();
   const [{ importJobId }] = useQueryStates(aiImportQueryState);
 
-  if (profiles.length === 0 && importJobId !== null) {
+  if (!isAvailable && importJobId !== null) {
     return <AiImportHistoryView />;
   }
 

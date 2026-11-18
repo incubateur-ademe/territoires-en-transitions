@@ -9,10 +9,10 @@ import { useQueryStates } from 'nuqs';
 import { aiImportQueryState } from '@/app/plans/plans/import-plan/ai-import.query-state';
 import { useDemarcheId } from '@/app/demarches/use-demarche-id';
 import { appLabels } from '@/app/labels/catalog';
-import { isAiImportVerifiable } from '@/app/plans/plans/import-plan/ai-import.form';
+import { isAiImportVerifiable } from '@/app/plans/plans/import-plan/ai-import-form.rules';
 import { useEnqueueAiImport } from '@/app/plans/plans/import-plan/data/use-enqueue-ai-import';
 import { useGetOngoingAiImport } from '@/app/plans/plans/import-plan/data/use-get-ongoing-ai-import';
-import { useAvailableAiImportProfiles } from '@/app/plans/plans/import-plan/data/use-available-ai-import-profiles';
+import { useAiImportAccess } from '@/app/plans/plans/import-plan/data/use-ai-import-access';
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
 import { useToastContext } from '@/app/utils/toast/toast-context';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -86,9 +86,9 @@ export const ImportProgrammeProvider = ({ children }: PropsWithChildren) => {
     () => trpc.demarches.pcaet.get.queryOptions({ collectiviteId, demarcheId }),
     [trpc, collectiviteId, demarcheId]
   );
-  const { profiles, isLoading: isCheckingAvailability } =
-    useAvailableAiImportProfiles();
-  const isEnabled = profiles.includes(AiPlanImportProfileEnum.PCAET);
+  const { isProfileAvailable, isLoading: isCheckingAvailability } =
+    useAiImportAccess();
+  const isEnabled = isProfileAvailable(AiPlanImportProfileEnum.PCAET);
 
   const {
     jobId: ongoingJobId,

@@ -8,8 +8,7 @@ import {
 import { Event, Icon, useEventTracker } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
 import { BetaLabel } from '@/app/ui/beta.label';
-import { useAvailableAiImportProfiles } from '@/app/plans/plans/import-plan/data/use-available-ai-import-profiles';
-import { useSuperAdminMode } from '@/app/users/authorizations/super-admin-mode/super-admin-mode.provider';
+import { useAiImportAccess } from '@/app/plans/plans/import-plan/data/use-ai-import-access';
 import CreatePlanPicto from './create.svg';
 import ImportPlanPicto from './import.svg';
 import { Link } from './link';
@@ -20,14 +19,12 @@ export const CreatePlanOptionLinksList = ({
   collectiviteId: number;
 }) => {
   const tracker = useEventTracker();
-  const { profiles } = useAvailableAiImportProfiles();
-  const { isSuperAdminRoleEnabled } = useSuperAdminMode();
-  const showAiImport = isSuperAdminRoleEnabled && profiles.length > 0;
+  const { profiles, isEntryPointVisible } = useAiImportAccess();
   return (
     <div
       data-test="choix-creation-plan"
       className={cn('grid grid-cols-1 gap-4 sm:grid-cols-2', {
-        'sm:grid-cols-3': showAiImport,
+        'sm:grid-cols-3': isEntryPointVisible,
       })}
     >
       <Link
@@ -42,7 +39,7 @@ export const CreatePlanOptionLinksList = ({
           tracker(Event.plans.createPlan);
         }}
       />
-      {showAiImport ? (
+      {isEntryPointVisible ? (
         <Link
           dataTest="choix-creation-plan.importer-ia"
           title={<BetaLabel>{appLabels.importPlanIaChoixTitre}</BetaLabel>}
