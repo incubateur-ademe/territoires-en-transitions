@@ -57,6 +57,13 @@ describe('matchHeading', () => {
       'Créer une maison de l’habitat',
     ],
     ['Fiche-action MOB-03 Vélo', 'fiche', 3, 'MOB-03', 'Vélo'],
+    [
+      'Fiche projet n°3 : Rénover la piscine',
+      'fiche',
+      3,
+      '3',
+      'Rénover la piscine',
+    ],
     ['Mesure 7 : Éclairage public', 'fiche', 3, '7', 'Éclairage public'],
     [
       '1.2 Diagnostic énergétique',
@@ -69,6 +76,8 @@ describe('matchHeading', () => {
     ['## Fiche action 3', 'markdown', 2, null, 'Fiche action 3'],
     ['### 2.3 Rénover', 'markdown', 3, '2.3', 'Rénover'],
     ['PROGRAMME D’ACTIONS', 'section', 0, null, 'PROGRAMME D’ACTIONS'],
+    ['Feuille de route', 'section', 0, null, 'Feuille de route'],
+    ['FICHES PROJETS', 'section', 0, null, 'FICHES PROJETS'],
     [
       '3. Stratégie territoriale',
       'section',

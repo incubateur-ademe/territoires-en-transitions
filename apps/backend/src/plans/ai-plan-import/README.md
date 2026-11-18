@@ -543,10 +543,30 @@ Ce qui limite les dégâts quand elle se trompe :
   n'est un titre de fiche qu'en grande police, en majuscules, et dans la suite
   des numéros précédents.
 
-Ce qui reste à faire pour la rendre fiable : un petit corpus de PCAET aux mises
-en page variées (5 à 10), chacun avec sa référence manuelle dans
-[`eval/references/`](eval/references/), et un test hors ligne qui vérifie le
-découpage de chacun, sans appel au modèle.
+Ce qui reste à faire pour la rendre fiable : un petit corpus de plans aux mises
+en page variées (5 à 10, dont des plans hors PCAET), chacun avec sa référence
+manuelle dans [`eval/references/`](eval/references/), et un test hors ligne qui
+vérifie le découpage de chacun, sans appel au modèle.
+
+## Types de plan
+
+Le moteur sert à tout type de plan. Ce qui dépend du type :
+
+- les secteurs réglementaires (`withSecteurs`) ne sont demandés que pour un
+  PCAET ; les effets attendus le sont pour tous ;
+- hors PCAET, la phrase de rôle de chaque prompt nomme le type choisi
+  (`prompts/plan-framing.ts`). Un PCAET, un plan sans type ou de type « Autre »
+  garde les prompts d'origine, ceux des références d'évaluation ;
+- le vocabulaire reconnu par le code couvre les autres plans : « Fiche projet
+  n° », « Feuille de route », « Fiches projets », « Programme opérationnel »
+  (`heading-patterns.ts`, `scout-units.ts`) ;
+- le garde-fou de tome (`detect-document-tome.ts`) refuse toujours un
+  diagnostic ou une évaluation environnementale déposés seuls, mais laisse
+  passer un document global dont le sommaire annonce des axes ou des fiches,
+  même si sa partie actions ne s'appelle pas « programme d'actions ».
+
+Aucune référence d'évaluation hors PCAET n'existe encore : ces règles sont
+couvertes par des tests hors ligne, pas par un import réel.
 
 ## Reprise d'un import
 

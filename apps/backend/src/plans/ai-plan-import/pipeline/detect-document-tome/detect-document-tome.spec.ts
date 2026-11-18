@@ -159,6 +159,55 @@ describe('detectDocumentTome', () => {
     expect(detectDocumentTome(document)).toEqual({ verdict: 'ok' });
   });
 
+  it.each([
+    ['CRTE du Pays de Redon – Fiches projets'],
+    ['Plan de mobilité simplifié', 'Feuille de route 2025-2030'],
+    ['Projet alimentaire territorial', 'Programme opérationnel'],
+  ])('accepte la partie actions d’un plan hors PCAET : %s', (...lines) => {
+    expect(detectDocumentTome(documentFromPages([lines]))).toEqual({
+      verdict: 'ok',
+    });
+  });
+
+  it('accepte un plan global dont le sommaire cite un diagnostic puis ses axes', () => {
+    const document = documentFromPages([
+      ['Projet de territoire 2030'],
+      [
+        'Sommaire',
+        '1. Diagnostic ......... 4',
+        '2. Ambitions ......... 30',
+        'Axe 1 : Habiter le territoire ......... 42',
+        'Axe 2 : Se déplacer autrement ......... 58',
+      ],
+    ]);
+    expect(detectDocumentTome(document)).toEqual({ verdict: 'ok' });
+  });
+
+  it('refuse un diagnostic déposé seul, quel que soit le type de plan', () => {
+    const document = documentFromPages([
+      ['Plan de mobilité simplifié', 'Diagnostic territorial'],
+      ['Sommaire', 'Les déplacements domicile-travail', 'L’offre de transport'],
+    ]);
+    expect(detectDocumentTome(document)).toMatchObject({
+      verdict: 'wrong_tome',
+      tome: 'diagnostic',
+    });
+  });
+
+  it('refuse une évaluation environnementale qui numérote ses mesures', () => {
+    const document = documentFromPages([
+      ['Schéma directeur des mobilités', 'Évaluation environnementale'],
+      [
+        'Mesure 1 : Éviter les zones humides',
+        'Mesure 2 : Réduire les emprises',
+      ],
+    ]);
+    expect(detectDocumentTome(document)).toMatchObject({
+      verdict: 'wrong_tome',
+      tome: 'evaluation_environnementale',
+    });
+  });
+
   it('laisse passer un document sans aucun marqueur', () => {
     const document = documentFromPages([
       ['Transition écologique', 'Actions du territoire'],

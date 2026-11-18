@@ -1,4 +1,5 @@
 import { isTabularKind, ReadDocument } from '../document/document-page';
+import { matchHeading } from '../segment-document/heading-patterns';
 
 /**
  * Détection déterministe du tome déposé, avant tout appel au modèle : un
@@ -7,8 +8,8 @@ import { isTabularKind, ReadDocument } from '../document/document-page';
  * d'actions s'importe. Repérer un mauvais tome dès la lecture évite un import
  * long, coûteux et sans action à la clé.
  *
- * L'import est aussi utilisé hors PCAET : ne sont refusés que les tomes qui
- * ne contiennent jamais de fiches actions (EES, diagnostic). Une « stratégie »
+ * L'import sert à tout type de plan : ne sont refusés que les tomes qui ne
+ * contiennent jamais de fiches actions (EES, diagnostic). Une « stratégie »
  * passe, car un plan stratégique légitime peut porter des fiches.
  */
 
@@ -26,12 +27,14 @@ const MAX_TITLE_LINE_LENGTH = 100;
 /**
  * Les titres sont ancrés en début de ligne : « Incidences du programme
  * d'actions » dans le sommaire d'une EES ne doit pas passer pour un titre.
- * Seule tolérance, une mention du PCAET en tête ("PCAET — Programme
- * d'actions", "PCAET de Lyon : Fiches actions").
+ * Seule tolérance, le sigle du plan en tête ("PCAET — Programme d'actions",
+ * "PCAET de Lyon : Fiches actions", "CRTE - Fiches projets").
  */
+const PLAN_SIGLE =
+  'pcaet|pcet|crte|cte|cot|pat|pdm|pdu|plh|plui?|scot|plpdma|ppa|tepos';
 const withTitlePrefix = (pattern: RegExp): RegExp =>
   new RegExp(
-    `^(?:pcaet\\b(?:[^:\\-–—]{0,40}[:\\-–—]+)?\\s*)?${pattern.source.replace(
+    `^(?:(?:${PLAN_SIGLE})\\b(?:[^:\\-–—]{0,40}[:\\-–—]+)?\\s*)?${pattern.source.replace(
       /^\^/,
       ''
     )}`,
@@ -47,8 +50,21 @@ const ACTION_PLAN_TITLES = [
   /^(?:le\s+)?(?:programme|plan)\s+d['’]actions?\b/i,
   /^fiches?[\s-]actions?\b/i,
   /^catalogue des actions\b/i,
-  /^plan op[ée]rationnel\b/i,
+  /^(?:plan|programme) op[ée]rationnel\b/i,
+  /^feuille de route\b/i,
+  /^fiches?[\s-]projets?\b/i,
 ].map(withTitlePrefix);
+
+/**
+ * Un sommaire qui annonce des axes ou des fiches : le document porte un plan,
+ * même s'il n'appelle pas sa partie actions « programme d'actions ».
+ */
+const MIN_STRUCTURE_HEADINGS = 2;
+const announcesPlanStructure = (lines: string[]): boolean =>
+  lines.filter((line) => {
+    const kind = matchHeading(line)?.kind;
+    return kind === 'axe' || kind === 'fiche';
+  }).length >= MIN_STRUCTURE_HEADINGS;
 
 /** Marqueurs forts : le titre d'un autre tome, à lui seul suffisant. */
 const WRONG_TOME_TITLES = (
@@ -76,7 +92,7 @@ const WRONG_TOME_TITLES = (
  */
 const EES_HINTS = [
   /mesures?\s+(?:d['’][ée]vitement|de r[ée]duction|de compensation)|s[ée]quence\s+erc|mesures\s+erc/i,
-  /incidences?\s+(?:sur l['’]environnement|du (?:pcaet|plan)|notables?|natura\s*2000)/i,
+  /incidences?\s+(?:sur l['’]environnement|du (?:pcaet|plan|projet|programme|sch[ée]ma)|notables?|natura\s*2000)/i,
   /[ée]tat initial de l['’]environnement/i,
 ];
 
@@ -93,11 +109,15 @@ export const detectDocumentTome = (document: ReadDocument): TomeDetection => {
     return { verdict: 'ok' };
   }
 
+  // « Diagnostic » dans le sommaire d'un document qui annonce aussi ses axes
+  // ou ses fiches n'est qu'une de ses parties. Une EES, elle, liste parfois
+  // ses mesures comme des fiches : son titre suffit toujours.
+  const hasPlanStructure = announcesPlanStructure(lines);
   for (const line of lines) {
     const wrongTitle = WRONG_TOME_TITLES.find(({ pattern }) =>
       pattern.test(line)
     );
-    if (wrongTitle) {
+    if (wrongTitle && !(wrongTitle.tome === 'diagnostic' && hasPlanStructure)) {
       return { verdict: 'wrong_tome', tome: wrongTitle.tome, evidence: line };
     }
   }
