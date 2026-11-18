@@ -37,7 +37,7 @@ const ORIENTATION = new RegExp(
   'iu'
 );
 const FICHE = new RegExp(
-  String.raw`^(?:fiche(?:[\s-]*actions?)?|action|mesure|op[ée]ration|projet)\s*${NUMBER}([A-Z]{0,3}[\s-]?\d+(?:[.\-]\d+){0,3}[a-z]?)${SEPARATOR}(.*)$`,
+  String.raw`^(?:fiche(?:[\s-]*(?:actions?|projets?|op[ée]rations?|mesures?))?|action|mesure|op[ée]ration|projet)\s*${NUMBER}([A-Z]{0,3}[\s-]?\d+(?:[.\-]\d+){0,3}[a-z]?)${SEPARATOR}(.*)$`,
   'iu'
 );
 // « 1.2.4 Titre » : le titre commence par une majuscule, sinon c'est « 1.5 tonnes ».
@@ -46,7 +46,7 @@ const NUMEROTATION =
 const MARKDOWN = /^(#{1,4})\s+(.+)$/u;
 // « Plan d'actions à 2030 », « Programme d'actions 2024-2030 » : l'horizon suit parfois le nom.
 const SECTION = new RegExp(
-  String.raw`^(?:\d{1,2}[.)]?\s+)?(?:l['’]|les?\s+|la\s+)?(sommaire|table des mati[èe]res|diagnostic(?: territorial| climat[\s-]air[\s-][ée]nergie)?|[ée]tat des lieux|strat[ée]gie(?: territoriale)?|programme d['’]actions?|plan d['’]actions?|fiches?[\s-]actions?|catalogue des actions|plan op[ée]rationnel|vue d['’]ensemble du programme d['’]actions?|synth[èe]se du programme d['’]actions?|engagements? des partenaires|suivi et [ée]valuation|indicateurs et modalit[ée]s de suivi|gouvernance|m[ée]thodologie|[ée]valuation environnementale(?: strat[ée]gique)?|r[ée]sum[ée] non technique|[ée]tat initial de l['’]environnement|(?:analyse|[ée]valuation) des incidences(?:\s.+)?|incidences du pcaet|mesures d['’][ée]vitement, de r[ée]duction et de compensation|justification des choix|articulation avec les autres plans(?:\s.+)?|annexes?(?:\s+\d+\s*[:\-–—].+)?|glossaire)(?:\s+(?:[àa]\s+|horizon\s+)?\d{4}(?:\s*[-–]\s*\d{4})?)?\s*$`,
+  String.raw`^(?:\d{1,2}[.)]?\s+)?(?:l['’]|les?\s+|la\s+)?(sommaire|table des mati[èe]res|diagnostic(?: territorial| climat[\s-]air[\s-][ée]nergie)?|[ée]tat des lieux|strat[ée]gie(?: territoriale)?|programme d['’]actions?|plan d['’]actions?|fiches?[\s-](?:actions?|projets?)|catalogue des actions|(?:plan|programme) op[ée]rationnel|feuille de route|vue d['’]ensemble du programme d['’]actions?|synth[èe]se du programme d['’]actions?|engagements? des partenaires|suivi et [ée]valuation|indicateurs et modalit[ée]s de suivi|gouvernance|m[ée]thodologie|[ée]valuation environnementale(?: strat[ée]gique)?|r[ée]sum[ée] non technique|[ée]tat initial de l['’]environnement|(?:analyse|[ée]valuation) des incidences(?:\s.+)?|incidences du (?:pcaet|plan|projet|programme|sch[ée]ma)|mesures d['’][ée]vitement, de r[ée]duction et de compensation|justification des choix|articulation avec les autres plans(?:\s.+)?|annexes?(?:\s+\d+\s*[:\-–—].+)?|glossaire)(?:\s+(?:[àa]\s+|horizon\s+)?\d{4}(?:\s*[-–]\s*\d{4})?)?\s*$`,
   'iu'
 );
 // « I. TOUS HÉROS ORDINAIRES » : un axe numéroté en chiffres romains.

@@ -18,12 +18,12 @@ export type ScoutUnitsResult = {
 // Les engagements des partenaires décrivent ce que d'autres feront, pas le
 // plan de la collectivité : une partie ainsi titrée n'est pas lue.
 const PARTNER_SECTION = /partenaire/i;
-// Un PCAET suit une structure réglementaire (diagnostic, stratégie, programme
-// d'actions, suivi) : quand le programme d'actions est titré et contient des
-// fiches, le reste du document n'a pas d'action à donner. Il ne sert plus
-// qu'au squelette.
+// Un plan range ses fiches dans une partie à part (programme d'actions,
+// feuille de route, fiches projets), après le diagnostic et la stratégie :
+// quand cette partie est titrée et contient des fiches, le reste du document
+// n'a pas d'action à donner. Il ne sert plus qu'au squelette.
 const ACTION_PLAN_SECTION =
-  /(?:plan|programme) d['’]actions?|fiches?[\s-]actions?|catalogue des actions|plan op[ée]rationnel/i;
+  /(?:plan|programme) d['’]actions?|fiches?[\s-](?:actions?|projets?)|catalogue des actions|(?:plan|programme) op[ée]rationnel|feuille de route/i;
 const MIN_FICHES_IN_ACTION_PLAN = 3;
 
 /**

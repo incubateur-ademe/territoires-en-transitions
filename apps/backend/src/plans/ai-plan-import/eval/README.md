@@ -20,6 +20,13 @@ La cible compile le backend (`nest build`) puis lance
 `dist/plans/ai-plan-import/eval/run-ai-import-eval.js` sous dotenvx. Le
 résultat est écrit dans `apps/backend/eval-out/` (ignoré par git).
 
+Hors PCAET, `--type-plan` donne au modèle le type du plan, comme le fait
+l'application à partir du type choisi dans le formulaire :
+
+```sh
+make ai-import-eval f=plan-mobilite.pdf args='--type-plan "Plan Mobilité"'
+```
+
 ## Profil Électrification
 
 Le profil par défaut est `generic`. Pour extraire les engagements du tableau A
