@@ -68,12 +68,7 @@ export class ValidateImportProfileService {
         available:
           enabled &&
           this.isProfileAllowed(profile) &&
-          (
-            await this.adapters[profile].checkAvailability(
-              { collectiviteId },
-              context
-            )
-          ).success,
+          (await this.isProfileAvailable(profile, collectiviteId, context)),
       }))
     );
     return success({ profiles });
@@ -143,7 +138,28 @@ export class ValidateImportProfileService {
         collectiviteId
       )
       .catch(() => false);
-    return enabled || this.permissions.hasSuperAdminRole(user, tx);
+    if (enabled) return true;
+    try {
+      return await this.permissions.hasSuperAdminRole(user, tx);
+    } catch {
+      return false;
+    }
+  }
+
+  private async isProfileAvailable(
+    profile: AiPlanImportProfile,
+    collectiviteId: number,
+    context: ServiceSecondArg
+  ): Promise<boolean> {
+    try {
+      const result = await this.adapters[profile].checkAvailability(
+        { collectiviteId },
+        context
+      );
+      return result.success;
+    } catch {
+      return false;
+    }
   }
 
   private async getPlanType(
