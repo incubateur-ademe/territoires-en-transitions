@@ -1,67 +1,34 @@
 import ActionLinkedCard from '@/app/referentiels/actions/action.linked-card';
-import { useListActions } from '@/app/referentiels/actions/use-list-actions';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import classNames from 'classnames';
-import { useEffect } from 'react';
+import { useIndicateurMesuresLiees } from '../../context/indicateur-mesures-liees.context';
 
 type MesuresLieesListeProps = {
-  isReadonly?: boolean;
-  /**
-   * Spécifie une collectivité lorsqu'on charge les données d'une autrre collectivité que la collectivité courante.
-   */
-  externalCollectiviteId?: number;
+  isReadonly: boolean;
   mesuresIds: string[];
-  className?: string;
-  onLoad?: (isLoading: boolean) => void;
-  onUnlink?: (actionId: string) => void;
 };
 
 export const MesuresLieesListe = ({
   isReadonly,
-  externalCollectiviteId,
   mesuresIds,
-  className,
-  onLoad,
-  onUnlink,
 }: MesuresLieesListeProps) => {
-  const { data: actionsLiees, isPending } = useListActions(
-    {
-      actionIds: mesuresIds,
-      collectiviteId: externalCollectiviteId,
-    },
-    { enabled: mesuresIds.length > 0 }
-  );
-
-  const isLoading = mesuresIds.length > 0 && isPending;
-
-  useEffect(() => onLoad?.(isLoading), [isLoading, onLoad]);
-
-  if (mesuresIds.length === 0) {
-    return null;
-  }
+  const { useListMesuresLiees } = useIndicateurMesuresLiees();
+  const { mesures, isLoading } = useListMesuresLiees(mesuresIds);
 
   if (isLoading) {
     return <SpinnerLoader className="mx-auto my-8" />;
   }
 
-  if (!actionsLiees?.length) return null;
+  if (mesures.length === 0) return null;
 
   return (
     // besoin de cette div car `grid` semble rentrer en conflit avec le container `flex` sur Safari
     <div>
-      <div
-        className={classNames(
-          'grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3',
-          className
-        )}
-      >
-        {actionsLiees.map((action) => (
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+        {mesures.map((mesure) => (
           <ActionLinkedCard
-            key={action.actionId}
-            externalCollectiviteId={externalCollectiviteId}
+            key={mesure.actionId}
             isReadonly={isReadonly}
-            action={action}
-            onUnlink={onUnlink ? () => onUnlink(action.actionId) : undefined}
+            action={mesure}
             openInNewTab
           />
         ))}
