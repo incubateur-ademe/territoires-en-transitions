@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ListIndicateursPredefinisService } from '@tet/backend/indicateurs/indicateurs/list-indicateurs-predefinis/list-indicateurs-predefinis.service';
 import ManageIndicateurValeursService from '@tet/backend/indicateurs/valeurs/manage-indicateur-valeurs/manage-indicateur-valeurs.service';
 import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
+import { toCommonFailure } from '@tet/backend/indicateurs/valeurs/indicateur-valeurs.errors';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import type { Transaction } from '@tet/backend/utils/database/transaction.utils';
@@ -125,15 +126,21 @@ export class UpdateDiagnosticIndicateursValeursService {
       tx
     );
 
-    await this.crudValeursService.upsertIndicateurValeurs(upsertRecords, {
-      user,
-      tx,
-      metadataAuthorization: {
-        collectiviteId,
-        metadonneeId,
-        sourceId: PCAET_COLLECTIVITE_SOURCE_ID,
-      },
-    });
+    const upserted = await this.crudValeursService.upsertIndicateurValeurs(
+      upsertRecords,
+      {
+        user,
+        tx,
+        metadataAuthorization: {
+          collectiviteId,
+          metadonneeId,
+          sourceId: PCAET_COLLECTIVITE_SOURCE_ID,
+        },
+      }
+    );
+    if (!upserted.success) {
+      return toCommonFailure(upserted);
+    }
 
     const payload = await this.diagnosticService.loadPayload(
       { demarcheId, collectiviteId },

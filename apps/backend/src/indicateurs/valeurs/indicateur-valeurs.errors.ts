@@ -39,13 +39,16 @@ export const toCommonError = (error: IndicateurValeursError): CommonError =>
     )
     .exhaustive();
 
+export type IndicateurValeursFailure = Extract<
+  Result<never, IndicateurValeursError>,
+  { success: false }
+>;
+
 export const toCommonFailure = ({
   error,
   cause,
-}: Extract<Result<never, IndicateurValeursError>, { success: false }>): Result<
-  never,
-  CommonError
-> => failure(toCommonError(error), cause);
+}: IndicateurValeursFailure): Result<never, CommonError> =>
+  failure(toCommonError(error), cause);
 
 /** Preserve the legacy cause while application services expose typed results. */
 export async function captureIndicateurValeursResult<T>(

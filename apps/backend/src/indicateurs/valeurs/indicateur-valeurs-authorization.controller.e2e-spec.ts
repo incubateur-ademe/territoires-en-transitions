@@ -34,6 +34,7 @@ import request from 'supertest';
 import { indicateurSourceMetadonneeTable } from '../shared/models/indicateur-source-metadonnee.table';
 import { indicateurSourceTable } from '../shared/models/indicateur-source.table';
 import ManageIndicateurValeursService from './manage-indicateur-valeurs/manage-indicateur-valeurs.service';
+import { getDataOrThrow } from '@tet/backend/utils/result.type';
 
 describe("Autorisation REST des valeurs d'indicateur", () => {
   let app: INestApplication;
@@ -546,7 +547,15 @@ describe("Autorisation REST des valeurs d'indicateur", () => {
                       : actualSourceId,
                 },
               })
-          ).rejects.toThrow('une autorisation interne dédiée');
+          ).resolves.toMatchObject({
+            success: false,
+            error: 'UNAUTHORIZED',
+            cause: {
+              message: expect.stringContaining(
+                'une autorisation interne dédiée'
+              ),
+            },
+          });
           await expect(readValeurs()).resolves.toEqual([]);
         }
       );
@@ -555,16 +564,18 @@ describe("Autorisation REST des valeurs d'indicateur", () => {
         const { valeur, readValeurs } = await createMetadataFixture({
           sourceId,
         });
-        await app
-          .get(ManageIndicateurValeursService)
-          .upsertIndicateurValeurs([{ ...valeur, calculAuto: true }], {
-            user: authenticatedUser,
-            metadataAuthorization: {
-              collectiviteId,
-              metadonneeId: valeur.metadonneeId,
-              sourceId,
-            },
-          });
+        getDataOrThrow(
+          await app
+            .get(ManageIndicateurValeursService)
+            .upsertIndicateurValeurs([{ ...valeur, calculAuto: true }], {
+              user: authenticatedUser,
+              metadataAuthorization: {
+                collectiviteId,
+                metadonneeId: valeur.metadonneeId,
+                sourceId,
+              },
+            })
+        );
         expect(await readValeurs()).toEqual([
           expect.objectContaining({
             ...valeur,
@@ -591,7 +602,15 @@ describe("Autorisation REST des valeurs d'indicateur", () => {
                 sourceId,
               },
             })
-        ).rejects.toThrow("n'acceptent pas de valeur utilisateur");
+        ).resolves.toMatchObject({
+          success: false,
+          error: 'USER_VALUE_NOT_ALLOWED',
+          cause: {
+            message: expect.stringContaining(
+              "n'acceptent pas de valeur utilisateur"
+            ),
+          },
+        });
         await expect(readValeurs()).resolves.toEqual([]);
       });
 
@@ -613,7 +632,13 @@ describe("Autorisation REST des valeurs d'indicateur", () => {
                 },
               }
             )
-        ).rejects.toThrow('respecter la périodicité');
+        ).resolves.toMatchObject({
+          success: false,
+          error: 'INVALID_VALUE',
+          cause: {
+            message: expect.stringContaining('respecter la périodicité'),
+          },
+        });
         await expect(readValeurs()).resolves.toEqual([]);
       });
     }

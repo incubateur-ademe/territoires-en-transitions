@@ -23,6 +23,7 @@ import { ListIndicateursService } from '../indicateurs/list-indicateurs/list-ind
 import ComputeValeursService from './compute-indicateur-valeurs/compute-valeurs.service';
 import ManageIndicateurValeursService from './manage-indicateur-valeurs/manage-indicateur-valeurs.service';
 import { IndicateurValeurLockRepository } from './indicateur-valeur-lock.repository';
+import { IndicateurValeursFailure } from './indicateur-valeurs.errors';
 import { UpsertGridValeursError } from './upsert-grid-valeurs.errors';
 import { UpsertGridValeursInput } from './upsert-grid-valeurs.input';
 import { UpsertGridValeursRepository } from './upsert-grid-valeurs.repository';
@@ -30,6 +31,12 @@ import { UserIndicateurValeurNotAllowedException } from './write-indicateur-vale
 import { ValidateIndicateurValeursWriteService } from './write-indicateur-valeurs/validate-indicateur-valeurs-write.service';
 
 type UpsertGridValeursContext = { user: AuthenticatedUser };
+
+const toGridFailure = ({
+  error,
+  cause,
+}: IndicateurValeursFailure): Result<never, UpsertGridValeursError> =>
+  failure(error === 'INVALID_VALUE' ? 'INVALID_GRID_VALEUR' : error, cause);
 
 const mergeValeursByPeriod = (
   valeurs: UpsertGridValeursInput['valeurs']
@@ -138,12 +145,7 @@ export class UpsertGridValeursService {
             { user, tx }
           );
           if (!validation.success) {
-            return failure(
-              validation.error === 'INVALID_VALUE'
-                ? 'INVALID_GRID_VALEUR'
-                : validation.error,
-              validation.cause
-            );
+            return toGridFailure(validation);
           }
           const valeursToWrite = valeursToValidate.map((valeur) => {
             const indicateur = validation.data[valeur.indicateurId];
@@ -171,16 +173,19 @@ export class UpsertGridValeursService {
             );
           changed.push(...saved);
           if (calculated.length > 0) {
-            changed.push(
-              ...(await this.manageIndicateurValeursService.upsertIndicateurValeurs(
+            const upsertedCalculated =
+              await this.manageIndicateurValeursService.upsertIndicateurValeurs(
                 calculated,
                 {
                   user,
                   isUserTrusted: true,
                   tx,
                 }
-              ))
-            );
+              );
+            if (!upsertedCalculated.success) {
+              return toGridFailure(upsertedCalculated);
+            }
+            changed.push(...upsertedCalculated.data);
           }
           return success(saved);
         } catch (error) {
