@@ -315,8 +315,12 @@ export const plansLabels = {
   importPlanIaDescription:
     'À partir de votre fichier, nous importons la structure de votre plan et ses actions. Notre outil détecte automatiquement : axes, sous-axes, titres des actions, description, statut, pilotes, dates, objectifs…',
   importPlanIaChoixTitre: "Importer un plan avec l'IA",
-  importPlanIaTypesCompatiblesSousTitre:
-    'depuis un fichier, pour les PCAET et plans d’Électrification',
+  importPlanIaTypesCompatiblesSousTitre: (
+    profiles: readonly AiPlanImportProfile[]
+  ) =>
+    `depuis un fichier, pour ${new Intl.ListFormat('fr').format(
+      profiles.map((profile) => AI_PLAN_IMPORT_PROFILE_LABELS[profile])
+    )}`,
   importPlanIaEtapeReperage: 'Repérage des actions',
   importPlanIaContact:
     'L’import ne vous convient pas ? Contactez-nous via le live chat en joignant votre fichier et quelques mots de contexte, cela nous aide à l’améliorer.',
