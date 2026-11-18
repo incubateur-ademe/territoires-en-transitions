@@ -29,7 +29,7 @@ export const IndicateurTabs = () => {
   const hasInformationsTab = !isPerso && !!description;
 
   return (
-    <Tabs tabsListClassName="!justify-start flex-nowrap overflow-x-auto">
+    <Tabs tabsListClassName="justify-start flex-nowrap overflow-x-auto">
       <Tab label={appLabels.indicateurOngletDonnees}>
         <IndicateurDonnees />
       </Tab>
