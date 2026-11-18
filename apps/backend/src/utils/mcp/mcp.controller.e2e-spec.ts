@@ -230,10 +230,18 @@ describe('MCP controller', () => {
     });
 
     test('fonctionnement de la plateforme : consigne de vérifier dans le code, carte servie par un outil', async () => {
-      expect(client.getInstructions()).toContain('connecteur GitHub');
-      expect(client.getInstructions()).toContain(
+      const instructions = client.getInstructions();
+      expect(instructions).toContain('connecteur GitHub');
+      expect(instructions).toContain(
         'incubateur-ademe/territoires-en-transitions'
       );
+      expect(instructions).toContain('ne réponds jamais de mémoire');
+      expect(instructions).toContain('Lis les fichiers concernés');
+      // Sans connecteur, la lecture passe par les outils de ce serveur.
+      expect(instructions).toMatch(
+        /connecteur GitHub n'est pas disponible[\s\S]*read_code/
+      );
+      expect(instructions).toContain('Cite le chemin des fichiers lus');
 
       const result = await client.callTool({
         name: 'get_repo_map',

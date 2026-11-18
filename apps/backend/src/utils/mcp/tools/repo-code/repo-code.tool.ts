@@ -41,7 +41,7 @@ export class RepoCodeTool implements McpTool {
       {
         title: "Lister les fichiers d'un dossier du dépôt",
         description:
-          "Liste les fichiers d'un dossier du dépôt : tous s'il est petit, sinon ses fichiers directs et ses sous-dossiers avec leur taille. Avec `filtre`, renvoie les fichiers du sous-arbre dont le chemin contient ce texte (nom de fonctionnalité, suffixe comme .rules.ts). Le nom d'un dossier de fonctionnalité commence par un verbe : il dit ce que fait le code.",
+          "Liste les fichiers d'un dossier du dépôt : tous s'il est petit, sinon ses fichiers directs et ses sous-dossiers avec leur taille. Avec `filtre`, renvoie les fichiers du sous-arbre dont le chemin contient ce texte (nom de fonctionnalité, suffixe comme .rules.ts). Le nom d'un dossier de fonctionnalité commence par un verbe : il dit ce que fait le code. La liste est limitée à 150 chemins : si `totalFichiers` dépasse le nombre de chemins renvoyés, ou si `partiel` est présent, préciser le filtre ou lister un sous-dossier avant de conclure qu'un fichier est absent.",
         inputSchema: listRepoFilesInputSchema,
         annotations: REPO_TOOL_ANNOTATIONS,
       },

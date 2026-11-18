@@ -58,11 +58,64 @@ describe('RepoCodeService', () => {
     });
   });
 
+  test('search : une page sans résultat affichable ne conclut pas à l’absence', async () => {
+    const result = await buildService({
+      searchCode: vi.fn().mockResolvedValue(
+        success({
+          total: 1,
+          incomplete: false,
+          matches: [{ path: 'apps/backend/.env', fragments: ['SECRET'] }],
+        })
+      ),
+    }).search({ termes: 'secret' });
+    expect(result.success && result.data.conseil).toContain(
+      "aucun n'est affichable"
+    );
+  });
+
+  test('search : une recherche interrompue par GitHub est signalée', async () => {
+    const result = await buildService({
+      searchCode: vi
+        .fn()
+        .mockResolvedValue(
+          success({ total: 0, incomplete: true, matches: [] })
+        ),
+    }).search({ termes: 'fiche' });
+    expect(result.success && result.data.conseil).toContain(
+      "ne prouve pas l'absence"
+    );
+  });
+
+  test('list : un arbre tronqué par GitHub est signalé, sans conclure à l’absence', async () => {
+    const result = await buildService({
+      listPaths: vi
+        .fn()
+        .mockResolvedValue(
+          success({ paths: ['apps/backend/src/main.ts'], truncated: true })
+        ),
+    }).list({ dossier: 'apps/inconnu' });
+    expect(result).toMatchObject({
+      success: true,
+      data: { totalFichiers: 0, partiel: expect.stringContaining('partie') },
+    });
+  });
+
+  test('read : le lien encode les caractères spéciaux du chemin', async () => {
+    const result = await buildService({
+      readFile: vi.fn().mockResolvedValue(success('a')),
+    }).read({ chemin: 'doc/notes #1.md' });
+    expect(result.success && result.data.url).toBe(
+      'https://github.com/incubateur-ademe/territoires-en-transitions/blob/main/doc/notes%20%231.md'
+    );
+  });
+
   test('list : dossier inconnu signalé, sortie du dépôt refusée', async () => {
     const service = buildService({
       listPaths: vi
         .fn()
-        .mockResolvedValue(success(['apps/backend/src/main.ts'])),
+        .mockResolvedValue(
+          success({ paths: ['apps/backend/src/main.ts'], truncated: false })
+        ),
     });
     expect(await service.list({ dossier: 'apps/inconnu' })).toMatchObject({
       success: false,

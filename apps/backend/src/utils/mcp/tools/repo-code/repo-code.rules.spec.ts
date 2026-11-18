@@ -64,6 +64,23 @@ describe('listRepoFolder', () => {
   });
 });
 
+test('listRepoFolder borne la liste et le dit', () => {
+  const many = Array.from(
+    { length: MAX_LISTED_FILES + 1 },
+    (_, index) => `apps/app/src/f${index}.rules.ts`
+  );
+  const filtered = listRepoFolder(many, '', '.rules.ts');
+  expect(filtered.fichiers).toHaveLength(MAX_LISTED_FILES);
+  expect(filtered.totalFichiers).toBe(MAX_LISTED_FILES + 1);
+  expect(filtered.partiel).toContain('sous-dossier');
+
+  const direct = listRepoFolder(many, 'apps/app/src');
+  expect(direct.fichiers).toHaveLength(MAX_LISTED_FILES);
+  expect(direct.partiel).toBeDefined();
+
+  expect(listRepoFolder(many.slice(0, 3), '').partiel).toBeUndefined();
+});
+
 describe('sliceCode', () => {
   const text = Array.from({ length: 300 }, (_, i) => `ligne ${i + 1}`).join(
     '\n'
@@ -96,4 +113,10 @@ test('buildCodeSearchQuery borne la recherche au dépôt', () => {
       'apps/backend'
     )
   ).toBe('canDeleteFiche repo autre/depot repo:o/r path:apps/backend');
+});
+
+test('buildCodeSearchQuery garde tel quel un texte entre guillemets', () => {
+  expect(buildCodeSearchQuery('"language: français" path:apps', 'o/r')).toBe(
+    '"language: français" path apps repo:o/r'
+  );
 });

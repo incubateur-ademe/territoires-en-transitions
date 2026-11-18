@@ -1,9 +1,9 @@
 {
   "promptVersion": "a84e3adbe577",
-  "toolsetVersion": "7ccc79e170a2",
+  "toolsetVersion": "03e56cf2367a",
   "lastEval": {
     "date": "2026-11-18",
-    "albert": "gpt-oss-120b : 18/11, lecture du dépôt (get_repo_map, search_code, list_repo_files, read_code) et point 9 du prompt. Seules deux questions de fonctionnement ont été jouées, hors fixture PCAET : statuts d'une fiche réussie (4 appels, 84 k tokens, fichier et lignes cités), fonctionnement-droit-supprimer-fiche échouée (8 appels, 183 k tokens, aucune réponse : budget épuisé en recherches). Les autres scénarios n'ont PAS été rejoués avec ce prompt. Précédent : gpt-oss-120b : 09/11, relancée après zod 4.6 (sérialisation JSON Schema des outils), 10/12 sur les scénarios exécutés, 15/27 plafonnés (capped, non exécutés : support, crisp, app, esquisse, catalogue-requetes, pages-consultees). Échecs : activation-par-categorie et plans-actifs-52-semaines (run_sql_query au lieu de run_named_query). Précédent : 03/11, support + crisp 12/12, run complet 20/25.",
+    "albert": "18/11, retours de revue : descriptions de search_code et list_repo_files précisées (liste bornée, pas de donnée personnelle dans les termes), AUCUN scénario rejoué depuis. Précédent : gpt-oss-120b : 18/11, lecture du dépôt (get_repo_map, search_code, list_repo_files, read_code) et point 9 du prompt. Seules deux questions de fonctionnement ont été jouées, hors fixture PCAET : statuts d'une fiche réussie (4 appels, 84 k tokens, fichier et lignes cités), fonctionnement-droit-supprimer-fiche échouée (8 appels, 183 k tokens, aucune réponse : budget épuisé en recherches). Les autres scénarios n'ont PAS été rejoués avec ce prompt. Précédent : gpt-oss-120b : 09/11, relancée après zod 4.6 (sérialisation JSON Schema des outils), 10/12 sur les scénarios exécutés, 15/27 plafonnés (capped, non exécutés : support, crisp, app, esquisse, catalogue-requetes, pages-consultees). Échecs : activation-par-categorie et plans-actifs-52-semaines (run_sql_query au lieu de run_named_query). Précédent : 03/11, support + crisp 12/12, run complet 20/25.",
     "gemini": "gemini-3.5-flash : 8/9 le 29/10, avant les scénarios support et sans base analytique"
   }
 }

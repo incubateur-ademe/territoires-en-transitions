@@ -2,7 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { z } from 'zod';
 import { REPO_FULL_NAME } from '../../resources/carte-du-depot.doc';
-import { GithubRepoClient, GithubRepoError } from './github-repo.client';
+import {
+  GithubCodeSearch,
+  GithubRepoClient,
+  GithubRepoError,
+} from './github-repo.client';
 import {
   buildCodeSearchQuery,
   CodeExcerpt,
@@ -25,7 +29,7 @@ export const searchCodeInputSchema = z.object({
     .min(2)
     .max(120)
     .describe(
-      'Un à trois mots présents dans le code : terme métier français (fiche, mesure, preuve), nom de fonction ou de fichier, ou "texte exact" entre guillemets pour un libellé vu à l\'écran. Tous les mots doivent figurer dans le même fichier : moins il y en a, plus il y a de résultats.'
+      "Un à trois mots présents dans le code : terme métier français (fiche, mesure, preuve), nom de fonction ou de fichier, ou \"texte exact\" entre guillemets pour un libellé vu à l'écran. Tous les mots doivent figurer dans le même fichier : moins il y en a, plus il y a de résultats. Ces termes partent vers GitHub : jamais de nom, d'adresse e-mail ni de donnée d'une collectivité ou d'un utilisateur."
     ),
   dossier: z
     .string()
@@ -82,6 +86,23 @@ export type SearchCodeOutput = {
 
 export type ReadCodeOutput = CodeExcerpt & { chemin: string; url: string };
 
+const INCOMPLETE_TREE =
+  "GitHub n'a rendu qu'une partie de l'arbre du dépôt : un fichier absent de cette liste peut exister, le vérifier avec read_code.";
+
+/** N'affirme l'absence que pour une recherche complète sans aucun résultat. */
+const emptySearchAdvice = ({
+  total,
+  incomplete,
+}: Pick<GithubCodeSearch, 'total' | 'incomplete'>): string => {
+  if (incomplete) {
+    return "GitHub a interrompu la recherche avant la fin : ce résultat ne prouve pas l'absence. Relancer la recherche, ou parcourir le dossier du domaine avec list_repo_files.";
+  }
+  if (total > 0) {
+    return "Des fichiers contiennent ces mots, mais aucun n'est affichable dans cette page (fichiers d'environnement, binaires) : préciser les termes ou le dossier.";
+  }
+  return 'Aucun fichier ne contient tous ces mots : réessayer avec un seul terme métier, ou parcourir le dossier du domaine avec list_repo_files.';
+};
+
 /** Recherche, arborescence et lecture du dépôt public, en lecture seule. */
 @Injectable()
 export class RepoCodeService {
@@ -111,10 +132,7 @@ export class RepoCodeService {
       total: result.data.total,
       resultats,
       ...(resultats.length === 0
-        ? {
-            conseil:
-              'Aucun fichier ne contient tous ces mots : réessayer avec un seul terme métier, ou parcourir le dossier du domaine avec list_repo_files.',
-          }
+        ? { conseil: emptySearchAdvice(result.data) }
         : {}),
     });
   }
@@ -130,8 +148,15 @@ export class RepoCodeService {
     if (!paths.success) {
       return paths;
     }
-    const listing = listRepoFolder(paths.data, folder, input.filtre);
-    return listing.totalFichiers === 0 && !input.filtre
+    const listed = listRepoFolder(paths.data.paths, folder, input.filtre);
+    const listing: RepoListing = paths.data.truncated
+      ? {
+          ...listed,
+          partiel: [INCOMPLETE_TREE, listed.partiel].filter(Boolean).join(' '),
+        }
+      : listed;
+    // Un arbre partiel ne prouve pas l'absence d'un dossier.
+    return listing.totalFichiers === 0 && !input.filtre && !paths.data.truncated
       ? failure(
           'FILE_NOT_FOUND',
           new Error(
@@ -161,7 +186,10 @@ export class RepoCodeService {
     }
     return success({
       chemin: path,
-      url: `https://github.com/${REPO_FULL_NAME}/blob/main/${path}`,
+      url: `https://github.com/${REPO_FULL_NAME}/blob/main/${path
+        .split('/')
+        .map(encodeURIComponent)
+        .join('/')}`,
       ...sliceCode(file.data, input.debut, input.lignes),
     });
   }

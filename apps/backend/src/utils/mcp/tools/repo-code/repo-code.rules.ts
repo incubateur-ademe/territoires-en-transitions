@@ -36,7 +36,18 @@ export type RepoListing = {
   /** Tous les fichiers si le dossier est petit, sinon ses enfants directs. */
   fichiers: string[];
   sousDossiers: { chemin: string; fichiers: number }[];
+  /** Présent quand la liste est coupée ou l'inventaire incomplet. */
+  partiel?: string;
 };
+
+const PARTIAL_LISTING = `Liste limitée aux ${MAX_LISTED_FILES} premiers chemins : préciser le filtre ou lister un sous-dossier pour voir la suite.`;
+
+const capListing = (
+  paths: string[]
+): Pick<RepoListing, 'fichiers' | 'partiel'> =>
+  paths.length > MAX_LISTED_FILES
+    ? { fichiers: paths.slice(0, MAX_LISTED_FILES), partiel: PARTIAL_LISTING }
+    : { fichiers: paths };
 
 /**
  * Contenu d'un dossier à partir de la liste des fichiers du dépôt. Avec un
@@ -58,7 +69,7 @@ export const listRepoFolder = (
     return {
       dossier: folder,
       totalFichiers: matches.length,
-      fichiers: matches.slice(0, MAX_LISTED_FILES),
+      ...capListing(matches),
       sousDossiers: [],
     };
   }
@@ -85,7 +96,7 @@ export const listRepoFolder = (
   return {
     dossier: folder,
     totalFichiers: inFolder.length,
-    fichiers: directFiles,
+    ...capListing(directFiles),
     sousDossiers: [...subFolders].map(([chemin, fichiers]) => ({
       chemin,
       fichiers,
@@ -139,11 +150,19 @@ export const buildCodeSearchQuery = (
   folder?: string
 ): string =>
   [
-    // Les qualificatifs sont posés par le serveur : ceux du modèle sont neutralisés.
-    terms.replace(
-      /\b(repo|org|user|path|filename|extension|language):/gi,
-      '$1 '
-    ),
+    // Les qualificatifs sont posés par le serveur : ceux du modèle sont
+    // neutralisés, sauf dans un texte entre guillemets, cherché tel quel.
+    terms
+      .split(/("[^"]*")/)
+      .map((part) =>
+        part.startsWith('"')
+          ? part
+          : part.replace(
+              /\b(repo|org|user|path|filename|extension|language):/gi,
+              '$1 '
+            )
+      )
+      .join(''),
     `repo:${repo}`,
     ...(folder ? [`path:${folder}`] : []),
   ].join(' ');
