@@ -182,8 +182,7 @@ test.describe('Priorisation : matrice et volet', () => {
     'un levier sans action de référence le dit',
     { tag: '@serial' },
     async ({ collectivites, page }) => {
-      const levierSansAction: Levier =
-        LEVIER_NOM_BY_ID.batiments_machines_agricoles;
+      const levierSansAction: Levier = LEVIER_NOM_BY_ID.captage_methane_isdnd;
       const { collectivite } = await collectivites.addCollectiviteAndUser({
         userArgs: { autoLogin: true },
       });
