@@ -900,10 +900,12 @@ export default class TrajectoiresDataService {
       );
     }
 
-    await this.valeursService.deleteIndicateurValeurs({
-      collectiviteId,
-      metadonneeId: snbcMetadonneesId,
-    });
+    getDataOrThrow(
+      await this.valeursService.deleteIndicateurValeurs({
+        collectiviteId,
+        metadonneeId: snbcMetadonneesId,
+      })
+    );
   }
 
   private processExistingTrajectoireData(valeurs: IndicateurValeur[]): {
