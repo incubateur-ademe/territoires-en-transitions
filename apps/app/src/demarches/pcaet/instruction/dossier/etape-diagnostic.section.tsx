@@ -17,9 +17,11 @@ import { useDiagnosticInstruction } from './data/use-diagnostic-instruction';
 export const EtapeDiagnosticSection = ({
   dossierRef,
   demarcheId,
+  showCompletion,
 }: {
   dossierRef: DossierInstructionRef;
   demarcheId: number;
+  showCompletion: boolean;
 }) => {
   const { diagnostic, isLoading, isError, refetch } =
     useDiagnosticInstruction(dossierRef);
@@ -32,6 +34,7 @@ export const EtapeDiagnosticSection = ({
       isError={isError}
       onRetry={() => refetch()}
       isReadonly
+      showCompletion={showCompletion}
       title={appLabels.instructionDossierEtapeDiagnostic}
       description={appLabels.instructionDossierEtapeDiagnosticDescription}
     />

@@ -5,6 +5,7 @@ import {
   DemarchePcaetStatusEnum,
   getEtapeIndexDemarchePcaet,
   getIndexEtapeDemarchePcaet,
+  isDemarchePcaetEnCours,
 } from '@tet/domain/demarches';
 import type {
   DemarcheType,
@@ -397,6 +398,11 @@ export const AvanceDemarcheSection = ({
     ? [diagnosticStep, ...documentsHorsPlateformeSteps, planStep]
     : finalisationSteps;
 
+  // Adopté ou archivé : il n'y a plus rien à compléter.
+  const displayedEtapeFinaleSteps = isDemarchePcaetEnCours(statut)
+    ? etapeFinaleSteps
+    : etapeFinaleSteps.map((step) => ({ ...step, status: null }));
+
   const [elaborationStep, ...remainingSteps] = buildSteps(typeLabels);
   const isElaborationActive = !isPreview && activeIndex === 0;
 
@@ -511,7 +517,7 @@ export const AvanceDemarcheSection = ({
               isFinalisationReached &&
               !isPreview && (
                 <div className="mt-3">
-                  {etapeFinaleSteps.map((step) => (
+                  {displayedEtapeFinaleSteps.map((step) => (
                     <SectionStepRow
                       key={step.key}
                       step={step}

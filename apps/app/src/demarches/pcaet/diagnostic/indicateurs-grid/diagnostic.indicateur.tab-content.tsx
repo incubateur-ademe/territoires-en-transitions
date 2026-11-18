@@ -16,6 +16,7 @@ type Props = {
   indicateurs: PcaetDiagnostic['indicateurDefinitions'];
   valeurs: PcaetDiagnostic['indicateurValeurs'];
   isReadonly: boolean;
+  showDescription: boolean;
 };
 
 export const DiagnosticIndicateurTabContent = ({
@@ -24,6 +25,7 @@ export const DiagnosticIndicateurTabContent = ({
   indicateurs,
   valeurs,
   isReadonly,
+  showDescription,
 }: Props): JSX.Element => {
   const tables = useMemo(
     () =>
@@ -43,7 +45,7 @@ export const DiagnosticIndicateurTabContent = ({
 
   return (
     <div className="flex flex-col gap-8">
-      {description !== undefined && (
+      {showDescription && description !== undefined && (
         <p className="text-sm text-primary-9 m-0">{description}</p>
       )}
       {tables.map((table, index) => (

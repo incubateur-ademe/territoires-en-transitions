@@ -15,6 +15,7 @@ type Props = {
   valeurs: PcaetDiagnostic['indicateurValeurs'];
   demarcheId: number;
   isReadonly: boolean;
+  showDescription: boolean;
 };
 
 export const DiagnosticTabContent = ({
@@ -24,12 +25,14 @@ export const DiagnosticTabContent = ({
   valeurs,
   demarcheId,
   isReadonly,
+  showDescription,
 }: Props) => {
   if (vulnerabilite !== null) {
     return (
       <DiagnosticVulnerabiliteTab
         demarcheId={demarcheId}
         isReadonly={isReadonly}
+        showDescription={showDescription}
         vulnerabilite={vulnerabilite}
       />
     );
@@ -46,6 +49,7 @@ export const DiagnosticTabContent = ({
       indicateurs={indicateurs}
       valeurs={valeurs}
       isReadonly={isReadonly}
+      showDescription={showDescription}
     />
   );
 };

@@ -30,6 +30,7 @@ type Props = {
   isError: boolean;
   onRetry: () => void;
   isReadonly: boolean;
+  showCompletion: boolean;
   /**
    * En finalisation, l'écran n'est plus une étape à compléter mais le rappel du
    * dossier transmis : c'est la page qui choisit lequel des deux il annonce.
@@ -45,6 +46,7 @@ export const DiagnosticTabs = ({
   isError,
   onRetry,
   isReadonly,
+  showCompletion,
   title,
   description,
 }: Props) => {
@@ -92,7 +94,9 @@ export const DiagnosticTabs = ({
               const config = diagnostic.indicateurParentConfigs.find(
                 (topic) => topic.code === tab.code
               );
-              const statut = config
+              const statut = !showCompletion
+                ? null
+                : config
                 ? getDiagnosticIndicateurTopicStatut(
                     config,
                     diagnostic.indicateurValeurs,
@@ -124,6 +128,7 @@ export const DiagnosticTabs = ({
               valeurs={diagnostic.indicateurValeurs}
               demarcheId={demarcheId}
               isReadonly={isReadonly}
+              showDescription={showCompletion}
             />
           </TabsPanel>
         </Tabs>
