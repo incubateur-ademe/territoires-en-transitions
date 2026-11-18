@@ -20,6 +20,21 @@ export const OBJECTIFS_RULE = `"objectifs" : ce que vise l'action, tel que le do
 
 export const CARTOUCHE_RULE = `Un cartouche ou un tableau de fiche (libellés d'un côté, valeurs de l'autre) arrive souvent lu colonne par colonne : tous les libellés, puis toutes les valeurs. Rapprochez une valeur de son libellé quand la correspondance est sûre, et rangez-la dans son champ ; un libellé seul, ou une valeur que vous ne savez pas rattacher, ne va nulle part, surtout pas dans "description".`;
 
+/**
+ * Règles nées de plans hors PCAET (mobilité, PAT, COT, PLPDMA, biodiversité) :
+ * elles tiennent à la forme du document, pas à son type, et valent pour tous.
+ */
+
+export const ACTION_LEVEL_RULE = `L'action est le niveau du document qui porte ses propres porteur ou pilote, partenaires ou budget. Un niveau au-dessus qui ne fait que regrouper de tels éléments n'est pas une action, même s'il s'appelle « mesure » ou « groupe d'actions » : "Mesure 1.1 Développer l'usage du vélo" suivie de "A – Organiser des bourses à vélo" et "B – Soutenir la réparation de vélos", chacune avec son porteur et ses partenaires, donne deux actions (A et B) dont le sous-axe est "1.1 Développer l'usage du vélo" ; de même "Groupe d'actions 1.2" suivi de puces qui ont chacune leur "Coût :" et leurs "Partenaires :". À l'inverse, les étapes d'une fiche qui n'a qu'un pilote et qu'un budget pour l'ensemble restent ses sous-actions, même quand chacune a sa date.`;
+
+export const OTHER_PLAN_PASSAGES_RULE = `N'extrayez que les actions du plan lui-même. Ne donnent aucune action : les fiches d'un autre plan reproduites en annexe ou citées en lien ("Annexe : fiches actions du PCAET", "Autre fiche action en lien : PCAET 0.0.1 …") ; le bilan d'un programme précédent ("Actions déjà mises en place", "Résultats et analyse") ; le compte rendu d'une concertation ou d'une consultation publique (avis, contributions et propositions du public) ; une fiche modèle qui explique comment lire les fiches ("A1. Titre de l'action", "Sous action 1.").`;
+
+export const COLUMN_TABLE_RULE = `Un tableau à plusieurs colonnes ("Enjeu | Objectifs | Actions | Portage | Réalisation") arrive souvent lu ligne par ligne, toutes colonnes mêlées : une même ligne peut coller la fin d'un objectif, le début d'une action et le nom d'un organisme. Repérez d'abord les actions à leur numéro ("A 1 :", "A 2 :"), recomposez le titre de chacune sur ses lignes, puis rattachez-lui le porteur et la période écrits à sa hauteur. Les fragments des autres colonnes donnent l'axe, le sous-axe ou les objectifs : jamais un morceau de titre, jamais une action.`;
+
+export const FIELD_LABELS_RULE = `Les libellés varient d'un plan à l'autre : "Portage", "Porteur(s)", "Maître d'ouvrage", "Pilote(s) de l'action" désignent les pilotes ; "Coût", "Investissement", "Fonctionnement", "Moyens financiers" le budget ; "Résultat attendu", "Objectif(s) quantifié(s)" les objectifs. "Public ciblé", "Cibles", "Territoires concernés", "Gisement impacté", "Flux concerné" n'ont pas de champ : gardez-les à la fin de "description", libellé compris ("Public ciblé : les ménages avec jardin"). Une étiquette entre crochets à la fin d'un titre ("[Structurante]", "[Sensibilisation]") n'en fait pas partie : retirez-la du titre.`;
+
+export const OPEN_ENDED_DATES_RULE = `"2025 et années suivantes", "À partir de 2024", "Dès 2023" donnent une date de début au 01/01 de l'année et aucune date de fin. "Court terme", "Moyen terme", "Long terme", "Annuelle", "Tout au long du programme", "Au fil de l'eau" ne sont pas des dates : laissez les deux dates à "".`;
+
 /** Le cas d'un import réel : toute la fiche recopiée en description. */
 export const FIELD_ALLOCATION_EXAMPLE = `Texte source (cartouche lu colonne par colonne, puis le corps de la fiche) :
 "NOUVELLE

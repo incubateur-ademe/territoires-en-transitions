@@ -1,12 +1,17 @@
 import { definePrompt } from '@tet/backend/utils/llm/prompt-template';
 import {
+  ACTION_LEVEL_RULE,
   buildStatutRule,
   CARTOUCHE_RULE,
+  COLUMN_TABLE_RULE,
   DESCRIPTION_RULE,
   FIELD_ALLOCATION_EXAMPLE,
   FIELD_ALLOCATION_RULE,
+  FIELD_LABELS_RULE,
   NON_ACTION_PASSAGES_RULE,
   OBJECTIFS_RULE,
+  OPEN_ENDED_DATES_RULE,
+  OTHER_PLAN_PASSAGES_RULE,
   PARTNER_COMMITMENTS_RULE,
   PILOTES_RULE,
   SOUS_ACTIONS_RULE,
@@ -66,13 +71,14 @@ Types et formats attendus
 • ${SOUS_ACTIONS_RULE}
 • ${OBJECTIFS_RULE}
 • ${PILOTES_RULE}
+• ${FIELD_LABELS_RULE}
 • "personne pilote" est une chaîne
 • "partenaires" est une chaîne. Les organismes cités comme partenaires, financeurs ou acteurs associés de l'action (rubriques "Partenaires", "Partenaires / financeurs", "Acteurs mobilisés"…), séparés par ", ". Ne jamais y mettre les pilotes ni les porteurs, qui vont dans "structure pilote" ou "direction ou service pilote". Si l'information n'est pas explicitement présente, laisser ""
 • "budget" est soit la valeur vide "", soit un entier sans séparateur d’espace
 • "financements" est une chaîne. Les sources de financement et subventions citées par la fiche (rubriques "Financements", "Sources de financement et subventions", "Fonds vert", "CEE"…), telles quelles. Si l'information n'est pas explicitement présente, laisser ""
 • "moyens humains" est une chaîne. Les moyens humains cités par la fiche (ETP, temps agent, services mobilisés), tels quels (par exemple "0,5 ETP chargé de mission"). Si l'information n'est pas explicitement présente, laisser ""
 • "priorite" est l'une des valeurs "Élevé", "Moyen", "Bas", sinon "". Convertir l'échelle du document : "Priorité 1", "P1", "***", "Majeur", "Forte", "Prioritaire" donnent "Élevé" ; "Priorité 2", "P2", "**", "Moyenne" donnent "Moyen" ; "Priorité 3", "P3", "*", "Faible", "Secondaire" donnent "Bas". Sans mention explicite de priorité, laisser ""
-• "date de debut" et "date de fin" sont des chaînes au format JJ/MM/AAAA, sinon "". Elles viennent du calendrier de l'action ("Calendrier", "Échéance", "Temps de mise en œuvre", "2024-2030"…). Une année seule de début donne le 01/01 de l'année ("2024" → "01/01/2024") ; une année seule de fin donne le 31/12 ("2030" → "31/12/2030"). Un calendrier "2024-2030" donne "date de debut" = "01/01/2024" et "date de fin" = "31/12/2030". Ne jamais inventer de date
+• "date de debut" et "date de fin" sont des chaînes au format JJ/MM/AAAA, sinon "". Elles viennent du calendrier de l'action ("Calendrier", "Échéance", "Temps de mise en œuvre", "2024-2030"…). Une année seule de début donne le 01/01 de l'année ("2024" → "01/01/2024") ; une année seule de fin donne le 31/12 ("2030" → "31/12/2030"). Un calendrier "2024-2030" donne "date de debut" = "01/01/2024" et "date de fin" = "31/12/2030". ${OPEN_ENDED_DATES_RULE} Ne jamais inventer de date
 • ${buildStatutRule(dateDuJour)}
 
 Définitions opérationnelles
@@ -135,6 +141,9 @@ Règles générales
 8 ${CARTOUCHE_RULE}
 9 ${NON_ACTION_PASSAGES_RULE}
 10 ${PARTNER_COMMITMENTS_RULE}
+11 ${OTHER_PLAN_PASSAGES_RULE}
+12 ${ACTION_LEVEL_RULE}
+13 ${COLUMN_TABLE_RULE}
 
 Exemples de bonne structure de plan
 Exemple de titres hiérarchiques attendus quand le texte les fournit

@@ -556,7 +556,15 @@ Le moteur sert à tout type de plan. Ce qui dépend du type :
   PCAET ; les effets attendus le sont pour tous ;
 - hors PCAET, la phrase de rôle de chaque prompt nomme le type choisi
   (`prompts/plan-framing.ts`). Un PCAET, un plan sans type ou de type « Autre »
-  garde les prompts d'origine, ceux des références d'évaluation ;
+  garde la phrase de rôle d'origine ;
+- cinq règles de `prompts/field-rules.ts` viennent de plans hors PCAET mais
+  tiennent à la forme du document et valent pour tous : le niveau qui porte
+  porteur, partenaires ou budget est l'action (« Mesure 1.1 » qui regroupe des
+  actions A, B, C devient leur sous-axe) ; les fiches d'un autre plan, le bilan
+  d'un programme précédent et une concertation ne donnent aucune action ; un
+  tableau à colonnes lu ligne par ligne se recompose action par action ; les
+  libellés « Portage », « Coût », « Public ciblé » ont leur champ ; « 2025 et
+  années suivantes » ou « Court terme » ne sont pas des périodes fermées ;
 - le vocabulaire reconnu par le code couvre les autres plans : « Fiche projet
   n° », « Feuille de route », « Fiches projets », « Programme opérationnel »
   (`heading-patterns.ts`, `scout-units.ts`) ;
@@ -566,7 +574,9 @@ Le moteur sert à tout type de plan. Ce qui dépend du type :
   même si sa partie actions ne s'appelle pas « programme d'actions ».
 
 Aucune référence d'évaluation hors PCAET n'existe encore : ces règles sont
-couvertes par des tests hors ligne, pas par un import réel.
+couvertes par des tests hors ligne, pas par un import réel. Le nom des axes
+reste imposé par le code (« Axe n : Titre ») : une « Brique » ou une
+« Ambition » du document devient un axe numéroté.
 
 ## Reprise d'un import
 

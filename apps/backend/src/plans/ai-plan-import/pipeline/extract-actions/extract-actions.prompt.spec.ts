@@ -1,8 +1,13 @@
 import { generatePrompt } from '@tet/backend/utils/llm/prompt-template';
 import { describe, expect, it } from 'vitest';
 import {
+  ACTION_LEVEL_RULE,
   CARTOUCHE_RULE,
+  COLUMN_TABLE_RULE,
   DESCRIPTION_RULE,
+  FIELD_LABELS_RULE,
+  OPEN_ENDED_DATES_RULE,
+  OTHER_PLAN_PASSAGES_RULE,
   FIELD_ALLOCATION_EXAMPLE,
   FIELD_ALLOCATION_RULE,
   NON_ACTION_PASSAGES_RULE,
@@ -86,6 +91,11 @@ describe('buildExtractionPrompt', () => {
       PILOTES_RULE,
       CARTOUCHE_RULE,
       FIELD_ALLOCATION_EXAMPLE,
+      ACTION_LEVEL_RULE,
+      OTHER_PLAN_PASSAGES_RULE,
+      COLUMN_TABLE_RULE,
+      FIELD_LABELS_RULE,
+      OPEN_ENDED_DATES_RULE,
     ]) {
       expect(extraction).toContain(rule);
       expect(structuration).toContain(rule);
