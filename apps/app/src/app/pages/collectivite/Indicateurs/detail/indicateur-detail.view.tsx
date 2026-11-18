@@ -12,11 +12,10 @@ import { IndicateurDetailDataProvider } from './data/indicateur-detail.data-prov
 import { IndicateurLayout } from './indicateur-layout.view';
 
 type Props = {
-  dataTest?: string;
   indicateurId: number | string;
 };
 
-export const IndicateurDetail = ({ dataTest, indicateurId }: Props) => {
+export const IndicateurDetail = ({ indicateurId }: Props) => {
   const collectiviteId = useCollectiviteId();
 
   const { data: indicateur, isLoading } = useGetIndicateur(
@@ -57,7 +56,7 @@ export const IndicateurDetail = ({ dataTest, indicateurId }: Props) => {
 
   return (
     <IndicateurDetailDataProvider indicateur={indicateur}>
-      <IndicateurLayout dataTest={dataTest} />
+      <IndicateurLayout />
     </IndicateurDetailDataProvider>
   );
 };

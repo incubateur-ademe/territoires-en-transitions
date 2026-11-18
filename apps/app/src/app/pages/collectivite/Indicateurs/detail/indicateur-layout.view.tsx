@@ -8,11 +8,7 @@ import { useIndicateurData } from './context/indicateur-data.context';
 import { IndicateurSousIndicateurs } from './content/sous-indicateurs/indicateur-sous-indicateurs.view';
 import { IndicateurTabs } from './indicateur-tabs.view';
 
-type IndicateurLayoutProps = {
-  dataTest?: string;
-};
-
-export const IndicateurLayout = ({ dataTest }: IndicateurLayoutProps) => {
+export const IndicateurLayout = () => {
   const { indicateur, canMutateIndicateur } = useIndicateurData();
   const { chartInfo } = useIndicateurChart();
   const { collectiviteId, hasCollectivitePermission } =
@@ -33,7 +29,7 @@ export const IndicateurLayout = ({ dataTest }: IndicateurLayoutProps) => {
         composeSansAgregation={composeSansAgregation}
       />
 
-      <div data-test={dataTest} className="pt-6">
+      <div className="pt-6">
         {composeSansAgregation ? (
           <IndicateurSousIndicateurs
             enfantsIds={enfants.map(({ id }) => id)}
