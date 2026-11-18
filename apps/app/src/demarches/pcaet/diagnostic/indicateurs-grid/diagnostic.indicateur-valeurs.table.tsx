@@ -2,11 +2,11 @@
 
 import { JSX, useMemo } from 'react';
 import { IndicateurValeursTable } from '../../../../indicateurs/valeurs/grid';
+import { buildIndicateurPeriodeColumns } from '../../../../indicateurs/valeurs/grid/indicateur-periode.columns';
 import type { GridMaxHeight } from '../../../../indicateurs/valeurs/grid/types';
 import { demarchePcaetAutosaveKeys } from '../../data/autosave-keys';
 import { DiagnosticIndicateurStickyTitle } from './diagnostic-indicateur-sticky-title';
 import type { DiagnosticIndicateurTable } from './indicateur-tab.layout';
-import { buildDiagnosticIndicateurPeriodeColumns } from './diagnostic-indicateur-periode.columns';
 import { useDiagnosticIndicateurValeursTable } from './use-diagnostic-indicateur-valeurs-table';
 
 type Props = {
@@ -44,7 +44,7 @@ export const DiagnosticIndicateurValeursTable = ({
   const currentYear = new Date().getFullYear();
   const periodeColumns = useMemo(
     () =>
-      buildDiagnosticIndicateurPeriodeColumns({
+      buildIndicateurPeriodeColumns({
         years,
         referenceYear,
         currentYear,

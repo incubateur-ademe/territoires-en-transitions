@@ -13,7 +13,7 @@ import { capitalize } from '@tet/ui/labels/plural';
 import { ComponentProps, JSX } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { appLabels } from '../../../../labels/catalog';
-import { buildDiagnosticIndicateurPeriodeColumns } from '../../../../demarches/pcaet/diagnostic/indicateurs-grid/diagnostic-indicateur-periode.columns';
+import { buildIndicateurPeriodeColumns } from '../indicateur-periode.columns';
 import { IndicateurValeursTable } from '../indicateur-valeurs.table';
 import { IndicateurTableRow } from '../types';
 import {
@@ -45,7 +45,7 @@ const gridElement = ({
   <IndicateurValeursTable
     autosaveKey="grille"
     rows={fakeRows}
-    periodeColumns={buildDiagnosticIndicateurPeriodeColumns({
+    periodeColumns={buildIndicateurPeriodeColumns({
       years,
       referenceYear,
       currentYear: fakeReferenceYear,

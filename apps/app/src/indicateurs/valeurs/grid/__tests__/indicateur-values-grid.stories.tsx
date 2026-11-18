@@ -2,7 +2,7 @@ import { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { Button } from '@tet/ui';
 import { fn } from 'storybook/test';
 import { JSX, useState } from 'react';
-import { buildDiagnosticIndicateurPeriodeColumns } from '../../../../demarches/pcaet/diagnostic/indicateurs-grid/diagnostic-indicateur-periode.columns';
+import { buildIndicateurPeriodeColumns } from '../indicateur-periode.columns';
 import { IndicateurValeursTable } from '../indicateur-valeurs.table';
 import { IndicateurTableRow } from '../types';
 import {
@@ -12,7 +12,7 @@ import {
   fakeYears,
 } from './grid-fixtures';
 
-const periodeColumns = buildDiagnosticIndicateurPeriodeColumns({
+const periodeColumns = buildIndicateurPeriodeColumns({
   years: fakeYears,
   referenceYear: fakeReferenceYear,
   currentYear: fakeReferenceYear,
@@ -46,7 +46,7 @@ export const Polluants: Story = {};
 export const LectureSeule: Story = {
   args: {
     isReadonly: true,
-    periodeColumns: buildDiagnosticIndicateurPeriodeColumns({
+    periodeColumns: buildIndicateurPeriodeColumns({
       years: fakeYears,
       referenceYear: fakeReferenceYear,
       currentYear: fakeReferenceYear,
@@ -57,7 +57,7 @@ export const LectureSeule: Story = {
 
 export const SansAnneeDeReference: Story = {
   args: {
-    periodeColumns: buildDiagnosticIndicateurPeriodeColumns({
+    periodeColumns: buildIndicateurPeriodeColumns({
       years: fakeYears.filter((year) => year !== fakeReferenceYear),
       referenceYear: null,
       currentYear: fakeReferenceYear,
