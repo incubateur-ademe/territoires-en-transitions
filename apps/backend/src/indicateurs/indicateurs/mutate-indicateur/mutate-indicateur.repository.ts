@@ -305,6 +305,33 @@ export class MutateIndicateurRepository {
       );
   }
 
+  async detachSousIndicateur(
+    {
+      parentId,
+      sousIndicateurId,
+      collectiviteId,
+    }: { parentId: number; sousIndicateurId: number; collectiviteId: number },
+    tx: Transaction
+  ): Promise<void> {
+    await tx
+      .delete(indicateurGroupeTable)
+      .where(
+        and(
+          eq(indicateurGroupeTable.parent, parentId),
+          eq(indicateurGroupeTable.enfant, sousIndicateurId),
+          inArray(
+            indicateurGroupeTable.enfant,
+            tx
+              .select({ id: indicateurDefinitionTable.id })
+              .from(indicateurDefinitionTable)
+              .where(
+                eq(indicateurDefinitionTable.collectiviteId, collectiviteId)
+              )
+          )
+        )
+      );
+  }
+
   async attachSousIndicateur(
     { parentId, enfantId }: { parentId: number; enfantId: number },
     tx: Transaction

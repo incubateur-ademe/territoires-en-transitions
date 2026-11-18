@@ -129,3 +129,14 @@ export const deleteIndicateurInputSchema = z.object({
 });
 
 export type DeleteIndicateurInput = z.infer<typeof deleteIndicateurInputSchema>;
+
+export const detachIndicateurInputSchema = z.object({
+  indicateurId: z
+    .number()
+    .int()
+    .positive()
+    .describe('Sous-indicateur à dissocier de son parent'),
+  collectiviteId: z.number().int().positive(),
+});
+
+export type DetachIndicateurInput = z.infer<typeof detachIndicateurInputSchema>;

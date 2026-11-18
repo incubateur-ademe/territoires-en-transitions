@@ -5,9 +5,12 @@ import { upsertIndicateurFichesErrorConfig } from '../upsert-indicateur-fiches/u
 import { createIndicateurErrorConfig } from './create-indicateur.errors';
 import CreateIndicateurService from './create-indicateur.service';
 import { DeleteIndicateurService } from './delete-indicateur.service';
+import { detachIndicateurErrorConfig } from './detach-indicateur.errors';
+import { DetachIndicateurService } from './detach-indicateur.service';
 import {
   createIndicateurInputSchema,
   deleteIndicateurInputSchema,
+  detachIndicateurInputSchema,
   updateIndicateurInputSchema,
 } from './mutate-indicateur.input';
 import { updateIndicateurErrorConfig } from './update-indicateur.errors';
@@ -25,11 +28,16 @@ export class MutateIndicateurRouter {
     createIndicateurErrorConfig
   );
 
+  private readonly getDetachResultDataOrThrowError = createTrpcErrorHandler(
+    detachIndicateurErrorConfig
+  );
+
   constructor(
     private readonly trpc: TrpcService,
     private readonly createService: CreateIndicateurService,
     private readonly updateService: UpdateIndicateurService,
-    private readonly deleteService: DeleteIndicateurService
+    private readonly deleteService: DeleteIndicateurService,
+    private readonly detachService: DetachIndicateurService
   ) {}
 
   router = this.trpc.router({
@@ -49,6 +57,15 @@ export class MutateIndicateurRouter {
           user: ctx.user,
         });
         return this.getUpdateResultDataOrThrowError(result);
+      }),
+
+    detach: this.trpc.authedProcedure
+      .input(detachIndicateurInputSchema)
+      .mutation(async ({ ctx, input }) => {
+        const result = await this.detachService.detachIndicateur(input, {
+          user: ctx.user,
+        });
+        return this.getDetachResultDataOrThrowError(result);
       }),
 
     listSousIndicateursBecomingAutonomous: this.trpc.authedProcedure

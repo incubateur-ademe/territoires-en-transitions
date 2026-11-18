@@ -26,6 +26,7 @@ import { ListIndicateursPredefinisController } from './indicateurs/list-indicate
 import { ListIndicateursPredefinisRepository } from './indicateurs/list-indicateurs-predefinis/list-indicateurs-predefinis.repository';
 import { ListIndicateursPredefinisService } from './indicateurs/list-indicateurs-predefinis/list-indicateurs-predefinis.service';
 import { DeleteIndicateurService } from './indicateurs/mutate-indicateur/delete-indicateur.service';
+import { DetachIndicateurService } from './indicateurs/mutate-indicateur/detach-indicateur.service';
 import { MutateIndicateurRepository } from './indicateurs/mutate-indicateur/mutate-indicateur.repository';
 import { UpdateIndicateurService } from './indicateurs/mutate-indicateur/update-indicateur.service';
 import { ImportIndicateurDefinitionController } from './import-indicateurs/import-indicateur-definition.controller';
@@ -115,6 +116,7 @@ const DEFINITIONS_PROVIDERS = [
   CreateIndicateurService,
   UpdateIndicateurService,
   DeleteIndicateurService,
+  DetachIndicateurService,
   MutateIndicateurRepository,
   MutateIndicateurRouter,
 
