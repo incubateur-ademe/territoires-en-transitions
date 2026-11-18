@@ -148,8 +148,14 @@ export class ResolveElectrificationEngagementsService {
         cible.libelleSource ??
           (engagementDefinition.cibles.length > 1 ? cible.key : undefined)
       );
-      const issue = (code: ElectrificationEngagementsErrorCode) =>
-        issues.push(electrificationEngagementsIssue(code, location));
+      const issue = (
+        code: ElectrificationEngagementsErrorCode,
+        message?: string
+      ) =>
+        issues.push({
+          ...electrificationEngagementsIssue(code, location),
+          ...(message ? { message } : {}),
+        });
       if (
         cible.validation !== 'validated' ||
         cible.periodicite === null ||
@@ -176,26 +182,39 @@ export class ResolveElectrificationEngagementsService {
         issue('INCOMPATIBLE_ENGAGEMENT_INDICATEUR');
         continue;
       }
+      const unit = cible.uniteImport ?? cible.unite;
       if (
         extracted?.unite != null &&
         extracted.unite !== cible.unite &&
-        extracted.unite !== (cible.uniteImport ?? cible.unite)
+        extracted.unite !== unit
       ) {
-        issue('INVALID_ENGAGEMENT_UNIT');
+        issue('INVALID_ENGAGEMENT_UNIT', `Renseignez la cible en ${unit}.`);
       }
       if (
         (extracted?.valeur != null &&
           (extracted.unite === null || extracted.annee === null)) ||
         (extracted?.annee != null && extracted.annee !== rules.annee)
       ) {
-        issue('INVALID_ENGAGEMENT_PERIOD');
+        issue(
+          'INVALID_ENGAGEMENT_PERIOD',
+          `Renseignez la cible en ${unit} pour l'année ${rules.annee}.`
+        );
       }
       if (
         extracted?.valeur != null &&
         ((rules.minimum !== null && extracted.valeur < rules.minimum) ||
           (rules.maximum !== null && extracted.valeur > rules.maximum))
       ) {
-        issue('INVALID_ENGAGEMENT_VALUE');
+        const bounds =
+          rules.minimum !== null && rules.maximum !== null
+            ? `entre ${rules.minimum} et ${rules.maximum}`
+            : rules.minimum !== null
+            ? `supérieure ou égale à ${rules.minimum}`
+            : `inférieure ou égale à ${rules.maximum}`;
+        issue(
+          'INVALID_ENGAGEMENT_VALUE',
+          `Renseignez une valeur ${bounds} ${unit}.`
+        );
       }
       const plafond = engagement.cibles.find(
         ({ key }) => key === rules.plafondCible
@@ -205,7 +224,15 @@ export class ResolveElectrificationEngagementsService {
         plafond?.valeur != null &&
         extracted.valeur > plafond.valeur
       ) {
-        issue('INCONSISTENT_ENGAGEMENT_TARGETS');
+        const parent = engagementDefinition.cibles.find(
+          ({ key }) => key === rules.plafondCible
+        );
+        issue(
+          'INCONSISTENT_ENGAGEMENT_TARGETS',
+          `La valeur ne peut pas dépasser la cible "${
+            parent?.libelleSource ?? rules.plafondCible
+          }" (${plafond.valeur} ${unit}).`
+        );
       }
       if (extracted?.valeur == null) {
         issue('EMPTY_ENGAGEMENT_TARGET');

@@ -64,23 +64,8 @@ export class InterpretElectrificationValues {
     });
     if (initial.success || (!requests.length && !unmatched.length))
       return initial;
-    const unrelatedError = initial.error.some(
-      ({ location, code }) =>
-        !requests.some(
-          (request) =>
-            request.source.location === location &&
-            code ===
-              (request.kind === 'target'
-                ? 'INVALID_ELECTRIFICATION_TARGET'
-                : 'INVALID_ELECTRIFICATION_INDICATEUR')
-        ) &&
-        !unmatched.some(
-          (request) =>
-            request.source.location === location &&
-            code === 'INVALID_ELECTRIFICATION_ENGAGEMENT'
-        )
-    );
-    if (unrelatedError) return initial;
+    if (this.hasUnrelatedErrors(initial.error, requests, unmatched))
+      return initial;
     for (const request of unmatched) {
       input.signal?.throwIfAborted();
       const completion = await llm.generateStructured({
@@ -139,20 +124,7 @@ Recopie le libellé du document entier dans quote. N'invente aucun code ni aucun
       if (!requests.length) return initial;
     }
     // Une erreur de structure, de date ou de statut n'est jamais confiée au modèle.
-    if (
-      initial.error.some(
-        ({ location, code }) =>
-          !requests.some(
-            (request) =>
-              request.source.location === location &&
-              code ===
-                (request.kind === 'target'
-                  ? 'INVALID_ELECTRIFICATION_TARGET'
-                  : 'INVALID_ELECTRIFICATION_INDICATEUR')
-          )
-      )
-    )
-      return initial;
+    if (this.hasUnrelatedErrors(initial.error, requests)) return initial;
 
     const interpretations: ElectrificationValueInterpretation[] = [];
     for (const request of requests) {
@@ -207,5 +179,28 @@ Recopie le libellé du document entier dans quote. N'invente aucun code ni aucun
     });
     if (extracted.success) extracted.data.tokens = sumTokenUsage(tokens);
     return extracted;
+  }
+
+  private static hasUnrelatedErrors(
+    issues: ElectrificationIssue[],
+    values: ElectrificationValueRequest[],
+    engagements: ElectrificationEngagementMatchRequest[] = []
+  ): boolean {
+    return issues.some(
+      ({ location, code }) =>
+        !values.some(
+          (request) =>
+            request.source.location === location &&
+            code ===
+              (request.kind === 'target'
+                ? 'INVALID_ELECTRIFICATION_TARGET'
+                : 'INVALID_ELECTRIFICATION_INDICATEUR')
+        ) &&
+        !engagements.some(
+          (request) =>
+            request.source.location === location &&
+            code === 'INVALID_ELECTRIFICATION_ENGAGEMENT'
+        )
+    );
   }
 }

@@ -126,7 +126,9 @@ fermée d'engagements ni exception par code. Son contrat de lecture est le suiva
   définissent une cible `principale`. L'unité est lue après le blanc.
 - Deux blancs reliés par "dont" définissent un `total` et une sous-cible dont
   la clé vient du libellé. La sous-cible partage l'unité et l'échéance du total
-  et ne peut pas le dépasser.
+  et ne peut pas le dépasser. Son libellé est un qualificatif simple (par
+  exemple "rapides"), éventuellement précédé de l'unité du total. Une autre
+  unité explicite ou une formulation ambiguë bloque la publication.
 - Les objectifs sont positifs ou nuls ; un pourcentage est limité à 100.
   Les variantes de casse des mots et le singulier des pluriels réguliers sont
   reconnus. La casse des symboles physiques est conservée (`MWh` et `mWh`

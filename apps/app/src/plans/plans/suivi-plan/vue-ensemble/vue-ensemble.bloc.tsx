@@ -109,6 +109,9 @@ export const VueEnsembleBloc = ({
                 pilotageFilters={filters.pilotageFilters}
                 repartition={data.repartitionParStatut}
               />
+              <span className="text-xs text-grey-8">
+                {appLabels.vueEnsembleRepartitionInfo}
+              </span>
             </div>
           </div>
         </div>

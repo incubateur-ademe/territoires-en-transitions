@@ -102,6 +102,17 @@ export class ElectrificationGristEngagementsRules {
     if (!unit || descriptions.some((description) => !description)) {
       throw new Error('Unité ou libellé de cible Grist absent');
     }
+    if (included) {
+      const child = descriptions[1];
+      const qualifier = child.startsWith(`${unit} `)
+        ? child.slice(unit.length).trim()
+        : child;
+      // Un qualificatif simple hérite de l'unité du total. Une autre unité
+      // explicite ("% rapides", "kW rapides"...) ne décrit pas un sous-ensemble.
+      if (!/^(?:\p{Lu}?\p{Ll}+)(?:-\p{Ll}+)*$/u.test(qualifier)) {
+        throw new Error('Unité ou qualificatif de sous-cible Grist ambigu');
+      }
+    }
     return descriptions.map((description, index) => {
       const key = !included
         ? 'principale'

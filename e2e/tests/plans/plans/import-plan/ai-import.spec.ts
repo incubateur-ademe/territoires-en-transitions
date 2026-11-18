@@ -84,10 +84,7 @@ test("conserve l'historique si la modale est fermée avant la réponse de l'envo
   collectivites,
 }) => {
   const mock = new AiImportFixture();
-  let release!: () => void;
-  mock.enqueueResponse = new Promise<void>((resolve) => {
-    release = resolve;
-  });
+  const release = mock.pauseEnqueueResponse();
   await mock.install(page);
   const { collectivite } = await collectivites.addCollectiviteAndUser({
     userArgs: supportUser,
@@ -1043,12 +1040,13 @@ test('affiche une erreur explicite pour un job inaccessible, sans polling', asyn
   ).toHaveCount(0);
 });
 
-test('importe avec le profil PCAET, rattache immédiatement le plan et retrouve le suivi après fermeture', async ({
+test("rattache le plan PCAET même si la modale est fermée avant la réponse de l'envoi", async ({
   page,
   collectivites,
   plans,
 }) => {
   const mock = new AiImportFixture();
+  const release = mock.pauseEnqueueResponse();
   await mock.install(page);
   const { collectivite, user } = await collectivites.addCollectiviteAndUser({
     userArgs: supportUser,
@@ -1071,18 +1069,27 @@ test('importe avec le profil PCAET, rattache immédiatement le plan et retrouve 
     typeId: pcaetType.id,
   });
   mock.status = { ...mock.status, profile: 'pcaet', createdPlanId: planId };
-  await submitImport(page);
+  const modal = page.getByTestId('demarches.plan.import-plan-modal');
+  try {
+    await submitImport(page);
+    await expect.poll(() => mock.enqueuedForms.length).toBe(1);
+    await page.getByTestId('close-demarches.plan.import-plan-modal').click();
+    await expect(modal).not.toBeVisible();
+  } finally {
+    release();
+  }
   await expect(page).toHaveURL(new RegExp(`importJobId=${mock.status.jobId}`));
   expect(mock.enqueuedForms[0].get('profile')).toBe('pcaet');
   expect(mock.enqueuedForms[0].get('planType')).toBe(String(pcaetType.id));
-  const modal = page.getByTestId('demarches.plan.import-plan-modal');
+  await expect(
+    page.getByTestId('demarches.plan.row').filter({ hasText: 'Plan de test' })
+  ).toHaveAttribute('data-linked', 'true');
+  await expect(modal).not.toBeVisible();
+  await demarche.importPlanButton.click();
   await expect(
     modal.getByTestId('plans.import-ia.etapes-simplifiees')
   ).toBeVisible();
   await modal.getByTestId('demarches.plan.import-arriere-plan').click();
-  await expect(
-    page.getByTestId('demarches.plan.row').filter({ hasText: 'Plan de test' })
-  ).toHaveAttribute('data-linked', 'true');
   mock.capabilities.profiles = [{ profile: 'pcaet', available: false }];
   await page.reload();
   await demarche.importPlanButton.click();

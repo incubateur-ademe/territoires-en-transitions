@@ -197,12 +197,25 @@ describe('Engagements publiés depuis Grist', () => {
     }
   );
 
+  it("accepte l'unité du total répétée devant le qualificatif de la sous-cible", () => {
+    const data = structuredClone(source);
+    data.Axes[0].fields.Parametre_signe =
+      "Rénover d'ici 2040 ___ bâtiments, dont ___ bâtiments scolaires";
+    expect(build([], data).engagements[0].cibles[1]).toMatchObject({
+      key: 'batiments-scolaires',
+      uniteImport: 'bâtiments',
+      reglesImport: { plafondCible: 'total', annee: 2040 },
+    });
+  });
+
   it.each([
     ['E42+E43', "Rénover d'ici 2040 ___ bâtiments et ___ écoles"],
     ['E42', "Rénover d'ici 2040 ___ bâtiments (E42) et ___ écoles (E43)"],
     ['E42', "Rénover d'ici 2040 ___ bâtiments, dont ___ écoles en 2050"],
     ['E42', "Rénover d'ici 2040 ___ bâtiments et ___ écoles"],
     ['E42', "Rénover d'ici demain ___ bâtiments"],
+    ['E42', "Installer d'ici 2030 ___ bornes, dont ___ % rapides"],
+    ['E42', "Installer d'ici 2030 ___ bornes, dont ___ kW rapides"],
   ])(
     'refuse une formulation ambiguë sans remplacer les données manquantes : %s / %s',
     (code, label) => {

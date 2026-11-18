@@ -128,9 +128,11 @@ export const AiImportFlow = ({
         demarcheId,
       });
       // L'envoi continue après fermeture, mais le suivi ne doit pas rouvrir la page quittée.
-      if (!mounted.current) return;
-      await setImportQuery({ importJobId: newJobId, retryJobId: null });
-      if (mounted.current) onImportStarted?.(newJobId, planId);
+      if (mounted.current) {
+        await setImportQuery({ importJobId: newJobId, retryJobId: null });
+      }
+      // Le parent reste responsable du rattachement à la démarche, même modale fermée.
+      onImportStarted?.(newJobId, planId);
     } catch (error) {
       if (mounted.current) setToast('error', getErrorMessage(error));
     }

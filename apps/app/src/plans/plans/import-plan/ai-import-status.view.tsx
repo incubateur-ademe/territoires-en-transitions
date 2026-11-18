@@ -89,18 +89,15 @@ export const AiImportStatusView = ({
 
   const failed = status.status === 'failed';
   const done = status.status === 'done';
-  const errorCount = status.report.issues.filter((issue) =>
+  const errors = status.report.issues.filter((issue) =>
     ['document-error', 'configuration-error', 'processing-error'].includes(
       issue.kind
     )
-  ).length;
-  const isErrorInReport = status.report.issues.some(
-    (issue) =>
-      issue.message === status.error &&
-      ['document-error', 'configuration-error', 'processing-error'].includes(
-        issue.kind
-      )
   );
+  const isErrorInReport = errors.some(
+    ({ message }) => message === status.error
+  );
+  const issueKinds = new Set(status.report.issues.map(({ kind }) => kind));
   if (renderStagesProgress && !failed && !done) {
     return (
       <section data-test="plans.import-ia.suivi">
@@ -163,9 +160,9 @@ export const AiImportStatusView = ({
           data-test="plans.import-ia.rapport"
         >
           <h3 className="mb-0 text-lg">{appLabels.importPlanIaRapport}</h3>
-          {errorCount > 0 && (
+          {errors.length > 0 && (
             <p className="mb-0">
-              {appLabels.importPlanIaErreursDetectees({ count: errorCount })}
+              {appLabels.importPlanIaErreursDetectees({ count: errors.length })}
             </p>
           )}
           {status.report.issues.map((issue, index) => (
@@ -189,18 +186,15 @@ export const AiImportStatusView = ({
               }
             />
           ))}
-          {[...new Set(status.report.issues.map((issue) => issue.kind))].map(
-            (kind) =>
-              importIssueHintLabels[kind] ? (
-                <p key={kind} className="mb-0">
-                  {importIssueHintLabels[kind]}
-                </p>
-              ) : null
+          {[...issueKinds].map((kind) =>
+            importIssueHintLabels[kind] ? (
+              <p key={kind} className="mb-0">
+                {importIssueHintLabels[kind]}
+              </p>
+            ) : null
           )}
-          {status.report.issues.some(
-            ({ kind }) =>
-              kind === 'configuration-error' || kind === 'processing-error'
-          ) && (
+          {(issueKinds.has('configuration-error') ||
+            issueKinds.has('processing-error')) && (
             <SupportChatLink>
               {appLabels.importPlanIaContacterSupport}
             </SupportChatLink>
