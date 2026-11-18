@@ -59,6 +59,8 @@ import { GetFaireAvancerLePlanService } from './suivi-plan/get-faire-avancer-le-
 import { GetVueEnsembleRouter } from './suivi-plan/get-vue-ensemble/get-vue-ensemble.router';
 import { GetVueEnsembleService } from './suivi-plan/get-vue-ensemble/get-vue-ensemble.service';
 import { ListSuiviPlanFichesService } from './suivi-plan/list-suivi-plan-fiches.service';
+import { SuiviPlanModulesRouter } from './suivi-plan/suivi-plan-modules/suivi-plan-modules.router';
+import { SuiviPlanModulesService } from './suivi-plan/suivi-plan-modules/suivi-plan-modules.service';
 import { SuiviPlanRouter } from './suivi-plan/suivi-plan.router';
 import { UpsertPlanRepository } from './upsert-plan/upsert-plan.repository';
 import { UpsertPlanRouter } from './upsert-plan/upsert-plan.router';
@@ -135,6 +137,8 @@ import { VerifyPlanService } from './verify-plan/verify-plan.service';
     GetEvolutionStatutsRouter,
     GetFaireAvancerLePlanService,
     GetFaireAvancerLePlanRouter,
+    SuiviPlanModulesService,
+    SuiviPlanModulesRouter,
     SuiviPlanRouter,
     ExportSuiviPlanService,
   ],
