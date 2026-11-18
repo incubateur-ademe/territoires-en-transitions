@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
+import { GetAxeRepository } from '@tet/backend/plans/axes/get-axe/get-axe.repository';
 import { FicheActionRepository } from '@tet/backend/plans/fiches/fiche-action.repository';
+import { ListFicheAxePathsRepository } from '@tet/backend/plans/fiches/list-fiche-axe-paths/list-fiche-axe-paths.repository';
 import { ConfigurationModule } from '@tet/backend/utils/config/configuration.module';
 import { DatabaseModule } from '@tet/backend/utils/database/database.module';
 import { LlmModule } from '@tet/backend/utils/llm/llm.module';
@@ -17,6 +19,7 @@ import { AnalyzeFichesService } from './analyze-fiches.service';
 import { ANALYZED_COLLECTIVITE_IDS } from './analyzed-collectivite-ids';
 import { AnalyzedCollectivites } from './analyzed-collectivites';
 import { FicheAnalysisStatusRepository } from './fiche-analysis-status.repository';
+import { FicheAxePathRepository } from './fiche-axe-path.repository';
 import { FicheCandidateRepository } from './fiche-candidate.repository';
 import { FicheTextRepository } from './fiche-text.repository';
 
@@ -34,6 +37,12 @@ import { FicheTextRepository } from './fiche-text.repository';
     FicheActionRepository,
     { provide: FicheCandidateRepository, useExisting: FicheActionRepository },
     { provide: FicheTextRepository, useExisting: FicheActionRepository },
+    GetAxeRepository,
+    ListFicheAxePathsRepository,
+    {
+      provide: FicheAxePathRepository,
+      useExisting: ListFicheAxePathsRepository,
+    },
     {
       provide: FicheAnalysisStatusRepository,
       useClass: FicheActionAnalysisRepository,
