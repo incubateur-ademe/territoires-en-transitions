@@ -476,8 +476,6 @@ export const plansLabels = {
         : 'action en cours sans progression renseignée, comptée'
     } à 0 %.`,
   vueEnsembleRepartitionParStatut: 'Répartition par statut',
-  vueEnsembleRepartitionInfo:
-    'Cliquer sur un statut ouvre les actions concernées dans le pilotage.',
   vueEnsembleTrancher: 'Trancher',
   vueEnsembleArbitrer: 'Arbitrer',
   vueEnsembleDebloquer: 'Débloquer',
