@@ -8,7 +8,7 @@ describe('buildDemarchePcaetExportFilename', () => {
   // 23 h 30 UTC le 15 : déjà le 16 à Paris.
   const date = new Date('2026-11-15T23:30:00Z');
 
-  it('nomme la photo de la transmission, sans accents, à la date civile française', () => {
+  it("nomme l'export figé de la transmission, sans accents, à la date civile française", () => {
     expect(
       buildDemarchePcaetExportFilename({
         collectiviteNom: 'CA du Pays de Gex Agglomération',

@@ -23,11 +23,11 @@ import {
 
 /**
  * Fige les classeurs d'un dépôt au moment d'une soumission (transmission pour
- * avis, publication) : une photo du dossier tel qu'il était, même si le plan
+ * avis, publication) : ils gardent le dossier tel qu'il était, même si le plan
  * est modifié ensuite.
  *
- * Appelé dans la transaction de la transition, et bloquant : pas de photo, pas
- * de soumission. Le stockage n'étant pas dans la transaction, l'appelant
+ * Appelé dans la transaction de la transition, et bloquant : pas d'export figé,
+ * pas de soumission. Le stockage n'étant pas dans la transaction, l'appelant
  * garde les chemins renvoyés et les passe à `discard` si elle est annulée.
  */
 @Injectable()

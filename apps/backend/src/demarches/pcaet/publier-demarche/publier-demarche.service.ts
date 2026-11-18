@@ -42,7 +42,7 @@ export class PublierDemarchePcaetService {
    * date de la délibération d'adoption saisie par la collectivité — les deux ne
    * tombent pas le même jour, et c'est l'adoption qui fait foi pour la validité
    * du PCAET. Les classeurs du dossier (plan, indicateurs) sont figés une
-   * seconde fois : le diagnostic se rouvre après les avis, la photo de la
+   * seconde fois : le diagnostic se rouvre après les avis, l'export figé de la
    * transmission ne vaut plus pour ce qui est publié. Le PCAET précédent,
    * remplacé, est archivé dans la même transaction.
    */
@@ -65,7 +65,7 @@ export class PublierDemarchePcaetService {
 
     let nbPrecedentesArchivees = 0;
     // Écrits hors de la base : à retirer si la transaction est annulée, par
-    // exemple quand l'archivage du PCAET remplacé échoue après la photo.
+    // exemple quand l'archivage du PCAET remplacé échoue après l'export figé.
     let storedPaths: string[] = [];
     const result = await this.transactionManager.executeSingle(
       async (transaction) => {
@@ -79,8 +79,8 @@ export class PublierDemarchePcaetService {
           DemarchePcaetTransitionEnum.PUBLIER,
           { user, tx: transaction },
           async ({ demarche, transaction: effectsTransaction }) => {
-            // Sans photo, pas de publication : son échec refuse la transition
-            // et annule la transaction.
+            // Sans export figé, pas de publication : son échec refuse la
+            // transition et annule la transaction.
             const exports = await this.generateExportsService.generate(
               {
                 demarche,

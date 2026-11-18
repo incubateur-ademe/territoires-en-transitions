@@ -74,9 +74,9 @@ export class TransmettrePourAvisDemarchePcaetService {
             transaction
           );
 
-        // La photo du dossier tel qu'il est transmis, dans la même
-        // transaction : sans photo, pas de transmission — la saisine et les
-        // notifications sont annulées avec elle. En dernier : c'est l'étape
+        // Les exports figés du dossier tel qu'il est transmis, dans la même
+        // transaction : sans export figé, pas de transmission — la saisine et
+        // les notifications sont annulées avec elle. En dernier : c'est l'étape
         // la plus longue, et la seule à écrire hors de la base.
         const exports = await this.generateExportsService.generate(
           {

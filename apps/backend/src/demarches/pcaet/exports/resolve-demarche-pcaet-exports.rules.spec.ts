@@ -38,7 +38,7 @@ describe('resolveDemarchePcaetExportSources', () => {
     'instruit',
     'instruit_hors_plateforme',
     'publie',
-  ] as const)("sert l'export du jour sans photo (%s)", (status) => {
+  ] as const)("sert l'export du jour sans export figé (%s)", (status) => {
     expect(
       resolveDemarchePcaetExportSources({
         status,
@@ -48,7 +48,7 @@ describe('resolveDemarchePcaetExportSources', () => {
     ).toEqual({ source: 'on_demand' });
   });
 
-  it('sert la photo de la dernière transition', () => {
+  it("sert l'export figé de la dernière transition", () => {
     const rows = [
       row('transmettre_pour_avis', 'plan', TRANSMISSION),
       row('transmettre_pour_avis', 'indicateurs', TRANSMISSION),
@@ -85,7 +85,7 @@ describe('resolveDemarchePcaetExportSources', () => {
     }
   });
 
-  it("ne complète jamais une photo par l'export du jour ni par une photo plus ancienne", () => {
+  it("ne complète jamais un export figé par l'export du jour ni par un export figé plus ancien", () => {
     const rows = [
       row('transmettre_pour_avis', 'plan', TRANSMISSION),
       row('transmettre_pour_avis', 'indicateurs', TRANSMISSION),

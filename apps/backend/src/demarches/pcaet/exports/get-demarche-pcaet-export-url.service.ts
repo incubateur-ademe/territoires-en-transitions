@@ -19,8 +19,8 @@ import { ResolveDemarchePcaetExportsService } from './resolve-demarche-pcaet-exp
 const DOWNLOAD_URL_TTL_SECONDS = 60;
 
 /**
- * Le lien signé d'un classeur figé. Réservé aux photos : l'export du jour se
- * télécharge par le contrôleur, qui le construit à la demande.
+ * Le lien signé d'un classeur figé. Réservé aux exports figés : l'export du
+ * jour se télécharge par le contrôleur, qui le construit à la demande.
  */
 @Injectable()
 export class GetDemarchePcaetExportUrlService {

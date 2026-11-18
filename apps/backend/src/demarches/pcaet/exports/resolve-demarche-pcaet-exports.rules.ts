@@ -20,9 +20,10 @@ export type DemarchePcaetExportSnapshotRow = Pick<
 
 /**
  * Ce qu'un lecteur reçoit d'un dépôt :
- * - `snapshot` : la photo de la dernière transition, classeur par classeur
- *   (`null` pour un classeur qu'elle ne contient pas) ;
- * - `on_demand` : pas de photo, le classeur se construit sur l'état du jour ;
+ * - `snapshot` : l'export figé de la dernière transition, classeur par classeur
+ *   (`null` pour un classeur qu'il ne contient pas) ;
+ * - `on_demand` : pas d'export figé, le classeur se construit sur l'état du
+ *   jour ;
  * - `none` : dépôt en élaboration, rien n'est encore déposé.
  */
 export type DemarchePcaetExportSources<
@@ -37,10 +38,10 @@ export type DemarchePcaetExportSources<
     };
 
 /**
- * Choisit ce qui est servi. La photo prime : dès qu'elle existe, c'est elle,
+ * Choisit ce qui est servi. L'export figé prime : dès qu'il existe, c'est lui,
  * jamais un mélange avec l'export du jour. Seule la dernière transition compte,
- * et le repli d'une variante à l'autre reste dans cette transition : une photo
- * plus ancienne ne montre pas le dépôt tel qu'il a été soumis en dernier.
+ * et le repli d'une variante à l'autre reste dans cette transition : un export
+ * figé plus ancien ne montre pas le dépôt tel qu'il a été soumis en dernier.
  *
  * `lectureSeule` (membre d'un EPCI couvert par le dépôt d'un Supra) : le plan
  * servi est `plan_expurge`, ou `plan` quand la transition n'en a pas produit —

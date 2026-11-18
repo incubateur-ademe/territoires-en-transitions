@@ -17,10 +17,10 @@ import { ResolveDemarchePcaetExportsService } from './resolve-demarche-pcaet-exp
 export type OnDemandPcaetExportFile = { buffer: Buffer; filename: string };
 
 /**
- * L'export du jour d'un dépôt soumis sans photo (dépôts antérieurs à la
+ * L'export du jour d'un dépôt soumis sans export figé (dépôts antérieurs à la
  * génération à la soumission) : le classeur est construit à la demande, sur
- * l'état lu à l'instant. Refusé dès qu'une photo existe — c'est elle qui fait
- * foi — et pour un dépôt en élaboration, où rien n'est encore déposé.
+ * l'état lu à l'instant. Refusé dès qu'un export figé existe — c'est lui qui
+ * fait foi — et pour un dépôt en élaboration, où rien n'est encore déposé.
  */
 @Injectable()
 export class BuildOnDemandPcaetExportService {

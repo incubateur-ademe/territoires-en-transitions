@@ -136,7 +136,7 @@ export class BuildDemarchePcaetWorkbooksService {
     tx?: Transaction
   ): Promise<Result<Buffer | null, DemarchePcaetExportError>> {
     try {
-      // Plans aboutis seulement, comme la lecture publique : une photo n'a
+      // Plans aboutis seulement, comme la lecture publique : un export figé n'a
       // pas ce cas, la transmission exige des plans vérifiés.
       const snapshots = await this.loadPlanSnapshots(
         { demarcheId, collectiviteId, activePlansOnly: true },

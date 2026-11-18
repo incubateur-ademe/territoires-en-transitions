@@ -203,15 +203,18 @@ describe('Classeurs du dépôt PCAET (demarches.pcaet.exports)', () => {
     return { ...result, workbook };
   };
 
-  /** Simule un dépôt publié avant la génération à la soumission : aucune photo. */
-  const setStatusSansPhoto = (demarcheId: number, status: 'publie') =>
+  /**
+   * Simule un dépôt publié avant la génération à la soumission : aucun export
+   * figé.
+   */
+  const setStatusWithoutExports = (demarcheId: number, status: 'publie') =>
     db.db
       .update(demarcheTable)
       .set({ status })
       .where(eq(demarcheTable.id, demarcheId));
 
   describe('accès', () => {
-    test("l'instructeur saisi reçoit la photo complète, une DREAL hors périmètre est refusée", async () => {
+    test("l'instructeur saisi reçoit l'export figé complet, une DREAL hors périmètre est refusée", async () => {
       const depot = await createDepot();
       const demandeAvisId = await transmettre(depot);
 
@@ -356,8 +359,8 @@ describe('Classeurs du dépôt PCAET (demarches.pcaet.exports)', () => {
     });
   });
 
-  describe('photo', () => {
-    test('après publication, sert la photo de la publication', async () => {
+  describe('export figé', () => {
+    test("après publication, sert l'export figé de la publication", async () => {
       const depot = await createDepot({ withFicheRestreinte: false });
       const demandeAvisId = await transmettre(depot);
       await publierTestDemarchePcaet(app, db, depot.caller, depot);
@@ -375,7 +378,7 @@ describe('Classeurs du dépôt PCAET (demarches.pcaet.exports)', () => {
       });
     });
 
-    test("refuse l'export du jour dès qu'une photo existe", async () => {
+    test("refuse l'export du jour dès qu'un export figé existe", async () => {
       const depot = await createDepot({ withFicheRestreinte: false });
       await transmettre(depot);
 
@@ -421,10 +424,10 @@ describe('Classeurs du dépôt PCAET (demarches.pcaet.exports)', () => {
     });
   });
 
-  describe('dépôt soumis sans photo : export du jour', () => {
+  describe('dépôt soumis sans export figé : export du jour', () => {
     test('propose les deux classeurs, construits sur les données à ce jour', async () => {
       const depot = await createDepot();
-      await setStatusSansPhoto(depot.demarcheId, 'publie');
+      await setStatusWithoutExports(depot.demarcheId, 'publie');
       const ref = {
         demarcheId: depot.demarcheId,
         collectiviteId: depot.collectiviteId,
@@ -503,7 +506,7 @@ describe('Classeurs du dépôt PCAET (demarches.pcaet.exports)', () => {
         demarcheId,
         nom: PLAN_NOM,
       });
-      await setStatusSansPhoto(demarcheId, 'publie');
+      await setStatusWithoutExports(demarcheId, 'publie');
       const token = await getAuthToken({
         email: fixture.user.email ?? '',
         password: fixture.user.password,
@@ -571,7 +574,7 @@ describe('Classeurs du dépôt PCAET (demarches.pcaet.exports)', () => {
         nom: PLAN_NOM,
         status: 'to_verify',
       });
-      await setStatusSansPhoto(demarcheId, 'publie');
+      await setStatusWithoutExports(demarcheId, 'publie');
 
       expect(
         await caller.demarches.pcaet.exports.list({
