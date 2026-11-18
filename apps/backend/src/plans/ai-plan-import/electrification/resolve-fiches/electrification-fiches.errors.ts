@@ -1,4 +1,3 @@
-import { electrificationCatalogueErrors } from '@tet/backend/plans/plans/electrification/publish-electrification-data/electrification-catalogue.rules';
 import { prepareFicheErrors } from '../../prepare-fiche/prepare-fiche.errors';
 import {
   createIssueFactory,
@@ -13,7 +12,8 @@ export const electrificationFichesErrors = {
   },
   INVALID_FICHES_CONFIG: {
     kind: 'configuration-error',
-    message: electrificationCatalogueErrors.INVALID_FICHES_CONFIG,
+    message:
+      "Les correspondances des actions sont incohérentes dans le catalogue Électrification. Aucune modification de votre document n'est attendue : contactez le support TeT, puis relancez l'import avec le même document.",
   },
   FICHES_CONFIG_UNAVAILABLE: {
     kind: 'configuration-error',
@@ -47,7 +47,7 @@ export const electrificationFichesErrors = {
   INVALID_INDICATEUR_PERIOD: {
     kind: 'document-error',
     message:
-      "La période de cette valeur est absente ou incompatible avec l'indicateur. Renseignez une année pour un indicateur annuel.",
+      "L'année de référence de cette valeur est absente ou invalide pour cet indicateur. Renseignez une année explicite (exemple : 2025).",
   },
   INVALID_INDICATEUR_PERIODICITY: {
     kind: 'document-error',

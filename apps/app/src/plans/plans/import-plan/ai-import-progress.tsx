@@ -4,6 +4,7 @@ import { appLabels } from '@/app/labels/catalog';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Alert, Button, Icon, VisibleWhen } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
+import { AiImportProgressBar } from './ai-import-stages';
 import { ImportStepView } from './ai-import-steps.model';
 
 const STEP_LABELS: Record<ImportStepView['name'], string> = {
@@ -144,6 +145,19 @@ const ImportStepList = ({
   );
 };
 
+const toProgressPercent = (steps: ImportStepView[]) => {
+  const visibleSteps = steps.filter(isVisible);
+  if (visibleSteps.length === 0) return 0;
+  const doneCount = visibleSteps.filter((step) => step.status === 'done').length;
+  const currentCount = visibleSteps.filter(
+    (step) => step.status === 'current'
+  ).length;
+
+  return Math.round(
+    ((doneCount + currentCount * 0.5) / visibleSteps.length) * 100
+  );
+};
+
 type AiImportProgressProps = {
   failed: boolean;
   pending?: boolean;
@@ -169,17 +183,16 @@ export const AiImportProgress = ({
 }: AiImportProgressProps) => (
   <div className="flex flex-col gap-8 py-10">
     {!failed && (
-      <div
-        role="status"
-        className="flex items-center gap-3 text-primary-9"
-        data-test="plans.import-ia.chargement"
-      >
-        <SpinnerLoader className="w-8 h-8 shrink-0" />
-        <p className="mb-0 font-bold">
-          {pending
-            ? appLabels.importPlanIaEnAttente
-            : appLabels.importPlanIaEnCoursCourt}
-        </p>
+      <div className="flex flex-col gap-4" data-test="plans.import-ia.chargement">
+        <div role="status" className="flex items-center gap-3 text-primary-9">
+          <SpinnerLoader className="w-8 h-8 shrink-0" />
+          <p className="mb-0 font-bold">
+            {pending
+              ? appLabels.importPlanIaEnAttente
+              : appLabels.importPlanIaEnCoursCourt}
+          </p>
+        </div>
+        <AiImportProgressBar percent={toProgressPercent(steps)} />
       </div>
     )}
     {!failed && <ImportStepList steps={steps} withSecteurs={withSecteurs} />}

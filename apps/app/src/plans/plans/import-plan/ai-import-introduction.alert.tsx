@@ -8,6 +8,7 @@ export const AiImportIntroductionAlert = ({
 }) => (
   <Alert
     state="info"
+    title={appLabels.importPlanIaRelireTitre}
     description={
       <>
         <p className="mb-2">{description}</p>

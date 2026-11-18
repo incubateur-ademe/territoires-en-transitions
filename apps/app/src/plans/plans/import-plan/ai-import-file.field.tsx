@@ -55,14 +55,14 @@ export const AiImportFileField = ({
             </div>
             <Button
               type="button"
-              variant="grey"
+              variant="outlined"
               size="xs"
               icon="close-line"
+              aria-label={appLabels.importPlanIaRetirerFichier}
+              title={appLabels.importPlanIaRetirerFichier}
               onClick={removeFile}
               dataTest="ai-import.retirer-fichier"
-            >
-              {appLabels.importPlanIaRetirerFichier}
-            </Button>
+            />
           </div>
         ) : (
           <>

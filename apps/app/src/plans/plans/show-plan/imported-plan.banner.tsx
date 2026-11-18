@@ -6,10 +6,8 @@ import {
   PLAN_SECTEURS_LISTE,
   usePlanSecteursVue,
 } from '@/app/plans/plans/secteurs-counts/use-plan-secteurs-vue';
-import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';
 import { Alert, Button, Icon, InlineLink } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
-import { useVerifyPlan } from './data/use-verify-plan';
 
 type BannerStep = {
   isDone: boolean;
@@ -72,29 +70,17 @@ const SupportLinks = () => (
 );
 
 /**
- * Plan importé par IA en attente de la validation d'un humain : vérifier et
- * valider, après avoir renseigné, pour un PCAET, les secteurs que l'IA n'a pas
- * su classer.
+ * Plan importé par IA : relire et corriger si besoin. Pour un PCAET, renseigner
+ * aussi les secteurs que l'IA n'a pas su classer.
  */
 export const ImportedPlanBanner = ({
-  planId,
   isSecteursConcerne,
   secteursARenseigner,
-  demarcheUrl,
 }: {
-  planId: number;
   /** Plan transmis avec une démarche PCAET : ses secteurs sont exigés. */
   isSecteursConcerne: boolean;
   secteursARenseigner: number;
-  /** Démarche qui tient le plan : le toast de validation y ramène. */
-  demarcheUrl?: string;
 }) => {
-  const { mutate: verifyPlan, isPending } = useVerifyPlan(planId, {
-    demarcheUrl,
-  });
-  // Validé, le plan n'a plus rien à vérifier : le panneau des secteurs se ferme.
-  const { setPanel } = useSidePanel();
-
   const steps: BannerStep[] = [
     ...(isSecteursConcerne
       ? [
@@ -128,22 +114,7 @@ export const ImportedPlanBanner = ({
             <div>
               {isSecteursConcerne && secteursARenseigner > 0 ? (
                 <SecteursButton count={secteursARenseigner} />
-              ) : (
-                <Button
-                  size="sm"
-                  icon="check-line"
-                  onClick={() =>
-                    verifyPlan(
-                      { planId },
-                      { onSuccess: () => setPanel({ type: 'close' }) }
-                    )
-                  }
-                  disabled={isPending}
-                  dataTest="plans.imported-plan-banner.valider"
-                >
-                  {appLabels.planImporteValider}
-                </Button>
-              )}
+              ) : null}
             </div>
             <SupportLinks />
           </div>

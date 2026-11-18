@@ -848,8 +848,9 @@ export const appLabels = {
   importerUnPlan: 'Importer un plan',
   importPlanIaTitre: 'Importer un plan',
   importPlanIaSousTitre: 'depuis un fichier PDF, Word ou Excel',
+  importPlanIaRelireTitre: 'Relire votre plan après l’import',
   importPlanIaAvertissement:
-    'Cet outil est en phase d’amélioration : le résultat peut contenir des erreurs, pensez à relire votre plan, vous pourrez le modifier ensuite.',
+    'L’import automatique est en cours d’amélioration et peut contenir des erreurs. Relisez votre plan, vous pourrez ensuite le modifier.',
   importPlanIaChampFichier: 'Document à importer',
   importPlanIaChampInstructions: "Précisions pour l'IA (facultatif)",
   importPlanIaFichierRequis: 'Un document est requis',
@@ -860,7 +861,7 @@ export const appLabels = {
   importPlanIaOptionSousActions: 'Mon document contient des sous-actions',
   importPlanIaLancer: "Lancer l'import",
   importPlanIaEnCours:
-    'Cela peut prendre quelques minutes. Vous pouvez fermer cette fenêtre.',
+    'La création se fait en arrière-plan : vous pouvez fermer cette fenêtre et continuer à naviguer. Votre plan devrait être prêt dans quelques minutes.',
   importPlanIaErreur: "L'import a échoué",
   importPlanIaReessayer: 'Réessayer',
   importPlanIaEtapeLecture: 'Lecture du document',

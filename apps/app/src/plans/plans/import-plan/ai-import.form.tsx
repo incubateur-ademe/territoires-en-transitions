@@ -2,7 +2,8 @@
 
 import { appLabels } from '@/app/labels/catalog';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { Button, Field, Input, Select } from '@tet/ui';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { Button, Field, Input, Select, Tooltip } from '@tet/ui';
 import { ReactElement } from 'react';
 import { Controller } from 'react-hook-form';
 import type {
@@ -13,8 +14,9 @@ import { AiImportAvailabilityAlert } from './ai-import-availability.alert';
 import { AiImportExtractionOptionsFields } from './ai-import-extraction-options.fields';
 import { AiImportFileField } from './ai-import-file.field';
 import { AiImportIntroductionAlert } from './ai-import-introduction.alert';
-import { useAiImportForm } from './use-ai-import-form';
+import { useGetOngoingAiImport } from './data/use-get-ongoing-ai-import';
 import { PreviousAiImportAlert } from './previous-ai-import.alert';
+import { useAiImportForm } from './use-ai-import-form';
 
 const PLAN_NAME_INPUT_ID = 'ai-import-plan-name';
 
@@ -30,6 +32,11 @@ export const AiImportForm = ({
   lockedPlanTypeId?: number;
   defaults?: AiImportDefaults;
 }) => {
+  const collectiviteId = useCollectiviteId();
+  const { isOngoing } = useGetOngoingAiImport(collectiviteId);
+  const disabledOngoingReason = isOngoing
+    ? appLabels.erreursApi.IN_FLIGHT_JOB_EXISTS
+    : undefined;
   const {
     form: {
       register,
@@ -52,11 +59,12 @@ export const AiImportForm = ({
     isSubmitDisabled,
     selectFile,
   } = useAiImportForm({ lockedPlanTypeId, defaults });
+  const disableSubmit = isSubmitDisabled || isOngoing;
 
   return (
     <form
       onSubmit={handleSubmit((values) => {
-        if (isSubmitDisabled) return;
+        if (disableSubmit) return;
         return onSubmit({
           ...values,
           ...config.fixedExtractionOptions,
@@ -126,20 +134,28 @@ export const AiImportForm = ({
       )}
       <div className="flex items-center justify-end gap-6 mt-6">
         {cancelButton}
-        <Button
-          type="submit"
-          disabled={isSubmitDisabled}
-          icon="upload-2-line"
-          dataTest="ai-import.lancer"
-        >
-          {isSubmitting ? (
-            <SpinnerLoader />
-          ) : previousImport ? (
-            appLabels.importPlanIaRelancerQuandMeme
-          ) : (
-            appLabels.importPlanIaLancer
-          )}
-        </Button>
+        <Tooltip label={disabledOngoingReason}>
+          <span
+            className="inline-flex"
+            tabIndex={disabledOngoingReason ? 0 : undefined}
+          >
+            <Button
+              type="submit"
+              disabled={disableSubmit}
+              icon="upload-2-line"
+              dataTest="ai-import.lancer"
+              className="disabled:pointer-events-none"
+            >
+              {isSubmitting ? (
+                <SpinnerLoader />
+              ) : previousImport ? (
+                appLabels.importPlanIaRelancerQuandMeme
+              ) : (
+                appLabels.importPlanIaLancer
+              )}
+            </Button>
+          </span>
+        </Tooltip>
       </div>
     </form>
   );

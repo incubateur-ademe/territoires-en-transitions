@@ -19,3 +19,14 @@ export const importIssueLabels = {
   warning: appLabels.importPlanIaAvertissementRapport,
   'preserved-data': appLabels.importPlanIaDonneesConservees,
 } satisfies Record<ImportStatus['report']['issues'][number]['kind'], string>;
+
+export const importIssueHintLabels = {
+  'document-error': appLabels.importPlanIaDocumentErreurHint,
+  'configuration-error': appLabels.importPlanIaConfigurationErreurHint,
+  'processing-error': appLabels.importPlanIaErreurTechniqueHint,
+  warning: undefined,
+  'preserved-data': undefined,
+} satisfies Record<
+  ImportStatus['report']['issues'][number]['kind'],
+  string | undefined
+>;

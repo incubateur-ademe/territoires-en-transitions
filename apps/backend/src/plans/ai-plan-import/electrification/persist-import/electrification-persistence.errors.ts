@@ -13,7 +13,7 @@ const messages = {
   ELECTRIFICATION_REFERENCES_CHANGED: {
     kind: 'configuration-error',
     message:
-      "Une définition d'indicateur a changé ou n'est plus disponible. Relancez la vérification de l'import.",
+      "Une définition d'indicateur a changé ou n'est plus disponible dans le catalogue. Aucune modification de votre document n'est attendue : relancez l'import et contactez le support TeT si l'erreur persiste.",
   },
   ELECTRIFICATION_PERSISTENCE_FAILED: {
     kind: 'processing-error',
