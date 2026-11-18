@@ -54,7 +54,8 @@ export class CollectivitesModulesService {
       .where(
         and(
           eq(tableauDeBordModuleTable.collectiviteId, collectiviteId),
-          isNull(tableauDeBordModuleTable.userId)
+          isNull(tableauDeBordModuleTable.userId),
+          isNull(tableauDeBordModuleTable.planId)
         )
       )) as CollectiviteModule[];
 
@@ -140,7 +141,8 @@ export class CollectivitesModulesService {
       .where(
         and(
           eq(tableauDeBordModuleTable.collectiviteId, collectiviteId),
-          eq(tableauDeBordModuleTable.id, moduleId)
+          eq(tableauDeBordModuleTable.id, moduleId),
+          isNull(tableauDeBordModuleTable.planId)
         )
       );
 
@@ -168,6 +170,7 @@ export class CollectivitesModulesService {
     const conditions: (SQLWrapper | SQL)[] = [
       eq(tableauDeBordModuleTable.collectiviteId, request.collectiviteId),
       isNull(tableauDeBordModuleTable.userId),
+      isNull(tableauDeBordModuleTable.planId),
     ];
 
     if (request.defaultKey) {

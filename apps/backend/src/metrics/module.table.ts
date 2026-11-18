@@ -1,4 +1,5 @@
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
+import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import {
   foreignKey,
@@ -16,6 +17,9 @@ export const tableauDeBordModuleTable = pgTable(
     id: uuid('id').defaultRandom().primaryKey().notNull(),
     collectiviteId: integer('collectivite_id').notNull(),
     userId: uuid('user_id'),
+    planId: integer('plan_id').references(() => axeTable.id, {
+      onDelete: 'cascade',
+    }),
     titre: varchar('titre'),
     defaultKey: varchar('default_key'),
     type: varchar('type').notNull(),
