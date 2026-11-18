@@ -43,6 +43,7 @@ import { ResumeImportRouter } from './resume-import/resume-import.router';
 import { ResolveElectrificationEngagementsService } from './electrification/resolve-engagements/resolve-electrification-engagements.service';
 import { ResumeImportService } from './resume-import/resume-import.service';
 import { PcaetImportProfileAdapter } from './pcaet/pcaet-import-profile.adapter';
+import { GenericImportProfileAdapter } from './generic/generic-import-profile.adapter';
 import { AiPlanImportProfileEnum } from '@tet/domain/plans';
 import {
   IMPORT_PROFILE_ADAPTERS,
@@ -90,17 +91,22 @@ import {
     GetImportStatusRouter,
     ValidateImportProfileService,
     PcaetImportProfileAdapter,
+    GenericImportProfileAdapter,
     {
       provide: IMPORT_PROFILE_ADAPTERS,
-      inject: [PcaetImportProfileAdapter, ElectrificationImportProfileAdapter],
+      inject: [
+        PcaetImportProfileAdapter,
+        ElectrificationImportProfileAdapter,
+        GenericImportProfileAdapter,
+      ],
       useFactory: (
         pcaet: PcaetImportProfileAdapter,
-        electrification: ElectrificationImportProfileAdapter
+        electrification: ElectrificationImportProfileAdapter,
+        generic: GenericImportProfileAdapter
       ): ImportProfileAdapters => ({
         [AiPlanImportProfileEnum.PCAET]: pcaet,
         [AiPlanImportProfileEnum.ELECTRIFICATION]: electrification,
-        // Lecture des anciens jobs et protocole des clients PCAET existants.
-        [AiPlanImportProfileEnum.GENERIC]: pcaet,
+        [AiPlanImportProfileEnum.GENERIC]: generic,
       }),
     },
     GetImportCapabilitiesRouter,

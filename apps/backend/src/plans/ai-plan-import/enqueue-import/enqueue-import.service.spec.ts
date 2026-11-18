@@ -33,6 +33,7 @@ import {
 } from '../models/ai-plan-import-job';
 import { initialStepStates } from '../pipeline/run-import-pipeline';
 import { EnqueueImportService } from './enqueue-import.service';
+import { GenericImportProfileAdapter } from '../generic/generic-import-profile.adapter';
 import { PcaetImportProfileAdapter } from '../pcaet/pcaet-import-profile.adapter';
 
 const jobId = '9d760311-40ad-4d81-b1f7-1bd5666b09d2';
@@ -244,7 +245,7 @@ const buildService = (overrides: MockOverrides = {}) => {
     {
       [AiPlanImportProfileEnum.PCAET]: pcaet,
       [AiPlanImportProfileEnum.ELECTRIFICATION]: electrification,
-      [AiPlanImportProfileEnum.GENERIC]: pcaet,
+      [AiPlanImportProfileEnum.GENERIC]: new GenericImportProfileAdapter(),
     },
     trackingService
   );
@@ -513,8 +514,13 @@ describe('EnqueueImportService', () => {
       planType: { id: 4, ...PCAET_PLAN_TYPE_KEY },
       withSecteurs: true,
     },
+    {
+      profile: AiPlanImportProfileEnum.GENERIC,
+      planType: { id: 4, categorie: 'Plans thématiques', type: 'Mobilité' },
+      withSecteurs: false,
+    },
   ])(
-    'accepte un type de plan existant et résout les secteurs ($withSecteurs)',
+    'accepte un type de plan existant et résout les secteurs ($profile, $withSecteurs)',
     async ({ profile, planType, withSecteurs }) => {
       const { service, add, createWithinQuotas } = buildService({
         planTypes: [planType],
@@ -540,6 +546,23 @@ describe('EnqueueImportService', () => {
       });
     }
   );
+
+  it('accepte un plan sans type par le profil générique, sans secteurs', async () => {
+    const { service, createWithinQuotas } = buildService();
+
+    const result = await service.enqueue({
+      collectiviteId: 10,
+      user,
+      file: toCsvFile(),
+      options: { ...options, planType: undefined },
+    });
+
+    expect(result).toMatchObject({ success: true });
+    expect(createWithinQuotas.mock.calls[0][0].options).toMatchObject({
+      profile: AiPlanImportProfileEnum.GENERIC,
+      withSecteurs: false,
+    });
+  });
 
   it.each([
     { name: 'type absent', planType: undefined },

@@ -5,6 +5,7 @@ import {
 
 /** Profils ouverts aux nouveaux imports, sous réserve des flags et des droits. */
 export const AI_PLAN_IMPORT_ALLOWED_PROFILES: readonly AiPlanImportProfile[] = [
+  AiPlanImportProfileEnum.GENERIC,
   AiPlanImportProfileEnum.PCAET,
   AiPlanImportProfileEnum.ELECTRIFICATION,
 ];

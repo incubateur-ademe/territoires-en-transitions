@@ -37,7 +37,7 @@ export class AiImportFixture {
   status = structuredClone(importStatus);
   capabilities: ImportCapabilities = {
     profiles: [
-      { profile: 'generic', available: false },
+      { profile: 'generic', available: true },
       { profile: 'pcaet', available: true },
       { profile: 'annexe-3-electrification', available: false },
     ],

@@ -69,6 +69,7 @@ import { NotifyPlanImportedService } from './notify-plan-imported/notify-plan-im
 import { ficheActionSecteurAttributionTable } from '@tet/backend/plans/fiches/fiche-secteurs/fiche-action-secteur-attribution.table';
 import { planActionTypeTable } from '@tet/backend/plans/fiches/shared/models/plan-action-type.table';
 import { PCAET_PLAN_TYPE_KEY } from '@tet/domain/demarches';
+import { ELECTRIFICATION_PLAN_TYPE_KEY } from '@tet/domain/plans';
 import { aiPlanImportJobTable } from './models/ai-plan-import-job.table';
 import { aiPlanImportStepRunTable } from './models/ai-plan-import-step-run.table';
 import { consolidationResponseSchema } from './pipeline/consolidate-actions/consolidate-actions.schema';
@@ -1046,6 +1047,50 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
       }
     }
   );
+
+  test('importe un plan d’un autre type par le profil générique, sans secteur réglementaire', async () => {
+    const types = await db.db.select().from(planActionTypeTable);
+    const otherType = types.find(
+      ({ type }) =>
+        type !== PCAET_PLAN_TYPE_KEY.type &&
+        type !== ELECTRIFICATION_PLAN_TYPE_KEY.type
+    );
+    if (!otherType) throw new Error('Type de plan hors PCAET manquant');
+    const { jobId, planId } = await enqueue(
+      {
+        planName: 'Plan import IA hors PCAET',
+        planType: String(otherType.id),
+        withVerifications: 'false',
+        withSousActions: 'true',
+      },
+      { source: csvSource('hors-pcaet') }
+    );
+    expect((await readJob(jobId)).options).toMatchObject({
+      profile: 'generic',
+      planType: otherType.id,
+      withSecteurs: false,
+    });
+
+    await app.get(GenerateImportDraftService).generate(jobId);
+
+    expect(await getStatus(jobId)).toMatchObject({
+      status: 'done',
+      withSecteurs: false,
+    });
+    const [plan] = await db.db
+      .select({ typeId: axeTable.typeId })
+      .from(axeTable)
+      .where(eq(axeTable.id, planId));
+    expect(plan.typeId).toBe(otherType.id);
+    const [action] = await fichesByTitreInPlan(planId, 'Action 1.1.1');
+    expect(action).toBeDefined();
+    expect(
+      await db.db
+        .select()
+        .from(ficheActionSecteurAttributionTable)
+        .where(eq(ficheActionSecteurAttributionTable.ficheId, action.id))
+    ).toHaveLength(0);
+  });
 
   test.each(['plan', 'job'] as const)(
     'annule les fiches et conserve le plan en échec si la finalisation du %s échoue',

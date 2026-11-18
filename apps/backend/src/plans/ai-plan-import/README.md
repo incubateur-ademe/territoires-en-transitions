@@ -62,8 +62,10 @@ sequenceDiagram
 
 Garde-fous à l'entrée (`enqueue-import/`, `ai-plan-import.constants.ts`) :
 
-- le type du plan doit être PCAET ou Électrification, y compris en super-admin ;
-  les droits et conditions d'accès propres à chaque import restent applicables ;
+- tout type de plan s'importe, et un plan peut ne pas en avoir : le profil
+  `generic` sert de repli au moteur documentaire. Le type PCAET y ajoute les
+  secteurs réglementaires ; le type Électrification impose son parcours dédié
+  (annexe 3 en DOCX) et reste refusé par le profil `generic` ;
 - le serveur combine la liste `AI_PLAN_IMPORT_ALLOWED_PROFILES` et le flag
   global `is-ai-plan-import-enabled`, pour les capacités et le lancement.
   Électrification exige aussi `is-electrification-plan-creation-enabled`.

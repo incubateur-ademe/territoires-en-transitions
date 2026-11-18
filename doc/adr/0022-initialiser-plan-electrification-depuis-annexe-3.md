@@ -296,6 +296,22 @@ les flags côté navigateur.
 Cette précision du 17 novembre remplace la politique initiale de flags
 indépendants et de contournement réservé au PCAET.
 
+**Décision du 18 novembre 2026 - rouvrir l'import à tous les types de plan.**
+Elle remplace la restriction du 17 novembre. Le profil `generic` rejoint
+`AI_PLAN_IMPORT_ALLOWED_PROFILES` et reçoit son propre adapter,
+`GenericImportProfileAdapter` : il ne revendique aucun type et admet tout plan,
+avec ou sans type, par le moteur documentaire commun. Les secteurs
+réglementaires restent propres au type PCAET, y compris quand un ancien client
+l'envoie avec le profil `generic`. Le type Électrification garde son parcours
+dédié et reste refusé hors de son profil. `PcaetImportProfileAdapter` ne répond
+plus qu'au profil `pcaet` ; les deux profils documentaires partagent leurs
+options et leur contrat de reprise dans `DocumentImportProfileAdapter`.
+L'erreur `IMPORT_PLAN_TYPE_NOT_SUPPORTED` disparaît. Les flags, les droits et
+les quotas ne changent pas. La tuile d'import de la page de création s'affiche
+dès que le serveur annonce un profil disponible, sans exiger le mode
+super-admin. Les paragraphes ci-dessous décrivent l'état du 17 novembre pour
+tout ce que cette décision ne modifie pas.
+
 `ValidateImportProfileService` coordonne les contrôles communs (permission,
 liste autorisée et cohérence du routage) via l'interface `ImportProfileAdapter`.
 `PcaetImportProfileAdapter` et `ElectrificationImportProfileAdapter` portent
