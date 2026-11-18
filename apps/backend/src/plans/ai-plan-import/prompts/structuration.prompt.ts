@@ -1,12 +1,17 @@
 import { definePrompt } from '@tet/backend/utils/llm/prompt-template';
 import {
+  ACTION_LEVEL_RULE,
   buildStatutRule,
   CARTOUCHE_RULE,
+  COLUMN_TABLE_RULE,
   DESCRIPTION_RULE,
   FIELD_ALLOCATION_EXAMPLE,
   FIELD_ALLOCATION_RULE,
+  FIELD_LABELS_RULE,
   NON_ACTION_PASSAGES_RULE,
   OBJECTIFS_RULE,
+  OPEN_ENDED_DATES_RULE,
+  OTHER_PLAN_PASSAGES_RULE,
   PARTNER_COMMITMENTS_RULE,
   PILOTES_RULE,
   SOUS_ACTIONS_RULE,
@@ -36,12 +41,15 @@ Règles d'extraction
 - Une entrée par action présente dans l'extrait, avec tout son contenu, chaque information dans son champ : ne résumez pas, ne regroupez pas plusieurs actions en une.
 - Si l'extrait ne contient aucune action (diagnostic, sommaire, méthodologie, page de garde), répondez avec un tableau vide [].
 - ${NON_ACTION_PASSAGES_RULE}
+- ${OTHER_PLAN_PASSAGES_RULE}
 - ${PARTNER_COMMITMENTS_RULE}
 - Ne jamais inventer d'information ni de chiffre. Un champ absent du texte reste "".
-- Les lignes "[Extrait …]" et "[page N]" sont des repères de découpage : ne les reprenez pas. Quand un repère donne « fiche « … » », c'est le titre complet de la fiche, même si le texte le coupe sur plusieurs lignes : reprenez-le pour "titre", avec les règles de format ci-dessous.
+- Les lignes "[Extrait …]" et "[page N]" sont des repères de découpage : ne les reprenez pas. Quand un repère donne « fiche « … » », c'est le titre complet de la fiche, même si le texte le coupe sur plusieurs lignes : reprenez-le pour "titre", avec les règles de format ci-dessous. Seule exception : un titre qui regroupe plusieurs actions, au sens de la règle suivante, donne leur sous-axe.
+- ${ACTION_LEVEL_RULE}
 - Le rappel de l'objectif ou de l'axe en tête d'une fiche (« 1- AMELIORER LA PERFORMANCE DES BATIMENTS » au-dessus de « ACTION 2 - … ») donne le sous-axe ou l'axe de la fiche : ce n'est jamais une action.
 - Le texte peut venir d'un PDF converti, avec des artefacts de mise en page : retirez seulement les artefacts manifestes, conservez l'orthographe et les majuscules des noms propres et sigles.${regleTableur}
 - ${CARTOUCHE_RULE}
+- ${COLUMN_TABLE_RULE}
 
 Sortie : un tableau JSON dont chaque objet a exactement ces champs
 "axe", "sous-axe", "titre", "description", "sous-actions", "objectifs", "structure pilote", "direction ou service pilote", "personne pilote", "partenaires", "budget", "financements", "moyens humains", "priorite", "date de debut", "date de fin", "statut"
@@ -56,13 +64,14 @@ Formats
 - ${SOUS_ACTIONS_RULE}
 - ${OBJECTIFS_RULE}
 - ${PILOTES_RULE}
+- ${FIELD_LABELS_RULE}
 - "personne pilote" : uniquement des noms de personnes.
 - "partenaires" : les organismes cités comme partenaires, financeurs ou acteurs associés, séparés par ", " ; jamais les pilotes ou porteurs, qui vont dans les champs pilotes.
 - "budget" : "" ou un entier sans séparateur.
 - "financements" : les sources de financement et subventions citées (Fonds vert, CEE, subventions…), telles quelles.
 - "moyens humains" : les moyens humains cités (ETP, temps agent, services mobilisés), tels quels.
 - "priorite" : "Élevé", "Moyen" ou "Bas", sinon "". "Priorité 1", "P1", "***", "Majeur", "Forte" donnent "Élevé" ; "Priorité 2", "**", "Moyenne" donnent "Moyen" ; "Priorité 3", "*", "Faible" donnent "Bas".
-- "date de debut" et "date de fin" : "JJ/MM/AAAA" ou "", d'après le calendrier de l'action. Une année seule de début donne le 01/01, une année seule de fin le 31/12 : "2024-2030" donne "01/01/2024" et "31/12/2030". Ne jamais inventer de date.
+- "date de debut" et "date de fin" : "JJ/MM/AAAA" ou "", d'après le calendrier de l'action. Une année seule de début donne le 01/01, une année seule de fin le 31/12 : "2024-2030" donne "01/01/2024" et "31/12/2030". ${OPEN_ENDED_DATES_RULE} Ne jamais inventer de date.
 - ${buildStatutRule(dateDuJour)}
 - Majuscule au premier mot de chaque champ, sans espaces superflus.
 

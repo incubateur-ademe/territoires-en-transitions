@@ -11,7 +11,7 @@ export const REPERAGE_PROMPT = definePrompt({
 Classez chaque extrait dans une seule catégorie :
 - "fiche_action" : il décrit une ou plusieurs actions ou mesures à mener (avec ou sans pilote, budget, calendrier, indicateurs).
 - "structure" : sommaire, liste des axes, orientations ou objectifs, tableau récapitulatif du plan.
-- "diagnostic" : état des lieux, chiffres du territoire, contexte, méthodologie, enjeux sans action ; aussi tout ce qui évalue ou suit le plan sans définir d'action (évaluation environnementale, analyse d'incidences, mesures d'évitement-réduction-compensation, tableaux d'indicateurs de suivi).
+- "diagnostic" : état des lieux, chiffres du territoire, contexte, méthodologie, enjeux sans action ; aussi tout ce qui évalue ou suit le plan sans définir d'action (évaluation environnementale, analyse d'incidences, mesures d'évitement-réduction-compensation, tableaux d'indicateurs de suivi, bilan d'un programme précédent, compte rendu d'une concertation publique).
 - "engagement_partenaire" : ce qu'une entreprise, une association ou une autre institution s'engage à faire de son côté (charte, contribution de partenaire, liste d'engagements signés) ; ce ne sont pas les actions de la collectivité.
 - "autre" : éditorial, remerciements, glossaire, annexes, pages blanches.
 

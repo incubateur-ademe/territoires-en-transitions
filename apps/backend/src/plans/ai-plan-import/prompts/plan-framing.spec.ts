@@ -87,8 +87,8 @@ describe('describePlanType', () => {
 });
 
 describe('cadrage des prompts par type de plan', () => {
-  // Les références d'éval sont des PCAET : sans libellé, chaque prompt doit
-  // rester celui sur lequel il a été évalué.
+  // Les références d'éval sont des PCAET : sans libellé, la phrase de rôle
+  // reste celle sur laquelle chaque prompt a été évalué.
   it('garde le cadrage d’origine sans libellé de type', () => {
     const prompts = buildPrompts(undefined);
 

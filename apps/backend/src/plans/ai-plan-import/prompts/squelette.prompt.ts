@@ -27,6 +27,7 @@ Règles
 - Un sous-axe a un titre complet, jamais un simple numéro.
 - Un sous-axe est un niveau intermédiaire qui regroupe plusieurs actions sous un même axe (orientation, objectif stratégique, enjeu). Un titre qui n'annonce qu'une seule action, ou qui reprend le titre d'une fiche, n'est pas un sous-axe.
 - Si le plan va directement des axes aux actions, laissez "sousAxes" vide : c'est fréquent et c'est la bonne réponse.
+- Seule exception aux titres de fiches : celui que les extraits de structure montrent regrouper plusieurs actions lettrées ou numérotées (« Mesure 1.1 … » suivie de « A. … », « B. … », ou « Groupe d'actions 1.2 ») est un sous-axe, pas une action.
 - Ne mettez aucune action dans le squelette.
 - Sans numérotation dans le document, numérotez les axes 1, 2, 3… et les sous-axes n.1, n.2…
 
