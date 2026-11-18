@@ -16,6 +16,8 @@ import { ErrorCard } from '@/app/utils/error/error.card';
 import {
   computeDemarcheDocumentsCoverage,
   DemarcheTypeEnum,
+  isDemarchePcaetEnCours,
+  type DemarchePcaetStatus,
   type DemarcheDocumentAdditional,
   type DemarcheDocumentDepose,
 } from '@tet/domain/demarches';
@@ -125,6 +127,7 @@ export const DemarchePcaetConsultationPage = ({
         <DiagnosticSection
           collectiviteId={collectiviteId}
           demarcheId={demarcheId}
+          status={data.demarche.status}
         />
       )}
       {etape === 'plan' && (
@@ -147,9 +150,11 @@ export const DemarchePcaetConsultationPage = ({
 const DiagnosticSection = ({
   collectiviteId,
   demarcheId,
+  status,
 }: {
   collectiviteId: number;
   demarcheId: number;
+  status: DemarchePcaetStatus;
 }) => {
   const { data, isLoading, isError, refetch } = usePublicDiagnostic({
     collectiviteId,
@@ -164,6 +169,7 @@ const DiagnosticSection = ({
       isError={isError}
       onRetry={() => refetch()}
       isReadonly
+      showCompletion={isDemarchePcaetEnCours(status)}
       title={appLabels.instructionDossierEtapeDiagnostic}
       description={appLabels.instructionDossierEtapeDiagnosticDescription}
     />

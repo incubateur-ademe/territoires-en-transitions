@@ -6,6 +6,7 @@ import { useGetPcaetDiagnostic } from '@/app/demarches/pcaet/diagnostic/data/use
 import { DiagnosticTabs } from '@/app/demarches/pcaet/diagnostic/diagnostic.tabs';
 import { useDemarcheId } from '@/app/demarches/use-demarche-id';
 import { appLabels } from '@/app/labels/catalog';
+import { isDemarchePcaetEnCours } from '@tet/domain/demarches';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { notFound } from 'next/navigation';
 
@@ -61,6 +62,7 @@ export const DemarchePcaetDiagnosticPage = () => {
         isError={isDiagnosticError}
         onRetry={() => refetchDiagnostic()}
         isReadonly={!demarche.contenuModifiable}
+        showCompletion={isDemarchePcaetEnCours(demarche.statut)}
         title={
           demarche.lectureSeule
             ? appLabels.demarcheLectureDiagnosticLabel

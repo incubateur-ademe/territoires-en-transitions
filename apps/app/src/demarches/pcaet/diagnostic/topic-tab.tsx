@@ -9,7 +9,7 @@ import type { DiagnosticTab } from './diagnostic.tabs.utils';
 type TopicTabProps = {
   tab: DiagnosticTab;
   isActive: boolean;
-  statut: DemarcheCompletionStatut;
+  statut: DemarcheCompletionStatut | null;
   onSelect: () => void;
 };
 
@@ -33,6 +33,10 @@ export const TopicTab = ({
     onClick={onSelect}
     // L'icône du volet est juste au-dessus : la répéter dans le badge déborde
     // dès que la sidebar est dépliée.
-    badge={getDemarcheCompletionBadgeProps(statut, { withIcon: false })}
+    badge={
+      statut === null
+        ? undefined
+        : getDemarcheCompletionBadgeProps(statut, { withIcon: false })
+    }
   />
 );

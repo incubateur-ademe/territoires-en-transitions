@@ -8,6 +8,7 @@ import { appLabels } from '@/app/labels/catalog';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ErrorCard } from '@/app/utils/error/error.card';
 import {
+  isDemarchePcaetEnCours,
   PcaetInstructionPartieEnum,
   pcaetInstructionPartieValues,
   type PcaetInstructionPartie,
@@ -194,6 +195,7 @@ export const DossierInstructionPage = ({
         <EtapeDiagnosticSection
           dossierRef={dossierRef}
           demarcheId={dossier.demarcheId}
+          showCompletion={isDemarchePcaetEnCours(dossier.status)}
         />
       )}
       {etape === PcaetInstructionPartieEnum.PLAN && (

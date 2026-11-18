@@ -11,12 +11,14 @@ import { VulnerabiliteTable } from '../vulnerabilite-table';
 type Props = {
   demarcheId: number;
   isReadonly: boolean;
+  showDescription: boolean;
   vulnerabilite: PcaetDiagnosticVulnerabilite;
 };
 
 export const DiagnosticVulnerabiliteTab = ({
   demarcheId,
   isReadonly,
+  showDescription,
   vulnerabilite,
 }: Props): JSX.Element => {
   const autosaveStatus = useAutosaveStatus(
@@ -25,17 +27,21 @@ export const DiagnosticVulnerabiliteTab = ({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-start justify-between gap-4">
-        <p className="text-sm text-primary-9 m-0">
-          {appLabels.demarcheVulnerabiliteDescription}
-        </p>
-        {!isReadonly && (
-          <AutosaveBadge
-            status={autosaveStatus}
-            dataTest="demarches.pcaet.diagnostic.vulnerabilite.autosave"
-          />
-        )}
-      </div>
+      {(showDescription || !isReadonly) && (
+        <div className="flex items-start justify-between gap-4">
+          {showDescription && (
+            <p className="text-sm text-primary-9 m-0">
+              {appLabels.demarcheVulnerabiliteDescription}
+            </p>
+          )}
+          {!isReadonly && (
+            <AutosaveBadge
+              status={autosaveStatus}
+              dataTest="demarches.pcaet.diagnostic.vulnerabilite.autosave"
+            />
+          )}
+        </div>
+      )}
       <div className="max-xl:overflow-x-auto p-4 pt-2 lg:p-8 lg:pt-4 bg-white rounded-xl border border-grey-3">
         <VulnerabiliteTable
           vulnerabilite={{
