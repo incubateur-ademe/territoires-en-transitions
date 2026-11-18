@@ -124,21 +124,19 @@ export class ElectrificationValueInterpretationRules {
     if (quoteStart < 0) return null;
     const numbers = [...value.quote.matchAll(numberLiteralPattern)];
     if (numbers.length !== (value.year === null ? 1 : 2)) return null;
+    const isYear = (match: RegExpExecArray) =>
+      /^[1-9]\d{3}$/.test(match[0]) &&
+      /(?:\b(?:en|pour|annee|d'ici)|\()\s*$/.test(
+        Values.normalize(text.slice(0, quoteStart + match.index))
+      );
     const year =
       value.year === null
         ? undefined
-        : numbers.find(
-            (match) =>
-              match[0] === value.year &&
-              /^[1-9]\d{3}$/.test(match[0]) &&
-              /(?:\b(?:en|pour|annee|d'ici)|\()\s*$/.test(
-                Values.normalize(text.slice(0, quoteStart + match.index))
-              )
-          );
+        : numbers.find((match) => match[0] === value.year && isYear(match));
     if (value.year !== null && !year) return null;
     const number = numbers.find(
       (match) =>
-        match !== year &&
+        !isYear(match) &&
         Values.numericLiteral(match[0]) === Values.numericLiteral(value.number)
     );
     return number ? { quoteStart, number, year } : null;
