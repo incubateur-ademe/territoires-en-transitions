@@ -35,9 +35,9 @@ export const statutInstructionLabel = (
 
 /**
  * Les couleurs suivent le sens et non le cycle : ce qui appelle une action est
- * en `warning`, ce qui a manqué en `error`, ce qui est acquis en `success`. Les
- * dépôts encore en chantier sont en `info` — ils informent sans rien réclamer —
- * et les lignes qui ne demandent rien restent grises.
+ * en `warning`, ce qui est acquis en `success`. Les dépôts encore en chantier
+ * sont en `info` — ils informent sans rien réclamer — et les lignes qui ne
+ * demandent plus rien restent grises, un avis non déposé compris.
  */
 export const STATUT_INSTRUCTION_VARIANTS: Record<
   PcaetStatutInstruction,
@@ -48,7 +48,7 @@ export const STATUT_INSTRUCTION_VARIANTS: Record<
   // Vert comme « instruit » : l'avis a été rendu, hors plateforme.
   depot_hors_plateforme: 'success',
   en_instruction: 'warning',
-  pas_d_avis_depose: 'error',
+  pas_d_avis_depose: 'grey',
   instruit: 'success',
   adopte: 'success',
   archive: 'grey',
@@ -104,6 +104,6 @@ export const DEMANDE_AVIS_ETAT_VARIANTS: Record<
   a_traiter: 'warning',
   brouillon_en_cours: 'info',
   avis_rendu: 'success',
-  delai_ecoule: 'error',
+  delai_ecoule: 'grey',
   clos: 'grey',
 };
