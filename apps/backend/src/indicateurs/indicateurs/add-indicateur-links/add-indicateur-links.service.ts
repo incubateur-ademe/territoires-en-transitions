@@ -146,10 +146,7 @@ export class AddIndicateurLinksService {
       return failure('NOT_FOUND');
     if (
       !(await this.updateIndicateur.canUpdateIndicateur(
-        user,
-        collectiviteId,
-        indicateurId,
-        true,
+        { user, collectiviteId, indicateurId },
         tx
       ))
     ) {

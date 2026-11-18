@@ -1,13 +1,11 @@
-import {
-  BadRequestException,
-  ForbiddenException,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import {
   AuthRole,
   type AuthenticatedUser,
 } from '@tet/backend/users/models/auth.models';
 import { failure, success } from '@tet/backend/utils/result.type';
+import { CommonErrorEnum } from '@tet/backend/utils/trpc/common-errors';
+import { ResourceType } from '@tet/domain/users';
 import { describe, expect, it, vi } from 'vitest';
 import { UpdateIndicateurService } from './update-indicateur.service';
 
@@ -404,9 +402,7 @@ describe('UpdateIndicateurService — groupement', () => {
     };
     const permissionService = {
       isApiKeyAllowed: vi.fn().mockReturnValue(success(undefined)),
-      throwForbiddenException: vi.fn(() => {
-        throw new ForbiddenException();
-      }),
+      isAllowed: vi.fn().mockResolvedValue(success(undefined)),
     };
     const fiches = {
       upsertIndicateurFiches: vi.fn().mockResolvedValue(success(undefined)),
@@ -453,6 +449,17 @@ describe('UpdateIndicateurService — groupement', () => {
       thematiques,
     };
   }
+
+  it("renvoie UNAUTHORIZED sans lever ni ouvrir de transaction quand l'utilisateur ne peut pas modifier l'indicateur", async () => {
+    const h = setup();
+    h.permissions.collectivites[0].permissions = [];
+
+    await expect(
+      h.service.updateIndicateur(h.input, { user })
+    ).resolves.toEqual(failure(CommonErrorEnum.UNAUTHORIZED));
+
+    expect(h.transactionManager.executeSingle).not.toHaveBeenCalled();
+  });
 
   it('autorise les personnalisations locales du membre', async () => {
     const h = setup();
@@ -570,7 +577,7 @@ describe('UpdateIndicateurService — groupement', () => {
     expect(h.repository.upsertCollectiviteFields).not.toHaveBeenCalled();
   });
 
-  it('refuse les permissions retirées avant la transaction', async () => {
+  it('refuse un droit disparu sous verrou', async () => {
     const h = setup();
     h.getUserPermissionsService.getUserRolesAndPermissions
       .mockResolvedValueOnce({ success: true, data: h.permissions })
@@ -580,7 +587,7 @@ describe('UpdateIndicateurService — groupement', () => {
       });
     await expect(
       h.service.updateIndicateur(h.input, { user })
-    ).rejects.toBeInstanceOf(ForbiddenException);
+    ).resolves.toEqual(failure(CommonErrorEnum.UNAUTHORIZED));
     expect(
       h.getUserPermissionsService.getUserRolesAndPermissions
     ).toHaveBeenLastCalledWith({ userId: user.id, tx: h.tx });
@@ -769,5 +776,105 @@ describe('UpdateIndicateurService — unité d’un groupe', () => {
     );
 
     expect(lockRepository.lockForIndicateurMutation).not.toHaveBeenCalled();
+  });
+});
+
+describe('UpdateIndicateurService.canUpdateIndicateur', () => {
+  const access = { user, collectiviteId: 1, indicateurId: 42 };
+
+  const pilotedByMePermissions = {
+    roles: [],
+    permissions: [],
+    collectivites: [
+      {
+        collectiviteId: 1,
+        permissions: ['indicateurs.indicateurs.update_piloted_by_me'],
+        audits: [],
+      },
+    ],
+  };
+
+  function setupPilote({
+    canReadPilotes,
+    pilotes = [],
+  }: {
+    canReadPilotes: boolean;
+    pilotes?: { userId: string }[];
+  }) {
+    const getUserPermissionsService = {
+      getUserRolesAndPermissions: vi
+        .fn()
+        .mockResolvedValue(success(pilotedByMePermissions)),
+    };
+    const permissionService = {
+      isAllowed: vi
+        .fn()
+        .mockResolvedValue(
+          canReadPilotes
+            ? success(undefined)
+            : failure(CommonErrorEnum.UNAUTHORIZED)
+        ),
+    };
+    const upsertIndicateurPilotesService = {
+      listIndicateurPilotes: vi.fn().mockResolvedValue(pilotes),
+    };
+    const service = new UpdateIndicateurService(
+      {} as never,
+      {} as never,
+      getUserPermissionsService as never,
+      permissionService as never,
+      {} as never,
+      upsertIndicateurPilotesService as never,
+      {} as never,
+      {} as never,
+      indicateurLockRepository as never
+    );
+    return { service, permissionService, upsertIndicateurPilotesService };
+  }
+
+  it('renvoie false sans lever quand un pilote ne peut pas lire les pilotes', async () => {
+    const { service, upsertIndicateurPilotesService } = setupPilote({
+      canReadPilotes: false,
+    });
+
+    await expect(service.canUpdateIndicateur(access)).resolves.toBe(false);
+
+    expect(
+      upsertIndicateurPilotesService.listIndicateurPilotes
+    ).not.toHaveBeenCalled();
+  });
+
+  it("autorise un pilote de l'indicateur", async () => {
+    const { service, permissionService, upsertIndicateurPilotesService } =
+      setupPilote({
+        canReadPilotes: true,
+        pilotes: [{ userId: user.id }],
+      });
+
+    await expect(service.canUpdateIndicateur(access)).resolves.toBe(true);
+
+    expect(permissionService.isAllowed).toHaveBeenCalledWith(
+      user,
+      'indicateurs.indicateurs.read_confidentiel',
+      ResourceType.COLLECTIVITE,
+      { collectiviteId: 1 },
+      undefined
+    );
+
+    expect(
+      upsertIndicateurPilotesService.listIndicateurPilotes
+    ).toHaveBeenCalledWith(
+      { indicateurId: 42, collectiviteId: 1, user },
+      undefined
+    );
+  });
+
+  it("refuse un utilisateur qui n'est pas pilote de l'indicateur", async () => {
+    const { service } = setupPilote({
+      canReadPilotes: true,
+      pilotes: [{ userId: 'un-autre-utilisateur' }],
+    });
+
+    await expect(service.canUpdateIndicateur(access)).resolves.toBe(false);
   });
 });

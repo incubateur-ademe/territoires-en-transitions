@@ -52,7 +52,7 @@ const createService = ({
   };
   const updateIndicateurService = {
     canUpdateIndicateur: vi.fn(
-      async (_user: unknown, _collectiviteId: number, indicateurId: number) =>
+      async ({ indicateurId }: { indicateurId: number }) =>
         updatableIndicateurIds.includes(indicateurId)
     ),
     updateIndicateursModifiedFields: vi.fn(async () => {
@@ -140,18 +140,12 @@ describe('DetachIndicateurService', () => {
 
     expect(updateIndicateurService.canUpdateIndicateur).toHaveBeenNthCalledWith(
       1,
-      user,
-      1,
-      42,
-      true,
+      { user, collectiviteId: 1, indicateurId: 42 },
       undefined
     );
     expect(updateIndicateurService.canUpdateIndicateur).toHaveBeenNthCalledWith(
       2,
-      user,
-      1,
-      7,
-      true,
+      { user, collectiviteId: 1, indicateurId: 7 },
       tx
     );
   });

@@ -292,15 +292,11 @@ export class SetScoreFromIndicateurService {
   ): Promise<Result<ScoreSnapshot, SetScoreFromIndicateurError>> {
     const { collectiviteId, actionId, indicateurId, isSuivi } = input;
 
-    // vérifié hors transaction : `updateIndicateur` lève une exception en cas
-    // de droits insuffisants, que `TransactionManager` ne sait pas convertir
-    // en erreur typée
-    const canUpdate = await this.updateIndicateurService.canUpdateIndicateur(
+    const canUpdate = await this.updateIndicateurService.canUpdateIndicateur({
       user,
       collectiviteId,
       indicateurId,
-      true
-    );
+    });
     if (!canUpdate) {
       return failure(CommonErrorEnum.UNAUTHORIZED);
     }

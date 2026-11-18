@@ -1423,7 +1423,7 @@ describe('UpdateIndicateurRouter', () => {
           ...h.input,
           indicateurFields: { estFavori: true },
         })
-      ).rejects.toThrow(/[Dd]roits insuffisants/);
+      ).rejects.toMatchObject({ code: 'FORBIDDEN' });
       expect(await h.readLocalFields()).toEqual([]);
     });
 

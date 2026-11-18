@@ -209,7 +209,7 @@ describe('indicateurs.indicateurs.update (services)', () => {
           services: [{ id: service.id }],
         },
       })
-    ).rejects.toThrow(/Droits insuffisants/);
+    ).rejects.toMatchObject({ code: 'FORBIDDEN' });
 
     await expect(() =>
       lectureCaller.indicateurs.indicateurs.delete({
@@ -254,7 +254,7 @@ describe('indicateurs.indicateurs.update (services)', () => {
           services: [{ id: service.id }],
         },
       })
-    ).rejects.toThrow(/Droits insuffisants/);
+    ).rejects.toMatchObject({ code: 'FORBIDDEN' });
 
     await expect(() =>
       limitedEditionCaller.indicateurs.indicateurs.delete({
