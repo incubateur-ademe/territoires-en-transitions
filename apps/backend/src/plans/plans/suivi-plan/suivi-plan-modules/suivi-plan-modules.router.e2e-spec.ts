@@ -260,11 +260,24 @@ describe('Suivi du plan : modules personnalisés', () => {
       caller.metrics.collectivites.getModule({ collectiviteId, id: module.id })
     ).rejects.toThrow();
     await expect(
+      caller.metrics.collectivites.upsertModule({
+        id: module.id,
+        collectiviteId,
+        titre: 'Détourné',
+        type: 'fiche-action.count-by',
+        options: { countByProperty: 'statut', filtre: {} },
+      })
+    ).rejects.toThrow();
+    await expect(
       caller.metrics.collectivites.deleteModule({
         collectiviteId,
         moduleId: module.id,
       })
     ).rejects.toThrow();
+    const [apres] = await caller.plans.suivi
+      .listModules({ planId })
+      .then((modules) => modules.filter((m) => m.id === module.id));
+    expect(apres.titre).toBe('Par thématique');
   });
 
   it('ignore un module rattaché au plan par une autre collectivité', async () => {

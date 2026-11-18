@@ -113,8 +113,22 @@ export class CollectivitesModulesService {
           titre: sql.raw(`excluded.${tableauDeBordModuleTable.titre.name}`),
           options: sql.raw(`excluded.${tableauDeBordModuleTable.options.name}`),
         },
+        setWhere: and(
+          eq(
+            tableauDeBordModuleTable.collectiviteId,
+            parsedModule.collectiviteId
+          ),
+          isNull(tableauDeBordModuleTable.userId),
+          isNull(tableauDeBordModuleTable.planId)
+        ),
       })
       .returning();
+
+    if (insertedModules.length === 0) {
+      throw new NotFoundException(
+        `Aucun module avec l'id ${parsedModule.id} n'a été trouvé`
+      );
+    }
 
     this.logger.log(
       `Module upserted for collectivite ${insertedModules[0].collectiviteId} with id ${insertedModules[0].id}`
