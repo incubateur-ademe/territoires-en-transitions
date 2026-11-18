@@ -1,10 +1,7 @@
-import {
-  BadRequestException,
-  ForbiddenException,
-  Injectable,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import type { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { failure, Result, success } from '@tet/backend/utils/result.type';
 import {
   Indicateur,
   IndicateurPeriodiciteEnum,
@@ -21,7 +18,10 @@ import {
   IndicateurValeursContext,
   IndicateurValeursWriteContext,
 } from '../indicateur-valeurs-context.types';
-import { captureIndicateurValeursResult } from '../indicateur-valeurs.errors';
+import {
+  captureIndicateurValeursResultOf,
+  IndicateurValeursError,
+} from '../indicateur-valeurs.errors';
 import { assertUserIndicateurValeursAllowed } from './user-indicateur-valeur.rules';
 import { getIndicateurDataOrThrow } from '../../indicateur/indicateur-nature.utils';
 
@@ -41,8 +41,10 @@ export class ValidateIndicateurValeursWriteService {
     valeurs: IndicateurValeurCreate[],
     context: IndicateurValeursContext
   ) {
-    return captureIndicateurValeursResult(
-      async (): Promise<PreparedIndicateurValeurs> => {
+    return captureIndicateurValeursResultOf(
+      async (): Promise<
+        Result<PreparedIndicateurValeurs, IndicateurValeursError>
+      > => {
         const { user, isUserTrusted = false } = context;
         if (!isUserTrusted && user) {
           for (const collectiviteId of new Set(
@@ -57,11 +59,14 @@ export class ValidateIndicateurValeursWriteService {
             );
           }
         } else if (!isUserTrusted) {
-          throw new ForbiddenException(
-            'Un contexte utilisateur ou une capacité interne explicite est requis pour écrire des valeurs'
+          return failure(
+            'UNAUTHORIZED',
+            new Error(
+              'Un contexte utilisateur ou une capacité interne explicite est requis pour écrire des valeurs'
+            )
           );
         }
-        return {
+        return success({
           valeurs: valeurs.map((valeur) =>
             !isUserTrusted && user?.role === AuthRole.AUTHENTICATED && user.id
               ? {
@@ -73,7 +78,7 @@ export class ValidateIndicateurValeursWriteService {
                 }
               : valeur
           ),
-        };
+        });
       }
     );
   }
@@ -82,7 +87,7 @@ export class ValidateIndicateurValeursWriteService {
     input: PreparedIndicateurValeurs,
     context: IndicateurValeursWriteContext
   ) {
-    return captureIndicateurValeursResult(async () => {
+    return captureIndicateurValeursResultOf(async () => {
       const { tx, user, isUserTrusted = false } = context;
       const indicateurIds = [
         ...new Set(input.valeurs.map((v) => v.indicateurId)),
@@ -94,12 +99,13 @@ export class ValidateIndicateurValeursWriteService {
       const enforceUserRules =
         !isUserTrusted && user?.role === AuthRole.AUTHENTICATED;
       if (enforceUserRules) assertUserIndicateurValeursAllowed(indicateurs);
-      await this.assertIndicateurValeursAvailableForWrite(
+      const availability = await this.checkIndicateurValeursAvailableForWrite(
         input.valeurs,
         indicateursById,
         enforceUserRules,
         tx
       );
+      if (!availability.success) return availability;
       const metadataIds = [
         ...new Set(
           input.valeurs.flatMap(({ metadonneeId }) =>
@@ -130,8 +136,11 @@ export class ValidateIndicateurValeursWriteService {
             authorization?.sourceId !==
               localSourceByMetadataId.get(valeur.metadonneeId)
           ) {
-            throw new ForbiddenException(
-              "L'écriture sous une métadonnée nécessite une autorisation interne dédiée"
+            return failure(
+              'UNAUTHORIZED',
+              new Error(
+                "L'écriture sous une métadonnée nécessite une autorisation interne dédiée"
+              )
             );
           }
         }
@@ -141,20 +150,21 @@ export class ValidateIndicateurValeursWriteService {
           indicateur.periodicite !==
             (valeur.periodicite ?? IndicateurPeriodiciteEnum.ANNUELLE)
         ) {
-          throw new BadRequestException(
-            'La valeur doit respecter la périodicité de déclaration'
+          return failure(
+            'INVALID_VALUE',
+            new Error('La valeur doit respecter la périodicité de déclaration')
           );
         }
       }
-      return indicateursById;
+      return success(indicateursById);
     });
   }
-  private async assertIndicateurValeursAvailableForWrite(
+  private async checkIndicateurValeursAvailableForWrite(
     valeurs: IndicateurValeurCreate[],
     indicateursById: Partial<Record<number, Indicateur>>,
     enforceGroupementMembership: boolean,
     tx: Transaction
-  ): Promise<void> {
+  ): Promise<Result<void, IndicateurValeursError>> {
     const groupementScopes: Array<{
       indicateurId: number;
       groupementId: number;
@@ -164,16 +174,22 @@ export class ValidateIndicateurValeursWriteService {
     for (const valeur of valeurs) {
       const indicateur = indicateursById[valeur.indicateurId];
       if (!indicateur) {
-        throw new BadRequestException(
-          `Indicateur definition not found for id ${valeur.indicateurId}`
+        return failure(
+          'INVALID_VALUE',
+          new Error(
+            `Indicateur definition not found for id ${valeur.indicateurId}`
+          )
         );
       }
       if (
         isIndicateurPerso(indicateur) &&
         indicateur.collectiviteId !== valeur.collectiviteId
       ) {
-        throw new BadRequestException(
-          `Indicateur ${valeur.indicateurId} non disponible pour la collectivité ${valeur.collectiviteId}`
+        return failure(
+          'INVALID_VALUE',
+          new Error(
+            `Indicateur ${valeur.indicateurId} non disponible pour la collectivité ${valeur.collectiviteId}`
+          )
         );
       }
       if (enforceGroupementMembership && isNotNil(indicateur.groupementId)) {
@@ -185,7 +201,7 @@ export class ValidateIndicateurValeursWriteService {
       }
     }
 
-    if (groupementScopes.length === 0) return;
+    if (groupementScopes.length === 0) return success(undefined);
 
     const memberships = await this.repository.lockGroupementMemberships(
       groupementScopes.map(({ groupementId, collectiviteId }) => ({
@@ -215,10 +231,14 @@ export class ValidateIndicateurValeursWriteService {
           .get(scope.groupementId)
           ?.has(scope.collectiviteId)
       ) {
-        throw new BadRequestException(
-          `Indicateur ${scope.indicateurId} non disponible pour la collectivité ${scope.collectiviteId}`
+        return failure(
+          'INVALID_VALUE',
+          new Error(
+            `Indicateur ${scope.indicateurId} non disponible pour la collectivité ${scope.collectiviteId}`
+          )
         );
       }
     }
+    return success(undefined);
   }
 }
