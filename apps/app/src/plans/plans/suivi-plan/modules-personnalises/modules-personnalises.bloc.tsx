@@ -3,7 +3,7 @@
 import { appLabels } from '@/app/labels/catalog';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { Button } from '@tet/ui';
+import { Button, EmptyCard } from '@tet/ui';
 import { useState } from 'react';
 import { FichesActionCountByCard } from '@/app/tableaux-de-bord/plans-action/fiches-action-count-by/fiches-action-count-by.card';
 import { useDeleteSuiviPlanModule } from '../data/use-delete-suivi-plan-module';
@@ -17,6 +17,7 @@ export const ModulesPersonnalisesBloc = ({ planId }: { planId: number }) => {
   const { data: modules, isLoading } = useListSuiviPlanModules({ planId });
   const { mutate: deleteModule } = useDeleteSuiviPlanModule();
   const [isAddOpen, setIsAddOpen] = useState(false);
+  const isEmpty = !isLoading && !modules?.length;
 
   return (
     <SuiviPlanBloc
@@ -24,7 +25,8 @@ export const ModulesPersonnalisesBloc = ({ planId }: { planId: number }) => {
       sousTitre={null}
       dataTest="plans.suivi.modules-personnalises"
       actions={
-        canEdit && (
+        canEdit &&
+        !isEmpty && (
           <Button
             size="sm"
             onClick={() => setIsAddOpen(true)}
@@ -37,6 +39,22 @@ export const ModulesPersonnalisesBloc = ({ planId }: { planId: number }) => {
     >
       {isLoading ? (
         <SpinnerLoader className="m-auto" />
+      ) : isEmpty ? (
+        <EmptyCard
+          variant="grey"
+          size="xs"
+          title={appLabels.suiviPlanModulesPersonnalisesVide}
+          subTitle={appLabels.suiviPlanModulesPersonnalisesVideDescription}
+          actions={[
+            {
+              children: appLabels.ajouterModulePersonnalise,
+              size: 'md',
+              onClick: () => setIsAddOpen(true),
+              isVisible: canEdit,
+              dataTest: 'plans.suivi.modules-personnalises.ajouter',
+            },
+          ]}
+        />
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {modules?.map((module) => (

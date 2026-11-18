@@ -14,8 +14,6 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
-import { suiviPlanDefaultModuleKeysSchema } from '@tet/domain/metrics';
-import { StatutEnum } from '@tet/domain/plans';
 import { CollectiviteRole } from '@tet/domain/users';
 import { beforeAll, describe, expect, it } from 'vitest';
 
@@ -90,31 +88,12 @@ describe('Suivi du plan : modules personnalisés', () => {
       },
     });
 
-  it('liste les 3 modules par défaut d’un plan sans module', async () => {
+  it('liste vide pour un plan sans module', async () => {
     const modules = await router
       .createCaller({ user: admin })
       .plans.suivi.listModules({ planId: autrePlanId });
 
-    expect(modules.map((module) => module.defaultKey)).toEqual(
-      suiviPlanDefaultModuleKeysSchema.options
-    );
-    expect(modules.map((module) => module.options)).toEqual([
-      {
-        countByProperty: 'statut',
-        filtre: { planActionIds: [autrePlanId] },
-      },
-      {
-        countByProperty: 'pilotes',
-        filtre: { planActionIds: [autrePlanId] },
-      },
-      {
-        countByProperty: 'priorite',
-        filtre: {
-          statuts: [StatutEnum.A_DISCUTER],
-          planActionIds: [autrePlanId],
-        },
-      },
-    ]);
+    expect(modules).toEqual([]);
   });
 
   it('crée un module en forçant le filtre sur le plan', async () => {
@@ -135,38 +114,32 @@ describe('Suivi du plan : modules personnalisés', () => {
     const modules = await router
       .createCaller({ user: lecteur })
       .plans.suivi.listModules({ planId });
-    expect(modules).toHaveLength(4);
-    expect(modules[3]).toMatchObject({
+    expect(modules).toHaveLength(1);
+    expect(modules[0]).toMatchObject({
       id: module.id,
       titre: 'Par thématique',
     });
   });
 
-  it('modifie un module par défaut une seule fois en base', async () => {
-    const caller = router.createCaller({ user: admin });
-    const [parStatut] = await caller.plans.suivi.listModules({ planId });
-
-    const input = {
+  it('supprime un module enregistré avec une clé par défaut', async () => {
+    const id = crypto.randomUUID();
+    await db.db.insert(tableauDeBordModuleTable).values({
+      id,
+      collectiviteId,
       planId,
-      id: parStatut.id,
-      defaultKey: 'suivi-plan-fiches-par-statut' as const,
-      titre: 'Statuts',
-      options: { countByProperty: 'statut' as const, filtre: {} },
-    };
-    const premier = await caller.plans.suivi.upsertModule(input);
-    const second = await caller.plans.suivi.upsertModule({
-      ...input,
-      id: crypto.randomUUID(),
-      titre: 'Statuts du plan',
+      defaultKey: 'suivi-plan-fiches-par-statut',
+      titre: 'Répartition par statut',
+      type: 'fiche-action.count-by',
+      options: { countByProperty: 'statut', filtre: {} },
     });
+    const caller = router.createCaller({ user: admin });
 
-    expect(second.id).toBe(premier.id);
-    const modules = await caller.plans.suivi.listModules({ planId });
-    expect(
-      modules.filter(
-        (module) => module.defaultKey === 'suivi-plan-fiches-par-statut'
-      )
-    ).toEqual([expect.objectContaining({ titre: 'Statuts du plan' })]);
+    const avant = await caller.plans.suivi.listModules({ planId });
+    expect(avant.find((module) => module.id === id)?.defaultKey).toBeNull();
+
+    await caller.plans.suivi.deleteModule({ planId, moduleId: id });
+    const apres = await caller.plans.suivi.listModules({ planId });
+    expect(apres.map((module) => module.id)).not.toContain(id);
   });
 
   it('modifie puis supprime un module', async () => {
@@ -235,7 +208,7 @@ describe('Suivi du plan : modules personnalisés', () => {
 
     await expect(
       lecteurCaller.plans.suivi.listModules({ planId })
-    ).resolves.toHaveLength(5);
+    ).resolves.toContainEqual(expect.objectContaining({ id: module.id }));
     await expect(createModuleAs(lecteurCaller)).rejects.toThrow(FORBIDDEN);
     await expect(
       lecteurCaller.plans.suivi.deleteModule({ planId, moduleId: module.id })
