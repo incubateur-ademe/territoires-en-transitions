@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import {
   Indicateur,
   IndicateurPeriodicite,
@@ -10,6 +10,7 @@ import {
 } from '@tet/domain/indicateurs';
 import { groupBy, isNil, partition, round } from 'es-toolkit';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { IndicateurValeursRules } from '../indicateur-valeurs.rules';
 import { FillMissingIndicateurValeursRules } from './fill-missing-indicateur-valeurs.rules';
 import { AuthenticatedUser } from '../../../users/models/auth.models';
@@ -19,7 +20,9 @@ import { IndicateurValeurLockRepository } from '../indicateur-valeur-lock.reposi
 import { IndicateurValeursWriteContext } from '../indicateur-valeurs-context.types';
 import {
   captureIndicateurValeursResult,
+  captureIndicateurValeursResultOf,
   getIndicateurValeursDataOrThrow,
+  IndicateurValeursError,
 } from '../indicateur-valeurs.errors';
 import { UpsertValeurIndicateur } from './upsert-valeur-indicateur.request';
 import { assertUserIndicateurValeursAllowed } from './user-indicateur-valeur.rules';
@@ -161,8 +164,10 @@ export class WriteIndicateurValeursService {
     { data }: { data: UpsertValeurIndicateur },
     { user, tx }: IndicateurValeursWriteContext & { user: AuthenticatedUser }
   ) {
-    return captureIndicateurValeursResult(
-      async (): Promise<IndicateurValeur | undefined> => {
+    return captureIndicateurValeursResultOf(
+      async (): Promise<
+        Result<IndicateurValeur | undefined, IndicateurValeursError>
+      > => {
         const { collectiviteId, indicateurId } = data;
         const [lockedIndicateur] = getIndicateurDataOrThrow(
           await this.indicateurLockRepository.lockIndicateurs(
@@ -171,8 +176,9 @@ export class WriteIndicateurValeursService {
           )
         );
         if (!lockedIndicateur)
-          throw new BadRequestException(
-            `Indicateur definition not found for id ${indicateurId}`
+          return failure(
+            'INVALID_VALUE',
+            new Error(`Indicateur definition not found for id ${indicateurId}`)
           );
         assertUserIndicateurValeursAllowed([lockedIndicateur]);
         const periodicite =
@@ -202,27 +208,49 @@ export class WriteIndicateurValeursService {
         if (!isNil(data.id)) {
           const key = { collectiviteId, indicateurId, id: data.id };
           const existing = await this.repository.findUserValeur(key, tx);
-          if (!existing) return undefined;
-          this.assertPeriodiciteAllowed(lockedIndicateur, existing.periodicite);
+          if (!existing) return success(undefined);
+          const existingPeriodiciteCheck = this.checkPeriodiciteAllowed(
+            lockedIndicateur,
+            existing.periodicite
+          );
+          if (!existingPeriodiciteCheck.success)
+            return failure(
+              existingPeriodiciteCheck.error,
+              existingPeriodiciteCheck.cause
+            );
           if (
             data.periodicite !== undefined &&
             existing.periodicite !== data.periodicite
           ) {
-            throw new BadRequestException(
-              'La périodicité de la valeur ne correspond pas à la série demandée'
+            return failure(
+              'INVALID_VALUE',
+              new Error(
+                'La périodicité de la valeur ne correspond pas à la série demandée'
+              )
             );
           }
           await this.lockRepository.lock([existing], tx);
-          return (
+          return success(
             (await this.repository.updateUserValeur(key, fields, tx)) ??
-            undefined
+              undefined
           );
         }
-        this.assertPeriodiciteAllowed(lockedIndicateur, periodicite);
+        const requestedPeriodiciteCheck = this.checkPeriodiciteAllowed(
+          lockedIndicateur,
+          periodicite
+        );
+        if (!requestedPeriodiciteCheck.success)
+          return failure(
+            requestedPeriodiciteCheck.error,
+            requestedPeriodiciteCheck.cause
+          );
         if (dateValeur === undefined)
-          throw new BadRequestException('Une valeur ou une date est requise');
+          return failure(
+            'INVALID_VALUE',
+            new Error('Une valeur ou une date est requise')
+          );
         await this.lockRepository.lock([{ collectiviteId, dateValeur }], tx);
-        return (
+        return success(
           (await this.repository.upsertUserValeur(
             {
               ...fields,
@@ -240,14 +268,16 @@ export class WriteIndicateurValeursService {
       }
     );
   }
-  private assertPeriodiciteAllowed(
+  private checkPeriodiciteAllowed(
     indicateur: Pick<Indicateur, 'periodicite'>,
     periodicite: IndicateurPeriodicite
-  ) {
+  ): Result<void, IndicateurValeursError> {
     if (indicateur.periodicite !== periodicite) {
-      throw new BadRequestException(
-        'La valeur doit respecter la périodicité de déclaration'
+      return failure(
+        'INVALID_VALUE',
+        new Error('La valeur doit respecter la périodicité de déclaration')
       );
     }
+    return success(undefined);
   }
 }
