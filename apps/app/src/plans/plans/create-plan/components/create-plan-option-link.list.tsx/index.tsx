@@ -6,7 +6,9 @@ import {
   makeCollectivitePlansActionsImporterIaUrl,
 } from '@/app/app/paths';
 import { Event, Icon, useEventTracker } from '@tet/ui';
+import { cn } from '@tet/ui/utils/cn';
 import { BetaLabel } from '@/app/ui/beta.label';
+import { useAvailableAiImportProfiles } from '@/app/plans/plans/import-plan/data/use-available-ai-import-profiles';
 import CreatePlanPicto from './create.svg';
 import ImportPlanPicto from './import.svg';
 import { Link } from './link';
@@ -17,10 +19,13 @@ export const CreatePlanOptionLinksList = ({
   collectiviteId: number;
 }) => {
   const tracker = useEventTracker();
+  const { profiles } = useAvailableAiImportProfiles();
   return (
     <div
       data-test="choix-creation-plan"
-      className="grid grid-cols-1 gap-4 sm:grid-cols-3"
+      className={cn('grid grid-cols-1 gap-4 sm:grid-cols-2', {
+        'sm:grid-cols-3': profiles.length > 0,
+      })}
     >
       <Link
         variant="primary"
@@ -34,18 +39,20 @@ export const CreatePlanOptionLinksList = ({
           tracker(Event.plans.createPlan);
         }}
       />
-      <Link
-        dataTest="choix-creation-plan.importer-ia"
-        title={<BetaLabel>{appLabels.importPlanIaChoixTitre}</BetaLabel>}
-        subTitle={appLabels.importPlanIaTypesCompatiblesSousTitre}
-        icon={<ImportPlanPicto />}
-        url={makeCollectivitePlansActionsImporterIaUrl({
-          collectiviteId,
-        })}
-        onClickCallback={() => {
-          tracker(Event.plans.importPlan);
-        }}
-      />
+      {profiles.length > 0 ? (
+        <Link
+          dataTest="choix-creation-plan.importer-ia"
+          title={<BetaLabel>{appLabels.importPlanIaChoixTitre}</BetaLabel>}
+          subTitle={appLabels.importPlanIaTypesCompatiblesSousTitre(profiles)}
+          icon={<ImportPlanPicto />}
+          url={makeCollectivitePlansActionsImporterIaUrl({
+            collectiviteId,
+          })}
+          onClickCallback={() => {
+            tracker(Event.plans.importPlan);
+          }}
+        />
+      ) : null}
       <Link
         dataTest="choix-creation-plan.demander-import"
         title={appLabels.importPlanSupportTitre}

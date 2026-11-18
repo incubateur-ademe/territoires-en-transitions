@@ -516,6 +516,12 @@ test('ouvre le plan Électrification terminé quand seul ce profil est disponibl
     'href',
     `/collectivite/${collectivite.data.id}/plans/importer`
   );
+  await expect(
+    page.getByTestId('choix-creation-plan.importer-ia')
+  ).toContainText('Électrification');
+  await expect(
+    page.getByTestId('choix-creation-plan.importer-ia')
+  ).not.toContainText('PCAET');
   await page.getByTestId('choix-creation-plan.importer-ia').click();
   await page.getByRole('textbox', { name: 'Nom du plan' }).fill('Plan de test');
   await page.getByTestId('ai-import.plan-type').click();
@@ -692,7 +698,10 @@ test("garde le formulaire et le suivi accessibles sans autoriser l'import quand 
   await page
     .getByRole('button', { name: 'Ajouter un plan', exact: true })
     .click();
-  await page.getByTestId('choix-creation-plan.importer-ia').click();
+  await expect(page.getByTestId('choix-creation-plan.importer-ia')).toHaveCount(
+    0
+  );
+  await page.goto(`/collectivite/${collectivite.data.id}/plans/importer-ia`);
   await selectElectrification(page);
   await expect(
     page.getByText(/L'import IA n'est pas disponible/)
