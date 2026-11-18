@@ -191,17 +191,21 @@ describe('MCP controller', () => {
         'get_collectivite',
         'get_demarche_pcaet',
         'get_referentiel_scores',
+        'get_repo_map',
         'get_support_stats',
         'list_named_queries',
         'list_plans',
         'list_recent_events',
+        'list_repo_files',
         'list_support_segments',
         'list_tables',
         'list_user_support_conversations',
+        'read_code',
         'run_hogql_query',
         'run_named_query',
         'run_sql_query',
         'sample_support_conversations',
+        'search_code',
       ]);
 
       const { resources } = await client.listResources();
@@ -211,6 +215,7 @@ describe('MCP controller', () => {
           'tet://docs/base-analytique',
           'tet://docs/posthog-hogql',
           'tet://docs/esquisse-modele',
+          'tet://docs/carte-du-depot',
         ])
       );
 
@@ -222,6 +227,27 @@ describe('MCP controller', () => {
           'support-conversation',
         ])
       );
+    });
+
+    test('fonctionnement de la plateforme : consigne de vérifier dans le code, carte servie par un outil', async () => {
+      expect(client.getInstructions()).toContain('connecteur GitHub');
+      expect(client.getInstructions()).toContain(
+        'incubateur-ademe/territoires-en-transitions'
+      );
+
+      const result = await client.callTool({
+        name: 'get_repo_map',
+        arguments: {},
+      });
+      expect(result.isError).toBeFalsy();
+      expect(result.content).toEqual([
+        {
+          type: 'text',
+          text: expect.stringContaining(
+            'packages/domain/src/users/authorizations'
+          ),
+        },
+      ]);
     });
 
     test('lit une ressource et le prompt', async () => {

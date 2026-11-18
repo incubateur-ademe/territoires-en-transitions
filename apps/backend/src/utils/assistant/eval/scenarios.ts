@@ -416,4 +416,16 @@ export const SCENARIOS: readonly Scenario[] = [
     },
     maxModelCalls: 8,
   }),
+  defineScenario({
+    id: 'fonctionnement-droit-supprimer-fiche',
+    tags: ['produit'],
+    say: 'Quel rôle faut-il dans une collectivité pour supprimer une fiche action ?',
+    expect: {
+      tools: [{ name: 'read_code' }],
+      anyTool: ['search_code', 'list_repo_files', 'get_repo_map'],
+      // La réponse cite au moins un fichier lu.
+      answer: { contains: [['apps/', 'packages/']] },
+    },
+    maxModelCalls: 7,
+  }),
 ];

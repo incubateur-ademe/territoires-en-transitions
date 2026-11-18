@@ -28,6 +28,7 @@ import { GetDemarchePcaetService } from './tools/get-demarche-pcaet/get-demarche
 import { GetDemarchePcaetTool } from './tools/get-demarche-pcaet/get-demarche-pcaet.tool';
 import { GetReferentielScoresService } from './tools/get-referentiel-scores/get-referentiel-scores.service';
 import { GetReferentielScoresTool } from './tools/get-referentiel-scores/get-referentiel-scores.tool';
+import { GetRepoMapTool } from './tools/get-repo-map/get-repo-map.tool';
 import { ListPlansActivityRepository } from './tools/list-plans/list-plans-activity.repository';
 import { ListCollectivitePlansService } from './tools/list-plans/list-plans.service';
 import { ListCollectivitePlansTool } from './tools/list-plans/list-plans.tool';
@@ -35,6 +36,9 @@ import { ListRecentEventsService } from './tools/list-recent-events/list-recent-
 import { ListRecentEventsTool } from './tools/list-recent-events/list-recent-events.tool';
 import { DescribeTableTool } from './tools/describe-table/describe-table.tool';
 import { PosthogQueryClient } from './tools/run-hogql-query/posthog-query.client';
+import { GithubRepoClient } from './tools/repo-code/github-repo.client';
+import { RepoCodeService } from './tools/repo-code/repo-code.service';
+import { RepoCodeTool } from './tools/repo-code/repo-code.tool';
 import { RunHogqlQueryService } from './tools/run-hogql-query/run-hogql-query.service';
 import { RunHogqlQueryTool } from './tools/run-hogql-query/run-hogql-query.tool';
 import { RunNamedQueryService } from './tools/run-named-query/run-named-query.service';
@@ -67,6 +71,9 @@ const toolClasses = [
   SampleSupportConversationsTool,
   ListSupportSegmentsTool,
   ListUserSupportConversationsTool,
+  // Code source : où vérifier le fonctionnement de la plateforme
+  GetRepoMapTool,
+  RepoCodeTool,
 ];
 
 const interactiveToolClasses = [ProposeChoicesTool, PrepareSegmentTaggingTool];
@@ -100,6 +107,8 @@ const interactiveToolClasses = [ProposeChoicesTool, PrepareSegmentTaggingTool];
     ListSupportSegmentsService,
     ListUserSupportConversationsService,
     PrepareSegmentTaggingService,
+    GithubRepoClient,
+    RepoCodeService,
     ApplySegmentTaggingService,
     ...toolClasses,
     ...interactiveToolClasses,
