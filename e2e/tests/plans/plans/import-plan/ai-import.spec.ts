@@ -500,7 +500,7 @@ test('ouvre le plan Électrification terminé quand seul ce profil est disponibl
   ];
   await mock.install(page);
   const { collectivite, user } = await collectivites.addCollectiviteAndUser({
-    userArgs: { autoLogin: true },
+    userArgs: supportUser,
   });
   const planId = await plans.create(user, {
     collectiviteId: collectivite.data.id,
