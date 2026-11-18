@@ -75,6 +75,7 @@ export class ExtractElectrificationPlan {
       response,
       sources: selected.data.sources,
       interpretations: valueContext?.interpretations ?? [],
+      engagementInterpretations: valueContext?.engagementInterpretations ?? [],
       tokens: emptyTokenUsage(),
     });
   }

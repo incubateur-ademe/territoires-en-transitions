@@ -1,5 +1,4 @@
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import { ElectrificationEngagementCodeEnum as EngagementCode } from '@tet/domain/plans';
 import { escapeRegExp } from 'es-toolkit';
 import type { ImportSource } from '../../models/import-source.schema';
 import type { ElectrificationIssue } from '../electrification-issue';
@@ -114,13 +113,6 @@ export class ElectrificationExtractionRules {
         ),
         cibles: engagement.cibles.map((cible) => ({
           ...cible,
-          // Le canevas compte des artisans ; le catalogue TeT utilise l'unité nb.
-          unite:
-            engagement.code === EngagementCode.ELECTRIFICATION_ARTISANS &&
-            cible.key === 'principale' &&
-            cible.unite === 'Nombre'
-              ? 'nb'
-              : cible.unite,
           source: this.source(
             ctx,
             cible.source,

@@ -26,7 +26,7 @@ import {
   ElectrificationLaureatsConfig,
 } from '@tet/domain/plans';
 import { CollectiviteRole } from '@tet/domain/users';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, or } from 'drizzle-orm';
 import { createHash, randomUUID } from 'node:crypto';
 import {
   afterAll,
@@ -42,7 +42,10 @@ import {
 import { electrificationStorageConfig } from '../config/electrification-storage.config';
 import { ElectrificationDataService } from './electrification-data.service';
 import { PrepareElectrificationDataService } from './prepare-electrification-data.service';
-import { electrificationCatalogueFixture } from './electrification-data.test-fixture';
+import {
+  electrificationCatalogueFixture,
+  buildElectrificationReferencesFixture,
+} from './electrification-data.test-fixture';
 import { ElectrificationDataKind } from './publish-electrification-data.input';
 import { CheckElectrificationEligibilityService } from '../check-electrification-eligibility/check-electrification-eligibility.service';
 import ConfigurationService from '@tet/backend/utils/config/configuration.service';
@@ -482,6 +485,30 @@ describe('Publication des données Électrification', () => {
     );
 
     beforeEach(async () => {
+      const engagementSource = eq(
+        indicateurReferenceExterneTable.source,
+        electrificationGristConfig.catalogue.engagementReferenceSource
+      );
+      const saved = await db.db
+        .select()
+        .from(indicateurReferenceExterneTable)
+        .where(engagementSource);
+      await db.db
+        .delete(indicateurReferenceExterneTable)
+        .where(engagementSource);
+      await db.db.insert(indicateurReferenceExterneTable).values(
+        buildElectrificationReferencesFixture(catalogueUrl).map((row) => ({
+          ...row,
+          version: 'test',
+        }))
+      );
+      onTestFinished(async () => {
+        await db.db
+          .delete(indicateurReferenceExterneTable)
+          .where(engagementSource);
+        if (saved.length)
+          await db.db.insert(indicateurReferenceExterneTable).values(saved);
+      });
       await db.db.insert(indicateurReferenceExterneTable).values({
         source: referenceSource,
         codeExterne: 'test-indicateur',
@@ -679,17 +706,42 @@ describe('Publication des données Électrification', () => {
         parents: null,
         valeurCalcule: null,
       }));
+      const existing = await db.db
+        .select()
+        .from(indicateurReferenceExterneTable)
+        .where(
+          eq(
+            indicateurReferenceExterneTable.source,
+            electrificationGristConfig.catalogue.engagementReferenceSource
+          )
+        );
+      const pending = buildElectrificationReferencesFixture(
+        catalogueUrl
+      ).filter(
+        (row) =>
+          !existing.some(
+            (old) =>
+              old.codeExterne === row.codeExterne && old.indicateurId !== null
+          ) && !(row.source === source && codes.includes(row.codeExterne))
+      );
       const imported = await app
         .get(ImportIndicateurDefinitionService)
         .upsertIndicateurDefinitions(
           definitions,
           [],
-          codes.map((codeExterne, index) => ({
-            source,
-            codeExterne,
-            lienSource: catalogueUrl,
-            identifiantReferentiel: definitions[index].identifiantReferentiel,
-          }))
+          [
+            ...pending,
+            ...codes.map((codeExterne, index) => ({
+              ...buildElectrificationReferencesFixture(catalogueUrl).find(
+                (row) =>
+                  row.source === source && row.codeExterne === codeExterne
+              ),
+              source,
+              codeExterne,
+              lienSource: catalogueUrl,
+              identifiantReferentiel: definitions[index].identifiantReferentiel,
+            })),
+          ]
         );
       const ids = imported.definitions
         .filter((definition) =>
@@ -717,7 +769,15 @@ describe('Publication des données Électrification', () => {
       await db.db
         .update(indicateurReferenceExterneTable)
         .set({ lienSource: nextUrl })
-        .where(testReference);
+        .where(
+          or(
+            testReference,
+            eq(
+              indicateurReferenceExterneTable.source,
+              electrificationGristConfig.catalogue.engagementReferenceSource
+            )
+          )
+        );
       const read = mockGrist(sourceTables(), false, 'stable', nextDocumentId);
       const prepared = await admin.plans.plans.electrificationData.prepare({
         kind: 'catalogue',
@@ -772,7 +832,15 @@ describe('Publication des données Électrification', () => {
       await db.db
         .update(indicateurReferenceExterneTable)
         .set({ lienSource: catalogueUrl })
-        .where(testReference);
+        .where(
+          or(
+            testReference,
+            eq(
+              indicateurReferenceExterneTable.source,
+              electrificationGristConfig.catalogue.engagementReferenceSource
+            )
+          )
+        );
       mockGrist();
       const otherDocument = await sync.sync('catalogue', false, auditContext);
       expect(otherDocument.success).toBe(true);
@@ -787,17 +855,12 @@ describe('Publication des données Électrification', () => {
         eq(indicateurReferenceExterneTable.source, engagementSource),
         eq(indicateurReferenceExterneTable.codeExterne, 'E01.principale')
       );
-      await db.db.insert(indicateurReferenceExterneTable).values({
-        source: engagementSource,
-        codeExterne: 'E01.principale',
-        version: 'test-pending',
-        lienSource: `https://grist.numerique.gouv.fr/o/test/${catalogueDocumentId}/Autre-page/p/7`,
-      });
-      onTestFinished(async () => {
-        await db.db
-          .delete(indicateurReferenceExterneTable)
-          .where(testReference);
-      });
+      await db.db
+        .update(indicateurReferenceExterneTable)
+        .set({
+          lienSource: `https://grist.numerique.gouv.fr/o/test/${catalogueDocumentId}/Autre-page/p/7`,
+        })
+        .where(testReference);
       const read = mockGrist();
       const prepared = await admin.plans.plans.electrificationData.prepare({
         kind: 'catalogue',
@@ -826,7 +889,17 @@ describe('Publication des données Électrification', () => {
       const initial = catalogue();
       await publish('catalogue', initial);
       const read = mockGrist();
-      await db.db.delete(indicateurReferenceExterneTable).where(testReference);
+      await db.db
+        .delete(indicateurReferenceExterneTable)
+        .where(
+          or(
+            testReference,
+            eq(
+              indicateurReferenceExterneTable.source,
+              electrificationGristConfig.catalogue.engagementReferenceSource
+            )
+          )
+        );
       expect(await sync.sync('catalogue', true, auditContext)).toMatchObject({
         success: false,
         error: 'SOURCE_NOT_CONFIGURED',
@@ -1001,6 +1074,7 @@ describe('Publication des données Électrification', () => {
             actionTitre: null,
             cibles: [
               {
+                ...electrificationCatalogueFixture.engagements[0].cibles[0],
                 key: 'principale',
                 identifiantReferentiel: definition.identifiantReferentiel,
                 unite: '%',
@@ -1014,6 +1088,7 @@ describe('Publication des données Électrification', () => {
             axeNumero: 1,
             cibles: [
               {
+                ...electrificationCatalogueFixture.engagements[1].cibles[0],
                 key: 'principale',
                 identifiantReferentiel: null,
                 unite: null,
@@ -1023,22 +1098,34 @@ describe('Publication des données Électrification', () => {
             ],
           }),
           {
+            ...electrificationCatalogueFixture.engagements.find(
+              (engagement) => engagement.code === 'E03'
+            ),
             code: 'E03',
             axeNumero: 4,
             actionTitre: 'Étudier le réseau',
             cibles: [],
           },
           {
+            ...electrificationCatalogueFixture.engagements.find(
+              (engagement) => engagement.code === 'E12'
+            ),
             code: 'E12',
             axeNumero: 7,
             actionTitre: 'Recharge des poids lourds',
             cibles: [],
           },
           {
+            ...electrificationCatalogueFixture.engagements.find(
+              (engagement) => engagement.code === 'E07'
+            ),
             code: 'E07',
             axeNumero: 6,
             actionTitre: null,
             cibles: bornes.map((definition, index) => ({
+              ...electrificationCatalogueFixture.engagements.find(
+                ({ code }) => code === 'E07'
+              )?.cibles[index],
               key: index === 0 ? 'total' : 'rapides',
               identifiantReferentiel: definition.identifiantReferentiel,
               unite: 'Nombre de bornes',
@@ -1054,7 +1141,8 @@ describe('Publication des données Électrification', () => {
       });
       await publish('catalogue', prepared.data);
       await db.db
-        .delete(indicateurReferenceExterneTable)
+        .update(indicateurReferenceExterneTable)
+        .set({ indicateurId: null })
         .where(
           and(
             eq(
@@ -1075,6 +1163,7 @@ describe('Publication des données Électrification', () => {
         )?.cibles
       ).toEqual([
         {
+          ...electrificationCatalogueFixture.engagements[0].cibles[0],
           key: 'principale',
           identifiantReferentiel: null,
           unite: null,
@@ -1121,7 +1210,7 @@ describe('Publication des données Électrification', () => {
 
     test.each([
       'colonne absente',
-      'code inconnu',
+      'code sans définition',
       'code dupliqué',
       'code vide',
       'engagement absent',
@@ -1133,7 +1222,7 @@ describe('Publication des données Électrification', () => {
         const tables = sourceTables();
         if (scenario === 'colonne absente')
           Reflect.deleteProperty(tables.Axes[0].fields, 'Code_signe');
-        if (scenario === 'code inconnu')
+        if (scenario === 'code sans définition')
           tables.Axes[0].fields.Code_signe = 'E99';
         if (scenario === 'code dupliqué')
           tables.Axes[0].fields.Code_signe = 'E01+E01+E02';
@@ -1154,7 +1243,7 @@ describe('Publication des données Électrification', () => {
     );
 
     test.each(['E07.inconnue', 'E03.principale'])(
-      'refuse une référence qui ne désigne pas une cible du canevas : %s',
+      "refuse une référence de cible non déclarée par l'engagement : %s",
       async (code) => {
         const initial = catalogue();
         await publish('catalogue', initial);

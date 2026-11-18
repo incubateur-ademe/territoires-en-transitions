@@ -1,3 +1,4 @@
+import { ElectrificationEngagementCodeEnum as EngagementCode } from '@tet/backend/plans/plans/electrification/publish-electrification-data/electrification-data.test-fixture';
 import {
   electrificationCatalogueFixture as electrificationConfig,
   buildInMemoryElectrificationData,
@@ -21,7 +22,6 @@ import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { LlmRepository } from '@tet/backend/utils/llm/repositories/llm.repository';
 import {
   ElectrificationConfig,
-  ElectrificationEngagementCodeEnum as EngagementCode,
   Engagement,
   engagementSchema,
   StatutEnum,
@@ -338,40 +338,51 @@ describe('Résolution des engagements Électrification', () => {
       expect.objectContaining({
         code: 'EMPTY_ENGAGEMENT_TARGET',
         kind: 'warning',
-        location: source('cible-rapides').location,
+        location: `${source('cible-rapides').location} > rapides`,
       }),
     ]);
   });
 
-  test('résout E06/E08 par leurs références explicites, sans déduction depuis le titre', async () => {
-    expect(
-      electrificationConfig.engagements
-        .filter(({ code }) => ['E06', 'E08'].includes(code))
-        .map(({ cibles }) => cibles[0].identifiantReferentiel)
-    ).toEqual(['test-E06-principale', 'test-E08-principale']);
-    input.engagements = ['E06', 'E08'].map((code) =>
-      engagement(code, [{ ...cible(), source: source(`${code}-cible`) }])
-    );
+  test('résout un nouveau code, une nouvelle clé et une année publiée sans déduire leur indicateur', async () => {
+    const definition = catalogue.engagements.find(({ code }) => code === 'E06');
+    assert(definition?.cibles[0].reglesImport);
+    const identifiantReferentiel = definition.cibles[0].identifiantReferentiel;
+    definition.code = 'E42';
+    definition.cibles[0].key = 'progression';
+    definition.cibles[0].reglesImport.annee = 2040;
+    definition.cibles[0].reglesImport.minimum = 10;
+    definition.cibles[0].reglesImport.maximum = 80;
+    input.engagements = [
+      engagement('E42', [cible('progression', 40, '%', 2040)]),
+    ];
     const result = await resolve();
     assert(result.success);
-    expect(
-      result.data.cibles.map(
-        ({ identifiantReferentiel }) => identifiantReferentiel
-      )
-    ).toEqual(
-      catalogue.engagements
-        .filter(({ code }) => ['E06', 'E08'].includes(code))
-        .map(({ cibles }) => cibles[0].identifiantReferentiel)
-    );
+    expect(result.data.cibles).toEqual([
+      expect.objectContaining({
+        key: 'engagement:E42:progression',
+        identifiantReferentiel,
+        objectif: 40,
+        dateValeur: '2040-01-01',
+      }),
+    ]);
+    input.engagements[0].cibles[0].valeur = 90;
+    await expectIssue('INVALID_ENGAGEMENT_VALUE');
   });
 
-  test('résout la cible artisans avec l’unité nb du catalogue TeT', async () => {
+  test('accepte une unité différente seulement si la référence publiée la déclare', async () => {
     input.engagements = [
       engagement(EngagementCode.ELECTRIFICATION_ARTISANS, [
-        cible('principale', 40, 'nb'),
+        cible('principale', 40, 'Nombre'),
       ]),
     ];
 
+    const definition = catalogue.engagements.find(
+      ({ code }) => code === EngagementCode.ELECTRIFICATION_ARTISANS
+    );
+    assert(definition);
+    delete definition.cibles[0].uniteImport;
+    await expectIssue('INVALID_ENGAGEMENT_UNIT');
+    definition.cibles[0].uniteImport = 'Nombre';
     const result = await resolve();
 
     assert(result.success);
@@ -548,7 +559,7 @@ describe('Résolution des engagements Électrification', () => {
         cible('rapides', 2, 'Nombre de bornes'),
       ]),
     ];
-    await expectIssue('INCONSISTENT_E07_TARGETS');
+    await expectIssue('INCONSISTENT_ENGAGEMENT_TARGETS');
   });
 
   test.each(['absente', 'version incompatible'] as const)(
@@ -657,6 +668,7 @@ describe('Résolution des engagements Électrification', () => {
     );
     assert(bornes);
     for (const cible of bornes.cibles) {
+      cible.libelleSource = `Libellé publié pour ${cible.key}`;
       cible.validation = 'pending';
       cible.identifiantReferentiel = null;
       cible.unite = null;
@@ -665,7 +677,16 @@ describe('Résolution des engagements Électrification', () => {
     input.engagements = [engagement('E03')];
     expect((await resolve()).success).toBe(true);
     input.engagements = [
-      engagement('E07', [cible('total', 10, 'Nombre de bornes')]),
+      engagement(
+        'E07',
+        ['total', 'rapides'].map((key) => ({
+          ...cible(key, 10, 'Nombre de bornes'),
+          source: {
+            key: `cible-${key}`,
+            location: 'Annexe 3, valeur-chiffree',
+          },
+        }))
+      ),
     ];
     const result = await resolve();
     assert(!result.success);
@@ -674,10 +695,12 @@ describe('Résolution des engagements Électrification', () => {
       expect.objectContaining({
         code: 'UNVALIDATED_ENGAGEMENT_INDICATEUR',
         kind: 'configuration-error',
+        location: 'Annexe 3, valeur-chiffree > Libellé publié pour total',
       }),
       expect.objectContaining({
         code: 'UNVALIDATED_ENGAGEMENT_INDICATEUR',
         kind: 'configuration-error',
+        location: 'Annexe 3, valeur-chiffree > Libellé publié pour rapides',
       }),
     ]);
   });

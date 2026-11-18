@@ -323,7 +323,7 @@ export const plansLabels = {
     )}`,
   importPlanIaEtapeReperage: 'Repérage des actions',
   importPlanIaContact:
-    'L’import ne vous convient pas ? Contactez-nous via le live chat en joignant votre fichier et quelques mots de contexte, cela nous aide à l’améliorer.',
+    'Un résultat qui ne correspond pas à votre fichier ? Écrivez-nous via le live chat avec votre fichier et quelques mots de contexte.',
   importPlanIaFormatsAcceptes:
     'PDF, Word (.docx), Excel (.xlsx) ou CSV, 25 Mo maximum',
   importElectrificationFormat: 'Annexe 3 de la convention signée sur Word',
@@ -380,22 +380,25 @@ export const plansLabels = {
   importPlanIaOuvrirPlan: 'Ouvrir le plan',
   importPlanIaRapport: 'Compte rendu de l’import',
   importPlanIaRapportSansRemarque: 'Aucune remarque signalée.',
-  importPlanIaDocumentErreur: 'Document à corriger',
+  importPlanIaDocumentErreur: 'Erreur',
   importPlanIaConfigurationErreur: 'Erreur',
-  importPlanIaAvertissementRapport: 'Point d’attention',
+  importPlanIaAvertissementRapport: 'Avertissement',
+  importPlanIaErreursDetectees: plural({
+    one: 'erreur détectée pendant cet import.',
+    other: 'erreurs détectées pendant cet import.',
+  }),
+  importPlanIaContacterSupport: 'Contacter le support',
   importPlanIaDocumentErreurHint:
     'Corrigez votre document puis relancez l’import.',
   importPlanIaConfigurationErreurHint:
-    'Notre équipe doit corriger la configuration du catalogue. Aucune modification de votre document n’est attendue.',
+    "Contactez le support avec votre document et ce compte rendu. Notre équipe vérifiera le catalogue ; vous pourrez ensuite relancer l'import avec le même document.",
   importPlanIaErreurTechniqueHint:
-    'Réessayez avec un autre document. Si le problème persiste, contactez-nous via le support en ligne.',
+    'Réessayez avec le même document. Si le problème persiste, contactez le support avec votre document et ce compte rendu.',
   importPlanIaEtapeCreation: 'Création du plan',
   importPlanIaDonneesConservees: 'Données existantes conservées',
   importPlanIaSuiviIndisponible:
     'Cet import est introuvable ou vous n’y avez pas accès.',
   importPlanIaSuiviErreur: 'Impossible de charger le suivi de cet import.',
-  importPlanIaSuiviRetrouvable:
-    'La création se fait en arrière-plan : vous pouvez fermer cette fenêtre et continuer à naviguer. Votre plan devrait être prêt dans quelques minutes.',
   importPlanIaPlanIndisponible: 'Aucun plan n’est associé à cet import.',
   importPlanIaReprendre: "Reprendre l'import",
   importPlanIaRepriseLancee: 'Import repris depuis sa dernière étape terminée',
@@ -422,9 +425,8 @@ export const plansLabels = {
   planImporteBandeauTitre: ({ etapes }: { etapes: number }) =>
     etapes > 1
       ? `Plan généré par l’IA : ${etapes} points à vérifier`
-      : 'Plan généré par l’IA : vérifiez-le avant publication',
-  planImporteEtapeStructureTitre:
-    'Vérifier la structure globale du plan',
+      : "Plan généré par l'IA : relisez votre plan",
+  planImporteEtapeStructureTitre: 'Vérifier la structure globale du plan',
   planImporteEtapeStructureDescription:
     'Vérifiez la structure globale de votre plan (axes et sous-axes), puis corrigez-la si besoin.',
   planImporteValider: 'Valider le plan',

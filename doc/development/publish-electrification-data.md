@@ -44,10 +44,10 @@ chaque environnement pour utiliser la clé de cette cible, sans hériter de cell
 Le document Grist désigné par `lienSource` doit exposer les
 six tables `V1_3_Axes`, `V1_3_Sous_axes`, `V1_3_Actions`, `V1_3_Sous_actions`,
 `V1_3_Indicateurs` et `V1_3_Ressources`. Dans `V1_3_Axes`, `Code_signe`
-fournit les engagements (dont `E01+E02` sur un même axe) et `Parametre_signe`
-leur formulation. Ces colonnes existent déjà ; la synchronisation lit Grist
-sans modifier ses tables. Les titres des actions non chiffrées viennent du
-paramètre signé, ou du titre d'axe si ce paramètre contient un blanc à remplir.
+fournit les codes des engagements (dont `E01+E02` sur un même axe).
+Les titres des actions non chiffrées viennent de `Parametre_signe`, ou du titre
+d'axe si ce paramètre contient un blanc à remplir. Les libellés attendus dans
+le Word viennent du Sheets. La synchronisation lit Grist sans modifier ses tables.
 Les identités des sous-actions restent stables après renommage, déplacement
 et réordonnancement. Un changement de document ou de table nécessite de
 vérifier cette continuité.
@@ -56,6 +56,8 @@ vérifier cette continuité.
 
 1. Appliquer les migrations `indicateur/references-externes` et
    `plan_action/electrification_data_selection` avant de déployer C.
+   Appliquer aussi `indicateur/references-externes-import` avant de déployer
+   le support des définitions et règles d'import des engagements.
 2. Compléter et faire valider l’onglet "Références externes" du Sheets configuré
    par `INDICATEUR_DEFINITIONS_SHEET_ID`. Le WIP n’est ni lu ni publié.
 3. Utiliser les boutons existants de vérification puis de publication des
@@ -63,17 +65,33 @@ vérifier cette continuité.
    pour une publication en production, comme pour les définitions.
 4. Lancer ensuite la synchronisation du catalogue Grist sur **la même cible**.
 
-| Colonne                  | Rôle                                                                                                                  |
-| ------------------------ | --------------------------------------------------------------------------------------------------------------------- |
-| `identifiantReferentiel` | Identifiant figurant dans "Indicateur definitions". Vide : référence publiée en attente, sans rattachement TeT.       |
-| `source`                 | `catalogue-electrification` pour les indicateurs Grist ; `engagements-electrification` pour les cibles de convention. |
-| `codeExterne`            | Code exact d'indicateur Grist, ou code d'engagement suivi de sa clé de cible, par exemple `E07.total`.                |
-| `lienSource`             | URL du document source. Pour Grist, les différentes pages d'un même document sont acceptées.                          |
+L'onglet "Références externes" est lu de A à P. Tous les en-têtes ci-dessous
+sont présents, même si leurs cellules ne concernent qu'une partie des lignes.
+`observation` (D) et `lienDefinitionTeT` (F) restent des aides à la revue.
 
-Ces quatre en-têtes sont obligatoires, même dans un onglet vide. L'onglet
-contient six colonnes : les trois champs du mapping en A:C, `observation`
-en D, `lienSource` en E et `lienDefinitionTeT` en F. Seuls `observation`
-et `lienDefinitionTeT` restent documentaires.
+| Colonne | Rôle |
+| --- | --- |
+| `identifiantReferentiel` (A) | Identifiant TeT d'une cible. Vide pour une définition d'engagement ou une cible en attente de correspondance. |
+| `source` (B) | `catalogue-electrification` pour les indicateurs Grist ; `engagements-electrification` pour les définitions et cibles d'engagement. |
+| `codeExterne` (C) | Code Grist de l'engagement sur sa ligne de définition ; `code.clé` sur une ligne de cible. |
+| `lienSource` (E) | URL du document Grist, identique ou équivalente pour toutes les lignes de cette source. |
+| `libelleSource` (G) | Sur une définition : libellé de l'engagement dans le document. Sur une cible : libellé facultatif du compte rendu. |
+| `uniteImport` (H) | Unité attendue dans le document, obligatoire pour chaque cible. Aucune conversion numérique. |
+| `typeImport` (I) | `action` pour un engagement qualitatif, `cibles` pour un engagement chiffré. Vide sur les lignes de cibles. |
+| `ciblesImport` (J) | Clés attendues, séparées par `|`, obligatoires pour `typeImport=cibles`. Vide pour `action`. |
+| `anneeCible` (K) | Année attendue, obligatoire pour chaque cible. |
+| `valeurMin` / `valeurMax` (L:M) | Bornes inclusives. Une cellule vide signifie aucune borne de ce côté. |
+| `plafondCible` (N) | Clé de la cible qui plafonne cette valeur, au sein du même engagement, avec la même unité et la même année. |
+| `libellesCible` (O) | Termes qui distinguent cette cible dans une cellule à plusieurs valeurs, séparés par `|`. |
+| `unitesAcceptees` (P) | Variantes littérales de l'unité, séparées par `|`, de même mesure et même échelle. La casse des symboles reste significative. |
+
+Par exemple, `E07` déclare `typeImport=cibles` et `ciblesImport=total|rapides`.
+Les lignes `E07.total` et `E07.rapides` portent chacune la correspondance TeT,
+l'unité et les règles. La ligne `E07.rapides` indique `total` dans
+`plafondCible`. E03 et E12 sont des lignes `action`, sans cible ni indicateur.
+Ces codes sont des données du Sheets,
+pas une liste de valeurs autorisées dans l'application.
+
 Plusieurs références peuvent désigner le même indicateur TeT. Un couple
 source/code répété ou un identifiant absent des définitions bloque la
 publication entière, sans mise à jour partielle. Retirer un lien de la feuille
@@ -107,27 +125,40 @@ restent `null`. Les colonnes `Unite` et `Frequence` de Grist ne sont pas lues
 pour construire les définitions TeT. Les recensements annuels doivent
 ainsi avoir une définition annuelle publiée ; aucune exception n’est en code.
 
-Les rapprochements préremplis dans l’onglet restent à valider par le métier
-avant publication. Ajouter les correspondances des 11 cibles dans ce même
-onglet, sous la source `engagements-electrification` :
+Les correspondances TeT et les équivalences d'unité doivent être validées
+avant publication. Pour ajouter un engagement, renseigner son code et son axe
+dans Grist, sa ligne de définition dans le Sheets, puis toutes les cibles
+annoncées dans `ciblesImport`. Un code comme E13 ou une clé supplémentaire
+ne nécessite pas de changement de code. Une cible sans indicateur TeT reste
+explicitement `pending` ; seuls les imports qui l'utilisent sont bloqués.
 
-- `E01.principale`, `E02.principale`, `E04.principale`, `E05.principale`,
-  `E06.principale`, `E08.principale`, `E09.principale`, `E10.principale`,
-  `E11.principale` ;
-- `E07.total` et `E07.rapides`.
+Une définition absente, une cible déclarée sans ligne, une référence orpheline,
+un code dupliqué ou une relation de plafond invalide bloque la publication.
+Effacer une correspondance TeT consiste à vider `identifiantReferentiel` en
+conservant la définition de la cible. Les plafonds ne peuvent pas former de
+cycle. Les définitions TeT font autorité pour l'unité enregistrée et la
+périodicité, qui doit être annuelle pour ces cibles.
 
-E03 et E12 créent des actions sans cible chiffrée ; aucune référence
-d'indicateur n'est attendue pour ces engagements. Les clés correspondent aux
-champs du canevas supporté. Ne pas déduire un indicateur depuis son axe : un
-axe peut porter plusieurs engagements et plusieurs indicateurs.
+L'extraction utilise les libellés et règles du catalogue admis. Les cellules
+simples sont lues directement. Pour une formulation différente ou une cellule
+numérique complexe, l'IA reçoit uniquement les engagements candidats de l'axe
+ou les cibles attendues. Les réponses sont contrôlées : code autorisé, citation
+exacte, nombres présents, unité et année cohérentes. Une sélection incertaine
+reste une erreur. Les citations documentent la décision du modèle ; elles ne
+prouvent pas à elles seules l'équivalence sémantique des formulations.
+L'IA ne choisit jamais un indicateur TeT ni une conversion d'unité.
 
-Les deux sources sont lues dans une même requête en base. Les unités et
-périodicités des cibles viennent également des définitions TeT publiées ; une
-cible validée doit être annuelle. Sans correspondance publiée, la cible reste
-`pending` avec des métadonnées nulles ; seuls les imports qui l'utilisent sont
-bloqués. Une référence supprimée ne réutilise pas l'ancien mapping du catalogue.
-Un code d'engagement inconnu, dupliqué ou manquant dans Grist, ou une référence
-de cible inconnue, bloque la synchronisation sans remplacer la version active.
+Les définitions et règles suivent la publication transactionnelle des références,
+puis le snapshot du catalogue (`engagementsFormat=2`). La reprise conserve le
+snapshot, les extractions et les citations admises sans nouvel appel IA. Les
+anciens snapshots restent lisibles sans réécriture. Déployer la migration et
+le backend avant de republier les indicateurs puis le catalogue.
+
+Si un import signale une correspondance d'engagement non validée, contrôler
+chaque clé utilisée, notamment les deux lignes `E07.total` et `E07.rapides`.
+Corriger le Sheets, publier les indicateurs puis synchroniser le catalogue
+sur la même cible. Lancer ensuite un nouvel import avec le document initial :
+la reprise d'un ancien job conserve son ancienne version du catalogue.
 
 Pour les lauréats, le lecteur utilise les trois colonnes existantes de
 `Territoires`, dans le document configuré par
@@ -351,16 +382,20 @@ La publication d'une liste ne modifie pas le feature flag de création.
 | Document Grist du catalogue                                                                                                         | `lienSource` de "Références externes", après publication dans la cible.                                                                                       |
 | Document Grist des lauréats                                                                                                         | Variable `ELECTRIFICATION_LAUREATS_GRIST_DOCUMENT_ID` de la cible.                                                                                            |
 | Correspondance entre un code externe et un indicateur TeT                                                                           | Trois colonnes de "Références externes" : `source`, `codeExterne`, `identifiantReferentiel`.                                                                  |
+| Définitions des engagements, cibles, libellés et règles de lecture | Colonnes G:P de "Références externes", après publication des indicateurs puis du catalogue. |
 | Validation et compléments TeT des actions absents de Grist : objectifs, ressources humaines, structures, partenaires, dates, statut | Catalogue publié, via l'administration existante. La synchronisation conserve ces champs ; les champs fournis par Grist sont toujours remplacés depuis Grist. |
 | Lauréats et correspondances collectivité                                                                                            | Annuaire Grist ; compatibilité du contrat de lecture à confirmer, comme indiqué plus haut.                                                                    |
 | Valeurs, sélections et champs renseignés par la collectivité                                                                        | Document importé, selon les règles de priorité de l'import.                                                                                                   |
-| Structure, libellés et placeholders du document accepté                                                                             | Contrat du canevas officiel dans le code. Ces libellés ne nomment pas les axes du plan.                                                                       |
+| Structure, en-têtes et placeholders du document accepté                                                                             | Contrat du canevas officiel dans le code. Ces libellés ne nomment pas les axes du plan.                                                                       |
 | Étapes du pipeline, identifiants de provenance, connexions et stockage                                                              | Configuration technique dans le code.                                                                                                                         |
 
 Les observations et liens `lienDefinitionTeT` sont des aides à la revue.
 `lienSource` détermine le document lu à la prochaine synchronisation.
-Les libellés, unités et périodicités se consultent dans les sources liées ;
-ils ne sont pas recopiés dans cet onglet. Les versions stockées et les références
+Les titres, unités et périodicités TeT se consultent dans les définitions liées ;
+ils ne sont pas recopiés dans cet onglet. `libelleSource` et `uniteImport`
+décrivent l'engagement ou la cible du document importé. Les autres colonnes
+de lecture déclarent ses règles, sans modifier la définition TeT.
+Les versions stockées et les références
 en base sont des publications des sources, sans synchronisation inverse.
 Un export administratif corrigé ne remplace pas la source de maintenance :
 la synchronisation suivante reprend Grist et les définitions TeT pour leurs

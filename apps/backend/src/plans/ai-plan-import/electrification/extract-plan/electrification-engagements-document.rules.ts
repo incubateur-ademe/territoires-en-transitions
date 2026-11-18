@@ -1,8 +1,5 @@
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import {
-  ElectrificationConfig,
-  ElectrificationEngagementCodeEnum as EngagementCode,
-} from '@tet/domain/plans';
+import { ElectrificationConfig } from '@tet/domain/plans';
 import { ElectrificationIssue } from '../electrification-issue';
 import { ElectrificationImportLocations as Locations } from '../electrification-import-locations';
 import { ElectrificationExtractionErrors as Errors } from './electrification-extraction.errors';
@@ -18,6 +15,9 @@ import {
   ElectrificationValueRequest,
 } from './electrification-value-interpretation.schema';
 
+import { ReadElectrificationV4Snapshot } from '@tet/backend/plans/plans/electrification/config/read-electrification-v4-snapshot';
+import { ElectrificationTargetValuesRules } from './electrification-target-values.rules';
+
 type Table = ElectrificationDocumentSource[][];
 type Engagement = ElectrificationExtractionResponse['engagements'][number];
 type Columns = {
@@ -27,9 +27,6 @@ type Columns = {
   cible: number;
 };
 
-const numberPattern = '(?:[0-9]+|[0-9]{1,3}(?: [0-9]{3})+)(?:[.,][0-9]+)?';
-const yearSuffix = "(?:\\s+(?:en|d'ici)\\s+2030)?";
-
 /** Extraction du tableau A : sélection explicite et cibles sans interprétation. */
 export class ElectrificationEngagementsDocumentRules {
   static parse(
@@ -37,6 +34,7 @@ export class ElectrificationEngagementsDocumentRules {
     catalogue: ElectrificationConfig,
     valueContext?: ElectrificationValueContext
   ): Result<Engagement[], ElectrificationIssue[]> {
+    catalogue = ReadElectrificationV4Snapshot.adapt(catalogue);
     const columns = this.getColumns(table[0] ?? []);
     if (!columns) {
       return failure([
@@ -95,22 +93,43 @@ export class ElectrificationEngagementsDocumentRules {
         continue;
       }
 
-      const code = Object.entries(
-        electrificationDocumentTemplate.engagements.labels
-      ).find(
-        ([, label]) => this.normalize(label) === this.normalize(engagement.text)
-      )?.[0];
-      const definition = catalogue.engagements.find(
-        (item) => item.code === code
+      const candidates = catalogue.engagements.filter(
+        (item) =>
+          item.libelleSource &&
+          this.normalize(item.libelleSource) === this.normalize(engagement.text)
       );
-      const expectedAxe = electrificationDocumentTemplate.engagements.axes.find(
-        (item) => item.numero === definition?.axeNumero
+      const axeNumero = axe.match(/^\s*Axe\s+(\d+)(?:[. :]|$)/i)?.[1];
+      const match = valueContext?.engagementInterpretations?.find(
+        ({ sourceId }) => sourceId === engagement.id
       );
+      const definition =
+        candidates.length === 1
+          ? candidates[0]
+          : match?.quote === engagement.text
+          ? catalogue.engagements.find(({ code }) => code === match.code)
+          : undefined;
+      if (
+        !candidates.length &&
+        !match &&
+        engagement.text.length <= 2000 &&
+        !engagement.links.length
+      ) {
+        const available = catalogue.engagements.flatMap(
+          ({ code, axeNumero: numero, libelleSource }) =>
+            numero === Number(axeNumero) && libelleSource
+              ? [{ code, label: libelleSource }]
+              : []
+        );
+        if (available.length)
+          valueContext?.onUnmatchedEngagement?.({
+            source: engagement,
+            candidates: available,
+          });
+      }
       if (
         !definition ||
-        !expectedAxe ||
-        !catalogue.axes.some(({ numero }) => numero === expectedAxe.numero) ||
-        this.normalize(axe) !== this.normalize(expectedAxe.label)
+        Number(axeNumero) !== definition.axeNumero ||
+        !catalogue.axes.some(({ numero }) => numero === definition.axeNumero)
       ) {
         issues.push(
           Errors.issue(
@@ -122,7 +141,7 @@ export class ElectrificationEngagementsDocumentRules {
       }
 
       const targets = this.parseTargets(
-        definition.code,
+        definition,
         cible,
         engagement.text,
         valueContext
@@ -166,7 +185,7 @@ export class ElectrificationEngagementsDocumentRules {
   }
 
   private static parseTargets(
-    code: string,
+    definition: ElectrificationConfig['engagements'][number],
     source: ElectrificationDocumentSource,
     label: string,
     context?: ElectrificationValueContext
@@ -175,112 +194,56 @@ export class ElectrificationEngagementsDocumentRules {
       failure([
         Errors.issue('INVALID_ELECTRIFICATION_TARGET', source.location),
       ]);
-    const { actionCodes, targetKeys } =
-      electrificationDocumentTemplate.engagements;
-    if (actionCodes.some((actionCode) => code === actionCode))
+    if (!definition.cibles.length)
       return source.text.trim() ? invalid() : success([]);
-    const bornes = code === EngagementCode.BORNES_RECHARGE_PUBLIQUES;
-    const unite = bornes
-      ? 'Nombre de bornes'
-      : code === EngagementCode.ELECTRIFICATION_ARTISANS
-      ? 'Nombre'
-      : code === EngagementCode.ELECTRIFICATION_INDUSTRIE ||
-        code === EngagementCode.ELECTRIFICATION_AGRICULTURE
-      ? 'MWh'
-      : '%';
+    const targets: Extract<
+      ElectrificationValueRequest,
+      { kind: 'target' }
+    >['targets'] = [];
+    for (const cible of definition.cibles) {
+      const rules = cible.reglesImport;
+      if (!rules || !cible.uniteImport)
+        return failure([
+          Errors.issue('INVALID_ELECTRIFICATION_ENGAGEMENT', source.location),
+        ]);
+      targets.push({
+        key: cible.key,
+        unit: cible.uniteImport,
+        year: rules.annee,
+        labels: rules.libelles,
+        units: rules.unites,
+      });
+    }
     const request: ElectrificationValueRequest = {
       kind: 'target',
       source,
       label,
-      unit: unite,
-      year: 2030,
-      keys: [...(bornes ? targetKeys.recharge : targetKeys.single)],
+      targets,
+      unit: targets.every(({ unit }) => unit === targets[0].unit)
+        ? targets[0].unit
+        : null,
+      year: targets.every(({ year }) => year === targets[0].year)
+        ? targets[0].year
+        : null,
+      keys: targets.map(({ key }) => key),
     };
-    const text = Interpretation.text(request, context)
-      .normalize('NFKC')
-      .trim()
-      .toLowerCase()
-      .replace(/[’‘]/g, "'")
-      .replace(/\s+/g, ' ');
-    if (bornes) {
-      const values = this.parseBornes(text);
-      if (values === null) Interpretation.request(request, context);
-      return values === null
-        ? invalid()
-        : success([
-            this.target('total', values.total, 'Nombre de bornes', source.id),
-            this.target(
-              'rapides',
-              values.rapides,
-              'Nombre de bornes',
-              source.id
-            ),
-          ]);
-    }
-
-    if (!text)
-      return success([this.target('principale', null, unite, source.id)]);
-    const unitPattern = unite === 'Nombre' ? 'artisans?' : unite.toLowerCase();
-    const match = text.match(
-      new RegExp(`^(${numberPattern})(?:\\s*${unitPattern})?${yearSuffix}$`)
+    const values = ElectrificationTargetValuesRules.parse(
+      Interpretation.text(request, context),
+      definition.cibles
     );
-    if (!match) {
+    if (values === null) {
       Interpretation.request(request, context);
       return invalid();
     }
-    const valeur = Values.number(match[1]);
-    return valeur === null
-      ? invalid()
-      : success([this.target('principale', valeur, unite, source.id)]);
-  }
-
-  private static parseBornes(
-    text: string
-  ): { total: number | null; rapides: number | null } | null {
-    if (!text) return { total: null, rapides: null };
-    const both =
-      text.match(
-        new RegExp(
-          `^(${numberPattern})(?:\\s+bornes(?: publiques)?)?\\s+dont\\s+(${numberPattern})\\s+(?:bornes\\s+)?rapides${yearSuffix}$`
-        )
-      ) ??
-      text.match(
-        new RegExp(
-          `^total\\s*:\\s*(${numberPattern})\\s*;\\s*rapides\\s*:\\s*(${numberPattern})${yearSuffix}$`
-        )
-      );
-    if (both) {
-      const total = Values.number(both[1]);
-      const rapides = Values.number(both[2]);
-      return total === null || rapides === null ? null : { total, rapides };
-    }
-    const total = text.match(
-      new RegExp(
-        `^(?:total\\s*:\\s*(${numberPattern})|(${numberPattern})\\s+bornes publiques)${yearSuffix}$`
-      )
+    return success(
+      targets.map(({ key, unit, year }) => ({
+        key,
+        valeur: values.get(key) ?? null,
+        unite: unit,
+        annee: year,
+        source: source.id,
+      }))
     );
-    if (total) {
-      const value = Values.number(total[1] ?? total[2]);
-      return value === null ? null : { total: value, rapides: null };
-    }
-    const rapides = text.match(
-      new RegExp(
-        `^(?:rapides\\s*:\\s*(${numberPattern})|(${numberPattern})\\s+(?:bornes\\s+)?rapides)${yearSuffix}$`
-      )
-    );
-    if (!rapides) return null;
-    const value = Values.number(rapides[1] ?? rapides[2]);
-    return value === null ? null : { total: null, rapides: value };
-  }
-
-  private static target(
-    key: string,
-    valeur: number | null,
-    unite: string,
-    source: string
-  ): Engagement['cibles'][number] {
-    // Unité et année viennent du libellé fixe vérifié, même si la cellule ne contient qu'un nombre.
-    return { key, valeur, unite, annee: 2030, source };
   }
 
   private static normalize(text: string): string {

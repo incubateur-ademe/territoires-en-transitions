@@ -1,3 +1,4 @@
+import { ElectrificationEngagementCodeEnum } from '@tet/backend/plans/plans/electrification/publish-electrification-data/electrification-data.test-fixture';
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUsers } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { indicateurDefinitionTable } from '@tet/backend/indicateurs/indicateur/indicateur-definition.table';
@@ -25,10 +26,7 @@ import {
   IndicateurSourceCreate,
   PCAET_COLLECTIVITE_SOURCE_ID,
 } from '@tet/domain/indicateurs';
-import {
-  ElectrificationEngagementCodeEnum,
-  PlanReferenceProgrammeEnum,
-} from '@tet/domain/plans';
+import { PlanReferenceProgrammeEnum } from '@tet/domain/plans';
 import { CollectiviteRole } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
 import assert from 'node:assert';

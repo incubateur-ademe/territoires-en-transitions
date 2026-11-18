@@ -130,12 +130,13 @@ export class ElectrificationValueInterpretationRules {
         (value) =>
           !(request.keys as readonly string[]).includes(value.key) ||
           (value.year !== null &&
-            request.year !== null &&
-            Number(value.year) !== request.year) ||
+            (request.kind === 'target'
+              ? Number(value.year) !==
+                request.targets.find(({ key }) => key === value.key)?.year
+              : request.year !== null &&
+                Number(value.year) !== request.year)) ||
           !this.preservesUnit(request, value) ||
-          (value.unit !== null &&
-            request.unit !== null &&
-            !this.sameUnit(value.unit, request.unit))
+          (value.unit !== null && !this.acceptsUnit(request, value, value.unit))
       )
     )
       return null;
@@ -147,29 +148,29 @@ export class ElectrificationValueInterpretationRules {
         value.year ? ` (${value.year})` : ''
       }`;
     }
-    if (request.keys.includes('principale')) {
+    if (request.keys.length === 1)
       return values.length === 1 ? values[0].number : null;
-    }
-    const total = values.find(({ key }) => key === 'total');
-    const rapides = values.find(({ key }) => key === 'rapides');
-    const totalValue = total ? Values.number(total.number) : null;
-    const rapidesValue = rapides ? Values.number(rapides.number) : null;
+    // Chaque cible multiple doit être explicitement qualifiée dans sa citation.
     if (
-      totalValue !== null &&
-      rapidesValue !== null &&
-      rapidesValue > totalValue
+      values.some((value) => {
+        const target = request.targets.find(({ key }) => key === value.key);
+        return (
+          !target ||
+          ![target.key, ...target.labels].some((label) =>
+            Values.normalize(value.quote)
+              .split(/[^\p{L}\p{N}]+/u)
+              .join(' ')
+              .includes(
+                Values.normalize(label)
+                  .split(/[^\p{L}\p{N}]+/u)
+                  .join(' ')
+              )
+          )
+        );
+      })
     )
       return null;
-    // Les clés ne peuvent pas être déduites de deux nombres dépourvus de qualificatifs.
-    if (
-      (total && !/\b(?:total|publiques)\b/i.test(total.quote)) ||
-      (rapides && !/\brapides?\b/i.test(rapides.quote))
-    )
-      return null;
-    return [total, rapides]
-      .filter((value) => value !== undefined)
-      .map(({ key, number }) => `${key}: ${number}`)
-      .join('; ');
+    return values.map(({ key, number }) => `${key}: ${number}`).join('; ');
   }
 
   /** Une citation tronquée ne doit pas faire disparaître l'unité accolée au nombre. */
@@ -190,21 +191,32 @@ export class ElectrificationValueInterpretationRules {
       .slice(end)
       .match(/^\s*(%|[\p{L}€°][\p{L}\d%²³/._-]*)/u)?.[1];
     // Ces mots relient une quantité à son contexte ; ils ne sont pas des unités.
-    if (!unit || /^(?:en|pour|au|dont|sur|rapides?|total)$/i.test(unit))
+    if (
+      !unit ||
+      /^(?:en|pour|au|dont|sur)$/i.test(unit) ||
+      (request.kind === 'target' &&
+        request.targets.some(
+          (target) => target.key === unit || target.labels.includes(unit)
+        ))
+    )
       return true;
-    const expected =
-      value.unit ?? (request.kind === 'target' ? request.unit : null);
-    return expected !== null && this.sameUnit(unit, expected);
+    if (request.kind === 'observation')
+      return value.unit === unit && this.acceptsUnit(request, value, unit);
+    return (
+      this.acceptsUnit(request, value, unit) &&
+      (value.unit === null || this.acceptsUnit(request, value, value.unit))
+    );
   }
 
-  private static sameUnit(actual: string, expected: string): boolean {
-    if (actual === expected) return true;
-    const normalize = (unit: string) =>
-      Values.normalize(unit).replace(/s\b/g, '');
-    if (expected === 'Nombre') return normalize(actual) === 'artisan';
-    if (expected === 'Nombre de bornes') return normalize(actual) === 'borne';
-    // La casse est signifiante pour les symboles (MWh et mWh, par exemple).
-    return actual === expected;
+  private static acceptsUnit(
+    request: ElectrificationValueRequest,
+    value: InterpretedValue,
+    unit: string
+  ): boolean {
+    if (request.kind === 'observation')
+      return request.unit === null || unit === request.unit;
+    const target = request.targets.find(({ key }) => key === value.key);
+    return !!target && [target.unit, ...target.units].includes(unit);
   }
 
   private static numbers(text: string): string[] {

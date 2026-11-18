@@ -1,9 +1,7 @@
-import {
-  ElectrificationConfig,
-  ElectrificationEngagementCodeEnum,
-} from '@tet/domain/plans';
+import { ElectrificationConfig } from '@tet/domain/plans';
 import { ElectrificationDataIssue } from './publish-electrification-data.input';
 import { ElectrificationIssue } from '@tet/backend/plans/ai-plan-import/electrification/electrification-issue';
+import { ReadElectrificationV4Snapshot } from '../config/read-electrification-v4-snapshot';
 
 export const electrificationCatalogueErrors = {
   DUPLICATE_CATALOGUE_REFERENCE:
@@ -45,17 +43,13 @@ export class ElectrificationCatalogueRules {
 
   /** Les correspondances sont vérifiées lors de la résolution des références utilisées. */
   static isValid(config: ElectrificationConfig): boolean {
-    const expectedEngagements = Object.values(
-      ElectrificationEngagementCodeEnum
-    );
     return (
       config.sousAxes !== null &&
       config.fiches.actions !== null &&
       config.fiches.indicateurs !== null &&
-      config.engagements.length === expectedEngagements.length &&
-      expectedEngagements.every((code) =>
-        config.engagements.some((engagement) => engagement.code === code)
-      ) &&
+      (config.engagementsFormat === 2
+        ? config.engagements.length > 0
+        : ReadElectrificationV4Snapshot.isSupported(config)) &&
       this.validateStructure(config).length === 0 &&
       this.validateFiches(config).length === 0
     );
@@ -133,6 +127,47 @@ export class ElectrificationCatalogueRules {
       }
       if ((engagement.actionTitre !== null) === engagement.cibles.length > 0) {
         issues.push(this.issue('INVALID_ENGAGEMENT_MAPPING', location));
+      }
+      if (
+        catalogue.engagementsFormat === 2 &&
+        (!engagement.libelleSource ||
+          engagement.cibles.some(
+            (cible) =>
+              !cible.uniteImport ||
+              !cible.reglesImport ||
+              (cible.reglesImport.minimum !== null &&
+                cible.reglesImport.maximum !== null &&
+                cible.reglesImport.minimum > cible.reglesImport.maximum) ||
+              (cible.reglesImport.plafondCible !== null &&
+                (cible.reglesImport.plafondCible === cible.key ||
+                  !engagement.cibles.some(
+                    ({ key }) => key === cible.reglesImport?.plafondCible
+                  )))
+          ))
+      ) {
+        issues.push(this.issue('INVALID_ENGAGEMENT_MAPPING', location));
+      }
+      if (catalogue.engagementsFormat === 2) {
+        for (const cible of engagement.cibles) {
+          const seen = new Set([cible.key]);
+          let current = cible;
+          while (current.reglesImport?.plafondCible) {
+            const parent = engagement.cibles.find(
+              ({ key }) => key === current.reglesImport?.plafondCible
+            );
+            if (
+              !parent ||
+              seen.has(parent.key) ||
+              parent.uniteImport !== cible.uniteImport ||
+              parent.reglesImport?.annee !== cible.reglesImport?.annee
+            ) {
+              issues.push(this.issue('INVALID_ENGAGEMENT_MAPPING', location));
+              break;
+            }
+            seen.add(parent.key);
+            current = parent;
+          }
+        }
       }
       const cibleKeys = new Set<string>();
       const indicateurReferences = new Set<string>();

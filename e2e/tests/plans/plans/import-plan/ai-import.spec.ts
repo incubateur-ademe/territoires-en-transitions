@@ -106,12 +106,15 @@ test('recharge les capacités d’import après désactivation du mode super-adm
   const refreshedCapabilities = page.waitForResponse((response) =>
     response.url().includes('plans.aiImport.getAiImportCapabilities')
   );
-  await page
+  await page.getByTestId('close-plans.import-ia.modal').click();
+  await expect(page).toHaveURL(new RegExp(`/plans/imports$`));
+  const superAdminMode = page
     .getByRole('checkbox', { name: 'Mode super-admin' })
-    .first()
-    .click();
+    .first();
+  await superAdminMode.click();
+  await expect(superAdminMode).not.toBeChecked();
+  await page.getByTestId('plans.import-ia.nouveau-button').click();
   await refreshedCapabilities;
-
   await expect(page.getByTestId('ai-import.plan-type')).toBeVisible();
   await expect(
     page.getByText(/L'import IA n'est pas disponible/)
@@ -239,6 +242,12 @@ test('importe le DOCX avec le profil Électrification et conserve le rapport apr
   await expect(page).toHaveURL(new RegExp(`importJobId=${mock.status.jobId}`));
   await expect(page.getByTestId('plans.import-ia.suivi')).toBeVisible();
   await expect(page.getByTestId('plans.import-ia.ouvrir-plan')).toHaveCount(0);
+  await expect(page.getByTestId('plans.import-ia.modal')).toBeVisible();
+  await page.getByTestId('close-plans.import-ia.modal').click();
+  await expect(page).toHaveURL(new RegExp(`/plans/imports$`));
+  await page.goto(
+    `/collectivite/${collectivite.data.id}/plans/importer-ia?importJobId=${mock.status.jobId}`
+  );
   expect(mock.enqueueCalls).toBe(1);
   const form = mock.enqueuedForms[0];
   expect(form.get('profile')).toBe('annexe-3-electrification');
@@ -300,10 +309,11 @@ test('importe le DOCX avec le profil Électrification et conserve le rapport apr
     'Tableau B, ligne 2'
   );
   await expect(
-    page.getByTestId('plans.import-ia.rapport').getByText(
-      'Le catalogue ne fournit pas de lien pour cette aide.',
-      { exact: true }
-    )
+    page
+      .getByTestId('plans.import-ia.rapport')
+      .getByText('Le catalogue ne fournit pas de lien pour cette aide.', {
+        exact: true,
+      })
   ).toBeVisible();
   await expect(page.getByTestId('plans.import-ia.etapes')).toHaveCount(0);
   await expect(page.getByTestId('plans.import-ia.chargement')).toHaveCount(0);
@@ -442,7 +452,22 @@ test('réessaie depuis le détail avec les choix précédents et garde Nouvel im
           code: 'PENDING_ENGAGEMENT_INDICATEUR',
           message:
             'La correspondance de cet indicateur reste à valider par notre équipe.',
-          location: 'Engagement "Électrifier les transports" > Indicateur',
+          location:
+            'Engagement "Installer des bornes" > Nombre total de bornes publiques',
+        },
+        {
+          kind: 'configuration-error',
+          code: 'PENDING_ENGAGEMENT_INDICATEUR',
+          message:
+            'La correspondance de cet indicateur reste à valider par notre équipe.',
+          location:
+            'Engagement "Installer des bornes" > Nombre de bornes rapides',
+        },
+        {
+          kind: 'warning',
+          code: 'EMPTY_ENGAGEMENT_TARGET',
+          message:
+            "Aucune valeur chiffrée n'est renseignée pour cet engagement.",
         },
       ],
       qualitativeReview: null,
@@ -458,9 +483,22 @@ test('réessaie depuis le détail avec les choix précédents et garde Nouvel im
     page
       .getByTestId('plans.import-ia.rapport')
       .getByText('Erreur', { exact: true })
-  ).toBeVisible();
+  ).toHaveCount(2);
   await expect(
     page.getByText('Traitement interrompu pendant la reprise.')
+  ).toBeVisible();
+  const report = page.getByTestId('plans.import-ia.rapport');
+  await expect(report).toContainText('2 erreurs détectées pendant cet import.');
+  await expect(
+    report.getByText('Avertissement', { exact: true })
+  ).toBeVisible();
+  await expect(
+    report.getByText(
+      /^Contactez le support avec votre document et ce compte rendu/
+    )
+  ).toHaveCount(1);
+  await expect(
+    report.getByRole('link', { name: 'Contacter le support' })
   ).toBeVisible();
   await page.getByRole('button', { name: 'Réessayer', exact: true }).click();
   await expect(page.getByRole('textbox', { name: 'Nom du plan' })).toHaveValue(
@@ -878,7 +916,7 @@ test('reprend un job sans plan et attend done et un plan avant la redirection', 
   );
 });
 
-test('ouvre le plan associé depuis le détail d’un import en échec sur mobile', async ({
+test('masque le plan incomplet depuis le détail d’un import en échec sur mobile', async ({
   page,
   collectivites,
   plans,
@@ -902,21 +940,11 @@ test('ouvre le plan associé depuis le détail d’un import en échec sur mobil
   await page.goto(
     `/collectivite/${collectivite.data.id}/plans/imports?importJobId=${mock.status.jobId}`
   );
-  const openPlan = page.getByRole('link', { name: 'Ouvrir le plan' });
-  await expect(openPlan).toBeInViewport();
+  await expect(page.getByTestId('plans.import-ia.ouvrir-plan')).toHaveCount(0);
   await expect(
     page.getByRole('link', { name: 'Nouvel import' })
   ).toBeInViewport();
-  await expect(
-    page
-      .getByRole('region', { name: 'Détails de l’import' })
-      .getByRole('link', {
-        name: 'Ouvrir le plan',
-      })
-  ).toBeVisible();
   await expect(page.getByTestId('plans.import-ia.rapport')).toBeVisible();
-  await openPlan.click();
-  await expect(page).toHaveURL(new RegExp(`/plans/${planId}$`));
   expect(mock.enqueueCalls).toBe(0);
   expect(mock.resumeCalls).toBe(0);
 });
@@ -935,13 +963,15 @@ test('cache l’ouverture sans plan et affiche le motif dans le rapport', async 
     `/collectivite/${collectivite.data.id}/plans/imports?importJobId=${mock.status.jobId}`
   );
   await expect(page.getByText('Import terminé', { exact: true })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Ouvrir le plan' })).toHaveCount(
-    0
-  );
+  await expect(
+    page.getByRole('button', { name: 'Ouvrir le plan' })
+  ).toHaveCount(0);
   await expect(page.getByRole('link', { name: 'Ouvrir le plan' })).toHaveCount(
     0
   );
-  await expect(page.getByText('Aucun plan n’est associé à cet import.')).toBeVisible();
+  await expect(
+    page.getByText('Aucun plan n’est associé à cet import.')
+  ).toBeVisible();
   await expect(page.getByRole('link', { name: 'Nouvel import' })).toBeVisible();
   await page.goto(
     `/collectivite/${collectivite.data.id}/plans/importer-ia?importJobId=${mock.status.jobId}`

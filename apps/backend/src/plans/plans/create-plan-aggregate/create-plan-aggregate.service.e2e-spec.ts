@@ -1,3 +1,4 @@
+import { ElectrificationEngagementCodeEnum } from '@tet/backend/plans/plans/electrification/publish-electrification-data/electrification-data.test-fixture';
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { annexeTable } from '@tet/backend/collectivites/documents/models/annexe.table';
@@ -30,7 +31,6 @@ import { CollectiviteRole } from '@tet/domain/users';
 import { and, eq, inArray, or, sql } from 'drizzle-orm';
 import {
   ELECTRIFICATION_PLAN_TYPE_KEY,
-  ElectrificationEngagementCodeEnum,
   ElectrificationLaureatsConfig,
   FicheReferenceKindEnum,
   PlanReferenceProgrammeEnum,

@@ -1,9 +1,5 @@
 import { PublishedIndicateurReference } from '@tet/backend/indicateurs/indicateur/indicateur-reference-externe.repository';
-import {
-  ElectrificationConfig,
-  ElectrificationEngagementCodeEnum as EngagementCode,
-} from '@tet/domain/plans';
-import { electrificationDocumentTemplate } from '../../config/electrification-document-template.constants';
+import { ElectrificationConfig } from '@tet/domain/plans';
 import { ElectrificationGristData } from './electrification-grist.schema';
 
 /** Le Grist fournit les contenus ; les correspondances TeT restent explicites. */
@@ -109,6 +105,7 @@ export class ElectrificationGristAdapter {
     }
     return {
       source: sourceUrl,
+      engagementsFormat: 2,
       engagements: this.buildEngagements(source.Axes, engagementReferences),
       axes: source.Axes.map(({ fields }) => ({
         numero: fields.Numero,
@@ -142,40 +139,85 @@ export class ElectrificationGristAdapter {
     axes: ElectrificationGristData['Axes'],
     references: PublishedIndicateurReference[]
   ): ElectrificationConfig['engagements'] {
-    const knownCodes = new Set<string>(Object.values(EngagementCode));
-    const seenCodes = new Set<string>();
-    const targetCodes = new Set<string>();
     const byCode = new Map(
       references.map((reference) => [reference.codeExterne, reference])
     );
-    const { actionCodes, targetKeys } =
-      electrificationDocumentTemplate.engagements;
+    if (byCode.size !== references.length)
+      throw new Error('Référence dupliquée');
+    const seen = new Set<string>();
+    const usedReferences = new Set<string>();
+    const split = (value: string | null) => {
+      if (value === null) return [];
+      const parts = value.split('|').map((part) => part.trim());
+      if (parts.some((part) => !part) || new Set(parts).size !== parts.length)
+        throw new Error('Liste de métadonnées invalide');
+      return parts;
+    };
     const engagements = axes.flatMap(({ fields: axe }) =>
       axe.Code_signe.split('+').map((value) => {
         const code = value.trim();
-        if (!knownCodes.has(code) || seenCodes.has(code)) {
-          throw new Error('Code d’engagement inconnu ou dupliqué dans Grist');
+        const definition = byCode.get(code);
+        if (
+          !code ||
+          seen.has(code) ||
+          !definition?.libelleSource ||
+          !definition.typeImport ||
+          definition.identifiantReferentiel !== null
+        ) {
+          throw new Error(
+            "Définition d'engagement absente, invalide ou dupliquée"
+          );
         }
-        seenCodes.add(code);
-        const keys = actionCodes.some((actionCode) => actionCode === code)
-          ? []
-          : code === EngagementCode.BORNES_RECHARGE_PUBLIQUES
-          ? targetKeys.recharge
-          : targetKeys.single;
+        seen.add(code);
+        usedReferences.add(code);
+        const keys = split(definition.ciblesImport);
+        if (
+          (definition.typeImport === 'action') !== (keys.length === 0) ||
+          new Set(keys).size !== keys.length ||
+          keys.some((key) => key.includes('.'))
+        ) {
+          throw new Error("Cibles de l'engagement invalides");
+        }
         return {
           code,
+          libelleSource: definition.libelleSource,
           axeNumero: axe.Numero,
           actionTitre: keys.length ? null : this.getActionTitre(axe),
           cibles: keys.map((key) => {
             const externalCode = `${code}.${key}`;
-            targetCodes.add(externalCode);
             const reference = byCode.get(externalCode);
+            if (
+              !reference?.uniteImport ||
+              reference.anneeCible === null ||
+              reference.typeImport !== null ||
+              (reference.plafondCible !== null &&
+                (!keys.includes(reference.plafondCible) ||
+                  reference.plafondCible === key)) ||
+              (reference.valeurMin !== null &&
+                reference.valeurMax !== null &&
+                reference.valeurMin > reference.valeurMax)
+            ) {
+              throw new Error('Définition de cible absente ou invalide');
+            }
+            usedReferences.add(externalCode);
             return {
               key,
-              identifiantReferentiel: reference?.identifiantReferentiel ?? null,
-              unite: reference?.unite ?? null,
-              periodicite: reference?.periodicite ?? null,
-              validation: reference?.identifiantReferentiel
+              ...(reference.libelleSource
+                ? { libelleSource: reference.libelleSource }
+                : {}),
+              uniteImport: reference.uniteImport,
+              reglesImport: {
+                annee: reference.anneeCible,
+                minimum: reference.valeurMin,
+                maximum: reference.valeurMax,
+                plafondCible: reference.plafondCible,
+                libelles: split(reference.libellesCible),
+                unites: split(reference.unitesAcceptees),
+              },
+              identifiantReferentiel: reference.identifiantReferentiel,
+              unite: reference.unite,
+              periodicite: reference.periodicite,
+              validation: reference.identifiantReferentiel
                 ? ('validated' as const)
                 : ('pending' as const),
             };
@@ -183,11 +225,8 @@ export class ElectrificationGristAdapter {
         };
       })
     );
-    if (
-      seenCodes.size !== knownCodes.size ||
-      references.some(({ codeExterne }) => !targetCodes.has(codeExterne))
-    ) {
-      throw new Error('Engagement manquant ou référence de cible inconnue');
+    if (!engagements.length || usedReferences.size !== references.length) {
+      throw new Error("Référence d'engagement sans correspondance dans Grist");
     }
     return engagements.sort((a, b) => a.code.localeCompare(b.code));
   }

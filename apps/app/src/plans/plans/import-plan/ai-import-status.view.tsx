@@ -16,6 +16,7 @@ import { toImportStageViews } from './ai-import-stages.model';
 import type { AiImportOrigine } from './data/use-enqueue-ai-import';
 import { toImportStepViews } from './ai-import-steps.model';
 import { importIssueHintLabels, importIssueLabels } from './ai-import.labels';
+import { SupportChatLink } from './support-chat.link';
 import {
   isInaccessibleAiImportError,
   type useGetAiImportStatus,
@@ -88,6 +89,11 @@ export const AiImportStatusView = ({
 
   const failed = status.status === 'failed';
   const done = status.status === 'done';
+  const errorCount = status.report.issues.filter((issue) =>
+    ['document-error', 'configuration-error', 'processing-error'].includes(
+      issue.kind
+    )
+  ).length;
   const isErrorInReport = status.report.issues.some(
     (issue) =>
       issue.message === status.error &&
@@ -100,7 +106,9 @@ export const AiImportStatusView = ({
       <section data-test="plans.import-ia.suivi">
         {renderStagesProgress(
           <AiImportStagesList
-            stages={toImportStageViews(status.stepStates)}
+            stages={toImportStageViews(status.stepStates, {
+              jobStatus: status.status,
+            })}
             withSecteurs={status.withSecteurs}
           />
         )}
@@ -155,6 +163,11 @@ export const AiImportStatusView = ({
           data-test="plans.import-ia.rapport"
         >
           <h3 className="mb-0 text-lg">{appLabels.importPlanIaRapport}</h3>
+          {errorCount > 0 && (
+            <p className="mb-0">
+              {appLabels.importPlanIaErreursDetectees({ count: errorCount })}
+            </p>
+          )}
           {status.report.issues.map((issue, index) => (
             <Alert
               key={`${issue.code}:${index}`}
@@ -172,13 +185,26 @@ export const AiImportStatusView = ({
                     <p className="mb-1 font-bold">{issue.location}</p>
                   )}
                   <p className="mb-0">{issue.message}</p>
-                  {importIssueHintLabels[issue.kind] && (
-                    <p className="mt-2 mb-0">{importIssueHintLabels[issue.kind]}</p>
-                  )}
                 </div>
               }
             />
           ))}
+          {[...new Set(status.report.issues.map((issue) => issue.kind))].map(
+            (kind) =>
+              importIssueHintLabels[kind] ? (
+                <p key={kind} className="mb-0">
+                  {importIssueHintLabels[kind]}
+                </p>
+              ) : null
+          )}
+          {status.report.issues.some(
+            ({ kind }) =>
+              kind === 'configuration-error' || kind === 'processing-error'
+          ) && (
+            <SupportChatLink>
+              {appLabels.importPlanIaContacterSupport}
+            </SupportChatLink>
+          )}
           {status.report.qualitativeReview ? (
             <p className="mb-0 whitespace-pre-wrap">
               {status.report.qualitativeReview}
@@ -192,11 +218,7 @@ export const AiImportStatusView = ({
             </p>
           )}
         </div>
-      ) : (
-        <p className="mb-0 text-sm text-grey-7">
-          {appLabels.importPlanIaSuiviRetrouvable}
-        </p>
-      )}
+      ) : null}
     </section>
   );
 };
