@@ -22,6 +22,7 @@ import { FilterField, toCategorieOption } from '../../preselection.filters';
 import { Preselection } from '../../use-preselection';
 import { ActionDeReferencePreselectionCard } from './action-de-reference-preselection.card';
 import { keepCategories } from './keep-categories';
+import { toDisplayedCategories } from './to-displayed-categories';
 
 type LevierActionsDeReferenceListProps = {
   actionsRef?: RefCallback<HTMLDivElement>;
@@ -34,6 +35,10 @@ type ActionCardsProps = {
   actions: readonly ActionDeReference[];
   preselection: Preselection;
   actionsRef?: RefCallback<HTMLDivElement>;
+};
+
+type GroupedActionsProps = ActionCardsProps & {
+  filteredCategories: readonly CategorieAction[];
 };
 
 type CategorieGroupProps = ActionCardsProps & {
@@ -99,9 +104,10 @@ const FoundActionsCount = ({ count }: { count: number }): JSX.Element => (
 
 const GroupedActions = ({
   actions,
+  filteredCategories,
   preselection,
   actionsRef,
-}: ActionCardsProps): JSX.Element => {
+}: GroupedActionsProps): JSX.Element => {
   const [ignored, visible] = partition(
     actions,
     (action) => preselection.statusOf(action.id) === 'ignoree'
@@ -109,7 +115,9 @@ const GroupedActions = ({
   const actionsOfCategorie = (
     categorie: CategorieAction
   ): ActionDeReference[] =>
-    visible.filter((action) => action.categories.includes(categorie));
+    visible.filter((action) =>
+      toDisplayedCategories({ action, filteredCategories }).includes(categorie)
+    );
   const categoriesWithActions = categorieActionEnumValues.filter(
     (categorie) => actionsOfCategorie(categorie).length > 0
   );
@@ -199,6 +207,7 @@ export const LevierActionsDeReferenceList = ({
             </VisibleWhen>
             <GroupedActions
               actions={actions}
+              filteredCategories={categories}
               preselection={preselection}
               actionsRef={actionsRef}
             />
