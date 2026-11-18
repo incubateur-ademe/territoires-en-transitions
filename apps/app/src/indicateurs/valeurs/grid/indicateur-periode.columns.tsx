@@ -2,11 +2,11 @@ import {
   IndicateurPeriodiciteEnum,
   IndicateurPeriodes,
 } from '@tet/domain/indicateurs';
-import { valueFieldsForPeriode } from '../../../../indicateurs/valeurs/grid/cell-editability';
-import type { IndicateurPeriodeColumn } from '../../../../indicateurs/valeurs/grid/types';
-import { DiagnosticIndicateurYearHeaderCell } from './diagnostic-indicateur-year.header-cell';
+import { valueFieldsForPeriode } from './cell-editability';
+import { IndicateurYearHeaderCell } from './indicateur-year.header-cell';
+import type { IndicateurPeriodeColumn } from './types';
 
-export const buildDiagnosticIndicateurPeriodeColumns = ({
+export const buildIndicateurPeriodeColumns = ({
   years,
   referenceYear,
   currentYear,
@@ -43,7 +43,7 @@ export const buildDiagnosticIndicateurPeriodeColumns = ({
           ? ['resultat']
           : valueFieldsForPeriode(periode, currentPeriode),
       renderHeader: (colSpan) => (
-        <DiagnosticIndicateurYearHeaderCell
+        <IndicateurYearHeaderCell
           year={year}
           colSpan={colSpan}
           isReference={isReference}

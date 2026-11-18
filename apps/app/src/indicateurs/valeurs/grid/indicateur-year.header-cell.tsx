@@ -1,10 +1,10 @@
 import { appLabels } from '@/app/labels/catalog';
 import { Badge, cn, Tooltip } from '@tet/ui';
 import { JSX, memo } from 'react';
-import { IndicateurValeurPeriodeHeaderCell } from '../../../../indicateurs/valeurs/grid/indicateur-valeur-periode.header-cell';
-import { ReferenceYearField } from '../../../../indicateurs/valeurs/grid/reference-year/reference-year-field';
+import { IndicateurValeurPeriodeHeaderCell } from './indicateur-valeur-periode.header-cell';
+import { ReferenceYearField } from './reference-year/reference-year-field';
 
-type YearColumnHeaderProps = {
+type IndicateurYearHeaderCellProps = {
   year: number | null;
   colSpan?: number;
   isReference?: boolean;
@@ -13,7 +13,7 @@ type YearColumnHeaderProps = {
 };
 
 type YearHeaderLabelProps = Pick<
-  YearColumnHeaderProps,
+  IndicateurYearHeaderCellProps,
   'year' | 'isReference' | 'displayedYears' | 'onReferenceYearChange'
 >;
 
@@ -57,14 +57,14 @@ const YearHeaderLabel = ({
   return <span>{year}</span>;
 };
 
-export const DiagnosticIndicateurYearHeaderCell = memo(
+export const IndicateurYearHeaderCell = memo(
   ({
     year,
     colSpan = 1,
     isReference = false,
     displayedYears,
     onReferenceYearChange,
-  }: YearColumnHeaderProps): JSX.Element => {
+  }: IndicateurYearHeaderCellProps): JSX.Element => {
     return (
       <IndicateurValeurPeriodeHeaderCell
         colSpan={colSpan}
@@ -82,4 +82,4 @@ export const DiagnosticIndicateurYearHeaderCell = memo(
   }
 );
 
-DiagnosticIndicateurYearHeaderCell.displayName = 'YearColumnHeader';
+IndicateurYearHeaderCell.displayName = 'IndicateurYearHeaderCell';
