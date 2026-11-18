@@ -6,7 +6,11 @@ import {
   CommonError,
   commonErrors,
 } from './common-errors';
-import { ErrorConfig, ErrorConfigMap } from './trpc-error-config';
+import {
+  ErrorConfig,
+  ErrorConfigMap,
+  getConfiguredErrorMessage,
+} from './trpc-error-config';
 
 /**
  * Configuration pour créer un handler d'erreurs TRPC
@@ -89,7 +93,8 @@ export function createTrpcErrorHandler<SpecificError extends string>(
       code: errorConfig.code,
       // Sans message configuré, le code interne fait office : le client le
       // retrouve dans `data.errorKey` et le traduit.
-      message: errorConfig.message ?? result.error,
+      message:
+        getConfiguredErrorMessage(errorConfig, result.cause) ?? result.error,
       cause: result.cause ?? new Error(result.error),
     });
   };

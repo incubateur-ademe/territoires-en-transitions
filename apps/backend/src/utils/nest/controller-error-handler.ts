@@ -17,7 +17,10 @@ import {
 import { TRPCError } from '@trpc/server';
 import { Result } from '../result.type';
 import { COMMON_ERROR_CONFIG, CommonError } from '../trpc/common-errors';
-import { ErrorConfigMap } from '../trpc/trpc-error-config';
+import {
+  ErrorConfigMap,
+  getConfiguredErrorMessage,
+} from '../trpc/trpc-error-config';
 import { TrpcErrorHandlerConfig } from '../trpc/trpc-error-handler';
 
 function getHttpErrorFromTrpcErrorCode(
@@ -138,6 +141,9 @@ export function createControllerErrorHandler<SpecificError extends string>(
       throw new InternalServerErrorException(result.error);
     }
 
-    throw getHttpErrorFromTrpcErrorCode(errorConfig.code, errorConfig.message);
+    throw getHttpErrorFromTrpcErrorCode(
+      errorConfig.code,
+      getConfiguredErrorMessage(errorConfig, result.cause)
+    );
   };
 }
