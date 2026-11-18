@@ -300,9 +300,10 @@ test('importe le DOCX avec le profil Électrification et conserve le rapport apr
     'Tableau B, ligne 2'
   );
   await expect(
-    page
-      .getByTestId('plans.import-ia.rapport')
-      .getByText('Avertissement', { exact: true })
+    page.getByTestId('plans.import-ia.rapport').getByText(
+      'Le catalogue ne fournit pas de lien pour cette aide.',
+      { exact: true }
+    )
   ).toBeVisible();
   await expect(page.getByTestId('plans.import-ia.etapes')).toHaveCount(0);
   await expect(page.getByTestId('plans.import-ia.chargement')).toHaveCount(0);
@@ -920,7 +921,7 @@ test('ouvre le plan associé depuis le détail d’un import en échec sur mobil
   expect(mock.resumeCalls).toBe(0);
 });
 
-test('désactive l’ouverture sans plan et explique pourquoi dans l’infobulle', async ({
+test('cache l’ouverture sans plan et affiche le motif dans le rapport', async ({
   page,
   collectivites,
 }) => {
@@ -934,31 +935,14 @@ test('désactive l’ouverture sans plan et explique pourquoi dans l’infobulle
     `/collectivite/${collectivite.data.id}/plans/imports?importJobId=${mock.status.jobId}`
   );
   await expect(page.getByText('Import terminé', { exact: true })).toBeVisible();
-  const openPlan = page.getByRole('button', { name: 'Ouvrir le plan' });
-  await expect(openPlan).toBeDisabled();
-  await expect(openPlan).not.toHaveAttribute('href');
-  // La bannière de connexion peut déplacer l'en-tête après le chargement.
-  await expect(async () => {
-    await openPlan.locator('..').hover();
-    await expect(page.getByRole('tooltip')).toHaveText(
-      'Aucun plan n’est associé à cet import.',
-      { timeout: 1000 }
-    );
-  }).toPass({ timeout: 5000 });
-  await page.mouse.move(0, 0);
-  await expect(page.getByRole('tooltip')).toHaveCount(0);
-  await page.getByRole('link', { name: 'Nouvel import' }).focus();
-  await page.keyboard.press('Shift+Tab');
-  await expect(page.getByRole('tooltip')).toHaveText(
-    'Aucun plan n’est associé à cet import.'
+  await expect(page.getByRole('button', { name: 'Ouvrir le plan' })).toHaveCount(
+    0
   );
-  const openPlanBox = await openPlan.boundingBox();
-  const newImportBox = await page
-    .getByRole('link', { name: 'Nouvel import' })
-    .boundingBox();
-  assert(openPlanBox && newImportBox);
-  expect(openPlanBox.x + openPlanBox.width).toBeLessThan(newImportBox.x);
-  expect(openPlanBox.y).toBe(newImportBox.y);
+  await expect(page.getByRole('link', { name: 'Ouvrir le plan' })).toHaveCount(
+    0
+  );
+  await expect(page.getByText('Aucun plan n’est associé à cet import.')).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Nouvel import' })).toBeVisible();
   await page.goto(
     `/collectivite/${collectivite.data.id}/plans/importer-ia?importJobId=${mock.status.jobId}`
   );
