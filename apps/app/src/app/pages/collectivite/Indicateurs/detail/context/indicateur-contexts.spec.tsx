@@ -4,6 +4,7 @@ import { useIndicateurChart } from './indicateur-chart.context';
 import { useIndicateurData } from './indicateur-data.context';
 import { useIndicateurActions } from './indicateur-actions.context';
 import { useIndicateurFichesLiees } from './indicateur-fiches-liees.context';
+import { useIndicateurMesuresLiees } from './indicateur-mesures-liees.context';
 import { useIndicateurPersonnalisation } from './indicateur-personnalisation.context';
 
 afterEach(() => vi.restoreAllMocks());
@@ -13,6 +14,7 @@ describe.each([
   ['useIndicateurChart', useIndicateurChart],
   ['useIndicateurActions', useIndicateurActions],
   ['useIndicateurFichesLiees', useIndicateurFichesLiees],
+  ['useIndicateurMesuresLiees', useIndicateurMesuresLiees],
   ['useIndicateurPersonnalisation', useIndicateurPersonnalisation],
 ])('%s', (name, useContextValue) => {
   it('échoue hors de son provider', () => {
