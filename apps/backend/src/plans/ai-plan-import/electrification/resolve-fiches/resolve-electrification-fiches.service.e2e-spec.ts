@@ -1369,7 +1369,7 @@ describe('Résolution des fiches actions Électrification', () => {
       expect(result.prepared.cibles).toEqual([]);
       expect(result.checkpoint).toMatchObject({
         profile: 'annexe-3-electrification',
-        schemaVersion: 1,
+        schemaVersion: 2,
         catalogueVersion: config.version,
         documentKind: 'docx',
         templateVersion: 'electrification-v4',
@@ -1829,6 +1829,21 @@ describe('Résolution des fiches actions Électrification', () => {
         { user: context.user }
       );
       expect(resumed).toEqual(success(result));
+      const { engagementInterpretations: _matches, ...saved } =
+        result.checkpoint;
+      const checkpointV1 = { ...saved, schemaVersion: 1 as const };
+      const resumedV1 = await prepareService.prepare(
+        {
+          catalogueVersion: config.version,
+          collectiviteId: context.collectiviteId,
+          schemaVersion: 1,
+          resumeFrom: checkpointV1,
+        },
+        { user: context.user }
+      );
+      expect(resumedV1).toEqual(
+        success({ ...result, checkpoint: checkpointV1 })
+      );
       action().validation = 'pending';
       const changed = await prepareService.prepare(
         {
@@ -2560,22 +2575,21 @@ describe('Résolution des fiches actions Électrification', () => {
     });
 
     test.each([
-      'Axe 4. Titre métier renommé',
-      'Axe 7. Recharge des poids lourds',
-    ])(
-      'refuse un titre d’axe étranger à la ligne du canevas : %s',
-      async (label) => {
-        const axe = config.axes.find(({ numero }) => numero === 4);
-        assert(axe);
-        axe.titre = 'Titre métier renommé';
-        const engagements = structuredClone(template.sections[0].rows);
-        engagements[5][0].text = label;
-        engagements[5][2].text = 'Oui';
-        await useForm({ engagements, fiches: [] });
+      { label: 'Axe 4. Titre métier renommé', valid: true },
+      { label: 'Axe 7. Recharge des poids lourds', valid: false },
+    ])("identifie l'axe par son numéro : $label", async ({ label, valid }) => {
+      const axe = config.axes.find(({ numero }) => numero === 4);
+      assert(axe);
+      axe.titre = 'Titre métier renommé';
+      const engagements = structuredClone(template.sections[0].rows);
+      engagements[5][0].text = label;
+      engagements[5][2].text = 'Oui';
+      await useForm({ engagements, fiches: [] });
 
-        await expectExtractionIssue('INVALID_ELECTRIFICATION_ENGAGEMENT');
-      }
-    );
+      if (valid)
+        expect((await prepared()).prepared.engagements[0].code).toBe('E03');
+      else await expectExtractionIssue('INVALID_ELECTRIFICATION_ENGAGEMENT');
+    });
 
     test('refuse un axe officiel absent du catalogue métier', async () => {
       config.axes = config.axes.filter(({ numero }) => numero !== 4);
@@ -2586,11 +2600,18 @@ describe('Résolution des fiches actions Électrification', () => {
       await expectExtractionIssue('INVALID_ELECTRIFICATION_ENGAGEMENT');
     });
 
-    test('refuse un engagement sélectionné dont le libellé fixe a été modifié', async () => {
+    test('refuse un libellé inconnu sans correspondance proposée par le modèle', async () => {
       const engagements = structuredClone(template.sections[0].rows);
       engagements[5][1].text = 'Un nouvel engagement inconnu';
       engagements[5][2].text = 'Oui';
       await useForm({ engagements, fiches: [] });
+      expectedInterpretationCalls = 1;
+      generate.mockResolvedValueOnce(
+        success({
+          data: { code: null, quote: 'Un nouvel engagement inconnu' },
+          tokens: emptyTokenUsage(),
+        })
+      );
       await expectExtractionIssue('INVALID_ELECTRIFICATION_ENGAGEMENT');
     });
 

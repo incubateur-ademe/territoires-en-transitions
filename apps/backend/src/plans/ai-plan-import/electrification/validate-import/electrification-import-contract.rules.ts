@@ -4,14 +4,14 @@ import { AiPlanImportError } from '../../ai-plan-import.errors';
 import { AiPlanImportProfileEnum } from '../../models/import-profile';
 import { electrificationDocumentTemplate } from '@tet/backend/plans/plans/electrification/config/electrification-document-template.constants';
 import {
-  ELECTRIFICATION_CHECKPOINT_VERSION,
+  electrificationCheckpointVersionSchema,
   ElectrificationExtractionCheckpoint,
   electrificationExtractionCheckpointSchema,
 } from '../extract-plan/electrification-extraction-checkpoint.schema';
 
 const electrificationImportContractSchema = z.object({
   profile: z.literal(AiPlanImportProfileEnum.ELECTRIFICATION),
-  schemaVersion: z.literal(ELECTRIFICATION_CHECKPOINT_VERSION),
+  schemaVersion: electrificationCheckpointVersionSchema,
   catalogueVersion: z.string().min(1),
   templateVersion: z.literal(electrificationDocumentTemplate.version),
   contractVersion: z.never().optional(),

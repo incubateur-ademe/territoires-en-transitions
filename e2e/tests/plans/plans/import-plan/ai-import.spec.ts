@@ -79,6 +79,42 @@ test('réserve les nouveaux imports aux types PCAET et Électrification, même e
   expect(mock.enqueueCalls).toBe(1);
 });
 
+test("conserve l'historique si la modale est fermée avant la réponse de l'envoi", async ({
+  page,
+  collectivites,
+}) => {
+  const mock = new AiImportFixture();
+  let release!: () => void;
+  mock.enqueueResponse = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  await mock.install(page);
+  const { collectivite } = await collectivites.addCollectiviteAndUser({
+    userArgs: supportUser,
+  });
+  const historyUrl = `/collectivite/${collectivite.data.id}/plans/imports`;
+  try {
+    await page.goto(`/collectivite/${collectivite.data.id}/plans/importer-ia`);
+    await submitImport(page);
+    await expect.poll(() => mock.enqueuedForms.length).toBe(1);
+    await page.getByTestId('close-plans.import-ia.modal').click();
+    await expect(page).toHaveURL(new RegExp(`${historyUrl}$`));
+    const response = page.waitForResponse((response) =>
+      response.url().endsWith('/plans/import-ia')
+    );
+    mock.recent = [mock.status];
+    release();
+    await response;
+    await expect(
+      page.getByTestId('plans.import-ia.historique').getByText('Plan de test')
+    ).toBeVisible();
+    await expect(page).toHaveURL(new RegExp(`${historyUrl}$`));
+    await expect(page.getByTestId('plans.import-ia.modal')).toHaveCount(0);
+  } finally {
+    release();
+  }
+});
+
 test('recharge les capacités d’import après désactivation du mode super-admin', async ({
   page,
   collectivites,

@@ -793,7 +793,8 @@ describe(
         catalogue.axes.push({ ...catalogue.axes[0] });
       if (reason === 'rattachement invalide')
         catalogue.engagements[0].axeNumero = 999;
-      if (reason === 'engagements incomplets') catalogue.engagements.pop();
+      if (reason === 'engagements incomplets')
+        delete catalogue.engagements[0].cibles[0].reglesImport;
       if (reason === 'catalogue vide') {
         catalogue.axes = [];
         catalogue.engagements = [];

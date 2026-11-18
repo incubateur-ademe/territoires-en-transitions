@@ -9,6 +9,7 @@ import { ElectrificationDocumentRules } from './electrification-document.rules';
 import { ElectrificationEngagementsDocumentRules } from './electrification-engagements-document.rules';
 import {
   ELECTRIFICATION_CHECKPOINT_VERSION,
+  ElectrificationCheckpointVersion,
   ElectrificationExtractionCheckpoint,
 } from './electrification-extraction-checkpoint.schema';
 import { ElectrificationExtractionRules } from './electrification-extraction.rules';
@@ -23,11 +24,13 @@ export class ExtractElectrificationPlan {
     catalogue,
     signal,
     valueContext,
+    schemaVersion = ELECTRIFICATION_CHECKPOINT_VERSION,
   }: {
     document: ReadDocument;
     catalogue: ElectrificationConfig;
     signal?: AbortSignal;
     valueContext?: ElectrificationValueContext;
+    schemaVersion?: ElectrificationCheckpointVersion;
   }): Result<ElectrificationExtractionCheckpoint, ElectrificationIssue[]> {
     signal?.throwIfAborted();
     const selected = ElectrificationDocumentRules.read(document);
@@ -68,14 +71,19 @@ export class ExtractElectrificationPlan {
     if (!draft.success) return draft;
     return success({
       profile: AiPlanImportProfileEnum.ELECTRIFICATION,
-      schemaVersion: ELECTRIFICATION_CHECKPOINT_VERSION,
+      ...(schemaVersion === 1
+        ? { schemaVersion: 1 as const }
+        : {
+            schemaVersion,
+            engagementInterpretations:
+              valueContext?.engagementInterpretations ?? [],
+          }),
       templateVersion: electrificationDocumentTemplate.version,
       catalogueVersion: catalogue.version,
       documentKind: 'docx',
       response,
       sources: selected.data.sources,
       interpretations: valueContext?.interpretations ?? [],
-      engagementInterpretations: valueContext?.engagementInterpretations ?? [],
       tokens: emptyTokenUsage(),
     });
   }

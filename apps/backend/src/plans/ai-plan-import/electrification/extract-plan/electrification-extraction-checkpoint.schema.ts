@@ -11,24 +11,43 @@ import { ElectrificationValueInterpretationRules } from './electrification-value
 import { electrificationEngagementInterpretationSchema } from './electrification-engagement-interpretation.schema';
 
 /** À incrémenter si le format ou son interprétation rend une reprise incompatible. */
-export const ELECTRIFICATION_CHECKPOINT_VERSION = 1;
+export const ELECTRIFICATION_CHECKPOINT_VERSION = 2;
+
+export const electrificationCheckpointVersionSchema = z.union([
+  z.literal(1),
+  z.literal(ELECTRIFICATION_CHECKPOINT_VERSION),
+]);
+export type ElectrificationCheckpointVersion = z.infer<
+  typeof electrificationCheckpointVersionSchema
+>;
+
+const checkpointFields = {
+  profile: z.literal(AiPlanImportProfileEnum.ELECTRIFICATION),
+  catalogueVersion: z.string().min(1),
+  documentKind: z.literal('docx'),
+  templateVersion: z.literal(electrificationDocumentTemplate.version),
+  response: electrificationExtractionResponseSchema,
+  sources: z.array(electrificationDocumentSourceSchema).min(1),
+  interpretations: z.array(electrificationValueInterpretationSchema),
+  tokens: tokenUsageSchema,
+};
 
 /** Brouillon documentaire seulement. La reprise résout à nouveau les objets TeT. */
 export const electrificationExtractionCheckpointSchema = z
-  .strictObject({
-    profile: z.literal(AiPlanImportProfileEnum.ELECTRIFICATION),
-    schemaVersion: z.literal(ELECTRIFICATION_CHECKPOINT_VERSION),
-    catalogueVersion: z.string().min(1),
-    documentKind: z.literal('docx'),
-    templateVersion: z.literal(electrificationDocumentTemplate.version),
-    response: electrificationExtractionResponseSchema,
-    sources: z.array(electrificationDocumentSourceSchema).min(1),
-    interpretations: z.array(electrificationValueInterpretationSchema),
-    engagementInterpretations: z
-      .array(electrificationEngagementInterpretationSchema)
-      .optional(),
-    tokens: tokenUsageSchema,
-  })
+  .discriminatedUnion('schemaVersion', [
+    z.strictObject({
+      ...checkpointFields,
+      schemaVersion: z.literal(1),
+      engagementInterpretations: z.never().optional(),
+    }),
+    z.strictObject({
+      ...checkpointFields,
+      schemaVersion: z.literal(ELECTRIFICATION_CHECKPOINT_VERSION),
+      engagementInterpretations: z.array(
+        electrificationEngagementInterpretationSchema
+      ),
+    }),
+  ])
   .refine(
     ({
       sources,

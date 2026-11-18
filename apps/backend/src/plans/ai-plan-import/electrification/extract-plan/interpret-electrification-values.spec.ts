@@ -147,6 +147,12 @@ describe('Extraction fondée sur les définitions publiées', () => {
       })
     ).toEqual(success(checkpoint));
     expect(
+      electrificationExtractionCheckpointSchema.safeParse({
+        ...checkpoint,
+        engagementInterpretations: [],
+      }).success
+    ).toBe(false);
+    expect(
       ElectrificationExtractionRules.adapt(
         checkpoint.response,
         checkpoint.sources
@@ -207,6 +213,7 @@ describe('Extraction fondée sur les définitions publiées', () => {
     expect(result).toMatchObject({
       success: true,
       data: {
+        schemaVersion: 2,
         response: {
           engagements: [
             {
@@ -220,6 +227,56 @@ describe('Extraction fondée sur les définitions publiées', () => {
         },
       },
     });
+    expect(calls).not.toHaveBeenCalled();
+  });
+
+  it('garde le format V1 pour un job admis avant le déploiement, sans nouveau rapprochement IA', async () => {
+    const { llm, calls } = model();
+    const result = await InterpretElectrificationValues.run({
+      catalogue,
+      llm,
+      schemaVersion: 1,
+      document: document(engagementLabel, '8 bâtiments dont 2 écoles'),
+    });
+    assert(result.success);
+    expect(result.data.schemaVersion).toBe(1);
+    expect(result.data).not.toHaveProperty('engagementInterpretations');
+    expect(
+      ElectrificationImportContractRules.parseCheckpoint(result.data, {
+        profile: result.data.profile,
+        schemaVersion: 1,
+        catalogueVersion: result.data.catalogueVersion,
+        templateVersion: result.data.templateVersion,
+      })
+    ).toEqual(success(result.data));
+    const unmatched = await InterpretElectrificationValues.run({
+      catalogue,
+      llm,
+      schemaVersion: 1,
+      document: document('Une formulation inconnue', ''),
+    });
+    expect(unmatched.success).toBe(false);
+    expect(calls).not.toHaveBeenCalled();
+  });
+
+  it('distingue les mêmes libellés dans deux axes sans appeler le modèle', async () => {
+    const definitions = structuredClone(catalogue);
+    definitions.axes.push({ numero: 14, titre: 'Autre axe' });
+    definitions.engagements.push({
+      ...definitions.engagements[0],
+      code: 'AUTRE',
+      axeNumero: 14,
+    });
+    const { llm, calls } = model();
+    const result = await InterpretElectrificationValues.run({
+      catalogue: definitions,
+      llm,
+      document: document(engagementLabel, '8 bâtiments dont 2 écoles'),
+    });
+    assert(result.success);
+    expect(result.data.response.engagements.map(({ code }) => code)).toEqual([
+      'RENOVATION',
+    ]);
     expect(calls).not.toHaveBeenCalled();
   });
 
@@ -256,6 +313,27 @@ describe('Extraction fondée sur les définitions publiées', () => {
     const checkpoint = electrificationExtractionCheckpointSchema.parse(
       JSON.parse(JSON.stringify(result.data))
     );
+    const contract = {
+      profile: checkpoint.profile,
+      schemaVersion: 2,
+      catalogueVersion: checkpoint.catalogueVersion,
+      templateVersion: checkpoint.templateVersion,
+    };
+    expect(
+      ElectrificationImportContractRules.parseCheckpoint(checkpoint, contract)
+    ).toEqual(success(checkpoint));
+    expect(
+      ElectrificationImportContractRules.parseCheckpoint(checkpoint, {
+        ...contract,
+        schemaVersion: 1,
+      }).success
+    ).toBe(false);
+    expect(
+      electrificationExtractionCheckpointSchema.safeParse({
+        ...checkpoint,
+        engagementInterpretations: undefined,
+      }).success
+    ).toBe(false);
     expect(checkpoint.engagementInterpretations).toEqual([
       { sourceId: 't0:r2:c2', code: 'RENOVATION', quote: label },
     ]);

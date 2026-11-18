@@ -51,6 +51,7 @@ export class AiImportFixture {
   enqueuedForms: FormData[] = [];
   statusCalls = 0;
   statusNotFound = false;
+  enqueueResponse?: Promise<void>;
 
   async install(page: Page) {
     // Les capacités serveur incluent déjà les flags et les droits.
@@ -61,6 +62,7 @@ export class AiImportFixture {
         headers: { 'content-type': request.headers()['content-type'] },
       });
       this.enqueuedForms.push(await multipartBody.formData());
+      await this.enqueueResponse;
       this.current = this.status;
       await route.fulfill({
         status: 201,

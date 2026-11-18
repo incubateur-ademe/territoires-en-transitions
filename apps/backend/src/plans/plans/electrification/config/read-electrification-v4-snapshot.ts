@@ -55,7 +55,17 @@ export class ReadElectrificationV4Snapshot {
               engagement.code === 'E07'
                 ? ['borne', 'bornes']
                 : engagement.code === 'E09'
-                ? ['artisan', 'artisans', 'nb']
+                ? [
+                    'artisan',
+                    'artisans',
+                    'Artisan',
+                    'Artisans',
+                    'ARTISAN',
+                    'ARTISANS',
+                    'nb',
+                    'Nb',
+                    'NB',
+                  ]
                 : [],
           },
         })),

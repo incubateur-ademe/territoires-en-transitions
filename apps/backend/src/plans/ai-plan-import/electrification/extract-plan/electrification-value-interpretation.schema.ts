@@ -47,7 +47,7 @@ export type ElectrificationValueRequest = {
   | { kind: 'observation'; keys: ['valeur'] }
 );
 
-/** Contexte interne : seuls les lecteurs de cellules numériques y accèdent. */
+/** Contexte interne de lecture des cellules numériques et de rapprochement des engagements. */
 export type ElectrificationValueContext = {
   engagementInterpretations?: ElectrificationEngagementInterpretation[];
   onUnmatchedEngagement?: (

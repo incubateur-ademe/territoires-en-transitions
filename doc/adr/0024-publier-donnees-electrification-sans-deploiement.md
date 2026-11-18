@@ -709,8 +709,11 @@ nouvelle publication. Une suppression de mapping laisse la définition en place.
 L'IA peut rapprocher une formulation des engagements publiés du même axe et
 extraire des valeurs complexes. Les codes, clés, citations, nombres, unités
 et années sont vérifiés ensuite. Les réponses et citations sont conservées
-dans le checkpoint pour ne pas refaire ces appels à la reprise. Ce champ
-facultatif conserve le contrat des jobs et checkpoints déjà admis. Une citation
+dans le checkpoint V2 pour ne pas refaire ces appels à la reprise. Le worker
+relit les checkpoints V1 sans ce champ et garde le format V1 pour les jobs
+déjà admis, sans nouveau rapprochement IA. L'ajout du champ n'est pas compatible
+avec le schéma strict des anciens workers ; une reprise V2 nécessite un worker
+mis à jour. Une citation
 prouve la provenance, pas la justesse sémantique ; cette limite impose une
 validation humaine du comportement sur les documents représentatifs.
 

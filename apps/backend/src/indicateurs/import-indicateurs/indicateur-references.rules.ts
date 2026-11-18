@@ -18,11 +18,16 @@ export class IndicateurReferencesRules {
     );
     const seen = new Set<string>();
     for (const reference of references) {
-      if (!z.safeParse(importIndicateurReferenceSchema, reference).success) {
+      const parsed = z.safeParse(importIndicateurReferenceSchema, reference);
+      if (!parsed.success) {
         return failure(
           'INVALID_IMPORT',
           new Error(
-            'Une référence externe doit définir sa source, son code et un lienSource valide.'
+            `Référence externe ${reference.source} / ${
+              reference.codeExterne
+            } : ${parsed.error.issues
+              .map(({ path, message }) => `${path.join('.')}: ${message}`)
+              .join('; ')}`
           )
         );
       }
