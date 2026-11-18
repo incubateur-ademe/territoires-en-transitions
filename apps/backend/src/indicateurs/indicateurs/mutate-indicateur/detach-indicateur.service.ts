@@ -39,10 +39,7 @@ export class DetachIndicateurService {
 
     const canUpdateSousIndicateur =
       await this.updateIndicateurService.canUpdateIndicateur(
-        user,
-        collectiviteId,
-        indicateurId,
-        true,
+        { user, collectiviteId, indicateurId },
         tx
       );
     if (!canUpdateSousIndicateur) {
@@ -79,10 +76,7 @@ export class DetachIndicateurService {
 
       const canUpdateParent =
         await this.updateIndicateurService.canUpdateIndicateur(
-          user,
-          collectiviteId,
-          sousIndicateur.parentId,
-          true,
+          { user, collectiviteId, indicateurId: sousIndicateur.parentId },
           transaction
         );
       if (!canUpdateParent) {

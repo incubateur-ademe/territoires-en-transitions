@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  ForbiddenException,
   Injectable,
   Logger,
   NotFoundException,
@@ -15,6 +14,7 @@ import type { Transaction } from '@tet/backend/utils/database/transaction.utils'
 import type { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
+import { CommonErrorEnum } from '@tet/backend/utils/trpc/common-errors';
 import {
   canChangeIndicateurUnite,
   type IndicateurInGroup,
@@ -34,6 +34,12 @@ import {
   UpdateIndicateurError,
   UpdateIndicateurErrorEnum,
 } from './update-indicateur.errors';
+
+type UpdateIndicateurAccess = {
+  user: AuthenticatedUser;
+  collectiviteId: number;
+  indicateurId: number;
+};
 
 const isOwnedByCollectivite = (
   indicateur: IndicateurNatureFields,
@@ -105,10 +111,7 @@ export class UpdateIndicateurService {
   ) {}
 
   async canUpdateIndicateur(
-    user: AuthenticatedUser,
-    collectiviteId: number,
-    indicateurId: number,
-    doNotThrow?: boolean,
+    { user, collectiviteId, indicateurId }: UpdateIndicateurAccess,
     tx?: Transaction
   ): Promise<boolean> {
     const userPermissionsResult =
@@ -118,12 +121,6 @@ export class UpdateIndicateurService {
       });
 
     if (!userPermissionsResult.success) {
-      if (!doNotThrow) {
-        throw new ForbiddenException(
-          `Droits insuffisants, l'utilisateur ${user.id} n'a pas les droits pour mettre à jour l'indicateur ${indicateurId} de la collectivité ${collectiviteId}`
-        );
-      }
-
       return false;
     }
 
@@ -137,33 +134,42 @@ export class UpdateIndicateurService {
       return true;
     }
 
-    if (
-      hasPermission(
-        userPermissions,
-        'indicateurs.indicateurs.update_piloted_by_me',
-        { collectiviteId }
-      )
-    ) {
-      const pilotes =
-        await this.upsertIndicateurPilotesService.listIndicateurPilotes(
-          { indicateurId, collectiviteId, user },
-          tx
-        );
-
-      if (pilotes.some((p) => p.userId === user.id)) {
-        return true;
-      }
+    const canUpdateWhenPilote = hasPermission(
+      userPermissions,
+      'indicateurs.indicateurs.update_piloted_by_me',
+      { collectiviteId }
+    );
+    if (!canUpdateWhenPilote) {
+      return false;
     }
 
-    if (!doNotThrow) {
-      this.permissionService.throwForbiddenException(
-        user,
-        'indicateurs.indicateurs.update',
-        ResourceType.COLLECTIVITE,
-        { collectiviteId }
+    return this.isPiloteOfIndicateur(
+      { user, collectiviteId, indicateurId },
+      tx
+    );
+  }
+
+  private async isPiloteOfIndicateur(
+    { user, collectiviteId, indicateurId }: UpdateIndicateurAccess,
+    tx?: Transaction
+  ): Promise<boolean> {
+    const readPilotesAccess = await this.permissionService.isAllowed(
+      user,
+      'indicateurs.indicateurs.read_confidentiel',
+      ResourceType.COLLECTIVITE,
+      { collectiviteId },
+      tx
+    );
+    if (!readPilotesAccess.success) {
+      return false;
+    }
+
+    const pilotes =
+      await this.upsertIndicateurPilotesService.listIndicateurPilotes(
+        { indicateurId, collectiviteId, user },
+        tx
       );
-    }
-    return false;
+    return pilotes.some((pilote) => pilote.userId === user.id);
   }
 
   private assertIndicateurInCollectiviteScope(
@@ -249,7 +255,14 @@ export class UpdateIndicateurService {
       indicateurId
     );
 
-    await this.canUpdateIndicateur(user, collectiviteId, indicateurId);
+    const canUpdate = await this.canUpdateIndicateur({
+      user,
+      collectiviteId,
+      indicateurId,
+    });
+    if (!canUpdate) {
+      return failure(CommonErrorEnum.UNAUTHORIZED);
+    }
 
     this.logger.log(
       `Mise à jour de l'indicateur dont l'id est ${indicateurId}`
@@ -306,13 +319,13 @@ export class UpdateIndicateurService {
         indicateurId,
         tx
       );
-      await this.canUpdateIndicateur(
-        user,
-        collectiviteId,
-        indicateurId,
-        false,
+      const canUpdateInTransaction = await this.canUpdateIndicateur(
+        { user, collectiviteId, indicateurId },
         tx
       );
+      if (!canUpdateInTransaction) {
+        return failure(CommonErrorEnum.UNAUTHORIZED);
+      }
 
       const indicateurInGroup = await this.findIndicateurInGroupToChangeUnite(
         { indicateurId, collectiviteId, unite },
