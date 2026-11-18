@@ -15,7 +15,7 @@ export const IndicateurLayout = () => {
     useCurrentCollectivite();
 
   const { enfants = [], sansValeurUtilisateur } = indicateur;
-  const composeSansAgregation = enfants.length > 0 && sansValeurUtilisateur;
+  const isComposeSansAgregation = enfants.length > 0 && sansValeurUtilisateur;
 
   return (
     <>
@@ -23,14 +23,14 @@ export const IndicateurLayout = () => {
         collectiviteId={collectiviteId}
         hasCollectivitePermission={hasCollectivitePermission}
         indicateur={indicateur}
-        chartInfo={composeSansAgregation ? undefined : chartInfo}
+        chartInfo={isComposeSansAgregation ? undefined : chartInfo}
         isReadonly={!canMutateIndicateur}
         isPerso={isIndicateurPerso(indicateur)}
-        composeSansAgregation={composeSansAgregation}
+        isComposeSansAgregation={isComposeSansAgregation}
       />
 
       <div className="pt-6">
-        {composeSansAgregation ? (
+        {isComposeSansAgregation ? (
           <IndicateurSousIndicateurs
             enfantsIds={enfants.map(({ id }) => id)}
             isReadonly={!canMutateIndicateur}

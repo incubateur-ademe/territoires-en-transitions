@@ -15,7 +15,7 @@ type Props = {
   hasCollectivitePermission: (permission: PermissionOperation) => boolean;
   isReadonly: boolean;
   isPerso: boolean;
-  composeSansAgregation: boolean;
+  isComposeSansAgregation: boolean;
 };
 
 const IndicateurHeader = ({
@@ -25,18 +25,18 @@ const IndicateurHeader = ({
   chartInfo,
   isReadonly,
   isPerso,
-  composeSansAgregation,
+  isComposeSansAgregation,
 }: Props): ReactElement => {
   const { updateTitre } = useIndicateurActions();
   const { titre, unite } = indicateur;
   const isTitleReadonly = isReadonly || !isPerso;
-  const uniteSuffix = composeSansAgregation ? null : (
+  const uniteSuffix = isComposeSansAgregation ? null : (
     <sup className="ml-1 text-grey-6 font-medium">{`(${unite})`}</sup>
   );
   const showInfos = hasIndicateurInfos({
     indicateur,
     isPerso,
-    composeSansAgregation,
+    isComposeSansAgregation,
     isReadonly,
   });
 
@@ -74,7 +74,7 @@ const IndicateurHeader = ({
         <IndicateurInfos
           indicateur={indicateur}
           isPerso={isPerso}
-          composeSansAgregation={composeSansAgregation}
+          isComposeSansAgregation={isComposeSansAgregation}
           isReadonly={isReadonly}
         />
       </PageHeader.Metadata>

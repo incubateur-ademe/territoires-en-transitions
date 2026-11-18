@@ -14,15 +14,13 @@ type ModalType = 'activityLog' | 'deleting' | 'none';
 type Props = {
   chartInfo?: IndicateurChartInfo;
   hasCollectivitePermission: (permission: PermissionOperation) => boolean;
-  isPerso?: boolean;
-  className?: string;
+  isPerso: boolean;
 };
 
 const IndicateurToolbar = ({
   chartInfo,
   hasCollectivitePermission,
-  isPerso = false,
-  className,
+  isPerso,
 }: Props) => {
   const [currentModal, setCurrentModal] = useState<ModalType>('none');
   const [isExportingPng, setIsExportingPng] = useState(false);
@@ -64,7 +62,7 @@ const IndicateurToolbar = ({
 
   return (
     <>
-      <div className={cn('flex items-center gap-2', className)}>
+      <div className="flex items-center gap-2">
         <Tooltip
           label={
             estFavori
