@@ -1,6 +1,7 @@
 'use client';
 
 import { DiagnosticTabs } from '@/app/demarches/pcaet/diagnostic/diagnostic.tabs';
+import { DownloadDemarcheExportButton } from '@/app/demarches/pcaet/exports/download-demarche-export.button';
 import { appLabels } from '@/app/labels/catalog';
 import type { DossierInstructionRef } from '../dossier-instruction-ref';
 import { useDiagnosticInstruction } from './data/use-diagnostic-instruction';
@@ -37,6 +38,15 @@ export const EtapeDiagnosticSection = ({
       showCompletion={showCompletion}
       title={appLabels.instructionDossierEtapeDiagnostic}
       description={appLabels.instructionDossierEtapeDiagnosticDescription}
+      action={
+        // Sans saisine, le dépôt n'a pas été transmis : rien à télécharger.
+        'demandeAvisId' in dossierRef ? (
+          <DownloadDemarcheExportButton
+            dossierRef={dossierRef}
+            type="indicateurs"
+          />
+        ) : null
+      }
     />
   );
 };

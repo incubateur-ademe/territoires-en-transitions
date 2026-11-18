@@ -78,6 +78,11 @@ type Props = {
   onCreatePlan: (payload: DemarcheCreatePlanPayload) => Promise<boolean>;
   /** Fichier et nom proposés d'office à l'import par IA. */
   importDefaults?: AiImportDefaults;
+  /**
+   * Téléchargement du classeur transmis, rendu à gauche du bouton de création.
+   * Seul le PCAET le passe : les autres démarches n'ont pas de classeur.
+   */
+  exportAction?: ReactNode;
 };
 
 const makePlanUrl = (
@@ -510,6 +515,7 @@ export const ProgrammeActionsSection = ({
   onUpdateAction,
   onCreatePlan,
   importDefaults,
+  exportAction,
 }: Props) => {
   const collectivite = useCurrentCollectivite();
   const { collectiviteId } = collectivite;
@@ -584,6 +590,8 @@ export const ProgrammeActionsSection = ({
       linkedPlanIds,
     });
 
+  const showCreatePlanButton = !isLoading && !hasEligiblePlans;
+
   const renderContent = () => {
     if (isLoading) {
       return <ProgrammeActionsLoading />;
@@ -616,9 +624,14 @@ export const ProgrammeActionsSection = ({
         isReadonly ? undefined : appLabels.demarcheProgrammeRattachementIntro
       }
       action={
-        isLoading || hasEligiblePlans
-          ? undefined
-          : renderCreatePlanButton('primary')
+        // Sans bouton d'export ni de création, pas de conteneur : l'en-tête des
+        // autres démarches reste celui d'avant.
+        exportAction || showCreatePlanButton ? (
+          <div className="flex flex-wrap items-start gap-3 empty:hidden">
+            {exportAction}
+            {showCreatePlanButton ? renderCreatePlanButton('primary') : null}
+          </div>
+        ) : undefined
       }
     >
       {renderContent()}

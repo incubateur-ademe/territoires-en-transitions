@@ -1014,4 +1014,11 @@ export const demarchesLabels = {
   pcaetDiagnosticIndicateurMarquerApplicable: 'Marquer comme applicable',
   pcaetDiagnosticIndicateurMarquerNonApplicable: 'Marquer comme non applicable',
   pcaetDiagnosticValeurNonApplicable: 'N/A',
+  pcaetExportTelechargerPlan: 'Télécharger le plan (Excel)',
+  pcaetExportTelechargerIndicateurs: 'Télécharger les données (Excel)',
+  pcaetExportVersionTransmise: ({ date }: { date: string }) =>
+    `Version transmise le ${date}`,
+  pcaetExportVersionPubliee: ({ date }: { date: string }) =>
+    `Version publiée le ${date}`,
+  pcaetExportDonneesDuJour: 'Données à ce jour',
 } as const;
