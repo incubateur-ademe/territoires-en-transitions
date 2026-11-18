@@ -21,7 +21,7 @@ export const IndicateurSousIndicateurs = ({
         searchParams={searchParams}
         setSearchParams={setSearchParams}
         isEditable={!isReadonly}
-        menuContainerClassname="!border-0 !pb-0"
+        isEmbedded
       />
     </div>
   );

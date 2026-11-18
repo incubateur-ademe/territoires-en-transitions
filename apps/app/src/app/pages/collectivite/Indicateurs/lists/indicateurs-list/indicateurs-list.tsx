@@ -38,7 +38,7 @@ type Props = {
   maxNbOfCards?: number;
   /** Rend les cartes indicateurs éditables */
   isEditable?: boolean;
-  menuContainerClassname?: string;
+  isEmbedded?: boolean;
 };
 
 /** Liste d'indicateurs avec tri et options de fitlre */
