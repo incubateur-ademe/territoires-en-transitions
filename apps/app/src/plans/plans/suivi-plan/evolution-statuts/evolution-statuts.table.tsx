@@ -81,7 +81,7 @@ export const EvolutionStatutsTable = ({
       {rows.map(({ statut, debut, fin }) => (
         <tr
           key={statut ?? SANS_STATUT_LABEL}
-          className="border-b border-grey-3"
+          className="border-b border-grey-3 transition-colors hover:bg-primary-1"
         >
           <td className="py-2">
             <Link
