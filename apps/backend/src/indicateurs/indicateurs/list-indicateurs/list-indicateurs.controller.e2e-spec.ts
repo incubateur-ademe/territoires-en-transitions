@@ -74,4 +74,31 @@ describe('ListIndicateursController', () => {
       })
     );
   });
+
+  test("expose les parents d'un indicateur prédéfini au format historique, sans ancestors", async () => {
+    const response = await request(app.getHttpServer())
+      .get(
+        `/indicateurs?collectiviteId=${collectiviteId}&identifiantsReferentiel=cae_1.ca`
+      )
+      .set('Authorization', `Bearer ${authToken}`)
+      .expect(200);
+
+    const [indicateur] = response.body.data;
+    expect(indicateur).not.toHaveProperty('ancestors');
+    expect(indicateur.parents).toEqual([
+      {
+        id: expect.any(Number),
+        titre: expect.any(String),
+        titreCourt: 'Résidentiel',
+        identifiantReferentiel: 'cae_1.c',
+        parent: {
+          id: expect.any(Number),
+          titre: 'Émissions de gaz à effet de serre du territoire',
+          titreCourt: null,
+          identifiantReferentiel: 'cae_1.a',
+          parent: null,
+        },
+      },
+    ]);
+  });
 });

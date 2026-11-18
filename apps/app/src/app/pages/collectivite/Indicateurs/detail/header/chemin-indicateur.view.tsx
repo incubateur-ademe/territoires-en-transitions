@@ -16,14 +16,10 @@ type Props = {
 const CheminIndicateur = ({ collectiviteId, indicateur }: Props) => {
   const router = useRouter();
 
-  const parentChain = [
-    indicateur.parent?.parent,
-    indicateur.parent,
-    indicateur,
-  ].flatMap((i) => (i ? [i] : []));
+  const chemin = [...indicateur.ancestors, indicateur];
 
   const items =
-    parentChain.map(({ id, titre, titreCourt, identifiantReferentiel }) => ({
+    chemin.map(({ id, titre, titreCourt, identifiantReferentiel }) => ({
       label: titreCourt || titre || appLabels.sansTitre,
       url:
         id !== indicateur.id

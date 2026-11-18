@@ -104,7 +104,7 @@ describe('ListIndicateursRouter', () => {
       expect(result.length).toBeGreaterThan(0);
 
       result.forEach((indicateur) => {
-        expect(indicateur.parent).toBeNull();
+        expect(indicateur.ancestors).toEqual([]);
       });
     });
 
@@ -122,22 +122,98 @@ describe('ListIndicateursRouter', () => {
 
       expect(indicateur).toBeDefined();
 
-      // Parents de l'indicateur `cae_1.ca` (définis en dur d'un point de vue métier)
-      expect(indicateur.parent).toEqual({
-        id: expect.any(Number),
-        titre: expect.any(String),
-        titreCourt: 'Résidentiel',
-        identifiantReferentiel: 'cae_1.c',
-        parent: expect.any(Object),
+      expect(indicateur.ancestors).toEqual([
+        {
+          id: expect.any(Number),
+          titre: 'Émissions de gaz à effet de serre du territoire',
+          titreCourt: null,
+          identifiantReferentiel: 'cae_1.a',
+        },
+        {
+          id: expect.any(Number),
+          titre: expect.any(String),
+          titreCourt: 'Résidentiel',
+          identifiantReferentiel: 'cae_1.c',
+        },
+      ]);
+    });
+
+    test("renvoie la chaîne des ancêtres d'un sous-indicateur perso à trois niveaux, de la racine au parent direct", async () => {
+      const { collectivite, user } = await addTestCollectiviteAndUser(
+        database,
+        { user: { role: CollectiviteRole.ADMIN } }
+      );
+      const caller = router.createCaller({
+        user: getAuthUserFromUserCredentials(user),
+      });
+      const racineId = await caller.indicateurs.indicateurs.create({
+        collectiviteId: collectivite.id,
+        titre: 'Déchets',
+        unite: 't',
+      });
+      const enfantId = await caller.indicateurs.indicateurs.create({
+        collectiviteId: collectivite.id,
+        titre: 'Déchets ménagers',
+        parentId: racineId,
+      });
+      const petitEnfantId = await caller.indicateurs.indicateurs.create({
+        collectiviteId: collectivite.id,
+        titre: 'Ordures ménagères',
+        parentId: enfantId,
       });
 
-      expect(indicateur.parent?.parent).toEqual({
-        id: expect.any(Number),
-        titre: 'Émissions de gaz à effet de serre du territoire',
-        titreCourt: null,
-        identifiantReferentiel: 'cae_1.a',
-        parent: null,
+      const { data: result } = await caller.indicateurs.indicateurs.list({
+        collectiviteId: collectivite.id,
+        filters: { indicateurIds: [racineId, enfantId, petitEnfantId] },
       });
+
+      const ancestorsById = new Map(
+        result.map(({ id, ancestors }) => [id, ancestors])
+      );
+      const racine = {
+        id: racineId,
+        titre: 'Déchets',
+        titreCourt: null,
+        identifiantReferentiel: null,
+      };
+      const enfant = {
+        id: enfantId,
+        titre: 'Déchets ménagers',
+        titreCourt: null,
+        identifiantReferentiel: null,
+      };
+      expect(ancestorsById.get(racineId)).toEqual([]);
+      expect(ancestorsById.get(enfantId)).toEqual([racine]);
+      expect(ancestorsById.get(petitEnfantId)).toEqual([racine, enfant]);
+    });
+
+    test("n'affiche que les racines d'une collectivité avec le seul filtre estPerso, pas leurs sous-indicateurs", async () => {
+      const { collectivite, user } = await addTestCollectiviteAndUser(
+        database,
+        { user: { role: CollectiviteRole.ADMIN } }
+      );
+      const caller = router.createCaller({
+        user: getAuthUserFromUserCredentials(user),
+      });
+      const racineId = await caller.indicateurs.indicateurs.create({
+        collectiviteId: collectivite.id,
+        titre: 'Déchets',
+        unite: 't',
+      });
+      const enfantId = await caller.indicateurs.indicateurs.create({
+        collectiviteId: collectivite.id,
+        titre: 'Déchets ménagers',
+        parentId: racineId,
+      });
+
+      const { data: result } = await caller.indicateurs.indicateurs.list({
+        collectiviteId: collectivite.id,
+        filters: { estPerso: true },
+      });
+
+      const ids = result.map(({ id }) => id);
+      expect(ids).toContain(racineId);
+      expect(ids).not.toContain(enfantId);
     });
   });
 
@@ -1002,7 +1078,7 @@ describe('ListIndicateursRouter', () => {
           expect.objectContaining({
             id: enfant.id,
             participationScore,
-            parent: expect.objectContaining({ id: parent.id }),
+            ancestors: [expect.objectContaining({ id: parent.id })],
           }),
         ]);
         expect(secondPage.count).toBe(2);
