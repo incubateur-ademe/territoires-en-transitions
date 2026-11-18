@@ -15,6 +15,8 @@ import { ResolveElectrificationFichesService } from '../resolve-fiches/resolve-e
 import {
   ElectrificationExtractionCheckpoint,
   electrificationExtractionCheckpointSchema,
+  electrificationCheckpointVersionSchema,
+  ELECTRIFICATION_CHECKPOINT_VERSION,
 } from './electrification-extraction-checkpoint.schema';
 import { ElectrificationExtractionErrors as Errors } from './electrification-extraction.errors';
 import { ElectrificationExtractionRules } from './electrification-extraction.rules';
@@ -24,6 +26,7 @@ import { LlmService } from '@tet/backend/utils/llm/llm.service';
 type PrepareInput = {
   collectiviteId: number;
   catalogueVersion: string;
+  schemaVersion?: number;
   onCheckpoint?: (
     checkpoint: ElectrificationExtractionCheckpoint
   ) => Promise<void>;
@@ -55,7 +58,11 @@ export class PrepareElectrificationImportService {
       ElectrificationIssue[]
     >
   > {
+    const version = electrificationCheckpointVersionSchema.safeParse(
+      input.schemaVersion ?? ELECTRIFICATION_CHECKPOINT_VERSION
+    );
     if (
+      !version.success ||
       typeof input.catalogueVersion !== 'string' ||
       !input.catalogueVersion.trim() ||
       !resolveElectrificationFichesInputSchema.shape.collectiviteId.safeParse(
@@ -99,6 +106,7 @@ export class PrepareElectrificationImportService {
         document: input.document,
         catalogue: catalogue.data,
         signal: input.signal,
+        schemaVersion: version.data,
       });
       if (!extraction.success) return extraction;
       checkpoint = extraction.data;
@@ -108,7 +116,9 @@ export class PrepareElectrificationImportService {
       );
       if (
         !parsed.success ||
-        parsed.data.catalogueVersion !== catalogue.data.version
+        parsed.data.catalogueVersion !== catalogue.data.version ||
+        (input.schemaVersion !== undefined &&
+          parsed.data.schemaVersion !== input.schemaVersion)
       ) {
         return failure([
           Errors.issue('INCOMPATIBLE_ELECTRIFICATION_CHECKPOINT'),

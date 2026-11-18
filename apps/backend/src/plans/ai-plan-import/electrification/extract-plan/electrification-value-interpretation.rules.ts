@@ -136,6 +136,7 @@ export class ElectrificationValueInterpretationRules {
               : request.year !== null &&
                 Number(value.year) !== request.year)) ||
           !this.preservesUnit(request, value) ||
+          !this.preservesYear(request, value) ||
           (value.unit !== null && !this.acceptsUnit(request, value, value.unit))
       )
     )
@@ -156,21 +157,66 @@ export class ElectrificationValueInterpretationRules {
         const target = request.targets.find(({ key }) => key === value.key);
         return (
           !target ||
-          ![target.key, ...target.labels].some((label) =>
-            Values.normalize(value.quote)
-              .split(/[^\p{L}\p{N}]+/u)
-              .join(' ')
-              .includes(
-                Values.normalize(label)
-                  .split(/[^\p{L}\p{N}]+/u)
-                  .join(' ')
-              )
-          )
+          ![target.key, ...target.labels].some((label) => {
+            const words = (text: string) =>
+              Values.normalize(text)
+                .split(/[^\p{L}\p{N}]+/u)
+                .filter(Boolean)
+                .join(' ');
+            const expected = words(label);
+            return (
+              expected !== '' &&
+              ` ${words(value.quote)} `.includes(` ${expected} `)
+            );
+          })
         );
       })
     )
       return null;
     return values.map(({ key, number }) => `${key}: ${number}`).join('; ');
+  }
+
+  /** Une année explicite ne peut pas être déplacée entre deux segments de la cellule. */
+  private static preservesYear(
+    request: ElectrificationValueRequest,
+    value: InterpretedValue
+  ): boolean {
+    const quotedNumbers = [...value.quote.matchAll(numberLiteralPattern)];
+    const number = quotedNumbers.find(
+      ([literal]) =>
+        Values.numericLiteral(literal) === Values.numericLiteral(value.number)
+    );
+    if (!number) return false;
+    const quoteStart = request.source.text.indexOf(value.quote);
+    const numberStart = quoteStart + number.index;
+    const before = request.source.text.slice(0, numberStart);
+    const segmentStart =
+      Math.max(before.lastIndexOf(';'), before.lastIndexOf('\n')) + 1;
+    const separator = request.source.text.slice(numberStart).search(/[;\n]/);
+    const segmentEnd =
+      separator < 0 ? request.source.text.length : numberStart + separator;
+    if (value.year !== null) {
+      const year = quotedNumbers.find(
+        ([literal], index) =>
+          literal === value.year && quotedNumbers[index].index !== number.index
+      );
+      if (
+        !year ||
+        quoteStart + year.index < segmentStart ||
+        quoteStart + year.index >= segmentEnd
+      )
+        return false;
+    }
+    const expected =
+      request.kind === 'target'
+        ? request.targets.find(({ key }) => key === value.key)?.year
+        : request.year ?? (value.year === null ? null : Number(value.year));
+    const segment = Values.normalize(
+      request.source.text.slice(segmentStart, segmentEnd)
+    );
+    return [
+      ...segment.matchAll(/(?:\b(?:en|pour|annee|d'ici)\s+|\()([1-9]\d{3})\b/g),
+    ].every(([, year]) => Number(year) === expected);
   }
 
   /** Une citation tronquée ne doit pas faire disparaître l'unité accolée au nombre. */
@@ -196,7 +242,9 @@ export class ElectrificationValueInterpretationRules {
       /^(?:en|pour|au|dont|sur)$/i.test(unit) ||
       (request.kind === 'target' &&
         request.targets.some(
-          (target) => target.key === unit || target.labels.includes(unit)
+          (target) =>
+            target.key === value.key &&
+            (target.key === unit || target.labels.includes(unit))
         ))
     )
       return true;

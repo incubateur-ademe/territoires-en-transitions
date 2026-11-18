@@ -7,7 +7,7 @@ import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ErrorCard } from '@/app/utils/error/error.card';
 import { appLabels } from '@/app/labels/catalog';
 import { useQueryStates } from 'nuqs';
-import { ReactElement, useEffect, useState } from 'react';
+import { ReactElement, useEffect, useRef, useState } from 'react';
 import { AiImportStatusView } from './ai-import-status.view';
 import { aiImportQueryState } from './ai-import.query-state';
 import { AiImportForm } from './ai-import.form';
@@ -72,6 +72,13 @@ export const AiImportFlow = ({
   const [{ importJobId, retryJobId }, setImportQuery] =
     useQueryStates(aiImportQueryState);
   const [followCurrentImport, setFollowCurrentImport] = useState(true);
+  const mounted = useRef(true);
+  useEffect(() => {
+    mounted.current = true;
+    return () => {
+      mounted.current = false;
+    };
+  }, []);
   const {
     data: currentImport,
     isFetchedAfterMount,
@@ -120,10 +127,12 @@ export const AiImportFlow = ({
         origine,
         demarcheId,
       });
+      // L'envoi continue après fermeture, mais le suivi ne doit pas rouvrir la page quittée.
+      if (!mounted.current) return;
       await setImportQuery({ importJobId: newJobId, retryJobId: null });
-      onImportStarted?.(newJobId, planId);
+      if (mounted.current) onImportStarted?.(newJobId, planId);
     } catch (error) {
-      setToast('error', getErrorMessage(error));
+      if (mounted.current) setToast('error', getErrorMessage(error));
     }
   };
 

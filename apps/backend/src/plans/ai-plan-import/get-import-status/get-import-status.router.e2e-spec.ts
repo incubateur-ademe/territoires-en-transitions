@@ -96,6 +96,7 @@ const electrificationCheckpoint: ElectrificationExtractionCheckpoint = {
     },
   ],
   interpretations: [],
+  engagementInterpretations: [],
   tokens: emptyTokenUsage(),
 };
 
@@ -634,7 +635,9 @@ describe('Suivi des imports IA', () => {
     { name: 'profil différent', checkpointPatch: { profile: 'generic' } },
     {
       name: 'version technique différente',
-      checkpointPatch: { schemaVersion: 2 },
+      checkpointPatch: {
+        schemaVersion: ELECTRIFICATION_CHECKPOINT_VERSION + 1,
+      },
     },
     {
       name: 'canevas différent',
@@ -646,7 +649,7 @@ describe('Suivi des imports IA', () => {
     },
     {
       name: 'version technique du job différente',
-      optionsPatch: { schemaVersion: 2 },
+      optionsPatch: { schemaVersion: 1 },
     },
     {
       name: 'canevas du job différent',

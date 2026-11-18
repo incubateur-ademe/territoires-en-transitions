@@ -85,6 +85,15 @@ const build = (engagementReferences = references()) =>
   });
 
 describe('Définitions publiées des engagements', () => {
+  it('refuse les libellés équivalents dans un axe, mais les autorise dans des axes distincts', () => {
+    const catalogue = { ...build(), version: 'test' };
+    catalogue.engagements[1].libelleSource = 'RENOVER LE PARC, ET SES ECOLES !';
+    expect(ElectrificationCatalogueRules.isValid(catalogue)).toBe(false);
+    catalogue.axes.push({ numero: 14, titre: 'Autre axe' });
+    catalogue.engagements[1].axeNumero = 14;
+    expect(ElectrificationCatalogueRules.isValid(catalogue)).toBe(true);
+  });
+
   it.each(['cycle', 'unite', 'annee'])(
     'refuse une relation entre cibles incohérente : %s',
     (scenario) => {

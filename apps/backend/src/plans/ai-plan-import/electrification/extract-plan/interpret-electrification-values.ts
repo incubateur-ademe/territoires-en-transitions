@@ -4,7 +4,10 @@ import { failure, Result } from '@tet/backend/utils/result.type';
 import { ElectrificationConfig } from '@tet/domain/plans';
 import { ReadDocument } from '../../pipeline/document/document-page';
 import { ElectrificationIssue } from '../electrification-issue';
-import { ElectrificationExtractionCheckpoint } from './electrification-extraction-checkpoint.schema';
+import {
+  ElectrificationCheckpointVersion,
+  ElectrificationExtractionCheckpoint,
+} from './electrification-extraction-checkpoint.schema';
 import { ElectrificationExtractionErrors as Errors } from './electrification-extraction.errors';
 import { ElectrificationValueInterpretationRules as Rules } from './electrification-value-interpretation.rules';
 import {
@@ -40,6 +43,7 @@ export class InterpretElectrificationValues {
     catalogue: ElectrificationConfig;
     llm: Pick<LlmService, 'generateStructured'>;
     signal?: AbortSignal;
+    schemaVersion?: ElectrificationCheckpointVersion;
   }): Promise<
     Result<ElectrificationExtractionCheckpoint, ElectrificationIssue[]>
   > {
@@ -51,7 +55,11 @@ export class InterpretElectrificationValues {
       ...input,
       valueContext: {
         onUnparsedValue: (request) => requests.push(request),
-        onUnmatchedEngagement: (request) => unmatched.push(request),
+        // Les jobs V1 conservent un checkpoint lisible par leur worker d'origine.
+        onUnmatchedEngagement:
+          input.schemaVersion === 1
+            ? undefined
+            : (request) => unmatched.push(request),
       },
     });
     if (initial.success || (!requests.length && !unmatched.length))

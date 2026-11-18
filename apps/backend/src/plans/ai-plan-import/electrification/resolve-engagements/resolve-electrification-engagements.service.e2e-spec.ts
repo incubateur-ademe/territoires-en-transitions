@@ -380,7 +380,7 @@ describe('Résolution des engagements Électrification', () => {
       ({ code }) => code === EngagementCode.ELECTRIFICATION_ARTISANS
     );
     assert(definition);
-    delete definition.cibles[0].uniteImport;
+    definition.cibles[0].uniteImport = 'nb';
     await expectIssue('INVALID_ENGAGEMENT_UNIT');
     definition.cibles[0].uniteImport = 'Nombre';
     const result = await resolve();

@@ -17,6 +17,7 @@ import {
 
 import { ReadElectrificationV4Snapshot } from '@tet/backend/plans/plans/electrification/config/read-electrification-v4-snapshot';
 import { ElectrificationTargetValuesRules } from './electrification-target-values.rules';
+import { ElectrificationCatalogueRules } from '@tet/backend/plans/plans/electrification/publish-electrification-data/electrification-catalogue.rules';
 
 type Table = ElectrificationDocumentSource[][];
 type Engagement = ElectrificationExtractionResponse['engagements'][number];
@@ -93,12 +94,20 @@ export class ElectrificationEngagementsDocumentRules {
         continue;
       }
 
-      const candidates = catalogue.engagements.filter(
+      const axeNumero = axe.match(/^\s*Axe\s+(\d+)(?:[. :]|$)/i)?.[1];
+      const matchingLabels = catalogue.engagements.filter(
         (item) =>
           item.libelleSource &&
-          this.normalize(item.libelleSource) === this.normalize(engagement.text)
+          ElectrificationCatalogueRules.normalizeEngagementLabel(
+            item.libelleSource
+          ) ===
+            ElectrificationCatalogueRules.normalizeEngagementLabel(
+              engagement.text
+            )
       );
-      const axeNumero = axe.match(/^\s*Axe\s+(\d+)(?:[. :]|$)/i)?.[1];
+      const candidates = matchingLabels.filter(
+        (item) => item.axeNumero === Number(axeNumero)
+      );
       const match = valueContext?.engagementInterpretations?.find(
         ({ sourceId }) => sourceId === engagement.id
       );
@@ -109,7 +118,7 @@ export class ElectrificationEngagementsDocumentRules {
           ? catalogue.engagements.find(({ code }) => code === match.code)
           : undefined;
       if (
-        !candidates.length &&
+        !matchingLabels.length &&
         !match &&
         engagement.text.length <= 2000 &&
         !engagement.links.length

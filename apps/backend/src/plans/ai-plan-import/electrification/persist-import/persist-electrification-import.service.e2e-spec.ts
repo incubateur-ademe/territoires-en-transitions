@@ -248,6 +248,7 @@ describe('Persistance atomique du plan Électrification', () => {
       templateVersion: electrificationDocumentTemplate.version,
       sources,
       interpretations: [],
+      engagementInterpretations: [],
       tokens: emptyTokenUsage(),
       response: {
         engagements: selectedCodes.map((code, index) => {

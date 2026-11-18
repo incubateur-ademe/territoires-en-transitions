@@ -78,12 +78,12 @@ sont présents, même si leurs cellules ne concernent qu'une partie des lignes.
 | `libelleSource` (G) | Sur une définition : libellé de l'engagement dans le document. Sur une cible : libellé facultatif du compte rendu. |
 | `uniteImport` (H) | Unité attendue dans le document, obligatoire pour chaque cible. Aucune conversion numérique. |
 | `typeImport` (I) | `action` pour un engagement qualitatif, `cibles` pour un engagement chiffré. Vide sur les lignes de cibles. |
-| `ciblesImport` (J) | Clés attendues, séparées par `|`, obligatoires pour `typeImport=cibles`. Vide pour `action`. |
+| `ciblesImport` (J) | Clés attendues, séparées par `\|`, obligatoires pour `typeImport=cibles`. Vide pour `action`. |
 | `anneeCible` (K) | Année attendue, obligatoire pour chaque cible. |
 | `valeurMin` / `valeurMax` (L:M) | Bornes inclusives. Une cellule vide signifie aucune borne de ce côté. |
 | `plafondCible` (N) | Clé de la cible qui plafonne cette valeur, au sein du même engagement, avec la même unité et la même année. |
-| `libellesCible` (O) | Termes qui distinguent cette cible dans une cellule à plusieurs valeurs, séparés par `|`. |
-| `unitesAcceptees` (P) | Variantes littérales de l'unité, séparées par `|`, de même mesure et même échelle. La casse des symboles reste significative. |
+| `libellesCible` (O) | Termes qui distinguent cette cible dans une cellule à plusieurs valeurs, séparés par `\|`. |
+| `unitesAcceptees` (P) | Variantes littérales de l'unité, séparées par `\|`, de même mesure et même échelle. La casse des symboles reste significative. |
 
 Par exemple, `E07` déclare `typeImport=cibles` et `ciblesImport=total|rapides`.
 Les lignes `E07.total` et `E07.rapides` portent chacune la correspondance TeT,
@@ -147,6 +147,14 @@ exacte, nombres présents, unité et année cohérentes. Une sélection incertai
 reste une erreur. Les citations documentent la décision du modèle ; elles ne
 prouvent pas à elles seules l'équivalence sémantique des formulations.
 L'IA ne choisit jamais un indicateur TeT ni une conversion d'unité.
+
+Les nouveaux jobs utilisent le checkpoint V2, qui conserve les rapprochements
+d'engagements. Le worker accepte aussi les checkpoints V1 sans ce champ. Un job
+déjà admis en V1 conserve son format, y compris si sa lecture commence après
+le déploiement ; il ne demande pas de rapprochement IA des engagements.
+Le numéro du checkpoint doit correspondre au contrat admis pour le job.
+Un ancien worker ne peut pas reprendre un checkpoint V2 : terminer le déploiement
+des workers avant de lancer les nouveaux imports.
 
 Les définitions et règles suivent la publication transactionnelle des références,
 puis le snapshot du catalogue (`engagementsFormat=2`). La reprise conserve le
