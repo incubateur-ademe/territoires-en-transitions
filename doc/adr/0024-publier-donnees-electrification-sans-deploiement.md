@@ -663,6 +663,8 @@ et le formatage YAML passent. Ces contrôles ne valent pas déploiement distant.
 
 ## Métadonnées des cibles importées - 18 novembre 2026
 
+Décision remplacée par [Engagements issus de Grist](#engagements-issus-de-grist---18-novembre-2026).
+
 Le retour TT-67 révèle deux correspondances E07 absentes du Sheets. La colonne
 Notion v2 désigne `s_26` pour le total et `elec_6_b` pour les bornes rapides.
 Ce choix métier est confirmé, même si le canevas emploie "bornes rapides"
@@ -689,6 +691,8 @@ du Sheets seules ne modifient aucune version déjà publiée.
 
 
 ## Définitions importables des engagements - 18 novembre 2026
+
+Décision remplacée par [Engagements issus de Grist](#engagements-issus-de-grist---18-novembre-2026).
 
 Cette décision remplace la liste fermée et les branches par code décrites dans
 "Engagements depuis les colonnes Grist existantes" et complète "Métadonnées
@@ -724,3 +728,46 @@ les ont admis. Il ne participe jamais à la publication depuis Sheets/Grist.
 Les tests des nouveaux catalogues emploient des codes, clés et années distincts
 des douze engagements initiaux. Aucun appel à un modèle payant n'est nécessaire
 pour vérifier ces contrats avec le fake LLM.
+
+
+## Engagements issus de Grist - 18 novembre 2026
+
+Cette décision remplace la source Sheets des définitions importables et des
+métadonnées de cibles décrite ci-dessus. Grist doit rester en lecture seule.
+Les engagements figurent déjà dans `V1_3_Axes` : `Code_signe` porte les codes,
+`Parametre_signe` les formulations. Leur duplication dans les références des
+indicateurs était un couplage injustifié. Aucun nouvel onglet ni configuration
+métier administrée séparément n'est nécessaire.
+
+Le lecteur construit les définitions depuis ces colonnes et les publie dans
+le catalogue, via le circuit de validation, versionnement et activation déjà
+partagé avec les lauréats. Le fichier Sheets ne porte que les correspondances
+vers les indicateurs TeT. Les colonnes et la migration SQL ajoutées pour les
+règles d'engagement sont retirées de la PR avant déploiement.
+
+Le contrat reconnaît les quantités à compléter et leur échéance explicite,
+les codes entre parenthèses pour les engagements regroupés et la relation
+"dont" entre un total et sa sous-cible. Les identités `principale` et `total`
+sont des conventions de lecture ; la clé d'une sous-cible vient du texte.
+Les unités, libellés et années ne sont pas associés à des codes dans le moteur.
+Les objectifs sont positifs ou nuls, les pourcentages plafonnés à 100. Une
+formulation ambiguë bloque la publication sans remplacer la version active.
+
+Une action sans échéance ne devient pas un objectif annuel. Cela conserve
+le traitement d'E12, dont le Grist demande d'identifier des sites sans année,
+et dont le canevas Word prévoit une sélection qualitative. Son libellé Grist
+reste disponible et son titre d'axe devient le titre de la fiche. Aucune
+quantité ni échéance n'est inventée. Une évolution de ce périmètre nécessiterait
+un contrat explicite pour les engagements quantifiés non datés.
+
+Les engagements restent publiables avec des correspondances en attente. Une
+ligne Sheets supprimée ou vidée conserve la cible définie par Grist et bloque
+seulement les imports qui l'utilisent. Les définitions TeT fournissent leur unité
+et périodicité. L'IA intervient dans l'import Word pour rapprocher les libellés
+et interpréter les valeurs complexes, dans les limites du catalogue admis ;
+la synchronisation des sources ne démarre aucun modèle.
+
+Les instantanés existants et leurs checkpoints restent inchangés. Les tests
+utilisent un extrait des 11 lignes Grist relues le 18 novembre, des codes et
+années synthétiques, ainsi qu'un fake LLM pour le rapprochement avec le canevas.
+La validation réelle du comportement sémantique du modèle reste humaine.

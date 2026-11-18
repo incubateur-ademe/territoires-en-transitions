@@ -1,4 +1,3 @@
-import assert from 'node:assert';
 import template from '@tet/backend/plans/ai-plan-import/electrification/extract-plan/__fixtures__/electrification-v4.template.json';
 import type { ImportIndicateurReference } from '@tet/backend/indicateurs/import-indicateurs/import-indicateur-reference.dto';
 import { failure, success } from '@tet/backend/utils/result.type';
@@ -185,37 +184,14 @@ export const buildInMemoryElectrificationData = (
   return { ...service, catalogues };
 };
 
-/** Métadonnées du Sheets synthétique, publiées avec les références TeT dans les e2e. */
+/** Correspondances seules : les définitions des engagements viennent de Grist. */
 export const buildElectrificationReferencesFixture = (
   lienSource: string
 ): ImportIndicateurReference[] =>
-  electrificationCatalogueFixture.engagements.flatMap(
-    (engagement): ImportIndicateurReference[] => [
-      {
-        source: 'engagements-electrification',
-        codeExterne: engagement.code,
-        lienSource,
-        libelleSource: engagement.libelleSource,
-        typeImport: engagement.cibles.length ? 'cibles' : 'action',
-        ...(engagement.cibles.length
-          ? { ciblesImport: engagement.cibles.map(({ key }) => key).join('|') }
-          : {}),
-      },
-      ...engagement.cibles.map((cible): ImportIndicateurReference => {
-        const rules = cible.reglesImport;
-        assert(rules);
-        return {
-          source: 'engagements-electrification',
-          codeExterne: `${engagement.code}.${cible.key}`,
-          lienSource,
-          uniteImport: cible.uniteImport,
-          anneeCible: rules.annee,
-          valeurMin: rules.minimum ?? undefined,
-          valeurMax: rules.maximum ?? undefined,
-          plafondCible: rules.plafondCible ?? undefined,
-          libellesCible: rules.libelles.join('|') || undefined,
-          unitesAcceptees: rules.unites.join('|') || undefined,
-        };
-      }),
-    ]
+  electrificationCatalogueFixture.engagements.flatMap((engagement) =>
+    engagement.cibles.map((cible) => ({
+      source: 'engagements-electrification',
+      codeExterne: `${engagement.code}.${cible.key}`,
+      lienSource,
+    }))
   );

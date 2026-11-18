@@ -1,3 +1,5 @@
+import gristAxes from './sources/__fixtures__/electrification-grist-axes.json';
+import { ElectrificationGristEngagementsRules } from './sources/electrification-grist-engagements.rules';
 import ImportIndicateurDefinitionService from '@tet/backend/indicateurs/import-indicateurs/import-indicateur-definition.service';
 import { sampleImportIndicateurDefinition } from '@tet/backend/indicateurs/import-indicateurs/samples/import-indicateur-definition.sample';
 import { indicateurReferenceExterneTable } from '@tet/backend/indicateurs/indicateur/indicateur-reference-externe.table';
@@ -531,18 +533,14 @@ describe('Publication des données Électrification', () => {
       }
     });
     const sourceTables = () => ({
-      Axes: electrificationCatalogueFixture.axes.map((a) => ({
-        id: a.numero,
-        fields: {
-          Numero: a.numero,
-          Titre: a.titre,
-          Code_signe: electrificationCatalogueFixture.engagements
-            .filter((engagement) => engagement.axeNumero === a.numero)
-            .map(({ code }) => code)
-            .join('+'),
-          Parametre_signe: `Engagement de l'axe ${a.numero}`,
-        },
-      })),
+      Axes: electrificationCatalogueFixture.axes.map((a) => {
+        const source = gristAxes.records.find(({ id }) => id === a.numero);
+        assert(source);
+        return {
+          id: a.numero,
+          fields: { ...source.fields, Titre: a.titre },
+        };
+      }),
       Sous_axes: [
         { id: 1, fields: { Numero: '1.1', Titre: 'Sous-axe test', Axe: 1 } },
       ],
@@ -1066,74 +1064,28 @@ describe('Publication des données Électrification', () => {
       expect(prepared.valid).toBe(true);
       const result = prepared.data as ElectrificationConfig;
       expect(result.engagements).toHaveLength(12);
+      const expected = ElectrificationGristEngagementsRules.read(tables.Axes);
       expect(result.engagements).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({
-            code: 'E01',
-            axeNumero: 1,
-            actionTitre: null,
-            cibles: [
-              {
-                ...electrificationCatalogueFixture.engagements[0].cibles[0],
-                key: 'principale',
-                identifiantReferentiel: definition.identifiantReferentiel,
-                unite: '%',
-                periodicite: 'annuelle',
-                validation: 'validated',
-              },
-            ],
+        expected.map((engagement) => ({
+          ...engagement,
+          cibles: engagement.cibles.map((cible) => {
+            const mapping =
+              engagement.code === 'E01'
+                ? definition
+                : engagement.code === 'E07'
+                ? bornes[cible.key === 'total' ? 0 : 1]
+                : null;
+            return mapping
+              ? {
+                  ...cible,
+                  identifiantReferentiel: mapping.identifiantReferentiel,
+                  unite: engagement.code === 'E01' ? '%' : 'Nombre de bornes',
+                  periodicite: 'annuelle',
+                  validation: 'validated',
+                }
+              : cible;
           }),
-          expect.objectContaining({
-            code: 'E02',
-            axeNumero: 1,
-            cibles: [
-              {
-                ...electrificationCatalogueFixture.engagements[1].cibles[0],
-                key: 'principale',
-                identifiantReferentiel: null,
-                unite: null,
-                periodicite: null,
-                validation: 'pending',
-              },
-            ],
-          }),
-          {
-            ...electrificationCatalogueFixture.engagements.find(
-              (engagement) => engagement.code === 'E03'
-            ),
-            code: 'E03',
-            axeNumero: 4,
-            actionTitre: 'Étudier le réseau',
-            cibles: [],
-          },
-          {
-            ...electrificationCatalogueFixture.engagements.find(
-              (engagement) => engagement.code === 'E12'
-            ),
-            code: 'E12',
-            axeNumero: 7,
-            actionTitre: 'Recharge des poids lourds',
-            cibles: [],
-          },
-          {
-            ...electrificationCatalogueFixture.engagements.find(
-              (engagement) => engagement.code === 'E07'
-            ),
-            code: 'E07',
-            axeNumero: 6,
-            actionTitre: null,
-            cibles: bornes.map((definition, index) => ({
-              ...electrificationCatalogueFixture.engagements.find(
-                ({ code }) => code === 'E07'
-              )?.cibles[index],
-              key: index === 0 ? 'total' : 'rapides',
-              identifiantReferentiel: definition.identifiantReferentiel,
-              unite: 'Nombre de bornes',
-              periodicite: 'annuelle',
-              validation: 'validated',
-            })),
-          },
-        ])
+        }))
       );
       expect(await data.getCatalogue()).toEqual({
         success: true,
@@ -1163,7 +1115,7 @@ describe('Publication des données Électrification', () => {
         )?.cibles
       ).toEqual([
         {
-          ...electrificationCatalogueFixture.engagements[0].cibles[0],
+          ...expected[0].cibles[0],
           key: 'principale',
           identifiantReferentiel: null,
           unite: null,

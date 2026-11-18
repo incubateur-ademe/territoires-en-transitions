@@ -35,7 +35,7 @@ export const electrificationConfigSchema = z.object({
         z.object({
           key: z.string().check(z.minLength(1)),
           libelleSource: z.optional(nonBlankTextSchema),
-          // Unité attendue dans le brouillon, déclarée par la référence externe.
+          // Unité attendue dans le brouillon, lue dans le paramètre signé Grist.
           // Obligatoire avec reglesImport dans les nouveaux catalogues.
           uniteImport: z.optional(nonBlankTextSchema),
           reglesImport: z.optional(

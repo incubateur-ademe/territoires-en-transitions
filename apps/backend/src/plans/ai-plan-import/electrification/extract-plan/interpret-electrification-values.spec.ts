@@ -12,6 +12,9 @@ import { ElectrificationExtractionRules } from './electrification-extraction.rul
 import { ElectrificationImportContractRules } from '../validate-import/electrification-import-contract.rules';
 import { ElectrificationValueInterpretationRules } from './electrification-value-interpretation.rules';
 import { InterpretElectrificationValues } from './interpret-electrification-values';
+import { ElectrificationGristAdapter } from '@tet/backend/plans/plans/electrification/publish-electrification-data/sources/electrification-grist.adapter';
+import gristAxes from '@tet/backend/plans/plans/electrification/publish-electrification-data/sources/__fixtures__/electrification-grist-axes.json';
+import template from './__fixtures__/electrification-v4.template.json';
 
 const engagementLabel = 'Rénover le parc, dont les écoles.';
 const catalogue: ElectrificationConfig = {
@@ -45,7 +48,7 @@ const catalogue: ElectrificationConfig = {
     },
   ],
 };
-const document = (label: string, value: string) =>
+const document = (label: string, value: string, axe = 13) =>
   buildDocument('docx', [], [], undefined, [
     {
       type: 'paragraph',
@@ -63,7 +66,7 @@ const document = (label: string, value: string) =>
           'Engagement retenu',
           "Valeur chiffrée de l'engagement",
         ],
-        ['Axe 13. Rénovation', label, 'Oui', value],
+        [`Axe ${axe}. Rénovation`, label, 'Oui', value],
       ].map((row, index) =>
         row.map((text, col) => ({
           text,
@@ -93,6 +96,64 @@ const model = (...responses: unknown[]) => {
 };
 
 describe('Extraction fondée sur les définitions publiées', () => {
+  it.each([
+    {
+      code: 'E02',
+      row: 2,
+      col: 0,
+      axe: 1,
+      value: '25 %',
+      cibles: [{ key: 'principale', valeur: 25, unite: '%', annee: 2030 }],
+    },
+    {
+      code: 'E07',
+      row: 7,
+      col: 1,
+      axe: 6,
+      value: '100 bornes dont 20 rapides',
+      cibles: [
+        { key: 'total', valeur: 100, unite: 'bornes', annee: 2030 },
+        { key: 'rapides', valeur: 20, unite: 'bornes', annee: 2030 },
+      ],
+    },
+    { code: 'E12', row: 8, col: 1, axe: 7, value: '', cibles: [] },
+  ])(
+    'rapproche le canevas Word et le catalogue issu des colonnes Grist pour $code',
+    async ({ code, row, col, axe, value, cibles }) => {
+      const definitions = {
+        ...ElectrificationGristAdapter.build({
+          source: {
+            Axes: gristAxes.records,
+            Sous_axes: [],
+            Actions: [],
+            Sous_actions: [],
+            Indicateurs: [],
+            Ressources: [],
+          },
+          sourceUrl: gristAxes.source,
+          engagementReferences: [],
+          indicateurReferences: [],
+        }),
+        version: 'grist-word-test',
+      };
+      const label = template.sections[0].rows[row][col].text;
+      const { llm, calls } = model({ code, quote: label });
+      const result = await InterpretElectrificationValues.run({
+        document: document(label, value, axe),
+        catalogue: definitions,
+        llm,
+      });
+      expect(result).toMatchObject({
+        success: true,
+        data: {
+          response: { engagements: [{ code, cibles }] },
+          engagementInterpretations: [{ code, quote: label }],
+        },
+      });
+      expect(calls).toHaveBeenCalledTimes(1);
+    }
+  );
+
   it('relit un checkpoint V1 sans citations de rapprochement ni nouvel appel IA', () => {
     const checkpoint = electrificationExtractionCheckpointSchema.parse({
       profile: AiPlanImportProfileEnum.ELECTRIFICATION,
