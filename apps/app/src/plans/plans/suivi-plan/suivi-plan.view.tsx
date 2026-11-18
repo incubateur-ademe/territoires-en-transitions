@@ -4,6 +4,7 @@ import { PlanNode } from '@tet/domain/plans';
 import { AvancementParAxeBloc } from './avancement-par-axe/avancement-par-axe.bloc';
 import { EvolutionStatutsBloc } from './evolution-statuts/evolution-statuts.bloc';
 import { FaireAvancerLePlanBloc } from './faire-avancer-le-plan/faire-avancer-le-plan.bloc';
+import { ModulesPersonnalisesBloc } from './modules-personnalises/modules-personnalises.bloc';
 import { RenseignerAvancementSidePanel } from './faire-avancer-le-plan/renseigner-avancement.side-panel';
 import { VueEnsembleBloc } from './vue-ensemble/vue-ensemble.bloc';
 
@@ -28,6 +29,7 @@ export const SuiviPlanView = ({
       axes={axes}
     />
     <FaireAvancerLePlanBloc collectiviteId={collectiviteId} planId={planId} />
+    <ModulesPersonnalisesBloc planId={planId} />
     <RenseignerAvancementSidePanel
       collectiviteId={collectiviteId}
       planId={planId}

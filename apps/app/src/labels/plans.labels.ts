@@ -550,4 +550,17 @@ export const plansLabels = {
     `${count > 1 ? 'actions' : 'action'} sans personne pilote`,
   faireAvancerLePlanSansPiloteInfo:
     "Elles n'ont pas de responsable désigné pour les faire avancer.",
+  suiviPlanModulesPersonnalises: 'Modules personnalisés',
+  moduleCountByNom: 'Nom du module :',
+  moduleCountByNomPlaceholder: 'Ajouter un titre',
+  moduleCountByCritere: 'Répartition des actions par :',
+  moduleCountByCriterePlaceholder: 'Sélectionner une valeur',
+  moduleCountByCritereInfo:
+    'Ce paramètre vous permet de choisir l’affichage selon lequel votre graphique sera trié.',
+  moduleCountByAjouter: 'Ajouter le module',
+  moduleCountByModifier: 'Modifier le module',
+  moduleCountByModifierLeFiltre: 'Modifier le filtre',
+  moduleCountBySupprimer: 'Supprimer le module',
+  moduleCountByConfirmerSuppression: (titre: string): string =>
+    `Confirmer la suppression du module : ${titre}`,
 } as const;
