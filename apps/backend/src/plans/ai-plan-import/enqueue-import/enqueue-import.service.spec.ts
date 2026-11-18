@@ -140,6 +140,9 @@ const toXlsxBomb = () => {
 
 type MockOverrides = {
   isAllowed?: boolean;
+  isFeatureEnabled?: boolean;
+  superAdminRole?: boolean;
+  superAdminRoleError?: Error;
   canImportInParallel?: boolean;
   canImportWithoutDailyQuota?: boolean;
   countInFlight?: number;
@@ -162,7 +165,13 @@ const buildService = (overrides: MockOverrides = {}) => {
       ? { success: true as const, data: undefined }
       : { success: false as const, error: 'UNAUTHORIZED' as const }
   );
-  const permissions = { isAllowed } as unknown as PermissionService;
+  const permissions = {
+    isAllowed,
+    hasSuperAdminRole: vi.fn(async () => {
+      if (overrides.superAdminRoleError) throw overrides.superAdminRoleError;
+      return overrides.superAdminRole ?? false;
+    }),
+  } as unknown as PermissionService;
 
   const createWithinQuotas = vi.fn<
     (
@@ -215,7 +224,9 @@ const buildService = (overrides: MockOverrides = {}) => {
   const capture = vi.fn();
   const trackingService = {
     capture,
-    isFeatureEnabled: vi.fn().mockResolvedValue(true),
+    isFeatureEnabled: vi
+      .fn()
+      .mockResolvedValue(overrides.isFeatureEnabled ?? true),
   } as unknown as TrackingService;
   const electrification = new ElectrificationImportProfileAdapter(
     new CheckElectrificationCreationService(trackingService, permissions),
@@ -252,6 +263,8 @@ const buildService = (overrides: MockOverrides = {}) => {
 
   return {
     service,
+    capabilities,
+    electrification,
     capture,
     createWithinQuotas,
     deleteIfPending,
@@ -266,6 +279,48 @@ const buildService = (overrides: MockOverrides = {}) => {
 };
 
 describe('EnqueueImportService', () => {
+  it('isole une erreur de disponibilité au profil concerné', async () => {
+    const { capabilities, electrification } = buildService();
+    vi.spyOn(electrification, 'checkAvailability').mockRejectedValue(
+      new Error('catalogue indisponible')
+    );
+
+    const result = await capabilities.getCapabilities(
+      { collectiviteId: 10 },
+      { user }
+    );
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    expect(result.data.profiles).toContainEqual({
+      profile: AiPlanImportProfileEnum.PCAET,
+      available: true,
+    });
+    expect(result.data.profiles).toContainEqual({
+      profile: AiPlanImportProfileEnum.ELECTRIFICATION,
+      available: false,
+    });
+  });
+
+  it('marque tous les profils indisponibles si la lecture du mode super-admin échoue', async () => {
+    const { capabilities } = buildService({
+      isFeatureEnabled: false,
+      superAdminRoleError: new Error('roles indisponibles'),
+    });
+
+    const result = await capabilities.getCapabilities(
+      { collectiviteId: 10 },
+      { user }
+    );
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    expect(result.data.profiles).not.toHaveLength(0);
+    expect(result.data.profiles.every((profile) => !profile.available)).toBe(
+      true
+    );
+  });
+
   it('refuse le type Électrification avant tout stockage ou mise en file', async () => {
     const { service, uploadBuffer, storeDocument, createWithinQuotas, add } =
       buildService({
