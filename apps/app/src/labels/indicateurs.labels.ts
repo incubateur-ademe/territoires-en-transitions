@@ -17,6 +17,8 @@ export const indicateursLabels = {
   indicateurDonneeIndisponible: 'Donnée indisponible',
   indicateurSousIndicateursTotal: 'Total',
   indicateurSousIndicateursTotalSomme: 'Total (somme)',
+  indicateurSousIndicateursObjectifDe: ({ label }: { label: string }) =>
+    `Objectif – ${label}`,
   indicateurValeurMasquee: 'Valeur masquée',
   indicateurTotalIncomplet: ({
     filledCount,
@@ -28,6 +30,8 @@ export const indicateursLabels = {
   indicateurSousIndicateursValeurs: 'Valeurs des sous-indicateurs',
   indicateurSousIndicateursChargement: 'Chargement des sous-indicateurs',
   indicateurSousIndicateursErreur: 'Impossible de charger les sous-indicateurs',
+  indicateurSousIndicateursGraphiqueAlternativeTableau:
+    'Les mêmes valeurs sont dans le tableau sous le graphique',
   indicateurSousIndicateurNiveau: ({ niveau }: { niveau: number }) =>
     `niveau ${niveau}`,
   indicateurSousIndicateurDeplier: ({ label }: { label: string }) =>

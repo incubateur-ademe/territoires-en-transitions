@@ -22,6 +22,7 @@ import {
 import { IndicateurFichesLieesDataProvider } from './indicateur-fiches-liees.data-provider';
 import { IndicateurMesuresLieesDataProvider } from './indicateur-mesures-liees.data-provider';
 import { IndicateurPersonnalisationDataProvider } from './indicateur-personnalisation.data-provider';
+import { IndicateurSousIndicateursChartDataProvider } from './indicateur-sous-indicateurs-chart.data-provider';
 import { IndicateurSousIndicateursTableDataProvider } from './indicateur-sous-indicateurs-table.data-provider';
 import { useDeleteIndicateurValeur } from '../../data/use-delete-indicateur-valeur';
 import { useIndicateurChartInfo } from '../../data/use-indicateur-chart';
@@ -169,7 +170,9 @@ export const IndicateurDetailDataProvider = ({
           <IndicateurMesuresLieesDataProvider>
             <IndicateurPersonnalisationDataProvider>
               <IndicateurSousIndicateursTableDataProvider>
-                {children}
+                <IndicateurSousIndicateursChartDataProvider>
+                  {children}
+                </IndicateurSousIndicateursChartDataProvider>
               </IndicateurSousIndicateursTableDataProvider>
             </IndicateurPersonnalisationDataProvider>
           </IndicateurMesuresLieesDataProvider>

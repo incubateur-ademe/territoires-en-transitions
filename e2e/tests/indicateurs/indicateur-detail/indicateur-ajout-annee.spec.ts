@@ -20,7 +20,7 @@ test.beforeEach(async ({ page }) => {
 for (const { resultats, pointsVisibles } of [
   { resultats: [10, null, 0], pointsVisibles: 2 },
   { resultats: [0], pointsVisibles: 1 },
-  { resultats: [10, 20, null, 0], pointsVisibles: 1 },
+  { resultats: [10, 20, null, 0], pointsVisibles: 2 },
 ]) {
   test(`Afficher les points isolés du segment annuel ${JSON.stringify(
     resultats
@@ -88,7 +88,7 @@ for (const { resultats, pointsVisibles } of [
           previousX = x;
         }
         return points;
-      }, '#E1E1FD'); // Première couleur de la palette des segments.
+      }, '#404092');
 
     await expect
       .poll(

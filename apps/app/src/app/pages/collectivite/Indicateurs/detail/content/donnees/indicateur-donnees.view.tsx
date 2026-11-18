@@ -12,6 +12,7 @@ import IndicateurDetailChart from '../../../Indicateur/detail/IndicateurDetailCh
 import { IndicateurValuesTabs } from '../../../Indicateur/detail/IndicateurValuesTabs';
 import { IndicateurSousIndicateursTable } from '../sous-indicateurs/indicateur-sous-indicateurs-table.view';
 import { IndicateurCommentaireInput } from './indicateur-commentaire.input';
+import { IndicateurSousIndicateursChart } from './indicateur-sous-indicateurs-chart.view';
 import { IndicateurSourcesSelect } from './indicateur-sources.select';
 import { IndicateurUniteInput } from './indicateur-unite.input';
 import { ThematiquesIndicateurInput } from './thematiques-indicateur.input';
@@ -65,17 +66,23 @@ export const IndicateurDonnees = () => {
       )}
 
       {/* Graphe */}
-      <IndicateurDetailChart
-        className="mb-6"
-        chartInfo={chartInfo}
-        indicateur={indicateur}
-        isReadonly={
-          !canMutateValeur ||
-          indicateur.sansValeurUtilisateur ||
-          hasSousIndicateurs
-        }
-        onAddValue={() => setIsTableModalOpen(true)}
-      />
+      {hasSousIndicateurs ? (
+        <div className="mb-6">
+          <IndicateurSousIndicateursChart
+            indicateurId={indicateur.id}
+            unite={unite}
+            periodicite={indicateur.periodicite}
+          />
+        </div>
+      ) : (
+        <IndicateurDetailChart
+          className="mb-6"
+          chartInfo={chartInfo}
+          indicateur={indicateur}
+          isReadonly={!canMutateValeur || indicateur.sansValeurUtilisateur}
+          onAddValue={() => setIsTableModalOpen(true)}
+        />
+      )}
 
       <div className="flex flex-col gap-7">
         <Divider color="primary" className="mb-6" />

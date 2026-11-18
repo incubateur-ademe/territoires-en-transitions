@@ -21,6 +21,11 @@ vi.mock('../../../Indicateur/detail/IndicateurDetailChart', () => ({
 vi.mock('../../../Indicateur/detail/IndicateurValuesTabs', () => ({
   IndicateurValuesTabs: () => <div role="group" aria-label="valeurs" />,
 }));
+vi.mock('./indicateur-sous-indicateurs-chart.view', () => ({
+  IndicateurSousIndicateursChart: () => (
+    <div role="img" aria-label="graphique des sous-indicateurs" />
+  ),
+}));
 vi.mock('./indicateur-commentaire.input', () => ({
   IndicateurCommentaireInput: () => null,
 }));
@@ -119,9 +124,11 @@ const sousIndicateursTable = {
   name: appLabels.indicateurSousIndicateursValeurs,
 };
 const valeursDuParent = { name: 'valeurs' };
+const graphiqueDuParent = { name: 'graphique' };
+const graphiqueDesSousIndicateurs = { name: 'graphique des sous-indicateurs' };
 
 describe('IndicateurDonnees : tableau des valeurs', () => {
-  it("affiche le tableau des sous-indicateurs à la place de celui du parent pour un perso qui a des enfants, et ferme l'ajout de valeur du graphique", () => {
+  it('affiche le graphique et le tableau des sous-indicateurs à la place de ceux du parent pour un perso qui a des enfants', () => {
     const { useSousIndicateursTable } = renderDonnees(
       toIndicateur({
         collectiviteId: 1,
@@ -132,14 +139,11 @@ describe('IndicateurDonnees : tableau des valeurs', () => {
     expect(screen.getByRole('table', sousIndicateursTable)).toBeDefined();
     expect(screen.queryByRole('group', valeursDuParent)).toBeNull();
     expect(useSousIndicateursTable).toHaveBeenCalledWith(10);
-    expect(
-      screen
-        .getByRole('img', { name: 'graphique' })
-        .getAttribute('data-readonly')
-    ).toBe('true');
+    expect(screen.getByRole('img', graphiqueDesSousIndicateurs)).toBeDefined();
+    expect(screen.queryByRole('img', graphiqueDuParent)).toBeNull();
   });
 
-  it('garde le tableau de valeurs du parent pour un perso sans enfant', () => {
+  it('garde le graphique et le tableau de valeurs du parent pour un perso sans enfant', () => {
     const { useSousIndicateursTable } = renderDonnees(
       toIndicateur({ collectiviteId: 1, enfants: [] })
     );
@@ -147,14 +151,11 @@ describe('IndicateurDonnees : tableau des valeurs', () => {
     expect(screen.getByRole('group', valeursDuParent)).toBeDefined();
     expect(screen.queryByRole('table', sousIndicateursTable)).toBeNull();
     expect(useSousIndicateursTable).not.toHaveBeenCalled();
-    expect(
-      screen
-        .getByRole('img', { name: 'graphique' })
-        .getAttribute('data-readonly')
-    ).toBe('false');
+    expect(screen.getByRole('img', graphiqueDuParent)).toBeDefined();
+    expect(screen.queryByRole('img', graphiqueDesSousIndicateurs)).toBeNull();
   });
 
-  it('garde le tableau de valeurs du parent pour un indicateur prédéfini qui a des enfants', () => {
+  it('garde le graphique et le tableau de valeurs du parent pour un indicateur prédéfini qui a des enfants', () => {
     const { useSousIndicateursTable } = renderDonnees(
       toIndicateur({
         collectiviteId: null,
@@ -165,5 +166,7 @@ describe('IndicateurDonnees : tableau des valeurs', () => {
     expect(screen.getByRole('group', valeursDuParent)).toBeDefined();
     expect(screen.queryByRole('table', sousIndicateursTable)).toBeNull();
     expect(useSousIndicateursTable).not.toHaveBeenCalled();
+    expect(screen.getByRole('img', graphiqueDuParent)).toBeDefined();
+    expect(screen.queryByRole('img', graphiqueDesSousIndicateurs)).toBeNull();
   });
 });
