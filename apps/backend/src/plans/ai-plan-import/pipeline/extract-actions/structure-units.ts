@@ -9,7 +9,9 @@ import { ExtractedAction } from '../../models/extracted-action';
 import { PlanSkeleton, renderSkeleton } from '../../models/plan-skeleton';
 import { SPREADSHEET_RULE } from '../../prompts/field-rules';
 import { buildIgnoreDirective } from '../../prompts/ignore-directive';
+import { framePlanScope } from '../../prompts/plan-framing';
 import {
+  STRUCTURATION_PLAN_SCOPE,
   STRUCTURATION_SYSTEM_PROMPT,
   STRUCTURATION_USER_PROMPT,
 } from '../../prompts/structuration.prompt';
@@ -49,6 +51,8 @@ export type StructureUnitsInput = {
   spreadsheet?: boolean;
   /** Un tableur dont chaque rangée est une fiche : un titre repris n'y est pas un écho. */
   rowsAreFiches?: boolean;
+  /** Type du plan, hors PCAET : précise le cadrage du prompt. */
+  planTypeLabel?: string;
   signal?: AbortSignal;
 };
 
@@ -74,6 +78,7 @@ export const structureUnits = async (
     currentDate,
     spreadsheet = false,
     rowsAreFiches = false,
+    planTypeLabel,
     signal,
   }: StructureUnitsInput
 ): Promise<Result<StructureUnitsResult, ExtractActionsError>> => {
@@ -85,6 +90,7 @@ export const structureUnits = async (
       .join('\n\n')
   );
   const systemInstruction = generatePrompt(STRUCTURATION_SYSTEM_PROMPT, {
+    cadrage: framePlanScope(STRUCTURATION_PLAN_SCOPE, planTypeLabel),
     dateDuJour: currentDate,
     regleTableur: spreadsheet ? `\n- ${SPREADSHEET_RULE}` : '',
   });

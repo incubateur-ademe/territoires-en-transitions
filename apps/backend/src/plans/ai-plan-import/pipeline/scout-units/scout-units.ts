@@ -34,7 +34,11 @@ const MIN_FICHES_IN_ACTION_PLAN = 3;
  */
 export const scoutUnits = async (
   llm: Pick<LlmService, 'generateStructured'>,
-  { units: allUnits, signal }: { units: DocumentUnit[]; signal?: AbortSignal }
+  {
+    units: allUnits,
+    planTypeLabel,
+    signal,
+  }: { units: DocumentUnit[]; planTypeLabel?: string; signal?: AbortSignal }
 ): Promise<Result<ScoutUnitsResult, LlmError>> => {
   const readable = allUnits.filter(
     (unit) => !unit.section || !PARTNER_SECTION.test(unit.section)
@@ -47,7 +51,11 @@ export const scoutUnits = async (
     MIN_FICHES_IN_ACTION_PLAN;
   const units = hasActionPlan ? actionPlan : readable;
   const setAsideCount = allUnits.length - units.length;
-  const classified = await classifyUnits(llm, { units, signal });
+  const classified = await classifyUnits(llm, {
+    units,
+    planTypeLabel,
+    signal,
+  });
   if (!classified.success) {
     return classified;
   }

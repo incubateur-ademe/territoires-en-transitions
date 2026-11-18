@@ -1,9 +1,12 @@
 import { definePrompt } from '@tet/backend/utils/llm/prompt-template';
 
+const cadrage = '{cadrage}';
 const extraits = '{extraits}';
 
+export const REPERAGE_PLAN_KIND = '(PCAET, plan climat, plan de transition)';
+
 export const REPERAGE_PROMPT = definePrompt({
-  template: `Vous êtes un agent de tri documentaire. On vous donne le début d'extraits d'un document de plan d'actions d'une collectivité (PCAET, plan climat, plan de transition).
+  template: `Vous êtes un agent de tri documentaire. On vous donne le début d'extraits d'un document de plan d'actions d'une collectivité ${cadrage}.
 
 Classez chaque extrait dans une seule catégorie :
 - "fiche_action" : il décrit une ou plusieurs actions ou mesures à mener (avec ou sans pilote, budget, calendrier, indicateurs).
@@ -18,5 +21,5 @@ Répondez avec un tableau JSON, un élément par extrait, sans en oublier aucun 
 
 Extraits (numéro | pages | partie et titres qui le couvrent | début du texte)
 ${extraits}`,
-  placeholders: { extraits },
+  placeholders: { cadrage, extraits },
 });

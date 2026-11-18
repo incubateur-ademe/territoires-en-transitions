@@ -12,6 +12,7 @@ import {
   SOUS_ACTIONS_RULE,
 } from './field-rules';
 
+const cadrage = '{cadrage}';
 const dateDuJour = '{date_du_jour}';
 const squelette = '{squelette}';
 const instructions = '{instructions}';
@@ -19,12 +20,15 @@ const position = '{position}';
 const extrait = '{extrait}';
 const regleTableur = '{regle_tableur}';
 
+export const STRUCTURATION_PLAN_SCOPE =
+  'de transition écologique des collectivités (PCAET, plans climat, plans de transition)';
+
 /**
  * Version condensée du prompt d'extraction, envoyée en instruction système
  * pour chaque extrait : le prompt complet pèserait plus lourd que l'extrait.
  */
 export const STRUCTURATION_SYSTEM_PROMPT = definePrompt({
-  template: `Vous êtes un agent d'extraction documentaire spécialisé dans les plans d'actions de transition écologique des collectivités (PCAET, plans climat, plans de transition).
+  template: `Vous êtes un agent d'extraction documentaire spécialisé dans les plans d'actions ${cadrage}.
 
 Vous ne voyez qu'un extrait d'un document plus long, découpé pour l'analyse. Votre tâche : extraire toutes les actions présentes dans cet extrait, et seulement celles-là.
 
@@ -64,7 +68,7 @@ Formats
 
 Exemple de répartition des champs
 ${FIELD_ALLOCATION_EXAMPLE}`,
-  placeholders: { dateDuJour, regleTableur },
+  placeholders: { cadrage, dateDuJour, regleTableur },
 });
 
 export const STRUCTURATION_USER_PROMPT = definePrompt({

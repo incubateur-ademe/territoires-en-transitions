@@ -1,11 +1,12 @@
 import { definePrompt } from '@tet/backend/utils/llm/prompt-template';
 
+const cadrage = '{cadrage}';
 const sousActionsList = '{sous_actions_list}';
 const textePdfAAnalyser = '{texte_pdf_a_analyser}';
 
 export const ENRICHMENT_PROMPT = definePrompt({
   template: `
-Vous êtes un agent d'enrichissement documentaire spécialisé dans les plans d'actions de transition écologique des collectivités, y compris les PCAET.
+Vous êtes un agent d'enrichissement documentaire spécialisé dans les plans d'actions ${cadrage}.
 
 Contexte
 On vous fournit :
@@ -86,5 +87,5 @@ Exemple de format attendu
   }
 ]
 `,
-  placeholders: { sousActionsList, textePdfAAnalyser },
+  placeholders: { cadrage, sousActionsList, textePdfAAnalyser },
 });

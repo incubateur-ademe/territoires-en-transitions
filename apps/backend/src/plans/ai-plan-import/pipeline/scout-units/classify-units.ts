@@ -10,7 +10,11 @@ import { mapWithConcurrency } from '@tet/backend/utils/map-with-concurrency';
 import { Result, success } from '@tet/backend/utils/result.type';
 import { chunk } from 'es-toolkit';
 import { z } from 'zod';
-import { REPERAGE_PROMPT } from '../../prompts/reperage.prompt';
+import { framePlanKind } from '../../prompts/plan-framing';
+import {
+  REPERAGE_PLAN_KIND,
+  REPERAGE_PROMPT,
+} from '../../prompts/reperage.prompt';
 import { DocumentUnit } from '../segment-document/document-unit';
 
 export const unitCategoryValues = [
@@ -52,16 +56,20 @@ type IndexedUnit = { unit: DocumentUnit; index: number };
  */
 export const classifyUnits = async (
   llm: Pick<LlmService, 'generateStructured'>,
-  { units, signal }: { units: DocumentUnit[]; signal?: AbortSignal }
+  {
+    units,
+    planTypeLabel,
+    signal,
+  }: { units: DocumentUnit[]; planTypeLabel?: string; signal?: AbortSignal }
 ): Promise<Result<ClassifyUnitsResult, LlmError>> => {
   const indexed = units.map((unit, index) => ({ unit, index }));
   const outcomes = await mapWithConcurrency(
     chunk(indexed, CLASSIFY_BATCH_SIZE),
     CLASSIFY_CONCURRENCY,
     async (batch) => {
-      let result = await classifyBatch(llm, batch, signal);
+      let result = await classifyBatch(llm, batch, planTypeLabel, signal);
       if (!result.success && isTransientForTri(result.error)) {
-        result = await classifyBatch(llm, batch, signal);
+        result = await classifyBatch(llm, batch, planTypeLabel, signal);
       }
       return result.success
         ? { ...result.data, warning: null }
@@ -93,6 +101,7 @@ const isTransientForTri = (error: LlmError): boolean =>
 const classifyBatch = async (
   llm: Pick<LlmService, 'generateStructured'>,
   batch: IndexedUnit[],
+  planTypeLabel: string | undefined,
   signal?: AbortSignal
 ): Promise<
   Result<{ entries: ClassifyEntry[]; tokens: TokenUsage }, LlmError>
@@ -100,6 +109,7 @@ const classifyBatch = async (
   const completion = await llm.generateStructured({
     tier: 'light',
     prompt: generatePrompt(REPERAGE_PROMPT, {
+      cadrage: framePlanKind(REPERAGE_PLAN_KIND, planTypeLabel),
       extraits: batch
         .map(({ unit, index }) => renderPreview(unit, index))
         .join('\n'),

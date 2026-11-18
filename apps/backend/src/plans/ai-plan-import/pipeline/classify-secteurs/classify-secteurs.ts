@@ -34,6 +34,8 @@ export type ClassifySecteursInput = {
   withSecteurs: boolean;
   /** La liste close où choisir les effets attendus, lue en base. */
   effetsAttendus: EffetAttendu[];
+  /** Type du plan, hors PCAET : précise le cadrage du prompt. */
+  planTypeLabel?: string;
   signal?: AbortSignal;
 };
 
@@ -73,6 +75,7 @@ export const classifySecteurs = async (
     source,
     withSecteurs,
     effetsAttendus,
+    planTypeLabel,
     signal,
   }: ClassifySecteursInput
 ): Promise<Result<ClassifySecteursResult, LlmError>> => {
@@ -95,6 +98,7 @@ export const classifySecteurs = async (
         withSecteurs,
         effetsAttendus,
         subject,
+        planTypeLabel,
         signal,
       })
   );
@@ -171,12 +175,14 @@ const classifyBatch = async (
     withSecteurs,
     effetsAttendus,
     subject,
+    planTypeLabel,
     signal,
   }: {
     batch: ChunkGroup<IndexedAction>;
     withSecteurs: boolean;
     effetsAttendus: EffetAttendu[];
     subject: string;
+    planTypeLabel?: string;
     signal?: AbortSignal;
   }
 ): Promise<BatchOutcome> => {
@@ -188,6 +194,7 @@ const classifyBatch = async (
       text: batch.text,
       withSecteurs,
       effetsAttendus,
+      planTypeLabel,
     }),
     tier: 'light' as const,
     thinkingLevel: 'low' as const,

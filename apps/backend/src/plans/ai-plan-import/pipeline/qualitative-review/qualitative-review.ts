@@ -13,6 +13,8 @@ import { renderActionsCompact } from './render-actions-compact';
 
 export type QualitativeReviewInput = {
   actions: ExtractedAction[];
+  /** Type du plan, hors PCAET : précise le cadrage du prompt. */
+  planTypeLabel?: string;
   signal?: AbortSignal;
 };
 
@@ -25,11 +27,12 @@ export type QualitativeReviewResult = {
 
 export const reviewQuality = async (
   llm: Pick<LlmService, 'generateStructured'>,
-  { actions, signal }: QualitativeReviewInput
+  { actions, planTypeLabel, signal }: QualitativeReviewInput
 ): Promise<Result<QualitativeReviewResult, LlmError>> => {
   const completion = await llm.generateStructured({
     prompt: buildQualitativeReviewPrompt({
       renderedActions: renderActionsCompact(actions),
+      planTypeLabel,
     }),
     schema: qualitativeReviewResponseSchema,
     thinkingLevel: 'low',

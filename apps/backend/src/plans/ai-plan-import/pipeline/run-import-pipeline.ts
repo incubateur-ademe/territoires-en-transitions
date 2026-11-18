@@ -117,6 +117,8 @@ export type RunImportPipelineInput = {
   withSousActions: boolean;
   /** Secteurs réglementaires proposés pour chaque action : plans PCAET. */
   withSecteurs?: boolean;
+  /** Type du plan, hors PCAET : précise le cadrage du prompt. */
+  planTypeLabel?: string;
   /** Liste close des effets attendus, lue en base : vide, l'étape n'en propose pas. */
   effetsAttendus: EffetAttendu[];
   signal?: AbortSignal;
@@ -305,6 +307,7 @@ export const runImportPipeline = async (
       run: async () => {
         const result = await scoutUnits(llm, {
           units: state.units as DocumentUnit[],
+          planTypeLabel: input.planTypeLabel,
           signal: input.signal,
         });
         if (!result.success) {
@@ -340,6 +343,7 @@ export const runImportPipeline = async (
           currentDate: input.currentDate,
           spreadsheet: tabular,
           rowsAreFiches: tabular && tabularRowGroups !== true,
+          planTypeLabel: input.planTypeLabel,
           signal: input.signal,
         };
         const result = state.units
@@ -428,6 +432,7 @@ export const runImportPipeline = async (
           actions,
           source: state.source,
           disabledFields: input.disabledFields,
+          planTypeLabel: input.planTypeLabel,
           signal: input.signal,
         }),
     },
@@ -452,12 +457,18 @@ export const runImportPipeline = async (
           actions,
           source: state.source,
           disabledFields: input.disabledFields,
+          planTypeLabel: input.planTypeLabel,
           signal: branchSignal,
         }),
     },
     {
       name: 'qualitativeReview',
-      run: (actions) => reviewQuality(llm, { actions, signal: branchSignal }),
+      run: (actions) =>
+        reviewQuality(llm, {
+          actions,
+          planTypeLabel: input.planTypeLabel,
+          signal: branchSignal,
+        }),
     },
   ];
   const secteursBranch: PipelineStep[] = [
@@ -470,6 +481,7 @@ export const runImportPipeline = async (
           source: state.source,
           withSecteurs: input.withSecteurs ?? false,
           effetsAttendus: input.effetsAttendus,
+          planTypeLabel: input.planTypeLabel,
           signal: branchSignal,
         }),
     },
