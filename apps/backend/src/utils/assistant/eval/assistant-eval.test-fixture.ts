@@ -26,6 +26,7 @@ export type EvalContext = {
   viewers: Record<Viewer, AuthenticatedUser & { email: string }>;
 };
 
+const GITHUB_UNAVAILABLE = /GITHUB_NOT_CONFIGURED|GITHUB_RATE_LIMITED/;
 const PLAN_NOM = 'Plan climat de la vallée';
 
 /**
@@ -134,9 +135,18 @@ export const runScenario = async (
       };
     }
     const failures = checkExpectations(scenario, result.data, context.fixture);
+    // Sans jeton ou à quota épuisé, l'échec vient de GitHub, pas de l'agent.
+    const githubUnavailable = result.data.toolCalls.some(
+      (call) => call.isError && GITHUB_UNAVAILABLE.test(call.resultPreview)
+    );
     return {
       ...base,
-      status: failures.length === 0 ? 'pass' : 'fail',
+      status:
+        failures.length === 0
+          ? 'pass'
+          : githubUnavailable
+          ? 'unavailable'
+          : 'fail',
       failures,
       answer: result.data.answer,
       toolCalls: result.data.toolCalls.map(

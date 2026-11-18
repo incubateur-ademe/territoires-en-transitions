@@ -7,7 +7,8 @@ export type RunOutcome = {
   scenarioId: string;
   tags: string[];
   run: number;
-  status: 'pass' | 'fail' | 'error' | 'capped';
+  /** `unavailable` : un prérequis externe manquait (GitHub), l'agent n'est pas jugé. */
+  status: 'pass' | 'fail' | 'error' | 'capped' | 'unavailable';
   failures: ExpectationFailure[];
   error?: string;
   answer?: string;
@@ -31,13 +32,20 @@ export type EvalReport = {
 export const scenarioVerdict = (
   outcomes: RunOutcome[],
   requiredPasses: number
-): 'pass' | 'fail' | 'flaky' | 'capped' => {
+): 'pass' | 'fail' | 'flaky' | 'capped' | 'unavailable' => {
   if (outcomes.every((outcome) => outcome.status === 'capped')) {
     return 'capped';
   }
-  const passes = outcomes.filter((outcome) => outcome.status === 'pass').length;
-  if (passes >= requiredPasses) {
-    return passes === outcomes.length ? 'pass' : 'flaky';
+  // Une exécution sans son prérequis externe ne compte ni pour ni contre l'agent.
+  const judged = outcomes.filter(
+    (outcome) => outcome.status !== 'capped' && outcome.status !== 'unavailable'
+  );
+  if (judged.length === 0) {
+    return 'unavailable';
+  }
+  const passes = judged.filter((outcome) => outcome.status === 'pass').length;
+  if (passes >= Math.min(requiredPasses, judged.length)) {
+    return passes === judged.length ? 'pass' : 'flaky';
   }
   return 'fail';
 };
@@ -51,7 +59,9 @@ export const renderMarkdown = (
   report: EvalReport,
   verdicts: Record<string, string>
 ): string => {
-  const ran = report.outcomes.filter((outcome) => outcome.status !== 'capped');
+  const ran = report.outcomes.filter(
+    (outcome) => outcome.status !== 'capped' && outcome.status !== 'unavailable'
+  );
   const passed = Object.values(verdicts).filter((v) => v === 'pass').length;
   const lines = [
     `# Évaluation de l'assistant — ${report.provider} (${report.model ?? '?'})`,
