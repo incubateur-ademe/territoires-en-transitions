@@ -491,7 +491,7 @@ services:
         '--',
         'sh',
         '-c',
-        'env "pnpm_config_//npm.bryntum.com/:_authToken=$$BRYNTUM_ACCESS_TOKEN" pnpm install && pnpm rebuild --config.ignore-scripts=false canvas',
+        'env "pnpm_config_//npm.bryntum.com/:_authToken=$$BRYNTUM_ACCESS_TOKEN" pnpm install && env "pnpm_config_//npm.bryntum.com/:_authToken=$$BRYNTUM_ACCESS_TOKEN" pnpm rebuild --config.ignore-scripts=false canvas',
       ]
 
   nx-daemon:
