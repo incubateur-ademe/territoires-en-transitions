@@ -26,6 +26,11 @@ import {
   useDemarcheTracker,
   useTrackDemarcheView,
 } from '../use-demarche-tracker';
+import {
+  StepsNavBar,
+  StepsNavNextButton,
+  StepsNavPreviousButton,
+} from './steps-nav.bar';
 
 /**
  * L'acte qui clôt le temps parcouru, proposé à la place d'« Étape suivante » sur
@@ -156,94 +161,77 @@ export const DemarcheStepsNav = ({
     item.section !== activeSection;
 
   return (
-    <nav
-      aria-label={appLabels.demarcheStepsNavAriaLabel}
-      data-test="demarches.steps-nav"
-      // Sticky bottom : flotte au bas du viewport par-dessus le contenu tant
-      // que sa position naturelle est sous la ligne de flottaison, puis
-      // reprend sa place dans le flux en fin de page.
-      className="sticky bottom-0 z-10 flex w-full items-center gap-4 border-t border-primary-3 bg-grey-2 py-4 shadow-t-sm"
+    <StepsNavBar
+      ariaLabel={appLabels.demarcheStepsNavAriaLabel}
+      dataTest="demarches.steps-nav"
+      previous={
+        prev && (
+          <StepsNavPreviousButton
+            dataTest="demarches.steps-nav.previous"
+            href={hrefOf(prev)}
+            onClick={() => {
+              trackNavigation('precedent');
+              if (crossesSection(prev)) onOpenProgressPanel();
+            }}
+          />
+        )
+      }
     >
-      {prev && (
+      {showDemoCompleter && (
         <Button
-          dataTest="demarches.steps-nav.previous"
+          dataTest="demarches.steps-nav.demo-completer"
           variant="outlined"
           size="sm"
-          icon="arrow-left-line"
+          icon="magic-line"
           iconPosition="left"
-          href={hrefOf(prev)}
-          onClick={() => {
-            trackNavigation('precedent');
-            if (crossesSection(prev)) onOpenProgressPanel();
-          }}
+          loading={completerEtape.isPending}
+          disabled={completerEtape.isPending}
+          onClick={() =>
+            // Le balayage part une fois les données relues : l'invalidation
+            // du hook est attendue avant ce rappel.
+            completerEtape.mutate(
+              { ...ids, etape: demoEtape },
+              { onSuccess: () => sweepRows(contentRef?.current ?? null) }
+            )
+          }
         >
-          {appLabels.demarcheStepsNavPrevious}
+          {appLabels.demarcheDemoCompleterEtape}
         </Button>
       )}
-
-      <div className="ml-auto flex items-center gap-4">
-        {showDemoCompleter && (
-          <Button
-            dataTest="demarches.steps-nav.demo-completer"
-            variant="outlined"
-            size="sm"
-            icon="magic-line"
-            iconPosition="left"
-            loading={completerEtape.isPending}
-            disabled={completerEtape.isPending}
-            onClick={() =>
-              // Le balayage part une fois les données relues : l'invalidation
-              // du hook est attendue avant ce rappel.
-              completerEtape.mutate(
-                { ...ids, etape: demoEtape },
-                { onSuccess: () => sweepRows(contentRef?.current ?? null) }
-              )
-            }
-          >
-            {appLabels.demarcheDemoCompleterEtape}
-          </Button>
-        )}
-        {showFinalAction && finalAction ? (
-          <Tooltip
-            label={getTransitionBlocageLabel(finalAction.transition)}
-            activatedBy="hover"
-          >
-            <span className="block">
-              <Button
-                dataTest={finalAction.dataTest}
-                variant={finalAction.transition.enabled ? 'primary' : 'grey'}
-                size="sm"
-                icon="arrow-right-line"
-                iconPosition="right"
-                disabled={!finalAction.transition.enabled}
-                onClick={() => {
-                  onOpenProgressPanel();
-                  finalAction.onClick();
-                }}
-              >
-                {finalAction.label}
-              </Button>
-            </span>
-          </Tooltip>
-        ) : (
-          next && (
+      {showFinalAction && finalAction ? (
+        <Tooltip
+          label={getTransitionBlocageLabel(finalAction.transition)}
+          activatedBy="hover"
+        >
+          <span className="block">
             <Button
-              dataTest="demarches.steps-nav.next"
-              variant="primary"
+              dataTest={finalAction.dataTest}
+              variant={finalAction.transition.enabled ? 'primary' : 'grey'}
               size="sm"
               icon="arrow-right-line"
               iconPosition="right"
-              href={hrefOf(next)}
+              disabled={!finalAction.transition.enabled}
               onClick={() => {
-                trackNavigation('suivant');
-                if (crossesSection(next)) onOpenProgressPanel();
+                onOpenProgressPanel();
+                finalAction.onClick();
               }}
             >
-              {appLabels.demarcheStepsNavNext}
+              {finalAction.label}
             </Button>
-          )
-        )}
-      </div>
-    </nav>
+          </span>
+        </Tooltip>
+      ) : (
+        next && (
+          <StepsNavNextButton
+            dataTest="demarches.steps-nav.next"
+            href={hrefOf(next)}
+            onClick={() => {
+              trackNavigation('suivant');
+              if (crossesSection(next)) onOpenProgressPanel();
+            }}
+          />
+        )
+      )}
+    </StepsNavBar>
   );
 };
