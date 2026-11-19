@@ -59,6 +59,7 @@ jobs:
           ELECTRIFICATION_LAUREATS_GRIST_DOCUMENT_ID: ${{ vars.ELECTRIFICATION_LAUREATS_GRIST_DOCUMENT_ID }}
           DATA_KIND: ${{ inputs.kind }}
           SYNC_MODE: ${{ inputs.mode }}
+          PUBLICATION_TARGET: ${{ inputs.target }}
         run: |
           for required in SUPABASE_DATABASE_URL SUPABASE_URL SUPABASE_SERVICE_ROLE_KEY GRIST_API_KEY; do
             if [ -z "${!required}" ]; then
@@ -74,7 +75,4 @@ jobs:
           if [ -z "$SUPABASE_DATABASE_SSL_ROOT_CERT" ]; then
             unset SUPABASE_DATABASE_SSL_ROOT_CERT
           fi
-          node apps/backend/dist/plans/plans/electrification/sync-electrification-data/sync-electrification-data.script.js \
-            --kind "$DATA_KIND" --mode "$SYNC_MODE" \
-            --actor "$GITHUB_ACTOR" \
-            --run-url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          node .github/scripts/rebuild-preprod-electrification-catalogue.cjs
