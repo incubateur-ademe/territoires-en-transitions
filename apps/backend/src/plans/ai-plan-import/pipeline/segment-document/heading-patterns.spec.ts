@@ -196,6 +196,10 @@ describe('matchHeading', () => {
     );
     expect(matchHeading('Actions 1-2-3-5 x x x x x')).toBeNull();
     expect(matchHeading('Action 6 X')).toBeNull();
+    expect(
+      matchHeading('Orientation d’Aménagement et de Programmation « nature »')
+    ).toBeNull();
+    expect(matchHeading('Orientation B – Rénover l’habitat')?.number).toBe('B');
   });
 
   it('prend une ligne en majuscules pour un titre, plus sûrement en grande police', () => {

@@ -108,6 +108,85 @@ describe('cutUnits', () => {
     expect(units[1].text).toContain('Suite de la fiche.');
   });
 
+  it("range une fiche sous l'axe et l'orientation qu'elle redit sous son titre, sans la couper", () => {
+    const fiche = (
+      index: number,
+      numero: number,
+      axe: string,
+      orientation: string
+    ) =>
+      page(
+        index,
+        `Action ${numero} : Favoriser la petite faune par des aménagements`,
+        axe,
+        orientation,
+        'Contexte :',
+        'La fragmentation des milieux érode la biodiversité.',
+        'Descriptif de l’action :',
+        '- Identifier les secteurs à équiper'
+      );
+    const units = cut([
+      page(0, 'Axe stratégique 3 : Relier les habitats', 'Introduction.'),
+      fiche(
+        1,
+        30,
+        'Axe stratégique 4 : Gérer les espaces verts',
+        'Orientation stratégique 9 : Accueillir la biodiversité'
+      ),
+      fiche(
+        2,
+        31,
+        'Axe stratégique 4 : Gérer les espaces verts',
+        'Orientation stratégique 10 : Soutenir les communes'
+      ),
+      fiche(
+        3,
+        32,
+        'Axe stratégique 5 : Bâtir des villes durables',
+        'Orientation stratégique 11 : S’appuyer sur la nature'
+      ),
+    ]);
+
+    expect(
+      units
+        .filter((unit) => unit.kind === 'fiche')
+        .map((unit) => [unit.headingPath, unit.pageStart])
+    ).toEqual([
+      [['4 Gérer les espaces verts', '9 Accueillir la biodiversité'], 1],
+      [['4 Gérer les espaces verts', '10 Soutenir les communes'], 2],
+      [['5 Bâtir des villes durables', '11 S’appuyer sur la nature'], 3],
+    ]);
+    expect(units.at(-1)?.text).toContain('Identifier les secteurs à équiper');
+    expect(units.filter((unit) => unit.kind === 'section')).toHaveLength(1);
+  });
+
+  it("laisse l'axe suivant ouvrir la suite quand les fiches du document ne redisent pas le leur", () => {
+    const units = cut([
+      page(
+        0,
+        'Axe 1 : Gaspillage alimentaire',
+        'Action 1 : Sensibiliser les écoles',
+        'Objectif : cinq établissements par an',
+        'Action 2 : Promouvoir le don',
+        'Objectif : dix restaurateurs',
+        'Axe 2 : Déchets verts',
+        'Les enjeux de cet axe.',
+        'Action 3 : Développer le compostage',
+        'Objectif : soixante pour cent des maisons'
+      ),
+    ]);
+
+    expect(
+      units
+        .filter((unit) => unit.kind === 'fiche')
+        .map((unit) => unit.headingPath)
+    ).toEqual([
+      ['1 Gaspillage alimentaire'],
+      ['1 Gaspillage alimentaire'],
+      ['2 Déchets verts'],
+    ]);
+  });
+
   it('rouvre une fiche à son titre quand seuls ses champs la trahissent', () => {
     const units = cut([
       page(
