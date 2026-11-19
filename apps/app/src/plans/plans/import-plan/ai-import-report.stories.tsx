@@ -16,7 +16,9 @@ const meta = {
   decorators: [
     (Story) => (
       <div className="max-w-5xl mx-auto bg-white border border-grey-3 rounded-lg shadow-sm p-6 md:p-8">
-        <h2 className="text-xl mb-6">Plan d'électrification du territoire</h2>
+        <h2 className="text-xl mb-6">
+          {"Plan d'électrification du territoire"}
+        </h2>
         <Story />
       </div>
     ),
