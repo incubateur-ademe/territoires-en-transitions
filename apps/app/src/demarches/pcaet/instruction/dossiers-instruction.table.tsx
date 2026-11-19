@@ -513,15 +513,15 @@ export const DossiersInstructionTable = ({
             table={table}
             ariaLabel={appLabels.instructionListeTitre}
             className={cn({
-              'min-w-[69rem]': !afficherRegion && !afficherDepartement,
-              'min-w-[75rem]': afficherRegion !== afficherDepartement,
-              'min-w-[81rem]': afficherRegion && afficherDepartement,
+              'min-w-[71rem]': !afficherRegion && !afficherDepartement,
+              'min-w-[77rem]': afficherRegion !== afficherDepartement,
+              'min-w-[83rem]': afficherRegion && afficherDepartement,
             })}
             isEmpty={dossiers.length === 0}
             emptyCard={{ className: 'min-h-[12rem]', ...etatVide }}
             rowWrapper={({ row, children }) => (
               <TableRow
-                className="text-sm"
+                className="text-sm [&>td]:align-top"
                 data-test={`demarches.pcaet.instruction.ligne-${row.id}`}
               >
                 {children}
