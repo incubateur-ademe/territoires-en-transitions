@@ -19,9 +19,9 @@ variable "node_type" {
 }
 
 variable "engine" {
-  description = "Version du moteur Postgres. La valeur doit être identique à celle utilisée par Supabase Cloud côté source (PostgreSQL-15)."
+  description = "Version du moteur Postgres. Un dump Supabase Cloud (PostgreSQL-15) se restaure sur une version supérieure."
   type        = string
-  default     = "PostgreSQL-15"
+  default     = "PostgreSQL-17"
 }
 
 variable "is_ha_cluster" {
