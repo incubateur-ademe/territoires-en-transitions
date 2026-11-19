@@ -54,16 +54,20 @@ export const ToutesLesFichesFiltersForm = ({
   title = 'Filtres',
   filters,
   readonlyFilters = {},
+  hiddenFilters = [],
   setFilters,
 }: {
   title?: string;
   filters: FormFilters;
   readonlyFilters?: Partial<FormFilters>;
+  hiddenFilters?: ReadonlyArray<keyof FormFilters>;
   setFilters: (filters: Partial<FormFilters>) => void;
 }) => {
   const pilotes = getPilotesValues(filters);
   const referents = getReferentsValues(filters);
   const shareFicheEnabled = useShareFicheEnabled();
+  const isFilterVisible = (key: keyof FormFilters) =>
+    !hiddenFilters.includes(key);
 
   const debutPeriodeRef = useRef<HTMLInputElement>(null);
   const finPeriodeRef = useRef<HTMLInputElement>(null);
@@ -208,21 +212,23 @@ export const ToutesLesFichesFiltersForm = ({
                 )}
               />
             </Field>
-            <Field title={getFilterLabel('instanceGouvernanceIds')}>
-              <Controller
-                name="instanceGouvernanceIds"
-                control={control}
-                render={({ field }) => (
-                  <InstanceGouvernanceTagDropdown
-                    values={field.value}
-                    onChange={({ values }) =>
-                      field.onChange(values.map((t) => t.id))
-                    }
-                    disableEdition={true}
-                  />
-                )}
-              />
-            </Field>
+            {isFilterVisible('instanceGouvernanceIds') && (
+              <Field title={getFilterLabel('instanceGouvernanceIds')}>
+                <Controller
+                  name="instanceGouvernanceIds"
+                  control={control}
+                  render={({ field }) => (
+                    <InstanceGouvernanceTagDropdown
+                      values={field.value}
+                      onChange={({ values }) =>
+                        field.onChange(values.map((t) => t.id))
+                      }
+                      disableEdition={true}
+                    />
+                  )}
+                />
+              </Field>
+            )}
 
             <Field title={getFilterLabel('personneReferenteIds')}>
               <Controller
@@ -268,20 +274,22 @@ export const ToutesLesFichesFiltersForm = ({
               />
             </Field>
 
-            <Field title="Notes">
-              <Controller
-                name="notes"
-                control={control}
-                render={({ field }) => (
-                  <Select
-                    options={NOTES_OPTIONS}
-                    values={field.value}
-                    disabled={!isNil(readonlyFilters.notes)}
-                    onChange={(v) => field.onChange(v ?? EMPTY_VALUE)}
-                  />
-                )}
-              />
-            </Field>
+            {isFilterVisible('notes') && (
+              <Field title="Notes">
+                <Controller
+                  name="notes"
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      options={NOTES_OPTIONS}
+                      values={field.value}
+                      disabled={!isNil(readonlyFilters.notes)}
+                      onChange={(v) => field.onChange(v ?? EMPTY_VALUE)}
+                    />
+                  )}
+                />
+              </Field>
+            )}
 
             <Field title={getFilterLabel('hasMesuresLiees')}>
               <Controller
@@ -406,42 +414,46 @@ export const ToutesLesFichesFiltersForm = ({
                 )}
               />
             </Field>
-            <Field title={getFilterLabel('hasDateDeFinPrevisionnelle')}>
-              <Controller
-                name="hasDateDeFinPrevisionnelle"
-                control={control}
-                render={({ field }) => (
-                  <Select
-                    values={field.value as string}
-                    disabled={
-                      !isNil(readonlyFilters.hasDateDeFinPrevisionnelle)
-                    }
-                    dataTest="hasDateDeFinPrevisionnelle"
-                    options={FILTRE_DATE_DE_FIN_PREVISIONNELLE_OPTIONS}
-                    onChange={(value) => {
-                      field.onChange(value ?? EMPTY_VALUE);
-                    }}
-                  />
-                )}
-              />
-            </Field>
-            <Field title={getFilterLabel('anneesNotes')}>
-              <Controller
-                name="anneesNotes"
-                control={control}
-                render={({ field }) => (
-                  <NoteYearsDropdown
-                    values={field.value}
-                    disabled={!isNil(readonlyFilters.anneesNotes)}
-                    onChange={(value: string[]) => {
-                      const anneesNotes =
-                        value && value.length > 0 ? value : EMPTY_ARRAY_VALUE;
-                      field.onChange(anneesNotes ?? EMPTY_VALUE);
-                    }}
-                  />
-                )}
-              />
-            </Field>
+            {isFilterVisible('hasDateDeFinPrevisionnelle') && (
+              <Field title={getFilterLabel('hasDateDeFinPrevisionnelle')}>
+                <Controller
+                  name="hasDateDeFinPrevisionnelle"
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      values={field.value as string}
+                      disabled={
+                        !isNil(readonlyFilters.hasDateDeFinPrevisionnelle)
+                      }
+                      dataTest="hasDateDeFinPrevisionnelle"
+                      options={FILTRE_DATE_DE_FIN_PREVISIONNELLE_OPTIONS}
+                      onChange={(value) => {
+                        field.onChange(value ?? EMPTY_VALUE);
+                      }}
+                    />
+                  )}
+                />
+              </Field>
+            )}
+            {isFilterVisible('anneesNotes') && (
+              <Field title={getFilterLabel('anneesNotes')}>
+                <Controller
+                  name="anneesNotes"
+                  control={control}
+                  render={({ field }) => (
+                    <NoteYearsDropdown
+                      values={field.value}
+                      disabled={!isNil(readonlyFilters.anneesNotes)}
+                      onChange={(value: string[]) => {
+                        const anneesNotes =
+                          value && value.length > 0 ? value : EMPTY_ARRAY_VALUE;
+                        field.onChange(anneesNotes ?? EMPTY_VALUE);
+                      }}
+                    />
+                  )}
+                />
+              </Field>
+            )}
             <Field title={getFilterLabel('hasBudget')}>
               <Controller
                 name="hasBudget"
@@ -566,30 +578,15 @@ export const ToutesLesFichesFiltersForm = ({
               )}
             />
 
-            <Controller
-              name="noReferent"
-              control={control}
-              render={({ field }) => (
-                <Checkbox
-                  label={getFilterLabel('noReferent')}
-                  checked={field.value || false}
-                  disabled={!isNil(readonlyFilters.noReferent)}
-                  onChange={(event) => {
-                    field.onChange(event.target.checked);
-                  }}
-                />
-              )}
-            />
-
-            {shareFicheEnabled && (
+            {isFilterVisible('noReferent') && (
               <Controller
-                name="sharedWithCollectivites"
+                name="noReferent"
                 control={control}
                 render={({ field }) => (
                   <Checkbox
-                    label={getFilterLabel('sharedWithCollectivites')}
+                    label={getFilterLabel('noReferent')}
                     checked={field.value || false}
-                    disabled={!isNil(readonlyFilters.sharedWithCollectivites)}
+                    disabled={!isNil(readonlyFilters.noReferent)}
                     onChange={(event) => {
                       field.onChange(event.target.checked);
                     }}
@@ -598,66 +595,92 @@ export const ToutesLesFichesFiltersForm = ({
               />
             )}
 
-            <Controller
-              name="noTag"
-              control={control}
-              render={({ field }) => (
-                <Checkbox
-                  label={getFilterLabel('noTag')}
-                  checked={field.value || false}
-                  disabled={!isNil(readonlyFilters.noTag)}
-                  onChange={(event) => {
-                    field.onChange(event.target.checked);
-                  }}
+            {shareFicheEnabled &&
+              isFilterVisible('sharedWithCollectivites') && (
+                <Controller
+                  name="sharedWithCollectivites"
+                  control={control}
+                  render={({ field }) => (
+                    <Checkbox
+                      label={getFilterLabel('sharedWithCollectivites')}
+                      checked={field.value || false}
+                      disabled={!isNil(readonlyFilters.sharedWithCollectivites)}
+                      onChange={(event) => {
+                        field.onChange(event.target.checked);
+                      }}
+                    />
+                  )}
                 />
               )}
-            />
-            <Controller
-              name="noThematique"
-              control={control}
-              render={({ field }) => (
-                <Checkbox
-                  data-test="plans.fiches.filters.no-thematique"
-                  label={getFilterLabel('noThematique')}
-                  checked={field.value || false}
-                  disabled={!isNil(readonlyFilters.noThematique)}
-                  onChange={(event) => {
-                    field.onChange(event.target.checked);
-                  }}
-                />
-              )}
-            />
+
+            {isFilterVisible('noTag') && (
+              <Controller
+                name="noTag"
+                control={control}
+                render={({ field }) => (
+                  <Checkbox
+                    label={getFilterLabel('noTag')}
+                    checked={field.value || false}
+                    disabled={!isNil(readonlyFilters.noTag)}
+                    onChange={(event) => {
+                      field.onChange(event.target.checked);
+                    }}
+                  />
+                )}
+              />
+            )}
+            {isFilterVisible('noThematique') && (
+              <Controller
+                name="noThematique"
+                control={control}
+                render={({ field }) => (
+                  <Checkbox
+                    data-test="plans.fiches.filters.no-thematique"
+                    label={getFilterLabel('noThematique')}
+                    checked={field.value || false}
+                    disabled={!isNil(readonlyFilters.noThematique)}
+                    onChange={(event) => {
+                      field.onChange(event.target.checked);
+                    }}
+                  />
+                )}
+              />
+            )}
           </div>
 
           <div className="flex flex-col gap-4">
-            <Controller
-              name="noPlan"
-              control={control}
-              render={({ field }) => (
-                <Checkbox
-                  label={getFilterLabel('noPlan')}
-                  checked={field.value || false}
-                  disabled={!isNil(readonlyFilters.noPlan)}
-                  onChange={(event) => {
-                    field.onChange(event.target.checked);
-                  }}
-                />
-              )}
-            />
-            <Controller
-              name="restreint"
-              control={control}
-              render={({ field }) => (
-                <Checkbox
-                  label={getFilterLabel('restreint')}
-                  checked={field.value || false}
-                  disabled={!isNil(readonlyFilters.restreint)}
-                  onChange={(event) => {
-                    field.onChange(event.target.checked);
-                  }}
-                />
-              )}
-            />
+            {isFilterVisible('noPlan') && (
+              <Controller
+                name="noPlan"
+                control={control}
+                render={({ field }) => (
+                  <Checkbox
+                    label={getFilterLabel('noPlan')}
+                    checked={field.value || false}
+                    disabled={!isNil(readonlyFilters.noPlan)}
+                    onChange={(event) => {
+                      field.onChange(event.target.checked);
+                    }}
+                  />
+                )}
+              />
+            )}
+            {isFilterVisible('restreint') && (
+              <Controller
+                name="restreint"
+                control={control}
+                render={({ field }) => (
+                  <Checkbox
+                    label={getFilterLabel('restreint')}
+                    checked={field.value || false}
+                    disabled={!isNil(readonlyFilters.restreint)}
+                    onChange={(event) => {
+                      field.onChange(event.target.checked);
+                    }}
+                  />
+                )}
+              />
+            )}
 
             <Controller
               name="ameliorationContinue"
@@ -674,20 +697,22 @@ export const ToutesLesFichesFiltersForm = ({
               )}
             />
 
-            <Controller
-              name="doesBelongToSeveralPlans"
-              control={control}
-              render={({ field }) => (
-                <Checkbox
-                  label={getFilterLabel('doesBelongToSeveralPlans')}
-                  checked={field.value || false}
-                  disabled={!isNil(readonlyFilters.doesBelongToSeveralPlans)}
-                  onChange={(event) => {
-                    field.onChange(event.target.checked);
-                  }}
-                />
-              )}
-            />
+            {isFilterVisible('doesBelongToSeveralPlans') && (
+              <Controller
+                name="doesBelongToSeveralPlans"
+                control={control}
+                render={({ field }) => (
+                  <Checkbox
+                    label={getFilterLabel('doesBelongToSeveralPlans')}
+                    checked={field.value || false}
+                    disabled={!isNil(readonlyFilters.doesBelongToSeveralPlans)}
+                    onChange={(event) => {
+                      field.onChange(event.target.checked);
+                    }}
+                  />
+                )}
+              />
+            )}
           </div>
         </FormSectionGrid>
       </form>
