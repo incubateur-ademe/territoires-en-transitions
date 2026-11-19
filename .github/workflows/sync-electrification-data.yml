@@ -60,6 +60,7 @@ jobs:
           DATA_KIND: ${{ inputs.kind }}
           SYNC_MODE: ${{ inputs.mode }}
           PUBLICATION_TARGET: ${{ inputs.target }}
+          CATALOGUE_BACKEND_URL: ${{ vars.BACKEND_URL }}
         run: |
           for required in SUPABASE_DATABASE_URL SUPABASE_URL SUPABASE_SERVICE_ROLE_KEY GRIST_API_KEY; do
             if [ -z "${!required}" ]; then
