@@ -71,6 +71,8 @@ const input = {
 describe('UpsertGridValeursService.upsertGridValeurs', () => {
   it.each([
     { error: 'INVALID_VALUE', expected: 'INVALID_GRID_VALEUR' },
+    { error: 'INDICATEUR_NOT_AVAILABLE', expected: 'INVALID_GRID_VALEUR' },
+    { error: 'PERIODICITE_MISMATCH', expected: 'INVALID_GRID_VALEUR' },
     { error: 'USER_VALUE_NOT_ALLOWED', expected: 'USER_VALUE_NOT_ALLOWED' },
     { error: 'UNAUTHORIZED', expected: 'UNAUTHORIZED' },
   ] as const)(
@@ -90,19 +92,22 @@ describe('UpsertGridValeursService.upsertGridValeurs', () => {
     }
   );
 
-  it("retourne l'échec de la validation en code de grille sans écrire de valeurs calculées", async () => {
-    const cause = new Error('détail précis');
-    const { service, manage } = toServiceWithMocks({
-      validation: failure('INVALID_VALUE', cause),
-    });
+  it.each(['INDICATEUR_NOT_AVAILABLE', 'PERIODICITE_MISMATCH'] as const)(
+    "retourne l'échec de validation %s en code de grille sans écrire de valeurs calculées",
+    async (error) => {
+      const cause = new Error('détail précis');
+      const { service, manage } = toServiceWithMocks({
+        validation: failure(error, cause),
+      });
 
-    const result = await service.upsertGridValeurs(input, {
-      user: user as never,
-    });
+      const result = await service.upsertGridValeurs(input, {
+        user: user as never,
+      });
 
-    expect(result).toEqual(failure('INVALID_GRID_VALEUR', cause));
-    expect(manage.upsertIndicateurValeurs).not.toHaveBeenCalled();
-  });
+      expect(result).toEqual(failure('INVALID_GRID_VALEUR', cause));
+      expect(manage.upsertIndicateurValeurs).not.toHaveBeenCalled();
+    }
+  );
 
   it('publie les événements et retourne les valeurs enregistrées quand les valeurs calculées réussissent', async () => {
     const { service, manage } = toServiceWithMocks({

@@ -163,7 +163,7 @@ describe('ValidateIndicateurValeursWriteService', () => {
 
       expect(result).toMatchObject({
         success: false,
-        error: 'INVALID_VALUE',
+        error: 'INDICATEUR_NOT_AVAILABLE',
         cause: { message: 'Indicateur definition not found for id 99' },
       });
     });
@@ -178,7 +178,7 @@ describe('ValidateIndicateurValeursWriteService', () => {
 
       expect(result).toMatchObject({
         success: false,
-        error: 'INVALID_VALUE',
+        error: 'INDICATEUR_NOT_AVAILABLE',
         cause: {
           message: `Indicateur 1 non disponible pour la collectivité ${otherCollectiviteId}`,
         },
@@ -193,7 +193,7 @@ describe('ValidateIndicateurValeursWriteService', () => {
 
       expect(result).toMatchObject({
         success: false,
-        error: 'INVALID_VALUE',
+        error: 'INDICATEUR_NOT_AVAILABLE',
         cause: {
           message: `Indicateur 1 non disponible pour la collectivité ${collectiviteId}`,
         },
@@ -225,7 +225,7 @@ describe('ValidateIndicateurValeursWriteService', () => {
 
       expect(result).toMatchObject({
         success: false,
-        error: 'INVALID_VALUE',
+        error: 'PERIODICITE_MISMATCH',
         cause: {
           message: 'La valeur doit respecter la périodicité de déclaration',
         },

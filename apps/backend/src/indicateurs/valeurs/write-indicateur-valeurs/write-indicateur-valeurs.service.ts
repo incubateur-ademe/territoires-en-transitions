@@ -177,7 +177,7 @@ export class WriteIndicateurValeursService {
         );
         if (!lockedIndicateur)
           return failure(
-            'INVALID_VALUE',
+            'INDICATEUR_NOT_AVAILABLE',
             new Error(`Indicateur definition not found for id ${indicateurId}`)
           );
         assertUserIndicateurValeursAllowed([lockedIndicateur]);
@@ -223,7 +223,7 @@ export class WriteIndicateurValeursService {
             existing.periodicite !== data.periodicite
           ) {
             return failure(
-              'INVALID_VALUE',
+              'PERIODICITE_MISMATCH',
               new Error(
                 'La périodicité de la valeur ne correspond pas à la série demandée'
               )
@@ -274,7 +274,7 @@ export class WriteIndicateurValeursService {
   ): Result<void, IndicateurValeursError> {
     if (indicateur.periodicite !== periodicite) {
       return failure(
-        'INVALID_VALUE',
+        'PERIODICITE_MISMATCH',
         new Error('La valeur doit respecter la périodicité de déclaration')
       );
     }

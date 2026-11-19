@@ -69,7 +69,7 @@ describe('WriteIndicateurValeursService.saveSingle', () => {
 
     expect(result).toMatchObject({
       success: false,
-      error: 'INVALID_VALUE',
+      error: 'INDICATEUR_NOT_AVAILABLE',
       cause: {
         message: `Indicateur definition not found for id ${indicateurId}`,
       },
@@ -88,7 +88,7 @@ describe('WriteIndicateurValeursService.saveSingle', () => {
 
     expect(result).toMatchObject({
       success: false,
-      error: 'INVALID_VALUE',
+      error: 'PERIODICITE_MISMATCH',
       cause: {
         message: 'La valeur doit respecter la périodicité de déclaration',
       },
@@ -118,7 +118,7 @@ describe('WriteIndicateurValeursService.saveSingle', () => {
 
     expect(result).toMatchObject({
       success: false,
-      error: 'INVALID_VALUE',
+      error: 'PERIODICITE_MISMATCH',
       cause: {
         message: 'La valeur doit respecter la périodicité de déclaration',
       },
@@ -141,7 +141,7 @@ describe('WriteIndicateurValeursService.saveSingle', () => {
 
     expect(result).toMatchObject({
       success: false,
-      error: 'INVALID_VALUE',
+      error: 'PERIODICITE_MISMATCH',
       cause: {
         message:
           'La périodicité de la valeur ne correspond pas à la série demandée',
