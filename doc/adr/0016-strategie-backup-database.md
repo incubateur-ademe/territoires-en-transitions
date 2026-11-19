@@ -7,6 +7,8 @@ Date : 2026-04-15
 Accepté. Révisé le 2026-11-02 pour remplacer les règles propres aux indicateurs
 par une prévalidation générique ; décision consolidée ici le 2026-11-03.
 Les anciennes règles restent consignées dans l’historique ci-dessous.
+Révisé le 2026-11-17 : les dumps passent du projet Supabase `backups` à un bucket
+Scaleway sous Object Lock, avec une rétention ramenée à 12 mois (§3).
 
 ## Contexte
 
@@ -78,18 +80,30 @@ Les tables qui ne sont pas dans `restore-config.yml` (ex : `notifications`, `web
 
 ### 3. Stockage S3-compatible avec politique de rétention
 
-Les backups sont stockés sur un bucket S3-compatible (Scaleway, OVH, MinIO, etc.) via l'AWS CLI avec le flag `--endpoint-url`. Le format de nommage est `backup-YYYY-MM-DD.dump` (dates UTC).
-A l'heure actuelle, un projet supabase `backups` a été créé et est utilisé pour stocker les backups car il est sur une zone AWS différente (bonne pratique en cas d'incident dans un datacenter).
+Les backups sont stockés sur un bucket S3-compatible via l'AWS CLI avec le flag `--endpoint-url`. Le format de nommage est `backup-YYYY-MM-DD.dump` (dates UTC).
+
+Le bucket est `tet-database-backups`, chez Scaleway (`fr-par`), déclaré dans la stack Terraform `infra/platform` :
+
+- **Projet dédié** (`tet-database-backups`) : les permissions IAM Object Storage valent pour un projet entier et les dumps ne sont pas chiffrés. Une clé d'un autre projet (celle de Coolify notamment) ne peut ni les lire, ni déposer un faux dump que `restore.sh` restaurerait.
+- **Versioning et Object Lock COMPLIANCE de 14 jours** : pendant 14 jours, aucune version d'un dump ne peut être supprimée ni écrasée, quelle que soit la clé utilisée. Au-delà, la protection repose sur les seuls droits de la clé.
+- **Upload par `put-object` avec `Content-MD5`** : un bucket verrouillé l'exige, et `aws s3 cp` ne l'envoie pas toujours. Un PUT simple est limité à 5 Go ; `backup.sh` échoue explicitement au-delà, et il faudra alors passer à un upload multipart.
+
+Tant que la base de prod est chez Supabase (AWS), ce bucket est chez un autre fournisseur que la base. Ce ne sera plus le cas une fois la prod migrée sur Scaleway `fr-par` (`infra/prod`) : base et backups partageront alors fournisseur et région, et une copie hors région sera à prévoir.
 
 **Politique de rétention** (gérée par `cleanup.sh`) :
 
-| Période            | Rétention                                  |
-| ------------------ | ------------------------------------------ |
-| < 60 jours         | 1 backup par jour (tous conservés)         |
-| 60 jours → 24 mois | 1 backup par mois (le plus ancien du mois) |
-| > 24 mois          | Supprimé                                   |
+| Période               | Rétention                                                                    |
+| --------------------- | ---------------------------------------------------------------------------- |
+| < 14 jours            | 1 backup par jour (tous conservés)                                           |
+| 14 jours → 4 semaines | 1 backup par semaine (le premier de la semaine), plus le premier de chaque mois |
+| 4 semaines → 12 mois  | 1 backup par mois (le plus ancien du mois)                                   |
+| > 12 mois             | Supprimé                                                                     |
 
-Un garde-fou empêche de descendre sous un nombre minimum de backups (configurable, défaut : 1).
+La fenêtre quotidienne est alignée sur la durée du verrou : un dump supprimé plus tôt resterait stocké et facturé jusqu'à l'échéance. Les seuils hebdomadaire et mensuel sont ramenés au lundi et au 1er du mois, pour que le backup retenu pour une semaine ou un mois ne sorte pas avant la fin de sa période. Les suppressions de `cleanup.sh` posent des delete markers ; les versions correspondantes sont purgées par la règle de cycle de vie du bucket (7 jours après être devenues non courantes, et pas avant la fin du verrou).
+
+Un garde-fou empêche de descendre sous un nombre minimum de backups (configurable, défaut : 1). `DRY_RUN=true` affiche les suppressions sans les faire ; `TODAY=YYYY-MM-DD` simule une autre date et n'est accepté qu'en dry-run.
+
+> **Historique :** jusqu'au 2026-11-17, les dumps étaient stockés dans un projet Supabase `backups`, sur une autre zone AWS que la prod, avec une rétention de 60 jours en quotidien puis 1 backup par mois jusqu'à 24 mois.
 
 ### 4. Restauration nocturne sur staging et preprod
 
@@ -256,8 +270,12 @@ de migrations.
 - Diagnostic précis des erreurs de restauration grâce à l'approche table par table
 - Compatibilité code/données vérifiable via les métadonnées
 - Politique de rétention automatisée avec garde-fous
+- Dumps des 14 derniers jours immuables (Object Lock), y compris pour une clé compromise ou un bug de `cleanup.sh`
 
 ### Négatives
+
+- Au-delà de 14 jours, les dumps hebdomadaires et mensuels ne sont plus verrouillés : la clé du workflow, qui a le droit de suppression pour appliquer la rétention, peut les effacer
+- Un dump de plus de 5 Go fait échouer le backup tant que l'upload multipart n'est pas écrit (cf. §3)
 
 - La restauration table par table est significativement plus lente (~150 appels `pg_restore` relisant chacun le dump complet)
 - Les tables non listées dans `restore-config.yml` ne sont pas restaurées (le backup, lui, contient l'intégralité de la base) — nécessite une attention lors de l'ajout de nouvelles tables pour les inclure dans un groupe

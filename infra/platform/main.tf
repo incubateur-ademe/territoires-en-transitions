@@ -190,8 +190,8 @@ resource "scaleway_object_bucket_lock_configuration" "coolify_backups" {
 # dumps ne sont pas chiffrés, la clé Coolify (sur le control plane) ne doit ni
 # les lire ni en déposer un faux, que restore.sh restaurerait.
 #
-# Pas de règle d'expiration : la rétention (60 jours, puis 1 par mois sur 24
-# mois) est appliquée par data_layer/backup/cleanup.sh. Ses suppressions posent
+# Pas de règle d'expiration : la rétention (14 jours, puis 1 par semaine jusqu'à 4
+# semaines, puis 1 par mois jusqu'à 12 mois) est appliquée par data_layer/backup/cleanup.sh. Ses suppressions posent
 # des delete markers, purgés par la règle noncurrent-versions une fois le verrou
 # expiré.
 resource "scaleway_object_bucket" "database_backups" {

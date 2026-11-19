@@ -36,6 +36,9 @@ upload() {
     echo "$file fait $size octets, au-delà des 5 Go d'un PUT simple : passer à un upload multipart."
     exit 1
   fi
+  if [ "$size" -ge 4000000000 ]; then
+    echo "::warning::$file fait $size octets, proche des 5 Go d'un PUT simple : prévoir un upload multipart."
+  fi
   AWS_ACCESS_KEY_ID="$BACKUP_AWS_ACCESS_KEY_ID" \
   AWS_SECRET_ACCESS_KEY="$BACKUP_AWS_SECRET_ACCESS_KEY" \
   aws s3api put-object \
