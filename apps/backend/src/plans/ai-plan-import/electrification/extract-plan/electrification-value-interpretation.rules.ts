@@ -8,7 +8,7 @@ import {
 } from './electrification-value-interpretation.schema';
 
 const numberLiteralPattern = new RegExp(
-  `(?<![\\p{L}\\p{N}])${Values.NUMBER_LITERAL}(?:[eE][+-]?\\d+)?`,
+  `(?<![\\p{L}\\p{N}])${Values.NUMBER_LITERAL}(?:[eE][+-]?\\d+)?(?!\\p{N})`,
   'gu'
 );
 const literalPattern = new RegExp(

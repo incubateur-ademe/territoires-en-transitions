@@ -2235,6 +2235,11 @@ describe('Résolution des fiches actions Électrification', () => {
           values: [value('parc', 0, '1')],
         },
         {
+          reason: 'séparateur ambigu sans troncature du nombre suivant',
+          text: 'Parc prévu : 8 2030',
+          values: [value('parc', 0, '8 203')],
+        },
+        {
           reason: 'occurrence réutilisée',
           text: 'Parc prévu : 8',
           values: [
