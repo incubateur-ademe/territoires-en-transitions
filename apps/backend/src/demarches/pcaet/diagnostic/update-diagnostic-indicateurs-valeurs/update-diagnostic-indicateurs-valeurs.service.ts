@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { ListIndicateursPredefinisService } from '@tet/backend/indicateurs/indicateurs/list-indicateurs-predefinis/list-indicateurs-predefinis.service';
 import ManageIndicateurValeursService from '@tet/backend/indicateurs/valeurs/manage-indicateur-valeurs/manage-indicateur-valeurs.service';
 import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
-import { toCommonFailure } from '@tet/backend/indicateurs/valeurs/indicateur-valeurs.errors';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import type { Transaction } from '@tet/backend/utils/database/transaction.utils';
@@ -23,6 +22,7 @@ import { DemarchePcaetDiagnosticService } from '../../shared/demarche-pcaet-diag
 import { DemarchePcaetRefRepository } from '../../shared/demarche-pcaet-ref.repository';
 import { DemarchePcaetSourceMetadonneeRepository } from '../../shared/demarche-pcaet-source-metadonnee.repository';
 import {
+  toUpdateDiagnosticFailure,
   UpdateDiagnosticIndicateursValeursErrorEnum,
   type UpdateDiagnosticIndicateursValeursError,
 } from './update-diagnostic-indicateurs-valeurs.errors';
@@ -139,7 +139,7 @@ export class UpdateDiagnosticIndicateursValeursService {
       }
     );
     if (!upserted.success) {
-      return toCommonFailure(upserted);
+      return toUpdateDiagnosticFailure(upserted);
     }
 
     const payload = await this.diagnosticService.loadPayload(

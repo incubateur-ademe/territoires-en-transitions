@@ -1,3 +1,5 @@
+import { IndicateurValeursFailure } from '@tet/backend/indicateurs/valeurs/indicateur-valeurs.errors';
+import { failure, Result } from '@tet/backend/utils/result.type';
 import {
   createErrorsEnum,
   type TrpcErrorHandlerConfig,
@@ -7,6 +9,8 @@ const specificErrors = [
   'DEMARCHE_PCAET_NOT_FOUND',
   'DIAGNOSTIC_NON_MODIFIABLE',
   'INDICATEUR_NON_ANNUEL',
+  'INVALID_VALUE',
+  'USER_VALUE_NOT_ALLOWED',
 ] as const;
 
 type SpecificError = (typeof specificErrors)[number];
@@ -19,6 +23,8 @@ export const updateDiagnosticIndicateursValeursErrorConfig: TrpcErrorHandlerConf
         message:
           'Le diagnostic PCAET exige des indicateurs annuels du référentiel',
       },
+      INVALID_VALUE: { code: 'BAD_REQUEST', messageFromCause: true },
+      USER_VALUE_NOT_ALLOWED: { code: 'BAD_REQUEST', messageFromCause: true },
       DEMARCHE_PCAET_NOT_FOUND: {
         code: 'NOT_FOUND',
         message: "La démarche PCAET demandée n'a pas été trouvée",
@@ -36,3 +42,11 @@ export const UpdateDiagnosticIndicateursValeursErrorEnum =
 
 export type UpdateDiagnosticIndicateursValeursError =
   keyof typeof UpdateDiagnosticIndicateursValeursErrorEnum;
+
+export const toUpdateDiagnosticFailure = ({
+  error,
+  cause,
+}: IndicateurValeursFailure): Result<
+  never,
+  UpdateDiagnosticIndicateursValeursError
+> => failure(error, cause);
