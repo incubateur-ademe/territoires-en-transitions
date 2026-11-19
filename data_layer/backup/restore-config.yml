@@ -76,7 +76,6 @@ groups:
     - categorie_tag
     - effet_attendu
     - filtre_intervalle
-    - tableau_de_bord_module
     # Part of other group bu done here because shared by groups
     - referentiel_definition
     - action_relation
@@ -173,6 +172,7 @@ groups:
     - plan_action_type_categorie
     - plan_action_type
     - axe # Axe reference panier
+    - tableau_de_bord_module # plan_id references axe
     - fiche_action
     - fiche_action_import_csv
     - fiche_action_action
