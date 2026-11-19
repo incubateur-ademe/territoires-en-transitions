@@ -154,6 +154,49 @@ describe('cutUnits', () => {
     expect(units[0].text).toContain('Orientation 1.1 : Rénover');
   });
 
+  it('réunit les petites sections d’un même axe, jamais par-dessus un changement d’axe', () => {
+    const units = cut(
+      [
+        page(
+          0,
+          'Sommaire',
+          'Axe 1 : Bâtiments',
+          'Axe 2 : Mobilité',
+          'Axe 3 : Déchets'
+        ),
+        page(
+          1,
+          'Axe 1 : Bâtiments',
+          '## 1.1 Rénover',
+          'Isoler les écoles, pilote : service bâtiments.',
+          '## 1.2 Construire',
+          'Bâtir une école passive, pilote : service bâtiments.'
+        ),
+        page(
+          2,
+          'Axe 2 : Mobilité',
+          '## 2.1 Pédaler',
+          'Tracer des pistes cyclables, pilote : service voirie.'
+        ),
+      ],
+      { minTokens: 200 }
+    );
+
+    expect(units.map((unit) => unit.text.split('\n')[0])).toEqual([
+      'Sommaire',
+      'Axe 1 : Bâtiments',
+      'Axe 1 : Bâtiments',
+      'Axe 2 : Mobilité',
+    ]);
+    // Les lignes du sommaire ensemble, sans le contenu du premier axe.
+    expect(units[1].text).toContain('Axe 3 : Déchets');
+    expect(units[1].text).not.toContain('Rénover');
+    expect(units[2].headingPath).toEqual(['1 Bâtiments']);
+    expect(units[2].text).toContain('1.2 Construire');
+    expect(units[2].text).not.toContain('Pédaler');
+    expect(units[3].headingPath).toEqual(['2 Mobilité']);
+  });
+
   it("ne fait prendre à une fiche ni ce qui la précède, ni l'introduction de l'axe suivant", () => {
     const units = cut(
       [

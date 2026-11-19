@@ -305,6 +305,8 @@ au modèle : on essaie un nouveau classeur sans coût.
 Aucun appel au modèle : on reconnaît les titres, on coupe aux frontières des
 fiches, puis on ramène chaque unité entre 1 000 et 3 500 tokens (les petites
 fusionnent avec leur voisine, les grandes sont fenêtrées avec une reprise).
+Deux unités de deux axes différents ne fusionnent que si les deux sont
+petites : le tableau d'un axe ne se dilue pas dans celui du suivant.
 
 Chaque unité garde ses pages, son chemin de titres (axe > sous-axe) et la
 partie du document qui la contient (diagnostic, stratégie, plan d'actions,
@@ -344,6 +346,15 @@ Ce que la mise en page trompe, et comment la segmentation s'en garde :
 - deux colonnes côte à côte : la lecture sépare deux morceaux de texte d'une
   même ligne quand plus de deux hauteurs de police les séparent, sans détacher
   un numéro ou un libellé court de sa valeur ;
+- un tableau à colonnes ou des cartes côte à côte : lue ligne par ligne, la
+  page mêlerait sur une même ligne une action, son objectif et son porteur.
+  `read-document/read-column-table.ts` la relit colonne par colonne. Un tableau
+  dont l'en-tête nomme les actions (« Enjeux | Objectifs | Actions | Portage »)
+  sort rangée par rangée, chaque valeur précédée de son libellé, le
+  regroupement de gauche en titre, et se poursuit d'une page à l'autre. Des
+  cartes (trois colonnes de même gabarit, ou deux au texte centré) sortent
+  l'une après l'autre, leur premier bloc en titre de fiche. Toute autre page
+  reste lue ligne par ligne ;
 - un titre sur plusieurs lignes : recollé jusqu'à quatre lignes de même
   police ; un titre explicite (« ACTION 2 - … », « OBJECTIF 2 - … ») admet une
   suite plus longue dans une autre grande police, mais n'avale jamais le titre

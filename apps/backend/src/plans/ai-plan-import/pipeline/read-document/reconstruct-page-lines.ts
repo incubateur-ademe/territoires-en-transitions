@@ -11,7 +11,7 @@ export type TextItemLike = {
   links?: DocumentLink[];
 };
 
-type PositionedItem = {
+export type PositionedItem = {
   text: string;
   x: number;
   right: number;
@@ -45,15 +45,27 @@ export const reconstructPageLines = (
   items: TextItemLike[],
   pageHeight: number,
   pageIndex?: number
-): PageLine[] => {
-  const positioned = items
+): PageLine[] =>
+  locateLines(
+    linesFromPositionedItems(positionItems(items, pageHeight)),
+    pageIndex
+  );
+
+/** Les fragments de pdf.js, placés depuis le haut de la page. */
+export const positionItems = (
+  items: TextItemLike[],
+  pageHeight: number
+): PositionedItem[] =>
+  items
     .filter((item) => item.str.length > 0)
     .map(toPositionedItem(pageHeight))
     .sort((a, b) => a.y - b.y || a.x - b.x);
 
-  const lines: PositionedItem[][] = [];
+/** Les fragments d'une même ligne physique, de gauche à droite. */
+export const groupRows = (positioned: PositionedItem[]): PositionedItem[][] => {
+  const rows: PositionedItem[][] = [];
   for (const item of positioned) {
-    const current = lines.at(-1);
+    const current = rows.at(-1);
     const anchor = current?.[0];
     if (
       anchor &&
@@ -62,32 +74,41 @@ export const reconstructPageLines = (
     ) {
       current.push(item);
     } else {
-      lines.push([item]);
+      rows.push([item]);
     }
   }
+  return rows.map((row) => dropOverprints(row.sort((a, b) => a.x - b.x)));
+};
 
-  return lines
-    .map((line) => dropOverprints(line.sort((a, b) => a.x - b.x)))
+export const linesFromPositionedItems = (
+  positioned: PositionedItem[]
+): PageLine[] =>
+  groupRows(positioned)
     .flatMap(splitColumns)
     .map(toPageLine)
-    .filter((line) => line.text.length > 0)
-    .map((line, lineIndex) =>
-      pageIndex === undefined
-        ? line
-        : {
-            ...line,
-            locations: [{ pageIndex, lineIndex }],
-            ...(line.links
-              ? {
-                  links: line.links.map((link) => ({
-                    ...link,
-                    location: { ...link.location, lineIndex },
-                  })),
-                }
-              : {}),
-          }
-    );
-};
+    .filter((line) => line.text.length > 0);
+
+/** Numérote les lignes d'une page, et leurs liens avec elles. */
+export const locateLines = (
+  lines: PageLine[],
+  pageIndex?: number
+): PageLine[] =>
+  lines.map((line, lineIndex) =>
+    pageIndex === undefined
+      ? line
+      : {
+          ...line,
+          locations: [{ pageIndex, lineIndex }],
+          ...(line.links
+            ? {
+                links: line.links.map((link) => ({
+                  ...link,
+                  location: { ...link.location, lineIndex },
+                })),
+              }
+            : {}),
+        }
+  );
 
 const toPositionedItem =
   (pageHeight: number) =>
@@ -117,7 +138,7 @@ const dropOverprints = (items: PositionedItem[]): PositionedItem[] =>
         )
   );
 
-const splitColumns = (items: PositionedItem[]): PositionedItem[][] => {
+export const splitColumns = (items: PositionedItem[]): PositionedItem[][] => {
   const segments: PositionedItem[][] = [];
   items.forEach((item, index) => {
     const previous = items[index - 1];
@@ -153,7 +174,7 @@ const letterCount = (items: PositionedItem[]): number =>
     0
   );
 
-const toPageLine = (items: PositionedItem[]): PageLine => {
+export const toPageLine = (items: PositionedItem[]): PageLine => {
   let text = '';
   let previous: PositionedItem | null = null;
   for (const item of items) {

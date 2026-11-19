@@ -3,6 +3,7 @@ import { basename, extname, join } from 'node:path';
 import type { LlmCallEvent } from '@tet/backend/utils/llm/llm-observer';
 import { normalizeExtractedActions } from '../adapters/extracted-action-to-import-action';
 import type { PlanSkeleton } from '../models/plan-skeleton';
+import type { StepName } from '../pipeline/pipeline-step-states';
 import type { PipelineOutcome } from '../pipeline/run-import-pipeline';
 import type { DocumentUnit } from '../pipeline/segment-document/document-unit';
 import {
@@ -49,6 +50,10 @@ export type EvalTrace = {
   keptUnits: TracedUnit[];
   /** Ceux qu'il a écartés : une action manquante s'y trouve souvent. */
   discardedUnits: TracedUnit[];
+  /** Nombre d'actions après chaque étape : une perte se date. */
+  actionsByStep: Partial<Record<StepName, number>>;
+  /** Titres relevés à l'extraction et absents ensuite : fondus comme doublons. */
+  titlesDroppedAfterExtraction: string[];
 };
 
 const START_CHARS = 100;
@@ -66,19 +71,32 @@ export const buildEvalTrace = ({
   skeleton,
   units,
   allUnits,
+  titlesByStep,
 }: {
   skeleton: PlanSkeleton | null;
   units: UnitToTrace[] | null;
   /** Les extraits d'avant le tri. */
   allUnits: UnitToTrace[] | null;
+  /** Les titres des actions après chaque étape terminée. */
+  titlesByStep: Partial<Record<StepName, string[]>>;
 }): EvalTrace => {
   const kept = new Set((units ?? []).map((unit) => unit.id));
+  const lastTitles = new Set(Object.values(titlesByStep).at(-1) ?? []);
   return {
     skeleton,
     keptUnits: (units ?? []).map(traceUnit),
     discardedUnits: (allUnits ?? [])
       .filter((unit) => !kept.has(unit.id))
       .map(traceUnit),
+    actionsByStep: Object.fromEntries(
+      Object.entries(titlesByStep).map(([step, titles]) => [
+        step,
+        titles.length,
+      ])
+    ),
+    titlesDroppedAfterExtraction: (titlesByStep.extraction ?? []).filter(
+      (title) => !lastTitles.has(title)
+    ),
   };
 };
 
