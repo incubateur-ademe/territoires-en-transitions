@@ -6,6 +6,7 @@ import { Icon } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
 import { AiImportProgressBar } from './ai-import-stages';
 import { ImportStepView } from './ai-import-steps.model';
+import { importStepStatusLabels } from './ai-import.labels';
 
 const STEP_LABELS: Record<ImportStepView['name'], string> = {
   reading: appLabels.importPlanIaEtapeLecture,
@@ -26,18 +27,15 @@ const stepLabelsFor = (withSecteurs: boolean): typeof STEP_LABELS =>
     ? STEP_LABELS
     : { ...STEP_LABELS, secteurs: appLabels.importPlanIaEtapeEffetsAttendus };
 
-const statusLabels: Record<VisibleStepStatus, string> = {
-  done: appLabels.importPlanIaEtapeTerminee,
-  current: appLabels.importPlanIaEtapeEnCours,
-  waiting: appLabels.importPlanIaEtapeEnAttente,
-  failed: appLabels.importPlanIaEtapeEnEchec,
-};
-
 type VisibleStepStatus = Exclude<ImportStepView['status'], 'skipped'>;
 
 type VisibleStep = ImportStepView & { status: VisibleStepStatus };
 
-const StepStatusIcon = ({ status }: { status: VisibleStepStatus }) => {
+export const StepStatusIcon = ({
+  status,
+}: {
+  status: ImportStepView['status'];
+}) => {
   switch (status) {
     case 'done':
       return (
@@ -54,6 +52,7 @@ const StepStatusIcon = ({ status }: { status: VisibleStepStatus }) => {
     case 'current':
       return <SpinnerLoader className="w-6 h-6 shrink-0" />;
     case 'waiting':
+    case 'skipped':
       return (
         <span className="w-6 h-6 shrink-0 p-0.5">
           <span className="block w-full h-full rounded-full border-2 border-grey-4" />
@@ -101,7 +100,7 @@ const ImportStepList = ({
             >
               {stepLabels[step.name]}
               <span className="sr-only">
-                {` (${statusLabels[step.status]})`}
+                {` (${importStepStatusLabels[step.status]})`}
               </span>
             </span>
           </li>
