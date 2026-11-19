@@ -39,6 +39,8 @@ describe('getIndicateurValeursDataOrThrow', () => {
   it.each([
     'UNAUTHORIZED',
     'INVALID_VALUE',
+    'INDICATEUR_NOT_AVAILABLE',
+    'PERIODICITE_MISMATCH',
     'USER_VALUE_NOT_ALLOWED',
     'DATABASE_ERROR',
   ] as const)(
@@ -65,6 +67,8 @@ describe('indicateurValeursErrorConfig', () => {
 
   it.each([
     { error: 'INVALID_VALUE', code: 'BAD_REQUEST' },
+    { error: 'INDICATEUR_NOT_AVAILABLE', code: 'BAD_REQUEST' },
+    { error: 'PERIODICITE_MISMATCH', code: 'BAD_REQUEST' },
     { error: 'USER_VALUE_NOT_ALLOWED', code: 'BAD_REQUEST' },
     { error: 'UNAUTHORIZED', code: 'FORBIDDEN' },
   ] as const)(
@@ -78,6 +82,8 @@ describe('indicateurValeursErrorConfig', () => {
 
   it.each([
     { error: 'INVALID_VALUE', exception: BadRequestException },
+    { error: 'INDICATEUR_NOT_AVAILABLE', exception: BadRequestException },
+    { error: 'PERIODICITE_MISMATCH', exception: BadRequestException },
     { error: 'USER_VALUE_NOT_ALLOWED', exception: BadRequestException },
     { error: 'UNAUTHORIZED', exception: ForbiddenException },
   ] as const)(
@@ -113,6 +119,8 @@ describe('toCommonError', () => {
     { error: 'UNAUTHORIZED', expected: 'UNAUTHORIZED' },
     { error: 'DATABASE_ERROR', expected: 'DATABASE_ERROR' },
     { error: 'INVALID_VALUE', expected: 'SERVER_ERROR' },
+    { error: 'INDICATEUR_NOT_AVAILABLE', expected: 'SERVER_ERROR' },
+    { error: 'PERIODICITE_MISMATCH', expected: 'SERVER_ERROR' },
     { error: 'USER_VALUE_NOT_ALLOWED', expected: 'SERVER_ERROR' },
   ] as const)('convertit $error en $expected', ({ error, expected }) => {
     expect(toCommonError(error)).toBe(expected);

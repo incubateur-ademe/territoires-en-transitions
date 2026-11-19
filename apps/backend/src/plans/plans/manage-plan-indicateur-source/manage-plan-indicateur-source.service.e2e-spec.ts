@@ -365,7 +365,7 @@ describe('Source de valeurs propre au plan', () => {
         { ...f.scope(planId), valeurs: [{ ...other.valeur, objectif: 1 }] },
         { user: f.user }
       )
-    ).toMatchObject({ success: false, error: 'INVALID_VALUE' });
+    ).toMatchObject({ success: false, error: 'INDICATEUR_NOT_AVAILABLE' });
     expect(await other.read()).toEqual([]);
     expect(await f.read()).toEqual([]);
   });

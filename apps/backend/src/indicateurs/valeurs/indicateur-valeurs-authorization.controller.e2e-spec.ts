@@ -634,7 +634,7 @@ describe("Autorisation REST des valeurs d'indicateur", () => {
             )
         ).resolves.toMatchObject({
           success: false,
-          error: 'INVALID_VALUE',
+          error: 'PERIODICITE_MISMATCH',
           cause: {
             message: expect.stringContaining('respecter la périodicité'),
           },

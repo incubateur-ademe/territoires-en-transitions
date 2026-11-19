@@ -525,7 +525,7 @@ describe('Complétion des valeurs sans écrasement', () => {
       await service.fillMissing([{ ...foreign.valeur, resultat: 1 }], {
         user: foreign.user,
       })
-    ).toMatchObject({ success: false, error: 'INVALID_VALUE' });
+    ).toMatchObject({ success: false, error: 'INDICATEUR_NOT_AVAILABLE' });
     expect(await protectedIndicateur.read()).toEqual([]);
     expect(await foreign.read()).toEqual([]);
   });

@@ -151,7 +151,7 @@ export class ValidateIndicateurValeursWriteService {
             (valeur.periodicite ?? IndicateurPeriodiciteEnum.ANNUELLE)
         ) {
           return failure(
-            'INVALID_VALUE',
+            'PERIODICITE_MISMATCH',
             new Error('La valeur doit respecter la périodicité de déclaration')
           );
         }
@@ -175,7 +175,7 @@ export class ValidateIndicateurValeursWriteService {
       const indicateur = indicateursById[valeur.indicateurId];
       if (!indicateur) {
         return failure(
-          'INVALID_VALUE',
+          'INDICATEUR_NOT_AVAILABLE',
           new Error(
             `Indicateur definition not found for id ${valeur.indicateurId}`
           )
@@ -186,7 +186,7 @@ export class ValidateIndicateurValeursWriteService {
         indicateur.collectiviteId !== valeur.collectiviteId
       ) {
         return failure(
-          'INVALID_VALUE',
+          'INDICATEUR_NOT_AVAILABLE',
           new Error(
             `Indicateur ${valeur.indicateurId} non disponible pour la collectivité ${valeur.collectiviteId}`
           )
@@ -232,7 +232,7 @@ export class ValidateIndicateurValeursWriteService {
           ?.has(scope.collectiviteId)
       ) {
         return failure(
-          'INVALID_VALUE',
+          'INDICATEUR_NOT_AVAILABLE',
           new Error(
             `Indicateur ${scope.indicateurId} non disponible pour la collectivité ${scope.collectiviteId}`
           )
