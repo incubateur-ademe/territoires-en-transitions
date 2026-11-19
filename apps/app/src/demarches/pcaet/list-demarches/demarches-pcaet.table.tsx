@@ -7,6 +7,7 @@ import {
 import { appLabels } from '@/app/labels/catalog';
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
 import { BasculerGroupeButton } from '@/app/demarches/components/basculer-groupe.button';
+import { CollectivitesCouvertesList } from '@/app/demarches/components/collectivites-couvertes.list';
 import {
   GroupesRepliablesProvider,
   useEtatGroupesRepliables,
@@ -14,7 +15,10 @@ import {
 } from '@/app/demarches/components/groupes-repliables.context';
 import { HeaderFilterButton } from '@/app/demarches/components/header-filter.button';
 import { Z_INDEX_ABOVE_STICKY_HEADER } from '@tet/design-tokens';
-import { type DemarchePcaetStatus } from '@tet/domain/demarches';
+import {
+  DemarchePcaetStatusEnum,
+  type DemarchePcaetStatus,
+} from '@tet/domain/demarches';
 import type { EmptyCardProps } from '@tet/ui';
 import {
   Badge,
@@ -31,7 +35,13 @@ import {
   useTable,
 } from '@tanstack/react-table';
 import Link from 'next/link';
-import { createContext, ReactNode, useContext, useMemo } from 'react';
+import {
+  createContext,
+  ReactNode,
+  useCallback,
+  useContext,
+  useMemo,
+} from 'react';
 import type {
   ColonneTriable,
   DemarcheListItem,
@@ -146,18 +156,17 @@ const columnHelper = createColumnHelper<typeof features, DemarcheListItem>();
 const getRowKey = (demarche: DemarcheListItem): string =>
   demarche.id.toString();
 
-const aDesSousLignes = (demarche: DemarcheListItem): boolean =>
-  (demarche.collectivitesCouvertes?.length ?? 0) > 0;
-
 const TitreCell = ({ demarche }: { demarche: DemarcheListItem }) => {
   const { getDetailUrl } = usePilotage();
   const { estDeplie, basculer } = useGroupesRepliables();
   const cle = getRowKey(demarche);
   const deplie = estDeplie(cle);
+  const couvertes = demarche.collectivitesCouvertes ?? [];
+  const estGroupe = couvertes.length > 0;
 
   return (
     <div className="flex items-start gap-1">
-      {aDesSousLignes(demarche) && (
+      {estGroupe && (
         <BasculerGroupeButton
           deplie={deplie}
           onClick={() => basculer(cle)}
@@ -187,6 +196,19 @@ const TitreCell = ({ demarche }: { demarche: DemarcheListItem }) => {
                 : appLabels.demarchePorteParAutreStructure
             }
             trim={false}
+          />
+        )}
+        {estGroupe && (
+          <span className="text-xs text-grey-7">
+            {appLabels.demarcheListeResumeCouvertes({
+              count: couvertes.length,
+            })}
+          </span>
+        )}
+        {estGroupe && deplie && (
+          <CollectivitesCouvertesList
+            dataTest={`demarches.pcaet.liste.couverte-${demarche.id}`}
+            collectivites={couvertes}
           />
         )}
       </div>
@@ -389,7 +411,22 @@ export const DemarchesPcaetTable = <T extends DemarcheListItem>({
     state: { columnVisibility: { actions: renderActions !== undefined } },
   });
 
-  const groupes = useEtatGroupesRepliables();
+  // Un dépôt archivé n'appelle plus rien : ses EPCI restent repliés tant qu'on
+  // ne les demande pas.
+  const clesArchivees = useMemo(
+    () =>
+      new Set(
+        demarches
+          .filter(({ status }) => status === DemarchePcaetStatusEnum.ARCHIVE)
+          .map(getRowKey)
+      ),
+    [demarches]
+  );
+  const estReplieParDefaut = useCallback(
+    (cle: string) => clesArchivees.has(cle),
+    [clesArchivees]
+  );
+  const groupes = useEtatGroupesRepliables(estReplieParDefaut);
 
   return (
     <PilotageContext.Provider value={pilotage}>
@@ -407,35 +444,13 @@ export const DemarchesPcaetTable = <T extends DemarcheListItem>({
             className="min-w-[72rem]"
             isEmpty={demarches.length === 0}
             emptyCard={{ className: 'min-h-[12rem]', ...etatVide }}
-            // Sous le dépôt d'un Supra, les EPCI qu'il couvre : leur nom sous le
-            // titre, le reste — statut, dates, actions — appartient au dépôt.
             rowWrapper={({ row, children }) => (
-              <>
-                <TableRow
-                  className="text-sm"
-                  data-test={`demarches.pcaet.liste.ligne-${row.id}`}
-                >
-                  {children}
-                </TableRow>
-                {groupes.estDeplie(row.id) &&
-                  row.original.collectivitesCouvertes?.map((couverte) => (
-                    <TableRow
-                      key={couverte.id}
-                      className="text-sm"
-                      data-test={`demarches.pcaet.liste.sous-ligne-${row.id}-${couverte.id}`}
-                    >
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.column.id}>
-                          {cell.column.id === 'titre' && (
-                            <span className="block pl-6 text-primary-9">
-                              {couverte.nom}
-                            </span>
-                          )}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))}
-              </>
+              <TableRow
+                className="text-sm"
+                data-test={`demarches.pcaet.liste.ligne-${row.id}`}
+              >
+                {children}
+              </TableRow>
             )}
           />
         </div>

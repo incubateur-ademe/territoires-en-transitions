@@ -10,7 +10,7 @@ import {
 
 /**
  * Les lignes groupées d'un tableau — un dépôt de Supra et les EPCI qu'il
- * couvre — dépliées par défaut : on retient celles qu'on a repliées.
+ * couvre. Chacune a son état par défaut : on retient celles qu'on a basculées.
  */
 export type GroupesRepliables = {
   estDeplie: (cle: string) => boolean;
@@ -31,12 +31,20 @@ export const useGroupesRepliables = (): GroupesRepliables => {
   return groupes;
 };
 
-/** L'état des groupes d'un tableau. */
-export const useEtatGroupesRepliables = (): GroupesRepliables => {
-  const [replies, setReplies] = useState<ReadonlySet<string>>(new Set());
+const TOUJOURS_DEPLIE = () => false;
+
+/**
+ * L'état des groupes d'un tableau, tous dépliés sauf ceux que
+ * `estReplieParDefaut` désigne. Le prédicat doit être stable d'un rendu à
+ * l'autre.
+ */
+export const useEtatGroupesRepliables = (
+  estReplieParDefaut: (cle: string) => boolean = TOUJOURS_DEPLIE
+): GroupesRepliables => {
+  const [bascules, setBascules] = useState<ReadonlySet<string>>(new Set());
   const basculer = useCallback(
     (cle: string) =>
-      setReplies((courants) => {
+      setBascules((courants) => {
         const suivants = new Set(courants);
         if (!suivants.delete(cle)) {
           suivants.add(cle);
@@ -46,7 +54,10 @@ export const useEtatGroupesRepliables = (): GroupesRepliables => {
     []
   );
   return useMemo(
-    () => ({ estDeplie: (cle: string) => !replies.has(cle), basculer }),
-    [replies, basculer]
+    () => ({
+      estDeplie: (cle: string) => estReplieParDefaut(cle) === bascules.has(cle),
+      basculer,
+    }),
+    [bascules, basculer, estReplieParDefaut]
   );
 };

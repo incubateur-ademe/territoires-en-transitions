@@ -24,6 +24,7 @@ export type DemarcheTypeLabels = {
 };
 
 const echeanceAvisJour = plural({ one: 'jour', other: 'jours' });
+const epciVolontaire = plural({ one: 'volontaire', other: 'volontaires' });
 const collectiviteCouverteSelectionnee = plural({
   one: 'sélectionnée',
   other: 'sélectionnées',
@@ -751,6 +752,10 @@ export const demarchesLabels = {
     `Replier les EPCI couverts par « ${titre} »`,
   demarcheListeDeplierGroupe: ({ titre }: { titre: string }) =>
     `Déplier les EPCI couverts par « ${titre} »`,
+  demarcheListeResumeCouvertes: plural({
+    one: 'EPCI couvert',
+    other: 'EPCI couverts',
+  }),
   /** Liste publique : ce que voit qui consulte la collectivité sans l'éditer. */
   demarcheListePubliqueDescription:
     'Les démarches adoptées ou archivées de la collectivité, en lecture seule.',
@@ -846,14 +851,17 @@ export const demarchesLabels = {
   instructionListeColonneActions: 'Actions',
   /** Badge d'un Supra dans les suggestions de la recherche. */
   instructionListeBadgeSupra: 'Supra',
-  /** Colonne Pilotes d'un EPCI couvert : ses pilotes sont ceux du Supra. */
-  instructionListePiloteParPorteur: {
-    petr: 'Piloté par le PETR',
-    pole_metropolitain: 'Piloté par le pôle métropolitain',
-    syndicat_mixte: 'Piloté par le syndicat mixte',
-    syndicat_intercommunal: 'Piloté par le syndicat intercommunal',
-  } satisfies Record<TypePorteurSupra, string>,
-  instructionListePiloteParAutreStructure: 'Piloté par la structure porteuse',
+  /** Sous le nom d'un Supra : ce que son dépôt couvre, replié ou non. */
+  instructionListeResumeCouvertes: ({
+    total,
+    volontaires,
+  }: {
+    total: number;
+    volontaires: number;
+  }) =>
+    volontaires > 0
+      ? `${total} EPCI dont ${epciVolontaire({ count: volontaires })}`
+      : `${total} EPCI`,
   instructionListeRecherche: 'Rechercher un PCAET',
   instructionListeRechercheCollectivites:
     'Collectivités et structures porteuses',

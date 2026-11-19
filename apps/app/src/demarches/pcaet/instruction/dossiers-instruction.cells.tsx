@@ -5,11 +5,13 @@ import {
   makeDossierInstructionUrl,
 } from '@/app/app/paths';
 import { BasculerGroupeButton } from '@/app/demarches/components/basculer-groupe.button';
+import { CollectivitesCouvertesList } from '@/app/demarches/components/collectivites-couvertes.list';
 import { appLabels } from '@/app/labels/catalog';
 import { format } from 'date-fns';
 import type { RouterOutput } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import {
+  CollectivitePcaetObligationEnum,
   DemarchePcaetStatusEnum,
   PcaetStatutInstructionEnum,
 } from '@tet/domain/demarches';
@@ -272,7 +274,7 @@ export const ActionsCell = ({ dossier }: { dossier: Dossier }) => {
 
 export const CollectiviteCell = ({
   dossier,
-  deplie,
+  deplie = true,
   basculer,
 }: {
   dossier: Dossier;
@@ -284,13 +286,14 @@ export const CollectiviteCell = ({
   const nom = (
     <span className="font-bold text-primary-9">{dossier.collectivite.nom}</span>
   );
-  const groupe = dossier.collectivitesCouvertes.length > 0 && basculer;
+  const couvertes = dossier.collectivitesCouvertes;
+  const estGroupe = couvertes.length > 0;
 
   return (
     <div className="flex items-start gap-1">
-      {groupe && (
+      {estGroupe && basculer && (
         <BasculerGroupeButton
-          deplie={deplie ?? true}
+          deplie={deplie}
           onClick={basculer}
           ariaLabel={
             deplie
@@ -312,62 +315,46 @@ export const CollectiviteCell = ({
             {nom}
           </Link>
         )}
-        <div className="flex flex-wrap items-center gap-1">
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
           {/* L'obligation d'un Supra est celle de chacun des EPCI qu'il
-              couvre : elle se lit sur leurs sous-lignes. */}
+              couvre : elle se lit sur leur ligne, et dans le décompte. */}
           {dossier.typePorteurSupra === null && (
             <ObligationBadge dossier={dossier} />
           )}
           <ScotAecBadge dossier={dossier} />
+          {estGroupe && (
+            <span className="text-xs text-grey-7">
+              {appLabels.instructionListeResumeCouvertes({
+                total: couvertes.length,
+                volontaires: couvertes.filter(
+                  ({ obligation }) =>
+                    obligation === CollectivitePcaetObligationEnum.VOLONTAIRE
+                ).length,
+              })}
+            </span>
+          )}
         </div>
+        {estGroupe && deplie && (
+          <CollectivitesCouvertesList
+            dataTest={`demarches.pcaet.instruction.couverte-${dossier.demarcheId}`}
+            collectivites={couvertes.map(({ id, nom, obligation }) => ({
+              id,
+              nom,
+              badge: obligation !== null && (
+                <Badge
+                  title={OBLIGATION_LABELS[obligation]}
+                  variant={OBLIGATION_VARIANTS[obligation]}
+                  size="xs"
+                  uppercase={false}
+                />
+              ),
+            }))}
+          />
+        )}
       </div>
     </div>
   );
 };
-
-type CollectiviteCouverte = Dossier['collectivitesCouvertes'][number];
-
-/**
- * Un EPCI que couvre le dépôt d'un Supra, en sous-ligne de son porteur : son
- * nom et son obligation propre. Ni statut, ni dates, ni action — ce sont ceux
- * du dépôt, sur la ligne du porteur.
- */
-export const CollectiviteCouverteCell = ({
-  couverte,
-}: {
-  couverte: CollectiviteCouverte;
-}) => (
-  <div className="flex items-start gap-2 pl-6">
-    <span
-      aria-hidden
-      className="mt-0.5 h-3 w-2.5 shrink-0 border-b border-l border-grey-5"
-    />
-    <div className="flex flex-col items-start gap-1">
-      <span className="text-primary-9">{couverte.nom}</span>
-      {couverte.obligation !== null && (
-        <Badge
-          title={OBLIGATION_LABELS[couverte.obligation]}
-          variant={OBLIGATION_VARIANTS[couverte.obligation]}
-          size="sm"
-          uppercase={false}
-        />
-      )}
-    </div>
-  </div>
-);
-
-/** La colonne Pilotes d'un EPCI couvert renvoie à son porteur. */
-export const PiloteCouverteCell = ({
-  typePorteurSupra,
-}: {
-  typePorteurSupra: Dossier['typePorteurSupra'];
-}) => (
-  <span className="text-grey-6">
-    {typePorteurSupra
-      ? appLabels.instructionListePiloteParPorteur[typePorteurSupra]
-      : appLabels.instructionListePiloteParAutreStructure}
-  </span>
-);
 
 export const RegionCell = ({ dossier }: { dossier: Dossier }) => (
   <span className="text-primary-9">

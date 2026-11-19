@@ -23,7 +23,7 @@ import {
   tableFeatures,
   useTable,
 } from '@tanstack/react-table';
-import { createContext, ReactNode, useContext, useMemo } from 'react';
+import { createContext, useContext, useMemo } from 'react';
 import type {
   ColonneTriable,
   DirectionTri,
@@ -33,13 +33,11 @@ import type {
 import {
   ActionsCell,
   CollectiviteCell,
-  CollectiviteCouverteCell,
   DateCell,
   DateSaisineCell,
   EcheanceCell,
   DepartementCell,
   PiloteCell,
-  PiloteCouverteCell,
   RegionCell,
   type Dossier,
 } from './dossiers-instruction.cells';
@@ -104,40 +102,6 @@ const CollectiviteGroupeCell = ({ dossier }: { dossier: Dossier }) => {
       basculer={() => basculer(cle)}
     />
   );
-};
-
-/**
- * Ce qu'une sous-ligne montre dans chaque colonne : son nom et son obligation,
- * son territoire, et le renvoi aux pilotes du porteur. Le reste — statut,
- * dates, action — appartient au dépôt.
- */
-const contenuSousLigne = (
-  colonne: string,
-  couverte: Dossier['collectivitesCouvertes'][number],
-  dossier: Dossier
-): ReactNode => {
-  if (colonne === 'collectivite') {
-    return <CollectiviteCouverteCell couverte={couverte} />;
-  }
-  if (colonne === 'pilote') {
-    return <PiloteCouverteCell typePorteurSupra={dossier.typePorteurSupra} />;
-  }
-  if (colonne === 'region') {
-    return (
-      <span className="text-primary-9">{couverte.regionLibelle ?? '—'}</span>
-    );
-  }
-  if (colonne === 'departement') {
-    return (
-      <DepartementCell
-        departement={{
-          code: couverte.departementCode,
-          libelle: couverte.departementLibelle,
-        }}
-      />
-    );
-  }
-  return null;
 };
 
 /**
@@ -557,32 +521,12 @@ export const DossiersInstructionTable = ({
             isEmpty={dossiers.length === 0}
             emptyCard={{ className: 'min-h-[12rem]', ...etatVide }}
             rowWrapper={({ row, children }) => (
-              <>
-                <TableRow
-                  className="text-sm"
-                  data-test={`demarches.pcaet.instruction.ligne-${row.id}`}
-                >
-                  {children}
-                </TableRow>
-                {groupes.estDeplie(row.id) &&
-                  row.original.collectivitesCouvertes.map((couverte) => (
-                    <TableRow
-                      key={couverte.id}
-                      className="text-sm"
-                      data-test={`demarches.pcaet.instruction.sous-ligne-${row.id}-${couverte.id}`}
-                    >
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.column.id}>
-                          {contenuSousLigne(
-                            cell.column.id,
-                            couverte,
-                            row.original
-                          )}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))}
-              </>
+              <TableRow
+                className="text-sm"
+                data-test={`demarches.pcaet.instruction.ligne-${row.id}`}
+              >
+                {children}
+              </TableRow>
             )}
           />
         </div>
