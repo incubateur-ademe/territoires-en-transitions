@@ -86,7 +86,7 @@ const FilledField = ({ field, cell }: FilledField): JSX.Element => (
   </span>
 );
 
-export const SousIndicateurYearCell = (
+export const SousIndicateurPeriodCell = (
   cells: SousIndicateurPeriodCells
 ): JSX.Element => {
   const filledFields = listFilledFields(cells);

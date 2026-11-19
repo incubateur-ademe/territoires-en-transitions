@@ -1,18 +1,15 @@
-import { IndicateurValeursTableLegend } from '@/app/indicateurs/valeurs/grid/indicateur-valeurs.table-legend';
-import { IndicateurValeursTableFrame } from '@/app/indicateurs/valeurs/grid/indicateur-valeurs.table-frame';
-import { appLabels } from '@/app/labels/catalog';
-import type {
-  IndicateurPeriode,
-  IndicateurDetaille,
+import { PeriodesTable } from '@/app/indicateurs/valeurs/periodes-table/periodes-table';
+import type { PeriodeTableCommentaires } from '@/app/indicateurs/valeurs/periodes-table/periodes-table.types';
+import {
+  IndicateurPeriodes,
+  type IndicateurDetaille,
+  type IndicateurPeriode,
 } from '@tet/domain/indicateurs';
-import { TableCell } from '@tet/ui';
 import { useRef, type ReactNode } from 'react';
 import type { IndicateurPeriodeData } from '../data/prepare-indicateur-periode-data';
 import type { SourceType } from '../types';
-import { IndicateurValeursTableCommentairesFooter } from './indicateur-valeurs-table-commentaires.footer';
-import { IndicateurValeursTableSourceRow } from './indicateur-valeurs-table-source.row';
-import { IndicateurValeursTableHeader } from './indicateur-valeurs-table.header';
 import { prepareIndicateurTableData } from './prepare-indicateur-table-data';
+import { toSourceTableRows } from './to-source-table-rows';
 import { useRevealIndicateurPeriode } from './use-reveal-indicateur-periode';
 
 type Props = {
@@ -32,6 +29,33 @@ type Props = {
   onComment: (periode: IndicateurPeriode) => void;
 };
 
+const toCommentaires = ({
+  resultats,
+  objectifs,
+  readonly,
+  periodicite,
+  onComment,
+}: Pick<Props, 'resultats' | 'objectifs' | 'readonly' | 'onComment'> & {
+  periodicite: IndicateurPeriode['periodicite'];
+}): PeriodeTableCommentaires | undefined => {
+  const resultatsCollectivite = resultats.donneesCollectivite;
+  const objectifsCollectivite = objectifs.donneesCollectivite;
+  if (!resultatsCollectivite && !objectifsCollectivite) return undefined;
+  return {
+    isReadonly: Boolean(readonly),
+    countOf: (periode) =>
+      [resultatsCollectivite, objectifsCollectivite].filter((source) =>
+        source?.valeurs.some(
+          (value) =>
+            IndicateurPeriodes.key(value.periode) ===
+              IndicateurPeriodes.key(periode) && value.commentaire
+        )
+      ).length,
+    canComment: (periode) => !readonly && periode.periodicite === periodicite,
+    onComment,
+  };
+};
+
 /** Results and objectives share a cell, while source versions remain separate. */
 export const IndicateurValeursTable = ({
   indicateur,
@@ -49,63 +73,42 @@ export const IndicateurValeursTable = ({
     resultats,
     objectifs
   );
-  const showAddPeriodeColumn = Boolean(addPeriode);
   const scrollRef = useRef<HTMLDivElement>(null);
   useRevealIndicateurPeriode(scrollRef, periodeToReveal, periodes);
+  const privatePeriode = confidentiel ? resultats.periodeModePrive : undefined;
 
   return (
-    <div className="flex flex-col gap-2">
-      <IndicateurValeursTableLegend />
-      <IndicateurValeursTableFrame
-        scrollRef={scrollRef}
-        persistentScrollbar
-        className="border-primary-3"
-        maxHeight="none"
-        layout="auto"
-        role="table"
-        aria-label={indicateur.titre}
-        data-test="indicateurs.valeurs.table"
-      >
-        <IndicateurValeursTableHeader
-          indicateur={indicateur}
-          periodes={periodes}
-          localValues={resultats.valeursExistantes}
-          privatePeriode={confidentiel ? resultats.periodeModePrive : undefined}
-          readonly={readonly}
-          addPeriode={addPeriode}
-          onDelete={onDelete}
-        />
-        <tbody>
-          {readonly && periodes.length === 0 ? (
-            <tr>
-              <TableCell className="text-center text-sm text-grey-7">
-                {appLabels.aucuneDonneeDisponible}
-              </TableCell>
-            </tr>
-          ) : (
-            sources.map((row) => (
-              <IndicateurValeursTableSourceRow
-                key={row.key}
-                row={row}
-                periodes={periodes}
-                readonly={readonly}
-                periodicite={indicateur.periodicite}
-                showAddPeriodeColumn={showAddPeriodeColumn}
-                onSave={onSave}
-              />
-            ))
-          )}
-        </tbody>
-        <IndicateurValeursTableCommentairesFooter
-          periodes={periodes}
-          resultats={resultats.donneesCollectivite}
-          objectifs={objectifs.donneesCollectivite}
-          readonly={readonly}
-          periodicite={indicateur.periodicite}
-          showAddPeriodeColumn={showAddPeriodeColumn}
-          onComment={onComment}
-        />
-      </IndicateurValeursTableFrame>
-    </div>
+    <PeriodesTable
+      title={indicateur.titre}
+      unite={indicateur.unite}
+      periodes={periodes}
+      rows={toSourceTableRows({
+        sources,
+        readonly,
+        periodicite: indicateur.periodicite,
+        onSave,
+      })}
+      deletablePeriodeKeys={
+        new Set(
+          resultats.valeursExistantes.map(({ periode }) =>
+            IndicateurPeriodes.key(periode)
+          )
+        )
+      }
+      privatePeriodeKey={
+        privatePeriode ? IndicateurPeriodes.key(privatePeriode) : undefined
+      }
+      readonly={readonly}
+      addPeriode={addPeriode}
+      commentaires={toCommentaires({
+        resultats,
+        objectifs,
+        readonly,
+        periodicite: indicateur.periodicite,
+        onComment,
+      })}
+      scrollRef={scrollRef}
+      onDelete={onDelete}
+    />
   );
 };

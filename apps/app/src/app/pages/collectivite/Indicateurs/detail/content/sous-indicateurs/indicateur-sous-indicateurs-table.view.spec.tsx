@@ -240,6 +240,14 @@ describe('IndicateurSousIndicateursTable', () => {
     expect(new Set(headers).size).toBe(2);
   });
 
+  it("épingle à gauche le titre de l'indicateur au défilement horizontal", () => {
+    renderReadyTable(toData({ totalCells: COMPLETE_TOTAL_CELLS }));
+
+    expect(
+      screen.getByRole('columnheader', { name: 'Déchets (t)' }).className
+    ).toContain('sticky');
+  });
+
   it("affiche la légende du résultat et de l'objectif au-dessus du tableau", () => {
     renderReadyTable(toData({ totalCells: COMPLETE_TOTAL_CELLS }));
 
