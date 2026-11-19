@@ -167,6 +167,8 @@ describe('consolidateHierarchy', () => {
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.data.actions[0].axe).toBe('Axe 1 : Bâtiments');
+      // Le libellé retapé par le modèle reprend la graphie du squelette.
+      expect(result.data.actions[0].sousAxe).toBe('1.1 Rénover');
       expect(result.data.keptIndexes).toEqual([0]);
     }
   });

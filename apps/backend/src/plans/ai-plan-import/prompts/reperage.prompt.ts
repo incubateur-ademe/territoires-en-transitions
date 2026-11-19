@@ -9,8 +9,8 @@ export const REPERAGE_PROMPT = definePrompt({
   template: `Vous êtes un agent de tri documentaire. On vous donne le début d'extraits d'un document de plan d'actions d'une collectivité ${cadrage}.
 
 Classez chaque extrait dans une seule catégorie :
-- "fiche_action" : il décrit une ou plusieurs actions ou mesures à mener (avec ou sans pilote, budget, calendrier, indicateurs).
-- "structure" : sommaire, liste des axes, orientations ou objectifs, tableau récapitulatif du plan.
+- "fiche_action" : il décrit une ou plusieurs actions ou mesures à mener (avec ou sans pilote, budget, calendrier, indicateurs). Un tableau dont chaque ligne est une action avec son porteur, son calendrier ou son coût (« A 12 : … CCPF 2024-2027 ») en fait partie, même s'il s'ouvre sur un titre d'axe et des en-têtes de colonnes (« Objectifs », « Enjeux », « Actions », « Portage »).
+- "structure" : sommaire, liste des axes, orientations ou objectifs, tableau récapitulatif qui ne fait que lister des titres.
 - "diagnostic" : état des lieux, chiffres du territoire, contexte, méthodologie, enjeux sans action ; aussi tout ce qui évalue ou suit le plan sans définir d'action (évaluation environnementale, analyse d'incidences, mesures d'évitement-réduction-compensation, tableaux d'indicateurs de suivi, bilan d'un programme précédent, compte rendu d'une concertation publique).
 - "engagement_partenaire" : ce qu'une entreprise, une association ou une autre institution s'engage à faire de son côté (charte, contribution de partenaire, liste d'engagements signés) ; ce ne sont pas les actions de la collectivité.
 - "autre" : éditorial, remerciements, glossaire, annexes, pages blanches.

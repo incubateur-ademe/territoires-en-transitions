@@ -1,7 +1,9 @@
 import { omit } from 'es-toolkit';
 import { z } from 'zod';
 import { ExtractedAction, isPinnedAction } from '../../models/extracted-action';
+import { PlanSkeleton } from '../../models/plan-skeleton';
 import { mergeActions } from '../extract-actions/merge-chunk-actions';
+import { alignSkeletonLabels, AxisLabels } from './align-skeleton-labels';
 
 export const hierarchyEntrySchema = z.object({
   index: z.number().int(),
@@ -29,8 +31,12 @@ export type HierarchyOutcome = {
  */
 export const applyHierarchy = (
   actions: ExtractedAction[],
-  entries: HierarchyEntry[]
+  entries: HierarchyEntry[],
+  skeleton?: PlanSkeleton
 ): HierarchyOutcome => {
+  const align = skeleton
+    ? alignSkeletonLabels(skeleton)
+    : (labels: AxisLabels) => labels;
   const entryByIndex = new Map(entries.map((entry) => [entry.index, entry]));
 
   const targetOf = new Map<number, number>();
@@ -66,8 +72,10 @@ export const applyHierarchy = (
       return entry && entry.axe.trim() && !isPinnedAction(action)
         ? {
             ...omit(action, ['cheminAxes']),
-            axe: entry.axe.trim(),
-            sousAxe: entry['sous-axe'].trim(),
+            ...align({
+              axe: entry.axe.trim(),
+              sousAxe: entry['sous-axe'].trim(),
+            }),
           }
         : action;
     }),

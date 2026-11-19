@@ -10,9 +10,9 @@ export const QUALITATIVE_REVIEW_PROMPT = definePrompt({
 Vous êtes un auditeur qualité spécialisé dans les plans d'actions ${cadrage}.
 
 Contexte
-On vous fournit une extraction déjà structurée avec les éléments suivants :
-"axe", "sous-axe", "titre", "titre de la sous-action", "description", "objectifs", "structure pilote", "direction ou service pilote", "personne pilote", "partenaires", "budget", "financements", "moyens humains", "priorité", "statut", "date de début", "date de fin" s'ils sont disponibles.
-Les actions classiques ont "titre" rempli. Les sous-actions apparaissent comme des lignes séparées marquées [SA], avec "titre" vide et "titre de la sous-action" rempli.
+On vous fournit une extraction déjà structurée, une action par ligne : son titre, puis ses champs renseignés sous la forme « Libellé : valeur », séparés par « | » (Axe, Sous-axe, Description, Objectifs, Structure pilote, Direction ou service pilote, Personne pilote, Partenaires, Budget, Financements, Moyens humains, Priorité, Date de début, Date de fin, Statut).
+Un champ absent d'une ligne est vide dans l'extraction, le plus souvent parce que le document ne donne pas l'information : ce n'est pas un défaut, ne le signalez pas. Vous ne voyez pas le document source : ne supposez pas ce qu'il contient.
+Les sous-actions suivent leur action sur des lignes marquées [SA] ; une action, ou un plan entier, peut n'en avoir aucune.
 
 Voici la sortie à évaluer
 ${reponseIa}
@@ -33,7 +33,7 @@ Contenu de l'avis
 - Rédiger en français, sous forme de quelques lignes de texte libre.
 - Commencer par un court avis global sur la qualité de l'extraction, par exemple "Extraction globalement cohérente avec quelques points à surveiller".
 - Si tout est satisfaisant, le préciser explicitement, par exemple "Aucun problème majeur détecté".
-- S'il existe des problèmes manifestes, les mentionner de manière ciblée en citant systématiquement la numérotation de l'action concernée, c'est-à-dire la partie "n.x.y" du champ "titre". Exemple : "1.2.4 description trop générale et peu opérationnelle" ou "4.1.3 présence probable d'artefacts de mise en page".
+- S'il existe des problèmes manifestes, les mentionner de manière ciblée en citant l'action concernée par sa numérotation "n.x.y" quand son titre en porte une, sinon par les premiers mots de son titre. Exemple : "1.2.4 description trop générale et peu opérationnelle" ou "4.1.3 présence probable d'artefacts de mise en page".
 - Ne pas réécrire les actions et ne pas proposer de nouvelle version des actions.
 - Ne pas dépasser une dizaine de lignes.
 

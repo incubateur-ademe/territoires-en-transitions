@@ -565,6 +565,13 @@ Le moteur sert à tout type de plan. Ce qui dépend du type :
   tableau à colonnes lu ligne par ligne se recompose action par action ; les
   libellés « Portage », « Coût », « Public ciblé » ont leur champ ; « 2025 et
   années suivantes » ou « Court terme » ne sont pas des périodes fermées ;
+- trois imports réels (plan de mobilité, COT, PAT) ont précisé le reste : un
+  tableau dont chaque ligne est une action se lit comme des fiches, pas comme
+  un récapitulatif (repérage) ; la liste d'objectifs en tête d'un axe n'est
+  pas faite de sous-axes (squelette) ; une action n'est jamais reclassée par
+  thème (hiérarchie), et un libellé retapé par le modèle reprend la graphie du
+  squelette (`align-skeleton-labels.ts`) ; un sigle ne se développe pas, un
+  libellé n'est pas une valeur, un montant par an n'est pas un budget ;
 - le vocabulaire reconnu par le code couvre les autres plans : « Fiche projet
   n° », « Feuille de route », « Fiches projets », « Programme opérationnel »
   (`heading-patterns.ts`, `scout-units.ts`) ;

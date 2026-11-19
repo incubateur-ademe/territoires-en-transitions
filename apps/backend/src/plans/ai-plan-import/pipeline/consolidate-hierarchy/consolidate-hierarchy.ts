@@ -66,7 +66,8 @@ export const consolidateHierarchy = async (
   return success({
     ...applyHierarchy(
       actions,
-      outcomes.flatMap(({ entries }) => entries)
+      outcomes.flatMap(({ entries }) => entries),
+      skeleton
     ),
     tokens: sumTokenUsage(outcomes.flatMap(({ tokens }) => tokens)),
     warnings: outcomes.flatMap(({ warnings }) => warnings),
