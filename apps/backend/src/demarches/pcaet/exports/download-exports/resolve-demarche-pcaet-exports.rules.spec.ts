@@ -1,7 +1,7 @@
 import type {
   DemarchePcaetExportTransition,
   DemarchePcaetExportType,
-} from '../shared/models/demarche-pcaet-export.table';
+} from '../../shared/models/demarche-pcaet-export.table';
 import {
   resolveDemarchePcaetExportSources,
   type DemarchePcaetExportSnapshotRow,

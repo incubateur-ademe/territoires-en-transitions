@@ -8,7 +8,7 @@ import {
   isDateAdoptionPcaetRecevable,
   type DemarchePcaet,
 } from '@tet/domain/demarches';
-import { GenerateDemarchePcaetExportsService } from '../generate-exports/generate-demarche-pcaet-exports.service';
+import { GenerateDemarchePcaetExportsService } from '../exports/generate-exports/generate-demarche-pcaet-exports.service';
 import { ArchiverDemarchePcaetService } from '../archiver-demarche/archiver-demarche.service';
 import { DemarchePcaetSuivantRepository } from '../shared/demarche-pcaet-suivant.repository';
 import { DemarchePcaetTransitionService } from '../shared/demarche-pcaet-transition.service';

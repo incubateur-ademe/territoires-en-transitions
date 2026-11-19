@@ -9,7 +9,7 @@ import {
 import {
   demarchePcaetExportErrorConfig,
   demarchePcaetExportErrors,
-} from '../generate-exports/generate-demarche-pcaet-exports.errors';
+} from '../exports/generate-exports/generate-demarche-pcaet-exports.errors';
 
 const specificErrors = [
   ...demarchePcaetTransitionErrors,

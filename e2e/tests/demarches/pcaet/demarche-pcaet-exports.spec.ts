@@ -1,5 +1,5 @@
 import { expect, Page } from '@playwright/test';
-import { DEMARCHE_PCAET_EXPORTS_BUCKET } from '@tet/backend/demarches/pcaet/generate-exports/demarche-pcaet-exports-storage.service';
+import { DEMARCHE_PCAET_EXPORTS_BUCKET } from '@tet/backend/demarches/pcaet/exports/demarche-pcaet-exports-storage.service';
 import { demarchePcaetExportTable } from '@tet/backend/demarches/pcaet/shared/models/demarche-pcaet-export.table';
 import { DemarchePcaetStatus } from '@tet/domain/demarches';
 import { test } from 'tests/main.fixture';

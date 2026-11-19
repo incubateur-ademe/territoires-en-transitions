@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { DEMARCHE_PCAET_EXPORT_TRANSITIONS } from '../shared/models/demarche-pcaet-export.table';
+import { DEMARCHE_PCAET_EXPORT_TRANSITIONS } from '../../shared/models/demarche-pcaet-export.table';
 
 /**
  * Un classeur proposé au téléchargement : l'export figé d'une soumission, ou

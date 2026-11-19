@@ -6,7 +6,7 @@ import {
   DEMARCHE_PCAET_EXPORT_TRANSITIONS,
   type DemarchePcaetExportRow,
   type DemarchePcaetExportTransition,
-} from '../shared/models/demarche-pcaet-export.table';
+} from '../../shared/models/demarche-pcaet-export.table';
 
 /** Les deux classeurs que connaît le front : la variante du plan est choisie ici. */
 export const DEMARCHE_PCAET_EXPORT_KINDS = ['plan', 'indicateurs'] as const;

@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import { BuildDemarchePcaetWorkbooksService } from '../generate-exports/build-demarche-pcaet-workbooks.service';
-import { buildDemarchePcaetExportFilename } from '../generate-exports/demarche-pcaet-export.rules';
-import { DemarchePcaetEventEnum } from '../shared/tracking/demarche-pcaet-tracking.constants';
-import { DemarchePcaetTrackingService } from '../shared/tracking/demarche-pcaet-tracking.service';
+import { BuildDemarchePcaetWorkbooksService } from '../build-workbooks/build-demarche-pcaet-workbooks.service';
+import { buildDemarchePcaetExportFilename } from '../demarche-pcaet-export-filename.rules';
+import { DemarchePcaetEventEnum } from '../../shared/tracking/demarche-pcaet-tracking.constants';
+import { DemarchePcaetTrackingService } from '../../shared/tracking/demarche-pcaet-tracking.service';
 import {
   DemarchePcaetExportsError,
   DemarchePcaetExportsErrorEnum,

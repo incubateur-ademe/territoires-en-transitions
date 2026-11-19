@@ -6,7 +6,7 @@ import {
   DemarchePcaetTransitionEnum,
   type DemarchePcaet,
 } from '@tet/domain/demarches';
-import { GenerateDemarchePcaetExportsService } from '../generate-exports/generate-demarche-pcaet-exports.service';
+import { GenerateDemarchePcaetExportsService } from '../exports/generate-exports/generate-demarche-pcaet-exports.service';
 import { NotifyDossierTransmisService } from '../notifications/notify-dossier-transmis/notify-dossier-transmis.service';
 import type { ServiceSansCompte } from '../notifications/notify-dossier-transmis/notify-support-services-sans-compte.props';
 import { DemarchePcaetTransitionInput } from '../shared/demarche-pcaet-transition.input';

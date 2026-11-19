@@ -15,7 +15,7 @@ import {
   completeTestDossierPcaet,
   listTestDemarchePcaetExports,
 } from '../demarches-pcaet.test-fixture';
-import { DEMARCHE_PCAET_EXPORTS_BUCKET } from '../generate-exports/demarche-pcaet-exports-storage.service';
+import { DEMARCHE_PCAET_EXPORTS_BUCKET } from '../exports/demarche-pcaet-exports-storage.service';
 
 describe('Supprimer une démarche PCAET', () => {
   let app: INestApplication;

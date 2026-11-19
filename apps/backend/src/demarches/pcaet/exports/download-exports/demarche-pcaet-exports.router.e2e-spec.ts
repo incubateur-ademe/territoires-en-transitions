@@ -30,8 +30,8 @@ import {
   listTestWorksheetTexts,
   pickFreeRegionCode,
   publierTestDemarchePcaet,
-} from '../demarches-pcaet.test-fixture';
-import { pcaetDemandeAvisTable } from '../shared/models/pcaet-demande-avis.table';
+} from '../../demarches-pcaet.test-fixture';
+import { pcaetDemandeAvisTable } from '../../shared/models/pcaet-demande-avis.table';
 import { BuildOnDemandPcaetExportService } from './build-on-demand-pcaet-export.service';
 import type { DemarchePcaetExportRef } from './demarche-pcaet-exports.input';
 
