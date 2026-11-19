@@ -1,5 +1,8 @@
 'use client';
 
+import { useRenameSousIndicateur } from '@/app/indicateurs/sous-indicateurs/data/use-rename-sous-indicateur';
+import { useCreateSousIndicateur } from '@/app/indicateurs/sous-indicateurs/data/use-create-sous-indicateur';
+import { useUpdateSousIndicateursCumul } from '@/app/indicateurs/sous-indicateurs/data/use-update-sous-indicateurs-cumul';
 import { useDetachSousIndicateur } from '@/app/indicateurs/sous-indicateurs/data/use-detach-sous-indicateur';
 import { useSousIndicateursCommentaires } from '@/app/indicateurs/sous-indicateurs/data/use-sous-indicateurs-commentaires';
 import { useDeleteSousIndicateursPeriode } from '@/app/indicateurs/sous-indicateurs/data/use-delete-sous-indicateurs-periode';
@@ -18,6 +21,9 @@ const SOUS_INDICATEURS_TABLE_VALUE: IndicateurSousIndicateursTableValue = {
   useDeclareSousIndicateursPeriodes,
   useDeleteSousIndicateursPeriode,
   useDetachSousIndicateur,
+  useCreateSousIndicateur,
+  useRenameSousIndicateur,
+  useUpdateSousIndicateursCumul,
   useSousIndicateursCommentaires,
 };
 

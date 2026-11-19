@@ -147,7 +147,8 @@ const toReadyState = (
 type RenderOptions = {
   periodicite?: IndicateurPeriodicite;
   isReadonly?: boolean;
-  canDetach?: boolean;
+  canMutateIndicateur?: boolean;
+  focusedIndicateurId?: number | null;
   commentairesOf?: (periode: IndicateurPeriode) => PeriodeCommentaires;
 };
 
@@ -156,7 +157,8 @@ const renderTable = (
   {
     periodicite = 'annuelle',
     isReadonly = true,
-    canDetach = false,
+    canMutateIndicateur = false,
+    focusedIndicateurId = null,
     commentairesOf = () => NO_COMMENTAIRES,
   }: RenderOptions = {}
 ) => {
@@ -166,6 +168,11 @@ const renderTable = (
   const deletePeriode = vi.fn().mockResolvedValue(undefined);
   const saveCommentaires = vi.fn().mockResolvedValue(true);
   const detachSousIndicateur = vi.fn();
+  const updateCumul = vi.fn();
+  const createSousIndicateur = vi.fn();
+  const renameSousIndicateur = vi.fn();
+  const onNameEditingEnd = vi.fn();
+  const onCreated = vi.fn();
   render(
     <IndicateurSousIndicateursTableProvider
       value={{
@@ -174,6 +181,9 @@ const renderTable = (
         useDeclareSousIndicateursPeriodes: () => declarePeriodes,
         useDeleteSousIndicateursPeriode: () => deletePeriode,
         useDetachSousIndicateur: () => detachSousIndicateur,
+        useCreateSousIndicateur: () => createSousIndicateur,
+        useRenameSousIndicateur: () => renameSousIndicateur,
+        useUpdateSousIndicateursCumul: () => updateCumul,
         useSousIndicateursCommentaires: () => ({
           commentairesOf,
           save: saveCommentaires,
@@ -186,7 +196,12 @@ const renderTable = (
         unite="t"
         periodicite={periodicite}
         isReadonly={isReadonly}
-        canDetach={canDetach}
+        canMutateIndicateur={canMutateIndicateur}
+        newSousIndicateur={{
+          id: focusedIndicateurId,
+          onCreated,
+          onNameEditingEnd,
+        }}
       />
     </IndicateurSousIndicateursTableProvider>
   );
@@ -197,6 +212,11 @@ const renderTable = (
     deletePeriode,
     saveCommentaires,
     detachSousIndicateur,
+    updateCumul,
+    createSousIndicateur,
+    renameSousIndicateur,
+    onNameEditingEnd,
+    onCreated,
   };
 };
 
@@ -537,7 +557,7 @@ describe('IndicateurSousIndicateursTable', () => {
   it('demande confirmation avant de dissocier le sous-indicateur de la ligne, puis le dissocie', () => {
     const { detachSousIndicateur } = renderReadyTable(
       toData({ totalCells: COMPLETE_TOTAL_CELLS }),
-      { canDetach: true }
+      { canMutateIndicateur: true }
     );
 
     fireEvent.click(
@@ -555,7 +575,7 @@ describe('IndicateurSousIndicateursTable', () => {
   it('ne dissocie rien quand la confirmation est annulée', () => {
     const { detachSousIndicateur } = renderReadyTable(
       toData({ totalCells: COMPLETE_TOTAL_CELLS }),
-      { canDetach: true }
+      { canMutateIndicateur: true }
     );
 
     fireEvent.click(
@@ -570,7 +590,7 @@ describe('IndicateurSousIndicateursTable', () => {
 
   it('propose la dissociation sur chaque ligne de sous-indicateur visible, pas sur le total', () => {
     renderReadyTable(toData({ totalCells: COMPLETE_TOTAL_CELLS }), {
-      canDetach: true,
+      canMutateIndicateur: true,
     });
 
     expect(
@@ -586,7 +606,7 @@ describe('IndicateurSousIndicateursTable', () => {
   it('ne propose pas la dissociation sans le droit de modifier la structure', () => {
     renderReadyTable(toData({ totalCells: COMPLETE_TOTAL_CELLS }), {
       isReadonly: false,
-      canDetach: false,
+      canMutateIndicateur: false,
     });
 
     expect(
@@ -594,6 +614,198 @@ describe('IndicateurSousIndicateursTable', () => {
         name: appLabels.indicateurSousIndicateurDissocier({ label: 'Papier' }),
       })
     ).toBeNull();
+  });
+
+  it('propose le cumul coché quand le total est affiché, et le décoche', () => {
+    const { updateCumul } = renderReadyTable(
+      toData({ totalCells: COMPLETE_TOTAL_CELLS }),
+      { canMutateIndicateur: true }
+    );
+
+    const cumul = screen.getByRole('checkbox', {
+      name: appLabels.indicateurCumulSousIndicateurs,
+    }) as HTMLInputElement;
+    expect(cumul.checked).toBe(true);
+    fireEvent.click(cumul);
+
+    expect(updateCumul).toHaveBeenCalledWith(false);
+  });
+
+  it("propose le cumul décoché quand le total n'est pas affiché, et le coche", () => {
+    const { updateCumul } = renderReadyTable(
+      toData({ totalCells: COMPLETE_TOTAL_CELLS, hasTotalRow: false }),
+      { canMutateIndicateur: true }
+    );
+
+    const cumul = screen.getByRole('checkbox', {
+      name: appLabels.indicateurCumulSousIndicateurs,
+    }) as HTMLInputElement;
+    expect(cumul.checked).toBe(false);
+    fireEvent.click(cumul);
+
+    expect(updateCumul).toHaveBeenCalledWith(true);
+  });
+
+  it("ne propose pas le cumul sans le droit de modifier l'indicateur", () => {
+    renderReadyTable(toData({ totalCells: COMPLETE_TOTAL_CELLS }), {
+      canMutateIndicateur: false,
+    });
+
+    expect(
+      screen.queryByRole('checkbox', {
+        name: appLabels.indicateurCumulSousIndicateurs,
+      })
+    ).toBeNull();
+  });
+
+  it('crée un sous-indicateur de la racine nommé à la suite des sous-indicateurs de premier niveau', () => {
+    const { createSousIndicateur } = renderReadyTable(
+      toData({ totalCells: COMPLETE_TOTAL_CELLS }),
+      { canMutateIndicateur: true }
+    );
+
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: appLabels.indicateurCreerSousIndicateur,
+      })
+    );
+
+    expect(createSousIndicateur).toHaveBeenCalledWith(
+      { parentId: 1, titre: 'Sous-indicateur 3' },
+      expect.anything()
+    );
+  });
+
+  it("ne propose pas de créer un sous-indicateur sans le droit de modifier l'indicateur", () => {
+    renderReadyTable(toData({ totalCells: COMPLETE_TOTAL_CELLS }), {
+      canMutateIndicateur: false,
+    });
+
+    expect(
+      screen.queryByRole('button', {
+        name: appLabels.indicateurCreerSousIndicateur,
+      })
+    ).toBeNull();
+  });
+
+  it('renomme le sous-indicateur à la validation du nouveau nom', () => {
+    const { renameSousIndicateur } = renderReadyTable(
+      toData({ totalCells: COMPLETE_TOTAL_CELLS }),
+      { canMutateIndicateur: true }
+    );
+
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: appLabels.indicateurSousIndicateurRenommer({ label: 'Papier' }),
+      })
+    );
+    const input = screen.getByRole('textbox', {
+      name: appLabels.indicateurSousIndicateurNom,
+    });
+    fireEvent.change(input, { target: { value: '  Carton  ' } });
+    fireEvent.keyDown(input, { key: 'Enter' });
+
+    expect(renameSousIndicateur).toHaveBeenCalledWith({
+      indicateurId: 6,
+      titre: 'Carton',
+    });
+    expect(screen.queryByRole('textbox')).toBeNull();
+  });
+
+  it("ne renomme rien quand l'édition est annulée, vide ou inchangée", () => {
+    const { renameSousIndicateur } = renderReadyTable(
+      toData({ totalCells: COMPLETE_TOTAL_CELLS }),
+      { canMutateIndicateur: true }
+    );
+    const rename = (value: string, key: string) => {
+      fireEvent.click(
+        screen.getByRole('button', {
+          name: appLabels.indicateurSousIndicateurRenommer({ label: 'Papier' }),
+        })
+      );
+      const input = screen.getByRole('textbox', {
+        name: appLabels.indicateurSousIndicateurNom,
+      });
+      fireEvent.change(input, { target: { value } });
+      fireEvent.keyDown(input, { key });
+    };
+
+    rename('Carton', 'Escape');
+    rename('   ', 'Enter');
+    rename('Papier', 'Enter');
+
+    expect(renameSousIndicateur).not.toHaveBeenCalled();
+  });
+
+  it('ouvre le champ du nom au clic sur le nom lui-même, sans passer par un crayon', () => {
+    renderReadyTable(toData({ totalCells: COMPLETE_TOTAL_CELLS }), {
+      canMutateIndicateur: true,
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /Renommer Papier/ }));
+
+    expect(
+      screen.getByRole('textbox', {
+        name: appLabels.indicateurSousIndicateurNom,
+      })
+    ).toBeDefined();
+  });
+
+  it('garde un lien vers la page du sous-indicateur quand son nom est éditable', () => {
+    renderReadyTable(toData({ totalCells: COMPLETE_TOTAL_CELLS }), {
+      canMutateIndicateur: true,
+    });
+
+    expect(
+      screen
+        .getByRole('link', {
+          name: appLabels.indicateurSousIndicateurOuvrir({ label: 'Papier' }),
+        })
+        .getAttribute('href')
+    ).toBe(
+      makeCollectiviteIndicateursUrl({
+        collectiviteId: COLLECTIVITE_ID,
+        indicateurView: 'perso',
+        indicateurId: 6,
+      })
+    );
+  });
+
+  it("ne propose pas de renommer sans le droit de modifier l'indicateur", () => {
+    renderReadyTable(toData({ totalCells: COMPLETE_TOTAL_CELLS }), {
+      canMutateIndicateur: false,
+    });
+
+    expect(
+      screen.queryByRole('button', {
+        name: appLabels.indicateurSousIndicateurRenommer({ label: 'Papier' }),
+      })
+    ).toBeNull();
+  });
+
+  it("ouvre directement le champ du nom du sous-indicateur qui vient d'être créé, et le signale terminé à la validation", () => {
+    const { onNameEditingEnd } = renderReadyTable(
+      toData({ totalCells: COMPLETE_TOTAL_CELLS }),
+      { canMutateIndicateur: true, focusedIndicateurId: 6 }
+    );
+
+    const input = screen.getByRole('textbox', {
+      name: appLabels.indicateurSousIndicateurNom,
+    });
+    expect(document.activeElement).toBe(input);
+    expect((input as HTMLInputElement).value).toBe('Papier');
+    fireEvent.keyDown(input, { key: 'Enter' });
+
+    expect(onNameEditingEnd).toHaveBeenCalledTimes(1);
+  });
+
+  it("ne passe pas en édition un sous-indicateur qui n'est pas le nouveau", () => {
+    renderReadyTable(toData({ totalCells: COMPLETE_TOTAL_CELLS }), {
+      canMutateIndicateur: true,
+      focusedIndicateurId: null,
+    });
+
+    expect(screen.queryByRole('textbox')).toBeNull();
   });
 
   it('ne propose aucune saisie en lecture seule', () => {

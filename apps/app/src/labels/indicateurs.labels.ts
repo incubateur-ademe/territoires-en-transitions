@@ -33,6 +33,19 @@ export const indicateursLabels = {
   indicateurSousIndicateursGraphiqueAlternativeTableau:
     'Les mêmes valeurs sont dans le tableau sous le graphique',
   indicateurSeparateurAncetres: '>',
+  indicateurCumulSousIndicateurs: 'Cumul des sous-indicateurs',
+  indicateurCreerSousIndicateur: 'Créer un sous-indicateur',
+  indicateurSousIndicateurRenommer: ({ label }: { label: string }) =>
+    `Renommer ${label}`,
+  indicateurSousIndicateurNom: 'Nom du sous-indicateur',
+  indicateurSousIndicateurOuvrir: ({ label }: { label: string }) =>
+    `Ouvrir ${label}`,
+  indicateurSousIndicateurRenommeErreur:
+    "Le sous-indicateur n'a pas pu être renommé",
+  indicateurSousIndicateurNomProvisoire: ({ numero }: { numero: number }) =>
+    `Sous-indicateur ${numero}`,
+  indicateurSousIndicateurCree: 'Le sous-indicateur a été créé',
+  indicateurSousIndicateurCreeErreur: "Le sous-indicateur n'a pas pu être créé",
   indicateurSousIndicateurDissocier: ({ label }: { label: string }) =>
     `Dissocier ${label}`,
   indicateurSousIndicateurDissocierInfo:

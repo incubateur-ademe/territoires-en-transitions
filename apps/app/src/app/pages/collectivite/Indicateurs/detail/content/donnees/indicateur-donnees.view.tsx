@@ -10,6 +10,8 @@ import {
 } from './indicateur-personnalisation.questions';
 import IndicateurDetailChart from '../../../Indicateur/detail/IndicateurDetailChart';
 import { IndicateurValuesTabs } from '../../../Indicateur/detail/IndicateurValuesTabs';
+import { CreateSousIndicateurButton } from '../sous-indicateurs/create-sous-indicateur.button';
+import { PrivateModeSwitch } from '../../../table/private-mode-switch';
 import { IndicateurSousIndicateursTable } from '../sous-indicateurs/indicateur-sous-indicateurs-table.view';
 import { IndicateurCommentaireInput } from './indicateur-commentaire.input';
 import { IndicateurSousIndicateursChart } from './indicateur-sous-indicateurs-chart.view';
@@ -24,6 +26,9 @@ export const IndicateurDonnees = () => {
   const { chartInfo } = useIndicateurChart();
   const { updateUnite, updateCommentaire } = useIndicateurActions();
   const [isTableModalOpen, setIsTableModalOpen] = useState(false);
+  const [newSousIndicateurId, setNewSousIndicateurId] = useState<number | null>(
+    null
+  );
   const { commentaire, unite } = indicateur;
 
   const { sourceFilter, typesSegmentation } = chartInfo;
@@ -89,22 +94,41 @@ export const IndicateurDonnees = () => {
 
         {/* Tableau */}
         {hasSousIndicateurs ? (
-          <IndicateurSousIndicateursTable
-            indicateurId={indicateur.id}
-            titre={indicateur.titre}
-            unite={unite}
-            periodicite={indicateur.periodicite}
-            isReadonly={!canMutateValeur || indicateur.sansValeurUtilisateur}
-            canDetach={canMutateIndicateur}
-          />
+          <>
+            <IndicateurSousIndicateursTable
+              indicateurId={indicateur.id}
+              titre={indicateur.titre}
+              unite={unite}
+              periodicite={indicateur.periodicite}
+              isReadonly={!canMutateValeur || indicateur.sansValeurUtilisateur}
+              canMutateIndicateur={canMutateIndicateur}
+              newSousIndicateur={{
+                id: newSousIndicateurId,
+                onCreated: setNewSousIndicateurId,
+                onNameEditingEnd: () => setNewSousIndicateurId(null),
+              }}
+            />
+            <PrivateModeSwitch isReadOnly={!canMutateIndicateur} />
+          </>
         ) : (
-          <IndicateurValuesTabs
-            isReadonly={!canMutateValeur || indicateur.sansValeurUtilisateur}
-            openModalState={{
-              isOpen: isTableModalOpen,
-              setIsOpen: setIsTableModalOpen,
-            }}
-          />
+          <>
+            <IndicateurValuesTabs
+              isReadonly={!canMutateValeur || indicateur.sansValeurUtilisateur}
+              openModalState={{
+                isOpen: isTableModalOpen,
+                setIsOpen: setIsTableModalOpen,
+              }}
+            />
+            {isPerso && canMutateIndicateur && (
+              <div className="my-4">
+                <CreateSousIndicateurButton
+                  parentId={indicateur.id}
+                  childCount={0}
+                  onCreated={setNewSousIndicateurId}
+                />
+              </div>
+            )}
+          </>
         )}
 
         <Divider color="primary" className="my-6" />

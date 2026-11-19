@@ -1,4 +1,5 @@
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
+import type { RenameSousIndicateur } from '@/app/indicateurs/sous-indicateurs/data/use-rename-sous-indicateur';
 import { SOUS_INDICATEURS_TOTAL_COLOR } from '@/app/indicateurs/sous-indicateurs/sous-indicateurs-colors';
 import type {
   SousIndicateurCell,
@@ -19,8 +20,8 @@ import {
   type IndicateurPeriodicite,
 } from '@tet/domain/indicateurs';
 import { uniqBy } from 'es-toolkit';
-import Link from 'next/link';
 import { SousIndicateurDetachButton } from './sous-indicateur-detach.button';
+import { SousIndicateurNameEditor } from './sous-indicateur-name.editor';
 import { SousIndicateurExpandToggle } from './sous-indicateur-expand.toggle';
 import { SousIndicateurPeriodCell } from './sous-indicateur-period.cell';
 import { SousIndicateurRowHeaderCell } from './sous-indicateur-row-header.cell';
@@ -143,6 +144,9 @@ const toSousIndicateurRow = ({
   isReadonly,
   saveValeur,
   onRequestDetach,
+  renameSousIndicateur,
+  isNameFocused,
+  onNameEditingEnd,
   isExpanded,
   onToggle,
 }: {
@@ -152,6 +156,9 @@ const toSousIndicateurRow = ({
   isReadonly: boolean;
   saveValeur: SaveSousIndicateurValeur;
   onRequestDetach: ((target: DetachTarget) => void) | undefined;
+  renameSousIndicateur: RenameSousIndicateur | undefined;
+  isNameFocused: boolean;
+  onNameEditingEnd: () => void;
   isExpanded: boolean;
   onToggle: () => void;
 }): PeriodeTableRow => ({
@@ -183,16 +190,22 @@ const toSousIndicateurRow = ({
         ) : null
       }
     >
-      <Link
-        className="text-primary-9 underline"
+      <SousIndicateurNameEditor
+        label={row.label}
         href={makeCollectiviteIndicateursUrl({
           collectiviteId,
           indicateurView: 'perso',
           indicateurId: row.indicateurId,
         })}
-      >
-        {row.label}
-      </Link>{' '}
+        isInitiallyEditing={isNameFocused}
+        onRename={
+          renameSousIndicateur
+            ? (titre) =>
+                renameSousIndicateur({ indicateurId: row.indicateurId, titre })
+            : undefined
+        }
+        onEditingEnd={onNameEditingEnd}
+      />{' '}
       <span className="sr-only">
         {appLabels.indicateurSousIndicateurNiveau({ niveau: row.depth + 1 })}
       </span>
@@ -228,6 +241,9 @@ export const toSousIndicateurTable = ({
   isReadonly,
   saveValeur,
   requestDetachSousIndicateur,
+  renameSousIndicateur,
+  focusedNameIndicateurId,
+  onNameEditingEnd,
   isExpanded,
   onToggle,
 }: {
@@ -238,6 +254,9 @@ export const toSousIndicateurTable = ({
   isReadonly: boolean;
   saveValeur: SaveSousIndicateurValeur;
   requestDetachSousIndicateur: ((target: DetachTarget) => void) | undefined;
+  renameSousIndicateur: RenameSousIndicateur | undefined;
+  focusedNameIndicateurId: number | null;
+  onNameEditingEnd: () => void;
   isExpanded: (rowKey: string) => boolean;
   onToggle: (rowKey: string) => void;
 }): { periodes: IndicateurPeriode[]; rows: PeriodeTableRow[] } => ({
@@ -257,6 +276,9 @@ export const toSousIndicateurTable = ({
         isReadonly,
         saveValeur,
         onRequestDetach: requestDetachSousIndicateur,
+        renameSousIndicateur,
+        isNameFocused: row.indicateurId === focusedNameIndicateurId,
+        onNameEditingEnd,
         isExpanded: isExpanded(row.rowKey),
         onToggle: () => onToggle(row.rowKey),
       })

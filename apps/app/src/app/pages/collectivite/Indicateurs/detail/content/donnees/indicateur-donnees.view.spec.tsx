@@ -1,6 +1,6 @@
 import type { SousIndicateursTableState } from '@/app/indicateurs/sous-indicateurs/sous-indicateurs-table-state.rules';
 import { appLabels } from '@/app/labels/catalog';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import type { IndicateurDetaille } from '@tet/domain/indicateurs';
 import { describe, expect, it, vi } from 'vitest';
 import type { IndicateurChartInfo } from '../../../data/use-indicateur-chart';
@@ -101,6 +101,7 @@ const toIndicateur = ({
   } as IndicateurDetaille);
 
 const renderDonnees = (indicateur: IndicateurDetaille) => {
+  const createSousIndicateur = vi.fn();
   const useSousIndicateursTable = vi.fn(() => readyState);
   render(
     <IndicateurDataProvider
@@ -115,6 +116,9 @@ const renderDonnees = (indicateur: IndicateurDetaille) => {
               useDeclareSousIndicateursPeriodes: () => vi.fn(),
               useDeleteSousIndicateursPeriode: () => vi.fn(),
               useDetachSousIndicateur: () => vi.fn(),
+              useCreateSousIndicateur: () => createSousIndicateur,
+              useRenameSousIndicateur: () => vi.fn(),
+              useUpdateSousIndicateursCumul: () => vi.fn(),
               useSousIndicateursCommentaires: () => ({
                 commentairesOf: () => ({ resultat: '', objectif: '' }),
                 save: vi.fn(),
@@ -127,7 +131,7 @@ const renderDonnees = (indicateur: IndicateurDetaille) => {
       </IndicateurChartProvider>
     </IndicateurDataProvider>
   );
-  return { useSousIndicateursTable };
+  return { useSousIndicateursTable, createSousIndicateur };
 };
 
 const sousIndicateursTable = {
@@ -151,6 +155,51 @@ describe('IndicateurDonnees : tableau des valeurs', () => {
     expect(useSousIndicateursTable).toHaveBeenCalledWith(10);
     expect(screen.getByRole('img', graphiqueDesSousIndicateurs)).toBeDefined();
     expect(screen.queryByRole('img', graphiqueDuParent)).toBeNull();
+  });
+
+  it("propose le résultat récent en mode privé sous le tableau des sous-indicateurs d'un perso qui a des enfants", () => {
+    renderDonnees(
+      toIndicateur({
+        collectiviteId: 1,
+        enfants: [{ id: 11, titre: 'Ménagers' }],
+      })
+    );
+
+    expect(
+      screen.getByRole('checkbox', { name: 'Résultat récent en mode privé' })
+    ).toBeDefined();
+  });
+
+  it("propose de créer le premier sous-indicateur sous le tableau d'un perso sans enfant, nommé Sous-indicateur 1", () => {
+    const { createSousIndicateur } = renderDonnees(
+      toIndicateur({ collectiviteId: 1, enfants: [] })
+    );
+
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: appLabels.indicateurCreerSousIndicateur,
+      })
+    );
+
+    expect(createSousIndicateur).toHaveBeenCalledWith(
+      { parentId: 10, titre: 'Sous-indicateur 1' },
+      expect.anything()
+    );
+  });
+
+  it('ne propose pas de créer un sous-indicateur pour un indicateur prédéfini', () => {
+    renderDonnees(
+      toIndicateur({
+        collectiviteId: null,
+        enfants: [{ id: 11, titre: 'Ménagers' }],
+      })
+    );
+
+    expect(
+      screen.queryByRole('button', {
+        name: appLabels.indicateurCreerSousIndicateur,
+      })
+    ).toBeNull();
   });
 
   it('garde le graphique et le tableau de valeurs du parent pour un perso sans enfant', () => {

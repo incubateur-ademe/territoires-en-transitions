@@ -1,5 +1,8 @@
 'use client';
 
+import type { RenameSousIndicateur } from '@/app/indicateurs/sous-indicateurs/data/use-rename-sous-indicateur';
+import type { CreateSousIndicateur } from '@/app/indicateurs/sous-indicateurs/data/use-create-sous-indicateur';
+import type { UpdateSousIndicateursCumul } from '@/app/indicateurs/sous-indicateurs/data/use-update-sous-indicateurs-cumul';
 import type { DetachSousIndicateur } from '@/app/indicateurs/sous-indicateurs/data/use-detach-sous-indicateur';
 import type { SousIndicateursCommentaires } from '@/app/indicateurs/sous-indicateurs/data/use-sous-indicateurs-commentaires';
 import type { DeleteSousIndicateursPeriode } from '@/app/indicateurs/sous-indicateurs/data/use-delete-sous-indicateurs-periode';
@@ -19,6 +22,11 @@ export type IndicateurSousIndicateursTableValue = {
   useDeclareSousIndicateursPeriodes: () => DeclareIndicateursPeriodes;
   useDeleteSousIndicateursPeriode: () => DeleteSousIndicateursPeriode;
   useDetachSousIndicateur: () => DetachSousIndicateur;
+  useCreateSousIndicateur: () => CreateSousIndicateur;
+  useRenameSousIndicateur: () => RenameSousIndicateur;
+  useUpdateSousIndicateursCumul: (
+    indicateurId: number
+  ) => UpdateSousIndicateursCumul;
   useSousIndicateursCommentaires: (
     indicateurId: number
   ) => SousIndicateursCommentaires;

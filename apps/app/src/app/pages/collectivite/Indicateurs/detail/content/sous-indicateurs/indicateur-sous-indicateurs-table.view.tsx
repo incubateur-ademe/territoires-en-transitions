@@ -4,12 +4,15 @@ import { PeriodesTable } from '@/app/indicateurs/valeurs/periodes-table/periodes
 import type { SaveSousIndicateurValeur } from '@/app/indicateurs/sous-indicateurs/data/use-save-sous-indicateur-valeur';
 import type { SousIndicateursCommentaires } from '@/app/indicateurs/sous-indicateurs/data/use-sous-indicateurs-commentaires';
 import { countCommentaires } from '@/app/indicateurs/sous-indicateurs/sous-indicateurs-commentaires.rules';
+import type { RenameSousIndicateur } from '@/app/indicateurs/sous-indicateurs/data/use-rename-sous-indicateur';
+import type { UpdateSousIndicateursCumul } from '@/app/indicateurs/sous-indicateurs/data/use-update-sous-indicateurs-cumul';
 import type { DetachSousIndicateur } from '@/app/indicateurs/sous-indicateurs/data/use-detach-sous-indicateur';
 import type { DeleteSousIndicateursPeriode } from '@/app/indicateurs/sous-indicateurs/data/use-delete-sous-indicateurs-periode';
 import type { DeclareIndicateursPeriodes } from '@/app/indicateurs/valeurs/use-declare-indicateur-periodes';
 import type { SousIndicateursTableData } from '@/app/indicateurs/sous-indicateurs/sous-indicateurs-table.rules';
 import { appLabels } from '@/app/labels/catalog';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { Checkbox } from '@tet/ui';
 import {
   IndicateurPeriodes,
   type IndicateurPeriode,
@@ -21,6 +24,7 @@ import { EditCommentaireModal } from '../../../table/edit-commentaire-modal';
 import { useIndicateurPeriodeDeclaration } from '../../../table/use-indicateur-periode-declaration';
 import { useRevealIndicateurPeriode } from '../../../table/use-reveal-indicateur-periode';
 import { useIndicateurSousIndicateursTable } from '../../context/indicateur-sous-indicateurs-table.context';
+import { CreateSousIndicateurButton } from './create-sous-indicateur.button';
 import { ConfirmDetachSousIndicateur } from './confirm-detach-sous-indicateur';
 import { ConfirmDeleteSousIndicateursPeriode } from './confirm-delete-sous-indicateurs-periode';
 import {
@@ -30,13 +34,20 @@ import {
 } from './to-sous-indicateur-table-rows';
 import { useSousIndicateurRowsExpansion } from './use-sous-indicateur-rows-expansion';
 
+export type NewSousIndicateur = Readonly<{
+  id: number | null;
+  onCreated: (indicateurId: number) => void;
+  onNameEditingEnd: () => void;
+}>;
+
 type Props = {
   indicateurId: number;
   titre: string;
   unite: string;
   periodicite: IndicateurPeriodicite;
   isReadonly: boolean;
-  canDetach: boolean;
+  canMutateIndicateur: boolean;
+  newSousIndicateur: NewSousIndicateur;
 };
 
 type ReadyTableProps = Props & {
@@ -46,6 +57,8 @@ type ReadyTableProps = Props & {
   deletePeriode: DeleteSousIndicateursPeriode;
   commentaires: SousIndicateursCommentaires;
   detachSousIndicateur: DetachSousIndicateur;
+  updateCumul: UpdateSousIndicateursCumul;
+  renameSousIndicateur: RenameSousIndicateur;
   data: SousIndicateursTableData;
 };
 
@@ -79,7 +92,10 @@ const ReadyTable = ({
   deletePeriode,
   commentaires,
   detachSousIndicateur,
-  canDetach,
+  updateCumul,
+  renameSousIndicateur,
+  canMutateIndicateur,
+  newSousIndicateur,
   data,
 }: ReadyTableProps): JSX.Element => {
   const { visibleRows, isExpanded, toggle } = useSousIndicateurRowsExpansion(
@@ -93,7 +109,14 @@ const ReadyTable = ({
     collectiviteId,
     isReadonly,
     saveValeur,
-    requestDetachSousIndicateur: canDetach ? setDetachTarget : undefined,
+    requestDetachSousIndicateur: canMutateIndicateur
+      ? setDetachTarget
+      : undefined,
+    renameSousIndicateur: canMutateIndicateur
+      ? renameSousIndicateur
+      : undefined,
+    focusedNameIndicateurId: newSousIndicateur.id,
+    onNameEditingEnd: newSousIndicateur.onNameEditingEnd,
     isExpanded,
     onToggle: toggle,
   });
@@ -153,6 +176,23 @@ const ReadyTable = ({
         }}
         onDelete={onDelete}
       />
+      {canMutateIndicateur && (
+        <div className="my-4 flex flex-wrap items-center gap-x-6 gap-y-2">
+          <CreateSousIndicateurButton
+            parentId={indicateurId}
+            childCount={data.rows.filter((row) => row.depth === 0).length}
+            onCreated={newSousIndicateur.onCreated}
+          />
+          {periodes.length > 0 && (
+            <Checkbox
+              variant="switch"
+              label={appLabels.indicateurCumulSousIndicateurs}
+              checked={data.hasTotalRow}
+              onChange={() => updateCumul(!data.hasTotalRow)}
+            />
+          )}
+        </div>
+      )}
       {declaration.modal}
       {detachTarget && (
         <ConfirmDetachSousIndicateur
@@ -203,7 +243,8 @@ export const IndicateurSousIndicateursTable = ({
   unite,
   periodicite,
   isReadonly,
-  canDetach,
+  canMutateIndicateur,
+  newSousIndicateur,
 }: Props): JSX.Element => {
   const {
     useSousIndicateursTable,
@@ -211,6 +252,8 @@ export const IndicateurSousIndicateursTable = ({
     useDeclareSousIndicateursPeriodes,
     useDeleteSousIndicateursPeriode,
     useDetachSousIndicateur,
+    useUpdateSousIndicateursCumul,
+    useRenameSousIndicateur,
     useSousIndicateursCommentaires,
   } = useIndicateurSousIndicateursTable();
   const state = useSousIndicateursTable(indicateurId);
@@ -218,6 +261,8 @@ export const IndicateurSousIndicateursTable = ({
   const declarePeriodes = useDeclareSousIndicateursPeriodes();
   const deletePeriode = useDeleteSousIndicateursPeriode();
   const detachSousIndicateur = useDetachSousIndicateur();
+  const updateCumul = useUpdateSousIndicateursCumul(indicateurId);
+  const renameSousIndicateur = useRenameSousIndicateur();
   const commentaires = useSousIndicateursCommentaires(indicateurId);
 
   if (state.status === 'loading') {
@@ -247,7 +292,10 @@ export const IndicateurSousIndicateursTable = ({
       deletePeriode={deletePeriode}
       commentaires={commentaires}
       detachSousIndicateur={detachSousIndicateur}
-      canDetach={canDetach}
+      updateCumul={updateCumul}
+      renameSousIndicateur={renameSousIndicateur}
+      canMutateIndicateur={canMutateIndicateur}
+      newSousIndicateur={newSousIndicateur}
       data={state.data}
     />
   );
