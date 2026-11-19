@@ -900,6 +900,8 @@ export const demarchesLabels = {
     'La collectivité n’a pas encore transmis ce PCAET pour avis. Vous le consultez tel qu’il est aujourd’hui : son contenu peut encore évoluer, et aucun avis n’est attendu de votre service à ce stade.',
   instructionDossierEtapesTitre: 'Les étapes de l’instruction',
   instructionDossierPanneauBouton: 'Étapes',
+  instructionDossierEtapesNavAriaLabel:
+    'Navigation entre les étapes du dossier',
   instructionDossierEtapeDocuments: 'Documents déposés',
   instructionDossierToutTelecharger: 'Tout télécharger',
   instructionDossierEtapeDocumentsDescription:
