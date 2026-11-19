@@ -165,13 +165,22 @@ fiches et d'indicateurs sont résolus par leurs identifiants, avec les contrôle
 d'accès habituels. Les rapprochements ne s'appuient sur aucun historique de
 libellés ni sur un catalogue embarqué dans le code.
 
-Pour une formulation inconnue ou une cellule
-numérique complexe, l'IA reçoit uniquement les engagements candidats de l'axe
-ou les cibles attendues. Les réponses sont contrôlées : code autorisé, citation
-exacte, nombres présents, unité explicite (y compris entre parenthèses) et année
-cohérentes. Une sélection incertaine
-reste une erreur. Les citations documentent la décision du modèle ; elles ne
-prouvent pas à elles seules l'équivalence sémantique des formulations.
+Pour une formulation inconnue, l'IA reçoit les engagements candidats de l'axe.
+Pour une cellule numérique rédigée, elle reçoit les cibles attendues et un
+inventaire des occurrences numériques de cette cellule. Elle associe leurs
+identifiants aux quantités et aux échéances, avec les unités explicites et les
+citations justificatives. Les réponses sont consommées comme des données typées,
+sans les convertir en texte à analyser à nouveau. Les nombres seuls, accompagnés
+éventuellement d'une unité déclarée et d'une année entre parenthèses, gardent
+une lecture directe.
+
+Les contrôles vérifient les clés autorisées, les citations exactes, la présence
+de chaque occurrence, l'absence de réutilisation d'une quantité et les unités
+et années déclarées dans le catalogue. Une échéance commune peut être partagée.
+Une réponse `unresolved` bloque l'extraction. Les relations, conditions et
+négations relèvent du modèle : les preuves de présence ne démontrent pas une
+interprétation sémantique correcte. Leur qualification sur des documents
+représentatifs reste humaine, selon le [guide d'évaluation](../../apps/backend/src/plans/ai-plan-import/eval/README.md#profil-électrification).
 L'IA ne choisit jamais un indicateur TeT ni une conversion d'unité.
 
 Le catalogue exige les définitions complètes des engagements et de leurs cibles,

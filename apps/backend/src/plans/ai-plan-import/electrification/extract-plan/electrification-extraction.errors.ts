@@ -6,6 +6,11 @@ import {
 import { aiPlanImportJobErrorMessages } from '../../ai-plan-import.errors';
 
 export const electrificationExtractionErrors = {
+  UNRESOLVED_ELECTRIFICATION_VALUE: {
+    kind: 'document-error',
+    message:
+      "Cette cellule ne permet pas d'identifier une valeur certaine pour chaque cible. Précisez les quantités, leurs unités et leurs échéances, sans condition ni approximation.",
+  },
   MISSING_INDICATEUR_YEAR: electrificationFichesErrors.MISSING_INDICATEUR_YEAR,
   SOURCE_UNREADABLE: {
     kind: 'processing-error',

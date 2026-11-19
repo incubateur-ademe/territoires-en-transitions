@@ -45,20 +45,30 @@ Le JSON contient `checkpoint` (extraction typée, sources, versions et tokens),
 `report.issues` (erreurs documentaires ou de traitement) et la durée.
 Quand aucun appel n'est nécessaire, `provider: "deterministic"`,
 `metrics.calls: 0` et les tokens à zéro identifient une extraction sans modèle.
-`schemaVersion: 1` est l'unique
-version technique du checkpoint. `templateVersion: "electrification-v4"`
+Le checkpoint utilise uniquement la version définie dans
+[`ELECTRIFICATION_CHECKPOINT_VERSION`](../electrification/extract-plan/electrification-extraction-checkpoint.schema.ts).
+`templateVersion: "electrification-v4"`
 identifie le canevas officiel ; `catalogueVersion` identifie les correspondances métier.
 `stage: "extraction"` et `referencesResolved: false` indiquent que les codes,
 URL, correspondances du catalogue et permissions restent à vérifier par le
 résolveur. Un statut `done` signifie seulement que l'extraction a réussi ;
 il ne qualifie pas un import ni les correspondances métier encore en attente.
 
-L'aide IA concerne les cibles et résultats numériques non reconnus. Elle
-utilise le fournisseur configuré et conserve la lecture déterministe de la
-structure et les validations métier. Elle ne corrige pas les dates, statuts ou
-références invalides. Les sources originales et les
-interprétations retenues sont conservées dans `checkpoint.sources` et
-`checkpoint.interpretations`, avec les extraits et valeurs littérales retenus.
+L'aide IA rapproche les libellés inconnus des engagements publiés et interprète
+les cellules numériques rédigées. Les nombres seuls, avec une unité déclarée
+et une année entre parenthèses éventuelles, sont lus directement. La structure
+et les validations métier restent déterministes. L'IA ne corrige pas les dates,
+statuts ou références invalides. Elle associe les occurrences numériques
+fournies à des clés de cible, unités et échéances, avec une citation exacte.
+Elle signale une cellule ambiguë ou conditionnelle par `status: "unresolved"` ;
+l'extraction s'arrête alors avec une erreur documentaire.
+
+Les sources originales et les interprétations retenues sont conservées dans
+`checkpoint.sources` et `checkpoint.interpretations`, avec `numberId`, `yearId`
+et les extraits justificatifs. Les valeurs sont lues dans les occurrences
+désignées, sans reformater la réponse en texte ni la reparcourir par une
+grammaire française. Les rapprochements d'engagements sont conservés dans
+`checkpoint.engagementInterpretations`.
 `provider`, `model` et `metrics` rendent compte du fournisseur, des tentatives
 d'appel et des tokens consommés, y compris en cas d'échec. Un document déjà
 compris termine sans aucun appel.
@@ -66,7 +76,12 @@ compris termine sans aucun appel.
 Cette évaluation n'active pas le profil dans l'application.
 Comparer chaque interprétation à sa source : mesurer les rejets évités et
 les valeurs erronées acceptées, pas seulement le nombre d'extractions réussies.
-Un statut `done` ne remplace pas cette vérification humaine.
+Les contrôles de présence, de format et de contraintes du catalogue ne prouvent
+pas que le modèle a correctement compris le sens de la phrase. Inclure des
+conditions, négations, approximations et unités contradictoires dans cette
+qualification. Les tests automatisés utilisent un faux modèle et vérifient le
+contrat d'extraction et les rejets techniques. Un statut `done` ne remplace pas
+cette vérification humaine.
 
 Les options `--ref`, `--instructions`, `--no-verifications`,
 `--no-sous-actions` et `--lecture-seule` sont réservées au profil générique.

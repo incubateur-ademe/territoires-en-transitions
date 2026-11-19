@@ -1,302 +1,173 @@
+import { escapeRegExp } from 'es-toolkit';
 import { ElectrificationDocumentValues as Values } from './electrification-document-values.rules';
 import {
+  ElectrificationInterpretedValue,
   ElectrificationValueContext,
   ElectrificationValueRequest,
   ElectrificationValueResponse,
 } from './electrification-value-interpretation.schema';
 
-type InterpretedValue = ElectrificationValueResponse['values'][number];
-type ValueSegment = { text: string; quote: string; afterNumber: string };
 const numberLiteralPattern = new RegExp(
-  `(?<![\\p{L}\\p{N}])${Values.NUMBER_LITERAL}(?![\\p{L}\\p{N}])`,
+  `(?<![\\p{L}\\p{N}])${Values.NUMBER_LITERAL}(?:[eE][+-]?\\d+)?`,
   'gu'
 );
-const unitAfterNumberPattern = new RegExp(
-  `^[\\s()]*(${Values.UNIT_TOKEN})`,
+const literalPattern = new RegExp(
+  `^(${Values.NUMBER_LITERAL})(?:\\s+(${Values.UNIT_TOKEN})|\\s*(%))?(?:\\s*\\((\\d{4})\\))?$`,
   'u'
 );
 
-/** Contrôles de l'aide à la lecture ; ils ne prouvent pas la justesse sémantique. */
+/** Vérifie les preuves et le contrat numérique ; le sens des phrases relève du modèle. */
 export class ElectrificationValueInterpretationRules {
-  static isCandidate({
-    source,
-    kind,
-    year,
-  }: ElectrificationValueRequest): boolean {
-    const text = Values.normalize(source.text);
-    if (
-      source.links.length ||
-      text.length > 2000 ||
-      !/[a-z]/.test(text) ||
-      !this.numbers(text).length ||
-      /https?:|www\./.test(text) ||
-      /\d\s*e[+-]?\d/.test(text) ||
-      /\b(?:si|sous reserve|condition|conditionnel|abandonne|annule|envisage|confirmer|pas|non|jamais|aucun)\b/.test(
-        text
-      ) ||
-      /\b(?:entre|environ|approximativement|presque|minimum|maximum|moins|plus|ou|fourchette)\b|[<>≤≥≈~]|\d\s*(?:a|[-–—/])\s*\d/.test(
-        text
-      )
-    )
-      return false;
-    const explicitYears = [
-      ...text.matchAll(/(?:\b(?:en|pour|annee|d'ici)\s+|\()([12]\d{3})\b/g),
-    ];
-    if (
-      year !== null &&
-      explicitYears.some(([, value]) => Number(value) !== year)
-    )
-      return false;
-    // Un résultat doit porter sa propre année, sans la déduire du contexte.
-    if (kind === 'observation' && year === null) {
-      return (
-        this.numbers(text).length >= 2 &&
-        /(?:\b(?:en|pour|annee)\s+[12]\d{3}\b|\([12]\d{3}\))/.test(text)
-      );
-    }
-    return true;
+  static numbers(text: string) {
+    return [...text.matchAll(numberLiteralPattern)].map((match, id) => ({
+      id,
+      text: match[0],
+      start: match.index,
+      end: match.index + match[0].length,
+    }));
   }
 
-  static text(
+  static read(
     request: ElectrificationValueRequest,
     context?: ElectrificationValueContext
-  ): string {
+  ): ElectrificationInterpretedValue[] | null {
     const interpretation = context?.interpretations?.find(
       ({ sourceId }) => sourceId === request.source.id
     );
-    return interpretation
-      ? this.normalize(request, interpretation.values) ?? request.source.text
-      : request.source.text;
-  }
-
-  static request(
-    request: ElectrificationValueRequest,
-    context?: ElectrificationValueContext
-  ): void {
-    if (this.isCandidate(request)) context?.onUnparsedValue?.(request);
-  }
-
-  /** Vérifie les citations et que chaque nombre du texte a été pris en compte. */
-  static hasEvidence(text: string, values: InterpretedValue[]): boolean {
+    if (interpretation) return this.resolve(request, interpretation);
+    const text = request.source.text.trim();
+    if (!text) return [];
+    // Une seule cible identifiable et un littéral complet n'exigent aucune lecture sémantique.
+    const literal =
+      request.keys.length === 1 ? text.match(literalPattern) : null;
+    if (literal) {
+      const value = Values.number(literal[1]);
+      if (value === null) return null;
+      const result = {
+        key: request.keys[0],
+        value,
+        unit: literal[2] ?? literal[3] ?? null,
+        year: literal[4] ? Number(literal[4]) : null,
+      };
+      // Sans unité déclarée, un mot après le nombre peut aussi être une réserve.
+      if (
+        request.kind !== 'observation' ||
+        request.unit !== null ||
+        result.unit === null
+      )
+        return this.accepts(request, result) ? [result] : null;
+    }
+    const numbers = this.numbers(text);
     if (
-      !values.length ||
-      new Set(values.map(({ key }) => key)).size !== values.length
+      !request.source.links.length &&
+      text.length <= 2000 &&
+      numbers.length > 0 &&
+      numbers.length <= 100
     )
+      context?.onUnparsedValue?.(request);
+    return null;
+  }
+
+  /** Chaque quantité a son occurrence ; une échéance commune peut être partagée. */
+  static hasEvidence(
+    text: string,
+    response: ElectrificationValueResponse
+  ): boolean {
+    if (response.status !== 'extracted' || !response.values.length)
       return false;
-    const sourceNumbers = new Map(
-      [...text.matchAll(numberLiteralPattern)].map((match) => [
-        match.index,
-        match[0],
-      ])
-    );
+    const numbers = this.numbers(text);
     const quantities = new Set<number>();
     const years = new Set<number>();
-    for (const value of values) {
-      const quoted = this.readQuotedNumbers(text, value);
+    const keys = new Set<string>();
+    for (const value of response.values) {
+      const number = numbers[value.numberId];
+      const year = value.yearId === null ? null : numbers[value.yearId];
       if (
-        !quoted ||
-        !value.quote.includes(value.number) ||
-        Values.number(value.number) === null ||
-        (value.unit !== null && !value.quote.includes(value.unit))
+        !number ||
+        (value.yearId !== null && (!year || !/^[1-9]\d{3}$/.test(year.text))) ||
+        keys.has(value.key) ||
+        quantities.has(value.numberId)
       )
         return false;
-      const quantityPosition = quoted.quoteStart + quoted.number.index;
+      const start = text.lastIndexOf(value.quote, number.start);
+      const end = start + value.quote.length;
       if (
-        sourceNumbers.get(quantityPosition) !== quoted.number[0] ||
-        quantities.has(quantityPosition) ||
-        years.has(quantityPosition)
+        start < 0 ||
+        number.end > end ||
+        (year && (year.start < start || year.end > end))
       )
         return false;
-      quantities.add(quantityPosition);
-      if (quoted.year) {
-        const yearPosition = quoted.quoteStart + quoted.year.index;
-        if (
-          sourceNumbers.get(yearPosition) !== quoted.year[0] ||
-          quantities.has(yearPosition)
-        )
-          return false;
-        years.add(yearPosition);
-      }
+      if (
+        value.unit !== null &&
+        !new RegExp(
+          `(?<![\\p{L}])${escapeRegExp(value.unit)}(?![\\p{L}\\p{N}])`,
+          'u'
+        ).test(value.quote)
+      )
+        return false;
+      quantities.add(value.numberId);
+      if (value.yearId !== null) years.add(value.yearId);
+      keys.add(value.key);
     }
-    // Une année peut être partagée, mais chaque quantité a sa propre occurrence.
-    return quantities.size + years.size === sourceNumbers.size;
-  }
-
-  private static readQuotedNumbers(text: string, value: InterpretedValue) {
-    const quoteStart = text.indexOf(value.quote);
-    if (quoteStart < 0) return null;
-    const numbers = [...value.quote.matchAll(numberLiteralPattern)];
-    if (numbers.length !== (value.year === null ? 1 : 2)) return null;
-    const isYear = (match: RegExpExecArray) =>
-      /^[1-9]\d{3}$/.test(match[0]) &&
-      /(?:\b(?:en|pour|annee|d'ici)|\()\s*$/.test(
-        Values.normalize(text.slice(0, quoteStart + match.index))
-      );
-    const year =
-      value.year === null
-        ? undefined
-        : numbers.find((match) => match[0] === value.year && isYear(match));
-    if (value.year !== null && !year) return null;
-    const number = numbers.find(
-      (match) =>
-        !isYear(match) &&
-        Values.numericLiteral(match[0]) === Values.numericLiteral(value.number)
+    return (
+      [...quantities].every((id) => !years.has(id)) &&
+      quantities.size + years.size === numbers.length
     );
-    return number ? { quoteStart, number, year } : null;
   }
 
-  static normalize(
+  static resolve(
     request: ElectrificationValueRequest,
-    values: InterpretedValue[]
-  ): string | null {
+    response: ElectrificationValueResponse
+  ): ElectrificationInterpretedValue[] | null {
+    if (!this.hasEvidence(request.source.text, response)) return null;
+    const numbers = this.numbers(request.source.text);
+    const values: ElectrificationInterpretedValue[] = [];
+    for (const value of response.values) {
+      const number = Values.number(numbers[value.numberId].text);
+      if (number === null) return null;
+      const result = {
+        key: value.key,
+        value: number,
+        unit: value.unit,
+        year: value.yearId === null ? null : Number(numbers[value.yearId].text),
+      };
+      if (!this.accepts(request, result)) return null;
+      values.push(result);
+    }
     if (
-      !this.isCandidate(request) ||
-      !this.hasEvidence(request.source.text, values)
+      request.kind === 'observation' &&
+      (values.length !== 1 || (values[0].year ?? request.year) === null)
     )
       return null;
-    for (const value of values) {
-      const segment = this.valueSegment(request.source.text, value);
-      if (
-        !segment ||
-        !(request.keys as readonly string[]).includes(value.key) ||
-        !this.preservesUnit(request, value, segment) ||
-        !this.preservesYear(request, value, segment) ||
-        (value.unit !== null &&
-          (!segment.quote.includes(value.unit) ||
-            !this.acceptsUnit(request, value, value.unit))) ||
-        (request.kind === 'target' &&
-          request.keys.length > 1 &&
-          !this.hasTargetLabel(request, value, segment.quote))
-      )
-        return null;
-    }
-    if (request.kind === 'observation') {
-      if (values.length !== 1) return null;
-      const value = values[0];
-      if (request.year === null && value.year === null) return null;
-      return `${value.number}${value.unit ? ` ${value.unit}` : ''}${
-        value.year ? ` (${value.year})` : ''
-      }`;
-    }
-    if (request.keys.length === 1)
-      return values.length === 1 ? values[0].number : null;
-    return values.map(({ key, number }) => `${key}: ${number}`).join('; ');
+    return values;
   }
 
-  /** Le libellé, l'unité et l'année appartiennent au segment du nombre cité. */
-  private static valueSegment(
-    text: string,
-    value: InterpretedValue
-  ): ValueSegment | null {
-    const quoted = this.readQuotedNumbers(text, value);
-    if (!quoted) return null;
-    const { quoteStart, number } = quoted;
-    const numberStart = quoteStart + number.index;
-    const before = text.slice(0, numberStart);
-    const segmentStart =
-      Math.max(before.lastIndexOf(';'), before.lastIndexOf('\n')) + 1;
-    const separator = text.slice(numberStart).search(/[;\n]/);
-    const segmentEnd = separator < 0 ? text.length : numberStart + separator;
-    return {
-      text: text.slice(segmentStart, segmentEnd),
-      quote: text.slice(
-        Math.max(quoteStart, segmentStart),
-        Math.min(quoteStart + value.quote.length, segmentEnd)
-      ),
-      afterNumber: text.slice(numberStart + number[0].length, segmentEnd),
-    };
-  }
-
-  private static hasTargetLabel(
-    request: Extract<ElectrificationValueRequest, { kind: 'target' }>,
-    value: InterpretedValue,
-    quote: string
-  ): boolean {
-    const target = request.targets.find(({ key }) => key === value.key);
-    if (!target) return false;
-    const words = (text: string) =>
-      Values.normalize(text)
-        .replace(/[^\p{L}\p{N}]+/gu, ' ')
-        .trim();
-    const quotedWords = ` ${words(quote)} `;
-    return [target.key, ...target.labels].some((label) => {
-      const expected = words(label);
-      return expected !== '' && quotedWords.includes(` ${expected} `);
-    });
-  }
-
-  private static preservesYear(
+  private static accepts(
     request: ElectrificationValueRequest,
-    value: InterpretedValue,
-    segment: ValueSegment
+    value: ElectrificationInterpretedValue
   ): boolean {
-    const expected =
-      request.kind === 'target'
-        ? request.targets.find(({ key }) => key === value.key)?.year
-        : request.year ?? (value.year === null ? null : Number(value.year));
     if (
-      value.year !== null &&
-      (Number(value.year) !== expected ||
-        this.numbers(segment.quote).length !== this.numbers(value.quote).length)
+      !Number.isFinite(value.value) ||
+      (value.year !== null && (value.year < 1000 || value.year > 9999))
     )
       return false;
-    const units = (
-      request.kind === 'target'
-        ? request.targets.flatMap(({ unit, units }) => [unit, ...units])
-        : [request.unit]
-    ).flatMap((unit) => (unit === null ? [] : [Values.normalize(unit)]));
-    const text = Values.normalize(segment.text);
-    return [
-      ...text.matchAll(/(?:\b(?:en|pour|annee|d'ici)\s+|\()([1-9]\d{3})\b/g),
-    ].every((match) => {
-      const unit = text
-        .slice(match.index + match[0].length)
-        .match(unitAfterNumberPattern)?.[1];
-      return Number(match[1]) === expected && (!unit || !units.includes(unit));
-    });
-  }
-
-  /** Une citation tronquée ne doit pas faire disparaître l'unité accolée au nombre. */
-  private static preservesUnit(
-    request: ElectrificationValueRequest,
-    value: InterpretedValue,
-    segment: ValueSegment
-  ): boolean {
-    const unit = segment.afterNumber.match(unitAfterNumberPattern)?.[1];
-    // Ces mots relient une quantité à son contexte ; ils ne sont pas des unités.
-    if (
-      !unit ||
-      /^(?:en|pour|au|dont|sur)$/i.test(unit) ||
-      (request.kind === 'target' &&
-        request.targets.some(
-          (target) =>
-            target.key === value.key &&
-            (target.key === unit || target.labels.includes(unit))
-        ))
-    )
-      return true;
-    if (request.kind === 'observation')
-      return value.unit === unit && this.acceptsUnit(request, value, unit);
-    return (
-      this.acceptsUnit(request, value, unit) &&
-      (value.unit === null || this.acceptsUnit(request, value, value.unit))
-    );
-  }
-
-  private static acceptsUnit(
-    request: ElectrificationValueRequest,
-    value: InterpretedValue,
-    unit: string
-  ): boolean {
-    if (request.kind === 'observation')
-      return request.unit === null || unit === request.unit;
+    if (request.kind === 'observation') {
+      return (
+        value.key === 'valeur' &&
+        (value.unit === null ||
+          request.unit === null ||
+          value.unit === request.unit) &&
+        (value.year === null ||
+          request.year === null ||
+          value.year === request.year)
+      );
+    }
     const target = request.targets.find(({ key }) => key === value.key);
-    return !!target && [target.unit, ...target.units].includes(unit);
-  }
-
-  private static numbers(text: string): string[] {
-    return [...text.matchAll(numberLiteralPattern)].map(([number]) =>
-      Values.numericLiteral(number)
+    return (
+      !!target &&
+      (value.unit === null ||
+        [target.unit, ...target.units].includes(value.unit)) &&
+      (value.year === null || value.year === target.year)
     );
   }
 }
