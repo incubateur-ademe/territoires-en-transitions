@@ -20,13 +20,13 @@ export class ElectrificationTargetValuesRules {
     }
     // "X dont Y" exprime une inclusion déjà déclarée dans les règles publiées.
     const included = targets.filter(
-      (target) => target.reglesImport?.plafondCible
+      (target) => target.reglesImport.plafondCible
     );
     const parts = text.split(/\s+dont\s+/i);
     if (targets.length === 2 && included.length === 1 && parts.length === 2) {
       const child = included[0];
       const parent = targets.find(
-        ({ key }) => key === child.reglesImport?.plafondCible
+        ({ key }) => key === child.reglesImport.plafondCible
       );
       if (!parent) return null;
       const total = this.parseOne(parts[0], parent, false);
@@ -55,7 +55,6 @@ export class ElectrificationTargetValuesRules {
     target: Target,
     requireLabel: boolean
   ): number | null {
-    if (!target.reglesImport || !target.uniteImport) return null;
     const rules = target.reglesImport;
     const units = [...new Set([target.uniteImport, ...rules.unites])]
       .map(escapeRegExp)

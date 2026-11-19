@@ -1,7 +1,5 @@
 import type { PublishedIndicateurReference } from '@tet/backend/indicateurs/indicateur/indicateur-reference-externe.repository';
-import type { ElectrificationConfig } from '@tet/domain/plans';
 import { describe, expect, it } from 'vitest';
-import assert from 'node:assert';
 import { ElectrificationCatalogueRules } from '../electrification-catalogue.rules';
 import { ElectrificationGristAdapter } from './electrification-grist.adapter';
 import type { ElectrificationGristData } from './electrification-grist.schema';
@@ -54,113 +52,38 @@ const references = () => [
     periodicite: 'annuelle',
   }),
 ];
-const build = (
-  engagementReferences = references(),
-  data = source,
-  previous?: ElectrificationConfig
-) =>
+const build = (engagementReferences = references(), data = source) =>
   ElectrificationGristAdapter.build({
     source: data,
     sourceUrl: gristAxes.source,
     indicateurReferences: [],
     engagementReferences,
-    previous,
   });
 
 describe('Engagements publiés depuis Grist', () => {
-  it.each(['libelleSource', 'anciensLibelles'] as const)(
-    "refuse qu'un %s désigne le code d'un autre engagement",
-    (field) => {
-      const catalogue = { ...build(), version: 'test' };
-      const engagement = catalogue.engagements[0];
-      const label = catalogue.engagements[1].code.toLowerCase();
-      if (field === 'libelleSource') engagement.libelleSource = label;
-      else engagement.anciensLibelles = [label];
-      expect(
-        ElectrificationCatalogueRules.validateStructure(catalogue)
-      ).toContainEqual({
-        code: 'DUPLICATE_CATALOGUE_REFERENCE',
-        location: `catalogue.engagements[0].${field}${
-          field === 'anciensLibelles' ? '[0]' : ''
-        }`,
-        message: 'Une référence du catalogue est présente plusieurs fois.',
-      });
-      if (field === 'libelleSource') engagement.libelleSource = engagement.code;
-      else engagement.anciensLibelles = [engagement.code];
-      expect(ElectrificationCatalogueRules.isValid(catalogue)).toBe(true);
-    }
-  );
-
-  it('conserve les anciens libellés par code dans le même document, sans réutiliser les mappings', () => {
-    const initial = { ...build(), version: 'initial' };
-    initial.source = gristAxes.source.replace('/p/78', '/p/99');
-    initial.engagements[0].anciensLibelles = ['Un libellé plus ancien'];
-    const nextSource = structuredClone(source);
-    nextSource.Axes[0].fields.Parametre_signe =
-      "Réhabiliter d'ici 2040 ___ bâtiments, dont ___ écoles";
-    const next = build([], nextSource, initial);
-    expect(next.engagements[0].anciensLibelles).toEqual([
-      initial.engagements[0].libelleSource,
-      'Un libellé plus ancien',
-    ]);
-    expect(next.engagements[0].cibles[0]).toMatchObject({
-      identifiantReferentiel: null,
-      validation: 'pending',
+  it("refuse qu'un libellé désigne le code d'un autre engagement", () => {
+    const catalogue = { ...build(), version: 'test' };
+    const engagement = catalogue.engagements[0];
+    engagement.libelleSource = catalogue.engagements[1].code.toLowerCase();
+    expect(
+      ElectrificationCatalogueRules.validateStructure(catalogue)
+    ).toContainEqual({
+      code: 'DUPLICATE_CATALOGUE_REFERENCE',
+      location: 'catalogue.engagements[0].libelleSource',
+      message: 'Une référence du catalogue est présente plusieurs fois.',
     });
-    expect(build([], nextSource, { ...next, version: 'next' })).toEqual(next);
-    expect(initial.engagements[0].libelleSource).toBe(
-      source.Axes[0].fields.Parametre_signe
-    );
+    engagement.libelleSource = engagement.code;
+    expect(ElectrificationCatalogueRules.isValid(catalogue)).toBe(true);
   });
-
-  it.each([
-    'document',
-    'source-absente',
-    'code',
-    'axe',
-    'annee',
-    'unite',
-    'cle',
-  ])(
-    'ne reprend pas les libellés après un changement incompatible : %s',
-    (change) => {
-      const initial = { ...build(), version: 'initial' };
-      const engagement = initial.engagements[0];
-      const cible = engagement.cibles[0];
-      assert(cible.reglesImport);
-      engagement.libelleSource = 'Ancien libellé';
-      if (change === 'document')
-        initial.source = 'https://grist.numerique.gouv.fr/autre';
-      if (change === 'source-absente')
-        Reflect.deleteProperty(initial, 'source');
-      if (change === 'code') engagement.code = 'AUTRE';
-      if (change === 'axe') engagement.axeNumero = 14;
-      if (change === 'annee') cible.reglesImport.annee = 2050;
-      if (change === 'unite') {
-        cible.uniteImport = 'MWh';
-        cible.reglesImport.unites = ['MWh'];
-      }
-      if (change === 'cle') cible.key = 'AUTRE';
-      expect(
-        build([], source, initial).engagements[0].anciensLibelles
-      ).toBeUndefined();
-    }
-  );
 
   it('refuse les libellés équivalents dans un axe, mais les autorise dans des axes distincts', () => {
     const catalogue = { ...build(), version: 'test' };
     const label = catalogue.engagements[0].libelleSource;
-    assert(label);
     catalogue.engagements[1].libelleSource = label.toUpperCase();
     catalogue.engagements[1].axeNumero = 13;
     expect(ElectrificationCatalogueRules.isValid(catalogue)).toBe(false);
     catalogue.engagements[1].axeNumero = 14;
     expect(ElectrificationCatalogueRules.isValid(catalogue)).toBe(true);
-    catalogue.engagements[1].libelleSource = 'Autre formulation';
-    catalogue.engagements[1].anciensLibelles = [label];
-    expect(ElectrificationCatalogueRules.isValid(catalogue)).toBe(true);
-    catalogue.engagements[1].axeNumero = 13;
-    expect(ElectrificationCatalogueRules.isValid(catalogue)).toBe(false);
   });
 
   it.each(['cycle', 'unite', 'annee', 'bornes'])(
@@ -169,7 +92,6 @@ describe('Engagements publiés depuis Grist', () => {
       const catalogue = { ...build(), version: 'test' };
       expect(ElectrificationCatalogueRules.isValid(catalogue)).toBe(true);
       const [parent, child] = catalogue.engagements[0].cibles;
-      assert(parent.reglesImport && child.reglesImport);
       if (scenario === 'cycle') parent.reglesImport.plafondCible = child.key;
       if (scenario === 'unite') child.uniteImport = '%';
       if (scenario === 'annee') child.reglesImport.annee = 2050;
@@ -183,7 +105,6 @@ describe('Engagements publiés depuis Grist', () => {
 
   it('lit de nouveaux codes, cibles et années depuis Grist sans ligne de définition ni mapping obligatoire', () => {
     const catalogue = build();
-    expect(catalogue.engagementsFormat).toBe(2);
     expect(catalogue.engagements).toHaveLength(2);
     expect(catalogue.engagements[0]).toMatchObject({
       code: 'E42',

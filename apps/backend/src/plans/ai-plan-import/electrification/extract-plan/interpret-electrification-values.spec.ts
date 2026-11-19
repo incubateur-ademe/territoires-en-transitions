@@ -6,7 +6,6 @@ import { emptyTokenUsage } from '@tet/backend/utils/llm/token-usage';
 import { success } from '@tet/backend/utils/result.type';
 import { describe, expect, it, vi } from 'vitest';
 import { buildDocument } from '../../pipeline/document/document-page';
-import { AiPlanImportProfileEnum } from '../../models/import-profile';
 import { electrificationExtractionCheckpointSchema } from './electrification-extraction-checkpoint.schema';
 import { ElectrificationExtractionRules } from './electrification-extraction.rules';
 import { ElectrificationImportContractRules } from '../validate-import/electrification-import-contract.rules';
@@ -15,12 +14,10 @@ import { InterpretElectrificationValues } from './interpret-electrification-valu
 import { ElectrificationGristAdapter } from '@tet/backend/plans/plans/electrification/publish-electrification-data/sources/electrification-grist.adapter';
 import gristAxes from '@tet/backend/plans/plans/electrification/publish-electrification-data/sources/__fixtures__/electrification-grist-axes.json';
 import template from './__fixtures__/electrification-v4.template.json';
-import { electrificationCatalogueFixture } from '@tet/backend/plans/plans/electrification/publish-electrification-data/electrification-data.test-fixture';
 
 const engagementLabel = 'Rénover le parc, dont les écoles.';
 const catalogue: ElectrificationConfig = {
   version: 'catalogue-dynamique',
-  engagementsFormat: 2,
   axes: [{ numero: 13, titre: 'Rénovation' }],
   sousAxes: [],
   fiches: { actions: [], indicateurs: [] },
@@ -32,6 +29,7 @@ const catalogue: ElectrificationConfig = {
       libelleSource: engagementLabel,
       cibles: ['parc', 'ecoles'].map((key) => ({
         key,
+        libelleSource: key,
         identifiantReferentiel: null,
         unite: null,
         periodicite: null,
@@ -97,9 +95,7 @@ const model = (...responses: unknown[]) => {
 };
 
 describe('Extraction fondée sur les définitions publiées', () => {
-  it('retrouve le E05 du Word V4 par son identité publiée malgré le nouveau libellé Grist', async () => {
-    const previous = structuredClone(electrificationCatalogueFixture);
-    Reflect.deleteProperty(previous, 'engagementsFormat');
+  it('retrouve un engagement par son code ou son libellé courant, sans IA', async () => {
     const definitions = {
       ...ElectrificationGristAdapter.build({
         source: {
@@ -113,11 +109,14 @@ describe('Extraction fondée sur les définitions publiées', () => {
         sourceUrl: gristAxes.source,
         engagementReferences: [],
         indicateurReferences: [],
-        previous,
       }),
-      version: 'historique-word-grist',
+      version: 'grist-courant',
     };
-    const label = template.sections[0].rows[4][1].text;
+    const definition = definitions.engagements.find(
+      ({ code }) => code === 'E05'
+    );
+    assert(definition);
+    const label = definition.libelleSource;
     const { llm, calls } = model({ code: null, quote: label });
     for (const identity of [label, 'E05']) {
       const result = await InterpretElectrificationValues.run({
@@ -218,83 +217,6 @@ describe('Extraction fondée sur les définitions publiées', () => {
     }
   );
 
-  it('relit un checkpoint V1 sans citations de rapprochement ni nouvel appel IA', () => {
-    const checkpoint = electrificationExtractionCheckpointSchema.parse({
-      profile: AiPlanImportProfileEnum.ELECTRIFICATION,
-      schemaVersion: 1,
-      catalogueVersion: 'publication-v1',
-      documentKind: 'docx',
-      templateVersion: 'electrification-v4',
-      response: {
-        engagements: [
-          {
-            code: 'E09',
-            source: 'engagement',
-            cibles: [
-              {
-                key: 'principale',
-                valeur: 40,
-                unite: 'Nombre',
-                annee: 2030,
-                source: 'valeur',
-              },
-            ],
-          },
-        ],
-        axes: [],
-        fiches: [],
-      },
-      sources: [
-        {
-          id: 'engagement',
-          section: 'A',
-          text: 'Accompagner les artisans',
-          location: 'Engagement',
-          links: [],
-        },
-        {
-          id: 'valeur',
-          section: 'A',
-          text: '40 artisans',
-          location: 'Valeur',
-          links: [],
-        },
-      ],
-      interpretations: [],
-      tokens: emptyTokenUsage(),
-    });
-    expect(
-      ElectrificationImportContractRules.parseCheckpoint(checkpoint, {
-        profile: checkpoint.profile,
-        schemaVersion: 1,
-        catalogueVersion: checkpoint.catalogueVersion,
-        templateVersion: checkpoint.templateVersion,
-      })
-    ).toEqual(success(checkpoint));
-    expect(
-      electrificationExtractionCheckpointSchema.safeParse({
-        ...checkpoint,
-        engagementInterpretations: [],
-      }).success
-    ).toBe(false);
-    expect(
-      ElectrificationExtractionRules.adapt(
-        checkpoint.response,
-        checkpoint.sources
-      )
-    ).toMatchObject({
-      success: true,
-      data: {
-        engagements: [
-          {
-            code: 'E09',
-            cibles: [{ valeur: 40, unite: 'Nombre', annee: 2030 }],
-          },
-        ],
-      },
-    });
-  });
-
   it("préserve l'unité accolée au résultat même sans unité attendue", () => {
     const text = 'Le résultat atteint 42 MWh en 2025, avant conversion en kWh';
     const request = {
@@ -352,35 +274,6 @@ describe('Extraction fondée sur les définitions publiées', () => {
         },
       },
     });
-    expect(calls).not.toHaveBeenCalled();
-  });
-
-  it('garde le format V1 pour un job admis avant le déploiement, sans nouveau rapprochement IA', async () => {
-    const { llm, calls } = model();
-    const result = await InterpretElectrificationValues.run({
-      catalogue,
-      llm,
-      schemaVersion: 1,
-      document: document(engagementLabel, '8 bâtiments dont 2 écoles'),
-    });
-    assert(result.success);
-    expect(result.data.schemaVersion).toBe(1);
-    expect(result.data).not.toHaveProperty('engagementInterpretations');
-    expect(
-      ElectrificationImportContractRules.parseCheckpoint(result.data, {
-        profile: result.data.profile,
-        schemaVersion: 1,
-        catalogueVersion: result.data.catalogueVersion,
-        templateVersion: result.data.templateVersion,
-      })
-    ).toEqual(success(result.data));
-    const unmatched = await InterpretElectrificationValues.run({
-      catalogue,
-      llm,
-      schemaVersion: 1,
-      document: document('Une formulation inconnue', ''),
-    });
-    expect(unmatched.success).toBe(false);
     expect(calls).not.toHaveBeenCalled();
   });
 
@@ -454,6 +347,19 @@ describe('Extraction fondée sur les définitions publiées', () => {
       }).success
     ).toBe(false);
     expect(
+      ElectrificationImportContractRules.isSupportedImport({
+        ...contract,
+        schemaVersion: 1,
+      })
+    ).toBe(false);
+    expect(
+      electrificationExtractionCheckpointSchema.safeParse({
+        ...checkpoint,
+        schemaVersion: 1,
+        engagementInterpretations: undefined,
+      }).success
+    ).toBe(false);
+    expect(
       electrificationExtractionCheckpointSchema.safeParse({
         ...checkpoint,
         engagementInterpretations: undefined,
@@ -486,7 +392,7 @@ describe('Extraction fondée sur les définitions publiées', () => {
     expect(prompt.candidates).toEqual([
       { code: 'RENOVATION', label: catalogue.engagements[0].libelleSource },
     ]);
-    const interpretation = checkpoint.engagementInterpretations?.[0];
+    const interpretation = checkpoint.engagementInterpretations[0];
     assert(interpretation);
     interpretation.quote = 'citation inventée';
     expect(

@@ -7,7 +7,7 @@ date: 2026-11-04
 
 # Import du plan Électrification
 
-Dernière mise à jour : 2026-11-16.
+Dernière mise à jour : 2026-11-19.
 
 Ce plan applique l'[ADR 0022](../adr/0022-initialiser-plan-electrification-depuis-annexe-3.md)
 et l'[ADR 0024](../adr/0024-publier-donnees-electrification-sans-deploiement.md)
@@ -20,7 +20,10 @@ sources et preuves des anciens lots restent dans
 [l'historique de l'ADR](../adr/0022-initialiser-plan-electrification-depuis-annexe-3.md#historique-des-décisions-et-des-prs).
 Les PRs A et B suivent le périmètre élargi : A reprend aussi les refactorings
 actifs sans changement de comportement ; B garde les évolutions fonctionnelles.
-L'import Électrification n'est pas qualifié pour une ouverture en production.
+L'import Électrification n'est pas activé en production. La
+[décision du 19 novembre](../adr/0024-publier-donnees-electrification-sans-deploiement.md#contrat-unique-avant-activation-en-production---19-novembre-2026)
+retire la rétrocompatibilité : seuls les formats courants du catalogue et du
+checkpoint sont pris en charge.
 
 Les [retours de recette TT-67 du 11 novembre][retours-tt67] sont intégrés au
 périmètre de B. Leur validation locale est décrite ci-dessous ; la recette
@@ -793,23 +796,10 @@ déployé.
 
 ### Déploiement de C
 
-1. Fermer temporairement le flag de création Électrification et laisser les
-   workers de B terminer les jobs en attente, en cours et leurs retries.
-   Conserver les jobs échoués et sauvegarder leurs versions exactes de catalogue
-   depuis le commit B réellement déployé, ou par export si C est déjà déployée.
-   Ne pas reconstruire ces versions depuis Grist ni relancer un échec pendant
-   la bascule.
-2. Appliquer `indicateur/references-externes`, puis déployer les API et tous les workers de C. L'API de publication devient
-   disponible après ce déploiement ; aucune publication préalable n'est requise
-   pour déployer B seule.
-3. Publier les définitions et références Sheets dans la cible. Vérifier puis
-   publier les anciennes versions nécessaires aux reprises,
-   le catalogue souhaité pour les nouveaux imports en dernier parmi les
-   catalogues, puis la liste courante des lauréats. Exporter les jeux actifs,
-   contrôler leurs versions et les vérifier.
-4. Rouvrir le flag pour le périmètre prévu. Les jobs échoués peuvent reprendre
-   avec leur catalogue d'origine ; une correction de catalogue nécessite
-   un nouvel import.
+Suivre la [première publication](../development/publish-electrification-data.md#première-publication-dans-un-environnement)
+du guide courant. Les versions de recette d'un format retiré ne sont pas
+converties ; initialiser les jeux au contrat courant et relancer les imports
+concernés avant l'ouverture.
 
 **Validation du 13 novembre — source des lauréats :** 55 e2e de publication et
 synchronisation réussis sur la base et le stockage locaux, Grist simulé. Les
@@ -940,8 +930,9 @@ avec une date invalide est refusée sans créer de plan. Les preuves sont consig
    pendant qu'un ancien worker peut encore consommer la queue commune. Les
    backends de test utilisant le même Redis sont également des consommateurs
    à vérifier. Les anciens jobs PCAET `generic` gardent leurs contrats de reprise.
-3. Vérifier les éventuels jobs de préproduction et traiter les versions non
-   compatibles avec leur code/catalogue d'origine. Ne pas réétiqueter les jobs.
+3. Vérifier les jeux et imports de préproduction. Les données d'un format
+   retiré doivent être recréées au contrat courant et les imports concernés
+   relancés ; aucun ancien lecteur n'est conservé.
 4. Activer les flags global d'import et de création Électrification pour la collectivité de démonstration `5460`, puis les autres
    collectivités de recette retenues, et tester d'abord un DOCX synthétique
    avec des références résolubles (E03/E12 et

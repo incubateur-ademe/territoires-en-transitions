@@ -154,7 +154,7 @@ export class ElectrificationIndicateursAdapter {
         valeurs,
       });
     }
-    const mapping = catalogue.fiches.indicateurs?.find(
+    const mapping = catalogue.fiches.indicateurs.find(
       ({ code }) => code === indicateur.code
     );
     if (mapping?.type !== 'quantitatif' || indicateur.indicateurId === null) {

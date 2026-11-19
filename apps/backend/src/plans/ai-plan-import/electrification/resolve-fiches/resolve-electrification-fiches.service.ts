@@ -101,13 +101,10 @@ export class ResolveElectrificationFichesService {
           continue;
         }
         const actions = config.data.fiches.actions;
-        const mapping = actions?.find(
+        const mapping = actions.find(
           (action) => action.code === fiche.reference
         );
-        if (
-          fiche.reference &&
-          (actions === null || mapping?.validation === 'pending')
-        ) {
+        if (fiche.reference && mapping?.validation === 'pending') {
           issue('FICHES_CONFIG_UNAVAILABLE');
           continue;
         }
@@ -124,11 +121,7 @@ export class ResolveElectrificationFichesService {
           fiche.source.location
         );
         issues.push(...resolvedDocuments.issues);
-        const sousActions = Rules.resolveSousActions(
-          fiche,
-          mapping,
-          actions !== null
-        );
+        const sousActions = Rules.resolveSousActions(fiche, mapping);
         if (!sousActions.success) {
           issues.push(...sousActions.error);
           continue;
@@ -169,7 +162,7 @@ export class ResolveElectrificationFichesService {
         }
         for (const code of mapping?.indicateurCodes ?? []) {
           if (seen.has(code)) continue;
-          const definition = config.data.fiches.indicateurs?.find(
+          const definition = config.data.fiches.indicateurs.find(
             (i) => i.code === code
           );
           if (!definition) {

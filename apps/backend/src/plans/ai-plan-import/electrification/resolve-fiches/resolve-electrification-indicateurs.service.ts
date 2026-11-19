@@ -145,11 +145,8 @@ export class ResolveElectrificationIndicateursService {
       });
     }
     const mappings = catalogue.fiches.indicateurs;
-    const mapping = mappings?.find((item) => item.code === input.reference);
-    if (
-      input.reference &&
-      (mappings === null || mapping?.validation === 'pending')
-    )
+    const mapping = mappings.find((item) => item.code === input.reference);
+    if (input.reference && mapping?.validation === 'pending')
       return failure([issue('FICHES_CONFIG_UNAVAILABLE')]);
     if (input.reference && !mapping)
       return failure([issue('UNKNOWN_FICHE_REFERENCE')]);

@@ -631,12 +631,6 @@ describe('Résolution des engagements Électrification', () => {
     await expectIssue(code, 'configuration-error');
   });
 
-  test('bloque un sous-axe numéroté tant que sa correspondance n’est pas livrée', async () => {
-    catalogue.sousAxes = null;
-    input.axes = [axe(1, 'axe', [sousAxe('1.1')])];
-    await expectIssue('SUB_AXES_CATALOGUE_UNAVAILABLE', 'configuration-error');
-  });
-
   test('garde les définitions non validées bloquantes malgré leur périodicité annuelle connue', async () => {
     mapping().validation = 'pending';
     mapping().periodicite = 'annuelle';

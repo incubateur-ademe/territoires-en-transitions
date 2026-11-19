@@ -163,7 +163,7 @@ export class PrepareElectrificationDataService {
           engagementReferences: references.filter(
             (reference) => reference.source === engagementReferenceSource
           ),
-          previous,
+          previousActions: previous?.fiches.actions,
         }),
         revision: source.data.revision,
         excluded: 0,

@@ -117,15 +117,6 @@ export class ResolveElectrificationStructureRules {
           });
           continue;
         }
-        if (catalogue.sousAxes === null) {
-          issues.push(
-            this.issue(
-              'SUB_AXES_CATALOGUE_UNAVAILABLE',
-              sousAxe.source.location
-            )
-          );
-          continue;
-        }
         const reference = catalogue.sousAxes.find(
           ({ numero }) => numero === sousAxe.numero
         );
