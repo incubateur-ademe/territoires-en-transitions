@@ -15,7 +15,7 @@ import {
   DemarchePcaetStatusEnum,
   PcaetStatutInstructionEnum,
 } from '@tet/domain/demarches';
-import { Badge, Button, ButtonMenu, cn, Icon } from '@tet/ui';
+import { Badge, Button, ButtonMenu, cn, Icon, InfoTooltip } from '@tet/ui';
 import Link from 'next/link';
 import { useState } from 'react';
 import { getEcheanceAvis } from '../../echeance-avis';
@@ -237,13 +237,13 @@ export const ActionsCell = ({ dossier }: { dossier: Dossier }) => {
     // service : la transmission a désigné d'autres destinataires, et
     // l'annoncer « non transmis » serait faux — son échéance est là, sous les
     // yeux de l'agent. Une collectivité sans dépôt n'a rien à dire ici.
+    if (dossier.demarcheStatus === null) {
+      return null;
+    }
     return (
-      <div className="flex items-center gap-2 justify-end">
-        <span className="text-grey-6">
-          {dossier.demarcheStatus === null
-            ? null
-            : appLabels.instructionListeNonSaisi}
-        </span>
+      <div className="flex items-center justify-end gap-1 text-right text-grey-7">
+        <span>{appLabels.instructionListeNonSaisi}</span>
+        <InfoTooltip label={appLabels.instructionListeNonSaisiAide} />
       </div>
     );
   }

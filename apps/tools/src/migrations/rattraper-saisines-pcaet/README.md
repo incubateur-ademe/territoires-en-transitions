@@ -8,7 +8,7 @@ Une saisine (`demarche_pcaet_demande_avis`) naît à la **transmission** d'un
 dossier, pour les services qui couvraient alors la collectivité déposante. Un
 service entré dans le dispositif après coup n'en a donc aucune sur les dossiers
 déjà partis : son périmètre les couvre, mais il ne peut pas les ouvrir — la
-liste d'instruction les lui montre en « Service non saisi ».
+liste d'instruction les lui montre en « Non transmis à votre service ».
 
 Le cas s'est vu à l'arrivée des services nationaux (DGEC, ADEME siège), et il se
 reproduira à chaque nouveau service. Sur la base de développement, le rattrapage
