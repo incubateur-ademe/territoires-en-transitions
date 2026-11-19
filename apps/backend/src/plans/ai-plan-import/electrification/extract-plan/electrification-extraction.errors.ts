@@ -5,7 +5,7 @@ import {
 } from '../electrification-issue';
 import { aiPlanImportJobErrorMessages } from '../../ai-plan-import.errors';
 
-const extractionErrors = {
+export const electrificationExtractionErrors = {
   MISSING_INDICATEUR_YEAR: electrificationFichesErrors.MISSING_INDICATEUR_YEAR,
   SOURCE_UNREADABLE: {
     kind: 'processing-error',
@@ -89,6 +89,11 @@ const extractionErrors = {
     message:
       'La source citée ne correspond pas à la section attendue du document.',
   },
+  INVALID_INTERPRETATION_SOURCE: {
+    kind: 'processing-error',
+    message:
+      'Les interprétations doivent citer les valeurs originales du document.',
+  },
   INVALID_EXTRACTION_PARENT: {
     kind: 'document-error',
     message: "L'action ne cite pas un axe ou sous-axe extrait du document.",
@@ -113,5 +118,5 @@ const extractionErrors = {
 >;
 
 export class ElectrificationExtractionErrors {
-  static issue = createIssueFactory(extractionErrors);
+  static issue = createIssueFactory(electrificationExtractionErrors);
 }
