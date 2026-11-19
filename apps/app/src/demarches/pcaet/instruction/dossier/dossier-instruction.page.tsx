@@ -15,15 +15,19 @@ import {
 } from '@tet/domain/demarches';
 import { useTrackDemarcheView } from '@/app/demarches/use-demarche-tracker';
 import { Button, cn, Event } from '@tet/ui';
-import { parseAsStringLiteral, useQueryState } from 'nuqs';
+import { listDiagnosticTabs } from '../../diagnostic/diagnostic.tabs.utils';
+import { usePcaetDiagnosticTabQueryState } from '../../diagnostic/use-pcaet-diagnostic-tab-query-state';
 import type { DossierInstructionRef } from '../dossier-instruction-ref';
+import { useDiagnosticInstruction } from './data/use-diagnostic-instruction';
 import { useDossierInstruction } from './data/use-dossier-instruction';
 import { DossierInstructionHeader } from './dossier.header';
 import { EtapeDiagnosticSection } from './etape-diagnostic.section';
 import { EtapeDocumentsSection } from './etape-documents.section';
 import { EtapePlanSection } from './etape-plan.section';
+import { EtapesInstructionNav } from './etapes-instruction.nav';
 import type { EtapeInstruction } from './etapes-instruction.side-panel-content';
 import { FinaliserInstructionButton } from './finaliser-instruction.button';
+import { useEtapeInstructionQueryState } from './use-etape-instruction-query-state';
 import { useEtapesInstructionSidePanel } from './use-etapes-instruction-side-panel';
 
 const ETAPE_LABELS: Record<PcaetInstructionPartie, string> = {
@@ -49,12 +53,10 @@ export const DossierInstructionPage = ({
 }) => {
   const { dossier, isLoading, isError, refetch } =
     useDossierInstruction(dossierRef);
-  const [etape, setEtape] = useQueryState(
-    'etape',
-    parseAsStringLiteral(pcaetInstructionPartieValues).withDefault(
-      PcaetInstructionPartieEnum.DIAGNOSTIC
-    )
-  );
+  const [etape, setEtape] = useEtapeInstructionQueryState();
+  // Même requête que l'étape Diagnostic : la barre d'étapes en lit les volets.
+  const { diagnostic } = useDiagnosticInstruction(dossierRef);
+  const [topicParam] = usePcaetDiagnosticTabQueryState();
 
   const trackingSubject = dossier && {
     id: dossier.demarcheId,
@@ -204,6 +206,17 @@ export const DossierInstructionPage = ({
           collectiviteId={dossier.collectivite.id}
         />
       )}
+
+      <EtapesInstructionNav
+        dossierPath={dossierPath}
+        etape={etape}
+        topicCodes={
+          diagnostic
+            ? listDiagnosticTabs(diagnostic).map(({ code }) => code)
+            : []
+        }
+        currentTopicCode={topicParam}
+      />
     </div>
   );
 };
