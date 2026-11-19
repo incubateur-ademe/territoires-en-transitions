@@ -2,10 +2,17 @@
 set -euo pipefail
 
 # --- Configuration de la politique de rétention ---
-# Nombre de jours où on garde tous les backups (1 par jour)
-DAILY_RETENTION_DAYS="${DAILY_RETENTION_DAYS:-60}"
-# Nombre de mois où on garde 1 backup par mois (au-delà de la période daily)
-MONTHLY_RETENTION_MONTHS="${MONTHLY_RETENTION_MONTHS:-24}"
+# Nombre de jours où on garde tous les backups (1 par jour). Aligné sur le verrou
+# Object Lock du bucket (backups_lock_days, infra/platform) : un dump supprimé plus
+# tôt resterait stocké et facturé jusqu'à la fin du verrou.
+DAILY_RETENTION_DAYS="${DAILY_RETENTION_DAYS:-14}"
+# Âge maximal, en semaines comptées depuis aujourd'hui, des backups hebdomadaires
+# (1 par semaine entre la fin de la période daily et ce seuil). Avec 14 jours de
+# daily et 4 semaines, le palier hebdo couvre les semaines 3 et 4 : 2 à 3 backups.
+WEEKLY_RETENTION_WEEKS="${WEEKLY_RETENTION_WEEKS:-4}"
+# Âge maximal, en mois comptés depuis aujourd'hui, des backups mensuels
+# (1 par mois entre la fin de la période weekly et ce seuil)
+MONTHLY_RETENTION_MONTHS="${MONTHLY_RETENTION_MONTHS:-12}"
 # Nombre minimum de backups à conserver (garde-fou)
 MIN_BACKUP_COUNT="${MIN_BACKUP_COUNT:-1}"
 # Mode simulation : affiche les actions sans supprimer
@@ -40,7 +47,7 @@ s3cmd() {
 }
 
 echo "=== Nettoyage des backups obsolètes ==="
-echo "Politique : ${DAILY_RETENTION_DAYS}j quotidien, ${MONTHLY_RETENTION_MONTHS} mois mensuel, min ${MIN_BACKUP_COUNT} backups"
+echo "Politique : ${DAILY_RETENTION_DAYS}j quotidien, ${WEEKLY_RETENTION_WEEKS} sem. hebdo, ${MONTHLY_RETENTION_MONTHS} mois mensuel, min ${MIN_BACKUP_COUNT} backups"
 if [ "$DRY_RUN" = "true" ]; then
     echo "MODE DRY-RUN : aucune suppression ne sera effectuée"
 fi
@@ -78,19 +85,47 @@ if [ "$total_backups" -le "$MIN_BACKUP_COUNT" ]; then
     exit 0
 fi
 
-# Calculer les dates seuils (UTC)
-today=$(date -u +%Y-%m-%d)
-if [[ "$(uname)" == "Darwin" ]]; then
-    daily_cutoff=$(date -u -v-${DAILY_RETENTION_DAYS}d +%Y-%m-%d)
-    monthly_cutoff=$(date -u -v-${MONTHLY_RETENTION_MONTHS}m +%Y-%m-%d)
-else
-    daily_cutoff=$(date -u -d "$today - ${DAILY_RETENTION_DAYS} days" +%Y-%m-%d)
-    monthly_cutoff=$(date -u -d "$today - ${MONTHLY_RETENTION_MONTHS} months" +%Y-%m-%d)
+# Helpers de dates (BSD date sur macOS, GNU date ailleurs)
+# date_fmt YYYY-MM-DD FORMAT
+date_fmt() {
+    if [[ "$(uname)" == "Darwin" ]]; then
+        date -u -j -f %Y-%m-%d "$1" "+$2"
+    else
+        date -u -d "$1" "+$2"
+    fi
+}
+# date_minus YYYY-MM-DD N days|months
+date_minus() {
+    if [[ "$(uname)" == "Darwin" ]]; then
+        date -u -j -v-"$2${3:0:1}" -f %Y-%m-%d "$1" +%Y-%m-%d
+    else
+        date -u -d "$1 - $2 $3" +%Y-%m-%d
+    fi
+}
+
+# Calculer les dates seuils (UTC). TODAY permet de simuler un nettoyage à une autre
+# date, uniquement en dry-run : une fausse date ne doit jamais piloter de vraies suppressions.
+if [ -n "${TODAY:-}" ] && [ "$DRY_RUN" != "true" ]; then
+    echo "TODAY n'est accepté qu'avec DRY_RUN=true."
+    exit 1
 fi
+today="${TODAY:-$(date -u +%Y-%m-%d)}"
+daily_cutoff=$(date_minus "$today" "$DAILY_RETENTION_DAYS" days)
+# Ramené au lundi de sa semaine ISO : sans ça, le seuil glissant ferait sortir le
+# représentant d'une semaine (son premier backup) alors que les jours suivants,
+# supprimés aux passages précédents, ne sont plus là pour prendre le relais.
+weekly_cutoff=$(date_minus "$today" $((WEEKLY_RETENTION_WEEKS * 7)) days)
+weekly_cutoff=$(date_minus "$weekly_cutoff" $(( $(date_fmt "$weekly_cutoff" %u) - 1 )) days)
+# Calé sur le 1er du mois, pour la même raison : le représentant d'un mois (son 1er
+# backup) ne doit pas sortir avant la fin du mois anniversaire. On part du 1er du
+# mois courant : GNU date déborde sur le mois suivant quand le jour n'existe pas
+# (2028-02-29 - 12 mois = 2027-03-01).
+monthly_cutoff=$(date_minus "${today:0:8}01" "$MONTHLY_RETENTION_MONTHS" months)
 
 echo "Date du jour (UTC) : $today"
 echo "Seuil quotidien    : $daily_cutoff (backups >= cette date sont conservés)"
-echo "Seuil mensuel      : $monthly_cutoff (1 par mois entre les deux seuils)"
+echo "Seuil hebdomadaire : $weekly_cutoff (lundi ; 1 par semaine entre ce seuil et le quotidien)"
+echo "Seuil mensuel      : $monthly_cutoff (1 par mois entre ce seuil et l'hebdomadaire)"
 
 # Classer chaque backup
 # On trie par date croissante pour que le premier backup d'un mois soit le plus ancien
@@ -98,13 +133,27 @@ IFS=$'\n' sorted_asc=($(printf '%s\n' "${backups[@]}" | sort)); unset IFS
 
 final_keep=()
 final_delete=()
-# Liste des mois déjà représentés (compatible bash 3, pas de declare -A)
+# Mois et semaines déjà représentés (compatible bash 3, pas de declare -A)
 seen_months=""
+seen_weeks=""
 
 for backup_date in "${sorted_asc[@]}"; do
     if [[ ! "$backup_date" < "$daily_cutoff" ]]; then
         # Période récente : on garde tout
         final_keep+=("$backup_date")
+    elif [[ ! "$backup_date" < "$weekly_cutoff" ]]; then
+        # Période hebdomadaire : garder le premier backup de chaque semaine, et aussi
+        # le premier de chaque mois, pour que le mensuel reste le 1er du mois une fois
+        # sorti de cette période
+        week=$(date_fmt "$backup_date" %G-%V)
+        month="${backup_date:0:7}"
+        if [[ "$seen_weeks" != *"$week"* || "$seen_months" != *"$month"* ]]; then
+            seen_weeks="$seen_weeks $week"
+            seen_months="$seen_months $month"
+            final_keep+=("$backup_date")
+        else
+            final_delete+=("$backup_date")
+        fi
     elif [[ ! "$backup_date" < "$monthly_cutoff" ]]; then
         # Période mensuelle : garder le premier (plus ancien) backup de chaque mois
         month="${backup_date:0:7}" # YYYY-MM
