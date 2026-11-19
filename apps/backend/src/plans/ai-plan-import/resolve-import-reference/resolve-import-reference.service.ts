@@ -10,7 +10,7 @@ import { ResourceType } from '@tet/domain/users';
 import { ImportReport } from '../models/import-report';
 import {
   ImportReferenceErrorCode,
-  importReferenceErrors,
+  ImportReferenceErrors as Errors,
 } from './import-reference.errors';
 import { ImportReferenceRules } from './import-reference.rules';
 
@@ -38,7 +38,7 @@ export class ResolveImportReferenceService {
     );
     if (!parsed.success) return parsed;
     if (parsed.data.kind !== 'fiche') {
-      return this.reject('INVALID_IMPORT_REFERENCE_URL');
+      return this.reject('INVALID_IMPORT_REFERENCE_URL', reference);
     }
     const permission = await this.permissions.isAllowed(
       user,
@@ -48,7 +48,7 @@ export class ResolveImportReferenceService {
       tx
     );
     if (!permission.success)
-      return this.reject('IMPORT_REFERENCE_UNAUTHORIZED');
+      return this.reject('IMPORT_REFERENCE_UNAUTHORIZED', reference);
 
     try {
       const result = await this.fiches.getFicheById(
@@ -57,7 +57,8 @@ export class ResolveImportReferenceService {
         user,
         tx
       );
-      if (!result.success) return this.reject('FICHE_REFERENCE_UNAVAILABLE');
+      if (!result.success)
+        return this.reject('FICHE_REFERENCE_UNAVAILABLE', reference);
       const fiche = result.data;
       const scopes = [
         fiche.collectiviteId,
@@ -65,7 +66,7 @@ export class ResolveImportReferenceService {
       ];
       // Une lecture publique ou des droits sur une autre collectivité ne suffisent pas.
       if (!scopes.includes(parsed.data.collectiviteId)) {
-        return this.reject('FICHE_REFERENCE_UNAVAILABLE');
+        return this.reject('FICHE_REFERENCE_UNAVAILABLE', reference);
       }
       const access = await this.fichePermissions.canLinkFicheToCollectivite(
         fiche.id,
@@ -75,16 +76,16 @@ export class ResolveImportReferenceService {
       );
       return access
         ? success({ ficheId: fiche.id })
-        : this.reject('FICHE_REFERENCE_UNAVAILABLE');
+        : this.reject('FICHE_REFERENCE_UNAVAILABLE', reference);
     } catch (error) {
       if (error instanceof ForbiddenException) {
-        return this.reject('FICHE_REFERENCE_UNAVAILABLE');
+        return this.reject('FICHE_REFERENCE_UNAVAILABLE', reference);
       }
       this.logger.error(
         'Impossible de résoudre la fiche action du lien TeT',
         error
       );
-      return this.reject('IMPORT_REFERENCE_RESOLUTION_FAILED');
+      return this.reject('IMPORT_REFERENCE_RESOLUTION_FAILED', reference);
     }
   }
 
@@ -99,7 +100,7 @@ export class ResolveImportReferenceService {
     );
     if (!parsed.success) return parsed;
     if (parsed.data.kind !== 'indicateur') {
-      return this.reject('INVALID_IMPORT_REFERENCE_URL');
+      return this.reject('INVALID_IMPORT_REFERENCE_URL', reference);
     }
     const permission = await this.permissions.isAllowed(
       user,
@@ -109,7 +110,7 @@ export class ResolveImportReferenceService {
       tx
     );
     if (!permission.success)
-      return this.reject('IMPORT_REFERENCE_UNAUTHORIZED');
+      return this.reject('IMPORT_REFERENCE_UNAUTHORIZED', reference);
 
     try {
       // Résoudre dans la collectivité cible : global, propre ou groupement autorisé.
@@ -129,22 +130,23 @@ export class ResolveImportReferenceService {
       );
       return result.data.length === 1
         ? success({ indicateurId: result.data[0].id })
-        : this.reject('INDICATEUR_REFERENCE_UNAVAILABLE');
+        : this.reject('INDICATEUR_REFERENCE_UNAVAILABLE', reference);
     } catch (error) {
       if (error instanceof ForbiddenException) {
-        return this.reject('INDICATEUR_REFERENCE_UNAVAILABLE');
+        return this.reject('INDICATEUR_REFERENCE_UNAVAILABLE', reference);
       }
       this.logger.error(
         'Impossible de résoudre l’indicateur du lien TeT',
         error
       );
-      return this.reject('IMPORT_REFERENCE_RESOLUTION_FAILED');
+      return this.reject('IMPORT_REFERENCE_RESOLUTION_FAILED', reference);
     }
   }
 
   private reject(
-    code: ImportReferenceErrorCode
+    code: ImportReferenceErrorCode,
+    reference: string
   ): Result<never, ImportReport['issues']> {
-    return failure([{ code, ...importReferenceErrors[code] }]);
+    return failure([Errors.issue(code, reference)]);
   }
 }

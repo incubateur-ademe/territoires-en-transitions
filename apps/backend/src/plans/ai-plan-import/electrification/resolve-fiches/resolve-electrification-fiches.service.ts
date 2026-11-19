@@ -1,8 +1,10 @@
 import { ElectrificationDataService } from '@tet/backend/plans/plans/electrification/publish-electrification-data/electrification-data.service';
+import { electrificationDocumentTemplate } from '@tet/backend/plans/plans/electrification/config/electrification-document-template.constants';
 import { Injectable, Logger } from '@nestjs/common';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { ElectrificationIssue } from '../electrification-issue';
+import { ElectrificationImportLocations as Locations } from '../electrification-import-locations';
 import { ResolveElectrificationEngagementsService } from '../resolve-engagements/resolve-electrification-engagements.service';
 import { ResolveImportReferenceService } from '../../resolve-import-reference/resolve-import-reference.service';
 import { ImportReferenceRules } from '../../resolve-import-reference/import-reference.rules';
@@ -21,6 +23,10 @@ import { ResolveElectrificationIndicateursService } from './resolve-electrificat
 /** Résolution sans écriture : les liens existants ne transportent aucun champ à modifier. */
 @Injectable()
 export class ResolveElectrificationFichesService {
+  private static readonly REFERENCE_FIELD_LABEL =
+    electrificationDocumentTemplate.fiches.fields.find(
+      ({ key }) => key === 'reference'
+    )?.label;
   private readonly logger = new Logger(
     ResolveElectrificationFichesService.name
   );
@@ -87,7 +93,10 @@ export class ResolveElectrificationFichesService {
             issues.push(
               ...reference.error.map((error) => ({
                 ...error,
-                location: fiche.source.location,
+                location: Locations.field(
+                  fiche.source.location,
+                  ResolveElectrificationFichesService.REFERENCE_FIELD_LABEL
+                ),
               }))
             );
           else {

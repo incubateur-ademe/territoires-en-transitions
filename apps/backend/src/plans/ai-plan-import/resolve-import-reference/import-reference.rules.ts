@@ -1,6 +1,6 @@
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { ImportReport } from '../models/import-report';
-import { importReferenceErrors } from './import-reference.errors';
+import { ImportReferenceErrors as Errors } from './import-reference.errors';
 
 type ImportReference =
   | { kind: 'fiche'; collectiviteId: number; ficheId: number }
@@ -29,29 +29,30 @@ export class ImportReferenceRules {
     appUrl: string
   ): Result<ImportReference, ImportReport['issues']> {
     const invalid = () =>
-      failure([
-        {
-          code: 'INVALID_IMPORT_REFERENCE_URL',
-          ...importReferenceErrors.INVALID_IMPORT_REFERENCE_URL,
-        },
-      ]);
+      failure([Errors.issue('INVALID_IMPORT_REFERENCE_URL', reference)]);
     const value = reference.trim();
     // URL normalise les espaces et les antislashs : ne pas corriger une référence ambiguë.
     if (/[\s\\]/.test(value)) return invalid();
     let url: URL;
     try {
       url = new URL(value);
-      const origins = [
-        new URL(appUrl).origin,
-        'https://app.territoiresentransitions.fr',
-      ];
+      const appOrigin = new URL(appUrl).origin;
+      const origins = [appOrigin, 'https://app.territoiresentransitions.fr'];
       if (
-        !origins.includes(url.origin) ||
         !['https:', 'http:'].includes(url.protocol) ||
         url.username ||
         url.password
       ) {
         return invalid();
+      }
+      if (!origins.includes(url.origin)) {
+        return failure([
+          Errors.issue(
+            'IMPORT_REFERENCE_ORIGIN_MISMATCH',
+            reference,
+            appOrigin
+          ),
+        ]);
       }
     } catch {
       return invalid();
@@ -63,12 +64,7 @@ export class ImportReferenceRules {
     );
     if (fiche) {
       if (/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(fiche[2])) {
-        return failure([
-          {
-            code: 'UNSUPPORTED_FICHE_UID',
-            ...importReferenceErrors.UNSUPPORTED_FICHE_UID,
-          },
-        ]);
+        return failure([Errors.issue('UNSUPPORTED_FICHE_UID', reference)]);
       }
       const collectiviteId = this.parseId(fiche[1]);
       const ficheId = this.parseId(fiche[2]);

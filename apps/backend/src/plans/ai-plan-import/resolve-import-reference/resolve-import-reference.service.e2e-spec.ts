@@ -224,7 +224,21 @@ describe('Résolution des liens TeT pour un import', () => {
   });
 
   test.each([
+    'https://preprod-app.territoiresentransitions.fr/collectivite/1/actions/2/details',
     'https://app.territoiresentransitions.fr.evil.test/collectivite/1/actions/2/details',
+  ])("explique le refus d'un domaine étranger : %s", async (url) => {
+    const result = await resolveFiche(url);
+    assert(!result.success);
+    expect(result.error).toContainEqual(
+      expect.objectContaining({
+        code: 'IMPORT_REFERENCE_ORIGIN_MISMATCH',
+        message: expect.stringContaining(appUrl),
+      })
+    );
+    expect(result.error[0].message).toContain(url);
+  });
+
+  test.each([
     'https://app.territoiresentransitions.fr@evil.test/collectivite/1/actions/2/details',
     'https://user:password@app.territoiresentransitions.fr/collectivite/1/actions/2/details',
     'https://app.territoiresentransitions.fr/collectivite/1/actions/2/documents/3',
