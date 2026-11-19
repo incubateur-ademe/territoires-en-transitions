@@ -114,7 +114,9 @@ export const demarchesLabels = {
    * n'existe dans la plateforme. Dire « non transmis » du second serait faux.
    */
   instructionListeNonTransmis: 'Dossier non transmis',
-  instructionListeNonSaisi: 'Service non saisi',
+  instructionListeNonSaisi: 'Non transmis à votre service',
+  instructionListeNonSaisiAide:
+    'Ce PCAET a été transmis pour avis avant que votre service n’en soit destinataire : vous ne pouvez pas l’ouvrir. Contactez le support pour y accéder.',
 
   /**
    * L'accueil d'un agent que son fournisseur d'identité vient de rattacher à
