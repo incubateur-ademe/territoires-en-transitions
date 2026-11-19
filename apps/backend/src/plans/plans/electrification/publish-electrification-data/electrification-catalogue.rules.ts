@@ -136,18 +136,37 @@ export class ElectrificationCatalogueRules {
     });
     const codes = new Set<string>();
     const labels = new Map<string, string>();
+    const codeLabels = catalogue.engagements.map(({ code }) => ({
+      code,
+      label: this.normalizeEngagementLabel(code),
+    }));
     catalogue.engagements.forEach((engagement, index) => {
       const location = `catalogue.engagements[${index}]`;
       if (catalogue.engagementsFormat === 2) {
-        for (const text of this.getEngagementLabels(engagement)) {
+        for (const [labelIndex, text] of this.getEngagementLabels(
+          engagement
+        ).entries()) {
           const label = this.normalizeEngagementLabel(text);
           const identity = JSON.stringify([engagement.axeNumero, label]);
           const owner = labels.get(identity);
-          if (!label || (owner !== undefined && owner !== engagement.code)) {
+          const conflictsWithCode = codeLabels.some(
+            (entry) => entry.label === label && entry.code !== engagement.code
+          );
+          if (
+            !label ||
+            conflictsWithCode ||
+            (owner !== undefined && owner !== engagement.code)
+          ) {
+            const field =
+              engagement.libelleSource && labelIndex === 0
+                ? 'libelleSource'
+                : `anciensLibelles[${
+                    labelIndex - Number(!!engagement.libelleSource)
+                  }]`;
             issues.push(
               this.issue(
                 'DUPLICATE_CATALOGUE_REFERENCE',
-                `${location}.libelleSource`
+                `${location}.${field}`
               )
             );
           }

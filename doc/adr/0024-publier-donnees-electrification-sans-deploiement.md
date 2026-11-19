@@ -104,7 +104,8 @@ aucune équivalence sémantique n'est déduite de cette continuité d'identité.
 permet de conserver les documents existants, notamment l'ancienne formulation E05,
 sans les réécrire ni modifier Grist. Un changement de document ou de cibles
 incompatible ne reprend pas ces libellés ; une collision entre engagements d'un
-même axe bloque la publication. Un lien au document Grist seul n'identifie pas un
+même axe, ou entre un libellé et le code d'un autre engagement, bloque la
+publication. Un lien au document Grist seul n'identifie pas un
 engagement. L'IA reste un recours pour les libellés non reconnus.
 
 **Ajustement du 13 novembre — Grist comme seule source des lauréats.** Le
