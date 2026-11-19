@@ -8,15 +8,14 @@ import { useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
 import { hasPermission } from '@tet/domain/users';
-import { Alert, Event, useEventTracker } from '@tet/ui';
+import { Event, useEventTracker } from '@tet/ui';
 import { ReactElement, useEffect, useRef } from 'react';
 import { AiImportProgress } from './ai-import-progress';
+import { AiImportReport } from './ai-import-report';
 import { AiImportStagesList } from './ai-import-stages';
 import { toImportStageViews } from './ai-import-stages.model';
 import type { AiImportOrigine } from './data/use-enqueue-ai-import';
 import { toImportStepViews } from './ai-import-steps.model';
-import { importIssueHintLabels, importIssueLabels } from './ai-import.labels';
-import { SupportChatLink } from './support-chat.link';
 import {
   isInaccessibleAiImportError,
   type useGetAiImportStatus,
@@ -89,15 +88,6 @@ export const AiImportStatusView = ({
 
   const failed = status.status === 'failed';
   const done = status.status === 'done';
-  const errors = status.report.issues.filter((issue) =>
-    ['document-error', 'configuration-error', 'processing-error'].includes(
-      issue.kind
-    )
-  );
-  const isErrorInReport = errors.some(
-    ({ message }) => message === status.error
-  );
-  const issueKinds = new Set(status.report.issues.map(({ kind }) => kind));
   if (renderStagesProgress && !failed && !done) {
     return (
       <section data-test="plans.import-ia.suivi">
@@ -117,13 +107,9 @@ export const AiImportStatusView = ({
       <h2 className="mb-0 text-xl">
         {status.planName ?? appLabels.importPlanIaSansNom}
       </h2>
-      {done ? (
-        <Alert state="success" title={appLabels.importPlanIaTermine} />
-      ) : (
-        <AiImportProgress
-          failed={failed}
-          pending={status.status === 'pending'}
-          errorMessage={isErrorInReport ? null : status.error}
+      {done || failed ? (
+        <AiImportReport
+          status={status}
           onRetry={() => {
             tracker(Event.plans.importIa.reessayer, {
               origine,
@@ -147,72 +133,16 @@ export const AiImportStatusView = ({
               : undefined
           }
           isResuming={resume.isPending}
+        />
+      ) : (
+        <AiImportProgress
+          pending={status.status === 'pending'}
           steps={toImportStepViews(status.stepStates, {
-            failed,
             jobStatus: status.status,
           })}
           withSecteurs={status.withSecteurs}
         />
       )}
-      {done || failed ? (
-        <div
-          className="flex flex-col gap-4"
-          data-test="plans.import-ia.rapport"
-        >
-          <h3 className="mb-0 text-lg">{appLabels.importPlanIaRapport}</h3>
-          {errors.length > 0 && (
-            <p className="mb-0">
-              {appLabels.importPlanIaErreursDetectees({ count: errors.length })}
-            </p>
-          )}
-          {status.report.issues.map((issue, index) => (
-            <Alert
-              key={`${issue.code}:${index}`}
-              state={
-                issue.kind === 'warning'
-                  ? 'warning'
-                  : issue.kind === 'preserved-data'
-                  ? 'info'
-                  : 'error'
-              }
-              title={importIssueLabels[issue.kind]}
-              description={
-                <div className="whitespace-pre-wrap">
-                  {issue.location && (
-                    <p className="mb-1 font-bold">{issue.location}</p>
-                  )}
-                  <p className="mb-0">{issue.message}</p>
-                </div>
-              }
-            />
-          ))}
-          {[...issueKinds].map((kind) =>
-            importIssueHintLabels[kind] ? (
-              <p key={kind} className="mb-0">
-                {importIssueHintLabels[kind]}
-              </p>
-            ) : null
-          )}
-          {(issueKinds.has('configuration-error') ||
-            issueKinds.has('processing-error')) && (
-            <SupportChatLink>
-              {appLabels.importPlanIaContacterSupport}
-            </SupportChatLink>
-          )}
-          {status.report.qualitativeReview ? (
-            <p className="mb-0 whitespace-pre-wrap">
-              {status.report.qualitativeReview}
-            </p>
-          ) : status.report.issues.length === 0 ? (
-            <p className="mb-0">{appLabels.importPlanIaRapportSansRemarque}</p>
-          ) : null}
-          {status.createdPlanId === null && (
-            <p className="mb-0 text-sm text-grey-7">
-              {appLabels.importPlanIaPlanIndisponible}
-            </p>
-          )}
-        </div>
-      ) : null}
     </section>
   );
 };

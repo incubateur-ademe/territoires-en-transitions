@@ -1,15 +1,11 @@
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { ComponentProps, useEffect, useState } from 'react';
-import { fn } from 'storybook/test';
 import { AiImportProgress } from './ai-import-progress';
 import { ImportStepStates, toImportStepViews } from './ai-import-steps.model';
 
 const meta: Meta<typeof AiImportProgress> = {
   component: AiImportProgress,
   args: {
-    failed: false,
-    errorMessage: null,
-    onRetry: fn(),
     steps: toImportStepViews(),
   },
 };
@@ -57,22 +53,6 @@ export const DeuxEtapesEnParallele: Story = {
 
 export const HorsPcaet: Story = {
   args: { steps: toImportStepViews(duringEnrichment) },
-};
-
-export const Echec: Story = {
-  args: {
-    failed: true,
-    errorMessage: 'Le service d’IA ne répond pas. Réessayez plus tard.',
-    steps: toImportStepViews(duringExtraction, { failed: true }),
-  },
-};
-
-/** Le bouton de reprise n'apparaît que pour l'équipe. */
-export const EchecAvecReprise: Story = {
-  args: {
-    ...Echec.args,
-    onResume: fn(),
-  },
 };
 
 const timeline: ImportStepStates[] = [

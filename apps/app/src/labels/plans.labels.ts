@@ -383,6 +383,13 @@ export const plansLabels = {
   importPlanIaDocumentErreur: 'Erreur',
   importPlanIaConfigurationErreur: 'Erreur',
   importPlanIaAvertissementRapport: 'Avertissement',
+  importPlanIaRemarquePosition: ({
+    position,
+    total,
+  }: {
+    position: number;
+    total: number;
+  }) => `Point ${position} sur ${total}`,
   importPlanIaErreursDetectees: plural({
     one: 'erreur détectée pendant cet import.',
     other: 'erreurs détectées pendant cet import.',

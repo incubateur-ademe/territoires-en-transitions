@@ -2,7 +2,7 @@
 
 import { appLabels } from '@/app/labels/catalog';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { Alert, Button, Icon, VisibleWhen } from '@tet/ui';
+import { Icon } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
 import { AiImportProgressBar } from './ai-import-stages';
 import { ImportStepView } from './ai-import-steps.model';
@@ -25,40 +25,6 @@ const stepLabelsFor = (withSecteurs: boolean): typeof STEP_LABELS =>
   withSecteurs
     ? STEP_LABELS
     : { ...STEP_LABELS, secteurs: appLabels.importPlanIaEtapeEffetsAttendus };
-
-const ImportFailedAlert = ({
-  errorMessage,
-  onRetry,
-  onResume,
-  isResuming,
-}: {
-  errorMessage: string | null;
-  onRetry: () => void;
-  onResume?: () => void;
-  isResuming: boolean;
-}) => (
-  <div role="alert" className="flex flex-col items-center gap-6">
-    <Alert
-      state="error"
-      title={appLabels.importPlanIaErreur}
-      description={errorMessage ?? undefined}
-    />
-    <div className="flex flex-wrap justify-center gap-4">
-      <Button variant="outlined" onClick={onRetry}>
-        {appLabels.reessayer}
-      </Button>
-      {onResume ? (
-        <Button
-          onClick={onResume}
-          disabled={isResuming}
-          data-test="plans.import-ia.reprendre-button"
-        >
-          {appLabels.importPlanIaReprendre}
-        </Button>
-      ) : null}
-    </div>
-  </div>
-);
 
 const statusLabels: Record<VisibleStepStatus, string> = {
   done: appLabels.importPlanIaEtapeTerminee,
@@ -148,7 +114,9 @@ const ImportStepList = ({
 const toProgressPercent = (steps: ImportStepView[]) => {
   const visibleSteps = steps.filter(isVisible);
   if (visibleSteps.length === 0) return 0;
-  const doneCount = visibleSteps.filter((step) => step.status === 'done').length;
+  const doneCount = visibleSteps.filter(
+    (step) => step.status === 'done'
+  ).length;
   const currentCount = visibleSteps.filter(
     (step) => step.status === 'current'
   ).length;
@@ -159,55 +127,30 @@ const toProgressPercent = (steps: ImportStepView[]) => {
 };
 
 type AiImportProgressProps = {
-  failed: boolean;
   pending?: boolean;
-  errorMessage: string | null;
-  onRetry: () => void;
-  /** Reprise depuis la dernière étape terminée : réservée à l'équipe. */
-  onResume?: () => void;
-  isResuming?: boolean;
   steps: ImportStepView[];
   /** Plan PCAET : l'import propose aussi les secteurs réglementaires. */
   withSecteurs?: boolean;
 };
 
 export const AiImportProgress = ({
-  failed,
   pending = false,
-  errorMessage,
-  onRetry,
-  onResume,
-  isResuming = false,
   steps,
   withSecteurs = false,
 }: AiImportProgressProps) => (
   <div className="flex flex-col gap-8 py-10">
-    {!failed && (
-      <div className="flex flex-col gap-4" data-test="plans.import-ia.chargement">
-        <div role="status" className="flex items-center gap-3 text-primary-9">
-          <SpinnerLoader className="w-8 h-8 shrink-0" />
-          <p className="mb-0 font-bold">
-            {pending
-              ? appLabels.importPlanIaEnAttente
-              : appLabels.importPlanIaEnCoursCourt}
-          </p>
-        </div>
-        <AiImportProgressBar percent={toProgressPercent(steps)} />
+    <div className="flex flex-col gap-4" data-test="plans.import-ia.chargement">
+      <div role="status" className="flex items-center gap-3 text-primary-9">
+        <SpinnerLoader className="w-8 h-8 shrink-0" />
+        <p className="mb-0 font-bold">
+          {pending
+            ? appLabels.importPlanIaEnAttente
+            : appLabels.importPlanIaEnCoursCourt}
+        </p>
       </div>
-    )}
-    {!failed && <ImportStepList steps={steps} withSecteurs={withSecteurs} />}
-    <VisibleWhen condition={failed}>
-      <ImportFailedAlert
-        errorMessage={errorMessage}
-        onRetry={onRetry}
-        onResume={onResume}
-        isResuming={isResuming}
-      />
-    </VisibleWhen>
-    <VisibleWhen condition={!failed}>
-      <p className="mb-0 text-sm text-grey-7">
-        {appLabels.importPlanIaEnCours}
-      </p>
-    </VisibleWhen>
+      <AiImportProgressBar percent={toProgressPercent(steps)} />
+    </div>
+    <ImportStepList steps={steps} withSecteurs={withSecteurs} />
+    <p className="mb-0 text-sm text-grey-7">{appLabels.importPlanIaEnCours}</p>
   </div>
 );
