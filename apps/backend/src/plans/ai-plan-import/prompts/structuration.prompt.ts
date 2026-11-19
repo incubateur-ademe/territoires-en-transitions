@@ -1,6 +1,7 @@
 import { definePrompt } from '@tet/backend/utils/llm/prompt-template';
 import {
   ACTION_LEVEL_RULE,
+  BUDGET_RULE,
   buildStatutRule,
   CARTOUCHE_RULE,
   COLUMN_TABLE_RULE,
@@ -67,7 +68,7 @@ Formats
 - ${FIELD_LABELS_RULE}
 - "personne pilote" : uniquement des noms de personnes.
 - "partenaires" : les organismes cités comme partenaires, financeurs ou acteurs associés, séparés par ", " ; jamais les pilotes ou porteurs, qui vont dans les champs pilotes.
-- "budget" : "" ou un entier sans séparateur.
+- ${BUDGET_RULE}
 - "financements" : les sources de financement et subventions citées (Fonds vert, CEE, subventions…), telles quelles.
 - "moyens humains" : les moyens humains cités (ETP, temps agent, services mobilisés), tels quels.
 - "priorite" : "Élevé", "Moyen" ou "Bas", sinon "". "Priorité 1", "P1", "***", "Majeur", "Forte" donnent "Élevé" ; "Priorité 2", "**", "Moyenne" donnent "Moyen" ; "Priorité 3", "*", "Faible" donnent "Bas".
