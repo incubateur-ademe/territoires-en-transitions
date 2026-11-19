@@ -69,11 +69,19 @@ export const CreateDemarchePcaetPage = () => {
 
   const { mutateAsync: createDemarche } = useMutation(
     trpc.demarches.pcaet.create.mutationOptions({
-      // Les EPCI cochés ne le sont plus ailleurs.
       onSuccess: () =>
-        queryClient.invalidateQueries({
-          queryKey: trpc.demarches.pcaet.getDepotContext.pathKey(),
-        }),
+        Promise.all([
+          queryClient.invalidateQueries({
+            queryKey: trpc.demarches.pcaet.list.queryKey({ collectiviteId }),
+          }),
+          // Les EPCI cochés ne le sont plus ailleurs, et se voient couverts.
+          queryClient.invalidateQueries({
+            queryKey: trpc.demarches.pcaet.getDepotContext.pathKey(),
+          }),
+          queryClient.invalidateQueries({
+            queryKey: trpc.demarches.pcaet.listCouvrantes.pathKey(),
+          }),
+        ]),
     })
   );
 

@@ -20,6 +20,9 @@ export const useDeleteDemarchePcaet = () => {
           queryClient.invalidateQueries({
             queryKey: trpc.demarches.pcaet.getDepotContext.pathKey(),
           }),
+          queryClient.invalidateQueries({
+            queryKey: trpc.demarches.pcaet.listCouvrantes.pathKey(),
+          }),
         ]);
       },
     })
