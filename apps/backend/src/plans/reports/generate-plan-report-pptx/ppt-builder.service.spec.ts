@@ -1,7 +1,15 @@
 import { Test } from '@nestjs/testing';
 import { IndicateurSourceEnum } from '@tet/domain/indicateurs';
 import { FicheWithRelations } from '@tet/domain/plans';
+import { mkdtempSync, rmSync, writeFileSync } from 'fs';
+import { DomUtils, parseDocument } from 'htmlparser2';
+import { tmpdir } from 'os';
+import * as path from 'path';
+import { Automizer } from 'pptx-automizer';
+import sharp from 'sharp';
+import { onTestFinished } from 'vitest';
 import { PptBuilderService } from './ppt-builder.service';
+import { ReportTemplateImagesEnum } from './report-template-images.enum';
 
 describe('PptBuilderService', () => {
   let pptBuilderService: PptBuilderService;
@@ -14,6 +22,85 @@ describe('PptBuilderService', () => {
       .compile();
 
     pptBuilderService = moduleRef.get(PptBuilderService);
+  });
+
+  it('insère la nouvelle image du graphique dans le PowerPoint généré', async () => {
+    const mediaDir = mkdtempSync(path.join(tmpdir(), 'plan-report-'));
+    onTestFinished(() => rmSync(mediaDir, { recursive: true, force: true }));
+    const imageFile = 'graphique.png';
+    const imageBuffer = await sharp({
+      create: { width: 2, height: 2, channels: 3, background: '#000091' },
+    })
+      .png()
+      .toBuffer();
+    writeFileSync(path.join(mediaDir, imageFile), imageBuffer);
+
+    const presentation = new Automizer({
+      templateDir: path.join(__dirname, 'docs'),
+      mediaDir,
+      removeExistingSlides: true,
+      autoImportSlideMasters: true,
+      cleanup: true,
+      verbosity: 0,
+    })
+      .loadRoot('template_bilan.pptx')
+      .load('template_bilan.pptx', 'bilan')
+      .loadMedia(imageFile);
+    const imageName = ReportTemplateImagesEnum.IMG_PLAN_PROGRESS_BY_AXE_CHART;
+
+    presentation.addSlide('bilan', 5, async (slide) => {
+      pptBuilderService['replaceImageInSlide'](
+        slide,
+        presentation,
+        await slide.getAllElements(),
+        imageName,
+        imageFile,
+        { width: 2, height: 2 },
+        'cover'
+      );
+    });
+
+    // Vérifier le contenu sérialisé : la présence du PNG dans l'archive ne
+    // suffit pas si la diapositive référence encore l'image du modèle.
+    const archive = await presentation.getJSZip();
+    const slides = archive.file(/^ppt\/slides\/slide\d+\.xml$/);
+    expect(slides).toHaveLength(1);
+    const slide = parseDocument(await slides[0].async('string'), {
+      xmlMode: true,
+    });
+    const image = DomUtils.findOne(
+      (element) =>
+        element.name === 'p:pic' &&
+        DomUtils.findOne(
+          (child) =>
+            child.name === 'p:cNvPr' && child.attribs.name === imageName,
+          element.children
+        ) !== null,
+      slide.children
+    );
+    const relationshipId = DomUtils.findOne(
+      (element) => element.name === 'a:blip',
+      image?.children ?? []
+    )?.attribs['r:embed'];
+    expect(relationshipId).toBeDefined();
+
+    const relationships = parseDocument(
+      (await archive
+        .file(`ppt/slides/_rels/${path.basename(slides[0].name)}.rels`)
+        ?.async('string')) ?? '',
+      { xmlMode: true }
+    );
+    const target = DomUtils.findOne(
+      (element) =>
+        element.name === 'Relationship' &&
+        element.attribs.Id === relationshipId,
+      relationships.children
+    )?.attribs.Target;
+
+    expect(target).toBe(`../media/${imageFile}`);
+    expect(
+      await archive.file(`ppt/media/${imageFile}`)?.async('nodebuffer')
+    ).toEqual(imageBuffer);
   });
 
   describe('sortFichesForReport', () => {
