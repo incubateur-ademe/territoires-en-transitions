@@ -98,7 +98,7 @@ jobs:
               SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
             # Sortie streamée via pnpm-prepare pour conserver le résumé Vitest
             # et les tests en échec dans les logs GitHub.
-            run: pnpm nx run backend:test --excludeTaskDependencies -- --project shared-app --project global-catalogues
+            run: pnpm nx run backend:test --excludeTaskDependencies -- --project shared-app --project global-state
 
           - name: Run api tests
             if: ${{ inputs.run-api }}

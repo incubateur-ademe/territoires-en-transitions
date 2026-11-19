@@ -216,8 +216,8 @@ describe("Notifications du dossier d'une collectivité de test", () => {
     expect(demandeDrAdemeId).toBeDefined();
     expect(demandeDgecId).toBeDefined();
 
-    // Restreint aux notifications de ce dossier : l'agent ajouté à la DGEC du
-    // seed reçoit aussi les transmissions des specs lancés en parallèle.
+    // Restreint aux notifications de ce dossier : un agent de la DGEC peut
+    // recevoir les notifications de plusieurs dossiers.
     // Transmission par demande, avis reçu par avis, clôture par démarche.
     const auxServices = await db.db
       .select()

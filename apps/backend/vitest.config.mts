@@ -23,12 +23,16 @@ const specsAlreadyRunByInitDbSeed = [
   'src/referentiels/import-referentiel/import-referentiel.controller.e2e-spec.ts',
 ];
 
-// Ces suites remplacent les références externes globales : aucune autre suite
-// ne doit lire ou modifier ces données pendant leurs scénarios.
-const globalCatalogueSpecs = [
+// Ces suites modifient des données globales : les catalogues et les membres de
+// la DGEC du seed. Elles passent après les autres suites, sans parallélisme :
+// une transmission PCAET pourrait sinon notifier un membre en cours de cleanup.
+const globalStateSpecs = [
   'src/indicateurs/import-indicateurs/import-indicateur-catalogue.controller.e2e-spec.ts',
   'src/indicateurs/import-indicateurs/import-indicateur-definition-atomicity.controller.e2e-spec.ts',
   'src/plans/plans/electrification/publish-electrification-data/publish-electrification-data.router.e2e-spec.ts',
+  'src/demarches/pcaet/referents/referents-pcaet.router.e2e-spec.ts',
+  'src/demarches/pcaet/notifications/demarches-pcaet-notifications.e2e-spec.ts',
+  'src/demarches/pcaet/notifications/notify-dossier-de-test.e2e-spec.ts',
 ];
 
 /**
@@ -104,15 +108,15 @@ export default defineConfig(({ mode }) => ({
           exclude: [
             ...configDefaults.exclude,
             ...specsAlreadyRunByInitDbSeed,
-            ...globalCatalogueSpecs,
+            ...globalStateSpecs,
           ],
         },
       },
       {
         extends: true,
         test: {
-          name: 'global-catalogues',
-          include: globalCatalogueSpecs,
+          name: 'global-state',
+          include: globalStateSpecs,
           fileParallelism: false,
           sequence: { groupOrder: 1 },
         },
