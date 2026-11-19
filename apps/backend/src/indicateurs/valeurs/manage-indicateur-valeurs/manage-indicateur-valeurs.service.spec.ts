@@ -22,7 +22,7 @@ import {
   IndicateurValeur,
   IndicateurValeurAvecMetadonnesDefinition,
 } from '@tet/domain/indicateurs';
-import { success } from '@tet/backend/utils/result.type';
+import { failure, success } from '@tet/backend/utils/result.type';
 import { cloneDeep } from 'es-toolkit';
 import { vi } from 'vitest';
 import CollectivitesService from '../../../collectivites/services/collectivites.service';
@@ -2209,6 +2209,49 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
           ([, existingTx]) => !existingTx
         )
       ).toHaveLength(1);
+    });
+
+    it('retourne un échec DATABASE_ERROR avec la cause quand le recalcul échoue', async () => {
+      const target = {
+        id: 3,
+        identifiantReferentiel: 'target',
+        valeurCalcule: 'val(source_a)',
+        periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
+      } as IndicateurPredefini;
+      const recomputeError = new Error('recalcul impossible');
+      const computeValeursService = {
+        getAllSourceIdentifiants: vi.fn().mockResolvedValue(['source_a']),
+        recomputeCollectivitesCalculatedIndicateurValeurs: vi
+          .fn()
+          .mockRejectedValue(recomputeError),
+      };
+      const service = createManageIndicateurValeursService(
+        {} as never,
+        {} as never,
+        {} as never,
+        {} as never,
+        {
+          listCollectiviteIndicateurs: vi
+            .fn()
+            .mockResolvedValue(success([target])),
+        } as never,
+        {} as never,
+        {} as never,
+        {} as never,
+        computeValeursService as never,
+        { lock: vi.fn() } as never,
+        {
+          lockIndicateurs: vi.fn().mockResolvedValue(success([target])),
+        } as never,
+        createTransactionManager({ marker: 'transaction' }) as never
+      );
+
+      await expect(
+        service.recomputeAllCalculatedIndicateurValeurs(1, null, {
+          indicateurs: [target],
+          skipPermissionCheck: true,
+        })
+      ).resolves.toEqual(failure('DATABASE_ERROR', recomputeError));
     });
   });
 
