@@ -209,14 +209,14 @@ export const CreateDemarchePcaetPage = () => {
                 <p className="text-sm text-grey-7 mt-2">
                   {appLabels.demarcheCreerCadreReglementaire}
                 </p>
+                {!couvertureEnCours && !tousEngages && (
+                  <p className="text-sm text-grey-7 mt-2 mb-0">
+                    {appLabels.demarcheCreerChampsObligatoiresLegende}
+                  </p>
+                )}
               </div>
               <DemarcheAvanceSidePanelButton isOpen={isOpen} onClick={toggle} />
             </div>
-            {!couvertureEnCours && !tousEngages && (
-              <p className="text-sm text-grey-7 mt-2">
-                {appLabels.demarcheCreerChampsObligatoiresLegende}
-              </p>
-            )}
 
             {couvertureEnCours ? (
               <Alert
