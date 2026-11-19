@@ -81,9 +81,9 @@ variable "pg_is_ha_cluster" {
 }
 
 variable "pg_volume_size_in_gb" {
-  description = "Taille du volume Postgres en GB. À aligner sur la taille réelle de la base plus une marge de croissance."
+  description = "Taille du volume Postgres en GB. La base restaurée pèse ~9,4 GB (8 GB de données, 1,5 GB d'index) : 10 GB saturent pendant une restauration (volume en disk_full, instance en lecture seule). Le volume s'agrandit à chaud mais ne se réduit pas : réduire impose de recréer l'instance."
   type        = number
-  default     = 10
+  default     = 20
 }
 
 variable "pg_backup_schedule_frequency" {

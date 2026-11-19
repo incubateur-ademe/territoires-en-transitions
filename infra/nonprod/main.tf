@@ -29,7 +29,7 @@ module "postgres" {
   environment        = "preprod"
   region             = var.scaleway_region
   node_type          = var.pg_node_type
-  engine             = "PostgreSQL-15"
+  engine             = "PostgreSQL-17"
   is_ha_cluster      = false
   volume_size_in_gb  = var.pg_volume_size_in_gb
   allowed_ips        = var.pg_allowed_ips

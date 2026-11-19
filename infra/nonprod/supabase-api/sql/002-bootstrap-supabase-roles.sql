@@ -35,4 +35,11 @@ END $$;
 -- Storage API bascule vers ces rôles par SET ROLE : il faut en être membre.
 GRANT anon, authenticated, service_role TO supabase_storage_admin;
 
+-- Depuis PG 16, CREATEROLE ne suffit plus pour ALTER ROLE : il faut aussi
+-- l'ADMIN OPTION sur le rôle, qu'un utilisateur créé par l'API Scaleway ne
+-- donne pas à tet_admin. restore-db.sh en a besoin pour poser le search_path.
+DO $$ BEGIN
+  EXECUTE format('GRANT supabase_storage_admin TO %I WITH ADMIN OPTION', current_user);
+END $$;
+
 COMMIT;
