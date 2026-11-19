@@ -26,8 +26,8 @@ export const DemarcheSection = ({
         className
       )}
     >
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex-1 min-w-0 basis-80">
           <div className="flex flex-wrap items-center gap-2">
             {title ? (
               <h2 className="text-lg font-bold text-primary-9 m-0">{title}</h2>
@@ -35,10 +35,12 @@ export const DemarcheSection = ({
             {status ? <DemarcheCompletionBadge statut={status} /> : null}
           </div>
           {description ? (
-            <p className="text-sm text-grey-7 mt-1">{description}</p>
+            <p className="text-sm text-grey-7 mt-1 mb-0 md:mb-3">
+              {description}
+            </p>
           ) : null}
         </div>
-        {action}
+        {action ? <div className="ml-auto shrink-0">{action}</div> : null}
       </div>
       {children}
     </section>

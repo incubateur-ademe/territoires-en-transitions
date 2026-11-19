@@ -66,7 +66,7 @@ export const DownloadDemarcheExportButton = ({
     <div className="flex flex-col items-end gap-1">
       <Button
         icon="download-line"
-        size="sm"
+        size="xs"
         variant="outlined"
         loading={isDownloading}
         disabled={isDownloading}
