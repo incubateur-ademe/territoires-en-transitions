@@ -9,6 +9,7 @@ import { electrificationDocumentTemplate } from '@tet/backend/plans/plans/electr
 import { electrificationValueInterpretationSchema } from './electrification-value-interpretation.schema';
 import { ElectrificationValueInterpretationRules } from './electrification-value-interpretation.rules';
 import { electrificationEngagementInterpretationSchema } from './electrification-engagement-interpretation.schema';
+import { electrificationExtractionErrors } from './electrification-extraction.errors';
 
 /** À incrémenter si le format ou son interprétation rend une reprise incompatible. */
 export const ELECTRIFICATION_CHECKPOINT_VERSION = 2;
@@ -61,7 +62,7 @@ export const electrificationExtractionCheckpointSchema = z
         })
       );
     },
-    'Les interprétations doivent citer les valeurs originales du document.'
+    electrificationExtractionErrors.INVALID_INTERPRETATION_SOURCE.message
   );
 export type ElectrificationExtractionCheckpoint = z.infer<
   typeof electrificationExtractionCheckpointSchema
