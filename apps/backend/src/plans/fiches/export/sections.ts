@@ -199,7 +199,7 @@ const BUDGET: Section = {
   cols: ({ maxFinanceurs }) => [
     {
       colLabel: 'Financements',
-      cellValue: ({ fiche }) => fiche?.financements,
+      cellValue: ({ fiche }) => htmlToText(fiche?.financements || ''),
     },
     {
       colLabel: 'Budgets de fonctionnement',
