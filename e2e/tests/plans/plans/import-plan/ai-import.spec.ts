@@ -521,17 +521,32 @@ test('réessaie depuis le détail avec les choix précédents et garde Nouvel im
     page.getByText('Traitement interrompu pendant la reprise.')
   ).toBeVisible();
   const report = page.getByTestId('plans.import-ia.rapport');
-  await expect(report).toContainText('2 erreurs détectées pendant cet import.');
+  const summary = report.getByRole('alert');
+  await expect(summary).toHaveCount(1);
+  await expect(summary).toContainText(
+    '2 erreurs détectées pendant cet import.'
+  );
+  const remarks = report.getByRole('listitem');
+  await expect(remarks).toHaveCount(3);
+  await expect(remarks.nth(0)).toContainText('Point 1 sur 3');
+  await expect(remarks.nth(0)).toContainText(
+    'Nombre total de bornes publiques'
+  );
+  await expect(remarks.nth(1)).toContainText('Point 2 sur 3');
+  await expect(remarks.nth(1)).toContainText('Nombre de bornes rapides');
+  await expect(remarks.nth(2)).toContainText('Point 3 sur 3');
+  await expect(page.getByTestId('plans.import-ia.etapes')).toHaveCount(0);
+  await expect(page.getByTestId('plans.import-ia.chargement')).toHaveCount(0);
   await expect(
     report.getByText('Avertissement', { exact: true })
   ).toBeVisible();
   await expect(
-    report.getByText(
+    summary.getByText(
       /^Contactez le support avec votre document et ce compte rendu/
     )
   ).toHaveCount(1);
   await expect(
-    report.getByRole('link', { name: 'Contacter le support' })
+    summary.getByRole('link', { name: 'Contacter le support' })
   ).toBeVisible();
   await page.getByRole('button', { name: 'Réessayer', exact: true }).click();
   await expect(page.getByRole('textbox', { name: 'Nom du plan' })).toHaveValue(
@@ -969,6 +984,18 @@ test('masque le plan incomplet depuis le détail d’un import en échec sur mob
     status: 'failed',
     createdPlanId: planId,
     error: 'Traitement interrompu',
+    report: {
+      issues: [
+        {
+          kind: 'document-error',
+          code: 'MISSING_INDICATEUR_YEAR',
+          location:
+            'Engagement "Le territoire accompagne la rénovation énergétique des logements sociaux" > Valeur chiffrée de l\'engagement',
+          message: 'Renseignez une année de référence pour ce résultat.',
+        },
+      ],
+      qualitativeReview: null,
+    },
   };
   await page.goto(
     `/collectivite/${collectivite.data.id}/plans/imports?importJobId=${mock.status.jobId}`
@@ -978,6 +1005,14 @@ test('masque le plan incomplet depuis le détail d’un import en échec sur mob
     page.getByRole('link', { name: 'Nouvel import' })
   ).toBeInViewport();
   await expect(page.getByTestId('plans.import-ia.rapport')).toBeVisible();
+  await expect(
+    page.getByTestId('plans.import-ia.rapport').getByRole('listitem')
+  ).toContainText('Renseignez une année de référence');
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth
+    )
+  ).toBe(true);
   expect(mock.enqueueCalls).toBe(0);
   expect(mock.resumeCalls).toBe(0);
 });
@@ -1240,7 +1275,14 @@ test('retrouve un échec sans plan depuis une liste vide et réserve la reprise 
     .getByRole('link', { name: 'Historique des imports', exact: true })
     .click();
   await page.getByRole('button', { name: 'Plan de test', exact: true }).click();
-  await expect(page.getByTestId('plans.import-ia.rapport')).toBeVisible();
+  const report = page.getByTestId('plans.import-ia.rapport');
+  await expect(report.getByRole('alert')).toContainText(
+    'Réessayez avec le même document.'
+  );
+  await expect(
+    report.getByRole('link', { name: 'Contacter le support' })
+  ).toBeVisible();
+  await expect(report).not.toContainText('Aucune remarque signalée.');
   await expect(
     page.getByTestId('plans.import-ia.reprendre-button')
   ).toHaveCount(0);

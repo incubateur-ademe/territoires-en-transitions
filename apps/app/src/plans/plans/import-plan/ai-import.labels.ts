@@ -15,7 +15,7 @@ export const importStatusLabels: Record<ImportStatus['status'], string> = {
 export const importIssueLabels = {
   'document-error': appLabels.importPlanIaDocumentErreur,
   'configuration-error': appLabels.importPlanIaConfigurationErreur,
-  'processing-error': appLabels.importPlanIaErreur,
+  'processing-error': appLabels.importPlanIaDocumentErreur,
   warning: appLabels.importPlanIaAvertissementRapport,
   'preserved-data': appLabels.importPlanIaDonneesConservees,
 } satisfies Record<ImportStatus['report']['issues'][number]['kind'], string>;

@@ -1,23 +1,11 @@
 import { appLabels } from '@/app/labels/catalog';
 import { render, screen, within } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { AiImportProgress } from './ai-import-progress';
 import { ImportStepView } from './ai-import-steps.model';
 
-const renderProgress = (
-  steps: ImportStepView[],
-  failed = false,
-  withSecteurs = false
-) =>
-  render(
-    <AiImportProgress
-      failed={failed}
-      errorMessage={null}
-      onRetry={vi.fn()}
-      steps={steps}
-      withSecteurs={withSecteurs}
-    />
-  );
+const renderProgress = (steps: ImportStepView[], withSecteurs = false) =>
+  render(<AiImportProgress steps={steps} withSecteurs={withSecteurs} />);
 
 const listedSteps = () =>
   within(screen.getByRole('list', { name: appLabels.importPlanIaEtapesTitre }))
@@ -50,35 +38,13 @@ describe('AiImportProgress', () => {
     expect(screen.queryByRole('alert')).toBeNull();
   });
 
-  it("masque les etapes et conserve l'alerte et la relance apres un echec", () => {
-    renderProgress(
-      [
-        { name: 'reading', status: 'done' },
-        { name: 'extraction', status: 'failed' },
-      ],
-      true
-    );
-
-    expect(
-      screen.queryByRole('list', { name: appLabels.importPlanIaEtapesTitre })
-    ).toBeNull();
-    expect(screen.getByRole('alert')).toBeTruthy();
-    expect(
-      screen.getByRole('button', { name: appLabels.reessayer })
-    ).toBeTruthy();
-  });
-
   it.each([
     [true, appLabels.importPlanIaEtapeSecteurs],
     [false, appLabels.importPlanIaEtapeEffetsAttendus],
   ])(
     "nomme l'etape des secteurs selon le plan (PCAET : %s)",
     (withSecteurs, label) => {
-      renderProgress(
-        [{ name: 'secteurs', status: 'current' }],
-        false,
-        withSecteurs
-      );
+      renderProgress([{ name: 'secteurs', status: 'current' }], withSecteurs);
 
       expect(listedSteps()).toEqual([
         [`${label} (${appLabels.importPlanIaEtapeEnCours})`, 'current'],

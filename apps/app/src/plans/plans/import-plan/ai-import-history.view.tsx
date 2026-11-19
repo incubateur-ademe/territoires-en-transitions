@@ -155,7 +155,7 @@ export const AiImportHistoryView = ({
           </PageHeader.Actions>
         )}
       </PageHeader>
-      <div className="bg-white rounded-lg p-6 md:p-10 flex flex-col gap-6">
+      <div className="bg-white border border-grey-3 rounded-lg shadow-sm p-6 md:p-8 flex flex-col gap-6">
         {importJobId !== null ? (
           <AiImportStatusView
             key={importJobId}
