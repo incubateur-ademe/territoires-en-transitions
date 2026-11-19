@@ -22,6 +22,7 @@ import { DemarchePcaetDiagnosticService } from '../../shared/demarche-pcaet-diag
 import { DemarchePcaetRefRepository } from '../../shared/demarche-pcaet-ref.repository';
 import { DemarchePcaetSourceMetadonneeRepository } from '../../shared/demarche-pcaet-source-metadonnee.repository';
 import {
+  toUpdateDiagnosticFailure,
   UpdateDiagnosticIndicateursValeursErrorEnum,
   type UpdateDiagnosticIndicateursValeursError,
 } from './update-diagnostic-indicateurs-valeurs.errors';
@@ -125,15 +126,21 @@ export class UpdateDiagnosticIndicateursValeursService {
       tx
     );
 
-    await this.crudValeursService.upsertIndicateurValeurs(upsertRecords, {
-      user,
-      tx,
-      metadataAuthorization: {
-        collectiviteId,
-        metadonneeId,
-        sourceId: PCAET_COLLECTIVITE_SOURCE_ID,
-      },
-    });
+    const upserted = await this.crudValeursService.upsertIndicateurValeurs(
+      upsertRecords,
+      {
+        user,
+        tx,
+        metadataAuthorization: {
+          collectiviteId,
+          metadonneeId,
+          sourceId: PCAET_COLLECTIVITE_SOURCE_ID,
+        },
+      }
+    );
+    if (!upserted.success) {
+      return toUpdateDiagnosticFailure(upserted);
+    }
 
     const payload = await this.diagnosticService.loadPayload(
       { demarcheId, collectiviteId },

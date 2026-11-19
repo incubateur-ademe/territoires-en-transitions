@@ -7,6 +7,7 @@ import {
 import ListCollectivitesService from '@tet/backend/collectivites/list-collectivites/list-collectivites.service';
 import { VerificationTrajectoireRequest } from '@tet/backend/indicateurs/trajectoires/verification-trajectoire.request';
 import { VerificationTrajectoireResultType } from '@tet/backend/indicateurs/trajectoires/verification-trajectoire.response';
+import { getDataOrThrow } from '@tet/backend/utils/result.type';
 import { CollectiviteResume } from '@tet/domain/collectivites';
 import {
   Indicateur,
@@ -281,11 +282,12 @@ export default class TrajectoiresSpreadsheetService {
     this.logger.log(
       `Ecriture des ${indicateurValeursTrajectoireResultat.length} valeurs des indicateurs correspondant à la trajectoire SNBC pour la collectivité ${request.collectiviteId}`
     );
-    const upsertedTrajectoireIndicateurValeurs =
+    const upsertedTrajectoireIndicateurValeurs = getDataOrThrow(
       await this.valeursService.upsertIndicateurValeurs(
         indicateurValeursTrajectoireResultat,
         { isUserTrusted: true } // this use case already checked its dedicated permission
-      );
+      )
+    );
 
     const [
       indicateursResultatConsommation,

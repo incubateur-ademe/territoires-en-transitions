@@ -87,10 +87,9 @@ export class IndicateursValeursController {
     @Body() request: UpsertIndicateursValeursRequest,
     @TokenInfo() tokenInfo: AuthenticatedOrServiceRoleUser
   ): Promise<UpsertIndicateursValeursResponse> {
-    const upsertedValeurs = await this.service.upsertIndicateurValeurs(
-      request.valeurs,
-      { user: tokenInfo }
-    );
-    return { valeurs: upsertedValeurs };
+    const result = await this.service.upsertIndicateurValeurs(request.valeurs, {
+      user: tokenInfo,
+    });
+    return { valeurs: this.getIndicateurValeursResultOrThrow(result) };
   }
 }

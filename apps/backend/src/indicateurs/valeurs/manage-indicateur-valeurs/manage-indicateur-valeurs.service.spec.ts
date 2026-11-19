@@ -22,7 +22,7 @@ import {
   IndicateurValeur,
   IndicateurValeurAvecMetadonnesDefinition,
 } from '@tet/domain/indicateurs';
-import { success } from '@tet/backend/utils/result.type';
+import { failure, success } from '@tet/backend/utils/result.type';
 import { cloneDeep } from 'es-toolkit';
 import { vi } from 'vitest';
 import CollectivitesService from '../../../collectivites/services/collectivites.service';
@@ -1719,9 +1719,9 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
           ],
           { user: serviceRoleUser }
         )
-      ).resolves.toEqual([
-        { ...saved, sourceId: 'rare', indicateurIdentifiant: null },
-      ]);
+      ).resolves.toEqual(
+        success([{ ...saved, sourceId: 'rare', indicateurIdentifiant: null }])
+      );
 
       expect(permissionService.assertAllowed).toHaveBeenCalledOnce();
       expect(indicateurLockRepository.lockIndicateurs).toHaveBeenCalledWith(
@@ -1797,7 +1797,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
             } as never,
           }
         )
-      ).resolves.toEqual([]);
+      ).resolves.toEqual(success([]));
 
       expect(repository.lockGroupementMemberships).toHaveBeenCalledWith(
         [{ groupementId: 99, collectiviteId: 3 }],
@@ -1858,7 +1858,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
           ],
           { isUserTrusted: true }
         )
-      ).resolves.toEqual([]);
+      ).resolves.toEqual(success([]));
 
       expect(repository.lockGroupementMemberships).not.toHaveBeenCalled();
       expect(repository.upsertValeursWithoutMetadata).toHaveBeenCalledOnce();
@@ -1911,9 +1911,13 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
           ],
           { isUserTrusted: true }
         )
-      ).rejects.toThrow(
-        'La valeur doit respecter la périodicité de déclaration'
-      );
+      ).resolves.toMatchObject({
+        success: false,
+        error: 'INVALID_VALUE',
+        cause: {
+          message: 'La valeur doit respecter la périodicité de déclaration',
+        },
+      });
 
       expect(indicateurLockRepository.lockIndicateurs).toHaveBeenCalledWith(
         [10],
@@ -1972,7 +1976,13 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
           ],
           { isUserTrusted: true }
         )
-      ).rejects.toThrow('Indicateur 10 non disponible pour la collectivité 3');
+      ).resolves.toMatchObject({
+        success: false,
+        error: 'INVALID_VALUE',
+        cause: {
+          message: 'Indicateur 10 non disponible pour la collectivité 3',
+        },
+      });
 
       expect(tx.insert).not.toHaveBeenCalled();
     });
@@ -2057,7 +2067,13 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
             } as never,
           }
         )
-      ).rejects.toThrow('Indicateur 11 non disponible pour la collectivité 3');
+      ).resolves.toMatchObject({
+        success: false,
+        error: 'INVALID_VALUE',
+        cause: {
+          message: 'Indicateur 11 non disponible pour la collectivité 3',
+        },
+      });
 
       expect(repository.lockGroupementMemberships).toHaveBeenCalledWith(
         [{ groupementId: 99, collectiviteId: 3 }],
@@ -2164,13 +2180,15 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
           indicateurs: [target],
           skipPermissionCheck: true,
         })
-      ).resolves.toEqual([
-        {
-          collectiviteId: 1,
-          valeursCount: 3,
-          identifiants: ['target'],
-        },
-      ]);
+      ).resolves.toEqual(
+        success([
+          {
+            collectiviteId: 1,
+            valeursCount: 3,
+            identifiants: ['target'],
+          },
+        ])
+      );
 
       expect(
         computeValeursService.recomputeCollectivitesCalculatedIndicateurValeurs
@@ -2191,6 +2209,49 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
           ([, existingTx]) => !existingTx
         )
       ).toHaveLength(1);
+    });
+
+    it('retourne un échec DATABASE_ERROR avec la cause quand le recalcul échoue', async () => {
+      const target = {
+        id: 3,
+        identifiantReferentiel: 'target',
+        valeurCalcule: 'val(source_a)',
+        periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
+      } as IndicateurPredefini;
+      const recomputeError = new Error('recalcul impossible');
+      const computeValeursService = {
+        getAllSourceIdentifiants: vi.fn().mockResolvedValue(['source_a']),
+        recomputeCollectivitesCalculatedIndicateurValeurs: vi
+          .fn()
+          .mockRejectedValue(recomputeError),
+      };
+      const service = createManageIndicateurValeursService(
+        {} as never,
+        {} as never,
+        {} as never,
+        {} as never,
+        {
+          listCollectiviteIndicateurs: vi
+            .fn()
+            .mockResolvedValue(success([target])),
+        } as never,
+        {} as never,
+        {} as never,
+        {} as never,
+        computeValeursService as never,
+        { lock: vi.fn() } as never,
+        {
+          lockIndicateurs: vi.fn().mockResolvedValue(success([target])),
+        } as never,
+        createTransactionManager({ marker: 'transaction' }) as never
+      );
+
+      await expect(
+        service.recomputeAllCalculatedIndicateurValeurs(1, null, {
+          indicateurs: [target],
+          skipPermissionCheck: true,
+        })
+      ).resolves.toEqual(failure('DATABASE_ERROR', recomputeError));
     });
   });
 
