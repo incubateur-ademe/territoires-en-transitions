@@ -138,25 +138,26 @@ export class SuiviPlanModulesService {
       return failure(SuiviPlanModulesErrorEnum.PLAN_NOT_FOUND);
     }
 
-    const isAllowed =
-      operation === 'read'
-        ? await this.getPlanService.checkPermission(
-            plan.collectiviteId,
-            user,
-            tx
-          )
-        : (
-            await this.permissionService.isAllowed(
-              user,
-              PermissionOperationEnum['PLANS.MUTATE'],
-              ResourceType.COLLECTIVITE,
-              { collectiviteId: plan.collectiviteId },
-              tx
-            )
-          ).success;
-
-    if (!isAllowed) {
-      return failure(SuiviPlanModulesErrorEnum.UNAUTHORIZED);
+    if (operation === 'read') {
+      const readResult = await this.getPlanService.checkPermission(
+        plan.collectiviteId,
+        user,
+        tx
+      );
+      if (!readResult.success) {
+        return readResult;
+      }
+    } else {
+      const mutateResult = await this.permissionService.isAllowed(
+        user,
+        PermissionOperationEnum['PLANS.MUTATE'],
+        ResourceType.COLLECTIVITE,
+        { collectiviteId: plan.collectiviteId },
+        tx
+      );
+      if (!mutateResult.success) {
+        return failure(SuiviPlanModulesErrorEnum.UNAUTHORIZED);
+      }
     }
     return success({ collectiviteId: plan.collectiviteId });
   }

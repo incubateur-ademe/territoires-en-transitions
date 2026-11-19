@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
-import { Result } from '@tet/backend/utils/result.type';
+import { failure, Result } from '@tet/backend/utils/result.type';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { GetAxeErrorEnum } from '../get-axe/get-axe.errors';
 import { GetAxeService } from '../get-axe/get-axe.service';
@@ -32,13 +32,10 @@ export class DeleteAxeService {
     );
 
     if (!axeResult.success) {
-      return {
-        success: false,
-        error:
-          axeResult.error === GetAxeErrorEnum.UNAUTHORIZED
-            ? axeResult.error
-            : GetAxeErrorEnum.AXE_NOT_FOUND,
-      };
+      return axeResult.error === GetAxeErrorEnum.UNAUTHORIZED ||
+        axeResult.error === GetAxeErrorEnum.DATABASE_ERROR
+        ? failure(axeResult.error, axeResult.cause)
+        : failure(GetAxeErrorEnum.AXE_NOT_FOUND);
     }
 
     const collectiviteId = axeResult.data.collectiviteId;
