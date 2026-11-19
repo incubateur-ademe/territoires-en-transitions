@@ -314,6 +314,45 @@ describe('scoutUnits', () => {
     }
   });
 
+  it('garde, malgré les fiches, le récapitulatif qui numérote plus d’actions qu’elles', async () => {
+    const recap = (numbers: number[]) =>
+      buildUnit(
+        numbers.map((number) => ({
+          text: `Action à engager ${number} : Mener l'action ${number}`,
+          pageIndex: 0,
+        })),
+        [],
+        'section'
+      );
+    const fiches = [
+      unit('Action 5 : Mener l’action 5. Pilote : Service', 'fiche'),
+      unit('Action 6 : Mener l’action 6. Pilote : Service', 'fiche'),
+    ];
+    // Le tri n'a vu que l'introduction du tableau : il le dit hors sujet.
+    const allStructure = (call: Call) =>
+      [...call.prompt.matchAll(/#(\d+) \|/g)].map((m) => ({
+        index: Number(m[1]),
+        type: Number(m[1]) === 0 ? 'autre' : 'structure',
+      }));
+
+    const more = await scoutUnits(llmRouting(allStructure).llm, {
+      units: numberUnits([recap([1, 2, 3, 4, 5, 6]), ...fiches]),
+    });
+    const same = await scoutUnits(llmRouting(allStructure).llm, {
+      units: numberUnits([recap([5, 6]), ...fiches]),
+    });
+
+    expect(more.success && more.data.keptUnits.map((u) => u.id)).toEqual([
+      'u0001',
+      'u0002',
+      'u0003',
+    ]);
+    expect(same.success && same.data.keptUnits.map((u) => u.id)).toEqual([
+      'u0002',
+      'u0003',
+    ]);
+  });
+
   it.each([
     [
       'PLAN D’ACTIONS À 2030',

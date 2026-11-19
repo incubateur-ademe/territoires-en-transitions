@@ -30,6 +30,14 @@ const ACTION_PLAN_SECTION =
 const PARTIAL_ACTION_PLAN_SECTION =
   /fiches?[\s-]projets?|programme op[ée]rationnel|feuille de route/i;
 const MIN_FICHES_IN_ACTION_PLAN = 3;
+// « Action à engager 31 : … », « Mesure 4.2 – … » : une ligne d'un tableau
+// récapitulatif, avec son numéro.
+const NUMBERED_ACTION =
+  /^(?:actions?|mesures?|op[ée]rations?|projets?)\b[^:\n]{0,30}?(\d+(?:\.\d+)*)\s*[:.–—-]/iu;
+// Un récapitulatif qui numérote nettement plus d'actions qu'il n'y a de
+// fiches en porte que nulle fiche ne détaille.
+const MIN_ACTIONS_WITHOUT_FICHE = 3;
+const ACTIONS_WITHOUT_FICHE_RATIO = 1.25;
 
 /**
  * Écarte ce qui ne contient pas d'action (diagnostic, éditorial, engagements
@@ -75,11 +83,14 @@ export const scoutUnits = async (
   // Avec des fiches, le sommaire et les tableaux récapitulatifs redisent ce
   // qu'elles détaillent : ils servent au squelette, pas à l'extraction.
   const withFiches = units.some((unit) => unit.kind === 'fiche');
-  const keptUnits = units.filter((unit, index) =>
-    isKept(unit, categories.get(index), withFiches)
-  );
   const structureUnits = units.filter(
     (_, index) => categories.get(index) === 'structure'
+  );
+  const listsActionsWithoutFiche = listActionsWithoutFiche(units);
+  const keptUnits = units.filter(
+    (unit, index) =>
+      isKept(unit, categories.get(index), withFiches) ||
+      listsActionsWithoutFiche(unit)
   );
 
   // Sans squelette, la mise en cohérence est sautée : l'import y perd en
@@ -106,6 +117,34 @@ export const scoutUnits = async (
     ]),
     warnings: [...classified.data.warnings, ...skeletonWarnings],
   });
+};
+
+const numberedActionsOf = (unit: DocumentUnit): string[] =>
+  unit.text
+    .split('\n')
+    .flatMap((line) => line.trim().match(NUMBERED_ACTION)?.[1] ?? []);
+
+/**
+ * Les tableaux à garder malgré les fiches, quoi qu'en dise le tri : ensemble,
+ * ils numérotent plus d'actions que le document n'a de fiches (51 actions au
+ * tableau, 24 fiches pour les seules actions nouvelles). Le tri ne voit que
+ * le début et la fin d'un extrait ; le compte, lui, porte sur toutes ses
+ * lignes. Un récapitulatif qui redit les fiches, à peu près autant qu'elles,
+ * reste écarté.
+ */
+const listActionsWithoutFiche = (
+  units: DocumentUnit[]
+): ((unit: DocumentUnit) => boolean) => {
+  const ficheCount = units.filter((unit) => unit.kind === 'fiche').length;
+  const listed = new Set(
+    units.filter((unit) => unit.kind !== 'fiche').flatMap(numberedActionsOf)
+  ).size;
+  const hasMore =
+    ficheCount > 0 &&
+    listed - ficheCount >= MIN_ACTIONS_WITHOUT_FICHE &&
+    listed >= ACTIONS_WITHOUT_FICHE_RATIO * ficheCount;
+  return (unit) =>
+    hasMore && numberedActionsOf(unit).length >= MIN_ACTIONS_WITHOUT_FICHE;
 };
 
 const isKept = (
