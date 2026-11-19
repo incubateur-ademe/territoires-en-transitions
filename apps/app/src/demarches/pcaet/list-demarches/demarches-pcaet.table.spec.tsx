@@ -63,28 +63,31 @@ const ligneDe = (texte: string): HTMLElement => {
 };
 
 describe('DemarchesPcaetTable', () => {
-  it('montre sous chaque dépôt les EPCI qu’il couvre', () => {
+  it('liste sous le titre de chaque dépôt les EPCI qu’il couvre', () => {
     renderTable([PREMIER_GROUPE, SECOND_GROUPE, SANS_PERIMETRE]);
 
-    const lignes = screen.getAllByRole('row').map((row) => row.textContent);
-    const indexDe = (texte: string) =>
-      lignes.findIndex((ligne) => ligne?.includes(texte));
-
-    expect(indexDe('CC Castelnaudary Lauragais Audois')).toBe(
-      indexDe('PCAET réglementaire 2026') + 1
-    );
-    expect(indexDe('CC des Terres du Lauragais')).toBe(
-      indexDe('PCAET réglementaire 2026') + 2
-    );
-    expect(indexDe('CC Lauragais Revel Sorezois')).toBe(
-      indexDe('PCAET réglementaire 2030') + 1
-    );
+    const premier = within(ligneDe(PREMIER_GROUPE.titre));
     expect(
-      within(ligneDe('CC Lauragais Revel Sorezois')).queryByRole('link')
-    ).toBeNull();
+      premier.getByText(appLabels.demarcheListeResumeCouvertes({ count: 2 }))
+    ).toBeInTheDocument();
+    expect(
+      premier.getByText('CC Castelnaudary Lauragais Audois')
+    ).toBeInTheDocument();
+    expect(premier.getByText('CC des Terres du Lauragais')).toBeInTheDocument();
+    expect(
+      premier.queryByText('CC Lauragais Revel Sorezois')
+    ).not.toBeInTheDocument();
+    expect(
+      within(ligneDe(SECOND_GROUPE.titre)).getByText(
+        'CC Lauragais Revel Sorezois'
+      )
+    ).toBeInTheDocument();
+    // Un EPCI couvert n'est pas une ligne : le tableau garde une ligne par dépôt.
+    expect(screen.getAllByRole('row')).toHaveLength(4);
+    expect(premier.getAllByRole('link')).toHaveLength(1);
   });
 
-  it('replie un dépôt', () => {
+  it('replie un dépôt en gardant son décompte', () => {
     renderTable([PREMIER_GROUPE, SECOND_GROUPE, SANS_PERIMETRE]);
 
     fireEvent.click(
@@ -97,6 +100,31 @@ describe('DemarchesPcaetTable', () => {
     expect(
       screen.queryByText('CC Castelnaudary Lauragais Audois')
     ).not.toBeInTheDocument();
+    expect(
+      screen.getByText(appLabels.demarcheListeResumeCouvertes({ count: 2 }))
+    ).toBeInTheDocument();
+    expect(screen.getByText('CC Lauragais Revel Sorezois')).toBeInTheDocument();
+  });
+
+  it('garde replié un dépôt archivé tant qu’on ne le déplie pas', () => {
+    const archive = demarche({
+      ...SECOND_GROUPE,
+      status: DemarchePcaetStatusEnum.ARCHIVE,
+    });
+    renderTable([PREMIER_GROUPE, archive]);
+
+    expect(
+      screen.queryByText('CC Lauragais Revel Sorezois')
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByText('CC Castelnaudary Lauragais Audois')
+    ).toBeInTheDocument();
+
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: appLabels.demarcheListeDeplierGroupe({ titre: archive.titre }),
+      })
+    );
     expect(screen.getByText('CC Lauragais Revel Sorezois')).toBeInTheDocument();
   });
 
