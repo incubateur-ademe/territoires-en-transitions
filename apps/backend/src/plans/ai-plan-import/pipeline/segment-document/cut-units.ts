@@ -32,6 +32,8 @@ type OpenUnit = {
   kind: UnitKind;
   section?: string;
   title?: string;
+  /** L'axe qui couvre l'unité, le sien quand elle s'ouvre sur son titre. */
+  axe?: string;
 };
 
 /**
@@ -51,6 +53,7 @@ export const cutUnits = (
   );
   const axeOfFiche = axesGivenBeforeFiches(headings);
   const units: DocumentUnit[] = [];
+  const axeOfUnit = new Map<DocumentUnit, string | undefined>();
   const stack: StackEntry[] = [];
   let section: string | undefined;
   let open: OpenUnit = { lines: [], headingPath: [], kind: 'unknown' };
@@ -58,16 +61,23 @@ export const cutUnits = (
 
   const close = () => {
     if (open.lines.some((line) => line.text.trim().length > 0)) {
-      units.push(
-        buildUnit(open.lines, open.headingPath, open.kind, {
-          section: open.section,
-          title: open.title,
-        })
-      );
+      const unit = buildUnit(open.lines, open.headingPath, open.kind, {
+        section: open.section,
+        title: open.title,
+      });
+      axeOfUnit.set(unit, open.axe);
+      units.push(unit);
     }
   };
   const start = (kind: UnitKind, lines: UnitLine[] = [], title?: string) => {
-    open = { lines, headingPath: pathOf(stack), kind, section, title };
+    open = {
+      lines,
+      headingPath: pathOf(stack),
+      kind,
+      section,
+      title,
+      axe: stack[0]?.label,
+    };
     labelsInWindow = [];
   };
   const isRecall = (heading: HeadingMatch) =>
@@ -138,6 +148,7 @@ export const cutUnits = (
           label: labelOf(heading),
           number: heading.number,
         });
+        open.axe = stack[0].label;
         return;
       }
 
@@ -155,7 +166,10 @@ export const cutUnits = (
   }
   close();
 
-  return windowUnits(mergeSmallUnits(units, options.minTokens), options);
+  return windowUnits(
+    mergeSmallUnits(units, options.minTokens, axeOfUnit),
+    options
+  );
 
   function retroOpenFiche(firstLabelIndex: number) {
     const from = Math.max(0, firstLabelIndex - RETRO_OPEN_LOOKBACK_LINES);
@@ -240,35 +254,71 @@ const looksLikeTitle = (text: string): boolean => {
 
 /**
  * Une unité trop courte rejoint sa voisine, dans la même partie du document.
- * Une fiche reste seule : elle ne prend ni le sommaire qui la précède, ni
- * l'introduction de l'axe suivant ; les extraits sont de toute façon
- * regroupés par appel à la structuration.
+ * Sous un même axe, toujours. D'un axe à l'autre, seulement entre deux
+ * petites unités : les lignes d'un sommaire (« Axe 1 … », « Axe 2 … ») ou
+ * les éclats d'une frise se réunissent, mais un axe entier ne prend pas le
+ * titre du suivant, et ce qui précède le premier axe (page de garde,
+ * sommaire) ne prend pas ses premières actions. Une fiche reste seule ; les
+ * extraits sont de toute façon regroupés par appel à la structuration.
  */
 const mergeSmallUnits = (
   units: DocumentUnit[],
-  minTokens: number
+  minTokens: number,
+  axeOfUnit: Map<DocumentUnit, string | undefined>
 ): DocumentUnit[] => {
   const merged: DocumentUnit[] = [];
-  for (const unit of units) {
+  units.forEach((unit, index) => {
     const previous = merged.at(-1);
     if (
-      previous &&
-      (previous.tokenEstimate < minTokens || unit.tokenEstimate < minTokens) &&
-      previous.section === unit.section &&
-      previous.kind !== 'fiche' &&
-      unit.kind !== 'fiche'
+      previous === undefined ||
+      previous.section !== unit.section ||
+      previous.kind === 'fiche' ||
+      unit.kind === 'fiche'
     ) {
-      merged[merged.length - 1] = buildUnit(
-        [...previous.lines, ...unit.lines],
-        unit.headingPath,
-        previous.kind,
-        { section: unit.section }
-      );
-    } else {
       merged.push(unit);
+      return;
     }
-  }
+    const next = units[index + 1];
+    const axe = axeOfUnit.get(unit);
+    const previousAxe = axeOfUnit.get(previous);
+    const previousIsSmall = previous.tokenEstimate < minTokens;
+    const unitIsSmall = unit.tokenEstimate < minTokens;
+    // Le titre d'un axe reste avec le contenu qu'il ouvre.
+    const opensItsContent =
+      next !== undefined &&
+      next.kind !== 'fiche' &&
+      axeOfUnit.get(next) === axe;
+    const joins =
+      previousAxe === axe
+        ? previousIsSmall || unitIsSmall
+        : previousIsSmall &&
+          unitIsSmall &&
+          previousAxe !== undefined &&
+          !opensItsContent;
+    if (!joins) {
+      merged.push(unit);
+      return;
+    }
+    const together = buildUnit(
+      [...previous.lines, ...unit.lines],
+      commonPath(previous.headingPath, unit.headingPath),
+      previous.kind,
+      { section: unit.section }
+    );
+    axeOfUnit.set(together, axe);
+    merged[merged.length - 1] = together;
+  });
   return merged;
+};
+
+// Le titre d'un axe ouvre une unité sans chemin : réunie à sa première
+// section, elle en prend le chemin.
+const commonPath = (a: string[], b: string[]): string[] => {
+  if (a.length === 0 || b.length === 0) {
+    return a.length === 0 ? b : a;
+  }
+  const length = a.findIndex((label, index) => label !== b[index]);
+  return length === -1 ? a : a.slice(0, length);
 };
 
 /** Une unité trop longue est coupée entre deux lignes, avec une reprise. */

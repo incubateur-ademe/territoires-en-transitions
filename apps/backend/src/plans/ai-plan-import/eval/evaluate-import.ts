@@ -121,6 +121,8 @@ const evaluateGenericImport = async (
     const startedAt = Date.now();
     let trace: EvalTrace | null = null;
     let allUnits: Parameters<typeof buildEvalTrace>[0]['allUnits'] = null;
+    const titlesByStep: Parameters<typeof buildEvalTrace>[0]['titlesByStep'] =
+      {};
     const outcome = await runImportPipeline(llm, {
       document: document.data,
       ...input.options,
@@ -128,11 +130,14 @@ const evaluateGenericImport = async (
       // Sans base, aucun effet attendu ; le profil PCAET conserve ses secteurs.
       effetsAttendus: [],
       currentDate: new Date().toISOString(),
-      onCheckpoint: async ({ skeleton, units, completedStep }) => {
+      onCheckpoint: async ({ skeleton, units, completedStep, progress }) => {
         if (completedStep === 'reading') {
           allUnits = units;
         }
-        trace = buildEvalTrace({ skeleton, units, allUnits });
+        titlesByStep[completedStep] = progress.actions.map(
+          (action) => action.titre
+        );
+        trace = buildEvalTrace({ skeleton, units, allUnits, titlesByStep });
       },
       onStepStatesChange: async (stepStates) => {
         const step = `pipeline ${JSON.stringify(stepStates)}, ${

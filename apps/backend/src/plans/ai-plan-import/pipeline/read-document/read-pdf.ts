@@ -8,7 +8,14 @@ import {
   DocumentLocation,
   DocumentPage,
 } from '../document/document-page';
-import { reconstructPageLines, TextItemLike } from './reconstruct-page-lines';
+import { ColumnTableContext, readColumnTable } from './read-column-table';
+import {
+  linesFromPositionedItems,
+  locateLines,
+  positionItems,
+  reconstructPageLines,
+  TextItemLike,
+} from './reconstruct-page-lines';
 
 // Quelques dizaines de millisecondes par page : 400 pages tiennent largement.
 const PDF_TIMEOUT_MS = 60_000;
@@ -23,6 +30,8 @@ export const readPdfPages: PdfReader = async (buffer) => {
   const document = await getDocumentProxy(new Uint8Array(buffer));
   try {
     const pages: DocumentPage[] = [];
+    // Un tableau qui court sur plusieurs pages ne redit pas son en-tête.
+    let tableContext: ColumnTableContext | null = null;
     for (let pageNumber = 1; pageNumber <= document.numPages; pageNumber++) {
       const page = await document.getPage(pageNumber);
       try {
@@ -38,7 +47,7 @@ export const readPdfPages: PdfReader = async (buffer) => {
           pageNumber - 1,
           viewport.height
         );
-        const lines = reconstructPageLines(
+        const positioned = positionItems(
           items.map((item) => ({
             ...item,
             links: annotations.filter(
@@ -46,7 +55,12 @@ export const readPdfPages: PdfReader = async (buffer) => {
                 link.location.rect && intersects(item, link.location.rect)
             ),
           })),
-          viewport.height,
+          viewport.height
+        );
+        const table = readColumnTable(positioned, tableContext);
+        tableContext = table?.context ?? null;
+        const lines = locateLines(
+          table?.lines ?? linesFromPositionedItems(positioned),
           pageNumber - 1
         ).map((line, lineIndex) => {
           const hyperlinks = line.links ?? [];
