@@ -1,6 +1,5 @@
 import { appLabels } from '@/app/labels/catalog';
 import {
-  DemarchePcaetStatusEnum,
   isDemarchePcaetEnCours,
   type EpciCandidat,
 } from '@tet/domain/demarches';
@@ -13,14 +12,25 @@ const FIELD_ID = 'create-demarche-pcaet-collectivites-couvertes';
 const formatDateDebut = (date: string): string =>
   format(parseISO(date), 'dd/MM/yyyy');
 
+/**
+ * Ce qui explique qu'un EPCI soit grisé, ou qu'il n'ait encore rien déposé. Un
+ * PCAET adopté ou archivé ne se dit pas ici : en face d'une case à cocher, il
+ * se lirait comme l'état du dépôt qui commence.
+ */
 const StatutDerniereDemarche = ({
   derniereDemarche,
   engagement,
-}: Pick<EpciCandidat, 'derniereDemarche' | 'engagement'>): JSX.Element => {
-  if (engagement) {
+}: Pick<
+  EpciCandidat,
+  'derniereDemarche' | 'engagement'
+>): JSX.Element | null => {
+  if (
+    engagement ||
+    (derniereDemarche && isDemarchePcaetEnCours(derniereDemarche.status))
+  ) {
     return (
       <Badge
-        size="xs"
+        size="sm"
         variant="info"
         type="outlined"
         title={appLabels.demarcheEpciCandidatEnCours}
@@ -30,35 +40,14 @@ const StatutDerniereDemarche = ({
   if (!derniereDemarche) {
     return (
       <Badge
-        size="xs"
+        size="sm"
         variant="grey"
         type="outlined"
         title={appLabels.instructionStatutAucunDepot}
       />
     );
   }
-  if (isDemarchePcaetEnCours(derniereDemarche.status)) {
-    return (
-      <Badge
-        size="xs"
-        variant="info"
-        type="outlined"
-        title={appLabels.demarcheEpciCandidatEnCours}
-      />
-    );
-  }
-  return (
-    <Badge
-      size="xs"
-      variant="success"
-      type="outlined"
-      title={
-        derniereDemarche.status === DemarchePcaetStatusEnum.ARCHIVE
-          ? appLabels.instructionStatutArchive
-          : appLabels.instructionStatutAdopte
-      }
-    />
-  );
+  return null;
 };
 
 type Props = {

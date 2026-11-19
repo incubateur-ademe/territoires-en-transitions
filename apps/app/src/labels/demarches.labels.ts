@@ -223,7 +223,7 @@ export const demarchesLabels = {
   /** La liste vient des relations BANATIC : un lien manquant se corrige par le support. */
   demarcheCreerCollectivitesCouvertesAucune:
     'Aucun EPCI membre de votre structure n’est connu de la plateforme. Contactez le support pour compléter la liste.',
-  demarcheEpciCandidatEnCours: 'Démarche en cours',
+  demarcheEpciCandidatEnCours: 'Dépôt en cours',
   /** Badge d'un dépôt de Supra dans la liste d'un EPCI qu'il couvre. */
   demarchePorteParType: {
     petr: 'Porté par un PETR',
