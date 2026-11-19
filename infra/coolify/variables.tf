@@ -18,54 +18,18 @@ variable "scaleway_zone" {
 # --- Accès à l'API Coolify ---
 
 variable "coolify_endpoint" {
-  description = "URL de base de l'API Coolify (suffixe /api/v1 inclus). Valeur de : terraform -chdir=../platform output -raw coolify_endpoint"
-  type        = string
-  default     = "https://coolify.territoiresentransitions.fr/api/v1"
-}
-
-variable "coolify_token" {
-  description = "Token API Coolify (format {id}|{token}, scope root). Fourni via TF_VAR_coolify_token par scripts/coolify-env.sh, jamais en clair dans le repo."
-  type        = string
-  sensitive   = true
-}
-
-# --- Control plane ---
-
-variable "coolify_server_name" {
-  description = "Nom de la VM du control plane. Sert à nommer la clé host dans Coolify."
-  type        = string
-  default     = "tet-platform-coolify"
-}
-
-variable "host_key_secret_name" {
-  description = "Nom du secret Secret Manager contenant la clé privée SSH host du control plane (créé par infra/platform)."
-  type        = string
-  default     = "tet-platform-coolify-host-ssh-key"
-}
-
-variable "coolify_server_id" {
-  description = "ID Scaleway de la VM du control plane. Change quand la VM est reconstruite (IP et clé d'hôte conservées) : réinstalle alors la sauvegarde d'instance. Valeur de : terraform -chdir=../platform output -raw coolify_server_id"
-  type        = string
-}
-
-variable "coolify_public_ip" {
-  description = "IP publique du control plane. Sert d'hôte de rebond SSH vers les serveurs applicatifs, dont le port 22 n'est pas exposé. Valeur de : terraform -chdir=../platform output -raw coolify_public_ip"
-  type        = string
-}
-
-variable "coolify_sshd_host_public_key" {
-  description = "Clé d'hôte SSH du control plane (ssh-ed25519 …), épinglée par les scripts qui s'y connectent, en direct ou en rebond. Valeur de : terraform -chdir=../platform output -raw coolify_sshd_host_public_key"
+  description = "URL de base de l'API de l'instance Coolify de l'incubateur, suffixe /api/v1 inclus. Relue aussi par scripts/coolify-env.sh."
   type        = string
   validation {
-    condition     = startswith(var.coolify_sshd_host_public_key, "ssh-ed25519 ")
-    error_message = "coolify_sshd_host_public_key doit être une clé publique ssh-ed25519."
+    condition     = startswith(var.coolify_endpoint, "https://") && endswith(var.coolify_endpoint, "/api/v1")
+    error_message = "coolify_endpoint doit être de la forme https://<instance>/api/v1."
   }
 }
 
-variable "bastion_user" {
-  description = "Utilisateur du rebond SSH sur le control plane. L'authentification vers le rebond utilise l'identité par défaut de l'opérateur (agent SSH)."
+variable "coolify_token" {
+  description = "Token API Coolify (format {id}|{token}, scope root, créé dans notre Team sur l'instance de l'incubateur). Fourni via TF_VAR_coolify_token par scripts/coolify-env.sh, jamais en clair dans le repo."
   type        = string
-  default     = "tet-ops"
+  sensitive   = true
 }
 
 # --- Serveurs applicatifs ---
@@ -76,8 +40,8 @@ variable "app_servers" {
 
     Chaque valeur provient des outputs du stack du tier correspondant :
       name                = server_name
-      ssh_host            = server_private_ip (nonprod, preview)
-                            server_ssh_host   (prod : IP publique, VPC séparé)
+      ssh_host            = server_public_ip  (l'instance Coolify de
+                            l'incubateur est hors de nos VPC)
       ssh_key_secret_name = server_ssh_key_secret_name
       sshd_host_public_key = server_sshd_host_public_key
       ssh_key_project_id  = projet du secret, si ce n'est pas project_id
@@ -146,29 +110,6 @@ variable "s3_credentials_revision" {
   description = "Compteur opaque à incrémenter après rotation des clés Object Storage (nouvelle clé dans infra/platform) pour les repousser dans Coolify et sur le control plane (les clés ne sont pas dans le state de ce stack)."
   type        = string
   default     = "1"
-}
-
-# --- Sauvegarde de l'instance Coolify ---
-
-variable "instance_backup_age_recipients" {
-  description = "Clés publiques age (age1…) vers lesquelles chiffrer les backups de l'instance Coolify. Une par opérateur habilité à restaurer ; les clés privées restent hors du serveur et hors du repo (cf. README)."
-  type        = list(string)
-  validation {
-    condition     = length(var.instance_backup_age_recipients) > 0 && alltrue([for r in var.instance_backup_age_recipients : can(regex("^age1[0-9a-z]{58}$", r))])
-    error_message = "Au moins une clé publique age valide (age1 suivi de 58 caractères) est requise."
-  }
-}
-
-variable "instance_backup_on_calendar" {
-  description = "Planification du backup de l'instance, au format OnCalendar systemd (heure du serveur, UTC)."
-  type        = string
-  default     = "*-*-* 03:15:00"
-}
-
-variable "instance_backup_prefix" {
-  description = "Préfixe des objets de backup de l'instance dans le bucket. Doit rester aligné sur coolify_instance_backup_prefix (infra/platform), qui porte la règle de rétention."
-  type        = string
-  default     = "coolify-instance"
 }
 
 # --- Applications ---

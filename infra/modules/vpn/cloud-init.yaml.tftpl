@@ -1,0 +1,83 @@
+#cloud-config
+
+# Passerelle WireGuard des opérateurs. Aucun état : tout vient d'ici, et la VM
+# est remplacée quand ce fichier change (cf. terraform_data.config).
+
+users:
+  - default
+  - name: tet-ops
+    groups:
+      - sudo
+    shell: /bin/bash
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    # jsonencode : une liste YAML valide, même vide.
+    ssh_authorized_keys: ${jsonencode(ssh_authorized_keys)}
+
+ssh_deletekeys: true
+ssh_genkeytypes: [ed25519]
+ssh_keys:
+  ed25519_private: |
+    ${indent(4, sshd_host_private_key)}
+  ed25519_public: ${sshd_host_public_key}
+
+package_update: true
+package_upgrade: true
+
+packages:
+  - wireguard
+  - fail2ban
+
+write_files:
+  - path: /etc/ssh/sshd_config.d/50-tet.conf
+    permissions: "0644"
+    content: |
+      PubkeyAuthentication yes
+      PermitRootLogin no
+      PasswordAuthentication no
+      HostKey /etc/ssh/ssh_host_ed25519_key
+
+  - path: /etc/sysctl.d/99-wireguard.conf
+    permissions: "0644"
+    content: |
+      net.ipv4.ip_forward = 1
+
+  # Le trafic des opérateurs est masqué derrière la passerelle (MASQUERADE,
+  # sans interface de sortie nommée : privée pour le VPC, publique pour l'IP
+  # publique de la prod). Les serveurs et l'ACL ne voient donc que l'IP de la
+  # passerelle. Seules les destinations listées sont relayées. En TCP, le port
+  # source est forcé dans nat_tcp_ports : l'ACL du VPC, sans état, n'accepte les
+  # retours que sur cette plage (un poste macOS sort jusqu'à 65535).
+  - path: /etc/wireguard/wg0.conf
+    permissions: "0600"
+    content: |
+      [Interface]
+      Address = ${gateway_address}
+      ListenPort = ${listen_port}
+      PrivateKey = ${private_key}
+      PostUp = iptables -A FORWARD -o %i -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+      PostDown = iptables -D FORWARD -o %i -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+%{ for cidr in routed_cidrs ~}
+      PostUp = iptables -A FORWARD -i %i -d ${cidr} -j ACCEPT
+      PostDown = iptables -D FORWARD -i %i -d ${cidr} -j ACCEPT
+%{ endfor ~}
+      PostUp = iptables -A FORWARD -i %i -j DROP
+      PostDown = iptables -D FORWARD -i %i -j DROP
+      PostUp = iptables -t nat -A POSTROUTING -s ${tunnel_cidr} ! -o %i -p tcp -j MASQUERADE --to-ports ${nat_tcp_ports}
+      PostDown = iptables -t nat -D POSTROUTING -s ${tunnel_cidr} ! -o %i -p tcp -j MASQUERADE --to-ports ${nat_tcp_ports}
+      PostUp = iptables -t nat -A POSTROUTING -s ${tunnel_cidr} ! -o %i -j MASQUERADE
+      PostDown = iptables -t nat -D POSTROUTING -s ${tunnel_cidr} ! -o %i -j MASQUERADE
+%{ for name, peer in peers ~}
+
+      # ${name}
+      [Peer]
+      PublicKey = ${peer.public_key}
+      AllowedIPs = ${peer.address}/32
+%{ endfor ~}
+
+runcmd:
+  - sshd -t
+  - systemctl restart ssh
+  - sysctl --system
+  - systemctl enable --now wg-quick@wg0
+
+final_message: "Passerelle WireGuard prête en $UPTIME secondes."

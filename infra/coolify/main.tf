@@ -1,54 +1,17 @@
 # Couche « Coolify-as-code » : ce qui vit *dans* Coolify, pas chez Scaleway.
 #
+# L'instance est celle de l'incubateur, partagée : tout ce qui suit vit dans
+# notre Team, pilotée par un token root de la Team. Rien ici ne touche
+# l'instance elle-même (serveur localhost, réglages, sauvegarde) : c'est le
+# travail de son admin.
+#
 # State distinct des stacks d'infrastructure : cette couche suppose Coolify
-# déjà up et joignable. La garder séparée évite que le `plan` de l'infra
-# Scaleway exige que l'application tourne (poule-œuf au premier boot).
+# joignable.
 
 locals {
   # Projet où lire la clé SSH de chaque serveur : la prod a le sien.
   server_key_project_ids = {
     for k, v in var.app_servers : k => coalesce(v.ssh_key_project_id, var.project_id)
-  }
-
-  # Serveur du control plane : Coolify le crée lui-même à l'install pour
-  # piloter sa propre machine. On ne fait que lui substituer une clé stable.
-  host_key_name = "${var.coolify_server_name}-host"
-}
-
-# --- Clé du serveur localhost (control plane) ---
-#
-# Clé privée SSH host, lue depuis Secret Manager (créée par infra/platform,
-# module coolify → tls_private_key + scaleway_secret).
-# `data` est renvoyé en base64 par le provider → on décode pour obtenir la clé
-# OpenSSH telle quelle.
-data "scaleway_secret_version" "host_key" {
-  secret_name = var.host_key_secret_name
-  project_id  = var.project_id
-  revision    = "latest"
-}
-
-resource "coolify_private_key" "host" {
-  name        = local.host_key_name
-  description = "Clé host pilotant le serveur localhost du control plane. Gérée par Terraform (infra/coolify). Privée dans Secret Manager (${var.host_key_secret_name})."
-  private_key = base64decode(data.scaleway_secret_version.host_key.data)
-}
-
-# Le serveur localhost reste hors de coolify_server : Coolify l'a créé à
-# l'install (ip host.docker.internal) et c'est lui qui porte le control plane.
-# On ne fait que lui substituer la clé, par l'API.
-resource "terraform_data" "assign_host_key" {
-  # Re-exécute si la clé change (rotation / recréation).
-  triggers_replace = [coolify_private_key.host.uuid]
-
-  provisioner "local-exec" {
-    command = "${path.module}/../scripts/coolify-upsert-server.sh"
-    environment = {
-      COOLIFY_ENDPOINT = var.coolify_endpoint
-      PRIVATE_KEY_UUID = coolify_private_key.host.uuid
-      SERVER_NAME      = "localhost"
-      MATCH_LOCALHOST  = "true"
-      # COOLIFY_TOKEN est hérité de l'environnement (coolify-env.sh).
-    }
   }
 }
 
@@ -72,9 +35,9 @@ resource "coolify_private_key" "server" {
   private_key = base64decode(data.scaleway_secret_version.server_key[each.key].data)
 }
 
-# nonprod et preview : Coolify les joint sur leur IP privée, seule l'ACL du VPC
-# laisse passer le control plane. prod : VPC séparé, Coolify la joint sur son
-# IP publique, ouverte à la seule IP du control plane.
+# L'instance de l'incubateur est hors de nos VPC : Coolify joint chaque
+# serveur sur son IP publique, dont le 22 n'est ouvert qu'à elle et au VPN des
+# opérateurs (ssh_allowed_ips des stacks de tier).
 #
 # Le provider supprime un serveur en ?force=true, donc avec toutes les
 # ressources qu'il héberge : prevent_destroy. Retirer un tier de app_servers
@@ -114,16 +77,6 @@ resource "coolify_server_docker_cleanup" "app" {
   delete_unused_networks   = false
 }
 
-# Ancienne inscription par script : sortie du state sans rien détruire, son
-# provisioner de destruction appelait l'API de suppression du serveur.
-removed {
-  from = terraform_data.server_registration
-
-  lifecycle {
-    destroy = false
-  }
-}
-
 # docker login ghcr.io sur root@serveur — prérequis pour tirer les images
 # privées. Coolify 4.4 a une API de login registry, mais le provider mettrait
 # le PAT dans le state : le helper monte /root/.docker/config.json en SSH.
@@ -135,8 +88,6 @@ resource "terraform_data" "ghcr_docker_login" {
 
   triggers_replace = [
     each.value.ssh_host,
-    var.coolify_public_ip,
-    var.coolify_sshd_host_public_key,
     each.value.sshd_host_public_key,
     var.ghcr_pull_secret_name,
     var.ghcr_pull_credentials_revision,
@@ -157,11 +108,8 @@ resource "terraform_data" "ghcr_docker_login" {
       SERVER_KEY_SECRET_PROJECT_ID = local.server_key_project_ids[each.key]
       GHCR_PULL_SECRET_NAME        = var.ghcr_pull_secret_name
       SECRET_PROJECT_ID            = var.project_id
-      # Rebond obligatoire par le control plane : nonprod et preview n'ont pas
-      # de SSH public, et celui de la prod n'accepte que l'IP de Coolify.
-      BASTION_HOST     = var.coolify_public_ip
-      BASTION_HOST_KEY = var.coolify_sshd_host_public_key
-      BASTION_USER     = var.bastion_user
+      # Connexion directe à l'IP publique : l'opérateur qui applique doit être
+      # sur le VPN, seule source autorisée avec Coolify.
     }
   }
 }
@@ -203,18 +151,6 @@ resource "coolify_environment" "env" {
   }
 }
 
-# Anciens projets, un par environnement (tet-preprod, tet-staging, tet-prod,
-# tet-preview) : sortis du state sans être détruits. Leurs ressources sont
-# déplacées à la main dans tet (UI : ressource → Settings → Move), puis les
-# projets vides supprimés dans l'UI.
-removed {
-  from = coolify_project.env
-
-  lifecycle {
-    destroy = false
-  }
-}
-
 # --- S3 storage (backups) ---
 #
 # coolify_s3_storage existe, mais garde access key et secret dans le state. On
@@ -230,10 +166,6 @@ resource "terraform_data" "s3_storage" {
     var.s3_credentials_revision,
   ]
 
-  # Après la clé host : Coolify est joignable et le token API a déjà été
-  # exercé. Pas de dépendance sur les serveurs (chemins indépendants).
-  depends_on = [terraform_data.assign_host_key]
-
   provisioner "local-exec" {
     command = "${path.module}/../scripts/coolify-configure-s3-storage.sh"
     environment = {
@@ -246,52 +178,6 @@ resource "terraform_data" "s3_storage" {
       S3_CREDENTIALS_SECRET_NAME = var.s3_credentials_secret_name
       S3_DESCRIPTION             = "Scaleway Object Storage (${var.s3_bucket}). Géré par Terraform (infra/coolify)."
       # COOLIFY_TOKEN hérité de l'environnement (coolify-env.sh).
-    }
-  }
-}
-
-# --- Sauvegarde de l'instance Coolify ---
-#
-# Les backups configurés dans Coolify couvrent les bases des applications, pas
-# Coolify lui-même. Or sa base porte toute la configuration des quatre
-# environnements (applications, variables, secrets) : sans elle, reconstruire
-# le control plane revient à tout ressaisir.
-#
-# Timer systemd sur le control plane : pg_dump de coolify-db + .env (APP_KEY),
-# chiffrés avec age vers les clés publiques des opérateurs, puis envoyés sur le
-# bucket de backups sous instance_backup_prefix. Rétention : règle de cycle de
-# vie du bucket (infra/platform). Restauration : infra/RUNBOOKS.md.
-resource "terraform_data" "instance_backup" {
-  triggers_replace = [
-    filesha256("${path.module}/../scripts/coolify-instance-backup.sh"),
-    filesha256("${path.module}/../scripts/coolify-install-instance-backup.sh"),
-    var.coolify_server_id,
-    var.coolify_public_ip,
-    var.coolify_sshd_host_public_key,
-    var.instance_backup_age_recipients,
-    var.instance_backup_on_calendar,
-    var.instance_backup_prefix,
-    var.s3_bucket,
-    var.s3_endpoint,
-    var.s3_region,
-    var.s3_credentials_secret_name,
-    var.s3_credentials_revision,
-  ]
-
-  provisioner "local-exec" {
-    command = "${path.module}/../scripts/coolify-install-instance-backup.sh"
-    environment = {
-      TARGET_HOST                = var.coolify_public_ip
-      TARGET_HOST_KEY            = var.coolify_sshd_host_public_key
-      HOST_KEY_SECRET_NAME       = var.host_key_secret_name
-      SECRET_PROJECT_ID          = var.project_id
-      S3_ENDPOINT                = var.s3_endpoint
-      S3_BUCKET                  = var.s3_bucket
-      S3_REGION                  = var.s3_region
-      S3_PREFIX                  = var.instance_backup_prefix
-      S3_CREDENTIALS_SECRET_NAME = var.s3_credentials_secret_name
-      AGE_RECIPIENTS             = join("\n", var.instance_backup_age_recipients)
-      BACKUP_ON_CALENDAR         = var.instance_backup_on_calendar
     }
   }
 }

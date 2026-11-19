@@ -15,3 +15,19 @@ coolify_ssh_allowed_ips = [
 coolify_ssh_authorized_keys = [
   "ssh-ed25519 AAAA... prenom.nom@example.org",
 ]
+
+# --- VPN des opérateurs (cf. README « Accès aux serveurs (VPN) ») ---
+
+# Un pair par opérateur : sa clé publique (wg pubkey) et son adresse dans le
+# tunnel (10.99.0.1 est la passerelle).
+vpn_peers = {
+  "prenom.nom" = { public_key = "AAAA...=", address = "10.99.0.2" }
+}
+
+# IP publiques des serveurs applicatifs, relayées par le tunnel :
+#   terraform -chdir=../<tier> output -raw server_public_ip
+vpn_routed_public_ips = ["203.0.113.30", "203.0.113.31", "203.0.113.32"]
+
+vpn_ssh_authorized_keys = [
+  "ssh-ed25519 AAAA... prenom.nom@example.org",
+]

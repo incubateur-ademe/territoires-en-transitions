@@ -1,10 +1,12 @@
 # Copier en terraform.tfvars (gitignoré) et compléter.
-# Ces deux valeurs se récupèrent après l'apply de infra/platform :
+# project_id se récupère après l'apply de infra/platform :
 #   terraform -chdir=../platform output -raw prod_project_id
-#   terraform -chdir=../platform output -raw coolify_public_ip
 
 project_id = "00000000-0000-0000-0000-000000000000"
-coolify_public_ip   = "203.0.113.20"
+
+# IP de sortie de l'instance Coolify de l'incubateur (fournie par son admin),
+# et IP de la passerelle VPN : terraform -chdir=../platform output -raw vpn_public_ip
+ssh_allowed_ips = ["198.51.100.40/32", "203.0.113.21/32"]
 
 server_ssh_authorized_keys = [
   "ssh-ed25519 AAAA... prenom.nom@example.org",

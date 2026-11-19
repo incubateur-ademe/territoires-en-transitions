@@ -3,10 +3,13 @@
 Terraform qui décrit l'infrastructure TET sur Scaleway : la cible de la migration depuis
 Supabase Cloud + Koyeb (cf. [brainstorm de référence](../doc/plans/2026-05-15-001-migration-infra-supabase-koyeb-vers-scaleway-coolify.md)).
 
-**En bref** : une instance **Coolify** unique, sur son propre serveur, déploie les
-applications sur trois serveurs applicatifs (prod, nonprod, preview). Terraform crée les
-serveurs, réseaux et bases, puis configure Coolify lui-même (« Coolify-as-code »). Les
-secrets vivent dans **Secret Manager**, jamais dans le state.
+**En bref** : l'instance **Coolify de l'incubateur**, où nous avons notre propre Team,
+déploie les applications sur trois serveurs applicatifs (prod, nonprod, preview).
+Terraform crée les serveurs, réseaux et bases, puis configure notre Team Coolify
+(« Coolify-as-code »). Les opérateurs passent par un **VPN WireGuard**. Les secrets fournis
+par un humain vivent dans **Secret Manager**. Ceux que Terraform génère ou lit pour les
+injecter sont aussi dans le state : accéder au bucket `tet-tfstate` vaut accès à eux (cf.
+[Secrets à déposer](#secrets-à-déposer-à-la-main)).
 
 Procédures ponctuelles (restauration de base, bascule de prod, restauration de Coolify,
 montée de version) : [`RUNBOOKS.md`](RUNBOOKS.md).
@@ -15,13 +18,14 @@ montée de version) : [`RUNBOOKS.md`](RUNBOOKS.md).
 
 ```mermaid
 flowchart TB
-  ops([Opérateur]) -- "SSH (bastion)" --> coolify
+  ops([Opérateur]) -- "WireGuard" --> vpn
   cd([GitHub Actions CD]) -- "API : tag d'image + deploy" --> coolify
+  coolify["Coolify de l'incubateur<br/>(notre Team)"]
 
   subgraph main["Projet Scaleway tet"]
     subgraph vpc["VPC tet — ACL IPv4 + IPv6 en drop"]
       subgraph ppn["tet-platform-pn 10.0.0.0/24"]
-        coolify["tet-platform-coolify<br/>Coolify + bastion"]
+        vpn["tet-platform-vpn<br/>passerelle WireGuard"]
       end
       subgraph npn["tet-nonprod-pn 10.0.1.0/24"]
         nonprod["tet-nonprod-apps<br/>preprod + staging"]
@@ -50,8 +54,9 @@ flowchart TB
     dbbucket[(tet-database-backups<br/>Object Lock COMPLIANCE)]
   end
 
-  coolify -- "SSH IP privée<br/>(seul flux inter-PN)" --> nonprod & preview
-  coolify -- "SSH IP publique<br/>filtrée sur l'IP Coolify" --> prod
+  coolify -- "SSH IP publique<br/>filtrée (ssh_allowed_ips)" --> nonprod & preview & prod
+  vpn -- "SSH, Postgres, Redis<br/>(IP privées)" --> nonprod & preview
+  vpn -- "SSH IP publique" --> prod
   sm -- "env vars (à l'apply)" --> coolify
   coolify -- "backups" --> bucket
   gha["GitHub Actions"] -- "dump quotidien BDD prod" --> dbbucket
@@ -65,7 +70,7 @@ serveurs tirent leurs images de `ghcr.io`.
 
 | Serveur                | Projet         | Rôle                                                     |
 | ---------------------- | -------------- | -------------------------------------------------------- |
-| `tet-platform-coolify` | `tet`          | Control plane Coolify + bastion SSH. Aucune application. |
+| `tet-platform-vpn`     | `tet`          | Passerelle WireGuard des opérateurs. Aucune application. |
 | `tet-prod-apps`        | **`tet-prod`** | Applications de production.                              |
 | `tet-nonprod-apps`     | `tet`          | Mutualisé : preprod **et** staging.                      |
 | `tet-preview-apps`     | `tet`          | Previews éphémères, une par pull request.                |
@@ -93,14 +98,15 @@ Deux VPC **sans aucun lien** : `tet` (projet principal, un Private Network par t
 prod) et `tet-prod` (un seul Private Network avec serveur, Postgres et Redis de prod).
 `10.0.2.0/24` est libre : staging vit sur le serveur nonprod.
 
-- Dans le VPC `tet`, les ACL (IPv4 **et** IPv6) n'autorisent qu'un flux inter-PN :
-  **TCP/22 du control plane vers nonprod et preview**.
-- La prod n'a **aucune route** depuis ce VPC : Coolify la pilote en SSH sur son IP publique,
-  que son security group n'ouvre qu'à l'IP publique du control plane (`coolify_public_ip`
-  dans `prod/terraform.tfvars`). Une erreur d'ACL côté nonprod ou preview ne peut donc pas
-  ouvrir la prod. Contrepartie : si l'IP de Coolify change, réappliquer `prod`.
-- Le port 22 est fermé publiquement sur nonprod et preview. Les humains passent par le
-  bastion (cf. [Accès aux serveurs](#accès-aux-serveurs-bastion)).
+- **Coolify** (instance de l'incubateur, hors de nos VPC) joint chaque serveur en SSH sur
+  son **IP publique**. Le port 22 n'y est ouvert qu'aux `ssh_allowed_ips` du stack du tier :
+  l'IP de sortie de l'instance de l'incubateur et celle de la passerelle VPN. Si l'une
+  change, réappliquer les trois stacks de tier.
+- **Opérateurs** : par le VPN (cf. [Accès aux serveurs](#accès-aux-serveurs-vpn)). Dans le
+  VPC `tet`, les ACL (IPv4 **et** IPv6) n'autorisent que la passerelle VPN vers nonprod et
+  preview, en TCP 22, 5432 et 6379.
+- La prod n'a **aucune route** depuis ce VPC : le VPN la joint sur son IP publique, comme
+  Coolify. Une erreur d'ACL côté nonprod ou preview ne peut donc pas ouvrir la prod.
 - Le trafic intra-PN (app → Postgres/Redis) n'est pas filtré : il reste en L2.
 
 > Les Security Groups Scaleway ne filtrent que l'**interface publique** ; les ACL du VPC
@@ -110,21 +116,20 @@ prod) et `tet-prod` (un seul Private Network avec serveur, Postgres et Redis de 
 
 Le plan d'adressage est dans `platform/variables.tf` (`network_plan`) et
 `prod/variables.tf`. Nonprod et preview redéclarent l'IP de leur serveur dans
-`server_private_ipv4_address` : **les deux doivent rester alignés**, sinon l'ACL bloque le
-SSH de Coolify.
+`server_private_ipv4_address` : **les deux doivent rester alignés**.
 
 ## Stacks Terraform
 
 ```mermaid
 flowchart LR
   admin([Admin org Scaleway<br/>projets + IAM, à la main]) --> platform
-  platform["platform<br/>VPC tet, ACL, VM Coolify,<br/>bucket de backups"]
+  platform["platform<br/>VPC tet, ACL, passerelle VPN,<br/>buckets de backups"]
   platform --> nonprod & preview & prod
   nonprod["nonprod<br/>VM + RDB/Redis preprod,<br/>bucket Storage, Cockpit"]
   preview["preview<br/>VM"]
   prod["prod<br/>VPC tet-prod, VM,<br/>RDB/Redis prod"]
   nonprod & preview & prod --> coolifys
-  coolifys["coolify<br/>clés, serveurs, environnements,<br/>applications, env vars, S3, backup"]
+  coolifys["coolify<br/>clés, serveurs, environnements,<br/>applications, env vars, S3"]
 ```
 
 Ordre d'application : `platform → nonprod / prod / preview → coolify`.
@@ -132,15 +137,15 @@ Ordre d'application : `platform → nonprod / prod / preview → coolify`.
 - **Un state par stack**, dans le bucket `tet-tfstate`, avec locking natif
   (`use_lockfile`, cf. [Bootstrap](#bootstrap-une-fois)).
 - **Pas de `terraform_remote_state`** : chaque flèche est un report manuel d'outputs
-  (IDs de Private Network, IP de Coolify, IPs des serveurs, noms de secrets) dans le
+  (IDs de Private Network, IP du VPN, IPs des serveurs, noms de secrets) dans le
   `terraform.tfvars` du stack suivant. Les stacks restent découplés.
 - `coolify` a son propre state parce qu'il suppose Coolify **déjà joignable** : le `plan`
   de l'infra Scaleway n'exige pas que l'application tourne.
 
 ```
 infra/
-├── modules/             network, coolify (VM control plane), app-server, postgres,
-│                        redis, cockpit-dashboards
+├── modules/             network, vpn, app-server, postgres, redis, cockpit,
+│                        cockpit-dashboards (coolify : ancien control plane, à retirer)
 ├── platform/            socle transverse
 ├── nonprod/ prod/ preview/   un stack par tier (nonprod porte aussi supabase-api/ et Cockpit)
 ├── coolify/             Coolify-as-code
@@ -153,7 +158,7 @@ infra/
 ### Prérequis
 
 - **Terraform >= 1.10** (pour `use_lockfile`), `scw`, [`aws`](https://www.scaleway.com/en/docs/object-storage/api-cli/object-storage-aws-cli/#how-to-install-the-aws-cli),
-  `jq`, `curl`, `ssh`, `psql`, et `age` pour les backups.
+  `jq`, `curl`, `ssh`, `psql`, et `wireguard-tools` (`wg`, `wg-quick`) pour le VPN.
 - Un compte Scaleway configuré : `brew install scw && scw init`.
 
 ### Prérequis admin (organisation Scaleway)
@@ -204,6 +209,9 @@ aws s3api put-object-lock-configuration \
 
 ### Appliquer un stack
 
+Avant le premier apply de `platform`, déposer `tet-platform-vpn-private-key` (cf.
+[VPN](#mise-en-place-une-fois)) : le stack la lit et échoue sans elle.
+
 ```sh
 # `source`, pas exécuter : sinon les exports se perdent dans le sous-shell
 source infra/scripts/tf-env.sh
@@ -223,16 +231,22 @@ Pour un stack applicatif, reporter les valeurs de `platform` dans son `terraform
 
 ```sh
 terraform -chdir=platform output -json private_network_ids | jq -r .nonprod
-terraform -chdir=platform output -raw coolify_public_ip
+terraform -chdir=platform output -raw vpn_public_ip   # + IP de l'instance Coolify → ssh_allowed_ips
 ```
+
+Une fois les stacks applicatifs appliqués, reporter leur `server_public_ip` dans
+`vpn_routed_public_ips` de `platform`, réappliquer `platform`, puis mettre à jour
+`AllowedIPs` dans la configuration WireGuard de chaque opérateur
+(`vpn_client_allowed_ips`) : sans cela, le tunnel ne relaie pas les IP publiques des
+serveurs.
 
 Après le premier apply d'un stack applicatif, récupérer les mots de passe générés
 (`terraform output -raw pg_admin_password`, `redis_admin_password`,
 `supabase_auth_admin_password`) et les ranger dans Secret Manager.
 
 Pour le stack `coolify`, sourcer en plus `scripts/coolify-env.sh` (`COOLIFY_ENDPOINT`,
-`COOLIFY_TOKEN`), après avoir [démarré Coolify](#premier-démarrage-de-coolify) et
-[déposé ses secrets](#secrets-à-déposer-à-la-main).
+`COOLIFY_TOKEN`), après avoir [créé le token](#instance-coolify-de-lincubateur) et
+[déposé ses secrets](#secrets-à-déposer-à-la-main), et se connecter au VPN.
 
 ### Hygiène
 
@@ -247,23 +261,69 @@ tflint --recursive
 
 Le `.terraform.lock.hcl` de chaque stack est versionné : il fige les versions des providers.
 
-## Accès aux serveurs (bastion)
+## Accès aux serveurs (VPN)
 
-Le control plane est le seul chemin vers les serveurs applicatifs. Chaque serveur a **sa
-propre clé SSH** (`tet-<tier>-server-ssh-key` dans Secret Manager) : révoquer un serveur
-compromis ne casse pas les autres.
+Les opérateurs passent par une passerelle **WireGuard** (`tet-platform-vpn`, module
+[`modules/vpn`](modules/vpn)). Le tunnel relaie le VPC `tet` (SSH, Postgres et Redis de
+nonprod et preview, filtrés par l'ACL) et les IP publiques des serveurs (`vpn_routed_public_ips`),
+dont la prod. La passerelle masque ses clients derrière son IP : les serveurs, l'ACL et
+les security groups ne voient qu'elle.
 
-Les clés d'hôte SSH sont générées par Terraform et installées par cloud-init : les scripts
-de `infra/coolify` les vérifient en mode strict. Les épingler une fois dans `known_hosts`
-plutôt que d'accepter la première clé présentée :
+La passerelle n'a pas d'état : changer un pair ou une route **remplace la VM** (une à deux
+minutes de coupure du tunnel). Son IP publique, sa clé WireGuard (Secret Manager) et sa clé
+d'hôte SSH survivent au remplacement : les postes n'ont rien à changer.
+
+Chaque serveur a **sa propre clé SSH root** (`tet-<tier>-server-ssh-key` dans Secret
+Manager) : révoquer un serveur compromis ne casse pas les autres.
+
+### Mise en place (une fois)
+
+```sh
+# Clé de la passerelle, déposée à la main : elle ne doit pas changer avec la VM
+wg genkey | scw secret version create \
+  "$(scw secret secret create name=tet-platform-vpn-private-key project-id=<projet-principal> -o json | jq -r .id)" \
+  data=@/dev/stdin
+```
+
+### Ajouter un opérateur
+
+1. Sur son poste : `(umask 077 && wg genkey | tee tet.key | wg pubkey)`. `tet.key` est sa
+   clé privée, lisible par lui seul ; la ligne affichée est la publique.
+2. Dans `platform/terraform.tfvars`, ajouter
+   `"<prenom.nom>" = { public_key = "<publique>", address = "10.99.0.<n>" }` à `vpn_peers`
+   et, s'il doit administrer la passerelle (`ssh tet-ops@10.99.0.1`), sa clé SSH publique à
+   `vpn_ssh_authorized_keys`. Appliquer `platform`.
+3. Sa configuration (`/etc/wireguard/tet.conf`, ou l'app WireGuard) :
+
+```ini
+[Interface]
+PrivateKey = <contenu de tet.key>
+Address = 10.99.0.<n>/32
+
+[Peer]
+# scw secret version access-by-path secret-name=tet-platform-vpn-private-key secret-path=/ \
+#   revision=latest -o json | jq -r .data | base64 -d | wg pubkey
+PublicKey = <publique de la passerelle>
+Endpoint = <terraform -chdir=infra/platform output -raw vpn_endpoint>
+AllowedIPs = <terraform -chdir=infra/platform output -raw vpn_client_allowed_ips>
+PersistentKeepalive = 25
+```
+
+Retirer un opérateur : supprimer son entrée de `vpn_peers` et, s'il administrait la
+passerelle, sa clé de `vpn_ssh_authorized_keys` et toute IP de secours qui lui est propre
+dans `vpn_ssh_allowed_ips`. Appliquer `platform`.
+
+### Se connecter
+
+Épingler une fois les clés d'hôte, générées par Terraform, plutôt que d'accepter la
+première venue. Commandes à lancer depuis la racine du dépôt :
 
 ```sh
 {
-  echo "$(terraform -chdir=infra/platform output -raw coolify_public_ip) $(terraform -chdir=infra/platform output -raw coolify_sshd_host_public_key)"
-  for t in nonprod preview; do
-    echo "$(terraform -chdir=infra/$t output -raw server_private_ip) $(terraform -chdir=infra/$t output -raw server_sshd_host_public_key)"
+  for t in nonprod preview prod; do
+    echo "$(terraform -chdir=infra/$t output -raw server_public_ip) $(terraform -chdir=infra/$t output -raw server_sshd_host_public_key)"
   done
-  echo "$(terraform -chdir=infra/prod output -raw server_ssh_host) $(terraform -chdir=infra/prod output -raw server_sshd_host_public_key)"
+  echo "$(terraform -chdir=infra/platform output -raw vpn_gateway_tunnel_ip) $(terraform -chdir=infra/platform output -raw vpn_sshd_host_public_key)"
 } >> ~/.ssh/known_hosts
 ```
 
@@ -271,63 +331,61 @@ Un « REMOTE HOST IDENTIFICATION HAS CHANGED » n'est jamais anodin : soit le se
 recréé (mettre à jour la ligne), soit la connexion est interceptée.
 
 ```sh
-# Bastion
-ssh tet-ops@$(terraform -chdir=infra/platform output -raw coolify_public_ip)
+wg-quick up tet
 
-# Rebond vers nonprod (même chose pour preview), en root, avec sa clé
+# Un serveur, en root avec sa clé (prod : ajouter project-id=<projet tet-prod>)
 scw secret version access-by-path \
   secret-name="$(terraform -chdir=infra/nonprod output -raw server_ssh_key_secret_name)" \
   secret-path=/ revision=latest -o json | jq -r '.data' | base64 -d > /tmp/srv_key
 chmod 600 /tmp/srv_key
-ssh -J tet-ops@<ip-coolify> -i /tmp/srv_key \
-  root@$(terraform -chdir=infra/nonprod output -raw server_private_ip)
+ssh -i /tmp/srv_key root@$(terraform -chdir=infra/nonprod output -raw server_public_ip)
 
-# Prod : clé lue dans le projet tet-prod, rebond vers l'IP publique
-scw secret version access-by-path project-id="$(terraform -chdir=infra/platform output -raw prod_project_id)" \
-  secret-name="$(terraform -chdir=infra/prod output -raw server_ssh_key_secret_name)" \
-  secret-path=/ revision=latest -o json | jq -r '.data' | base64 -d > /tmp/prod_key
-chmod 600 /tmp/prod_key
-ssh -J tet-ops@<ip-coolify> -i /tmp/prod_key \
-  root@$(terraform -chdir=infra/prod output -raw server_ssh_host)
+# Postgres preprod, en direct sur son IP privée
+psql "host=$(terraform -chdir=infra/nonprod output -raw pg_private_endpoint_ip) …"
+
+# La passerelle elle-même
+ssh tet-ops@10.99.0.1
 ```
+
+Tunnel tombé : `vpn_ssh_allowed_ips` ouvre en secours le 22 public de la passerelle à une
+IP donnée, sinon console Scaleway.
 
 Contrôle d'isolation, depuis le serveur nonprod : `nc -zv -w3 10.0.3.10 22` et
 `nc -zv -w3 <ip-publique-prod> 22` doivent tous deux finir en timeout.
 
 ## Coolify
 
-### Premier démarrage de Coolify
+### Instance Coolify de l'incubateur
 
-Le port 8000 n'est **jamais** ouvert : le dashboard est servi en HTTPS par le Traefik de
-Coolify, une fois son FQDN configuré.
+Nous n'administrons pas l'instance : son admin en gère la version, les réglages, le proxy
+de son propre serveur et la sauvegarde. Nous avons une **Team** dédiée, dont nous sommes
+admins, et tout ce que décrit le stack `coolify` vit dans cette Team.
 
-1. Poser chez Cloudflare un A `coolify.territoiresentransitions.fr` vers
-   `terraform -chdir=infra/platform output -raw coolify_public_ip` (DNS only).
-2. Premier accès par tunnel :
-   `ssh -L 8000:localhost:8000 -L 6001:localhost:6001 -L 6002:localhost:6002 tet-ops@<ip-coolify>`
-   puis http://localhost:8000 (6001/6002 : temps réel et terminal).
-3. Créer le compte admin, puis **Servers → localhost** (**Validate & configure** si besoin)
-   → **Proxy** → **Traefik** → **Start Proxy**. Sans ce proxy, rien n'écoute sur 80/443.
-4. **Settings → Instance Domain** → le FQDN. Coolify émet son certificat Let's Encrypt
-   (HTTP-01 sur le port 80).
-5. **Security → API Tokens** → créer un token **scope `root`** et le ranger dans Secret
-   Manager (cf. ci-dessous).
+1. Dans notre Team, **Security → API Tokens** → créer un token **scope `root`** (limité à
+   la Team) et le ranger dans Secret Manager (cf. ci-dessous).
+2. `coolify_endpoint` dans `coolify/terraform.tfvars` : `https://<instance>/api/v1`.
+3. L'IP de sortie de l'instance, fournie par son admin, va dans `ssh_allowed_ips` des
+   stacks `nonprod`, `preview` et `prod`. Elle doit rester fixe.
 
-Coolify pilote son propre serveur (`localhost`) en SSH. La clé qu'il génère lui-même est
-régénérée à chaque update ou réinstall (« Permission denied (publickey) ») : Terraform pose
-donc une clé à nous (`tet-platform-coolify-host-ssh-key`), que le stack `coolify` assigne au
-serveur `localhost` ([`scripts/coolify-upsert-server.sh`](scripts/coolify-upsert-server.sh)).
-L'auto-update est désactivé pour la même raison, et la version est figée
-(`coolify_version`) : montée de version dans les [runbooks](RUNBOOKS.md#montée-de-version-de-coolify).
+Les admins de l'instance peuvent lire ce que contient notre Team, clés SSH root et
+variables d'environnement comprises. C'est le prix de la mutualisation, à garder en tête
+avant d'y confier un secret qui ne sert pas aux applications.
 
 ### Secrets à déposer à la main
 
-Ces secrets ne sont jamais créés par Terraform avec leur valeur : ils n'entrent pas dans le
-state. Tous dans le projet principal.
+Ces secrets ne sont jamais créés par Terraform avec leur valeur. Tous dans le projet
+principal. `tet-platform-vpn-private-key` passe pourtant en clair par le state de
+`platform`, qui la lit pour l'injecter dans le `user_data` de la passerelle.
+
+Le state contient aussi tout ce que Terraform génère : clés SSH root et clés d'hôte des
+serveurs et de la passerelle (`tls_private_key`), mots de passe des bases
+(`random_password`). Les droits sur `tet-tfstate` sont donc ceux d'un accès root aux
+serveurs : à réserver aux opérateurs Terraform.
 
 | Secret                                | Format                    | Contenu                                                                                     |
 | ------------------------------------- | ------------------------- | ------------------------------------------------------------------------------------------- |
-| `tet-platform-coolify-api-token`      | `<id>\|<token>`           | Token API Coolify `root` (créé dans l'UI)                                                   |
+| `tet-platform-coolify-api-token`      | `<id>\|<token>`           | Token API `root` de notre Team Coolify (créé dans l'UI)                                     |
+| `tet-platform-vpn-private-key`        | sortie de `wg genkey`     | Clé privée WireGuard de la passerelle (cf. [VPN](#mise-en-place-une-fois))                  |
 | `tet-platform-ghcr-pull`              | `<github-username>\|<pat>` | PAT GitHub **classic**, scope `read:packages` seul, idéalement sur un machine user           |
 | `tet-platform-coolify-s3-credentials` | `<access_key>\|<secret_key>` | Clé de l'application IAM `tet-coolify-backups` (créée par l'admin). Coquille créée par `platform` |
 
@@ -344,7 +402,7 @@ printf '%s|%s' '<partie-1>' '<partie-2>' | scw secret version create "$_id" data
   `curl -sI -H "Authorization: token <pat>" https://api.github.com/user | grep -i x-oauth-scopes`.
   Coolify n'a pas d'API pour ça :
   [`scripts/coolify-ghcr-docker-login.sh`](scripts/coolify-ghcr-docker-login.sh) écrit
-  `/root/.docker/config.json` sur chaque serveur, via le bastion.
+  `/root/.docker/config.json` sur chaque serveur, en SSH : appliquer `coolify` connecté au VPN.
 - **Rotation** : déposer une nouvelle version du secret, incrémenter
   `ghcr_pull_credentials_revision` ou `s3_credentials_revision` dans
   `coolify/terraform.tfvars`, appliquer `coolify`. Pour S3, l'admin supprime ensuite
@@ -363,7 +421,6 @@ et, là où il ne convient pas, des scripts d'API dans `scripts/` :
 | Variables d'environnement                           | script `coolify-push-env.sh`                                |
 | S3 storage (cible des backups Coolify)              | script `coolify-configure-s3-storage.sh`                    |
 | Login GHCR sur les serveurs                         | script `coolify-ghcr-docker-login.sh`                       |
-| Backup de l'instance Coolify                        | script `coolify-install-instance-backup.sh` (timer systemd) |
 
 Env vars, S3 et GHCR restent en scripts par choix : le provider stocke tout secret qu'il
 gère dans le state (aucun attribut write-only), et son API « bulk » d'env vars ignore
@@ -415,7 +472,7 @@ Mise en service d'une entrée :
 2. Premier déploiement : bouton **Deploy** dans Coolify, ou
    `APP_ID=<env>/<app> infra/scripts/coolify-deploy.sh` (sans `IMAGE_TAG` : tête de branche).
 3. Redéploiement au push : dans le dépôt GitHub, **Settings → Webhooks** →
-   `https://coolify.territoiresentransitions.fr/webhooks/source/github/events/manual`,
+   `https://<instance>/webhooks/source/github/events/manual`,
    `application/json`, événement *push*, avec le secret de l'onglet **Webhooks** de
    l'application dans Coolify. Retirer ensuite l'auto-deploy du service Koyeb.
 4. Domaine hors `*.preprod` : le déclarer d'abord en `http://<nom>`. Avec `https://`,
@@ -461,34 +518,15 @@ jq -c . sa.json | infra/scripts/coolify-env-secret-set.sh preprod gcloud-service
 - **Ajouter une clé** : une ligne dans le manifeste. Pour un secret, l'`apply` crée sa
   coquille puis échoue en la signalant vide : déposer la valeur, réappliquer.
 
-### Sauvegarde de l'instance Coolify
+### Sauvegarde
 
-Les backups configurés dans Coolify couvrent les bases des applications, pas Coolify
-lui-même, dont la base porte pourtant toute la configuration (applications, variables,
-secrets). L'`apply` de `coolify` installe donc sur le control plane un timer quotidien
-(`tet-coolify-backup.timer`) qui `pg_dump` `coolify-db`, y joint `/data/coolify/source/.env`
-(l'`APP_KEY`, sans laquelle la base est illisible), chiffre le tout avec
-[age](https://age-encryption.org) vers les clés des opérateurs et l'envoie sous
-`coolify-instance/` dans le bucket de backups (rétention 30 jours, cycle de vie dans
-`platform`).
+La sauvegarde de l'instance revient à son admin. Notre reprise ne dépend pas d'elle : tout
+ce que contient notre Team se recrée par `terraform apply` (serveurs, applications,
+variables lues dans Secret Manager). Restent à refaire à la main : les webhooks GitHub des
+applications Git et les flags de métriques Traefik de chaque serveur.
 
-Le bucket `tet-coolify-backups` est sous **Object Lock COMPLIANCE** (14 jours) : personne ne
-peut supprimer une version avant l'échéance. Le serveur ne détient aucune clé privée age.
-
-Ajouter un opérateur :
-
-```sh
-age-keygen -o ~/tet-coolify-backup.key   # affiche la clé publique (age1…)
-```
-
-Ranger la clé privée dans le gestionnaire de mots de passe de l'équipe, **hors** Scaleway,
-puis ajouter la clé publique à `instance_backup_age_recipients` dans
-`coolify/terraform.tfvars` et appliquer. Les anciens backups restent lisibles par les seules
-clés de l'époque. Le premier `apply` lance un backup immédiat et échoue si la chaîne est
-cassée. Suivi : `sudo systemctl list-timers tet-coolify-backup.timer` et
-`sudo journalctl -u tet-coolify-backup.service -n 20` sur le control plane.
-
-Restauration : [runbook](RUNBOOKS.md#restauration-de-linstance-coolify).
+Les bases des applications sont sauvegardées par Coolify dans `tet-coolify-backups` (S3
+storage de notre Team), sous **Object Lock COMPLIANCE** (14 jours).
 
 ## Backups de la BDD de prod
 
@@ -527,7 +565,6 @@ certificats en HTTP-01) :
 
 | Nom                                            | Type | Cible                                                    |
 | ---------------------------------------------- | ---- | -------------------------------------------------------- |
-| `coolify`                                      | A    | `terraform -chdir=infra/platform output -raw coolify_public_ip` |
 | `preprod`, `*.preprod`, `staging`, `*.staging` | A    | `terraform -chdir=infra/nonprod output -raw server_public_ip`   |
 | `preview`, `*.preview`                         | A    | `terraform -chdir=infra/preview output -raw server_public_ip`   |
 
@@ -616,13 +653,15 @@ Coolify, reconfigure le proxy : revérifier ensuite les flags ci-dessus.
 
 ## Décisions actées
 
-- **Instance Coolify dédiée et transverse** : le control plane ne partage ni CPU, ni disque,
-  ni cycle de vie avec les applications.
+- **Instance Coolify de l'incubateur**, dans une Team dédiée : pas de control plane à
+  exploiter. Contrepartie : version et sauvegarde de l'instance hors de nos mains, et ses
+  admins voient nos secrets.
 - **Production dans un projet séparé**, VPC propre, aucun lien réseau : prod injoignable
   depuis nonprod et preview par construction, pas par filtrage. Pas de VPC Peering : il
   réintroduirait un chemin à filtrer par quatre ACL (IPv4/IPv6 des deux côtés).
-- **SSH** : privé uniquement pour nonprod et preview, IP publique filtrée pour la prod ; le
-  control plane sert de bastion dans tous les cas.
+- **SSH** : IP publique filtrée sur l'instance Coolify et la passerelle VPN. Les opérateurs
+  passent par **WireGuard** auto-hébergé plutôt que par un bastion SSH (accès direct aux
+  bases privées) ou Tailscale (plan de contrôle chez un tiers).
 - **Backups dans un projet dédié**, bucket sous Object Lock COMPLIANCE : la clé des backups
   ne voit que ce projet.
 - **Preprod iso-prod sur du managé**, staging et preview conteneurisés.

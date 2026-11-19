@@ -42,13 +42,13 @@ variable "private_ipv4_address" {
 }
 
 variable "ssh_allowed_ips" {
-  description = "CIDR autorisés à joindre le port 22 sur l'IP publique. Laisser vide (défaut) : l'accès passe par le bastion Coolify en IP privée."
+  description = "CIDR autorisés à joindre le port 22 sur l'IP publique. En pratique : l'instance Coolify de l'incubateur et la passerelle VPN des opérateurs."
   type        = list(string)
   default     = []
 }
 
 variable "ssh_authorized_keys" {
-  description = "Clés publiques SSH autorisées sur l'utilisateur tet-ops. Utile pour un accès opérateur via le bastion ; l'accès root est réservé à Coolify."
+  description = "Clés publiques SSH autorisées sur l'utilisateur tet-ops. Utile pour un accès opérateur par le VPN ; l'accès root est réservé à Coolify."
   type        = list(string)
   default     = []
 }

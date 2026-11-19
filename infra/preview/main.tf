@@ -19,8 +19,9 @@ module "app_server" {
   private_network_id   = var.private_network_id
   private_ipv4_address = var.server_private_ipv4_address
 
-  # Port 22 fermé sur l'IP publique : l'accès passe par le bastion Coolify.
-  ssh_allowed_ips     = []
+  # Port 22 ouvert à la seule instance Coolify de l'incubateur et à la
+  # passerelle VPN des opérateurs.
+  ssh_allowed_ips     = var.ssh_allowed_ips
   ssh_authorized_keys = var.server_ssh_authorized_keys
 
   # Chaque PR tire de nouvelles images et laisse derrière elle des couches

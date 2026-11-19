@@ -1,8 +1,3 @@
-output "host_private_key_uuid" {
-  description = "UUID de la clé host enregistrée dans Coolify pour le serveur localhost du control plane."
-  value       = coolify_private_key.host.uuid
-}
-
 output "server_private_key_uuids" {
   description = "UUID des clés root enregistrées dans Coolify, indexés par tier."
   value       = { for k, v in coolify_private_key.server : k => v.uuid }

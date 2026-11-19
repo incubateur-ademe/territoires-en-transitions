@@ -21,7 +21,7 @@ output "server_private_ip" {
 }
 
 output "server_ssh_host" {
-  description = "Adresse SSH du serveur de production pour Coolify : son IP publique, ouverte à la seule IP du control plane. Valeur ssh_host de app_servers.prod dans infra/coolify."
+  description = "Adresse SSH du serveur de production pour Coolify : son IP publique, ouverte à l'instance Coolify et au VPN (ssh_allowed_ips). Valeur ssh_host de app_servers.prod dans infra/coolify."
   value       = module.app_server.public_ip
 }
 

@@ -20,7 +20,39 @@ output "network_plan" {
   value       = var.network_plan
 }
 
-# --- Control plane Coolify ---
+# --- Passerelle VPN ---
+
+output "vpn_public_ip" {
+  description = "IP publique de la passerelle VPN. À ajouter à ssh_allowed_ips des stacks nonprod, preview et prod."
+  value       = module.vpn.public_ip
+}
+
+output "vpn_private_ip" {
+  description = "IP privée de la passerelle VPN."
+  value       = module.vpn.private_ip
+}
+
+output "vpn_endpoint" {
+  description = "Endpoint WireGuard des postes opérateurs."
+  value       = module.vpn.endpoint
+}
+
+output "vpn_client_allowed_ips" {
+  description = "AllowedIPs de la configuration WireGuard des postes opérateurs."
+  value       = module.vpn.client_allowed_ips
+}
+
+output "vpn_gateway_tunnel_ip" {
+  description = "Adresse de la passerelle dans le tunnel : cible SSH (tet-ops) pour l'administrer."
+  value       = cidrhost(var.vpn_tunnel_cidr, 1)
+}
+
+output "vpn_sshd_host_public_key" {
+  description = "Clé d'hôte SSH de la passerelle, à épingler dans known_hosts."
+  value       = module.vpn.sshd_host_public_key
+}
+
+# --- Control plane Coolify (ancien, à retirer après la bascule) ---
 
 output "coolify_server_id" {
   description = "ID Scaleway de la VM Coolify."
