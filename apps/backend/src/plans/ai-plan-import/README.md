@@ -391,7 +391,11 @@ Ce que la mise en page trompe, et comment la segmentation s'en garde :
   annexes n'ont pas d'action à donner. Sans partie de ce type, tout est lu.
 - Avec des fiches, un extrait classé `structure` (sommaire, tableau
   récapitulatif) sert au squelette mais n'est pas structuré : il redit ce que
-  les fiches détaillent.
+  les fiches détaillent. Sauf si les tableaux du document numérotent nettement
+  plus d'actions qu'il n'a de fiches (51 lignes « Action à engager 31 : … »
+  pour 24 fiches) : ils portent alors des actions que nulle fiche ne
+  détaille, et restent lus quoi qu'en dise le tri, qui n'en voit que le début
+  et la fin.
 - Après la structuration, les actions de même titre (à la casse, aux accents,
   à la ponctuation et à la numérotation près : « ACTION 3 - » et « 2.1.3 »)
   sont fondues sur tout le document, sur la version la plus complète. Deux
