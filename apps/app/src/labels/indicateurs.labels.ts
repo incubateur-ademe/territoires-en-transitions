@@ -15,6 +15,53 @@ export const indicateursLabels = {
     `Supprimer la période ${periode}`,
   indicateurValeurAbsente: 'Non renseigné',
   indicateurDonneeIndisponible: 'Donnée indisponible',
+  indicateurSousIndicateursTotal: 'Total',
+  indicateurSousIndicateursTotalSomme: 'Total (somme)',
+  indicateurSousIndicateursObjectifDe: ({ label }: { label: string }) =>
+    `Objectif – ${label}`,
+  indicateurValeurMasquee: 'Valeur masquée',
+  indicateurTotalIncomplet: ({
+    filledCount,
+    expectedCount,
+  }: {
+    filledCount: number;
+    expectedCount: number;
+  }) => `incomplet (${filledCount}/${expectedCount})`,
+  indicateurSousIndicateursValeurs: 'Valeurs des sous-indicateurs',
+  indicateurSousIndicateursChargement: 'Chargement des sous-indicateurs',
+  indicateurSousIndicateursErreur: 'Impossible de charger les sous-indicateurs',
+  indicateurSousIndicateursGraphiqueAlternativeTableau:
+    'Les mêmes valeurs sont dans le tableau sous le graphique',
+  indicateurSeparateurAncetres: '>',
+  indicateurCumulSousIndicateurs: 'Cumul des sous-indicateurs',
+  indicateurResultatRecentModePrive: 'Résultat récent en mode privé',
+  indicateurResultatRecentModePriveInfo:
+    "Si le mode privé est activé, le résultat le plus récent n'est plus consultable par les personnes n’étant pas membres de votre collectivité. Seuls les autres résultats restent accessibles pour tous les utilisateurs et la valeur privée reste consultable par l’ADEME et le service support de la plateforme.",
+  indicateurCreerSousIndicateur: 'Créer un sous-indicateur',
+  indicateurSousIndicateurRenommer: ({ label }: { label: string }) =>
+    `Renommer ${label}`,
+  indicateurSousIndicateurNom: 'Nom du sous-indicateur',
+  indicateurSousIndicateurOuvrir: ({ label }: { label: string }) =>
+    `Ouvrir ${label}`,
+  indicateurSousIndicateurRenommeErreur:
+    "Le sous-indicateur n'a pas pu être renommé",
+  indicateurSousIndicateurNomProvisoire: ({ numero }: { numero: number }) =>
+    `Sous-indicateur ${numero}`,
+  indicateurSousIndicateurCree: 'Le sous-indicateur a été créé',
+  indicateurSousIndicateurCreeErreur: "Le sous-indicateur n'a pas pu être créé",
+  indicateurSousIndicateurDissocier: ({ label }: { label: string }) =>
+    `Dissocier ${label}`,
+  indicateurSousIndicateurDissocierInfo:
+    "Ce sous-indicateur sera dissocié de l'indicateur parent. Ses données et son unité sont conservées.",
+  indicateurSousIndicateurDissocie: 'Le sous-indicateur a été dissocié',
+  indicateurSousIndicateurDissocieErreur:
+    "Le sous-indicateur n'a pas pu être dissocié",
+  indicateurSousIndicateurNiveau: ({ niveau }: { niveau: number }) =>
+    `niveau ${niveau}`,
+  indicateurSousIndicateurDeplier: ({ label }: { label: string }) =>
+    `Déplier ${label}`,
+  indicateurSousIndicateurReplier: ({ label }: { label: string }) =>
+    `Replier ${label}`,
   indicateurTableDefilement: 'Défilement horizontal du tableau',
   indicateurOptions: "Plus d'options",
   indicateurTelechargerExcel: "Télécharger l'indicateur (Excel)",
@@ -111,6 +158,10 @@ export const indicateursLabels = {
     `des données de la collectivité pour la période ${periodeLabel}`,
   indicateurSuppressionPeriodeAttention: (periodeLabel: string) =>
     `Attention, les données existantes pour la période ${periodeLabel} seront supprimées.`,
+  indicateurPeriodeSupprimee: (periodeLabel: string) =>
+    `La période ${periodeLabel} a été supprimée`,
+  indicateurPeriodeSuppressionErreur: (periodeLabel: string) =>
+    `La période ${periodeLabel} n'a pas pu être supprimée`,
   indicateurSourcePeriodicite: (label: string, cadence: string) =>
     `${label} · ${cadence}`,
   indicateurSourceVersion: (id: number) => `Source ${id}`,

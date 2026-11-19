@@ -4,41 +4,24 @@ import {
   type IndicateurPeriode,
 } from '@tet/domain/indicateurs';
 import { Button, TableCell, TableHeaderCell } from '@tet/ui';
-import type { IndicateurPeriodeData } from '../data/prepare-indicateur-periode-data';
-import { ADD_PERIODE_CELL_CLASSNAME } from './indicateur-valeurs-table.styles';
+import { ADD_PERIODE_CELL_CLASSNAME } from './periodes-table.styles';
+import type { PeriodeTableCommentaires } from './periodes-table.types';
 
 type Props = {
   periodes: readonly IndicateurPeriode[];
-  resultats: IndicateurPeriodeData['donneesCollectivite'];
-  objectifs: IndicateurPeriodeData['donneesCollectivite'];
-  readonly?: boolean;
-  periodicite: IndicateurPeriode['periodicite'];
+  commentaires: PeriodeTableCommentaires;
   showAddPeriodeColumn: boolean;
-  onComment: (periode: IndicateurPeriode) => void;
 };
 
-export const IndicateurValeursTableCommentairesFooter = ({
+export const PeriodesTableCommentairesFooter = ({
   periodes,
-  resultats,
-  objectifs,
-  readonly,
-  periodicite,
+  commentaires: { isReadonly, countOf, canComment, onComment },
   showAddPeriodeColumn,
-  onComment,
 }: Props) => {
-  if (periodes.length === 0 || (!resultats && !objectifs)) return null;
+  if (periodes.length === 0) return null;
 
-  const commentCounts = periodes.map(
-    (periode) =>
-      [resultats, objectifs].filter((source) =>
-        source?.valeurs.some(
-          (value) =>
-            IndicateurPeriodes.key(value.periode) ===
-              IndicateurPeriodes.key(periode) && value.commentaire
-        )
-      ).length
-  );
-  if (readonly && !commentCounts.some((count) => count > 0)) return null;
+  const commentCounts = periodes.map(countOf);
+  if (isReadonly && !commentCounts.some((count) => count > 0)) return null;
 
   return (
     <tfoot>
@@ -56,8 +39,7 @@ export const IndicateurValeursTableCommentairesFooter = ({
               key={IndicateurPeriodes.key(periode)}
               className="border-r border-primary-4 text-center"
             >
-              {((!readonly && periode.periodicite === periodicite) ||
-                commentCount > 0) && (
+              {(canComment(periode) || commentCount > 0) && (
                 <Button
                   icon="question-answer-line"
                   variant="outlined"
