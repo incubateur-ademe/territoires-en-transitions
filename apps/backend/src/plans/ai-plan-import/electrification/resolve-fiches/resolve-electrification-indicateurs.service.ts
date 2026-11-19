@@ -22,6 +22,8 @@ import {
 
 @Injectable()
 export class ResolveElectrificationIndicateursService {
+  private static readonly REFERENCE_FIELD_LABEL =
+    electrificationDocumentTemplate.fiches.indicateurs.columns[0];
   private readonly logger = new Logger(
     ResolveElectrificationIndicateursService.name
   );
@@ -132,7 +134,10 @@ export class ResolveElectrificationIndicateursService {
         return failure(
           result.error.map((error) => ({
             ...error,
-            location: input.source.location,
+            location: Locations.field(
+              input.source.location,
+              ResolveElectrificationIndicateursService.REFERENCE_FIELD_LABEL
+            ),
           }))
         );
       return success({

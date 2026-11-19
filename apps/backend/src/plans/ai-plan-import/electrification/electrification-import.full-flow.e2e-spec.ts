@@ -632,6 +632,69 @@ describe(
       }
     );
 
+    test.each([
+      {
+        kind: 'action',
+        path: 'actions/2/details',
+        location:
+          'Action "Action synthétique" > Code de l\'action de référence ou URL de l\'action (facultatif)',
+      },
+      {
+        kind: 'indicateur',
+        path: 'indicateurs/perso/2',
+        location:
+          'Action "Action synthétique" > Indicateur "Consommation (MWh)" > Code ou URL de l\'indicateur (facultatif)',
+      },
+    ])(
+      "localise le lien d'un autre environnement dans le rapport : $kind",
+      async ({ kind, path, location }) => {
+        const reference = `https://preprod-app.territoiresentransitions.fr/collectivite/${collectiviteId()}/${path}`;
+        const jobId = await enqueue(
+          kind === 'action'
+            ? {
+                fields: {
+                  "Code de l'action de référence ou URL de l'action (facultatif)":
+                    reference,
+                },
+              }
+            : {
+                indicateurs: [
+                  {
+                    reference,
+                    titre: 'Consommation (MWh)',
+                    resultat: '1 MWh (2025)',
+                  },
+                ],
+              }
+        );
+
+        await worker.generate(jobId);
+
+        expect(await status(jobId)).toMatchObject({
+          status: 'failed',
+          createdPlanId: null,
+          report: {
+            issues: [
+              {
+                kind: 'document-error',
+                code: 'IMPORT_REFERENCE_ORIGIN_MISMATCH',
+                location,
+                message: expect.stringContaining(reference),
+              },
+            ],
+          },
+        });
+        expect(await readAxes()).toEqual([]);
+        expect(await readFiches()).toEqual([]);
+        expect(await readValeurs()).toEqual([]);
+        expect(llm.complete).not.toHaveBeenCalled();
+        expect(llm.chat).not.toHaveBeenCalled();
+        expect(
+          JSON.stringify(vi.mocked(app.get(TrackingService).capture).mock.calls)
+        ).not.toContain(reference);
+      }
+    );
+
     test('résout le code de l’action et crée ses sous-actions et documents malgré une aide sans URL', async () => {
       vi.mocked(llm.complete).mockResolvedValueOnce(
         success({

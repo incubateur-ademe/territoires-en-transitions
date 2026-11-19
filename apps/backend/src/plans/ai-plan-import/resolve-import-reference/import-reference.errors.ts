@@ -6,6 +6,11 @@ export const importReferenceErrors = {
     message:
       'Le lien fourni ne désigne pas une action ou un indicateur TeT reconnu.',
   },
+  IMPORT_REFERENCE_ORIGIN_MISMATCH: {
+    kind: 'document-error',
+    message:
+      "Ce lien renvoie vers un autre site ou un autre environnement. Copiez le lien de l'action ou de l'indicateur depuis le site où vous effectuez cet import. Changer seulement le domaine ne garantit pas de retrouver la même donnée.",
+  },
   UNSUPPORTED_FICHE_UID: {
     kind: 'document-error',
     message:
@@ -34,3 +39,29 @@ export const importReferenceErrors = {
 >;
 
 export type ImportReferenceErrorCode = keyof typeof importReferenceErrors;
+
+const importReferenceErrorLabels = {
+  reference: (reference: string) =>
+    `Lien indiqué dans le document : ${reference}`,
+  expectedOrigin: (origin: string) => `Site d'import : ${origin}`,
+};
+
+export class ImportReferenceErrors {
+  static issue(
+    code: ImportReferenceErrorCode,
+    reference: string,
+    expectedOrigin?: string
+  ): ImportReport['issues'][number] {
+    return {
+      code,
+      ...importReferenceErrors[code],
+      message: [
+        importReferenceErrors[code].message,
+        importReferenceErrorLabels.reference(reference),
+        ...(expectedOrigin
+          ? [importReferenceErrorLabels.expectedOrigin(expectedOrigin)]
+          : []),
+      ].join('\n'),
+    };
+  }
+}

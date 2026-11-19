@@ -1757,7 +1757,14 @@ describe('Résolution des fiches actions Électrification', () => {
       );
       assert(!resumed.success, JSON.stringify(resumed));
       expect(resumed.error).toContainEqual(
-        expect.objectContaining({ code: 'FICHE_REFERENCE_UNAVAILABLE' })
+        expect.objectContaining({
+          code: 'FICHE_REFERENCE_UNAVAILABLE',
+          location:
+            'Action "Action du document" > Code de l\'action de référence ou URL de l\'action (facultatif)',
+          message: expect.stringContaining(
+            `https://app.territoiresentransitions.fr/collectivite/${context.collectiviteId}/plans/fiches/${existing.id}`
+          ),
+        })
       );
     });
 
