@@ -1,6 +1,6 @@
 import { TrajectoireSnbc3FeatureFlagService } from '@tet/backend/indicateurs/trajectoires/trajectoire-snbc3-feature-flag.service';
 import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
-import { ForbiddenException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import ComputeValeursService from '@tet/backend/indicateurs/valeurs/compute-indicateur-valeurs/compute-valeurs.service';
 import { GetUserRolesAndPermissionsService } from '@tet/backend/users/authorizations/get-user-roles-and-permissions/get-user-roles-and-permissions.service';
@@ -41,6 +41,7 @@ import { IndicateurValeursReadAccessService } from '../indicateur-valeurs-read-a
 import { ListIndicateurValeursService } from '../list-indicateur-valeurs/list-indicateur-valeurs.service';
 import { ValidateIndicateurValeursWriteService } from '../write-indicateur-valeurs/validate-indicateur-valeurs-write.service';
 import { WriteIndicateurValeursService } from '../write-indicateur-valeurs/write-indicateur-valeurs.service';
+import { UserIndicateurValeurNotAllowedException } from '../write-indicateur-valeurs/user-indicateur-valeur.errors';
 import { ReconcileIndicateurValeursService } from '../reconcile-indicateur-valeurs/reconcile-indicateur-valeurs.service';
 
 // Compose the real workflows around repository mocks so these tests continue to
@@ -1543,6 +1544,18 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
     });
   });
 
+  const utilisateur = {
+    id: '00000000-0000-0000-0000-000000000001',
+    role: AuthRole.AUTHENTICATED,
+  } as never;
+  const valeurACreer = {
+    collectiviteId: 3,
+    indicateurId: 10,
+    periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+    dateValeur: '2026-01-01',
+    resultat: 42,
+  };
+
   describe('upsertValeur', () => {
     it('refuse une valeur annuelle pour une définition mensuelle immuable', async () => {
       const tx = { insert: vi.fn(), update: vi.fn(), select: vi.fn() };
@@ -1601,9 +1614,13 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
             role: AuthRole.AUTHENTICATED,
           } as never
         )
-      ).rejects.toThrow(
-        'La valeur doit respecter la périodicité de déclaration'
-      );
+      ).resolves.toMatchObject({
+        success: false,
+        error: 'INVALID_VALUE',
+        cause: {
+          message: 'La valeur doit respecter la périodicité de déclaration',
+        },
+      });
 
       expect(indicateurLockRepository.lockIndicateurs).toHaveBeenCalledWith(
         [10],
@@ -1612,6 +1629,118 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
       expect(tx.select).not.toHaveBeenCalled();
       expect(tx.insert).not.toHaveBeenCalled();
       expect(tx.update).not.toHaveBeenCalled();
+    });
+
+    describe.each([
+      {
+        nom: 'upsertValeur',
+        verrouPremierAppele: 'lockIndicateurs',
+        appeler: (service: ManageIndicateurValeursService) =>
+          service.upsertValeur(valeurACreer, utilisateur),
+      },
+      {
+        nom: 'deleteValeurIndicateur',
+        verrouPremierAppele: 'lockForValueWrite',
+        appeler: (service: ManageIndicateurValeursService) =>
+          service.deleteValeurIndicateur(
+            { collectiviteId: 3, indicateurId: 10, id: 1 },
+            utilisateur
+          ),
+      },
+    ])('$nom : échecs retournés au lieu d’être levés', (cas) => {
+      const { appeler, verrouPremierAppele } = cas;
+      const toServiceWithMocks = ({
+        getIndicateur = vi.fn().mockResolvedValue({ id: 10 }),
+        canMutateValeur,
+        verrouEnEchec,
+      }: {
+        getIndicateur?: ReturnType<typeof vi.fn>;
+        canMutateValeur?: ReturnType<typeof vi.fn>;
+        verrouEnEchec?: Error;
+      }) => {
+        const service = createManageIndicateurValeursService(
+          {} as never,
+          {} as never,
+          {} as never,
+          {} as never,
+          {} as never,
+          {} as never,
+          { getIndicateur } as never,
+          {} as never,
+          {} as never,
+          {} as never,
+          {
+            lockIndicateurs: vi.fn(),
+            lockForValueWrite: vi.fn(),
+            ...(verrouEnEchec && {
+              [verrouPremierAppele]: vi.fn().mockRejectedValue(verrouEnEchec),
+            }),
+          } as never,
+          createTransactionManager({}) as never
+        );
+        vi.spyOn(service, 'canMutateValeur').mockImplementation(
+          (canMutateValeur ?? vi.fn().mockResolvedValue(true)) as never
+        );
+        return service;
+      };
+
+      it('un indicateur inconnu ressort en INVALID_VALUE avec le message de la cause', async () => {
+        const service = toServiceWithMocks({
+          getIndicateur: vi
+            .fn()
+            .mockRejectedValue(
+              new BadRequestException('Indicateur not found for id 10')
+            ),
+        });
+
+        await expect(appeler(service)).resolves.toMatchObject({
+          success: false,
+          error: 'INVALID_VALUE',
+          cause: { message: 'Indicateur not found for id 10' },
+        });
+      });
+
+      it('un refus de droits ressort en UNAUTHORIZED avec le message de la cause', async () => {
+        const service = toServiceWithMocks({
+          canMutateValeur: vi
+            .fn()
+            .mockRejectedValue(new ForbiddenException('Droits insuffisants')),
+        });
+
+        await expect(appeler(service)).resolves.toMatchObject({
+          success: false,
+          error: 'UNAUTHORIZED',
+          cause: { message: 'Droits insuffisants' },
+        });
+      });
+
+      it('un indicateur sans valeur utilisateur ressort en USER_VALUE_NOT_ALLOWED', async () => {
+        const service = toServiceWithMocks({
+          canMutateValeur: vi
+            .fn()
+            .mockRejectedValue(
+              new UserIndicateurValeurNotAllowedException([10])
+            ),
+        });
+
+        await expect(appeler(service)).resolves.toMatchObject({
+          success: false,
+          error: 'USER_VALUE_NOT_ALLOWED',
+        });
+      });
+
+      it('une exception inattendue dans la transaction ressort en DATABASE_ERROR avec sa cause', async () => {
+        const cause = new Error('connexion perdue');
+        const service = toServiceWithMocks({
+          verrouEnEchec: cause,
+        });
+
+        await expect(appeler(service)).resolves.toMatchObject({
+          success: false,
+          error: 'DATABASE_ERROR',
+          cause: { message: 'connexion perdue' },
+        });
+      });
     });
   });
 
@@ -2319,9 +2448,9 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
           collectiviteId: candidate.collectiviteId,
           metadonneeId: candidate.metadonneeId,
         })
-      ).resolves.toEqual({
-        indicateurValeurIdsSupprimes: [{ id: candidate.id }],
-      });
+      ).resolves.toEqual(
+        success({ indicateurValeurIdsSupprimes: [{ id: candidate.id }] })
+      );
 
       expect(events).toEqual([
         'lock-graph',

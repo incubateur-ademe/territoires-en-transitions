@@ -1,10 +1,12 @@
 import { BadRequestException, ForbiddenException } from '@nestjs/common';
 import { createControllerErrorHandler } from '@tet/backend/utils/nest/controller-error-handler';
-import { failure } from '@tet/backend/utils/result.type';
+import { failure, success } from '@tet/backend/utils/result.type';
 import { createTrpcErrorHandler } from '@tet/backend/utils/trpc/trpc-error-handler';
 import { describe, expect, it } from 'vitest';
 import {
+  captureIndicateurValeursResult,
   getIndicateurValeursDataOrThrow,
+  IndicateurValeursError,
   indicateurValeursErrorConfig,
   toCommonError,
 } from './indicateur-valeurs.errors';
@@ -19,66 +21,38 @@ const toThrownValue = (operation: () => unknown): unknown => {
 };
 
 describe('getIndicateurValeursDataOrThrow', () => {
-  it('relance un échec INVALID_VALUE en BadRequestException portant le message de la cause', () => {
-    const thrown = toThrownValue(() =>
-      getIndicateurValeursDataOrThrow(
-        failure('INVALID_VALUE', new Error('Valeur invalide'))
-      )
-    );
-
-    expect(thrown).toBeInstanceOf(BadRequestException);
-    expect(thrown).toMatchObject({ message: 'Valeur invalide' });
+  it('retourne les données d’un succès', () => {
+    expect(getIndicateurValeursDataOrThrow(success(42))).toBe(42);
   });
 
-  it('relance un échec UNAUTHORIZED en ForbiddenException portant le message de la cause', () => {
-    const thrown = toThrownValue(() =>
-      getIndicateurValeursDataOrThrow(
-        failure('UNAUTHORIZED', new Error('Accès refusé'))
-      )
+  it('lance l’échec lui-même, sans le convertir en exception HTTP', () => {
+    const result = failure<IndicateurValeursError>(
+      'INVALID_VALUE',
+      new Error('Valeur invalide')
     );
 
-    expect(thrown).toBeInstanceOf(ForbiddenException);
-    expect(thrown).toMatchObject({ message: 'Accès refusé' });
+    const thrown = toThrownValue(() => getIndicateurValeursDataOrThrow(result));
+
+    expect(thrown).toBe(result);
   });
 
-  it('relance telle quelle une cause déjà HTTP', () => {
-    const cause = new ForbiddenException('déjà HTTP');
+  it.each([
+    'UNAUTHORIZED',
+    'INVALID_VALUE',
+    'USER_VALUE_NOT_ALLOWED',
+    'DATABASE_ERROR',
+  ] as const)(
+    'un échec %s relancé dans une capture est restitué avec son code et sa cause',
+    async (error) => {
+      const cause = new Error('détail précis');
 
-    const thrown = toThrownValue(() =>
-      getIndicateurValeursDataOrThrow(failure('UNAUTHORIZED', cause))
-    );
+      const captured = await captureIndicateurValeursResult(() =>
+        getIndicateurValeursDataOrThrow(failure(error, cause))
+      );
 
-    expect(thrown).toBe(cause);
-  });
-
-  it('utilise le code comme message quand un échec INVALID_VALUE n’a pas de cause', () => {
-    const thrown = toThrownValue(() =>
-      getIndicateurValeursDataOrThrow(failure('INVALID_VALUE'))
-    );
-
-    expect(thrown).toBeInstanceOf(BadRequestException);
-    expect(thrown).toMatchObject({ message: 'INVALID_VALUE' });
-  });
-
-  it('relance la cause d’un échec USER_VALUE_NOT_ALLOWED sans la convertir', () => {
-    const cause = new Error('indicateur protégé');
-
-    const thrown = toThrownValue(() =>
-      getIndicateurValeursDataOrThrow(failure('USER_VALUE_NOT_ALLOWED', cause))
-    );
-
-    expect(thrown).toBe(cause);
-  });
-
-  it('relance la cause d’un échec DATABASE_ERROR sans la convertir', () => {
-    const cause = new Error('connexion perdue');
-
-    const thrown = toThrownValue(() =>
-      getIndicateurValeursDataOrThrow(failure('DATABASE_ERROR', cause))
-    );
-
-    expect(thrown).toBe(cause);
-  });
+      expect(captured).toEqual({ success: false, error, cause });
+    }
+  );
 });
 
 describe('indicateurValeursErrorConfig', () => {

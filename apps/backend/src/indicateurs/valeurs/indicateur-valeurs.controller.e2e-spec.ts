@@ -37,6 +37,7 @@ import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { randomUUID } from 'node:crypto';
 import { indicateurSourceTable } from '../shared/models/indicateur-source.table';
 import ManageIndicateurValeursService from './manage-indicateur-valeurs/manage-indicateur-valeurs.service';
+import { getDataOrThrow } from '@tet/backend/utils/result.type';
 import { and, eq, inArray, isNull } from 'drizzle-orm';
 import { default as request } from 'supertest';
 import { UpsertIndicateursValeursRequest } from './write-indicateur-valeurs/upsert-indicateurs-valeurs.request';
@@ -1135,11 +1136,13 @@ describe('Indicateurs', () => {
       expect(await readCalculated()).toMatchObject(expected(27, 107));
 
       // Internal source deletion has no public endpoint; use its real application service.
-      await app.get(ManageIndicateurValeursService).deleteIndicateurValeurs({
-        collectiviteId: fixture.collectiviteId,
-        indicateurId: source.id,
-        metadonneeId: first.id,
-      });
+      getDataOrThrow(
+        await app.get(ManageIndicateurValeursService).deleteIndicateurValeurs({
+          collectiviteId: fixture.collectiviteId,
+          indicateurId: source.id,
+          metadonneeId: first.id,
+        })
+      );
       const remaining = [
         { indicateurId: target.id, metadonneeId: second.id, resultat: 107 },
         { indicateurId: downstream.id, metadonneeId: second.id, resultat: 214 },
