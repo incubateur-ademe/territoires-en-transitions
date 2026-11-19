@@ -90,6 +90,23 @@ références externes publiées avec les définitions TeT dans l'environnement c
 Sans correspondance publiée,
 un code reste `pending` ; un ancien mapping du catalogue actif ne le réactive pas.
 
+**Tolérance des libellés existants - décision du 19 novembre 2026.** L'identité
+publiée de l'engagement prime sur sa formulation. La synchronisation peut conserver
+les anciens libellés du catalogue actif pour le même code, le même axe et le même
+document Grist, lorsque les clés, unités et échéances des cibles sont compatibles.
+Le contrat des premiers snapshots V4 permet de relire leurs associations
+code/libellé même sans URL source. Cette lecture historique ne remplace aucune
+définition ni correspondance provenant des sources actuelles.
+
+Le Word peut désigner un engagement par son code exact, son libellé actuel ou un
+ancien libellé ainsi conservé. Les sources originales restent dans le checkpoint ;
+aucune équivalence sémantique n'est déduite de cette continuité d'identité. Cela
+permet de conserver les documents existants, notamment l'ancienne formulation E05,
+sans les réécrire ni modifier Grist. Un changement de document ou de cibles
+incompatible ne reprend pas ces libellés ; une collision entre engagements d'un
+même axe bloque la publication. Un lien au document Grist seul n'identifie pas un
+engagement. L'IA reste un recours pour les libellés non reconnus.
+
 **Ajustement du 13 novembre — Grist comme seule source des lauréats.** Le
 lecteur utilise les colonnes existantes de `Territoires` : "Code territoire",
 "Identifiant public" et "Nature du périmètre". Les métadonnées Grist relient
