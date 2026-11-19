@@ -1,5 +1,4 @@
 import gristAxes from './sources/__fixtures__/electrification-grist-axes.json';
-import { ElectrificationGristEngagementsRules } from './sources/electrification-grist-engagements.rules';
 import ImportIndicateurDefinitionService from '@tet/backend/indicateurs/import-indicateurs/import-indicateur-definition.service';
 import { sampleImportIndicateurDefinition } from '@tet/backend/indicateurs/import-indicateurs/samples/import-indicateur-definition.sample';
 import { indicateurReferenceExterneTable } from '@tet/backend/indicateurs/indicateur/indicateur-reference-externe.table';
@@ -78,20 +77,15 @@ describe('Publication des données Électrification', () => {
   >();
   const reference = `test-publication-${randomUUID()}`;
 
-  const catalogue = (): ElectrificationConfig => ({
-    ...structuredClone(electrificationCatalogueFixture),
-    version: randomUUID(),
-    fiches: { actions: [], indicateurs: [] },
-    engagements: electrificationCatalogueFixture.engagements.map(
-      (engagement) => ({
-        ...engagement,
-        cibles: engagement.cibles.map((cible) => ({
-          ...cible,
-          validation: 'pending',
-        })),
-      })
-    ),
-  });
+  const catalogue = (): ElectrificationConfig => {
+    const result = structuredClone(electrificationCatalogueFixture);
+    result.version = randomUUID();
+    result.fiches = { actions: [], indicateurs: [] };
+    for (const engagement of result.engagements) {
+      for (const cible of engagement.cibles) cible.validation = 'pending';
+    }
+    return result;
+  };
   const laureats = (): ElectrificationLaureatsConfig => ({
     version: randomUUID(),
     source: `https://grist.numerique.gouv.fr/${laureatsDocumentId}`,
@@ -330,6 +324,73 @@ describe('Publication des données Électrification', () => {
     };
     expect(await verify()).toMatchObject({ valid: false });
   });
+
+  test.each(['code', 'libellé'] as const)(
+    'refuse une identité ambiguë avant publication : %s',
+    async (identity) => {
+      const payload = catalogue();
+      const [first, second] = payload.engagements;
+      second.libelleSource =
+        identity === 'code'
+          ? first.code.toLowerCase()
+          : first.libelleSource.toUpperCase();
+      second.axeNumero = first.axeNumero;
+      const api = admin.plans.plans.electrificationData;
+
+      expect(
+        await api.verify({ kind: 'catalogue', data: payload })
+      ).toMatchObject({
+        valid: false,
+        issues: expect.arrayContaining([
+          expect.objectContaining({
+            location: 'catalogue.engagements[1].libelleSource',
+          }),
+        ]),
+      });
+      await expect(publish('catalogue', payload)).rejects.toMatchObject({
+        code: 'BAD_REQUEST',
+      });
+
+      // Un code peut désigner son propre engagement ; un libellé peut être partagé entre axes.
+      if (identity === 'code') second.libelleSource = second.code;
+      else second.axeNumero = payload.axes[1].numero;
+      expect(await api.verify({ kind: 'catalogue', data: payload })).toEqual({
+        valid: true,
+        issues: [],
+      });
+    }
+  );
+
+  test.each(['cycle', 'unité', 'année', 'bornes'] as const)(
+    'refuse des règles de cibles incohérentes avant publication : %s',
+    async (scenario) => {
+      const payload = catalogue();
+      const engagement = payload.engagements.find(({ code }) => code === 'E07');
+      assert(engagement);
+      const [parent, child] = engagement.cibles;
+      if (scenario === 'cycle') parent.reglesImport.plafondCible = child.key;
+      if (scenario === 'unité') child.uniteImport = '%';
+      if (scenario === 'année') child.reglesImport.annee = 2040;
+      if (scenario === 'bornes') {
+        child.reglesImport.minimum = 10;
+        child.reglesImport.maximum = 5;
+      }
+
+      expect(
+        await admin.plans.plans.electrificationData.verify({
+          kind: 'catalogue',
+          data: payload,
+        })
+      ).toMatchObject({ valid: false });
+      await expect(publish('catalogue', payload)).rejects.toMatchObject({
+        code: 'BAD_REQUEST',
+      });
+      expect(await data.getCatalogue(payload.version)).toMatchObject({
+        success: false,
+        error: 'DATA_UNAVAILABLE',
+      });
+    }
+  );
 
   test('active les nouvelles données sans redémarrage et conserve chaque version pour les imports en cours', async () => {
     const first = catalogue();
@@ -1061,28 +1122,76 @@ describe('Publication des données Électrification', () => {
       expect(prepared.valid).toBe(true);
       const result = prepared.data as ElectrificationConfig;
       expect(result.engagements).toHaveLength(12);
-      const expected = ElectrificationGristEngagementsRules.read(tables.Axes);
       expect(result.engagements).toEqual(
-        expected.map((engagement) => ({
-          ...engagement,
-          cibles: engagement.cibles.map((cible) => {
-            const mapping =
-              engagement.code === 'E01'
-                ? definition
-                : engagement.code === 'E07'
-                ? bornes[cible.key === 'total' ? 0 : 1]
-                : null;
-            return mapping
-              ? {
-                  ...cible,
-                  identifiantReferentiel: mapping.identifiantReferentiel,
-                  unite: engagement.code === 'E01' ? '%' : 'Nombre de bornes',
-                  periodicite: 'annuelle',
-                  validation: 'validated',
-                }
-              : cible;
+        expect.arrayContaining([
+          expect.objectContaining({
+            code: 'E01',
+            libelleSource:
+              "Électrifier d'ici 2030 ___ % des logements chauffés au fioul",
+            cibles: [
+              expect.objectContaining({
+                key: 'principale',
+                identifiantReferentiel: definition.identifiantReferentiel,
+                unite: '%',
+                uniteImport: '%',
+                periodicite: 'annuelle',
+                validation: 'validated',
+                reglesImport: expect.objectContaining({
+                  annee: 2030,
+                  maximum: 100,
+                }),
+              }),
+            ],
           }),
-        }))
+          expect.objectContaining({
+            code: 'E02',
+            libelleSource:
+              "Électrifier d'ici 2030 ___ % des logements chauffés au gaz",
+            cibles: [expect.objectContaining({ validation: 'pending' })],
+          }),
+          expect.objectContaining({
+            code: 'E03',
+            actionTitre: 'Étudier le réseau',
+            cibles: [],
+          }),
+          expect.objectContaining({
+            code: 'E07',
+            cibles: [
+              expect.objectContaining({
+                key: 'total',
+                identifiantReferentiel: bornes[0].identifiantReferentiel,
+                uniteImport: 'bornes',
+                validation: 'validated',
+              }),
+              expect.objectContaining({
+                key: 'rapides',
+                identifiantReferentiel: bornes[1].identifiantReferentiel,
+                validation: 'validated',
+                reglesImport: expect.objectContaining({
+                  plafondCible: 'total',
+                }),
+              }),
+            ],
+          }),
+          expect.objectContaining({
+            code: 'E10',
+            cibles: [
+              expect.objectContaining({
+                uniteImport: 'MWh',
+                reglesImport: expect.objectContaining({
+                  annee: 2030,
+                  maximum: null,
+                  unites: ['MWh'],
+                }),
+              }),
+            ],
+          }),
+          expect.objectContaining({
+            code: 'E12',
+            actionTitre: 'Recharge des poids lourds',
+            cibles: [],
+          }),
+        ])
       );
       expect(await data.getCatalogue()).toEqual({
         success: true,
@@ -1112,7 +1221,7 @@ describe('Publication des données Électrification', () => {
         )?.cibles
       ).toEqual([
         {
-          ...expected[0].cibles[0],
+          ...result.engagements[0].cibles[0],
           key: 'principale',
           identifiantReferentiel: null,
           unite: null,
@@ -1125,6 +1234,75 @@ describe('Publication des données Électrification', () => {
         data: prepared.data,
       });
     });
+
+    test.each(['bâtiments scolaires', 'SCOLAIRES'])(
+      'publie de nouveaux codes et cibles Grist sans mapping obligatoire : %s',
+      async (qualifier) => {
+        const tables = sourceTables();
+        tables.Axes.push({
+          id: 13,
+          fields: {
+            Numero: 13,
+            Titre: 'Rénovation',
+            Code_signe: 'E42',
+            Parametre_signe: `Rénover d'ici 2040 ___ bâtiments, dont ___ ${qualifier}`,
+          },
+        });
+        const [definition] = await publishReferences(
+          ['E42.total'],
+          electrificationGristConfig.catalogue.engagementReferenceSource,
+          'nb'
+        );
+        mockGrist(tables);
+
+        const prepared = await admin.plans.plans.electrificationData.prepare({
+          kind: 'catalogue',
+          version: randomUUID(),
+        });
+
+        expect(prepared.valid).toBe(true);
+        expect(
+          (prepared.data as ElectrificationConfig).engagements
+        ).toContainEqual({
+          code: 'E42',
+          axeNumero: 13,
+          libelleSource: tables.Axes.at(-1)?.fields.Parametre_signe,
+          actionTitre: null,
+          cibles: [
+            expect.objectContaining({
+              key: 'total',
+              identifiantReferentiel: definition.identifiantReferentiel,
+              unite: 'nb',
+              uniteImport: 'bâtiments',
+              validation: 'validated',
+              reglesImport: expect.objectContaining({
+                annee: 2040,
+                minimum: 0,
+                maximum: null,
+                plafondCible: null,
+              }),
+            }),
+            expect.objectContaining({
+              key:
+                qualifier === 'SCOLAIRES' ? 'scolaires' : 'batiments-scolaires',
+              libelleSource: qualifier,
+              identifiantReferentiel: null,
+              uniteImport: 'bâtiments',
+              validation: 'pending',
+              reglesImport: expect.objectContaining({
+                annee: 2040,
+                plafondCible: 'total',
+              }),
+            }),
+          ],
+        });
+        await publish('catalogue', prepared.data);
+        expect(await data.getCatalogue()).toEqual({
+          success: true,
+          data: prepared.data,
+        });
+      }
+    );
 
     test('refuse une cible dont la définition TeT publiée n’est pas annuelle', async () => {
       const initial = catalogue();
@@ -1191,7 +1369,39 @@ describe('Publication des données Électrification', () => {
       }
     );
 
-    test.each(['E07.inconnue', 'E03.principale'])(
+    test.each([
+      ['E07+E99', "Installer d'ici 2030 ___ bornes et ___ écoles"],
+      ['E07', "Installer d'ici 2030 ___ bornes (E07) et ___ écoles (E99)"],
+      ['E07', "Installer d'ici 2030 ___ bornes, dont ___ rapides en 2040"],
+      ['E07', "Installer d'ici 2030 ___ bornes et ___ rapides"],
+      ['E07', "Installer d'ici demain ___ bornes"],
+      ['E07', "Installer d'ici 2030 ___ bornes, dont ___ % rapides"],
+      ['E07', "Installer d'ici 2030 ___ bornes, dont ___ kW rapides"],
+    ])(
+      'conserve le catalogue actif si Grist contient une formulation ambiguë : %s / %s',
+      async (code, label) => {
+        const initial = catalogue();
+        await publish('catalogue', initial);
+        const tables = sourceTables();
+        const axe = tables.Axes.find(
+          ({ fields }) => fields.Code_signe === 'E07'
+        );
+        assert(axe);
+        Object.assign(axe.fields, { Code_signe: code, Parametre_signe: label });
+        mockGrist(tables);
+
+        expect(await sync.sync('catalogue', true, auditContext)).toEqual({
+          success: false,
+          error: 'INVALID_SOURCE',
+        });
+        expect(await data.getCatalogue()).toEqual({
+          success: true,
+          data: initial,
+        });
+      }
+    );
+
+    test.each(['E07.inconnue', 'E03.principale', 'E123.principale', 'E07'])(
       "refuse une référence de cible non déclarée par l'engagement : %s",
       async (code) => {
         const initial = catalogue();
