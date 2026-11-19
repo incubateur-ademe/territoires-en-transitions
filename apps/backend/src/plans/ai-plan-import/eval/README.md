@@ -60,6 +60,10 @@ et une année entre parenthèses éventuelles, sont lus directement. La structur
 et les validations métier restent déterministes. L'IA ne corrige pas les dates,
 statuts ou références invalides. Elle associe les occurrences numériques
 fournies à des clés de cible, unités et échéances, avec une citation exacte.
+Pour les cibles d'engagement, l'unité et l'échéance du catalogue s'appliquent
+si la cellule ne les précise pas. Une unité non répétée auprès d'une quantité
+identifiable reste `null` dans l'interprétation, comme une année absente de la
+cellule. Une unité ou une échéance explicite incompatible reste refusée.
 Elle signale une cellule ambiguë ou conditionnelle par `status: "unresolved"` ;
 l'extraction s'arrête alors avec une erreur documentaire.
 

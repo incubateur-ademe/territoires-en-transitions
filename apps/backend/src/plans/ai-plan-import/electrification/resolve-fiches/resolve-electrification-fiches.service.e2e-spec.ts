@@ -2930,6 +2930,7 @@ describe('Résolution des fiches actions Électrification', () => {
     test.each([
       ['total: 100; rapides: 0', 100, 0],
       ['20 bornes rapides', null, 20],
+      ['120 bornes publiques dont 30 rapides', 120, 30],
     ])(
       'conserve les cibles E07 explicitement identifiées : %s',
       async (value, total, rapides) => {
@@ -2948,8 +2949,20 @@ describe('Résolution des fiches actions Électrification', () => {
               ]
         );
         expect(
-          (await prepared()).prepared.cibles.map(({ objectif }) => objectif)
-        ).toEqual([total, rapides]);
+          (await prepared()).prepared.cibles.map(
+            ({ objectif, unite, dateValeur }) => ({
+              objectif,
+              unite,
+              dateValeur,
+            })
+          )
+        ).toEqual(
+          [total, rapides].map((objectif) => ({
+            objectif,
+            unite: 'Nombre de bornes',
+            dateValeur: '2030-01-01',
+          }))
+        );
       }
     );
 
