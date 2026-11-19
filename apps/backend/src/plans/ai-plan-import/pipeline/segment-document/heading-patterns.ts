@@ -66,7 +66,7 @@ const GLUED_NEXT_COLUMN =
   /(?<=\p{Ll})(?=(?:Action|Fiche|Mesure|Objectif)\s*(?:n[°º]\s*)?\d)|\s+(?=(?:Action|Fiche|Mesure)\s*(?:n[°º]\s*)?\d{1,2}\.\d)/u;
 // Le contenu d'une fiche : un libellé de champ, pas un titre.
 const FICHE_LABEL =
-  /^(description|contexte|objectifs?|pilote|porteur|structure porteuse|porteurs? de l['’]action|ma[iî]tr(?:e|ise) d['’]ouvrage|partenaires?(?: (?:et|\/) financeurs)?|financeurs?|calendrier|[ée]ch[ée]ance|planning|[ée]tapes de mise en œuvre|temps de mise en œuvre|budget|co[uû]t(?: estim[ée])?|financements?|sources? de financements?(?: et subventions)?|subventions?|indicateurs?(?: de suivi)?|cibles?|publics? vis[ée]s?|moyens(?: humains| financiers)?|r[ée]sultats attendus|gains? estim[ée]s|impacts? de l['’]action|trajectoire|actions? op[ée]rationnelles?|priorit[ée]|statut|[ée]tat d['’]avancement|gains? (?:ges|[ée]nerg[ée]tiques?))\s*[:：]?\s*$/iu;
+  /^(description|descriptif(?: de l['’]action)?|contexte|objectifs?|pilote|pilotes? et partenaires|flux vis[ée]s?|moyens n[ée]cessaires|calendrier pr[ée]visionnel|porteur|structure porteuse|porteurs? de l['’]action|ma[iî]tr(?:e|ise) d['’]ouvrage|partenaires?(?: (?:et|\/) financeurs)?|financeurs?|calendrier|[ée]ch[ée]ance|planning|[ée]tapes de mise en œuvre|temps de mise en œuvre|budget|co[uû]t(?: estim[ée])?|financements?|sources? de financements?(?: et subventions)?|subventions?|indicateurs?(?: de suivi)?|cibles?|publics? vis[ée]s?|moyens(?: humains| financiers)?|r[ée]sultats attendus|gains? estim[ée]s|impacts? de l['’]action|trajectoire|actions? op[ée]rationnelles?|priorit[ée]|statut|[ée]tat d['’]avancement|gains? (?:ges|[ée]nerg[ée]tiques?))\s*[:：]?\s*$/iu;
 // « Axe : » ou « Axe : 2 » : la valeur d'un champ de fiche, pas une frontière.
 const FIELD_VALUE = /^(?:axe|orientation|objectif)\s*[:：]/iu;
 
@@ -95,6 +95,23 @@ export const matchHeading = (
 
   const markdown = line.match(MARKDOWN);
   if (markdown) {
+    // Une page transcrite met en titre tout ce qui est en gras : un libellé
+    // de champ (« ## Objectifs », « ## Cibles : les ménages ») n'en est pas un,
+    // et « # Fiche Action n°1.3 » reste une fiche.
+    const text = markdown[2].trim();
+    if (isFicheLabel(text) || isFicheLabel(text.split(/[:：]/u)[0])) {
+      return null;
+    }
+    const fiche = text.match(FICHE);
+    if (fiche && !CHECK_MARKS.test(fiche[2].trim())) {
+      return {
+        kind: 'fiche',
+        level: FICHE_LEVEL,
+        number: fiche[1].trim(),
+        title: fiche[2].trim(),
+        confidence: 1,
+      };
+    }
     const level = markdown[1].length;
     return {
       kind: 'markdown',

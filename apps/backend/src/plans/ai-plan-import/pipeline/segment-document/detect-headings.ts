@@ -50,6 +50,7 @@ const BULLET = /^(?:[o•●▪◦■□*\-–—]|\d{1,2}[.)])\s/u;
 // En dessous, « Action 1 » et « Fiche action 1 » sont deux façons de titrer
 // une fiche, pas deux niveaux.
 const MIN_NAMED_FICHES = 3;
+const MARKDOWN_MARK = /^#{1,4}\s+/u;
 
 export const detectHeadings = (pages: DocumentPage[]): DetectedHeading[] => {
   const bodyFontSize = estimateBodyFontSize(pages);
@@ -159,7 +160,8 @@ const dropActionsOfNamedFiches = (
     pattern.test(
       pageByIndex
         .get(heading.pageIndex)
-        ?.lines[heading.lineIndex]?.text.trim() ?? ''
+        ?.lines[heading.lineIndex]?.text.trim()
+        .replace(MARKDOWN_MARK, '') ?? ''
     );
   const namedFiches = headings.filter((heading) =>
     startsWith(heading, /^fiche/iu)
@@ -190,7 +192,7 @@ const titleBelow = (
     index++
   ) {
     const line = lines[index];
-    const text = line.text.trim();
+    const text = line.text.trim().replace(MARKDOWN_MARK, '');
     const first = lines[lineIndex + 1];
     const continues =
       parts.length === 0

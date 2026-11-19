@@ -19,6 +19,13 @@ export const titlesMatch = (a: string, b: string): boolean => {
   return common / union >= TITLE_SIMILARITY_THRESHOLD;
 };
 
+/** Tous les mots de `part` sont dans `title` : un titre écourté du même. */
+export const titleIncludes = (title: string, part: string): boolean => {
+  const words = titleWords(title);
+  const partWords = [...titleWords(part)];
+  return partWords.length > 0 && partWords.every((word) => words.has(word));
+};
+
 const titleWords = (title: string): Set<string> =>
   new Set(
     title

@@ -130,6 +130,9 @@ coût, d'essayer les heuristiques sur un nouveau classeur réel.
 - `metrics` : nombre d'actions, d'axes et de sous-axes distincts, profondeur
   du plus long chemin d'axes, nombre de sous-actions ; taux de remplissage par
   champ ; appels au modèle, dont les 429 et les échecs ; tokens ; durée.
+- `trace` : le squelette relevé (axes et sous-axes) et les extraits gardés par
+  le tri, avec leurs pages, leur titre et leur chemin de titres. C'est ce qui
+  dit si un défaut vient du découpage, du tri ou de l'extraction.
 - `draft` : le brouillon complet, tel qu'il serait enregistré.
 - `diff` (avec `ref=`) : écarts de métriques, titres de la référence
   introuvables dans le résultat, titres en trop. Les titres sont comparés sans

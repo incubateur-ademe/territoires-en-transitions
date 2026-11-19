@@ -21,34 +21,66 @@ import type { GenericEvalInput } from './read-eval-input';
  * Ce que le pipeline a retenu avant d'extraire : sans cela, un axe mal rangé
  * ou une fiche manquante ne dit pas d'où il vient (découpage, tri, squelette).
  */
+type TracedUnit = {
+  kind: DocumentUnit['kind'];
+  pages: string;
+  headingPath: string[];
+  title: string | null;
+  tokens: number;
+  /** Le début du texte : de quoi reconnaître l'extrait dans le document. */
+  start: string;
+};
+
+type UnitToTrace = Pick<
+  DocumentUnit,
+  | 'id'
+  | 'kind'
+  | 'pageStart'
+  | 'pageEnd'
+  | 'headingPath'
+  | 'title'
+  | 'tokenEstimate'
+  | 'text'
+>;
+
 export type EvalTrace = {
   skeleton: PlanSkeleton | null;
   /** Les extraits gardés par le tri, dans l'ordre du document. */
-  keptUnits: {
-    kind: DocumentUnit['kind'];
-    pages: string;
-    headingPath: string[];
-    title: string | null;
-    tokens: number;
-  }[];
+  keptUnits: TracedUnit[];
+  /** Ceux qu'il a écartés : une action manquante s'y trouve souvent. */
+  discardedUnits: TracedUnit[];
 };
+
+const START_CHARS = 100;
+
+const traceUnit = (unit: UnitToTrace): TracedUnit => ({
+  kind: unit.kind,
+  pages: `${unit.pageStart + 1}-${unit.pageEnd + 1}`,
+  headingPath: unit.headingPath,
+  title: unit.title ?? null,
+  tokens: unit.tokenEstimate,
+  start: unit.text.replace(/\s+/g, ' ').slice(0, START_CHARS),
+});
 
 export const buildEvalTrace = ({
   skeleton,
   units,
+  allUnits,
 }: {
   skeleton: PlanSkeleton | null;
-  units: DocumentUnit[] | null;
-}): EvalTrace => ({
-  skeleton,
-  keptUnits: (units ?? []).map((unit) => ({
-    kind: unit.kind,
-    pages: `${unit.pageStart + 1}-${unit.pageEnd + 1}`,
-    headingPath: unit.headingPath,
-    title: unit.title ?? null,
-    tokens: unit.tokenEstimate,
-  })),
-});
+  units: UnitToTrace[] | null;
+  /** Les extraits d'avant le tri. */
+  allUnits: UnitToTrace[] | null;
+}): EvalTrace => {
+  const kept = new Set((units ?? []).map((unit) => unit.id));
+  return {
+    skeleton,
+    keptUnits: (units ?? []).map(traceUnit),
+    discardedUnits: (allUnits ?? [])
+      .filter((unit) => !kept.has(unit.id))
+      .map(traceUnit),
+  };
+};
 
 export type EvalOutput = EvalRun & {
   file: string;
