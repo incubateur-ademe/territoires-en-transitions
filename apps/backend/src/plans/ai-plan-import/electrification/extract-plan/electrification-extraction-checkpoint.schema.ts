@@ -12,7 +12,7 @@ import { electrificationEngagementInterpretationSchema } from './electrification
 import { electrificationExtractionErrors } from './electrification-extraction.errors';
 
 /** À incrémenter si le format ou son interprétation rend une reprise incompatible. */
-export const ELECTRIFICATION_CHECKPOINT_VERSION = 2;
+export const ELECTRIFICATION_CHECKPOINT_VERSION = 3;
 
 export const electrificationCheckpointVersionSchema = z.literal(
   ELECTRIFICATION_CHECKPOINT_VERSION
@@ -50,13 +50,15 @@ export const electrificationExtractionCheckpointSchema = z
                 engagement.source === sourceId && engagement.code === code
             )
         ) &&
-        interpretations.every(({ sourceId, values }) => {
-          const source = sources.find(({ id }) => id === sourceId);
+        interpretations.every((interpretation) => {
+          const source = sources.find(
+            ({ id }) => id === interpretation.sourceId
+          );
           return (
             source &&
             ElectrificationValueInterpretationRules.hasEvidence(
               source.text,
-              values
+              interpretation
             )
           );
         })

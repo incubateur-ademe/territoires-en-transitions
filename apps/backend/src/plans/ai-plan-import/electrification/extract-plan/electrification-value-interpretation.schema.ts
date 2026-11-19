@@ -7,19 +7,27 @@ import type {
 
 const interpretedValueSchema = z.strictObject({
   key: z.string().min(1),
-  number: z.string().min(1),
+  numberId: z.number().int().nonnegative(),
   unit: z.string().min(1).nullable(),
-  year: z.string().min(1).nullable(),
+  yearId: z.number().int().nonnegative().nullable(),
   quote: z.string().min(1),
 });
 
-/** Des littéraux du document, jamais une valeur calculée ou une unité déduite. */
+/** Le modèle affecte les occurrences du document à leurs rôles, sans produire de nombre. */
 export const electrificationValueResponseSchema = z.strictObject({
+  status: z.enum(['extracted', 'unresolved']),
   values: z.array(interpretedValueSchema).max(100),
 });
 export type ElectrificationValueResponse = z.infer<
   typeof electrificationValueResponseSchema
 >;
+
+export type ElectrificationInterpretedValue = {
+  key: string;
+  value: number;
+  unit: string | null;
+  year: number | null;
+};
 
 export const electrificationValueInterpretationSchema =
   electrificationValueResponseSchema.extend({ sourceId: z.string().min(1) });

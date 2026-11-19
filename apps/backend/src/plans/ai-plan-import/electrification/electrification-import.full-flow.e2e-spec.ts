@@ -32,6 +32,7 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import SupabaseService from '@tet/backend/utils/database/supabase.service';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { FakeLlmRepository } from '@tet/backend/utils/llm/repositories/fake/fake-llm.repository';
+import { emptyTokenUsage } from '@tet/backend/utils/llm/token-usage';
 import { failure, success } from '@tet/backend/utils/result.type';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
 import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
@@ -632,6 +633,31 @@ describe(
     );
 
     test('résout le code de l’action et crée ses sous-actions et documents malgré une aide sans URL', async () => {
+      vi.mocked(llm.complete).mockResolvedValueOnce(
+        success({
+          completed: true,
+          text: JSON.stringify({
+            status: 'extracted',
+            values: [
+              {
+                key: 'total',
+                numberId: 0,
+                unit: 'bornes',
+                yearId: null,
+                quote: '40 bornes',
+              },
+              {
+                key: 'rapides',
+                numberId: 1,
+                unit: null,
+                yearId: null,
+                quote: '10 rapides',
+              },
+            ],
+          }),
+          usage: emptyTokenUsage(),
+        })
+      );
       catalogue.fiches.actions = [
         {
           code: '6.1.1',
@@ -694,7 +720,7 @@ describe(
       expect(documents).toMatchObject([
         { titre: 'Aide liée', url: 'https://example.org/recharge' },
       ]);
-      expect(llm.complete).not.toHaveBeenCalled();
+      expect(llm.complete).toHaveBeenCalledOnce();
       expect(llm.chat).not.toHaveBeenCalled();
     });
 
@@ -903,19 +929,20 @@ describe(
           data: {
             completed: true,
             text: JSON.stringify({
+              status: 'extracted',
               values: [
                 {
                   key: 'rapides',
-                  number: '20',
+                  numberId: 0,
                   unit: null,
-                  year: null,
+                  yearId: null,
                   quote: '20 bornes rapides',
                 },
                 {
                   key: 'total',
-                  number: '100',
+                  numberId: 1,
                   unit: null,
-                  year: null,
+                  yearId: null,
                   quote: 'un total de 100',
                 },
               ],

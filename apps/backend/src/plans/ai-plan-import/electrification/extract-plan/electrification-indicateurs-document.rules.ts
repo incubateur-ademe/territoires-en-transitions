@@ -147,36 +147,31 @@ export class ElectrificationIndicateursDocumentRules {
       year: defaultYear,
       keys: ['valeur'],
     };
-    const text = Interpretation.text(request, context).trim();
+    const text = source.text.trim();
     if (!text) return success({ value: null, year: defaultYear, unit: null });
-    const date = text.match(/\s*(?:\((\d{4})\)|en\s+(\d{4}))\s*$/i);
-    const year = date ? Number(date[1] ?? date[2]) : defaultYear;
-    if (year === 0 || (date && defaultYear !== null && year !== defaultYear))
-      return failure([
-        Errors.issue('INVALID_ELECTRIFICATION_INDICATEUR', source.location),
-      ]);
+    const date = text.match(/\s*\((\d{4})\)\s*$/);
     const value = date ? text.slice(0, date.index).trim() : text;
     const boolean = Values.normalize(value);
-    if (boolean === 'oui' || boolean === 'non')
+    if (boolean === 'oui' || boolean === 'non') {
+      const year = date ? Number(date[1]) : defaultYear;
+      if (year === 0 || (date && defaultYear !== null && year !== defaultYear))
+        return failure([
+          Errors.issue('INVALID_ELECTRIFICATION_INDICATEUR', source.location),
+        ]);
       return year === null
         ? failure([Errors.issue('MISSING_INDICATEUR_YEAR', source.location)])
         : success({ value: boolean === 'oui', year, unit: null });
-    const number = value.match(
-      new RegExp(`^(${Values.NUMBER_LITERAL})(?:\\s+([^\\d\\s].*)|\\s*(%))?$`)
-    );
-    const parsed = number ? Values.number(number[1]) : null;
-    const parsedUnit = (number?.[2] ?? number?.[3])?.trim() ?? null;
-    if (
-      parsed === null ||
-      (parsedUnit !== null && !Values.isUnit(parsedUnit))
-    ) {
-      Interpretation.request(request, context);
+    }
+    const values = Interpretation.read(request, context);
+    if (!values || values.length !== 1) {
       return failure([
         Errors.issue('INVALID_ELECTRIFICATION_INDICATEUR', source.location),
       ]);
     }
+    const parsed = values[0];
+    const year = parsed.year ?? defaultYear;
     return year === null
       ? failure([Errors.issue('MISSING_INDICATEUR_YEAR', source.location)])
-      : success({ value: parsed, year, unit: parsedUnit });
+      : success({ value: parsed.value, year, unit: parsed.unit });
   }
 }

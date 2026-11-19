@@ -51,6 +51,7 @@ import {
   vi,
 } from 'vitest';
 import templateData from '../extract-plan/__fixtures__/electrification-v4.template.json';
+import { ELECTRIFICATION_CHECKPOINT_VERSION } from '../extract-plan/electrification-extraction-checkpoint.schema';
 import { PrepareElectrificationImportService } from '../extract-plan/prepare-electrification-import.service';
 import { ReadDocument } from '../../pipeline/document/document-page';
 import { readDocument } from '../../pipeline/read-document/read-document';
@@ -1363,7 +1364,7 @@ describe('Résolution des fiches actions Électrification', () => {
       expect(result.prepared.cibles).toEqual([]);
       expect(result.checkpoint).toMatchObject({
         profile: 'annexe-3-electrification',
-        schemaVersion: 2,
+        schemaVersion: ELECTRIFICATION_CHECKPOINT_VERSION,
         catalogueVersion: config.version,
         documentKind: 'docx',
         templateVersion: 'electrification-v4',
@@ -1509,21 +1510,6 @@ describe('Résolution des fiches actions Électrification', () => {
         const fiche = (await prepared()).prepared.fiches[0];
         assert(fiche.mode === 'create');
         expect(fiche.champs.dateDebut).toBe(expected);
-      }
-    );
-
-    test.each(['5 à 6', '1e3', '1e-3', '5à6'])(
-      'refuse une valeur ambiguë au lieu de prendre le premier nombre : %s',
-      async (value) => {
-        const rows = actionRows();
-        rows.splice(23, 1, [
-          { text: '' },
-          { text: 'Énergie économisée (MWh)', columnSpan: 2 },
-          { text: `${value} (2025)` },
-          { text: '10' },
-        ]);
-        await useForm({ fiches: [rows] });
-        await expectExtractionIssue('INVALID_ELECTRIFICATION_INDICATEUR');
       }
     );
 
@@ -1939,6 +1925,27 @@ describe('Résolution des fiches actions Électrification', () => {
         fiches: [],
       });
 
+    const interpretTargets = (
+      text: string,
+      targets: { key: string; numberId: number }[]
+    ) => {
+      expectedInterpretationCalls++;
+      generate.mockResolvedValueOnce(
+        success({
+          data: {
+            status: 'extracted',
+            values: targets.map((target) => ({
+              ...target,
+              unit: null,
+              yearId: null,
+              quote: text,
+            })),
+          },
+          tokens: emptyTokenUsage(),
+        })
+      );
+    };
+
     test.each([
       { code: 'E05', identity: 'code', axe: 3, value: '25 %', expected: [25] },
       {
@@ -2007,6 +2014,11 @@ describe('Résolution des fiches actions Électrification', () => {
             success({ data: { code, quote: label }, tokens: emptyTokenUsage() })
           );
         }
+        if (code === 'E07')
+          interpretTargets(value, [
+            { key: 'total', numberId: 0 },
+            { key: 'rapides', numberId: 1 },
+          ]);
 
         const result = await prepared();
 
@@ -2031,10 +2043,11 @@ describe('Résolution des fiches actions Électrification', () => {
       const label = 'Rénover le parc, dont les écoles.';
       const value = (
         key: string,
-        number: string,
+        numberId: number,
         quote: string,
-        year: string | null = null
-      ) => ({ key, number, quote, year, unit: null });
+        yearId: number | null = null,
+        unit: string | null = null
+      ) => ({ key, numberId, quote, yearId, unit });
       const cibles = () => config.engagements[0].cibles;
 
       beforeEach(async () => {
@@ -2075,14 +2088,33 @@ describe('Résolution des fiches actions Électrification', () => {
         await configureEngagementTargets(['RENOVATION']);
       });
 
-      test('lit un nouveau code et des cibles datées sans IA, même avec un libellé partagé entre axes', async () => {
+      const interpret = async (
+        text: string,
+        values: ReturnType<typeof value>[]
+      ) => {
+        await useEngagement(label, text);
+        expectedInterpretationCalls = 1;
+        generate.mockResolvedValueOnce(
+          success({
+            data: { status: 'extracted', values },
+            tokens: emptyTokenUsage(),
+          })
+        );
+      };
+
+      test('interprète de nouveaux codes et des formulations libres à partir du catalogue', async () => {
         cibles()[1].reglesImport.plafondCible = 'parc';
         config.engagements.push({
           ...structuredClone(config.engagements[0]),
           code: 'AUTRE',
           axeNumero: 14,
         });
-        await useEngagement(label, '8 bâtiments dont 2 écoles en 2040');
+        const text =
+          "À l'horizon 2040, 8 bâtiments municipaux seront rénovés, parmi lesquels 2 établissements scolaires.";
+        await interpret(text, [
+          value('parc', 1, text, 0, 'bâtiments'),
+          value('ecoles', 2, text, 0),
+        ]);
 
         const result = await prepared();
 
@@ -2103,34 +2135,55 @@ describe('Résolution des fiches actions Électrification', () => {
             dateValeur: '2040-01-01',
           },
         ]);
-        expect(result.checkpoint.interpretations).toEqual([]);
+        expect(result.checkpoint.engagementInterpretations).toEqual([]);
+        expect(JSON.parse(generate.mock.calls[0][0].prompt).numbers).toEqual([
+          {
+            id: 0,
+            text: '2040',
+            start: text.indexOf('2040'),
+            end: text.indexOf('2040') + 4,
+          },
+          {
+            id: 1,
+            text: '8',
+            start: text.indexOf('8'),
+            end: text.indexOf('8') + 1,
+          },
+          {
+            id: 2,
+            text: '2',
+            start: text.lastIndexOf('2'),
+            end: text.lastIndexOf('2') + 1,
+          },
+        ]);
       });
-
-      const interpret = async (
-        text: string,
-        values: ReturnType<typeof value>[]
-      ) => {
-        await useEngagement(label, text);
-        expectedInterpretationCalls = 1;
-        generate.mockResolvedValueOnce(
-          success({ data: { values }, tokens: emptyTokenUsage() })
-        );
-      };
 
       test.each([
         {
-          text: 'Parc-communal prévu : 8 bâtiments ; écoles prévues : 2 écoles',
+          text: 'Parc-communal prévu : 8bâtiments ; écoles prévues : 2 écoles',
           values: [
-            value('parc', '8', 'Parc-communal prévu : 8 bâtiments'),
-            value('ecoles', '2', 'écoles prévues : 2 écoles'),
+            value(
+              'parc',
+              0,
+              'Parc-communal prévu : 8bâtiments',
+              null,
+              'bâtiments'
+            ),
+            value('ecoles', 1, 'écoles prévues : 2 écoles'),
           ],
           expected: [8, 2],
         },
         {
           text: 'Parc prévu : 8 bâtiments en 2030 ; écoles prévues : 2 écoles',
           values: [
-            value('parc', '8', 'Parc prévu : 8 bâtiments en 2030', '2030'),
-            value('ecoles', '2', 'écoles prévues : 2 écoles'),
+            value(
+              'parc',
+              0,
+              'Parc prévu : 8 bâtiments en 2030',
+              1,
+              'bâtiments'
+            ),
+            value('ecoles', 2, 'écoles prévues : 2 écoles'),
           ],
           expected: [8, 2],
         },
@@ -2139,27 +2192,30 @@ describe('Résolution des fiches actions Électrification', () => {
           values: [
             value(
               'parc',
-              '2030',
+              0,
               'Parc prévu : 2030 bâtiments en 2030',
-              '2030'
+              1,
+              'bâtiments'
             ),
-            value('ecoles', '2030', 'écoles prévues : 2030 bâtiments'),
+            value(
+              'ecoles',
+              2,
+              'écoles prévues : 2030 bâtiments',
+              null,
+              'bâtiments'
+            ),
           ],
           expected: [2030, 2030],
         },
       ])(
-        'conserve les quantités, libellés et échéances distincts : $text',
+        'conserve les occurrences distinctes et les échéances publiées : $text',
         async ({ text, values, expected }) => {
           cibles()[0].reglesImport.annee = 2030;
           await interpret(text, values);
-
-          const result = await prepared();
-
           expect(
-            result.prepared.cibles.map(({ objectif, dateValeur }) => ({
-              objectif,
-              dateValeur,
-            }))
+            (await prepared()).prepared.cibles.map(
+              ({ objectif, dateValeur }) => ({ objectif, dateValeur })
+            )
           ).toEqual([
             { objectif: expected[0], dateValeur: '2030-01-01' },
             { objectif: expected[1], dateValeur: '2040-01-01' },
@@ -2167,87 +2223,66 @@ describe('Résolution des fiches actions Électrification', () => {
         }
       );
 
-      test('autorise une année partagée entre deux cibles du même segment', async () => {
-        await interpret('Parc prévu : 8 en 2040, écoles prévues : 2', [
-          value('parc', '8', 'Parc prévu : 8 en 2040', '2040'),
-          value('ecoles', '2', '2040, écoles prévues : 2', '2040'),
-        ]);
-        expect(
-          (await prepared()).prepared.cibles.map(({ objectif }) => objectif)
-        ).toEqual([8, 2]);
-      });
-
       test.each([
         {
-          reason: 'libellé partiel',
-          text: 'parcelles prévues : 8',
-          values: [value('parc', '8', 'parcelles prévues : 8')],
+          reason: 'notation numérique non prise en charge',
+          text: 'Parc prévu : 1e-3',
+          values: [value('parc', 0, 'Parc prévu : 1e-3')],
         },
         {
-          reason: 'nombre inventé',
-          text: '2 écoles sur un ensemble de 8 bâtiments',
-          values: [
-            value('ecoles', '3', '2 écoles'),
-            value('parc', '8', 'un ensemble de 8 bâtiments'),
-          ],
-        },
-        {
-          reason: 'occurrence partielle',
-          text: 'parc prévu : 18',
-          values: [value('parc', '1', '1')],
+          reason: 'citation partielle',
+          text: 'Parc prévu : 18',
+          values: [value('parc', 0, '1')],
         },
         {
           reason: 'occurrence réutilisée',
-          text: 'parc prévu : 8',
+          text: 'Parc prévu : 8',
           values: [
-            value('parc', '8', 'parc prévu : 8'),
-            value('ecoles', '8', 'parc prévu : 8'),
+            value('parc', 0, 'Parc prévu : 8'),
+            value('ecoles', 0, 'Parc prévu : 8'),
           ],
         },
         {
-          reason: 'année prise pour une quantité',
-          text: 'parc prévu en 2030',
-          values: [value('parc', '2030', 'parc prévu en 2030')],
+          reason: 'quantité et année confondues',
+          text: 'Parc prévu : 2030',
+          values: [value('parc', 0, 'Parc prévu : 2030', 0)],
         },
         {
-          reason: 'année empruntée au segment voisin',
-          text: 'parc prévu : 8 en 2040 ; écoles prévues : 2',
-          values: [
-            value('parc', '8', 'parc prévu : 8'),
-            value('ecoles', '2', '2040 ; écoles prévues : 2', '2040'),
-          ],
+          reason: 'année sans occurrence',
+          text: 'Parc prévu : 8',
+          values: [value('parc', 0, 'Parc prévu : 8', 1)],
+        },
+        {
+          reason: 'année hors de la citation',
+          text: 'Parc prévu : 8 ; échéance 2030',
+          values: [value('parc', 0, 'Parc prévu : 8', 1)],
+        },
+        {
+          reason: 'échéance incompatible',
+          text: 'Parc prévu : 8 en 2040',
+          values: [value('parc', 0, 'Parc prévu : 8 en 2040', 1)],
         },
         {
           reason: 'quantité omise égale à une année',
-          text: 'parc prévu : 8 bâtiments en 2030 ; écoles prévues : 2030 bâtiments',
-          values: [
-            value('parc', '8', 'parc prévu : 8 bâtiments en 2030', '2030'),
-          ],
-        },
-        {
-          reason: 'quantité déclarée comme année',
-          text: 'parc prévu : 8 bâtiments, écoles prévues pour 2030 bâtiments',
+          text: 'Parc prévu : 8 bâtiments en 2030 ; écoles prévues : 2030 bâtiments',
           values: [
             value(
               'parc',
-              '8',
-              'parc prévu : 8 bâtiments, écoles prévues pour 2030 bâtiments',
-              '2030'
+              0,
+              'Parc prévu : 8 bâtiments en 2030',
+              1,
+              'bâtiments'
             ),
           ],
         },
-        ...[' ; ', '\n'].map((separator) => ({
-          reason: `libellés empruntés aux segments voisins (${JSON.stringify(
-            separator
-          )})`,
-          text: ['Parc prévu : 8', 'écoles prévues : 2', 'bilan du parc'].join(
-            separator
-          ),
+        {
+          reason: 'clé répétée',
+          text: 'Parc prévu : 8 ; écoles prévues : 2',
           values: [
-            value('ecoles', '8', `8${separator}écoles`),
-            value('parc', '2', `2${separator}bilan du parc`),
+            value('parc', 0, 'Parc prévu : 8'),
+            value('parc', 1, 'écoles prévues : 2'),
           ],
-        })),
+        },
       ])(
         'refuse des preuves de cibles incohérentes : $reason',
         async ({ text, values }) => {
@@ -2259,27 +2294,30 @@ describe('Résolution des fiches actions Électrification', () => {
         }
       );
 
-      test.each(['kW', '( kW )', '(MWh)'])(
-        "contrôle l'unité accolée au nombre sans emprunter le libellé d'une autre cible : %s",
-        async (unit) => {
+      test.each([
+        { sourceUnit: 'kW', extractedUnit: 'kW', valid: false },
+        { sourceUnit: '(MWh)', extractedUnit: 'MWh', valid: true },
+        { sourceUnit: 'MWh', extractedUnit: 'Wh', valid: false },
+      ])(
+        "vérifie l'unité extraite et sa preuve : $sourceUnit / $extractedUnit",
+        async ({ sourceUnit, extractedUnit, valid }) => {
           const [energie, puissance] = cibles();
           Object.assign(energie, {
             key: 'energie',
             uniteImport: 'MWh',
             unite: 'MWh',
           });
-          energie.reglesImport.libelles = ['énergie'];
           Object.assign(puissance, {
             key: 'puissance',
             uniteImport: 'kW',
             unite: 'kW',
           });
-          puissance.reglesImport.libelles = ['kW'];
           await configureEngagementTargets(['RENOVATION']);
-          await interpret(`énergie prévue : 42 ${unit}`, [
-            value('energie', '42', 'énergie prévue : 42'),
+          const text = `énergie prévue : 42 ${sourceUnit}`;
+          await interpret(text, [
+            value('energie', 0, text, null, extractedUnit),
           ]);
-          if (unit === '(MWh)')
+          if (valid)
             expect((await prepared()).prepared.cibles[0].objectif).toBe(42);
           else
             await expectExtractionIssue(
@@ -2290,13 +2328,13 @@ describe('Résolution des fiches actions Électrification', () => {
     });
 
     describe('Interprétation IA ciblée des valeurs non reconnues', () => {
-      const observationText = 'Le résultat atteint 42 MWh en 2025';
+      const observationText = "Le résultat atteint 42 MWh à l'horizon 2025";
       const observationValue = () => ({
         key: 'valeur',
-        number: '42',
+        numberId: 0,
         unit: 'MWh',
-        year: '2025',
-        quote: '42 MWh en 2025',
+        yearId: 1,
+        quote: "42 MWh à l'horizon 2025",
       });
       const useObservation = async (
         text = observationText,
@@ -2318,11 +2356,11 @@ describe('Résolution des fiches actions Électrification', () => {
         engagements[7][3].text = '20 bornes rapides sur un total de 100';
         return engagements;
       };
-      const respondWith = (values: unknown[]) => {
+      const respondWith = (values: unknown[], status = 'extracted') => {
         expectedInterpretationCalls = 1;
         generate.mockResolvedValue(
           success({
-            data: { values },
+            data: { status, values },
             tokens: {
               ...emptyTokenUsage(),
               promptTokens: 12,
@@ -2343,16 +2381,16 @@ describe('Résolution des fiches actions Électrification', () => {
         const values = [
           {
             key: 'rapides',
-            number: '20',
+            numberId: 0,
             unit: null,
-            year: null,
+            yearId: null,
             quote: '20 bornes rapides',
           },
           {
             key: 'total',
-            number: '100',
+            numberId: 1,
             unit: null,
-            year: null,
+            yearId: null,
             quote: 'un total de 100',
           },
         ];
@@ -2464,7 +2502,7 @@ describe('Résolution des fiches actions Électrification', () => {
       });
 
       test('garde le chemin déterministe pour les valeurs lisibles', async () => {
-        await useObservation('42 MWh en 2025');
+        await useObservation('42 MWh (2025)');
         const result = await prepared();
         expect(result.checkpoint.interpretations).toEqual([]);
         expect(result.checkpoint.tokens).toEqual(emptyTokenUsage());
@@ -2483,21 +2521,15 @@ describe('Résolution des fiches actions Électrification', () => {
         await expectExtractionIssue('INVALID_ELECTRIFICATION_INDICATEUR');
       });
 
-      test.each([
-        '30 % si financement obtenu',
-        "La cible n'est pas 30 %",
-        'Environ 30 %',
-      ])(
-        'ne transforme pas une cible conditionnelle ou incertaine en valeur : %s',
-        async (text) => {
-          const engagements = structuredClone(template.sections[0].rows);
-          engagements[1][2].text = 'Oui';
-          engagements[1][3].text = text;
-          await useForm({ engagements, fiches: [] });
+      test('signale une cible que le modèle ne peut pas interpréter avec certitude', async () => {
+        const engagements = structuredClone(template.sections[0].rows);
+        engagements[1][2].text = 'Oui';
+        engagements[1][3].text = '30 % si financement obtenu';
+        await useForm({ engagements, fiches: [] });
 
-          await expectExtractionIssue('INVALID_ELECTRIFICATION_TARGET');
-        }
-      );
+        respondWith([], 'unresolved');
+        await expectExtractionIssue('UNRESOLVED_ELECTRIFICATION_VALUE');
+      });
 
       test('valide la date avant une observation à interpréter dans la même fiche', async () => {
         await useObservation(observationText, {
@@ -2559,12 +2591,27 @@ describe('Résolution des fiches actions Électrification', () => {
       );
 
       test.each([
-        ['Entre 20 et 30 MWh en 2025', 'INVALID_ELECTRIFICATION_INDICATEUR'],
-        ['2025', 'MISSING_INDICATEUR_YEAR'],
+        {
+          text: 'Entre 20 et 30 MWh en 2025',
+          code: 'UNRESOLVED_ELECTRIFICATION_VALUE',
+          title: 'Énergie économisée (MWh)',
+        },
+        {
+          text: '42 environ (2025)',
+          code: 'UNRESOLVED_ELECTRIFICATION_VALUE',
+          title: 'Énergie économisée',
+        },
+        {
+          text: '2025',
+          code: 'MISSING_INDICATEUR_YEAR',
+          title: 'Énergie économisée (MWh)',
+        },
       ])(
-        'ne demande pas à l’IA de compléter une valeur ambiguë ou absente : %s',
-        async (text, code) => {
-          await useObservation(text);
+        'refuse une valeur ambiguë ou sans échéance : $text',
+        async ({ text, code, title }) => {
+          await useObservation(text, {}, title);
+          if (code === 'UNRESOLVED_ELECTRIFICATION_VALUE')
+            respondWith([], 'unresolved');
           const result = await prepare();
           assert(!result.success, JSON.stringify(result));
           expect(result.error).toContainEqual(
@@ -2577,13 +2624,13 @@ describe('Résolution des fiches actions Électrification', () => {
       );
 
       test.each([
-        ['nombre inventé', { ...observationValue(), number: '99' }],
+        ['nombre inventé', { ...observationValue(), numberId: 99 }],
         [
           'citation inventée',
           { ...observationValue(), quote: '42 MWh durant 2025' },
         ],
         ['clé inconnue', { ...observationValue(), key: 'inventée' }],
-        ['année omise', { ...observationValue(), year: null }],
+        ['année omise', { ...observationValue(), yearId: null }],
       ])(
         'refuse une interprétation non justifiée : %s',
         async (_reason, value) => {
@@ -2625,45 +2672,14 @@ describe('Résolution des fiches actions Électrification', () => {
         );
       });
 
-      test.each([
-        {
-          text: 'Le résultat atteint 42 kWh en 2025',
-          unit: null,
-          title: 'Énergie économisée (MWh)',
-        },
-        {
-          text: 'Le résultat atteint 42 kWh en 2025',
-          unit: 'kWh',
-          title: 'Énergie économisée (MWh)',
-        },
-        {
-          text: `${observationText}, avant conversion en kWh`,
-          unit: 'kWh',
-          title: 'Énergie économisée',
-        },
-      ])(
-        'refuse une unité source incompatible même si le modèle renvoie $unit : $text',
-        async ({ text, unit, title }) => {
-          await useObservation(text, {}, title);
-          respondWith([
-            {
-              ...observationValue(),
-              unit,
-              quote: text,
-            },
-          ]);
-
-          const result = await prepare();
-
-          assert(!result.success, JSON.stringify(result));
-          expect(result.error).toContainEqual(
-            expect.objectContaining({
-              code: 'INVALID_ELECTRIFICATION_VALUE_INTERPRETATION',
-              location: expect.any(String),
-            })
-          );
-        }
-      );
+      test("refuse une unité extraite incompatible avec l'unité attendue", async () => {
+        const text = 'Le résultat atteint 42 kWh en 2025';
+        await useObservation(text);
+        respondWith([{ ...observationValue(), unit: 'kWh', quote: text }]);
+        await expectExtractionIssue(
+          'INVALID_ELECTRIFICATION_VALUE_INTERPRETATION'
+        );
+      });
 
       test('revérifie les citations du checkpoint sans rappeler le modèle', async () => {
         await useObservation();
@@ -2767,8 +2783,12 @@ describe('Résolution des fiches actions Électrification', () => {
       engagements[7][3].text = '100 bornes publiques dont 20 rapides';
       engagements[10][2].text = 'Oui';
       engagements[11][2].text = 'Oui';
-      engagements[11][3].text = '1\u202f200,5 MWh en 2030';
+      engagements[11][3].text = '1\u202f200,5 MWh (2030)';
       await useForm({ engagements, fiches: [] });
+      interpretTargets(engagements[7][3].text, [
+        { key: 'total', numberId: 0 },
+        { key: 'rapides', numberId: 1 },
+      ]);
       const result = await prepared();
       expect(
         result.prepared.cibles.map(({ key, objectif, unite, dateValeur }) => ({
@@ -2913,23 +2933,38 @@ describe('Résolution des fiches actions Électrification', () => {
         engagements[7][2].text = 'Oui';
         engagements[7][3].text = String(value);
         await useForm({ engagements, fiches: [] });
+        interpretTargets(
+          String(value),
+          total === null
+            ? [{ key: 'rapides', numberId: 0 }]
+            : [
+                { key: 'total', numberId: 0 },
+                { key: 'rapides', numberId: 1 },
+              ]
+        );
         expect(
           (await prepared()).prepared.cibles.map(({ objectif }) => objectif)
         ).toEqual([total, rapides]);
       }
     );
 
-    test.each([
-      '100;20',
-      '100 bornes publiques dont 20 rapides ≥150 kW',
-      '100 bornes en 2029',
-    ])('refuse une cible E07 ambiguë : %s', async (value) => {
-      const engagements = structuredClone(template.sections[0].rows);
-      engagements[7][2].text = 'Oui';
-      engagements[7][3].text = value;
-      await useForm({ engagements, fiches: [] });
-      await expectExtractionIssue('INVALID_ELECTRIFICATION_TARGET');
-    });
+    test.each(['100;20', '100 bornes publiques dont 20 rapides ≥150 kW'])(
+      'refuse une cible E07 ambiguë : %s',
+      async (value) => {
+        const engagements = structuredClone(template.sections[0].rows);
+        engagements[7][2].text = 'Oui';
+        engagements[7][3].text = value;
+        await useForm({ engagements, fiches: [] });
+        expectedInterpretationCalls = 1;
+        generate.mockResolvedValueOnce(
+          success({
+            data: { status: 'unresolved', values: [] },
+            tokens: emptyTokenUsage(),
+          })
+        );
+        await expectExtractionIssue('UNRESOLVED_ELECTRIFICATION_VALUE');
+      }
+    );
 
     test.each(['x', ''])(
       'refuse une cible renseignée sans sélection oui/non explicite : "%s"',

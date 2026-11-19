@@ -15,7 +15,6 @@ import {
   ElectrificationValueRequest,
 } from './electrification-value-interpretation.schema';
 
-import { ElectrificationTargetValuesRules } from './electrification-target-values.rules';
 import { ElectrificationCatalogueRules } from '@tet/backend/plans/plans/electrification/publish-electrification-data/electrification-catalogue.rules';
 
 type Table = ElectrificationDocumentSource[][];
@@ -27,7 +26,7 @@ type Columns = {
   cible: number;
 };
 
-/** Extraction du tableau A : sélection explicite et cibles sans interprétation. */
+/** Lecture du tableau A et adaptation des valeurs extraites vers les cibles du catalogue. */
 export class ElectrificationEngagementsDocumentRules {
   static parse(
     table: Table,
@@ -232,18 +231,12 @@ export class ElectrificationEngagementsDocumentRules {
         : null,
       keys: targets.map(({ key }) => key),
     };
-    const values = ElectrificationTargetValuesRules.parse(
-      Interpretation.text(request, context),
-      definition.cibles
-    );
-    if (values === null) {
-      Interpretation.request(request, context);
-      return invalid();
-    }
+    const values = Interpretation.read(request, context);
+    if (values === null) return invalid();
     return success(
       targets.map(({ key, unit, year }) => ({
         key,
-        valeur: values.get(key) ?? null,
+        valeur: values.find((value) => value.key === key)?.value ?? null,
         unite: unit,
         annee: year,
         source: source.id,

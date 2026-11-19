@@ -7,6 +7,8 @@ Date : 2026-11-11
 **Décision du 19 novembre 2026 :** l'import n'est pas activé en production.
 Le [contrat unique](#contrat-unique-avant-activation-en-production---19-novembre-2026)
 remplace les dispositions de rétrocompatibilité consignées dans cet historique.
+L'[extraction numérique typée](#extraction-numérique-typée---19-novembre-2026)
+remplace la grammaire française des cellules numériques du document importé.
 La procédure applicable est le [guide de publication](../development/publish-electrification-data.md).
 
 Publication implémentée, déployée et données initiales publiées en préproduction
@@ -831,3 +833,31 @@ Les jeux de recette d'un format supprimé doivent être republiés et les import
 concernés relancés. Aucune conversion automatique n'est ajoutée. Les tests de
 compatibilité retirée sont supprimés ; les contrôles du format courant, des
 reprises, des autorisations et de l'intégrité des valeurs restent couverts.
+
+## Extraction numérique typée - 19 novembre 2026
+
+Les règles de mots de liaison, d'années et de qualificatifs des cellules Word
+sont remplacées par une interprétation structurée du modèle. Les tableaux,
+codes et nombres littéraux avec unité déclarée et année entre parenthèses
+restent lus directement. La synchronisation des définitions Grist ne change pas.
+
+Le code fournit les occurrences numériques avec leurs identifiants et positions.
+Le modèle associe ces identifiants à une clé de cible, une unité explicite et
+une éventuelle échéance, avec une citation exacte. Le code vérifie la présence
+des occurrences, leur couverture complète, l'unicité des quantités, les clés,
+unités et années autorisées. Il lit les valeurs dans le document et les transmet
+directement aux validations métier, sans reconstruire une phrase à analyser.
+Une réponse `unresolved` arrête l'extraction avec une erreur documentaire.
+
+Cette décision remplace le choix de relecture textuelle des réponses IA. Elle
+évite l'accumulation de règles françaises, au prix d'un appel au modèle pour
+les cellules rédigées, y compris les formulations précédemment reconnues par
+ces règles. Les reprises conservent les interprétations admises et ne rappellent
+pas le modèle. Le checkpoint adopte un seul nouveau format, sans conversion
+des formats précédents, conformément à la décision de contrat unique.
+
+Les citations et contraintes ne prouvent pas que les rôles sémantiques ont été
+correctement attribués. Les e2e avec faux modèle vérifient le contrat, les rejets
+et les reprises. La qualification humaine doit vérifier les conditions,
+négations, approximations, unités et échéances sur des documents représentatifs
+avant activation, selon le [guide d'évaluation](../../apps/backend/src/plans/ai-plan-import/eval/README.md#profil-électrification).
