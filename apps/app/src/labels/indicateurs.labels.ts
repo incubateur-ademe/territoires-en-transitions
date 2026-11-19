@@ -32,6 +32,13 @@ export const indicateursLabels = {
   indicateurSousIndicateursErreur: 'Impossible de charger les sous-indicateurs',
   indicateurSousIndicateursGraphiqueAlternativeTableau:
     'Les mêmes valeurs sont dans le tableau sous le graphique',
+  indicateurSousIndicateurDissocier: ({ label }: { label: string }) =>
+    `Dissocier ${label}`,
+  indicateurSousIndicateurDissocierInfo:
+    "Ce sous-indicateur sera dissocié de l'indicateur parent. Ses données et son unité sont conservées.",
+  indicateurSousIndicateurDissocie: 'Le sous-indicateur a été dissocié',
+  indicateurSousIndicateurDissocieErreur:
+    "Le sous-indicateur n'a pas pu être dissocié",
   indicateurSousIndicateurNiveau: ({ niveau }: { niveau: number }) =>
     `niveau ${niveau}`,
   indicateurSousIndicateurDeplier: ({ label }: { label: string }) =>
@@ -134,6 +141,10 @@ export const indicateursLabels = {
     `des données de la collectivité pour la période ${periodeLabel}`,
   indicateurSuppressionPeriodeAttention: (periodeLabel: string) =>
     `Attention, les données existantes pour la période ${periodeLabel} seront supprimées.`,
+  indicateurPeriodeSupprimee: (periodeLabel: string) =>
+    `La période ${periodeLabel} a été supprimée`,
+  indicateurPeriodeSuppressionErreur: (periodeLabel: string) =>
+    `La période ${periodeLabel} n'a pas pu être supprimée`,
   indicateurSourcePeriodicite: (label: string, cadence: string) =>
     `${label} · ${cadence}`,
   indicateurSourceVersion: (id: number) => `Source ${id}`,

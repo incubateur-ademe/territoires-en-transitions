@@ -29,6 +29,8 @@ const PeriodeCell = ({
           'border-b border-r border-primary-4 whitespace-nowrap text-center',
           cell.isBold && 'font-bold'
         )}
+        data-periode={periode.dateDebut}
+        data-periodicite={periode.periodicite}
       >
         {cell.content}
       </TableCell>

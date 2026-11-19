@@ -9,6 +9,7 @@ type Props = PropsWithChildren<{
   indentationRem?: number;
   isBold?: boolean;
   toggle?: ReactNode;
+  actions?: ReactNode;
 }>;
 
 const SeriesSwatch = ({ color }: { color: string }): JSX.Element => (
@@ -24,6 +25,7 @@ export const SousIndicateurRowHeaderCell = ({
   indentationRem = 0,
   isBold = false,
   toggle = null,
+  actions = null,
   children,
 }: Props): JSX.Element => (
   <TableHeaderCell
@@ -42,6 +44,7 @@ export const SousIndicateurRowHeaderCell = ({
       <div className="flex items-center gap-2">
         <SeriesSwatch color={color} />
         <div>{children}</div>
+        {actions}
       </div>
       {toggle}
     </div>

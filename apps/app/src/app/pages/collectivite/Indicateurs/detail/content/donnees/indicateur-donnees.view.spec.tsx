@@ -109,7 +109,17 @@ const renderDonnees = (indicateur: IndicateurDetaille) => {
       <IndicateurChartProvider value={{ chartInfo }}>
         <IndicateurActionsProvider value={actions}>
           <IndicateurSousIndicateursTableProvider
-            value={{ useSousIndicateursTable }}
+            value={{
+              useSousIndicateursTable,
+              useSaveSousIndicateurValeur: () => vi.fn(),
+              useDeclareSousIndicateursPeriodes: () => vi.fn(),
+              useDeleteSousIndicateursPeriode: () => vi.fn(),
+              useDetachSousIndicateur: () => vi.fn(),
+              useSousIndicateursCommentaires: () => ({
+                commentairesOf: () => ({ resultat: '', objectif: '' }),
+                save: vi.fn(),
+              }),
+            }}
           >
             <IndicateurDonnees />
           </IndicateurSousIndicateursTableProvider>

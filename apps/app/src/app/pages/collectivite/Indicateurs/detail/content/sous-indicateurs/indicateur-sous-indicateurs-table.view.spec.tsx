@@ -6,9 +6,18 @@ import type {
   SousIndicateursTableData,
   SousIndicateurTableRow,
 } from '@/app/indicateurs/sous-indicateurs/sous-indicateurs-table.rules';
+import {
+  NO_COMMENTAIRES,
+  type PeriodeCommentaires,
+} from '@/app/indicateurs/sous-indicateurs/sous-indicateurs-commentaires.rules';
+import { getIndicateurValeurFieldLabel } from '@/app/indicateurs/valeurs/grid/indicateur-valeur.field';
 import { appLabels } from '@/app/labels/catalog';
 import { fireEvent, render, screen, within } from '@testing-library/react';
-import type { IndicateurPeriodicite } from '@tet/domain/indicateurs';
+import {
+  IndicateurPeriodes,
+  type IndicateurPeriode,
+  type IndicateurPeriodicite,
+} from '@tet/domain/indicateurs';
 import { describe, expect, it, vi } from 'vitest';
 import { IndicateurSousIndicateursTableProvider } from '../../context/indicateur-sous-indicateurs-table.context';
 import { IndicateurSousIndicateursTable } from './indicateur-sous-indicateurs-table.view';
@@ -135,28 +144,66 @@ const toReadyState = (
   data,
 });
 
+type RenderOptions = {
+  periodicite?: IndicateurPeriodicite;
+  isReadonly?: boolean;
+  canDetach?: boolean;
+  commentairesOf?: (periode: IndicateurPeriode) => PeriodeCommentaires;
+};
+
 const renderTable = (
   state: SousIndicateursTableState,
-  periodicite: IndicateurPeriodicite = 'annuelle'
+  {
+    periodicite = 'annuelle',
+    isReadonly = true,
+    canDetach = false,
+    commentairesOf = () => NO_COMMENTAIRES,
+  }: RenderOptions = {}
 ) => {
   const useSousIndicateursTable = vi.fn(() => state);
+  const saveValeur = vi.fn().mockResolvedValue(true);
+  const declarePeriodes = vi.fn().mockResolvedValue(undefined);
+  const deletePeriode = vi.fn().mockResolvedValue(undefined);
+  const saveCommentaires = vi.fn().mockResolvedValue(true);
+  const detachSousIndicateur = vi.fn();
   render(
-    <IndicateurSousIndicateursTableProvider value={{ useSousIndicateursTable }}>
+    <IndicateurSousIndicateursTableProvider
+      value={{
+        useSousIndicateursTable,
+        useSaveSousIndicateurValeur: () => saveValeur,
+        useDeclareSousIndicateursPeriodes: () => declarePeriodes,
+        useDeleteSousIndicateursPeriode: () => deletePeriode,
+        useDetachSousIndicateur: () => detachSousIndicateur,
+        useSousIndicateursCommentaires: () => ({
+          commentairesOf,
+          save: saveCommentaires,
+        }),
+      }}
+    >
       <IndicateurSousIndicateursTable
         indicateurId={1}
         titre="Déchets"
         unite="t"
         periodicite={periodicite}
+        isReadonly={isReadonly}
+        canDetach={canDetach}
       />
     </IndicateurSousIndicateursTableProvider>
   );
-  return { useSousIndicateursTable };
+  return {
+    useSousIndicateursTable,
+    saveValeur,
+    declarePeriodes,
+    deletePeriode,
+    saveCommentaires,
+    detachSousIndicateur,
+  };
 };
 
 const renderReadyTable = (
   data: SousIndicateursTableData,
-  periodicite?: IndicateurPeriodicite
-) => renderTable(toReadyState(data), periodicite);
+  options?: RenderOptions
+) => renderTable(toReadyState(data), options);
 
 const getRowOf = (rowHeaderName: RegExp | string): HTMLElement => {
   const row = screen
@@ -231,7 +278,7 @@ describe('IndicateurSousIndicateursTable', () => {
       columns: [{ dateValeur: '2020-01-01' }, { dateValeur: '2020-02-01' }],
     };
 
-    renderReadyTable(monthlyData, 'mensuelle');
+    renderReadyTable(monthlyData, { periodicite: 'mensuelle' });
 
     const headers = screen
       .getAllByRole('columnheader')
@@ -246,6 +293,317 @@ describe('IndicateurSousIndicateursTable', () => {
     expect(
       screen.getByRole('columnheader', { name: 'Déchets (t)' }).className
     ).toContain('sticky');
+  });
+
+  it('enregistre le résultat saisi sur la feuille avec son indicateur et la période de la colonne', async () => {
+    const { saveValeur } = renderReadyTable(
+      toData({ totalCells: COMPLETE_TOTAL_CELLS }),
+      { isReadonly: false }
+    );
+
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: getIndicateurValeurFieldLabel('resultat', '2020'),
+      })
+    );
+    const input = screen.getByRole('textbox', {
+      name: getIndicateurValeurFieldLabel('resultat', '2020'),
+    });
+    fireEvent.change(input, { target: { value: '7' } });
+    fireEvent.keyDown(input, { key: 'Enter' });
+
+    await vi.waitFor(() => expect(saveValeur).toHaveBeenCalledTimes(1));
+    const [saved] = saveValeur.mock.calls[0];
+    expect({
+      indicateurId: saved.indicateurId,
+      field: saved.field,
+      value: saved.value,
+      periode: IndicateurPeriodes.format(saved.periode),
+    }).toEqual({
+      indicateurId: 6,
+      field: 'resultat',
+      value: 7,
+      periode: '2020',
+    });
+  });
+
+  it('ne rend éditable que la ligne de la feuille, ni le total ni un niveau intermédiaire', () => {
+    renderReadyTable(toData({ totalCells: COMPLETE_TOTAL_CELLS }), {
+      isReadonly: false,
+    });
+
+    expect(
+      screen.getAllByRole('button', {
+        name: getIndicateurValeurFieldLabel('resultat', '2020'),
+      })
+    ).toHaveLength(1);
+  });
+
+  it("déclare l'année ajoutée sur chaque feuille du tableau, pas sur les niveaux intermédiaires", async () => {
+    const { declarePeriodes } = renderReadyTable(
+      toData({ totalCells: COMPLETE_TOTAL_CELLS }),
+      { isReadonly: false }
+    );
+
+    const input = screen.getByRole('textbox', { name: 'Ajouter une année' });
+    fireEvent.change(input, { target: { value: '2024' } });
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Valider et ajouter une année' })
+    );
+
+    await vi.waitFor(() => expect(declarePeriodes).toHaveBeenCalledTimes(1));
+    const [indicateurIds, periodes] = declarePeriodes.mock.calls[0];
+    expect(indicateurIds).toEqual([5, 6]);
+    expect(
+      periodes.map((periode: IndicateurPeriode) =>
+        IndicateurPeriodes.format(periode)
+      )
+    ).toEqual(['2024']);
+  });
+
+  it("ne propose pas d'ajouter une année en lecture seule", () => {
+    renderReadyTable(toData({ totalCells: COMPLETE_TOTAL_CELLS }));
+
+    expect(
+      screen.queryByRole('textbox', { name: 'Ajouter une année' })
+    ).toBeNull();
+  });
+
+  it("propose d'ajouter un mois, et non une année, pour un indicateur mensuel", () => {
+    renderReadyTable(toData({ totalCells: COMPLETE_TOTAL_CELLS }), {
+      periodicite: 'mensuelle',
+      isReadonly: false,
+    });
+
+    expect(
+      screen.queryByRole('textbox', { name: 'Ajouter une année' })
+    ).toBeNull();
+    expect(
+      screen.getByRole('button', { name: 'Ajouter un mois' })
+    ).toBeDefined();
+  });
+
+  it('demande confirmation avant de supprimer une période qui a des valeurs, puis la supprime sur chaque feuille', async () => {
+    const { deletePeriode } = renderReadyTable(
+      toData({ totalCells: COMPLETE_TOTAL_CELLS }),
+      { isReadonly: false }
+    );
+
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: appLabels.indicateurSupprimerPeriode('2020'),
+      })
+    );
+
+    expect(deletePeriode).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole('button', { name: appLabels.confirmer }));
+
+    await vi.waitFor(() => expect(deletePeriode).toHaveBeenCalledTimes(1));
+    const [{ indicateurIds, periode }] = deletePeriode.mock.calls[0];
+    expect(indicateurIds).toEqual([1, 5, 6]);
+    expect(IndicateurPeriodes.format(periode)).toBe('2020');
+  });
+
+  it('ne supprime rien quand la confirmation est annulée', () => {
+    const { deletePeriode } = renderReadyTable(
+      toData({ totalCells: COMPLETE_TOTAL_CELLS }),
+      { isReadonly: false }
+    );
+
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: appLabels.indicateurSupprimerPeriode('2020'),
+      })
+    );
+    fireEvent.click(screen.getByRole('button', { name: appLabels.annuler }));
+
+    expect(deletePeriode).not.toHaveBeenCalled();
+  });
+
+  it("supprime sans confirmation une période dont les feuilles n'ont aucune valeur", async () => {
+    const withoutLeafValues = toData({ totalCells: COMPLETE_TOTAL_CELLS });
+    const { deletePeriode } = renderReadyTable(
+      {
+        ...withoutLeafValues,
+        rows: withoutLeafValues.rows.map((row) =>
+          row.isExpandable
+            ? row
+            : {
+                ...row,
+                cells: row.cells.map((cell) => ({
+                  ...cell,
+                  resultat: EMPTY,
+                  objectif: EMPTY,
+                })),
+              }
+        ),
+      },
+      { isReadonly: false }
+    );
+
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: appLabels.indicateurSupprimerPeriode('2020'),
+      })
+    );
+
+    await vi.waitFor(() => expect(deletePeriode).toHaveBeenCalledTimes(1));
+  });
+
+  it('ne propose pas de supprimer une période en lecture seule', () => {
+    renderReadyTable(toData({ totalCells: COMPLETE_TOTAL_CELLS }));
+
+    expect(
+      screen.queryByRole('button', {
+        name: appLabels.indicateurSupprimerPeriode('2020'),
+      })
+    ).toBeNull();
+  });
+
+  it('ouvre les commentaires de la période du parent et les enregistre', async () => {
+    const { saveCommentaires } = renderReadyTable(
+      toData({ totalCells: COMPLETE_TOTAL_CELLS }),
+      { isReadonly: false }
+    );
+
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: appLabels.indicateurCommentairesPeriode('2020'),
+      })
+    );
+    fireEvent.change(screen.getAllByRole('textbox')[0], {
+      target: { value: 'Mesuré en mars' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: appLabels.valider }));
+
+    await vi.waitFor(() => expect(saveCommentaires).toHaveBeenCalledTimes(1));
+    const [{ periode, commentaires }] = saveCommentaires.mock.calls[0];
+    expect(IndicateurPeriodes.format(periode)).toBe('2020');
+    expect(commentaires).toEqual({ resultat: 'Mesuré en mars', objectif: '' });
+  });
+
+  it("n'affiche en lecture seule la ligne de commentaires que pour les périodes commentées", () => {
+    renderReadyTable(toData({ totalCells: COMPLETE_TOTAL_CELLS }), {
+      commentairesOf: (periode) =>
+        IndicateurPeriodes.format(periode) === '2021'
+          ? { resultat: 'Vérifié', objectif: '' }
+          : NO_COMMENTAIRES,
+    });
+
+    expect(
+      screen.queryByRole('button', {
+        name: appLabels.indicateurCommentairesPeriode('2020'),
+      })
+    ).toBeNull();
+    expect(
+      screen.getByRole('button', {
+        name: appLabels.indicateurCommentairesPeriode('2021'),
+      })
+    ).toBeDefined();
+  });
+
+  it("demande confirmation avant de supprimer une période qui n'a qu'un commentaire du parent", () => {
+    const withoutLeafValues = toData({ totalCells: COMPLETE_TOTAL_CELLS });
+    const { deletePeriode } = renderReadyTable(
+      {
+        ...withoutLeafValues,
+        rows: withoutLeafValues.rows.map((row) => ({
+          ...row,
+          cells: row.cells.map((cell) => ({
+            ...cell,
+            resultat: EMPTY,
+            objectif: EMPTY,
+          })),
+        })),
+      },
+      {
+        isReadonly: false,
+        commentairesOf: () => ({ resultat: 'À conserver', objectif: '' }),
+      }
+    );
+
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: appLabels.indicateurSupprimerPeriode('2020'),
+      })
+    );
+
+    expect(deletePeriode).not.toHaveBeenCalled();
+    expect(
+      screen.getByRole('button', { name: appLabels.confirmer })
+    ).toBeDefined();
+  });
+
+  it('demande confirmation avant de dissocier le sous-indicateur de la ligne, puis le dissocie', () => {
+    const { detachSousIndicateur } = renderReadyTable(
+      toData({ totalCells: COMPLETE_TOTAL_CELLS }),
+      { canDetach: true }
+    );
+
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: appLabels.indicateurSousIndicateurDissocier({ label: 'Papier' }),
+      })
+    );
+
+    expect(detachSousIndicateur).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole('button', { name: appLabels.confirmer }));
+
+    expect(detachSousIndicateur).toHaveBeenCalledWith(6);
+  });
+
+  it('ne dissocie rien quand la confirmation est annulée', () => {
+    const { detachSousIndicateur } = renderReadyTable(
+      toData({ totalCells: COMPLETE_TOTAL_CELLS }),
+      { canDetach: true }
+    );
+
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: appLabels.indicateurSousIndicateurDissocier({ label: 'Papier' }),
+      })
+    );
+    fireEvent.click(screen.getByRole('button', { name: appLabels.annuler }));
+
+    expect(detachSousIndicateur).not.toHaveBeenCalled();
+  });
+
+  it('propose la dissociation sur chaque ligne de sous-indicateur visible, pas sur le total', () => {
+    renderReadyTable(toData({ totalCells: COMPLETE_TOTAL_CELLS }), {
+      canDetach: true,
+    });
+
+    expect(
+      screen
+        .getAllByRole('button')
+        .filter((button) =>
+          (button.getAttribute('aria-label') ?? '').startsWith('Dissocier')
+        )
+        .map((button) => button.getAttribute('aria-label'))
+    ).toEqual(['Dissocier Ménagers', 'Dissocier Papier']);
+  });
+
+  it('ne propose pas la dissociation sans le droit de modifier la structure', () => {
+    renderReadyTable(toData({ totalCells: COMPLETE_TOTAL_CELLS }), {
+      isReadonly: false,
+      canDetach: false,
+    });
+
+    expect(
+      screen.queryByRole('button', {
+        name: appLabels.indicateurSousIndicateurDissocier({ label: 'Papier' }),
+      })
+    ).toBeNull();
+  });
+
+  it('ne propose aucune saisie en lecture seule', () => {
+    renderReadyTable(toData({ totalCells: COMPLETE_TOTAL_CELLS }));
+
+    expect(
+      screen.queryByRole('button', {
+        name: getIndicateurValeurFieldLabel('resultat', '2020'),
+      })
+    ).toBeNull();
   });
 
   it("affiche la légende du résultat et de l'objectif au-dessus du tableau", () => {

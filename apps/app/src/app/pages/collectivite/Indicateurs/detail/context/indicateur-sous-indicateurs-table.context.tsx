@@ -1,5 +1,10 @@
 'use client';
 
+import type { DetachSousIndicateur } from '@/app/indicateurs/sous-indicateurs/data/use-detach-sous-indicateur';
+import type { SousIndicateursCommentaires } from '@/app/indicateurs/sous-indicateurs/data/use-sous-indicateurs-commentaires';
+import type { DeleteSousIndicateursPeriode } from '@/app/indicateurs/sous-indicateurs/data/use-delete-sous-indicateurs-periode';
+import type { SaveSousIndicateurValeur } from '@/app/indicateurs/sous-indicateurs/data/use-save-sous-indicateur-valeur';
+import type { DeclareIndicateursPeriodes } from '@/app/indicateurs/valeurs/use-declare-indicateur-periodes';
 import type { SousIndicateursTableState } from '@/app/indicateurs/sous-indicateurs/sous-indicateurs-table-state.rules';
 import {
   createContext,
@@ -10,6 +15,13 @@ import {
 
 export type IndicateurSousIndicateursTableValue = {
   useSousIndicateursTable: (indicateurId: number) => SousIndicateursTableState;
+  useSaveSousIndicateurValeur: () => SaveSousIndicateurValeur;
+  useDeclareSousIndicateursPeriodes: () => DeclareIndicateursPeriodes;
+  useDeleteSousIndicateursPeriode: () => DeleteSousIndicateursPeriode;
+  useDetachSousIndicateur: () => DetachSousIndicateur;
+  useSousIndicateursCommentaires: (
+    indicateurId: number
+  ) => SousIndicateursCommentaires;
 };
 
 const IndicateurSousIndicateursTableContext =
