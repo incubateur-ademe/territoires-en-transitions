@@ -377,9 +377,8 @@ const columns = [
     id: 'actions',
     header: () => (
       <TableHeaderCell
-        className="w-44"
+        className="w-52"
         title={appLabels.instructionListeColonneActions}
-        align="right"
       />
     ),
     cell: ({ row }) => (

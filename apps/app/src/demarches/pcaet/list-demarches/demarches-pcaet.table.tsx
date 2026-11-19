@@ -218,7 +218,7 @@ const TitreCell = ({ demarche }: { demarche: DemarcheListItem }) => {
 
 const ActionsCell = ({ demarche }: { demarche: DemarcheListItem }) => {
   const { renderActions } = usePilotage();
-  return <div className="flex justify-end">{renderActions?.(demarche)}</div>;
+  return <div className="flex">{renderActions?.(demarche)}</div>;
 };
 
 /**
@@ -340,7 +340,6 @@ const columns = [
       <TableHeaderCell
         className="w-52"
         title={appLabels.demarcheListeColonneActions}
-        align="right"
       />
     ),
     cell: ({ row }) => (
