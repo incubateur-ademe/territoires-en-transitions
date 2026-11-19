@@ -34,6 +34,11 @@ export const AvancementParAxeBloc = ({
   const axesVisibles =
     axes && !isAllVisible ? axes.slice(0, NB_AXES_VISIBLES) : axes;
   const nbAxesMasques = axes ? axes.length - NB_AXES_VISIBLES : 0;
+  const isAucunAxeCorrespondant =
+    filters.filtersCount > 0 &&
+    axes !== undefined &&
+    axes.length > 0 &&
+    axes.every((axe) => axe.total === 0);
 
   return (
     <SuiviPlanBloc
@@ -69,6 +74,10 @@ export const AvancementParAxeBloc = ({
       ) : axes.length === 0 ? (
         <p className="mb-0 text-sm text-grey-8">
           {appLabels.avancementParAxeAucunAxe}
+        </p>
+      ) : isAucunAxeCorrespondant ? (
+        <p className="mb-0 text-sm text-grey-8">
+          {appLabels.avancementParAxeAucunAxeCorrespondant}
         </p>
       ) : (
         <div className="flex flex-col">
