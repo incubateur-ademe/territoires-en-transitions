@@ -712,8 +712,8 @@ describe('Notifications des démarches PCAET', () => {
 
       await notificationsService.sendPendingNotifications();
 
-      // La DGEC est unique : son agent reçoit aussi les transmissions des
-      // dossiers d'autres specs en parallèle. On ne compte que ce dossier-ci.
+      // Un agent de la DGEC peut suivre plusieurs dossiers. On ne compte que
+      // les notifications de ce dossier-ci.
       const mesDemandes = new Set([
         demandeDrealId,
         demandeRegionId,
