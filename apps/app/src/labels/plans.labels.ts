@@ -478,8 +478,6 @@ export const plansLabels = {
         : 'action en cours sans progression renseignée, comptée'
     } à 0 %.`,
   vueEnsembleRepartitionParStatut: 'Répartition par statut',
-  vueEnsembleRepartitionInfo:
-    'Cliquer sur un statut ouvre les actions concernées dans le pilotage.',
   vueEnsembleTrancher: 'Trancher',
   vueEnsembleArbitrer: 'Arbitrer',
   vueEnsembleDebloquer: 'Débloquer',
@@ -491,6 +489,8 @@ export const plansLabels = {
     `Voir plus (${count} ${count > 1 ? 'axes' : 'axe'})`,
   avancementParAxeVoirMoins: 'Voir moins',
   avancementParAxeAucunAxe: "Ce plan n'a pas encore d'axe.",
+  avancementParAxeAucunAxeCorrespondant:
+    'Aucun axe ne correspond à votre recherche.',
   evolutionStatutsTitre: 'Évolution des statuts sur la période',
   evolutionStatutsPeriodeTitre: ({
     debut,
@@ -578,6 +578,9 @@ export const plansLabels = {
   faireAvancerLePlanSansPiloteInfo:
     "Elles n'ont pas de responsable désigné pour les faire avancer.",
   suiviPlanModulesPersonnalises: 'Modules personnalisés',
+  suiviPlanModulesPersonnalisesVide: 'Aucun module personnalisé',
+  suiviPlanModulesPersonnalisesVideDescription:
+    'Ajoutez un module pour suivre la répartition de vos actions selon le critère de votre choix.',
   moduleCountByNom: 'Nom du module :',
   moduleCountByNomPlaceholder: 'Ajouter un titre',
   moduleCountByCritere: 'Répartition des actions par :',

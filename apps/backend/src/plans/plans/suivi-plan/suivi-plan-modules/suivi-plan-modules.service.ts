@@ -8,14 +8,10 @@ import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import {
-  ModuleFicheCountByProperty,
   ModuleFicheCountFilters,
-  SuiviPlanDefaultModuleKey,
-  suiviPlanDefaultModuleKeysSchema,
   SuiviPlanModule,
   UpsertSuiviPlanModuleInput,
 } from '@tet/domain/metrics';
-import { StatutEnum } from '@tet/domain/plans';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { and, eq, isNull } from 'drizzle-orm';
 import { DateTime } from 'luxon';
@@ -26,33 +22,6 @@ import {
 } from './suivi-plan-modules.errors';
 
 type ModuleRow = typeof tableauDeBordModuleTable.$inferSelect;
-
-const DEFAULT_MODULE_CREATED_AT = '2026-11-17T00:00:00.000Z';
-
-const defaultModules: Record<
-  SuiviPlanDefaultModuleKey,
-  {
-    titre: string;
-    countByProperty: ModuleFicheCountByProperty;
-    filtre: ModuleFicheCountFilters;
-  }
-> = {
-  'suivi-plan-fiches-par-statut': {
-    titre: 'Répartition par statut',
-    countByProperty: 'statut',
-    filtre: {},
-  },
-  'suivi-plan-fiches-par-personne-pilote': {
-    titre: 'Répartition par personne pilote',
-    countByProperty: 'pilotes',
-    filtre: {},
-  },
-  'suivi-plan-fiches-a-discuter-par-priorite': {
-    titre: 'Actions à discuter par priorité',
-    countByProperty: 'priorite',
-    filtre: { statuts: [StatutEnum.A_DISCUTER] },
-  },
-};
 
 @Injectable()
 export class SuiviPlanModulesService {
@@ -75,20 +44,10 @@ export class SuiviPlanModulesService {
     const rows = await (tx ?? this.databaseService.db)
       .select()
       .from(tableauDeBordModuleTable)
-      .where(this.isModuleOfPlan(planId, collectiviteId));
-    const modules = rows.map((row) => this.toModule(row, planId));
+      .where(this.isModuleOfPlan(planId, collectiviteId))
+      .orderBy(tableauDeBordModuleTable.createdAt);
 
-    const missingDefaultModules = suiviPlanDefaultModuleKeysSchema.options
-      .filter((key) => !modules.some((module) => module.defaultKey === key))
-      .map((key) => this.buildDefaultModule(key, collectiviteId, planId));
-
-    return success(
-      [...missingDefaultModules, ...modules].sort(
-        (a, b) =>
-          this.getDefaultKeyIndex(a) - this.getDefaultKeyIndex(b) ||
-          a.createdAt.localeCompare(b.createdAt)
-      )
-    );
+    return success(rows.map((row) => this.toModule(row, planId)));
   }
 
   async upsertModule(
@@ -107,20 +66,6 @@ export class SuiviPlanModulesService {
     const { collectiviteId } = accessResult.data;
     const db = tx ?? this.databaseService.db;
 
-    const existingDefaultModuleId = input.defaultKey
-      ? (
-          await db
-            .select({ id: tableauDeBordModuleTable.id })
-            .from(tableauDeBordModuleTable)
-            .where(
-              and(
-                this.isModuleOfPlan(input.planId, collectiviteId),
-                eq(tableauDeBordModuleTable.defaultKey, input.defaultKey)
-              )
-            )
-        )[0]?.id
-      : undefined;
-
     const titre = input.titre;
     const options = {
       countByProperty: input.options.countByProperty,
@@ -130,11 +75,11 @@ export class SuiviPlanModulesService {
     const [row] = await db
       .insert(tableauDeBordModuleTable)
       .values({
-        id: existingDefaultModuleId ?? input.id ?? crypto.randomUUID(),
+        id: input.id ?? crypto.randomUUID(),
         collectiviteId,
         planId: input.planId,
         userId: null,
-        defaultKey: input.defaultKey ?? null,
+        defaultKey: null,
         type: 'fiche-action.count-by',
         titre,
         options,
@@ -231,38 +176,6 @@ export class SuiviPlanModulesService {
     return { ...filtre, planActionIds: [planId], noPlan: undefined };
   }
 
-  private getDefaultKeyIndex(module: SuiviPlanModule) {
-    const index = suiviPlanDefaultModuleKeysSchema.options.indexOf(
-      module.defaultKey as SuiviPlanDefaultModuleKey
-    );
-    return index === -1
-      ? suiviPlanDefaultModuleKeysSchema.options.length
-      : index;
-  }
-
-  private buildDefaultModule(
-    key: SuiviPlanDefaultModuleKey,
-    collectiviteId: number,
-    planId: number
-  ): SuiviPlanModule {
-    const { titre, countByProperty, filtre } = defaultModules[key];
-    return {
-      id: crypto.randomUUID(),
-      collectiviteId,
-      planId,
-      userId: null,
-      titre,
-      defaultKey: key,
-      type: 'fiche-action.count-by',
-      options: {
-        countByProperty,
-        filtre: this.forcePlanFilter(filtre, planId),
-      },
-      createdAt: DEFAULT_MODULE_CREATED_AT,
-      modifiedAt: DEFAULT_MODULE_CREATED_AT,
-    };
-  }
-
   private toModule(row: ModuleRow, planId: number): SuiviPlanModule {
     const options = row.options as SuiviPlanModule['options'];
     return {
@@ -271,7 +184,7 @@ export class SuiviPlanModulesService {
       planId,
       userId: null,
       titre: row.titre ?? '',
-      defaultKey: row.defaultKey,
+      defaultKey: null,
       type: 'fiche-action.count-by',
       options: {
         countByProperty: options.countByProperty,

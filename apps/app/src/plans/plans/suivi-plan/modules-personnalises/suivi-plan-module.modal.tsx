@@ -36,8 +36,6 @@ export const SuiviPlanModuleModal = ({
         upsertModule({
           planId,
           id: module?.id,
-          defaultKey: (module?.defaultKey ??
-            undefined) as UpsertSuiviPlanModuleInput['defaultKey'],
           titre,
           options: {
             countByProperty:
