@@ -20,6 +20,7 @@ import {
 } from '@tet/domain/indicateurs';
 import { uniq } from 'es-toolkit';
 import { useRef, useState, type JSX, type PropsWithChildren } from 'react';
+import { PrivateModeToggle } from '../../../table/private-mode-toggle';
 import { EditCommentaireModal } from '../../../table/edit-commentaire-modal';
 import { useIndicateurPeriodeDeclaration } from '../../../table/use-indicateur-periode-declaration';
 import { useRevealIndicateurPeriode } from '../../../table/use-reveal-indicateur-periode';
@@ -33,6 +34,11 @@ import {
   type DetachTarget,
 } from './to-sous-indicateur-table-rows';
 import { useSousIndicateurRowsExpansion } from './use-sous-indicateur-rows-expansion';
+
+export type PrivateMode = Readonly<{
+  isConfidentiel: boolean;
+  onChange: (isConfidentiel: boolean) => void;
+}>;
 
 export type NewSousIndicateur = Readonly<{
   id: number | null;
@@ -48,6 +54,7 @@ type Props = {
   isReadonly: boolean;
   canMutateIndicateur: boolean;
   newSousIndicateur: NewSousIndicateur;
+  privateMode: PrivateMode;
 };
 
 type ReadyTableProps = Props & {
@@ -96,6 +103,7 @@ const ReadyTable = ({
   renameSousIndicateur,
   canMutateIndicateur,
   newSousIndicateur,
+  privateMode,
   data,
 }: ReadyTableProps): JSX.Element => {
   const { visibleRows, isExpanded, toggle } = useSousIndicateurRowsExpansion(
@@ -182,14 +190,20 @@ const ReadyTable = ({
             childCount={data.rows.filter((row) => row.depth === 0).length}
             onCreated={newSousIndicateur.onCreated}
           />
+          <span aria-hidden className="h-6 w-px bg-grey-4" />
           {periodes.length > 0 && (
             <Checkbox
               variant="switch"
               label={appLabels.indicateurCumulSousIndicateurs}
+              labelClassname="text-primary-9"
               checked={data.hasTotalRow}
               onChange={() => updateCumul(!data.hasTotalRow)}
             />
           )}
+          <PrivateModeToggle
+            isConfidentiel={privateMode.isConfidentiel}
+            onChange={privateMode.onChange}
+          />
         </div>
       )}
       {declaration.modal}
@@ -244,6 +258,7 @@ export const IndicateurSousIndicateursTable = ({
   isReadonly,
   canMutateIndicateur,
   newSousIndicateur,
+  privateMode,
 }: Props): JSX.Element => {
   const {
     useSousIndicateursTable,
@@ -295,6 +310,7 @@ export const IndicateurSousIndicateursTable = ({
       renameSousIndicateur={renameSousIndicateur}
       canMutateIndicateur={canMutateIndicateur}
       newSousIndicateur={newSousIndicateur}
+      privateMode={privateMode}
       data={state.data}
     />
   );

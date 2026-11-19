@@ -8,6 +8,8 @@ import { IndicateurChartPngExport } from '../../chart/indicateur-chart.png-expor
 import { IndicateurChartInfo } from '../../data/use-indicateur-chart';
 import { useIndicateurActions } from '../context/indicateur-actions.context';
 import { useIndicateurData } from '../context/indicateur-data.context';
+import { useIndicateurNouveauSousIndicateur } from '../context/indicateur-nouveau-sous-indicateur.context';
+import { CreateSousIndicateurButton } from '../content/sous-indicateurs/create-sous-indicateur.button';
 
 type ModalType = 'activityLog' | 'deleting' | 'none';
 
@@ -29,7 +31,8 @@ const IndicateurToolbar = ({
   const { updateIndicateur, exportIndicateur, deleteIndicateur } =
     useIndicateurActions();
 
-  const { indicateur } = useIndicateurData();
+  const { indicateur, canMutateIndicateur } = useIndicateurData();
+  const { onCreated } = useIndicateurNouveauSousIndicateur();
   const { estFavori } = indicateur;
 
   const actions: MenuAction[] = [
@@ -63,6 +66,15 @@ const IndicateurToolbar = ({
   return (
     <>
       <div className="flex items-center gap-2">
+        {isPerso && canMutateIndicateur && (
+          <CreateSousIndicateurButton
+            variant="primary"
+            size="xs"
+            parentId={indicateur.id}
+            childCount={indicateur.enfants.length}
+            onCreated={onCreated}
+          />
+        )}
         <Tooltip
           label={
             estFavori

@@ -34,6 +34,9 @@ export const indicateursLabels = {
     'Les mêmes valeurs sont dans le tableau sous le graphique',
   indicateurSeparateurAncetres: '>',
   indicateurCumulSousIndicateurs: 'Cumul des sous-indicateurs',
+  indicateurResultatRecentModePrive: 'Résultat récent en mode privé',
+  indicateurResultatRecentModePriveInfo:
+    "Si le mode privé est activé, le résultat le plus récent n'est plus consultable par les personnes n’étant pas membres de votre collectivité. Seuls les autres résultats restent accessibles pour tous les utilisateurs et la valeur privée reste consultable par l’ADEME et le service support de la plateforme.",
   indicateurCreerSousIndicateur: 'Créer un sous-indicateur',
   indicateurSousIndicateurRenommer: ({ label }: { label: string }) =>
     `Renommer ${label}`,

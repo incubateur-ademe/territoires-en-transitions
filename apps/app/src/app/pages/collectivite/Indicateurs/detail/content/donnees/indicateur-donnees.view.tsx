@@ -2,6 +2,7 @@ import { isIndicateurPerso } from '@tet/domain/indicateurs';
 import { Divider } from '@tet/ui';
 import { useState } from 'react';
 import { useIndicateurActions } from '../../context/indicateur-actions.context';
+import { useIndicateurNouveauSousIndicateur } from '../../context/indicateur-nouveau-sous-indicateur.context';
 import { useIndicateurChart } from '../../context/indicateur-chart.context';
 import { useIndicateurData } from '../../context/indicateur-data.context';
 import {
@@ -11,7 +12,6 @@ import {
 import IndicateurDetailChart from '../../../Indicateur/detail/IndicateurDetailChart';
 import { IndicateurValuesTabs } from '../../../Indicateur/detail/IndicateurValuesTabs';
 import { CreateSousIndicateurButton } from '../sous-indicateurs/create-sous-indicateur.button';
-import { PrivateModeSwitch } from '../../../table/private-mode-switch';
 import { IndicateurSousIndicateursTable } from '../sous-indicateurs/indicateur-sous-indicateurs-table.view';
 import { IndicateurCommentaireInput } from './indicateur-commentaire.input';
 import { IndicateurSousIndicateursChart } from './indicateur-sous-indicateurs-chart.view';
@@ -24,11 +24,10 @@ export const IndicateurDonnees = () => {
   const { indicateur, canMutateIndicateur, canMutateValeur } =
     useIndicateurData();
   const { chartInfo } = useIndicateurChart();
-  const { updateUnite, updateCommentaire } = useIndicateurActions();
+  const { updateUnite, updateCommentaire, updateIndicateur } =
+    useIndicateurActions();
   const [isTableModalOpen, setIsTableModalOpen] = useState(false);
-  const [newSousIndicateurId, setNewSousIndicateurId] = useState<number | null>(
-    null
-  );
+  const newSousIndicateur = useIndicateurNouveauSousIndicateur();
   const { commentaire, unite } = indicateur;
 
   const { sourceFilter, typesSegmentation } = chartInfo;
@@ -94,22 +93,20 @@ export const IndicateurDonnees = () => {
 
         {/* Tableau */}
         {hasSousIndicateurs ? (
-          <>
-            <IndicateurSousIndicateursTable
-              indicateurId={indicateur.id}
-              titre={indicateur.titre}
-              unite={unite}
-              periodicite={indicateur.periodicite}
-              isReadonly={!canMutateValeur || indicateur.sansValeurUtilisateur}
-              canMutateIndicateur={canMutateIndicateur}
-              newSousIndicateur={{
-                id: newSousIndicateurId,
-                onCreated: setNewSousIndicateurId,
-                onNameEditingEnd: () => setNewSousIndicateurId(null),
-              }}
-            />
-            <PrivateModeSwitch isReadOnly={!canMutateIndicateur} />
-          </>
+          <IndicateurSousIndicateursTable
+            indicateurId={indicateur.id}
+            titre={indicateur.titre}
+            unite={unite}
+            periodicite={indicateur.periodicite}
+            isReadonly={!canMutateValeur || indicateur.sansValeurUtilisateur}
+            canMutateIndicateur={canMutateIndicateur}
+            newSousIndicateur={newSousIndicateur}
+            privateMode={{
+              isConfidentiel: indicateur.estConfidentiel ?? false,
+              onChange: (estConfidentiel) =>
+                updateIndicateur({ estConfidentiel }),
+            }}
+          />
         ) : (
           <>
             <IndicateurValuesTabs
@@ -124,7 +121,7 @@ export const IndicateurDonnees = () => {
                 <CreateSousIndicateurButton
                   parentId={indicateur.id}
                   childCount={0}
-                  onCreated={setNewSousIndicateurId}
+                  onCreated={newSousIndicateur.onCreated}
                 />
               </div>
             )}

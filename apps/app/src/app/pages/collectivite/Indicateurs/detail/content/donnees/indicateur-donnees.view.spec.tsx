@@ -10,6 +10,7 @@ import {
 } from '../../context/indicateur-actions.context';
 import { IndicateurChartProvider } from '../../context/indicateur-chart.context';
 import { IndicateurDataProvider } from '../../context/indicateur-data.context';
+import { IndicateurNouveauSousIndicateurProvider } from '../../context/indicateur-nouveau-sous-indicateur.context';
 import { IndicateurSousIndicateursTableProvider } from '../../context/indicateur-sous-indicateurs-table.context';
 import { IndicateurDonnees } from './indicateur-donnees.view';
 
@@ -125,7 +126,15 @@ const renderDonnees = (indicateur: IndicateurDetaille) => {
               }),
             }}
           >
-            <IndicateurDonnees />
+            <IndicateurNouveauSousIndicateurProvider
+              value={{
+                id: null,
+                onCreated: vi.fn(),
+                onNameEditingEnd: vi.fn(),
+              }}
+            >
+              <IndicateurDonnees />
+            </IndicateurNouveauSousIndicateurProvider>
           </IndicateurSousIndicateursTableProvider>
         </IndicateurActionsProvider>
       </IndicateurChartProvider>

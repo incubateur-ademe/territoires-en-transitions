@@ -149,6 +149,7 @@ type RenderOptions = {
   isReadonly?: boolean;
   canMutateIndicateur?: boolean;
   focusedIndicateurId?: number | null;
+  isConfidentiel?: boolean;
   commentairesOf?: (periode: IndicateurPeriode) => PeriodeCommentaires;
 };
 
@@ -159,6 +160,7 @@ const renderTable = (
     isReadonly = true,
     canMutateIndicateur = false,
     focusedIndicateurId = null,
+    isConfidentiel = false,
     commentairesOf = () => NO_COMMENTAIRES,
   }: RenderOptions = {}
 ) => {
@@ -173,6 +175,7 @@ const renderTable = (
   const renameSousIndicateur = vi.fn();
   const onNameEditingEnd = vi.fn();
   const onCreated = vi.fn();
+  const onPrivateModeChange = vi.fn();
   render(
     <IndicateurSousIndicateursTableProvider
       value={{
@@ -202,6 +205,7 @@ const renderTable = (
           onCreated,
           onNameEditingEnd,
         }}
+        privateMode={{ isConfidentiel, onChange: onPrivateModeChange }}
       />
     </IndicateurSousIndicateursTableProvider>
   );
@@ -217,6 +221,7 @@ const renderTable = (
     renameSousIndicateur,
     onNameEditingEnd,
     onCreated,
+    onPrivateModeChange,
   };
 };
 
@@ -915,6 +920,51 @@ describe('IndicateurSousIndicateursTable', () => {
 
     expect(getRowOf(TOTAL_ROW_NAME).className).toContain('bg-grey-2');
     expect(getRowOf(/^Papier/).className).not.toContain('bg-grey-2');
+  });
+
+  it('aligne sur une même ligne le bouton de création, le cumul et le résultat récent privé', () => {
+    renderReadyTable(toData({ totalCells: COMPLETE_TOTAL_CELLS }), {
+      canMutateIndicateur: true,
+    });
+
+    const bar = screen.getByRole('button', {
+      name: appLabels.indicateurCreerSousIndicateur,
+    }).parentElement as HTMLElement;
+
+    expect(
+      [
+        appLabels.indicateurCumulSousIndicateurs,
+        appLabels.indicateurResultatRecentModePrive,
+      ].map((name) => bar.contains(screen.getByRole('checkbox', { name })))
+    ).toEqual([true, true]);
+    expect(bar.className).toContain('flex');
+  });
+
+  it("sépare le bouton de création des interrupteurs par un séparateur ignoré des lecteurs d'écran", () => {
+    renderReadyTable(toData({ totalCells: COMPLETE_TOTAL_CELLS }), {
+      canMutateIndicateur: true,
+    });
+
+    const bar = screen.getByRole('button', {
+      name: appLabels.indicateurCreerSousIndicateur,
+    }).parentElement as HTMLElement;
+
+    expect(bar.querySelectorAll('span[aria-hidden="true"]')).toHaveLength(1);
+  });
+
+  it('active et désactive le résultat récent en mode privé selon son état', () => {
+    const { onPrivateModeChange } = renderReadyTable(
+      toData({ totalCells: COMPLETE_TOTAL_CELLS }),
+      { canMutateIndicateur: true, isConfidentiel: true }
+    );
+
+    const toggle = screen.getByRole('checkbox', {
+      name: appLabels.indicateurResultatRecentModePrive,
+    }) as HTMLInputElement;
+    expect(toggle.checked).toBe(true);
+    fireEvent.click(toggle);
+
+    expect(onPrivateModeChange).toHaveBeenCalledWith(false);
   });
 
   it('ne propose aucune saisie en lecture seule', () => {
