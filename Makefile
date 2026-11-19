@@ -376,7 +376,7 @@ install: preflight-env-keys ## Installe les dépendances (token Bryntum injecté
 	@$(if $(IS_WORKTREE),node scripts/worktree-env.mts,true)
 	@$(call decrypt_env,$(ENV_ROOT)) -- sh -c '\
 		case "$$BRYNTUM_ACCESS_TOKEN" in ""|encrypted:*) echo "✗ BRYNTUM_ACCESS_TOKEN vide ou indéchiffrable dans $(ENV_ROOT) (clé .env.keys manquante ?)"; exit 1;; esac; \
-		env "pnpm_config_//npm.bryntum.com/:_authToken=$$BRYNTUM_ACCESS_TOKEN" pnpm install && pnpm rebuild --config.ignore-scripts=false canvas'
+		env "pnpm_config_//npm.bryntum.com/:_authToken=$$BRYNTUM_ACCESS_TOKEN" pnpm install && env "pnpm_config_//npm.bryntum.com/:_authToken=$$BRYNTUM_ACCESS_TOKEN" pnpm rebuild --config.ignore-scripts=false canvas'
 
 # Chemins cités un à un : les routes Next ont des parenthèses et des crochets
 # (`(authed)/[collectiviteId]`) que le shell interpréterait. Les guillemets
