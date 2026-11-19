@@ -74,6 +74,7 @@ import {
   verifyReferentielExpressions,
 } from './verify-referentiel-expressions';
 import { IndicateurReference } from './verify-referentiel-expressions.types';
+import { validateTachesPoints } from './validate-taches-points.rules';
 
 const REFERENTIEL_SPREADSHEET_RANGE = 'Structure référentiel!A:Z';
 const REFERENTIEL_TAGS_SPREADSHEET_RANGE = 'Tags!A:C';
@@ -94,6 +95,13 @@ const REFERENTIEL_ID_TO_CONFIG_KEY: Record<
 // ces types peuvent avoir des points (ou un pourcentage)
 const ACTION_TYPE_WITH_POINTS: ActionType[] = [
   ActionTypeEnum.ACTION,
+  ActionTypeEnum.SOUS_ACTION,
+  ActionTypeEnum.TACHE,
+];
+
+// dans le nouveau référentiel, les points sont portés par les sous-actions
+// (obligatoires) et éventuellement par les tâches
+const NEW_REFERENTIEL_ACTION_TYPE_WITH_POINTS: ActionType[] = [
   ActionTypeEnum.SOUS_ACTION,
   ActionTypeEnum.TACHE,
 ];
@@ -240,9 +248,12 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
           ),
         };
 
+        // Dans le nouveau référentiel, les points des tâches sont facultatifs :
+        // ils permettent une répartition non équitable des points de la
+        // sous-action (par ex. entre les tâches liées à des indicateurs).
         if (
           isNewReferentiel
-            ? actionType === ActionTypeEnum.SOUS_ACTION
+            ? NEW_REFERENTIEL_ACTION_TYPE_WITH_POINTS.includes(actionType)
             : ACTION_TYPE_WITH_POINTS.includes(actionType)
         ) {
           createActionDefinition.points = action.points;
@@ -252,7 +263,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
             isNil(createActionDefinition.pourcentage)
           ) {
             const message = `Action ${actionId} is missing points or percentage`;
-            if (isNewReferentiel) {
+            if (isNewReferentiel && actionType === ActionTypeEnum.SOUS_ACTION) {
               // ce cas est bloquant pour le nouveau référentiel
               throw new UnprocessableEntityException(message);
             } else if (actionType === ActionTypeEnum.SOUS_ACTION) {
@@ -456,6 +467,25 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
         actionRelations.push(actionRelation);
       }
     });
+
+    if (isNewReferentiel) {
+      const tachesPointsErrors = validateTachesPoints(
+        actionDefinitions.map((action) => ({
+          actionId: action.actionId,
+          parentId: getParentId({ actionId: action.actionId }),
+          isTache:
+            getActionTypeFromActionId(
+              action.actionId,
+              referentielDefinition.hierarchie
+            ) === ActionTypeEnum.TACHE,
+          points: action.points,
+          pourcentage: action.pourcentage,
+        }))
+      );
+      if (tachesPointsErrors.length) {
+        throw new UnprocessableEntityException(tachesPointsErrors.join('\n'));
+      }
+    }
 
     // liste les indicateurs utilisés dans les formules de calcul du score
     let createIndicateurActions: IndicateurActionToSave[] = [];
