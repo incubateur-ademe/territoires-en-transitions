@@ -72,11 +72,18 @@ describe('Preuves des cibles interprétées', () => {
       },
       { key: 'puissance', unit: 'kW', year: 2040, labels: ['kW'], units: [] },
     ];
+    for (const unit of ['kW', '(kW)', '( kW )']) {
+      expect(
+        Rules.normalize(request(`énergie : 42 ${unit}`, definitions), [
+          value('energie', '42', 'énergie : 42'),
+        ])
+      ).toBeNull();
+    }
     expect(
-      Rules.normalize(request('énergie : 42 kW', definitions), [
+      Rules.normalize(request('énergie : 42 (MWh)', definitions), [
         value('energie', '42', 'énergie : 42'),
       ])
-    ).toBeNull();
+    ).toBe('energie: 42');
     expect(
       Rules.normalize(request('2 écoles'), [value('ecoles', '2', '2 écoles')])
     ).toBe('ecoles: 2');
@@ -155,6 +162,7 @@ describe('Preuves des cibles interprétées', () => {
     for (const withoutYear of [
       'parc : 8 bâtiments, écoles : 2030 bâtiments',
       'parc : 8 bâtiments, écoles prévues pour 2030 bâtiments',
+      'parc : 8 bâtiments, écoles (2030) bâtiments',
     ]) {
       expect(
         Rules.normalize(request(withoutYear), [

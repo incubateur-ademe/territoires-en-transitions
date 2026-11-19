@@ -165,6 +165,8 @@ qui peuvent ne pas avoir d'URL source, sont reconnus par leur contrat historique
 Les libellés conservés font partie du nouveau snapshot ; les versions précédentes
 restent inchangées. Aucun ancien mapping TeT n'est repris. Une collision de
 libellés entre deux engagements du même axe bloque la publication.
+Un libellé actuel ou ancien ne peut pas non plus être égal au code d'un autre
+engagement, même dans un autre axe.
 
 Cette continuité permet d'importer les Word existants malgré un changement de
 formulation, notamment pour E05, sans modifier Grist ni déduire une équivalence
@@ -176,7 +178,8 @@ identifiants, avec les contrôles d'accès habituels.
 Pour une formulation inconnue ou une cellule
 numérique complexe, l'IA reçoit uniquement les engagements candidats de l'axe
 ou les cibles attendues. Les réponses sont contrôlées : code autorisé, citation
-exacte, nombres présents, unité et année cohérentes. Une sélection incertaine
+exacte, nombres présents, unité explicite (y compris entre parenthèses) et année
+cohérentes. Une sélection incertaine
 reste une erreur. Les citations documentent la décision du modèle ; elles ne
 prouvent pas à elles seules l'équivalence sémantique des formulations.
 L'IA ne choisit jamais un indicateur TeT ni une conversion d'unité.

@@ -11,7 +11,10 @@ const numberLiteralPattern = new RegExp(
   `(?<![\\p{L}\\p{N}])${Values.NUMBER_LITERAL}(?![\\p{L}\\p{N}])`,
   'gu'
 );
-const unitAfterNumberPattern = new RegExp(`^\\s*(${Values.UNIT_TOKEN})`, 'u');
+const unitAfterNumberPattern = new RegExp(
+  `^[\\s()]*(${Values.UNIT_TOKEN})`,
+  'u'
+);
 
 /** Contrôles de l'aide à la lecture ; ils ne prouvent pas la justesse sémantique. */
 export class ElectrificationValueInterpretationRules {

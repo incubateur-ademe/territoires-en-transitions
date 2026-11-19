@@ -68,6 +68,29 @@ const build = (
   });
 
 describe('Engagements publiés depuis Grist', () => {
+  it.each(['libelleSource', 'anciensLibelles'] as const)(
+    "refuse qu'un %s désigne le code d'un autre engagement",
+    (field) => {
+      const catalogue = { ...build(), version: 'test' };
+      const engagement = catalogue.engagements[0];
+      const label = catalogue.engagements[1].code.toLowerCase();
+      if (field === 'libelleSource') engagement.libelleSource = label;
+      else engagement.anciensLibelles = [label];
+      expect(
+        ElectrificationCatalogueRules.validateStructure(catalogue)
+      ).toContainEqual({
+        code: 'DUPLICATE_CATALOGUE_REFERENCE',
+        location: `catalogue.engagements[0].${field}${
+          field === 'anciensLibelles' ? '[0]' : ''
+        }`,
+        message: 'Une référence du catalogue est présente plusieurs fois.',
+      });
+      if (field === 'libelleSource') engagement.libelleSource = engagement.code;
+      else engagement.anciensLibelles = [engagement.code];
+      expect(ElectrificationCatalogueRules.isValid(catalogue)).toBe(true);
+    }
+  );
+
   it('conserve les anciens libellés par code dans le même document, sans réutiliser les mappings', () => {
     const initial = { ...build(), version: 'initial' };
     initial.source = gristAxes.source.replace('/p/78', '/p/99');
