@@ -27,7 +27,7 @@ const PeriodeCell = ({
       <TableCell
         className={cn(
           'border-b border-r border-primary-4 whitespace-nowrap text-center',
-          cell.isBold && 'font-bold'
+          cell.isBold && 'font-bold text-primary-9'
         )}
         data-periode={periode.dateDebut}
         data-periodicite={periode.periodicite}
@@ -61,7 +61,7 @@ export const PeriodesTableRow = ({
   periodes,
   showAddPeriodeColumn,
 }: Props) => (
-  <tr>
+  <tr className={cn('bg-white', row.isHighlighted && 'bg-grey-2')}>
     {row.title}
     {periodes.map((periode) => (
       <PeriodeCell

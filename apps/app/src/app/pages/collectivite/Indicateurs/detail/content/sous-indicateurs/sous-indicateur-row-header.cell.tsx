@@ -1,6 +1,5 @@
 'use client';
 
-import { STICKY_LEFT_SHADOW_CLASSNAME } from '@/app/indicateurs/valeurs/grid/scroll-shadow';
 import { cn, TableHeaderCell } from '@tet/ui';
 import type { JSX, PropsWithChildren, ReactNode } from 'react';
 
@@ -30,23 +29,25 @@ export const SousIndicateurRowHeaderCell = ({
 }: Props): JSX.Element => (
   <TableHeaderCell
     scope="row"
-    pinnedLeft
     className={cn(
-      'border-b border-grey-3 align-middle',
-      isBold && 'font-bold',
-      STICKY_LEFT_SHADOW_CLASSNAME
+      'max-w-80 border-b border-r border-primary-4 align-middle',
+      isBold && 'font-bold'
     )}
   >
     <div
       className="flex w-full items-center justify-between gap-2"
       style={{ paddingLeft: `${indentationRem}rem` }}
     >
-      <div className="flex items-center gap-2">
+      <div className="flex min-w-0 flex-1 items-center gap-2">
+        {toggle !== null && (
+          <span className="order-first flex w-6 shrink-0 justify-center">
+            {toggle}
+          </span>
+        )}
         <SeriesSwatch color={color} />
-        <div>{children}</div>
-        {actions}
+        <div className="min-w-0 flex-1">{children}</div>
       </div>
-      {toggle}
+      <div className="flex shrink-0 items-center gap-1">{actions}</div>
     </div>
   </TableHeaderCell>
 );

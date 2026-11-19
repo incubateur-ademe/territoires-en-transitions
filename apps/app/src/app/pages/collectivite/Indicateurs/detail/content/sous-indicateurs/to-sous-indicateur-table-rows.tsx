@@ -21,6 +21,7 @@ import {
 } from '@tet/domain/indicateurs';
 import { uniqBy } from 'es-toolkit';
 import { SousIndicateurDetachButton } from './sous-indicateur-detach.button';
+import { SousIndicateurOpenLink } from './sous-indicateur-open.link';
 import { SousIndicateurNameEditor } from './sous-indicateur-name.editor';
 import { SousIndicateurExpandToggle } from './sous-indicateur-expand.toggle';
 import { SousIndicateurPeriodCell } from './sous-indicateur-period.cell';
@@ -120,9 +121,12 @@ const toTotalRow = ({
   periodicite: IndicateurPeriodicite;
 }): PeriodeTableRow => ({
   key: TOTAL_ROW_KEY,
+  isHighlighted: true,
   title: (
     <SousIndicateurRowHeaderCell color={SOUS_INDICATEURS_TOTAL_COLOR} isBold>
-      {appLabels.indicateurSousIndicateursTotalSomme}
+      <span className="text-primary-9">
+        {appLabels.indicateurSousIndicateursTotalSomme}
+      </span>
     </SousIndicateurRowHeaderCell>
   ),
   cellOf: (periode) =>
@@ -174,29 +178,36 @@ const toSousIndicateurRow = ({
             isExpanded={isExpanded}
             onToggle={onToggle}
           />
-        ) : null
+        ) : (
+          <span aria-hidden />
+        )
       }
       actions={
-        onRequestDetach ? (
-          <SousIndicateurDetachButton
+        <>
+          {onRequestDetach && (
+            <SousIndicateurDetachButton
+              label={row.label}
+              onDetach={() =>
+                onRequestDetach({
+                  indicateurId: row.indicateurId,
+                  label: row.label,
+                })
+              }
+            />
+          )}
+          <SousIndicateurOpenLink
             label={row.label}
-            onDetach={() =>
-              onRequestDetach({
-                indicateurId: row.indicateurId,
-                label: row.label,
-              })
-            }
+            href={makeCollectiviteIndicateursUrl({
+              collectiviteId,
+              indicateurView: 'perso',
+              indicateurId: row.indicateurId,
+            })}
           />
-        ) : null
+        </>
       }
     >
       <SousIndicateurNameEditor
         label={row.label}
-        href={makeCollectiviteIndicateursUrl({
-          collectiviteId,
-          indicateurView: 'perso',
-          indicateurId: row.indicateurId,
-        })}
         isInitiallyEditing={isNameFocused}
         onRename={
           renameSousIndicateur

@@ -1,13 +1,11 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
-import { Button, Icon, Input } from '@tet/ui';
-import Link from 'next/link';
+import { Input } from '@tet/ui';
 import { useRef, useState, type JSX } from 'react';
 
 type Props = {
   label: string;
-  href: string;
   isInitiallyEditing: boolean;
   onRename: ((titre: string) => void) | undefined;
   onEditingEnd: () => void;
@@ -15,7 +13,6 @@ type Props = {
 
 export const SousIndicateurNameEditor = ({
   label,
-  href,
   isInitiallyEditing,
   onRename,
   onEditingEnd,
@@ -75,34 +72,25 @@ export const SousIndicateurNameEditor = ({
 
   if (onRename === undefined) {
     return (
-      <Link className="text-primary-9 underline" href={href}>
+      <span className="block truncate font-bold text-grey-8" title={label}>
         {label}
-      </Link>
+      </span>
     );
   }
 
   return (
-    <span className="inline-flex items-center gap-1">
-      <Button
-        variant="unstyled"
-        size="xs"
-        className="text-primary-9 hover:underline"
-        aria-label={appLabels.indicateurSousIndicateurRenommer({ label })}
-        onClick={() => {
-          isFinishedRef.current = false;
-          setDraft(label);
-          setIsEditing(true);
-        }}
-      >
-        {label}
-      </Button>
-      <Link
-        className="flex text-primary-9"
-        href={href}
-        aria-label={appLabels.indicateurSousIndicateurOuvrir({ label })}
-      >
-        <Icon icon="arrow-right-s-line" size="sm" />
-      </Link>
-    </span>
+    <button
+      type="button"
+      className="block max-w-full cursor-text truncate rounded px-1 py-0.5 -mx-1 text-left font-bold text-grey-8 hover:bg-grey-3"
+      title={label}
+      aria-label={appLabels.indicateurSousIndicateurRenommer({ label })}
+      onClick={() => {
+        isFinishedRef.current = false;
+        setDraft(label);
+        setIsEditing(true);
+      }}
+    >
+      {label}
+    </button>
   );
 };

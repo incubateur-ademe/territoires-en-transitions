@@ -307,12 +307,18 @@ describe('IndicateurSousIndicateursTable', () => {
     expect(new Set(headers).size).toBe(2);
   });
 
-  it("épingle à gauche le titre de l'indicateur au défilement horizontal", () => {
+  it("n'épingle pas la première colonne au défilement horizontal, comme le tableau de la page détail", () => {
     renderReadyTable(toData({ totalCells: COMPLETE_TOTAL_CELLS }));
 
     expect(
       screen.getByRole('columnheader', { name: 'Déchets (t)' }).className
-    ).toContain('sticky');
+    ).not.toContain('sticky');
+    expect(
+      screen.getByRole('rowheader', { name: TOTAL_ROW_NAME }).className
+    ).not.toContain('sticky');
+    expect(getRowOf(/^Papier/).querySelector('th')?.className).not.toContain(
+      'sticky'
+    );
   });
 
   it('enregistre le résultat saisi sur la feuille avec son indicateur et la période de la colonne', async () => {
@@ -808,6 +814,109 @@ describe('IndicateurSousIndicateursTable', () => {
     expect(screen.queryByRole('textbox')).toBeNull();
   });
 
+  it("tronque avec une ellipsis le nom d'un sous-indicateur trop long et le garde lisible en infobulle", () => {
+    renderReadyTable(toData({ totalCells: COMPLETE_TOTAL_CELLS }));
+
+    const name = screen.getByText('Papier');
+
+    expect(name.className).toContain('truncate');
+    expect(name.getAttribute('title')).toBe('Papier');
+  });
+
+  it("tronque aussi le nom d'un sous-indicateur éditable", () => {
+    renderReadyTable(toData({ totalCells: COMPLETE_TOTAL_CELLS }), {
+      canMutateIndicateur: true,
+    });
+
+    const name = screen.getByRole('button', { name: /Renommer Papier/ });
+
+    expect(name.className).toContain('truncate');
+    expect(name.getAttribute('title')).toBe('Papier');
+  });
+
+  it("laisse la cellule de titre du total sans fond blanc propre pour qu'elle prenne le gris de sa ligne", () => {
+    renderReadyTable(toData({ totalCells: COMPLETE_TOTAL_CELLS }));
+
+    expect(
+      screen.getByRole('rowheader', { name: TOTAL_ROW_NAME }).className
+    ).not.toContain('bg-white');
+  });
+
+  it('signale un nom éditable au survol par un curseur de texte et un fond gris clair, sans le souligner', () => {
+    renderReadyTable(toData({ totalCells: COMPLETE_TOTAL_CELLS }), {
+      canMutateIndicateur: true,
+    });
+
+    const { className } = screen.getByRole('button', {
+      name: /Renommer Papier/,
+    });
+
+    expect(className).toContain('cursor-text');
+    expect(className).toContain('hover:bg-grey-3');
+    expect(className).not.toContain('hover:underline');
+  });
+
+  it('donne le même fond gris clair au survol aux actions du titre de ligne : dissocier, ouvrir et déplier', () => {
+    renderReadyTable(toData({ totalCells: COMPLETE_TOTAL_CELLS }), {
+      canMutateIndicateur: true,
+    });
+
+    const actions = [
+      screen.getByRole('button', {
+        name: appLabels.indicateurSousIndicateurDissocier({
+          label: 'Ménagers',
+        }),
+      }),
+      screen.getByRole('link', {
+        name: appLabels.indicateurSousIndicateurOuvrir({ label: 'Ménagers' }),
+      }),
+      screen.getByRole('button', {
+        name: appLabels.indicateurSousIndicateurDeplier({ label: 'Ménagers' }),
+      }),
+    ];
+
+    expect(
+      actions.map((action) => action.className.includes('hover:bg-grey-3'))
+    ).toEqual([true, true, true]);
+  });
+
+  it("laisse le nom de chaque sous-indicateur occuper toute la largeur disponible avant d'être tronqué, au lieu de dépendre de son contenu", () => {
+    renderReadyTable(toData({ totalCells: COMPLETE_TOTAL_CELLS }));
+
+    const nameColumn = screen.getByText('Papier').parentElement;
+
+    expect(nameColumn?.className).toContain('flex-1');
+    expect(nameColumn?.className).toContain('min-w-0');
+    expect(nameColumn?.parentElement?.className).toContain('flex-1');
+  });
+
+  it('garde, comme le tableau de la page détail, un filet à droite et en bas de chaque titre de ligne', () => {
+    renderReadyTable(toData({ totalCells: COMPLETE_TOTAL_CELLS }));
+
+    const titles = [
+      screen.getByRole('rowheader', { name: TOTAL_ROW_NAME }),
+      getRowOf(/^Papier/).querySelector('th') as HTMLElement,
+    ];
+
+    expect(
+      titles.map(({ className }) => [
+        className.includes('border-r'),
+        className.includes('border-b'),
+        className.includes('border-primary-4'),
+      ])
+    ).toEqual([
+      [true, true, true],
+      [true, true, true],
+    ]);
+  });
+
+  it('grise la ligne du total sans griser les lignes de sous-indicateurs', () => {
+    renderReadyTable(toData({ totalCells: COMPLETE_TOTAL_CELLS }));
+
+    expect(getRowOf(TOTAL_ROW_NAME).className).toContain('bg-grey-2');
+    expect(getRowOf(/^Papier/).className).not.toContain('bg-grey-2');
+  });
+
   it('ne propose aucune saisie en lecture seule', () => {
     renderReadyTable(toData({ totalCells: COMPLETE_TOTAL_CELLS }));
 
@@ -942,7 +1051,9 @@ describe('IndicateurSousIndicateursTable', () => {
     expect(
       expectedRows.map(({ rowHeader, label }) =>
         within(getRowOf(rowHeader))
-          .getByRole('link', { name: label })
+          .getByRole('link', {
+            name: appLabels.indicateurSousIndicateurOuvrir({ label }),
+          })
           .getAttribute('href')
       )
     ).toEqual(

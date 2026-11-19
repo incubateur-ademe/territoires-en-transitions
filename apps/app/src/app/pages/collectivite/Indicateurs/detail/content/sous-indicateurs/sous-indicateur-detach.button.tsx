@@ -19,6 +19,7 @@ export const SousIndicateurDetachButton = ({
       <Button
         variant="unstyled"
         size="xs"
+        className="rounded hover:bg-grey-3"
         icon="link-unlink"
         aria-label={actionLabel}
         onClick={onDetach}

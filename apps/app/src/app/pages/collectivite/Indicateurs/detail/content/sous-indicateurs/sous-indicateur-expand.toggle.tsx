@@ -22,6 +22,7 @@ export const SousIndicateurExpandToggle = ({
     <Button
       variant="unstyled"
       size="xs"
+      className="rounded hover:bg-grey-3"
       icon={isExpanded ? 'arrow-down-s-line' : 'arrow-right-s-line'}
       title={actionLabel}
       aria-label={actionLabel}

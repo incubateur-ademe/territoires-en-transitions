@@ -23,6 +23,7 @@ export type PeriodeTableCell =
 
 export type PeriodeTableRow = Readonly<{
   key: string;
+  isHighlighted?: boolean;
   title: ReactNode;
   cellOf: (periode: IndicateurPeriode) => PeriodeTableCell;
   onSave: (

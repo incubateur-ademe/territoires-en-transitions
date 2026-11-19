@@ -163,7 +163,6 @@ const ReadyTable = ({
         periodes={periodes}
         rows={rows}
         readonly={isReadonly}
-        isTitlePinned
         deletablePeriodeKeys={new Set(periodes.map(IndicateurPeriodes.key))}
         addPeriode={declaration.addPeriode}
         scrollRef={scrollRef}
