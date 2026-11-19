@@ -2,6 +2,9 @@ import { PublishedIndicateurReference } from '@tet/backend/indicateurs/indicateu
 import { ElectrificationConfig } from '@tet/domain/plans';
 import { ElectrificationGristData } from './electrification-grist.schema';
 import { ElectrificationGristEngagementsRules } from './electrification-grist-engagements.rules';
+import { GristDocumentRules } from '@tet/backend/utils/grist/grist-document.rules';
+import { ReadElectrificationV4Snapshot } from '../../config/read-electrification-v4-snapshot';
+import { ElectrificationCatalogueRules } from '../electrification-catalogue.rules';
 
 /** Le Grist fournit les contenus ; les correspondances TeT restent explicites. */
 export class ElectrificationGristAdapter {
@@ -10,19 +13,20 @@ export class ElectrificationGristAdapter {
     sourceUrl,
     indicateurReferences,
     engagementReferences,
-    previousActions,
+    previous,
   }: {
     source: ElectrificationGristData;
     sourceUrl: string;
     indicateurReferences: PublishedIndicateurReference[];
     engagementReferences: PublishedIndicateurReference[];
-    previousActions?: ElectrificationConfig['fiches']['actions'];
+    previous?: ElectrificationConfig;
   }): Omit<ElectrificationConfig, 'version'> {
     const axes = this.index(source.Axes);
     const sousAxes = this.index(source.Sous_axes);
     const sousActions = this.index(source.Sous_actions);
     const indicateurs = this.index(source.Indicateurs);
     const ressources = this.index(source.Ressources);
+    const previousActions = previous?.fiches.actions;
     const previousActionsByCode = new Map(
       previousActions?.map((action) => [action.code, action])
     );
@@ -107,7 +111,11 @@ export class ElectrificationGristAdapter {
     return {
       source: sourceUrl,
       engagementsFormat: 2,
-      engagements: this.buildEngagements(source.Axes, engagementReferences),
+      engagements: this.withPreviousLabels(
+        this.buildEngagements(source.Axes, engagementReferences),
+        sourceUrl,
+        previous
+      ),
       axes: source.Axes.map(({ fields }) => ({
         numero: fields.Numero,
         titre: fields.Titre,
@@ -134,6 +142,73 @@ export class ElectrificationGristAdapter {
         }),
       },
     };
+  }
+
+  /** Le même ID garde ses anciens libellés, jamais ses anciens mappings TeT. */
+  private static withPreviousLabels(
+    engagements: ElectrificationConfig['engagements'],
+    sourceUrl: string,
+    previous?: ElectrificationConfig
+  ): ElectrificationConfig['engagements'] {
+    if (!previous) return engagements;
+    const documentId = GristDocumentRules.getDocumentId(sourceUrl);
+    const legacy =
+      previous.engagementsFormat !== 2 &&
+      ReadElectrificationV4Snapshot.isSupported(previous);
+    if (
+      !documentId ||
+      (previous.engagementsFormat !== 2 && !legacy) ||
+      (previous.source
+        ? GristDocumentRules.getDocumentId(previous.source) !== documentId
+        : !legacy)
+    )
+      return engagements;
+    // Les premiers snapshots V4 n'avaient pas d'URL source ; leur contrat
+    // publié identifie déjà les engagements du programme par code.
+    const byCode = new Map(
+      ReadElectrificationV4Snapshot.adapt(previous).engagements.map(
+        (engagement) => [engagement.code, engagement]
+      )
+    );
+    return engagements.map((engagement) => {
+      const old = byCode.get(engagement.code);
+      if (
+        !old ||
+        old.axeNumero !== engagement.axeNumero ||
+        old.cibles.length !== engagement.cibles.length ||
+        !engagement.cibles.every((cible) => {
+          const previousCible = old.cibles.find(({ key }) => key === cible.key);
+          const currentRules = cible.reglesImport;
+          const previousRules = previousCible?.reglesImport;
+          return (
+            currentRules &&
+            previousRules &&
+            currentRules.annee === previousRules.annee &&
+            [cible.uniteImport, ...currentRules.unites].some(
+              (unit) =>
+                unit !== undefined &&
+                [previousCible?.uniteImport, ...previousRules.unites].includes(
+                  unit
+                )
+            )
+          );
+        })
+      )
+        return engagement;
+      const normalize = ElectrificationCatalogueRules.normalizeEngagementLabel;
+      const current = normalize(engagement.libelleSource ?? '');
+      const labels = new Map(
+        ElectrificationCatalogueRules.getEngagementLabels(old).map((label) => [
+          normalize(label),
+          label,
+        ])
+      );
+      labels.delete(current);
+      const anciensLibelles = [...labels.values()].sort();
+      return anciensLibelles.length
+        ? { ...engagement, anciensLibelles }
+        : engagement;
+    });
   }
 
   private static buildEngagements(

@@ -942,6 +942,7 @@ describe('Publication des données Électrification', () => {
 
     test('prépare le catalogue depuis les références publiées et conserve les compléments TeT', async () => {
       const initial = catalogue();
+      initial.source = catalogueUrl;
       initial.fiches.actions = [
         {
           code: '1.1.1',
@@ -974,6 +975,12 @@ describe('Publication des données Électrification', () => {
         kind: 'catalogue',
         version,
       });
+      const e05 = (prepared.data as ElectrificationConfig).engagements.find(
+        ({ code }) => code === 'E05'
+      );
+      expect(e05?.anciensLibelles).toEqual([
+        initial.engagements.find(({ code }) => code === 'E05')?.libelleSource,
+      ]);
       expect(prepared).toMatchObject({
         valid: true,
         issues: [],

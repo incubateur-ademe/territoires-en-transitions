@@ -2,7 +2,8 @@ import { ElectrificationConfig } from '@tet/domain/plans';
 import { electrificationV4Snapshot } from './electrification-v4-snapshot.constants';
 
 /** Relecture des snapshots immuables publiés avant engagementsFormat=2.
- * Aucune publication depuis les sources ne passe par cet adaptateur. */
+ * Leurs libellés peuvent identifier les documents existants ; leurs mappings
+ * ne remplacent jamais les correspondances relues depuis les sources. */
 export class ReadElectrificationV4Snapshot {
   static isSupported(catalogue: ElectrificationConfig): boolean {
     const codes = Object.keys(electrificationV4Snapshot.labels);

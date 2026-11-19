@@ -31,6 +31,15 @@ type ElectrificationCatalogueIssue = {
 
 /** Invariants du catalogue partagé entre publication et résolution des imports. */
 export class ElectrificationCatalogueRules {
+  static getEngagementLabels(
+    engagement: ElectrificationConfig['engagements'][number]
+  ): string[] {
+    return [
+      ...(engagement.libelleSource ? [engagement.libelleSource] : []),
+      ...(engagement.anciensLibelles ?? []),
+    ];
+  }
+
   /** Même identité de libellé à la publication et à la lecture du document. */
   static normalizeEngagementLabel(text: string): string {
     return text
@@ -126,21 +135,24 @@ export class ElectrificationCatalogueRules {
       }
     });
     const codes = new Set<string>();
-    const labels = new Set<string>();
+    const labels = new Map<string, string>();
     catalogue.engagements.forEach((engagement, index) => {
       const location = `catalogue.engagements[${index}]`;
-      if (catalogue.engagementsFormat === 2 && engagement.libelleSource) {
-        const label = this.normalizeEngagementLabel(engagement.libelleSource);
-        const identity = JSON.stringify([engagement.axeNumero, label]);
-        if (!label || labels.has(identity)) {
-          issues.push(
-            this.issue(
-              'DUPLICATE_CATALOGUE_REFERENCE',
-              `${location}.libelleSource`
-            )
-          );
+      if (catalogue.engagementsFormat === 2) {
+        for (const text of this.getEngagementLabels(engagement)) {
+          const label = this.normalizeEngagementLabel(text);
+          const identity = JSON.stringify([engagement.axeNumero, label]);
+          const owner = labels.get(identity);
+          if (!label || (owner !== undefined && owner !== engagement.code)) {
+            issues.push(
+              this.issue(
+                'DUPLICATE_CATALOGUE_REFERENCE',
+                `${location}.libelleSource`
+              )
+            );
+          }
+          labels.set(identity, engagement.code);
         }
-        labels.add(identity);
       }
       if (codes.has(engagement.code)) {
         issues.push(this.issue('DUPLICATE_CATALOGUE_REFERENCE', location));

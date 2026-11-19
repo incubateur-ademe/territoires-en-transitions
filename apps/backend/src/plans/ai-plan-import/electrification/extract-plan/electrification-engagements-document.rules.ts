@@ -95,15 +95,18 @@ export class ElectrificationEngagementsDocumentRules {
       }
 
       const axeNumero = axe.match(/^\s*Axe\s+(\d+)(?:[. :]|$)/i)?.[1];
-      const matchingLabels = catalogue.engagements.filter(
-        (item) =>
-          item.libelleSource &&
-          ElectrificationCatalogueRules.normalizeEngagementLabel(
-            item.libelleSource
-          ) ===
-            ElectrificationCatalogueRules.normalizeEngagementLabel(
-              engagement.text
-            )
+      const identified = catalogue.engagements.find(
+        ({ code }) => code === engagement.text.trim()
+      );
+      const label = ElectrificationCatalogueRules.normalizeEngagementLabel(
+        engagement.text
+      );
+      const matchingLabels = catalogue.engagements.filter((item) =>
+        ElectrificationCatalogueRules.getEngagementLabels(item).some(
+          (text) =>
+            ElectrificationCatalogueRules.normalizeEngagementLabel(text) ===
+            label
+        )
       );
       const candidates = matchingLabels.filter(
         (item) => item.axeNumero === Number(axeNumero)
@@ -112,12 +115,14 @@ export class ElectrificationEngagementsDocumentRules {
         ({ sourceId }) => sourceId === engagement.id
       );
       const definition =
-        candidates.length === 1
+        identified ??
+        (candidates.length === 1
           ? candidates[0]
           : match?.quote === engagement.text
           ? catalogue.engagements.find(({ code }) => code === match.code)
-          : undefined;
+          : undefined);
       if (
+        !identified &&
         !matchingLabels.length &&
         !match &&
         engagement.text.length <= 2000 &&

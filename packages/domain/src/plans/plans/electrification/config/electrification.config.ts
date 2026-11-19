@@ -29,6 +29,8 @@ export const electrificationConfigSchema = z.object({
     z.object({
       code: z.string().check(z.minLength(1)),
       libelleSource: z.optional(nonBlankTextSchema),
+      // Libellés déjà publiés pour la même identité et des cibles compatibles.
+      anciensLibelles: z.optional(z.array(nonBlankTextSchema)),
       axeNumero: z.int().check(z.positive()),
       actionTitre: z.nullable(z.string().check(z.minLength(1))),
       cibles: z.array(

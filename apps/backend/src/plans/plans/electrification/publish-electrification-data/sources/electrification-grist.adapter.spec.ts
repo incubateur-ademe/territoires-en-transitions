@@ -1,4 +1,5 @@
 import type { PublishedIndicateurReference } from '@tet/backend/indicateurs/indicateur/indicateur-reference-externe.repository';
+import type { ElectrificationConfig } from '@tet/domain/plans';
 import { describe, expect, it } from 'vitest';
 import assert from 'node:assert';
 import { ElectrificationCatalogueRules } from '../electrification-catalogue.rules';
@@ -53,15 +54,76 @@ const references = () => [
     periodicite: 'annuelle',
   }),
 ];
-const build = (engagementReferences = references(), data = source) =>
+const build = (
+  engagementReferences = references(),
+  data = source,
+  previous?: ElectrificationConfig
+) =>
   ElectrificationGristAdapter.build({
     source: data,
     sourceUrl: gristAxes.source,
     indicateurReferences: [],
     engagementReferences,
+    previous,
   });
 
 describe('Engagements publiés depuis Grist', () => {
+  it('conserve les anciens libellés par code dans le même document, sans réutiliser les mappings', () => {
+    const initial = { ...build(), version: 'initial' };
+    initial.source = gristAxes.source.replace('/p/78', '/p/99');
+    initial.engagements[0].anciensLibelles = ['Un libellé plus ancien'];
+    const nextSource = structuredClone(source);
+    nextSource.Axes[0].fields.Parametre_signe =
+      "Réhabiliter d'ici 2040 ___ bâtiments, dont ___ écoles";
+    const next = build([], nextSource, initial);
+    expect(next.engagements[0].anciensLibelles).toEqual([
+      initial.engagements[0].libelleSource,
+      'Un libellé plus ancien',
+    ]);
+    expect(next.engagements[0].cibles[0]).toMatchObject({
+      identifiantReferentiel: null,
+      validation: 'pending',
+    });
+    expect(build([], nextSource, { ...next, version: 'next' })).toEqual(next);
+    expect(initial.engagements[0].libelleSource).toBe(
+      source.Axes[0].fields.Parametre_signe
+    );
+  });
+
+  it.each([
+    'document',
+    'source-absente',
+    'code',
+    'axe',
+    'annee',
+    'unite',
+    'cle',
+  ])(
+    'ne reprend pas les libellés après un changement incompatible : %s',
+    (change) => {
+      const initial = { ...build(), version: 'initial' };
+      const engagement = initial.engagements[0];
+      const cible = engagement.cibles[0];
+      assert(cible.reglesImport);
+      engagement.libelleSource = 'Ancien libellé';
+      if (change === 'document')
+        initial.source = 'https://grist.numerique.gouv.fr/autre';
+      if (change === 'source-absente')
+        Reflect.deleteProperty(initial, 'source');
+      if (change === 'code') engagement.code = 'AUTRE';
+      if (change === 'axe') engagement.axeNumero = 14;
+      if (change === 'annee') cible.reglesImport.annee = 2050;
+      if (change === 'unite') {
+        cible.uniteImport = 'MWh';
+        cible.reglesImport.unites = ['MWh'];
+      }
+      if (change === 'cle') cible.key = 'AUTRE';
+      expect(
+        build([], source, initial).engagements[0].anciensLibelles
+      ).toBeUndefined();
+    }
+  );
+
   it('refuse les libellés équivalents dans un axe, mais les autorise dans des axes distincts', () => {
     const catalogue = { ...build(), version: 'test' };
     const label = catalogue.engagements[0].libelleSource;
@@ -71,6 +133,11 @@ describe('Engagements publiés depuis Grist', () => {
     expect(ElectrificationCatalogueRules.isValid(catalogue)).toBe(false);
     catalogue.engagements[1].axeNumero = 14;
     expect(ElectrificationCatalogueRules.isValid(catalogue)).toBe(true);
+    catalogue.engagements[1].libelleSource = 'Autre formulation';
+    catalogue.engagements[1].anciensLibelles = [label];
+    expect(ElectrificationCatalogueRules.isValid(catalogue)).toBe(true);
+    catalogue.engagements[1].axeNumero = 13;
+    expect(ElectrificationCatalogueRules.isValid(catalogue)).toBe(false);
   });
 
   it.each(['cycle', 'unite', 'annee', 'bornes'])(

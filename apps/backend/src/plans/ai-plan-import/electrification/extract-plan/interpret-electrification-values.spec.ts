@@ -15,6 +15,7 @@ import { InterpretElectrificationValues } from './interpret-electrification-valu
 import { ElectrificationGristAdapter } from '@tet/backend/plans/plans/electrification/publish-electrification-data/sources/electrification-grist.adapter';
 import gristAxes from '@tet/backend/plans/plans/electrification/publish-electrification-data/sources/__fixtures__/electrification-grist-axes.json';
 import template from './__fixtures__/electrification-v4.template.json';
+import { electrificationCatalogueFixture } from '@tet/backend/plans/plans/electrification/publish-electrification-data/electrification-data.test-fixture';
 
 const engagementLabel = 'Rénover le parc, dont les écoles.';
 const catalogue: ElectrificationConfig = {
@@ -96,6 +97,69 @@ const model = (...responses: unknown[]) => {
 };
 
 describe('Extraction fondée sur les définitions publiées', () => {
+  it('retrouve le E05 du Word V4 par son identité publiée malgré le nouveau libellé Grist', async () => {
+    const previous = structuredClone(electrificationCatalogueFixture);
+    Reflect.deleteProperty(previous, 'engagementsFormat');
+    const definitions = {
+      ...ElectrificationGristAdapter.build({
+        source: {
+          Axes: gristAxes.records,
+          Sous_axes: [],
+          Actions: [],
+          Sous_actions: [],
+          Indicateurs: [],
+          Ressources: [],
+        },
+        sourceUrl: gristAxes.source,
+        engagementReferences: [],
+        indicateurReferences: [],
+        previous,
+      }),
+      version: 'historique-word-grist',
+    };
+    const label = template.sections[0].rows[4][1].text;
+    const { llm, calls } = model({ code: null, quote: label });
+    for (const identity of [label, 'E05']) {
+      const result = await InterpretElectrificationValues.run({
+        document: document(identity, '25 %', 3),
+        catalogue: definitions,
+        llm,
+      });
+      expect(result).toMatchObject({
+        success: true,
+        data: {
+          response: {
+            engagements: [
+              {
+                code: 'E05',
+                cibles: [
+                  { key: 'principale', valeur: 25, unite: '%', annee: 2030 },
+                ],
+              },
+            ],
+          },
+          engagementInterpretations: [],
+        },
+      });
+      assert(result.success);
+      expect(
+        result.data.sources.find(
+          ({ id }) => id === result.data.response.engagements[0].source
+        )?.text
+      ).toBe(identity);
+    }
+    const wrongAxe = await InterpretElectrificationValues.run({
+      document: document('E05', '25 %', 4),
+      catalogue: definitions,
+      llm,
+    });
+    expect(wrongAxe).toMatchObject({
+      success: false,
+      error: [{ code: 'INVALID_ELECTRIFICATION_ENGAGEMENT' }],
+    });
+    expect(calls).not.toHaveBeenCalled();
+  });
+
   it.each([
     {
       code: 'E02',

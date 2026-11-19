@@ -154,7 +154,26 @@ uniquement de republier le catalogue. Republier les indicateurs est nécessaire
 lorsque leurs définitions ou leurs correspondances changent.
 
 L'extraction utilise les libellés et règles du catalogue admis. Les cellules
-simples sont lues directement. Pour une formulation différente ou une cellule
+simples sont lues directement. Un code d'engagement exact dans la colonne
+"Engagement du programme" identifie directement l'engagement. Un libellé actuel
+ou déjà publié peut aussi le désigner, sans appel IA.
+
+La synchronisation conserve ces anciens libellés par code, pour le même axe et
+le même document Grist (indépendamment de sa page ou de son slug), si les clés,
+unités et années des cibles restent compatibles. Les premiers snapshots V4,
+qui peuvent ne pas avoir d'URL source, sont reconnus par leur contrat historique.
+Les libellés conservés font partie du nouveau snapshot ; les versions précédentes
+restent inchangées. Aucun ancien mapping TeT n'est repris. Une collision de
+libellés entre deux engagements du même axe bloque la publication.
+
+Cette continuité permet d'importer les Word existants malgré un changement de
+formulation, notamment pour E05, sans modifier Grist ni déduire une équivalence
+à partir du texte. Sans historique publié ni code explicite, aucune identité
+n'est inventée. Un lien vers le document Grist entier ne suffit pas à identifier
+un engagement. Les liens TeT de fiches et d'indicateurs restent résolus par leurs
+identifiants, avec les contrôles d'accès habituels.
+
+Pour une formulation inconnue ou une cellule
 numérique complexe, l'IA reçoit uniquement les engagements candidats de l'axe
 ou les cibles attendues. Les réponses sont contrôlées : code autorisé, citation
 exacte, nombres présents, unité et année cohérentes. Une sélection incertaine
