@@ -363,6 +363,10 @@ Ce que la mise en page trompe, et comment la segmentation s'en garde :
   « 2.1.3 Titre » presque sans texte entre elles n'ouvre aucune fiche ;
 - le bandeau d'objectif en tête de fiche (« 1- AMELIORER… » juste au-dessus de
   « ACTION 2 - … ») est le sous-axe, pas une fiche ;
+- l'axe et l'orientation redits sous le titre de la fiche (« Action 31 : … »
+  puis « Axe stratégique 4 : … ») la rattachent sans la refermer, quand la
+  moitié au moins des fiches du document font de même ; ailleurs, un axe qui
+  suit une fiche courte ouvre la suite ;
 - un titre de partie en corps de texte juste après une fiche (« Suivi et
   évaluation ») est un intertitre de la fiche ;
 - un document qui nomme ses axes (« AXE STRATEGIQUE 4 ») ne prend pas une

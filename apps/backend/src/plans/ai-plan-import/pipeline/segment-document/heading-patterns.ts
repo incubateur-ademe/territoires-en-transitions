@@ -40,8 +40,10 @@ const AXE_GLUED_TO_TEXT = new RegExp(
   String.raw`^axe(?:\s+strat[ée]gique)?\s*${NUMBER}(?:\d{1,2}|[IVX]{1,4})\s+(.*)$`,
   'iu'
 );
+// « Orientation B – … », jamais « Orientation d'aménagement » : la lettre
+// d'ordre n'est pas suivie d'une apostrophe.
 const ORIENTATION = new RegExp(
-  String.raw`^(?:orientation(?:\s+strat[ée]gique)?|objectif(?:\s+strat[ée]gique|\s+op[ée]rationnel)?|enjeu|d[ée]fi|priorit[ée]|th[ée]matique|volet|ambition|levier|chantier|pilier|sous[- ]axe)(?!\p{L})\s*${NUMBER}(\d+(?:\.\d+)*|[IVX]{1,4}|[A-Z])(?!\p{L})${SEPARATOR}(.*)$`,
+  String.raw`^(?:orientation(?:\s+strat[ée]gique)?|objectif(?:\s+strat[ée]gique|\s+op[ée]rationnel)?|enjeu|d[ée]fi|priorit[ée]|th[ée]matique|volet|ambition|levier|chantier|pilier|sous[- ]axe)(?!\p{L})\s*${NUMBER}(\d+(?:\.\d+)*|[IVX]{1,4}|[A-Z])(?![\p{L}'’])${SEPARATOR}(.*)$`,
   'iu'
 );
 const FICHE = new RegExp(

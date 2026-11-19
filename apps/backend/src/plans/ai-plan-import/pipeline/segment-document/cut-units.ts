@@ -23,6 +23,14 @@ const FICHE_LABEL_WINDOW_LINES = 12;
 const FICHE_LABEL_MIN_COUNT = 3;
 const RETRO_OPEN_LOOKBACK_LINES = 6;
 const AXE_LEVEL = 1;
+// Sous son titre, une fiche redit parfois son axe puis son orientation : à
+// quelques lignes du titre, et suivis de son contenu, pas d'une autre fiche.
+// C'est une convention du document : la moitié de ses fiches au moins la
+// suivent, sinon l'axe qui vient après une fiche courte ouvre la suite.
+const FICHE_PATH_MAX_LINES = 6;
+const FICHE_PATH_BODY_LINES = 12;
+const MIN_FICHES_STATING_AXE = 3;
+const FICHES_STATING_AXE_SHARE = 0.5;
 
 type StackEntry = { level: number; label: string; number: string | null };
 
@@ -52,6 +60,7 @@ export const cutUnits = (
     ])
   );
   const axeOfFiche = axesGivenBeforeFiches(headings);
+  const fichesStateAxe = fichesStateTheirAxe(headings);
   const units: DocumentUnit[] = [];
   const axeOfUnit = new Map<DocumentUnit, string | undefined>();
   const stack: StackEntry[] = [];
@@ -116,6 +125,33 @@ export const cutUnits = (
         open.lines.push(unitLine);
         return;
       }
+      // « Action 31 : … » puis « Axe stratégique 4 : … » : la fiche dit où
+      // elle se range. Ce titre d'axe ne la referme pas, il la rattache.
+      const fiche = stack.at(-1);
+      if (
+        heading &&
+        fichesStateAxe &&
+        (heading.kind === 'axe' || heading.kind === 'orientation') &&
+        heading.level < FICHE_LEVEL &&
+        open.kind === 'fiche' &&
+        fiche?.level === FICHE_LEVEL &&
+        open.lines.length <= FICHE_PATH_MAX_LINES &&
+        open.lines[0].pageIndex === page.index &&
+        !contradictsFicheNumber(fiche.number, heading) &&
+        !opensAnotherFiche(page.index, lineIndex)
+      ) {
+        popTo(stack, heading.level);
+        stack.push({
+          level: heading.level,
+          label: labelOf(heading),
+          number: heading.number,
+        });
+        open.headingPath = pathOf(stack);
+        open.axe = stack[0].label;
+        stack.push(fiche);
+        open.lines.push(unitLine);
+        return;
+      }
       if (heading && heading.level >= FICHE_LEVEL) {
         close();
         popTo(stack, FICHE_LEVEL);
@@ -170,6 +206,13 @@ export const cutUnits = (
     mergeSmallUnits(units, options.minTokens, axeOfUnit),
     options
   );
+
+  // Dans une liste de titres, l'axe qui suit une fiche ouvre les suivantes.
+  function opensAnotherFiche(pageIndex: number, lineIndex: number): boolean {
+    return Array.from({ length: FICHE_PATH_BODY_LINES }, (_, offset) =>
+      headingAt.get(`${pageIndex}:${lineIndex + offset + 1}`)
+    ).some((next) => next !== undefined && next.level >= FICHE_LEVEL);
+  }
 
   function retroOpenFiche(firstLabelIndex: number) {
     const from = Math.max(0, firstLabelIndex - RETRO_OPEN_LOOKBACK_LINES);
@@ -226,6 +269,51 @@ const axesGivenBeforeFiches = (
   }
   return (fiche) =>
     axes.get(fiche.number?.match(/^(\d{1,2})\.\d/)?.[1] ?? '') ?? null;
+};
+
+/** Le document redit-il l'axe de chaque fiche juste sous son titre ? */
+const fichesStateTheirAxe = (headings: DetectedHeading[]): boolean => {
+  const fiches = headings.filter(
+    (heading) => heading.match.level >= FICHE_LEVEL
+  );
+  const stating = headings.filter((heading, index) => {
+    const next = headings[index + 1];
+    return (
+      heading.match.level >= FICHE_LEVEL &&
+      next !== undefined &&
+      next.match.kind === 'axe' &&
+      next.pageIndex === heading.pageIndex &&
+      next.lineIndex - heading.lineIndex <= FICHE_PATH_MAX_LINES
+    );
+  });
+  return (
+    stating.length >= MIN_FICHES_STATING_AXE &&
+    stating.length >= FICHES_STATING_AXE_SHARE * fiches.length
+  );
+};
+
+/**
+ * La fiche « 2.4.3 » ne se range pas sous l'« Axe 4 » qui la suit dans un
+ * tableau, et « 1.1 Titre » sous la fiche « 1 » en est une partie, pas son axe.
+ */
+const contradictsFicheNumber = (
+  ficheNumber: string | null,
+  heading: HeadingMatch
+): boolean => {
+  if (ficheNumber === null || heading.number === null) {
+    return false;
+  }
+  if (heading.number.startsWith(`${ficheNumber}.`)) {
+    return true;
+  }
+  const [first, ...rest] = ficheNumber.split('.');
+  return (
+    rest.length > 0 &&
+    heading.level === AXE_LEVEL &&
+    /^\d+$/.test(first) &&
+    /^\d+$/.test(heading.number) &&
+    Number(first) !== Number(heading.number)
+  );
 };
 
 const popTo = (stack: StackEntry[], level: number) => {
