@@ -9,17 +9,27 @@ import { UserIndicateurValeurNotAllowedException } from './write-indicateur-vale
 export type IndicateurValeursError =
   | 'UNAUTHORIZED'
   | 'INVALID_VALUE'
+  | 'INDICATEUR_NOT_AVAILABLE'
+  | 'PERIODICITE_MISMATCH'
   | 'USER_VALUE_NOT_ALLOWED'
   | 'DATABASE_ERROR';
 
 export const indicateurValeursErrorConfig: TrpcErrorHandlerConfig<
-  Extract<IndicateurValeursError, 'INVALID_VALUE' | 'USER_VALUE_NOT_ALLOWED'>
+  Extract<
+    IndicateurValeursError,
+    | 'INVALID_VALUE'
+    | 'INDICATEUR_NOT_AVAILABLE'
+    | 'PERIODICITE_MISMATCH'
+    | 'USER_VALUE_NOT_ALLOWED'
+  >
 > = {
   commonErrors: {
     UNAUTHORIZED: { code: 'FORBIDDEN', messageFromCause: true },
   },
   specificErrors: {
     INVALID_VALUE: { code: 'BAD_REQUEST', messageFromCause: true },
+    INDICATEUR_NOT_AVAILABLE: { code: 'BAD_REQUEST', messageFromCause: true },
+    PERIODICITE_MISMATCH: { code: 'BAD_REQUEST', messageFromCause: true },
     USER_VALUE_NOT_ALLOWED: { code: 'BAD_REQUEST', messageFromCause: true },
   },
 };
@@ -30,6 +40,8 @@ export const toCommonError = (error: IndicateurValeursError): CommonError =>
     .with('DATABASE_ERROR', () => 'DATABASE_ERROR' as const)
     .with(
       'INVALID_VALUE',
+      'INDICATEUR_NOT_AVAILABLE',
+      'PERIODICITE_MISMATCH',
       'USER_VALUE_NOT_ALLOWED',
       () => 'SERVER_ERROR' as const
     )

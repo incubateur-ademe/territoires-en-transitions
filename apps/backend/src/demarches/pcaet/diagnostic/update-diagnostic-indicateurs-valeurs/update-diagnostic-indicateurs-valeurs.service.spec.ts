@@ -35,16 +35,14 @@ const toServiceWithUpsertResult = (upsertResult: unknown) =>
       upsertIndicateurValeurs: vi.fn().mockResolvedValue(upsertResult),
     } as never,
     {
-      listIndicateursPredefinis: vi
-        .fn()
-        .mockResolvedValue(
-          success([
-            {
-              id: indicateurId,
-              periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
-            },
-          ])
-        ),
+      listIndicateursPredefinis: vi.fn().mockResolvedValue(
+        success([
+          {
+            id: indicateurId,
+            periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+          },
+        ])
+      ),
     } as never,
     {} as never
   );
@@ -54,7 +52,12 @@ describe('UpdateDiagnosticIndicateursValeursService.updateValeurs', () => {
     updateDiagnosticIndicateursValeursErrorConfig
   );
 
-  it.each(['INVALID_VALUE', 'USER_VALUE_NOT_ALLOWED'] as const)(
+  it.each([
+    'INVALID_VALUE',
+    'INDICATEUR_NOT_AVAILABLE',
+    'PERIODICITE_MISMATCH',
+    'USER_VALUE_NOT_ALLOWED',
+  ] as const)(
     "un refus d'écriture %s remonte en BAD_REQUEST avec le message de la cause",
     async (error) => {
       const service = toServiceWithUpsertResult(

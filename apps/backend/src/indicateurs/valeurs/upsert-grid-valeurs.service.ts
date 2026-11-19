@@ -23,20 +23,16 @@ import { ListIndicateursService } from '../indicateurs/list-indicateurs/list-ind
 import ComputeValeursService from './compute-indicateur-valeurs/compute-valeurs.service';
 import ManageIndicateurValeursService from './manage-indicateur-valeurs/manage-indicateur-valeurs.service';
 import { IndicateurValeurLockRepository } from './indicateur-valeur-lock.repository';
-import { IndicateurValeursFailure } from './indicateur-valeurs.errors';
-import { UpsertGridValeursError } from './upsert-grid-valeurs.errors';
+import {
+  toGridFailure,
+  UpsertGridValeursError,
+} from './upsert-grid-valeurs.errors';
 import { UpsertGridValeursInput } from './upsert-grid-valeurs.input';
 import { UpsertGridValeursRepository } from './upsert-grid-valeurs.repository';
 import { UserIndicateurValeurNotAllowedException } from './write-indicateur-valeurs/user-indicateur-valeur.errors';
 import { ValidateIndicateurValeursWriteService } from './write-indicateur-valeurs/validate-indicateur-valeurs-write.service';
 
 type UpsertGridValeursContext = { user: AuthenticatedUser };
-
-const toGridFailure = ({
-  error,
-  cause,
-}: IndicateurValeursFailure): Result<never, UpsertGridValeursError> =>
-  failure(error === 'INVALID_VALUE' ? 'INVALID_GRID_VALEUR' : error, cause);
 
 const mergeValeursByPeriod = (
   valeurs: UpsertGridValeursInput['valeurs']

@@ -10,6 +10,8 @@ const specificErrors = [
   'DIAGNOSTIC_NON_MODIFIABLE',
   'INDICATEUR_NON_ANNUEL',
   'INVALID_VALUE',
+  'INDICATEUR_NOT_AVAILABLE',
+  'PERIODICITE_MISMATCH',
   'USER_VALUE_NOT_ALLOWED',
 ] as const;
 
@@ -24,6 +26,8 @@ export const updateDiagnosticIndicateursValeursErrorConfig: TrpcErrorHandlerConf
           'Le diagnostic PCAET exige des indicateurs annuels du référentiel',
       },
       INVALID_VALUE: { code: 'BAD_REQUEST', messageFromCause: true },
+      INDICATEUR_NOT_AVAILABLE: { code: 'BAD_REQUEST', messageFromCause: true },
+      PERIODICITE_MISMATCH: { code: 'BAD_REQUEST', messageFromCause: true },
       USER_VALUE_NOT_ALLOWED: { code: 'BAD_REQUEST', messageFromCause: true },
       DEMARCHE_PCAET_NOT_FOUND: {
         code: 'NOT_FOUND',
