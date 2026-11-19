@@ -6,7 +6,11 @@ import {
 } from '@/app/demarches/pcaet/instruction/dossier-instruction-cookie';
 import { extractDossierInstructionRefFromPath } from '@/app/demarches/pcaet/instruction/dossier-instruction-path';
 import type { DossierInstructionRef } from '@/app/demarches/pcaet/instruction/dossier-instruction-ref';
-import { getCollectivite } from '@tet/api/collectivites/index.server';
+import {
+  canVisitAsInstructeur,
+  getCollectivite,
+} from '@tet/api/collectivites/index.server';
+import { getUser } from '@tet/api/users/user-details.fetch.server';
 import { TRPCClientError } from '@trpc/client';
 import { cookies, headers } from 'next/headers';
 import { notFound } from 'next/navigation';
@@ -33,8 +37,10 @@ const toIds = (dossier: DossierInstructionRef | null) => ({
  * pas falsifiable (cf. `proxy.ts`).
  *
  * Ailleurs dans la collectivité, c'est le dernier dossier ouvert, mémorisé par
- * la bannière : sans lui, l'agent membre de la collectivité qu'il instruit
- * perdrait la bannière en ouvrant le plan depuis le dossier.
+ * la bannière : sans lui, l'agent perdrait la bannière en ouvrant le plan depuis
+ * le dossier. Sans dossier mémorisé, pas de contexte : on n'est pas venu par
+ * l'instruction. Une saisine peut toutefois ouvrir la collectivité à un
+ * non-membre, ce que dit `isVisitAllowedByInstruction`.
  */
 export const getCollectiviteForRequest = cache(
   async (collectiviteId: number) => {
@@ -72,18 +78,38 @@ export const getCollectiviteForRequest = cache(
     }
 
     // Un dossier mémorisé qui ne résout plus rien (saisine close, droits
-    // retirés) ne doit pas faire perdre à un non-membre la saisine la plus
-    // récente, qui lui ouvre la collectivité. L'appelant efface le cookie.
+    // retirés) : l'appelant efface le cookie, et le store est déjà rendu sans
+    // dossier, comme il le sera une fois le cookie parti.
     const isRememberedDossierStale =
       rememberedDossier !== null && collectivite.contexteInstruction === null;
-    if (isRememberedDossierStale) {
-      return {
-        collectivite: await getCollectivite(collectiviteId),
-        ...toIds(null),
-        isRememberedDossierStale,
-      };
-    }
+    const ids = isRememberedDossierStale ? toIds(null) : dossier;
 
-    return { collectivite, ...dossier, isRememberedDossierStale };
+    return {
+      collectivite,
+      ...ids,
+      isRememberedDossierStale,
+      isVisitAllowedByInstruction: await isVisitAllowedByInstruction(
+        collectiviteId,
+        collectivite.contexteInstruction !== null
+      ),
+    };
   }
 );
+
+/**
+ * Un membre n'a pas besoin de la saisine pour entrer : on lui épargne la
+ * requête.
+ */
+const isVisitAllowedByInstruction = async (
+  collectiviteId: number,
+  hasContexte: boolean
+) => {
+  if (hasContexte) {
+    return true;
+  }
+  const user = await getUser();
+  const isMembre = user.collectivites.some(
+    (acces) => acces.collectiviteId === collectiviteId
+  );
+  return !isMembre && (await canVisitAsInstructeur(collectiviteId));
+};
