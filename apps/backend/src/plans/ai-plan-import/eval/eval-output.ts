@@ -2,7 +2,9 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { basename, extname, join } from 'node:path';
 import type { LlmCallEvent } from '@tet/backend/utils/llm/llm-observer';
 import { normalizeExtractedActions } from '../adapters/extracted-action-to-import-action';
+import type { PlanSkeleton } from '../models/plan-skeleton';
 import type { PipelineOutcome } from '../pipeline/run-import-pipeline';
+import type { DocumentUnit } from '../pipeline/segment-document/document-unit';
 import {
   compareWithManualReference,
   compareWithReference,
@@ -15,6 +17,39 @@ import {
 } from './eval-metrics';
 import type { GenericEvalInput } from './read-eval-input';
 
+/**
+ * Ce que le pipeline a retenu avant d'extraire : sans cela, un axe mal rangé
+ * ou une fiche manquante ne dit pas d'où il vient (découpage, tri, squelette).
+ */
+export type EvalTrace = {
+  skeleton: PlanSkeleton | null;
+  /** Les extraits gardés par le tri, dans l'ordre du document. */
+  keptUnits: {
+    kind: DocumentUnit['kind'];
+    pages: string;
+    headingPath: string[];
+    title: string | null;
+    tokens: number;
+  }[];
+};
+
+export const buildEvalTrace = ({
+  skeleton,
+  units,
+}: {
+  skeleton: PlanSkeleton | null;
+  units: DocumentUnit[] | null;
+}): EvalTrace => ({
+  skeleton,
+  keptUnits: (units ?? []).map((unit) => ({
+    kind: unit.kind,
+    pages: `${unit.pageStart + 1}-${unit.pageEnd + 1}`,
+    headingPath: unit.headingPath,
+    title: unit.title ?? null,
+    tokens: unit.tokenEstimate,
+  })),
+});
+
 export type EvalOutput = EvalRun & {
   file: string;
   provider: string;
@@ -25,6 +60,7 @@ export type EvalOutput = EvalRun & {
   error: string | null;
   warnings: string[];
   stepStates: unknown;
+  trace: EvalTrace | null;
   plan: EvalRun['draft'];
   diff: EvalDiff | ManualReferenceDiff | null;
 };
@@ -32,6 +68,7 @@ export type EvalOutput = EvalRun & {
 export const buildEvalOutput = ({
   input,
   outcome,
+  trace,
   events,
   durationMs,
   provider,
@@ -39,6 +76,7 @@ export const buildEvalOutput = ({
 }: {
   input: GenericEvalInput;
   outcome: PipelineOutcome;
+  trace: EvalTrace | null;
   events: LlmCallEvent[];
   durationMs: number;
   provider: string;
@@ -73,6 +111,7 @@ export const buildEvalOutput = ({
         ? `${outcome.failedStep}: ${outcome.error.kind}`
         : null,
     stepStates: outcome.stepStates,
+    trace,
     warnings: outcome.warnings,
     metrics,
     draft,

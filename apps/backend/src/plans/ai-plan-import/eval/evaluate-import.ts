@@ -16,6 +16,8 @@ import { runImportPipeline } from '../pipeline/run-import-pipeline';
 import { describeWorkbookAnalysis } from './describe-workbook-analysis';
 import {
   buildEvalOutput,
+  buildEvalTrace,
+  type EvalTrace,
   print,
   printEvalSummary,
   writeOutput,
@@ -117,6 +119,7 @@ const evaluateGenericImport = async (
     printDocumentStats(document.data);
 
     const startedAt = Date.now();
+    let trace: EvalTrace | null = null;
     const outcome = await runImportPipeline(llm, {
       document: document.data,
       ...input.options,
@@ -124,6 +127,9 @@ const evaluateGenericImport = async (
       // Sans base, aucun effet attendu ; le profil PCAET conserve ses secteurs.
       effetsAttendus: [],
       currentDate: new Date().toISOString(),
+      onCheckpoint: async ({ skeleton, units }) => {
+        trace = buildEvalTrace({ skeleton, units });
+      },
       onStepStatesChange: async (stepStates) => {
         const step = `pipeline ${JSON.stringify(stepStates)}, ${
           events.length
@@ -136,6 +142,7 @@ const evaluateGenericImport = async (
     return buildEvalOutput({
       input,
       outcome,
+      trace,
       events,
       durationMs: Date.now() - startedAt,
       provider,

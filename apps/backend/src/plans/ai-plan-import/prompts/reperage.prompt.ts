@@ -11,15 +11,15 @@ export const REPERAGE_PROMPT = definePrompt({
 Classez chaque extrait dans une seule catégorie :
 - "fiche_action" : il décrit une ou plusieurs actions ou mesures à mener (avec ou sans pilote, budget, calendrier, indicateurs). Un tableau dont chaque ligne est une action avec son porteur, son calendrier ou son coût (« A 12 : … CCPF 2024-2027 ») en fait partie, même s'il s'ouvre sur un titre d'axe et des en-têtes de colonnes (« Objectifs », « Enjeux », « Actions », « Portage »).
 - "structure" : sommaire, liste des axes, orientations ou objectifs, tableau récapitulatif qui ne fait que lister des titres.
-- "diagnostic" : état des lieux, chiffres du territoire, contexte, méthodologie, enjeux sans action ; aussi tout ce qui évalue ou suit le plan sans définir d'action (évaluation environnementale, analyse d'incidences, mesures d'évitement-réduction-compensation, tableaux d'indicateurs de suivi, bilan d'un programme précédent, compte rendu d'une concertation publique).
+- "diagnostic" : état des lieux, chiffres du territoire, contexte, méthodologie, enjeux sans action ; aussi tout ce qui évalue ou suit le plan sans définir d'action (évaluation environnementale, analyse d'incidences, mesures d'évitement-réduction-compensation, tableaux d'indicateurs de suivi, bilan d'un programme précédent, compte rendu d'une concertation publique) ; et l'état des lieux de ce qui est déjà fait (réalisations passées, sites déjà aménagés, labels obtenus), même quand il renvoie aux fiches du plan (« ➔ Fiches actions 18, 27 »).
 - "engagement_partenaire" : ce qu'une entreprise, une association ou une autre institution s'engage à faire de son côté (charte, contribution de partenaire, liste d'engagements signés) ; ce ne sont pas les actions de la collectivité.
 - "autre" : éditorial, remerciements, glossaire, annexes, pages blanches.
 
-En cas de doute entre "fiche_action" et une autre catégorie, choisissez "fiche_action" : mieux vaut lire un extrait de trop que manquer une action.
+En cas de doute entre "fiche_action" et une autre catégorie, choisissez "fiche_action" : mieux vaut lire un extrait de trop que manquer une action. Un extrait qui s'ouvre sur un sommaire ou une page de garde mais dont la fin décrit des actions est "fiche_action".
 
 Répondez avec un tableau JSON, un élément par extrait, sans en oublier aucun : { "index": <numéro de l'extrait>, "type": <catégorie> }.
 
-Extraits (numéro | pages | partie et titres qui le couvrent | début du texte)
+Extraits (numéro | pages | partie et titres qui le couvrent | début du texte, puis sa fin après « […] » quand il est long)
 ${extraits}`,
   placeholders: { cadrage, extraits },
 });

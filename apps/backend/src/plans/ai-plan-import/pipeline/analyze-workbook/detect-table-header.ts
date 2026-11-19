@@ -18,8 +18,9 @@ export type TableHeader = {
   /** Une ou deux rangées. */
   headerRows: number[];
   /**
-   * Rangées de consignes sous l'en-tête (« Champ texte », « Champ date ») :
-   * ni libellé, ni donnée.
+   * Rangées de consignes sous l'en-tête (« Champ texte », « Champ date »), et
+   * la fiche d'exemple qui les suit dans le modèle d'import : ni libellé, ni
+   * donnée.
    */
   noteRows: number[];
   /** Un libellé par colonne (`labels[col - 1]`), vide sans libellé. */
@@ -35,6 +36,9 @@ const SUB_HEADER_MAX_LENGTH = 40;
 const MAX_NOTE_ROWS = 2;
 const NOTE_MIN_CELLS = 4;
 const NOTE_MAX_DISTINCT_SHARE = 0.5;
+// La fiche d'exemple du modèle d'import de la plateforme, sous ses consignes :
+// « Action 1 - … (ou) 1.1.1.1. … », portée par « La Collectivité Exemple ».
+const TEMPLATE_EXAMPLE = /\(ou\)\s+\d|collectivité exemple/iu;
 // Un en-tête tient sur deux rangées au plus : une fusion plus haute qui en
 // part regroupe des données.
 const HEADER_MAX_MERGE_HEIGHT = 2;
@@ -66,6 +70,12 @@ export const detectTableHeader = (grid: SheetGrid): TableHeader | null => {
     }
     noteRows.push(row);
   }
+  const example = rows.find(
+    (candidate) => candidate > (noteRows.at(-1) ?? Infinity)
+  );
+  if (example !== undefined && isTemplateExampleRow(grid, example)) {
+    noteRows.push(example);
+  }
   return {
     titleRows: rows.filter((row) => row < top),
     headerRows,
@@ -89,6 +99,9 @@ const isNoteRow = (grid: SheetGrid, row: number): boolean => {
   const firstLines = own.map((cell) => cell.text.split('\n')[0].trim());
   return new Set(firstLines).size / own.length <= NOTE_MAX_DISTINCT_SHARE;
 };
+
+const isTemplateExampleRow = (grid: SheetGrid, row: number): boolean =>
+  filledCellsOf(grid, row).some((cell) => TEMPLATE_EXAMPLE.test(cell.text));
 
 /** « CALENDRIER · 2021 » : le libellé du dessus, puis son détail. */
 export const composeHeaderLabels = (
