@@ -32,6 +32,15 @@ export function useCollectiviteId(): number {
   return context.collectiviteId;
 }
 
+/**
+ * Collectivité courante si elle est connue, `undefined` sinon, y compris hors
+ * d'un `CollectiviteProvider` : pour le code partagé entre pages avec et sans
+ * collectivité.
+ */
+export function useOptionalCollectiviteId(): number | undefined {
+  return useContext(CollectiviteContext)?.collectiviteId;
+}
+
 /** À utiliser lorsque la collectivité est garantie */
 export function useCurrentCollectivite(): CollectiviteCurrent {
   const context = useCollectiviteContext();

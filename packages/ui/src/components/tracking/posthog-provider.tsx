@@ -10,7 +10,6 @@ import { PostHogPageView } from './posthog-pageview';
 type PostHogConfig = {
   host?: string;
   key?: string;
-  environment?: string;
   shouldIdentifyUser?: boolean;
 };
 
@@ -30,7 +29,7 @@ let initializedFor: string | null = null;
  * et posthog-js jetterait l'appel. Le rendu du parent, lui, précède toujours
  * celui des enfants.
  */
-const ensureInitialized = ({ host, key, environment }: PostHogConfig): void => {
+const ensureInitialized = ({ host, key }: PostHogConfig): void => {
   // Le provider est rendu côté serveur (`root-providers.tsx`) : pas de client
   // à initialiser là, et `getConsent()` a besoin de `document`.
   if (typeof window === 'undefined' || !key) {
@@ -54,7 +53,9 @@ const ensureInitialized = ({ host, key, environment }: PostHogConfig): void => {
     capture_pageleave: true,
     // Error tracking : exceptions non gérées et rejets de promesses
     capture_exceptions: true,
-    evaluation_contexts: environment ? [environment] : undefined,
+    // Les feature flags sont évalués par le backend (`featureFlags.list`) :
+    // pas de requête `/flags` depuis le navigateur.
+    advanced_disable_feature_flags: true,
     loaded: (posthog) => {
       if (process.env.NODE_ENV === 'development') posthog.debug();
     },
