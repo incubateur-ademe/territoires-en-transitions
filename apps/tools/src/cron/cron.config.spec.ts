@@ -22,6 +22,8 @@ const JOBS_PROPRES = [
   'posthog-demarches-pcaet-snapshot',
   'scan-fichiers',
   'import-perimetres-epci',
+  'refresh-site-labellisation',
+  'refresh-stats-crm',
 ] as const;
 
 describe('cron.config', () => {

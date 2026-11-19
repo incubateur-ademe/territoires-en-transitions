@@ -16,6 +16,7 @@ import { CronCloreInstructionsService } from '../demarches/cron-clore-instructio
 import { CronTrackPcaetSnapshotService } from '../demarches/cron-track-pcaet-snapshot.service';
 import { CronComputeTrajectoireService } from '../indicateurs/trajectoires/cron-compute-trajectoire.service';
 import { PostHogCollectivitesSyncService } from '../posthog/posthog-collectivites-sync.service';
+import { CronRefreshVuesMaterialiseesService } from '../stats/cron-refresh-vues-materialisees.service';
 import { CronNotificationsService } from './cron-notifications.service';
 import { CRON_JOBS_QUEUE_NAME, JobName } from './cron.config';
 
@@ -34,6 +35,7 @@ export class CronConsumerService extends WorkerHost {
     private readonly postHogCollectivitesSyncService: PostHogCollectivitesSyncService,
     private readonly cronImportPerimetresEpciService: CronImportPerimetresEpciService,
     private readonly cronScanFichiersService: CronScanFichiersService,
+    private readonly cronRefreshVuesMaterialiseesService: CronRefreshVuesMaterialiseesService,
     private readonly contextStoreService: ContextStoreService
   ) {
     super();
@@ -80,6 +82,14 @@ export class CronConsumerService extends WorkerHost {
         case 'import-perimetres-epci':
           result =
             await this.cronImportPerimetresEpciService.importPerimetresEpci();
+          break;
+        case 'refresh-site-labellisation':
+          result =
+            await this.cronRefreshVuesMaterialiseesService.refreshSiteLabellisation();
+          break;
+        case 'refresh-stats-crm':
+          result =
+            await this.cronRefreshVuesMaterialiseesService.refreshStatsCrm();
           break;
         default:
           if (isCrmSyncJobName(job.name)) {
