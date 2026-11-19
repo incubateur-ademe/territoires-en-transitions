@@ -33,16 +33,14 @@ variable "server_private_ipv4_address" {
   default     = "10.0.3.10"
 }
 
-variable "coolify_public_ip" {
-  description = "IP publique du control plane Coolify : seule source autorisée sur le port 22 du serveur prod. Valeur de : terraform -chdir=../platform output -raw coolify_public_ip. À réappliquer si elle change, sinon Coolify perd l'accès à la prod."
-  type        = string
+variable "ssh_allowed_ips" {
+  description = "CIDR autorisés sur le port 22 public du serveur : IP de sortie de l'instance Coolify de l'incubateur, et IP publique de la passerelle VPN des opérateurs (terraform -chdir=../platform output -raw vpn_public_ip). Si l'une change, réappliquer ce stack, sinon Coolify ou les opérateurs perdent l'accès."
+  type        = list(string)
   validation {
-    condition = (
-      can(regex("^(\\d{1,3}\\.){3}\\d{1,3}$", var.coolify_public_ip)) &&
-      can(cidrhost("${var.coolify_public_ip}/32", 0)) &&
-      !can(regex("^(0\\.|10\\.|127\\.|169\\.254\\.|192\\.168\\.|172\\.(1[6-9]|2\\d|3[01])\\.)", var.coolify_public_ip))
-    )
-    error_message = "coolify_public_ip doit être l'IPv4 publique du control plane, sans masque (ni privée, ni 0.0.0.0)."
+    condition = length(var.ssh_allowed_ips) > 0 && alltrue([
+      for c in var.ssh_allowed_ips : can(cidrhost(c, 0)) && !startswith(c, "0.0.0.0/")
+    ])
+    error_message = "ssh_allowed_ips : au moins un CIDR (ex. 203.0.113.20/32), jamais 0.0.0.0/0."
   }
 }
 
@@ -61,7 +59,7 @@ variable "server_root_volume_size_in_gb" {
 }
 
 variable "server_ssh_authorized_keys" {
-  description = "Clés publiques SSH des opérateurs sur l'utilisateur tet-ops. L'accès se fait via le bastion Coolify (ssh -J), le port 22 n'étant ouvert qu'à l'IP du control plane."
+  description = "Clés publiques SSH des opérateurs sur l'utilisateur tet-ops. L'accès se fait par le VPN des opérateurs."
   type        = list(string)
   default     = []
 }

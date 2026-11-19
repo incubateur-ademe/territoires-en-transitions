@@ -111,6 +111,61 @@ variable "coolify_ssh_authorized_keys" {
   default     = []
 }
 
+# --- Passerelle VPN des opérateurs ---
+
+variable "vpn_private_ipv4_address" {
+  description = "IP privée fixe de la passerelle WireGuard, dans le Private Network platform."
+  type        = string
+  default     = "10.0.0.11"
+}
+
+variable "vpn_tunnel_cidr" {
+  description = "Sous-réseau du tunnel WireGuard. Hors 10.0.0.0/16 pour ne chevaucher aucun Private Network."
+  type        = string
+  default     = "10.99.0.0/24"
+}
+
+variable "vpn_private_key_secret_name" {
+  description = "Secret Secret Manager (projet principal) portant la clé privée WireGuard de la passerelle, déposée à la main (cf. README)."
+  type        = string
+  default     = "tet-platform-vpn-private-key"
+}
+
+variable "vpn_peers" {
+  description = "Opérateurs autorisés sur le VPN, par nom : clé publique WireGuard et adresse dans vpn_tunnel_cidr (sans masque, à partir de .2)."
+  type = map(object({
+    public_key = string
+    address    = string
+  }))
+  default = {}
+  validation {
+    condition     = alltrue([for p in values(var.vpn_peers) : can(cidrhost("${p.address}/32", 0)) && p.address != cidrhost(var.vpn_tunnel_cidr, 1)])
+    error_message = "Chaque adresse de pair doit être une IPv4 sans masque, différente de celle de la passerelle (première adresse du tunnel)."
+  }
+}
+
+variable "vpn_routed_public_ips" {
+  description = "IP publiques des serveurs applicatifs (nonprod, preview, prod), joignables en SSH par le tunnel. Valeurs de : terraform -chdir=../<tier> output -raw server_public_ip."
+  type        = list(string)
+  default     = []
+}
+
+variable "vpn_ssh_allowed_ips" {
+  description = "CIDR autorisés en SSH sur l'IP publique de la passerelle, en secours si le tunnel tombe. Vide par défaut."
+  type        = list(string)
+  default     = []
+  validation {
+    condition     = alltrue([for c in var.vpn_ssh_allowed_ips : can(cidrhost(c, 0)) && !startswith(c, "0.0.0.0/")])
+    error_message = "vpn_ssh_allowed_ips : des CIDR (ex. 203.0.113.10/32), jamais 0.0.0.0/0."
+  }
+}
+
+variable "vpn_ssh_authorized_keys" {
+  description = "Clés publiques SSH des opérateurs sur l'utilisateur tet-ops de la passerelle."
+  type        = list(string)
+  default     = []
+}
+
 # --- Stockage ---
 
 variable "coolify_backups_bucket_name" {

@@ -13,12 +13,8 @@
 #
 # Coolify n'expose aucune API de credentials registry : ce geste reste un SSH.
 #
-# On passe par le serveur Coolify en rebond (ProxyCommand) : nonprod et preview
-# n'ont pas de port 22 public, et celui de la prod n'accepte que l'IP de
-# Coolify. L'authentification vers le rebond
-# utilise l'identité par défaut de l'opérateur (agent SSH), celle vers la cible
-# la clé root lue dans Secret Manager — d'où le ProxyCommand explicite plutôt
-# qu'un -J, qui propagerait IdentitiesOnly au rebond.
+# Connexion directe à l'IP publique du serveur, dont le port 22 n'accepte que
+# l'instance Coolify et la passerelle VPN : lancer ce script connecté au VPN.
 #
 # Invoqué par terraform_data.ghcr_docker_login (infra/coolify/main.tf), ou
 # manuellement. Idempotent.
@@ -27,8 +23,7 @@
 # Format du secret : <github-username>|<pat-with-read:packages>
 #
 # Variables attendues :
-#   TARGET_HOST             adresse SSH du serveur cible (IP privée, ou publique
-#                           pour la prod)
+#   TARGET_HOST             adresse SSH du serveur cible (IP publique)
 #   TARGET_HOST_KEY         clé d'hôte SSH attendue de la cible (ssh-ed25519 …),
 #                           vérifiée en mode strict
 #   SERVER_KEY_SECRET_NAME  secret SM de la clé privée SSH root du serveur
@@ -37,11 +32,6 @@
 #                           projet par défaut du profil scw peut être un autre)
 #   SERVER_KEY_SECRET_PROJECT_ID  (optionnel) projet de la clé du serveur, si
 #                           différent (prod), défaut SECRET_PROJECT_ID
-#   BASTION_HOST            (optionnel) IP publique du serveur Coolify. Si vide,
-#                           connexion directe à TARGET_HOST.
-#   BASTION_HOST_KEY        clé d'hôte SSH attendue du rebond (requise avec
-#                           BASTION_HOST)
-#   BASTION_USER            (optionnel) utilisateur du rebond, défaut tet-ops
 #   GHCR_PULL_TEST_IMAGE    (optionnel) image:tag à tester dans le helper
 set -euo pipefail
 
@@ -52,8 +42,6 @@ set -euo pipefail
 : "${SECRET_PROJECT_ID:?SECRET_PROJECT_ID non défini}"
 _server_key_project="${SERVER_KEY_SECRET_PROJECT_ID:-${SECRET_PROJECT_ID}}"
 
-_bastion_host="${BASTION_HOST:-}"
-_bastion_user="${BASTION_USER:-tet-ops}"
 _HELPER_IMAGE="${COOLIFY_HELPER_IMAGE:-docker.io/coollabsio/coolify-helper:1.0.16}"
 # Si défini (ex. ghcr.io/incubateur-ademe/tet-app:prod-a5f7544ea), vérifie le
 # pull *dans* le helper — le même chemin que Coolify. Sinon on s'arrête après
@@ -102,7 +90,6 @@ _auth="$(printf '%s:%s' "${_ghcr_user}" "${_ghcr_token}" | base64 | tr -d '\n')"
 # root et le PAT GHCR, il ne doit parler qu'aux machines attendues. Les clés
 # viennent de Terraform (tls_private_key.sshd_host), installées au premier boot.
 printf '%s %s\n' "${TARGET_HOST}" "${TARGET_HOST_KEY}" >"${_tmpdir}/known_hosts"
-_host_key_opts="-o StrictHostKeyChecking=yes -o HostKeyAlgorithms=ssh-ed25519 -o UserKnownHostsFile=${_tmpdir}/known_hosts"
 
 _ssh_opts=(
   -i "${_tmpdir}/server_key"
@@ -111,12 +98,6 @@ _ssh_opts=(
   -o HostKeyAlgorithms=ssh-ed25519
   -o UserKnownHostsFile="${_tmpdir}/known_hosts"
 )
-if [ -n "${_bastion_host}" ]; then
-  : "${BASTION_HOST_KEY:?BASTION_HOST_KEY non défini : clé hôte SSH attendue du rebond}"
-  printf '%s %s\n' "${_bastion_host}" "${BASTION_HOST_KEY}" >>"${_tmpdir}/known_hosts"
-  echo "  rebond via ${_bastion_user}@${_bastion_host}"
-  _ssh_opts+=(-o "ProxyCommand=ssh -W %h:%p ${_host_key_opts} ${_bastion_user}@${_bastion_host}")
-fi
 
 _ssh() {
   ssh "${_ssh_opts[@]}" "root@${TARGET_HOST}" "$@"

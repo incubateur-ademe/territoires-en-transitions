@@ -3,8 +3,7 @@
 Procédures ponctuelles, sorties du [README](README.md) pour qu'il reste lisible.
 
 - [Restauration complète de la base et bascule](#restauration-complète-de-la-base-et-bascule)
-- [Restauration de l'instance Coolify](#restauration-de-linstance-coolify)
-- [Montée de version de Coolify](#montée-de-version-de-coolify)
+- [Migration vers l'instance Coolify de l'incubateur](#migration-vers-linstance-coolify-de-lincubateur)
 - [Lock Terraform fantôme](#lock-terraform-fantôme)
 
 ## Restauration complète de la base et bascule
@@ -130,65 +129,65 @@ conséquence. Ils faussent aussi le contrôle final : `rclone size` doit compter
 autant d'objets que `select count(*) from storage.objects`. Sinon, relancer la boucle de
 la passe 2 (`copyto` saute les objets déjà identiques).
 
-## Restauration de l'instance Coolify
+## Migration vers l'instance Coolify de l'incubateur
 
-Procédure Coolify officielle ([instance-restore](https://github.com/coollabsio/coolify-docs/blob/main/content/docs/core/backup-and-recovery/instance-restore.mdx)),
-appliquée aux archives du timer `tet-coolify-backup` (cf.
-[README](README.md#sauvegarde-de-linstance-coolify)) :
+On quitte notre control plane (`tet-platform-coolify`) pour notre Team sur l'instance de
+l'incubateur, et son bastion pour le VPN. Les deux instances pilotent les mêmes serveurs le
+temps de la bascule. Ce qui tourne déjà : la preprod TET, et **en production aldo et
+rencontres**, plus Alloy sur nonprod et prod. Vérifier dans l'ancienne UI qu'aucune autre
+ressource (une base Coolify, notamment) n'est hors Terraform : elle serait à migrer à part.
 
-```sh
-# 1. Récupérer et déchiffrer la dernière archive (poste opérateur).
-#    Le bucket vit dans le projet tet-coolify-backups : utiliser sa clé dédiée, que l'API S3
-#    résout dans le bon projet (les credentials perso visent le projet principal).
-_c="$(scw secret version access-by-path secret-name=tet-platform-coolify-s3-credentials \
-  secret-path=/ revision=latest -o json | jq -r .data | base64 --decode)"
-export AWS_ACCESS_KEY_ID="${_c%%|*}" AWS_SECRET_ACCESS_KEY="${_c#*|}"; unset _c
-aws s3 ls --endpoint-url https://s3.fr-par.scw.cloud s3://tet-coolify-backups/coolify-instance/
-aws s3 cp --endpoint-url https://s3.fr-par.scw.cloud \
-  s3://tet-coolify-backups/coolify-instance/<archive>.tar.gz.age .
-age -d -i ~/tet-coolify-backup.key <archive>.tar.gz.age | tar -xzf -
-# → coolify.dump + coolify.env
+Prérequis côté incubateur : API activée sur l'instance, token `root` de notre Team créé,
+**IP de sortie fixe** de l'instance connue.
 
-# 2. Sur un control plane à la *même version* de Coolify (coolify_version),
-#    copier coolify.dump, puis restaurer :
-docker exec -i coolify-db pg_restore --clean --if-exists --exit-on-error \
-  --no-acl --no-owner --username=coolify --dbname=coolify < coolify.dump
+1. **VPN.** Déposer `tet-platform-vpn-private-key` (cf.
+   [README](README.md#mise-en-place-une-fois)), renseigner `vpn_peers` et
+   `vpn_routed_public_ips` dans `platform/terraform.tfvars`, appliquer `platform`. Se
+   connecter et vérifier : `ssh tet-ops@10.99.0.1`.
+2. **Ouvrir le 22 des serveurs.** Dans `nonprod`, `preview` et `prod`,
+   `ssh_allowed_ips` = IP de l'instance de l'incubateur + `vpn_public_ip`. **En prod,
+   garder aussi l'ancienne `coolify_public_ip/32`** jusqu'à l'étape 6 : l'ancienne instance
+   pilote encore le serveur. Appliquer les trois stacks.
+3. **Token.** Déposer le token de notre Team comme nouvelle version de
+   `tet-platform-coolify-api-token`.
+4. **Coolify-as-code.** Dans `coolify/terraform.tfvars` : `coolify_endpoint`, `ssh_host` =
+   IP publique de chaque serveur, retirer les variables du control plane
+   (`coolify_public_ip`, `coolify_server_id`, `coolify_sshd_host_public_key`,
+   `instance_backup_*`). Puis, connecté au VPN :
 
-# 3. Dans /data/coolify/source/.env, remplacer UNIQUEMENT la ligne APP_KEY= par celle
-#    de coolify.env. Les autres valeurs (DB_PASSWORD…) appartiennent à la nouvelle
-#    installation.
+   ```sh
+   source infra/scripts/tf-env.sh && source infra/scripts/coolify-env.sh
+   terraform -chdir=infra/coolify init -reconfigure   # nouveau state coolify-incubateur/
+   terraform -chdir=infra/coolify apply
+   ```
 
-# 4. Relancer l'installeur à la même version : il redémarre Coolify et applique
-#    les migrations éventuelles
-curl -fsSL https://cdn.coollabs.io/coolify/install.sh | bash -s <coolify_version>
-```
+   Les secrets applicatifs sont déjà dans Secret Manager : l'apply recrée tout, variables
+   comprises. Refaire les flags de métriques Traefik de chaque serveur si l'instance
+   reconfigure le proxy (cf. [README](README.md#métriques-traefik-une-fois-par-serveur)).
+5. **Bascule, ressource par ressource** (`terraform -chdir=infra/coolify output
+   application_ids`, plus les services `<env>/supabase-api` et `<env>/alloy`) :
+   1. déployer depuis la nouvelle instance : `APP_ID=<env>/<app> infra/scripts/coolify-deploy.sh`
+      (`IMAGE_TAG=<tag en place>` pour les images TET, lu dans l'ancienne UI) ;
+   2. une fois le nouveau conteneur sain, **Stop** sur la ressource dans l'**ancienne**
+      instance. Jamais de suppression de serveur : elle détruit les conteneurs.
 
-Erreur « Invalid MAC » ou de chiffrement dans le dashboard : l'`APP_KEY` active n'est pas
-celle de l'archive. Arrêter `coolify`, corriger `APP_KEY` dans le `.env`, relancer
-l'installeur. Ne pas utiliser `APP_PREVIOUS_KEYS`.
-
-Tester cette restauration sur une VM jetable après chaque montée de version de Coolify :
-un backup jamais restauré n'est pas un backup.
-
-## Montée de version de Coolify
-
-L'auto-update est désactivé (`AUTOUPDATE=false`) : un update régénérerait les clés SSH de
-Coolify dans notre dos. La version est figée par `coolify_version` (`platform/variables.tf`), et
-cloud-init ne rejoue pas (`ignore_changes` sur `user_data`). Pour upgrader la VM :
-
-```bash
-ssh tet-ops@<coolify_public_ip>
-curl -fsSL https://cdn.coollabs.io/coolify/install.sh | sudo AUTOUPDATE=false bash -s <version>
-```
-
-`AUTOUPDATE=false` se passe à `install.sh`, qui l'écrit dans le `.env`. Le modifier dans le
-`.env` après coup ne suffit pas : vérifier ensuite dans l'UI (Settings, auto-update) qu'il
-est bien désactivé.
-
-Puis mettre à jour `coolify_version`, et tester une
-[restauration](#restauration-de-linstance-coolify) sur une VM jetable. Vérifier aussi que
-les flags de métriques Traefik sont toujours dans le `command` du proxy
-(cf. [README](README.md#métriques-traefik-une-fois-par-serveur)).
+   Le temps du recouvrement, Traefik voit deux routeurs sur le même `Host` et sert l'un
+   ou l'autre : sans conséquence, c'est la même version. Commencer par la preprod, finir
+   par aldo et rencontres en prod. Puis basculer la CD (`vars.COOLIFY_ENDPOINT` et
+   `secrets.COOLIFY_TOKEN` des environnements GitHub), reconfigurer les webhooks GitHub
+   des applications Git et contrôler les sondes Cockpit.
+6. **Décommissionner** (change à part, une fois tout stable) :
+   - arrêter la VM `tet-platform-coolify` (console) et retirer l'IP de l'ancienne instance
+     de `ssh_allowed_ips` en prod ;
+   - sur chaque serveur, supprimer les conteneurs et `/data/coolify/applications/<uuid>`
+     orphelins de l'ancienne instance ;
+   - dans `platform` : retirer `module "coolify"` (passer d'abord `prevent_destroy` et
+     `protected` à false), `acl_ssh_rules`, `acl_ssh_return_rules`, les variables et
+     outputs `coolify_*`, la règle de cycle de vie `coolify-instance-retention` ; supprimer
+     `modules/coolify`. Appliquer, puis supprimer le volume racine conservé
+     (`delete_on_termination = false`) une fois sûr de ne plus en avoir besoin ;
+   - supprimer l'enregistrement DNS `coolify` chez Cloudflare ;
+   - garder l'ancien state `coolify/terraform.tfstate` dans le bucket, pour mémoire.
 
 ## Lock Terraform fantôme
 

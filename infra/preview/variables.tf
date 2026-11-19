@@ -42,8 +42,19 @@ variable "server_root_volume_size_in_gb" {
   default     = 150
 }
 
+variable "ssh_allowed_ips" {
+  description = "CIDR autorisés sur le port 22 public du serveur : IP de sortie de l'instance Coolify de l'incubateur, et IP publique de la passerelle VPN des opérateurs (terraform -chdir=../platform output -raw vpn_public_ip). Si l'une change, réappliquer ce stack, sinon Coolify ou les opérateurs perdent l'accès."
+  type        = list(string)
+  validation {
+    condition = length(var.ssh_allowed_ips) > 0 && alltrue([
+      for c in var.ssh_allowed_ips : can(cidrhost(c, 0)) && !startswith(c, "0.0.0.0/")
+    ])
+    error_message = "ssh_allowed_ips : au moins un CIDR (ex. 203.0.113.20/32), jamais 0.0.0.0/0."
+  }
+}
+
 variable "server_ssh_authorized_keys" {
-  description = "Clés publiques SSH des opérateurs sur l'utilisateur tet-ops. L'accès se fait via le bastion Coolify (ssh -J)."
+  description = "Clés publiques SSH des opérateurs sur l'utilisateur tet-ops. L'accès se fait par le VPN des opérateurs."
   type        = list(string)
   default     = []
 }

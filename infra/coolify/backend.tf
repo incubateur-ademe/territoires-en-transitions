@@ -4,9 +4,13 @@ terraform {
   # *déjà up et joignable*. La garder séparée évite que le `plan` de l'infra
   # Scaleway exige que l'appli tourne (poule-œuf au premier boot).
   # Même bucket, clé différente.
+  #
+  # coolify-incubateur : state de l'instance de l'incubateur. L'ancien,
+  # coolify/terraform.tfstate, décrit l'instance qu'on quitte : ses UUID n'ont
+  # aucun sens ailleurs, on ne le migre pas.
   backend "s3" {
     bucket = "tet-tfstate"
-    key    = "coolify/terraform.tfstate"
+    key    = "coolify-incubateur/terraform.tfstate"
     region = "fr-par"
 
     endpoints = {

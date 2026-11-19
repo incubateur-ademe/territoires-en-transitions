@@ -6,6 +6,10 @@
 project_id = "00000000-0000-0000-0000-000000000000"
 private_network_id  = "fr-par/00000000-0000-0000-0000-000000000000"
 
+# IP de sortie de l'instance Coolify de l'incubateur (fournie par son admin),
+# et IP de la passerelle VPN : terraform -chdir=../platform output -raw vpn_public_ip
+ssh_allowed_ips = ["198.51.100.40/32", "203.0.113.21/32"]
+
 server_ssh_authorized_keys = [
   "ssh-ed25519 AAAA... prenom.nom@example.org",
 ]

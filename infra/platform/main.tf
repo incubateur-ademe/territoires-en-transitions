@@ -54,6 +54,56 @@ locals {
       description   = "Retour SSH serveur ${tier} -> Coolify"
     }
   ] : []
+
+  # --- Passerelle VPN des opérateurs ---
+  #
+  # Ce que le tunnel relaie : tout le VPC tet, et les IP publiques des
+  # serveurs applicatifs (la prod n'a aucune route depuis ce VPC : on la joint
+  # sur son IP publique, qui autorise celle de la passerelle).
+  vpn_routed_cidrs = concat(
+    [for tier, plan in var.network_plan : plan.ipv4_subnet],
+    [for ip in var.vpn_routed_public_ips : "${ip}/32"],
+  )
+
+  vpn_server_cidr = "${var.vpn_private_ipv4_address}/32"
+
+  # Ports privés ouverts aux opérateurs dans chaque tier : SSH, Postgres et
+  # Redis managés (preprod). Destination : tout le /24, les bases managées y
+  # ont leur propre IP.
+  vpn_acl_ports = { ssh = 22, postgres = 5432, redis = 6379 }
+
+  vpn_acl_rules = flatten([
+    for tier in local.app_tiers : [
+      for name, port in local.vpn_acl_ports : {
+        protocol      = "TCP"
+        source        = local.vpn_server_cidr
+        destination   = var.network_plan[tier].ipv4_subnet
+        src_port_low  = 0
+        src_port_high = 65535
+        dst_port_low  = port
+        dst_port_high = port
+        action        = "accept"
+        description   = "VPN opérateurs -> ${tier} (${name})"
+      }
+    ]
+  ])
+
+  vpn_acl_return_rules = var.acl_allow_return_traffic ? flatten([
+    for tier in local.app_tiers : [
+      for name, port in local.vpn_acl_ports : {
+        protocol      = "TCP"
+        source        = var.network_plan[tier].ipv4_subnet
+        destination   = local.vpn_server_cidr
+        src_port_low  = port
+        src_port_high = port
+        # Plage imposée au MASQUERADE TCP de la passerelle (modules/vpn/main.tf).
+        dst_port_low  = 32768
+        dst_port_high = 60999
+        action        = "accept"
+        description   = "Retour ${tier} (${name}) -> VPN opérateurs"
+      }
+    ]
+  ]) : []
 }
 
 module "network" {
@@ -68,9 +118,33 @@ module "network" {
 
   acl_enabled        = var.acl_enabled
   acl_default_policy = "drop"
-  acl_rules          = concat(local.acl_ssh_rules, local.acl_ssh_return_rules)
+  acl_rules = concat(
+    local.acl_ssh_rules, local.acl_ssh_return_rules,
+    local.vpn_acl_rules, local.vpn_acl_return_rules,
+  )
 }
 
+# Accès des opérateurs aux serveurs et aux bases privées. Remplace le bastion
+# SSH du control plane, qui disparaît avec la migration vers l'instance
+# Coolify de l'incubateur (cf. RUNBOOKS.md « Migration vers l'instance
+# Coolify de l'incubateur »).
+module "vpn" {
+  source = "../modules/vpn"
+
+  zone                    = var.scaleway_zone
+  private_network_id      = module.network.private_network_ids["platform"]
+  private_ipv4_address    = var.vpn_private_ipv4_address
+  private_key_secret_name = var.vpn_private_key_secret_name
+  tunnel_cidr             = var.vpn_tunnel_cidr
+  routed_cidrs            = local.vpn_routed_cidrs
+  peers                   = var.vpn_peers
+  ssh_allowed_ips         = var.vpn_ssh_allowed_ips
+  ssh_authorized_keys     = var.vpn_ssh_authorized_keys
+}
+
+# Ancien control plane Coolify, remplacé par l'instance de l'incubateur. À
+# retirer après la bascule, avec acl_ssh_rules / acl_ssh_return_rules et les
+# variables coolify_* (cf. RUNBOOKS.md, étape « Décommissionner »).
 module "coolify" {
   source = "../modules/coolify"
 

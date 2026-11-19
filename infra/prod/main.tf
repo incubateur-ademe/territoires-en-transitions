@@ -3,7 +3,7 @@
 # Projet Scaleway dédié (créé par un admin de l'organisation) et VPC propre, sans lien
 # réseau avec le VPC partagé : nonprod et preview n'ont aucune route vers la
 # prod. Coolify pilote le serveur en SSH sur son IP publique, que le security
-# group n'ouvre qu'à l'IP publique du control plane.
+# group n'ouvre qu'à l'instance Coolify de l'incubateur et au VPN des opérateurs.
 
 module "network" {
   source = "../modules/network"
@@ -36,9 +36,9 @@ module "app_server" {
   private_network_id   = local.private_network_id
   private_ipv4_address = var.server_private_ipv4_address
 
-  # Port 22 ouvert à la seule IP publique du control plane : c'est par là que
-  # Coolify pilote ce serveur, et que les opérateurs rebondissent (ssh -J).
-  ssh_allowed_ips     = ["${var.coolify_public_ip}/32"]
+  # Port 22 ouvert à la seule instance Coolify de l'incubateur et à la
+  # passerelle VPN des opérateurs.
+  ssh_allowed_ips     = var.ssh_allowed_ips
   ssh_authorized_keys = var.server_ssh_authorized_keys
 }
 
