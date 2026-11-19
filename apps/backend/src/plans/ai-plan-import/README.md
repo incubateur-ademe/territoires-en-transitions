@@ -572,6 +572,11 @@ Le moteur sert à tout type de plan. Ce qui dépend du type :
   thème (hiérarchie), et un libellé retapé par le modèle reprend la graphie du
   squelette (`align-skeleton-labels.ts`) ; un sigle ne se développe pas, un
   libellé n'est pas une valeur, un montant par an n'est pas un budget ;
+- le découpage (`segment-document/`) lit aussi les plans qui titrent
+  « Fiche Action n°1.2 » sur une ligne et le titre dessous : leurs « Action 1 –
+  … » sont des étapes, leurs lignes de calendrier (« Actions 1-2 x x x ») ne
+  sont pas des titres, et le numéro de la fiche donne son axe quand les axes
+  ne sont nommés qu'au sommaire ;
 - le vocabulaire reconnu par le code couvre les autres plans : « Fiche projet
   n° », « Feuille de route », « Fiches projets », « Programme opérationnel »
   (`heading-patterns.ts`, `scout-units.ts`) ;

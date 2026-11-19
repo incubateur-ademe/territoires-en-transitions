@@ -73,7 +73,8 @@ describe('matchHeading', () => {
       'Diagnostic énergétique',
     ],
     ['2.3.1. Rénover les écoles', 'fiche', 3, '2.3.1', 'Rénover les écoles'],
-    ['## Fiche action 3', 'markdown', 2, null, 'Fiche action 3'],
+    ['## Fiche action 3', 'fiche', 3, '3', ''],
+    ['## Rénover la piscine', 'markdown', 2, null, 'Rénover la piscine'],
     ['### 2.3 Rénover', 'markdown', 3, '2.3', 'Rénover'],
     ['PROGRAMME D’ACTIONS', 'section', 0, null, 'PROGRAMME D’ACTIONS'],
     ['Feuille de route', 'section', 0, null, 'Feuille de route'],
@@ -162,6 +163,13 @@ describe('matchHeading', () => {
     ],
   ])('reconnaît « %s »', (line, kind, level, number, title) => {
     expect(matchHeading(line)).toMatchObject({ kind, level, number, title });
+  });
+
+  it('ne prend pas pour un titre un libellé de champ mis en titre par une page transcrite', () => {
+    expect(matchHeading('## Objectifs')).toBeNull();
+    expect(matchHeading('## Cibles : les ménages, les écoles')).toBeNull();
+    expect(matchHeading("# Descriptif de l'action")).toBeNull();
+    expect(matchHeading('## Objectifs de l’axe 1 :')?.kind).toBe('markdown');
   });
 
   it('écarte ce que la mise en page colle à un titre d’axe ou prend pour un titre', () => {

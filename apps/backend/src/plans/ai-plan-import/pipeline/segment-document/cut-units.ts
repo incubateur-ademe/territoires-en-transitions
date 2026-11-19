@@ -109,7 +109,7 @@ export const cutUnits = (
       if (heading && heading.level >= FICHE_LEVEL) {
         close();
         popTo(stack, FICHE_LEVEL);
-        const axe = axeOfFiche(heading);
+        const axe = heading.kind === 'fiche' ? axeOfFiche(heading) : null;
         if (axe && stack[0]?.label !== axe.label) {
           // Un sous-axe de cet axe, titré parmi les fiches, reste.
           const sousAxes = stack.filter(
@@ -189,11 +189,11 @@ export const cutUnits = (
 const axesGivenBeforeFiches = (
   headings: DetectedHeading[]
 ): ((fiche: HeadingMatch) => StackEntry | null) => {
-  const firstFiche = headings.findIndex(
-    ({ match }) => match.level >= FICHE_LEVEL
-  );
+  // Les titres Markdown d'une page transcrite ne disent pas leur niveau :
+  // seuls comptent ici les « Axe n » et les fiches qui se nomment.
+  const firstFiche = headings.findIndex(({ match }) => match.kind === 'fiche');
   const isAxe = ({ match }: DetectedHeading) =>
-    match.level === AXE_LEVEL && match.number !== null;
+    match.kind === 'axe' && match.number !== null;
   const axes = new Map(
     headings
       .slice(0, Math.max(0, firstFiche))

@@ -9,7 +9,7 @@ import {
 import { Result, success } from '@tet/backend/utils/result.type';
 import { PlanSkeleton, planSkeletonSchema } from '../../models/plan-skeleton';
 import { SQUELETTE_PROMPT } from '../../prompts/squelette.prompt';
-import { titlesMatch } from '../extract-actions/similar-titles';
+import { titleIncludes, titlesMatch } from '../extract-actions/similar-titles';
 import { DocumentUnit } from '../segment-document/document-unit';
 
 // Les extraits de structure sont rarement longs ; au-delà, le sommaire suffit.
@@ -40,9 +40,15 @@ export const extractSkeleton = async (
   }
 ): Promise<Result<ExtractSkeletonResult, LlmError>> => {
   const titles = distinctHeadingPaths(units);
-  const ficheTitles = units.flatMap((unit) =>
-    unit.kind === 'fiche' && unit.title && !unit.continued ? [unit.title] : []
+  const fiches = units.filter(
+    (unit) => unit.kind === 'fiche' && unit.title && !unit.continued
   );
+  const ficheTitles = fiches.map((unit) => unit.title as string);
+  // Une « Mesure 1.1 » qui range ses actions A, B, C est leur sous-axe : le
+  // prompt l'admet, le filtre ne doit pas la retirer ensuite.
+  const actionTitles = fiches
+    .filter((unit) => !groupsLetteredActions(unit))
+    .map((unit) => unit.title as string);
   const extraits = capByTokens(structureUnits, STRUCTURE_MAX_TOKENS);
   if (titles.length === 0 && extraits.length === 0) {
     return success({ skeleton: null, tokens: emptyTokenUsage() });
@@ -69,12 +75,19 @@ export const extractSkeleton = async (
   if (!completion.success) {
     return completion;
   }
-  const skeleton = withoutFicheSousAxes(completion.data.data, ficheTitles);
+  const skeleton = withoutFicheSousAxes(completion.data.data, actionTitles);
   return success({
     skeleton: skeleton.axes.length > 0 ? skeleton : null,
     tokens: completion.data.tokens,
   });
 };
+
+const LETTERED_ACTION = /^[A-H]\s?[.–—-]\s+\p{Lu}/u;
+const MIN_LETTERED_ACTIONS = 2;
+
+const groupsLetteredActions = (unit: DocumentUnit): boolean =>
+  unit.lines.filter((line) => LETTERED_ACTION.test(line.text.trim())).length >=
+  MIN_LETTERED_ACTIONS;
 
 /**
  * Un sous-axe qui porte le titre d'une fiche est la fiche elle-même, vue dans
@@ -88,8 +101,12 @@ const withoutFicheSousAxes = (
     ...axe,
     sousAxes: axe.sousAxes.filter(
       (sousAxe) =>
-        !ficheTitles.some((fiche) =>
-          titlesMatch(fiche, `${sousAxe.numero} ${sousAxe.titre}`)
+        !ficheTitles.some(
+          (fiche) =>
+            titlesMatch(fiche, `${sousAxe.numero} ${sousAxe.titre}`) ||
+            // « 5.3 Faciliter l'organisation » : le titre de la fiche 5.3, écourté.
+            (fiche.startsWith(`${sousAxe.numero} `) &&
+              titleIncludes(fiche, sousAxe.titre))
         )
     ),
   })),

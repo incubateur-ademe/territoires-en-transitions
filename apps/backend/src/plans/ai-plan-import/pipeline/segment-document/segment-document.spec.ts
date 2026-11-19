@@ -302,6 +302,33 @@ describe('detectHeadings sur un PCAET à fiches tabulaires', () => {
     ]);
   });
 
+  it('lit de même une fiche transcrite en Markdown : titre dessous, champs et étapes dedans', () => {
+    const named = (numero: string) => [
+      { text: `Fiche Action n°${numero}` },
+      { text: 'Trier à la source' },
+      { text: 'Pilote : Direction' },
+    ];
+
+    expect(
+      titles([
+        buildPage(0, named('1.1')),
+        buildPage(1, named('1.2')),
+        buildPage(2, [
+          { text: '# Fiche Action n°1.3' },
+          { text: '## Poursuivre le tri à la source des biodéchets' },
+          { text: '## Cibles : les ménages' },
+          { text: '## Objectifs' },
+          { text: "# Descriptif de l'action" },
+          { text: '### Action 5 – Faciliter la fourniture du broyat' },
+        ]),
+      ])
+    ).toEqual([
+      ['fiche', 3, 'Trier à la source'],
+      ['fiche', 3, 'Trier à la source'],
+      ['fiche', 3, 'Poursuivre le tri à la source des biodéchets'],
+    ]);
+  });
+
   it('garde « Action n » pour une fiche quand le document ne titre pas ses fiches autrement', () => {
     expect(
       titles([

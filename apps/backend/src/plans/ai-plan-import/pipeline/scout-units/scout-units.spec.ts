@@ -154,6 +154,54 @@ describe('extractSkeleton, avec des fiches', () => {
   });
 });
 
+describe('extractSkeleton, avec des mesures qui rangent des actions', () => {
+  it('garde pour sous-axe la mesure aux actions lettrées, retire la fiche au titre écourté', async () => {
+    const { llm } = llmRouting(
+      () => [],
+      () => ({
+        axes: [
+          {
+            numero: '1',
+            titre: 'Garantir le droit à se déplacer',
+            sousAxes: [
+              { numero: '1.1', titre: 'Développer l’usage du vélo' },
+              { numero: '1.3', titre: 'Faciliter l’organisation' },
+            ],
+          },
+        ],
+      })
+    );
+    const mesure = {
+      ...buildUnit(
+        [
+          'Mesure 1.1 : Développer l’usage du vélo',
+          'A – Organiser des bourses à vélo',
+          'B – Soutenir la réparation de vélos',
+        ].map((text) => ({ text, pageIndex: 0 })),
+        ['1 Garantir le droit à se déplacer'],
+        'fiche'
+      ),
+      title: '1.1 Développer l’usage du vélo',
+    };
+    const fiche = {
+      ...unit('Pilote : Direction', 'fiche'),
+      title: '1.3 Faciliter l’organisation de manifestations responsables',
+    };
+
+    const result = await extractSkeleton(llm, {
+      units: [mesure, fiche],
+      structureUnits: [],
+    });
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.skeleton?.axes[0].sousAxes).toEqual([
+        { numero: '1.1', titre: 'Développer l’usage du vélo' },
+      ]);
+    }
+  });
+});
+
 describe('extractSkeleton, avec des parties titrées', () => {
   it('range les titres sous leur partie du document', async () => {
     const { llm, calls } = llmRouting(
