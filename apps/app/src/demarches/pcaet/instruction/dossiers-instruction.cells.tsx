@@ -241,7 +241,7 @@ export const ActionsCell = ({ dossier }: { dossier: Dossier }) => {
       return null;
     }
     return (
-      <div className="flex items-center justify-end gap-1 text-right text-grey-7">
+      <div className="flex items-center gap-1 text-grey-7">
         <span>{appLabels.instructionListeNonSaisi}</span>
         <InfoTooltip label={appLabels.instructionListeNonSaisiAide} />
       </div>
@@ -257,7 +257,7 @@ export const ActionsCell = ({ dossier }: { dossier: Dossier }) => {
     dossier.statut === PcaetStatutInstructionEnum.ARCHIVE;
 
   return (
-    <div className="flex items-center gap-2 justify-end">
+    <div className="flex items-center gap-2">
       <Button
         href={href}
         variant="outlined"
