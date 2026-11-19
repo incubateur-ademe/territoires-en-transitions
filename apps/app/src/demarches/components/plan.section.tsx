@@ -322,7 +322,7 @@ const useCreatePlanAction = ({
     useState(false);
 
   // La fin de l'import se traite au niveau de la démarche, la modale démontant
-  // son contenu à la fermeture. Ouverte, elle affiche déjà l'échec en détail.
+  // son contenu à la fermeture. Ouverte, elle affiche l'échec et le lien au compte rendu.
   const {
     isEnabled: isAiPlanImportEnabled,
     isCheckingAvailability,

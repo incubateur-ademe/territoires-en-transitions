@@ -333,6 +333,17 @@ test('importe le DOCX avec le profil Électrification et conserve le rapport apr
     },
   };
   mock.current = null;
+  await expect(
+    page.getByTestId('plans.import-ia.modal').getByRole('alert')
+  ).toContainText("L'import a échoué");
+  await expect(page.getByTestId('plans.import-ia.rapport')).toHaveCount(0);
+  await page
+    .getByRole('link', { name: 'Voir le compte rendu', exact: true })
+    .click();
+  await expect(page).toHaveURL(
+    new RegExp(`/imports\\?importJobId=${mock.status.jobId}$`)
+  );
+  await expect(page.getByTestId('plans.import-ia.modal')).toHaveCount(0);
   await expect(page.getByTestId('plans.import-ia.rapport')).toContainText(
     'Corriger la référence de la fiche.'
   );
@@ -423,11 +434,18 @@ test('conserve les choix après un échec et un rechargement, puis permet de rem
     },
   };
   mock.current = null;
+  await expect(
+    page.getByTestId('plans.import-ia.modal').getByRole('alert')
+  ).toContainText("L'import a échoué");
+  await expect(page.getByTestId('plans.import-ia.rapport')).toHaveCount(0);
+  await page.reload();
+  await page
+    .getByRole('link', { name: 'Voir le compte rendu', exact: true })
+    .click();
   await expect(page.getByTestId('plans.import-ia.rapport')).toContainText(
     correction
   );
   await expect(page.getByText(correction)).toHaveCount(1);
-  await page.reload();
   await page.getByRole('button', { name: 'Réessayer', exact: true }).click();
   await expect(page).toHaveURL(new RegExp(`retryJobId=${mock.status.jobId}`));
   await expect(page).not.toHaveURL(/importJobId=/);
@@ -659,23 +677,31 @@ test('ouvre le plan Électrification terminé quand seul ce profil est disponibl
   expect(mock.enqueuedForms[0].get('profile')).toBe('annexe-3-electrification');
 });
 
-test('conserve le suivi sans plan au rechargement et affiche le rapport après échec', async ({
+test('propose le compte rendu depuis la modale PCAET après échec et rechargement', async ({
   page,
   collectivites,
 }) => {
   const mock = new AiImportFixture();
+  mock.status.profile = 'pcaet';
   await mock.install(page);
   const { collectivite } = await collectivites.addCollectiviteAndUser({
     userArgs: supportUser,
   });
-  await page.goto(`/collectivite/${collectivite.data.id}/plans/importer-ia`);
+  const demarche = new DemarchePcaetPom(page);
+  await demarche.gotoCreatePage(collectivite.data.id);
+  await demarche.createDemarche(collectivite.data.id);
+  await demarche.gotoPlanActions();
+  await demarche.importPlanButton.click();
   await submitImport(page);
   await expect(page).toHaveURL(new RegExp(`importJobId=${mock.status.jobId}`));
   expect(mock.enqueuedForms[0].get('profile')).toBe('pcaet');
   await expect(page.getByTestId('plans.import-ia.suivi')).toBeVisible();
   await expect(page.getByTestId('plans.import-ia.ouvrir-plan')).toHaveCount(0);
   await page.reload();
-  await expect(page.getByTestId('plans.import-ia.etapes')).toBeVisible();
+  await demarche.importPlanButton.click();
+  await expect(
+    page.getByTestId('plans.import-ia.etapes-simplifiees')
+  ).toBeVisible();
   mock.status = {
     ...mock.status,
     status: 'failed',
@@ -693,11 +719,25 @@ test('conserve le suivi sans plan au rechargement et affiche le rapport après �
     },
   };
   mock.current = null;
-  await expect(page.getByTestId('plans.import-ia.rapport')).toContainText(
-    'Corriger le code E99.'
+  const reportLink = page.getByRole('link', {
+    name: 'Voir le compte rendu',
+    exact: true,
+  });
+  await expect(reportLink).toHaveAttribute(
+    'href',
+    `/collectivite/${collectivite.data.id}/plans/imports?importJobId=${mock.status.jobId}`
   );
-  await expect(page.getByTestId('plans.import-ia.etapes')).toHaveCount(0);
+  await expect(page.getByTestId('plans.import-ia.rapport')).toHaveCount(0);
+  await expect(page.getByText('Corriger le code E99.')).toHaveCount(0);
+  await expect(
+    page.getByTestId('plans.import-ia.etapes-simplifiees')
+  ).toHaveCount(0);
   await page.reload();
+  await demarche.importPlanButton.click();
+  await reportLink.click();
+  await expect(
+    page.getByTestId('demarches.plan.import-plan-modal')
+  ).toHaveCount(0);
   await expect(page.getByTestId('plans.import-ia.rapport')).toContainText(
     'Tableau B, ligne 2'
   );
@@ -938,7 +978,7 @@ test('retrouve les détails depuis le menu du plan importé, sans URL de suivi n
   expect(mock.resumeCalls).toBe(0);
 });
 
-test('reprend un job sans plan et attend done et un plan avant la redirection', async ({
+test('reprend un job depuis son compte rendu et attend done avant de proposer le plan', async ({
   page,
   collectivites,
   plans,
@@ -961,6 +1001,9 @@ test('reprend un job sans plan et attend done et un plan avant la redirection', 
   await page.goto(
     `/collectivite/${collectivite.data.id}/plans/importer-ia?importJobId=${mock.status.jobId}`
   );
+  await page
+    .getByRole('link', { name: 'Voir le compte rendu', exact: true })
+    .click();
   await expect(page.getByTestId('plans.import-ia.rapport')).toBeVisible();
   await expect(page.getByTestId('plans.import-ia.etapes')).toHaveCount(0);
   await page.getByTestId('plans.import-ia.reprendre-button').click();
@@ -972,13 +1015,20 @@ test('reprend un job sans plan et attend done et un plan avant la redirection', 
   mock.status = { ...mock.status, createdPlanId: planId };
   const before = mock.statusCalls;
   await expect.poll(() => mock.statusCalls).toBeGreaterThan(before);
-  await expect(page).toHaveURL(/importer-ia/);
+  await expect(page).toHaveURL(
+    new RegExp(`/imports\\?importJobId=${mock.status.jobId}$`)
+  );
+  await expect(page.getByTestId('plans.import-ia.ouvrir-plan')).toHaveCount(0);
   mock.status = {
     ...mock.status,
     status: 'done',
     report: { issues: [], qualitativeReview: 'Plan à relire.' },
   };
   mock.recent = [mock.status];
+  await expect(page.getByTestId('plans.import-ia.rapport')).toContainText(
+    'Plan à relire.'
+  );
+  await page.getByTestId('plans.import-ia.ouvrir-plan').click();
   await expect(page).toHaveURL(new RegExp(`/plans/${planId}$`));
   await page.getByTestId('plans.plan.menu').click();
   await page.getByRole('link', { name: 'Détails de l’import' }).click();
@@ -1079,6 +1129,13 @@ test('cache l’ouverture sans plan et affiche le motif dans le rapport', async 
   );
   await expect(page.getByText('Import terminé', { exact: true })).toBeVisible();
   await expect(page).toHaveURL(/importer-ia\?importJobId=/);
+  await expect(page.getByTestId('plans.import-ia.rapport')).toHaveCount(0);
+  await expect(
+    page.getByRole('link', { name: 'Voir le compte rendu', exact: true })
+  ).toHaveAttribute(
+    'href',
+    `/collectivite/${collectivite.data.id}/plans/imports?importJobId=${mock.status.jobId}`
+  );
   await expect(page.getByRole('link', { name: 'Ouvrir le plan' })).toHaveCount(
     0
   );

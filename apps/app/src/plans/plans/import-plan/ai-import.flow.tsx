@@ -6,8 +6,10 @@ import { getErrorMessage } from '@tet/domain/utils';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ErrorCard } from '@/app/utils/error/error.card';
 import { appLabels } from '@/app/labels/catalog';
+import { makeCollectivitePlanImportsUrl } from '@/app/app/paths';
+import { Alert, Button, Event, useEventTracker } from '@tet/ui';
 import { useQueryStates } from 'nuqs';
-import { ReactElement, useEffect, useRef, useState } from 'react';
+import { ReactElement, useEffect, useRef } from 'react';
 import { AiImportStatusView } from './ai-import-status.view';
 import { aiImportQueryState } from './ai-import.query-state';
 import { AiImportForm } from './ai-import.form';
@@ -60,7 +62,7 @@ export const AiImportFlow = ({
   onProgressVisibilityChange?: (isProgressVisible: boolean) => void;
   /**
    * Suivi grand public en quatre étapes, mis en page par l'appelant. Sans lui,
-   * le détail des étapes du pipeline s'affiche. Un échec garde le détail.
+   * le détail des étapes du pipeline s'affiche.
    */
   renderStagesProgress?: (stagesList: ReactElement) => ReactElement;
   /** D'où l'import est lancé, transmis au serveur pour le suivi. */
@@ -68,10 +70,10 @@ export const AiImportFlow = ({
   demarcheId?: number;
 }) => {
   const collectiviteId = useCollectiviteId();
+  const tracker = useEventTracker();
   const { setToast } = useToastContext();
   const [{ importJobId, retryJobId }, setImportQuery] =
     useQueryStates(aiImportQueryState);
-  const [followCurrentImport, setFollowCurrentImport] = useState(true);
   const mounted = useRef(true);
   useEffect(() => {
     mounted.current = true;
@@ -85,19 +87,16 @@ export const AiImportFlow = ({
     error,
     refetch,
   } = useGetCurrentAiImport(collectiviteId, {
-    enabled: importJobId === null && retryJobId === null && followCurrentImport,
+    enabled: importJobId === null && retryJobId === null,
   });
   const resumedJobId =
-    isFetchedAfterMount && followCurrentImport && retryJobId === null
+    isFetchedAfterMount && retryJobId === null
       ? currentImport?.jobId ?? null
       : null;
   const jobId = importJobId ?? resumedJobId;
   const statusQuery = useGetAiImportStatus(jobId ?? retryJobId);
   const isCheckingOngoingImport =
-    jobId === null &&
-    retryJobId === null &&
-    followCurrentImport &&
-    !isFetchedAfterMount;
+    jobId === null && retryJobId === null && !isFetchedAfterMount;
   const isProgressVisible = jobId !== null;
 
   // Persister aussi les imports lancés depuis une autre page avant leur fin.
@@ -145,17 +144,46 @@ export const AiImportFlow = ({
         jobId={jobId}
         statusQuery={statusQuery}
         renderStagesProgress={renderStagesProgress}
-        origine={origine}
-        demarcheId={demarcheId}
         onPlanCreated={onPlanCreated}
-        onRetry={() => {
-          setFollowCurrentImport(false);
-          void setImportQuery({ importJobId: null, retryJobId: jobId });
-        }}
+        renderOutcome={(status) => (
+          <div role={status.status === 'failed' ? 'alert' : 'status'}>
+            <Alert
+              state={status.status === 'failed' ? 'error' : 'success'}
+              title={
+                status.status === 'failed'
+                  ? appLabels.importPlanIaErreur
+                  : appLabels.importPlanIaTermine
+              }
+              description={appLabels.importPlanIaConsulterRapport}
+              footer={
+                <Button
+                  size="sm"
+                  variant="outlined"
+                  href={makeCollectivitePlanImportsUrl({
+                    collectiviteId,
+                    importJobId: jobId,
+                  })}
+                  onClick={() =>
+                    tracker(Event.plans.importIa.details, {
+                      origine,
+                      demarcheId,
+                      jobId,
+                      profile: status.profile,
+                      status: status.status,
+                    })
+                  }
+                  dataTest="plans.import-ia.voir-rapport"
+                >
+                  {appLabels.importPlanIaVoirRapport}
+                </Button>
+              }
+            />
+          </div>
+        )}
       />
     );
   }
-  if (error && followCurrentImport && retryJobId === null) {
+  if (error && retryJobId === null) {
     return (
       <ErrorCard
         title={appLabels.importPlanIaSuiviErreur}

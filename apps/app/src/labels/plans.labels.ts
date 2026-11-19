@@ -382,6 +382,9 @@ export const plansLabels = {
   importPlanIaNouveau: 'Nouvel import',
   importPlanIaOuvrirPlan: 'Ouvrir le plan',
   importPlanIaRapport: 'Compte rendu de l’import',
+  importPlanIaVoirRapport: 'Voir le compte rendu',
+  importPlanIaConsulterRapport:
+    "Consultez le compte rendu pour retrouver le détail de l'import.",
   importPlanIaRapportSansRemarque: 'Aucune remarque signalée.',
   importPlanIaDocumentErreur: 'Erreur',
   importPlanIaConfigurationErreur: 'Erreur',

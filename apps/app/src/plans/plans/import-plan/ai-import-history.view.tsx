@@ -12,6 +12,8 @@ import { ErrorCard } from '@/app/utils/error/error.card';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { useUser } from '@tet/api/users';
+import { hasPermission } from '@tet/domain/users';
 import {
   Badge,
   Breadcrumbs,
@@ -24,6 +26,7 @@ import {
 import { useRouter } from 'next/navigation';
 import { useQueryStates } from 'nuqs';
 import { AiImportStatusView } from './ai-import-status.view';
+import { AiImportReport } from './ai-import-report';
 import { importStatusLabels } from './ai-import.labels';
 import { aiImportQueryState } from './ai-import.query-state';
 import {
@@ -31,6 +34,7 @@ import {
   useGetAiImportStatus,
 } from './data/use-get-ai-import-status';
 import { useGetOngoingAiImport } from './data/use-get-ongoing-ai-import';
+import { useResumeAiImport } from './data/use-resume-ai-import';
 
 export const AiImportHistoryView = ({
   showDetails = true,
@@ -38,6 +42,8 @@ export const AiImportHistoryView = ({
   showDetails?: boolean;
 }) => {
   const tracker = useEventTracker();
+  const canResume = hasPermission(useUser(), 'plans.fiches.import_resume');
+  const resume = useResumeAiImport();
   const { collectiviteId, hasCollectivitePermission } =
     useCurrentCollectivite();
   const trpc = useTRPC();
@@ -161,14 +167,37 @@ export const AiImportHistoryView = ({
             key={importJobId}
             jobId={importJobId}
             statusQuery={statusQuery}
-            onRetry={() =>
-              router.push(
-                makeCollectivitePlansActionsImporterIaUrl({
-                  collectiviteId,
-                  retryJobId: importJobId,
-                })
-              )
-            }
+            renderOutcome={(status) => (
+              <AiImportReport
+                status={status}
+                onRetry={() => {
+                  tracker(Event.plans.importIa.reessayer, {
+                    origine: 'detail_import',
+                    jobId: importJobId,
+                    profile: status.profile,
+                  });
+                  router.push(
+                    makeCollectivitePlansActionsImporterIaUrl({
+                      collectiviteId,
+                      retryJobId: importJobId,
+                    })
+                  );
+                }}
+                onResume={
+                  canResume && status.resumable
+                    ? () => {
+                        tracker(Event.plans.importIa.reprendre, {
+                          origine: 'detail_import',
+                          jobId: importJobId,
+                          profile: status.profile,
+                        });
+                        resume.mutate({ jobId: importJobId });
+                      }
+                    : undefined
+                }
+                isResuming={resume.isPending}
+              />
+            )}
           />
         ) : (
           <>
