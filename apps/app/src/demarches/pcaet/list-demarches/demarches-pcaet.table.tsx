@@ -445,7 +445,7 @@ export const DemarchesPcaetTable = <T extends DemarcheListItem>({
             emptyCard={{ className: 'min-h-[12rem]', ...etatVide }}
             rowWrapper={({ row, children }) => (
               <TableRow
-                className="text-sm"
+                className="text-sm [&>td]:align-top"
                 data-test={`demarches.pcaet.liste.ligne-${row.id}`}
               >
                 {children}
