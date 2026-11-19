@@ -138,7 +138,7 @@ appliquée aux archives du timer `tet-coolify-backup` (cf.
 
 ```sh
 # 1. Récupérer et déchiffrer la dernière archive (poste opérateur).
-#    Le bucket vit dans le projet tet-backups : utiliser sa clé dédiée, que l'API S3
+#    Le bucket vit dans le projet tet-coolify-backups : utiliser sa clé dédiée, que l'API S3
 #    résout dans le bon projet (les credentials perso visent le projet principal).
 _c="$(scw secret version access-by-path secret-name=tet-platform-coolify-s3-credentials \
   secret-path=/ revision=latest -o json | jq -r .data | base64 --decode)"

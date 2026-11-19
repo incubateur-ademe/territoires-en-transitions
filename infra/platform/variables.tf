@@ -119,6 +119,12 @@ variable "coolify_backups_bucket_name" {
   default     = "tet-coolify-backups"
 }
 
+variable "database_backups_bucket_name" {
+  description = "Nom du bucket Object Storage des dumps quotidiens de la BDD de prod. Doit être globalement unique."
+  type        = string
+  default     = "tet-database-backups"
+}
+
 variable "coolify_instance_backup_prefix" {
   description = "Préfixe des backups de l'instance Coolify dans le bucket. Doit rester aligné sur instance_backup_prefix (infra/coolify)."
   type        = string
@@ -151,6 +157,15 @@ variable "coolify_backups_credentials_secret_name" {
 
 # --- Projets créés par l'admin de l'organisation ---
 
+variable "database_backups_project_id" {
+  description = "ID du projet Scaleway des dumps de la BDD de prod (tet-database-backups), créé par un admin de l'organisation. Séparé de tet-coolify-backups pour que la clé Coolify ne voie pas les dumps."
+  type        = string
+  validation {
+    condition     = can(regex("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", var.database_backups_project_id))
+    error_message = "database_backups_project_id doit être un UUID de projet Scaleway."
+  }
+}
+
 variable "prod_project_id" {
   description = "ID du projet Scaleway de production (tet-prod), créé par un admin de l'organisation. Relayé en output pour infra/prod."
   type        = string
@@ -160,11 +175,11 @@ variable "prod_project_id" {
   }
 }
 
-variable "backups_project_id" {
-  description = "ID du projet Scaleway des backups (tet-backups), créé par un admin de l'organisation. Porte le bucket de backups."
+variable "coolify_backups_project_id" {
+  description = "ID du projet Scaleway des backups Coolify (tet-coolify-backups), créé par un admin de l'organisation. Porte le bucket tet-coolify-backups."
   type        = string
   validation {
-    condition     = can(regex("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", var.backups_project_id))
-    error_message = "backups_project_id doit être un UUID de projet Scaleway."
+    condition     = can(regex("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", var.coolify_backups_project_id))
+    error_message = "coolify_backups_project_id doit être un UUID de projet Scaleway."
   }
 }
