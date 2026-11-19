@@ -192,9 +192,9 @@ describe('Suivi du plan : modules personnalisés', () => {
     await expect(
       router.createCaller({ user: admin }).plans.suivi.upsertModule({
         planId,
-        titre: 'Par plan',
+        titre: 'Par date de création',
         options: {
-          countByProperty: 'plans' as 'statut',
+          countByProperty: 'createdAt' as 'statut',
           filtre: {},
         },
       })

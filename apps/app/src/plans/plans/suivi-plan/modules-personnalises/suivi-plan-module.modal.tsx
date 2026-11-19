@@ -1,3 +1,4 @@
+import { FormFilters } from '@/app/plans/fiches/list-all-fiches/filters/types';
 import { FichesActionCountByModal } from '@/app/tableaux-de-bord/plans-action/fiches-action-count-by/fiches-action-count-by.modal';
 import {
   SuiviPlanModule,
@@ -6,6 +7,20 @@ import {
 } from '@tet/domain/metrics';
 import { ModalProps } from '@tet/ui';
 import { useUpsertSuiviPlanModule } from '../data/use-upsert-suivi-plan-module';
+
+const HIDDEN_FILTERS: ReadonlyArray<keyof FormFilters> = [
+  'instanceGouvernanceIds',
+  'notes',
+  'anneesNotes',
+  'hasDateDeFinPrevisionnelle',
+  'noReferent',
+  'noTag',
+  'noThematique',
+  'noPlan',
+  'restreint',
+  'doesBelongToSeveralPlans',
+  'sharedWithCollectivites',
+];
 
 export const SuiviPlanModuleModal = ({
   planId,
@@ -32,6 +47,7 @@ export const SuiviPlanModuleModal = ({
       }
       countByProperties={suiviPlanCountByPropertyEnumSchema.options}
       readonlyFilters={{ planActionIds: [planId] }}
+      hiddenFilters={HIDDEN_FILTERS}
       onSave={({ titre, countByProperty, filtre }) =>
         upsertModule({
           planId,

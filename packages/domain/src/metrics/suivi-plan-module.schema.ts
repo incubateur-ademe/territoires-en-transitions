@@ -5,9 +5,7 @@ import { moduleFicheActionCountBySchema } from './module-fiche-action-count-by.s
 
 export const suiviPlanCountByPropertyEnumSchema =
   countByPropertyEnumSchema.exclude([
-    'plans',
     'restreint',
-    'sousThematiques',
     'createdAt',
     'budgetsDepenseFonctionnementTotal',
     'budgetsDepenseFonctionnementParAnnee',

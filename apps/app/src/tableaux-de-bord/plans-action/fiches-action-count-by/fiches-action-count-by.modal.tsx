@@ -43,12 +43,14 @@ export const FichesActionCountByModal = ({
   initialValues,
   countByProperties = countByPropertyEnumSchema.options,
   readonlyFilters,
+  hiddenFilters,
   onSave,
 }: {
   openState: ModalProps['openState'];
   initialValues?: FichesActionCountByValues;
   countByProperties?: readonly CountByPropertyEnumType[];
   readonlyFilters?: Partial<FormFilters>;
+  hiddenFilters?: ReadonlyArray<keyof FormFilters>;
   onSave: (values: FichesActionCountByValues) => void;
 }) => {
   const [step, setStep] = useState(PARAMETRES);
@@ -108,6 +110,7 @@ export const FichesActionCountByModal = ({
               ...readonlyFilters,
             }}
             readonlyFilters={readonlyFilters}
+            hiddenFilters={hiddenFilters}
             setFilters={(formFilters) =>
               setFiltre(fromFormFiltersToFilters(formFilters))
             }
