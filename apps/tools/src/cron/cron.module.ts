@@ -8,6 +8,8 @@ import {
 } from './cron.config';
 import { ToolsIndicateursModule } from '../indicateurs/tools-indicateurs.module';
 import { PosthogModule } from '../posthog/posthog.module';
+import { CronRefreshVuesMaterialiseesService } from '../stats/cron-refresh-vues-materialisees.service';
+import { DatabaseModule } from '../utils/database/database.module';
 import { UtilsModule } from '../utils/utils.module';
 import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
 import { BullBoardModule } from '@bull-board/nestjs';
@@ -32,6 +34,7 @@ import { CronService } from './cron.service';
       adapter: BullMQAdapter,
     }),
     UtilsModule,
+    DatabaseModule,
     ConfigurationModule,
     AirtableModule,
     CalendlyModule,
@@ -48,6 +51,7 @@ import { CronService } from './cron.service';
     CronTrackPcaetSnapshotService,
     CronImportPerimetresEpciService,
     CronScanFichiersService,
+    CronRefreshVuesMaterialiseesService,
   ],
 })
 export class CronModule {}

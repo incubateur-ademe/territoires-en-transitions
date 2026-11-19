@@ -1938,15 +1938,6 @@ values
     ('vue', 'retool_plan_action_hebdo', 'edition', 'non', 'non', 'non', 'non'),
     ('vue', 'retool_plan_action_hebdo', 'admin', 'non', 'non', 'non', 'non'),
     ('vue', 'retool_plan_action_hebdo', 'auditeur', 'non', 'non', 'non', 'non'),
-    -- Vue retool_plan_action_premier_usage
-    ('vue', 'retool_plan_action_premier_usage', 'public', 'non', 'non', 'non', 'non'),
-    ('vue', 'retool_plan_action_premier_usage', 'connecte', 'non', 'non', 'non', 'non'),
-    ('vue', 'retool_plan_action_premier_usage', 'verifie', 'non', 'non', 'non', 'non'),
-    ('vue', 'retool_plan_action_premier_usage', 'support', 'non', 'non', 'non', 'non'),
-    ('vue', 'retool_plan_action_premier_usage', 'lecture', 'non', 'non', 'non', 'non'),
-    ('vue', 'retool_plan_action_premier_usage', 'edition', 'non', 'non', 'non', 'non'),
-    ('vue', 'retool_plan_action_premier_usage', 'admin', 'non', 'non', 'non', 'non'),
-    ('vue', 'retool_plan_action_premier_usage', 'auditeur', 'non', 'non', 'non', 'non'),
     -- Vue retool_plan_action_usage
     ('vue', 'retool_plan_action_usage', 'public', 'non', 'non', 'non', 'non'),
     ('vue', 'retool_plan_action_usage', 'connecte', 'non', 'non', 'non', 'non'),

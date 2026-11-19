@@ -97,6 +97,19 @@ export const JOBS_CONFIG = [
     cronExpression: '0 4 1 1 *',
     data: {},
   },
+  {
+    // Remplace le job pg_cron `site_labellisation` (même horaire).
+    name: 'refresh-site-labellisation',
+    cronExpression: CronExpression.EVERY_DAY_AT_1AM,
+    data: {},
+  },
+  {
+    // Remplace le job pg_cron `refresh_stats_views_crm` (même horaire), avant
+    // les synchros `crm-indicateurs-sync` et `crm-plans-sync` de 6 h.
+    name: 'refresh-stats-crm',
+    cronExpression: CronExpression.EVERY_DAY_AT_3AM,
+    data: {},
+  },
   ...CRM_SYNC_JOBS_CONFIG,
 ] as const;
 
