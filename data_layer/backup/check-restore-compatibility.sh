@@ -67,9 +67,27 @@ if ! pg_restore --data-only --schema=sqitch --table=changes --file=- "$archive" 
     exit 1
 fi
 
-psql --no-psqlrc --no-password --set ON_ERROR_STOP=1 --dbname="$TO_DB_URL" \
-    --command='COPY (SELECT project, change_id FROM sqitch.changes) TO STDOUT' \
-    | sort > "$workspace/target-changes"
+read_target_changes() {
+    psql --no-psqlrc --no-password --set ON_ERROR_STOP=1 --dbname="$TO_DB_URL" \
+        --command='COPY (SELECT project, change_id FROM sqitch.changes ORDER BY committed_at DESC) TO STDOUT' \
+        > "$workspace/target-changes-newest-first"
+    sort "$workspace/target-changes-newest-first" > "$workspace/target-changes"
+}
+read_target_changes
+
+# A target that follows main (staging) is ahead of prod until the next release.
+# With SQITCH set (the sqitch command, run from the repo root), revert the
+# migrations the backup does not have: back to the newest change they share.
+# restore.sh redeploys them after the data load, which replays their data
+# updates on the restored rows. The comparison below still decides.
+if [[ -n "${SQITCH:-}" && -z "$(comm -23 "$workspace/source-changes" "$workspace/target-changes")" ]] &&
+    ! cmp -s "$workspace/source-changes" "$workspace/target-changes"; then
+    revert_to=$(grep -Fx -m1 -f "$workspace/source-changes" "$workspace/target-changes-newest-first" | cut -f2)
+    echo "Target is ahead of the backup: reverting its extra Sqitch migrations (back to $revert_to)."
+    read -r -a sqitch <<< "$SQITCH"
+    "${sqitch[@]}" revert -y --to "$revert_to" --target "db:pg://${TO_DB_URL#*://}"
+    read_target_changes
+fi
 if ! cmp -s "$workspace/source-changes" "$workspace/target-changes"; then
     echo 'Refusing to restore: backup and target have different Sqitch migrations.' >&2
     echo 'Use a backup and target at the same migration state; no tables were truncated.' >&2

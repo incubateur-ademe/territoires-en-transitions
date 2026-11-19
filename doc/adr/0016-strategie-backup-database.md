@@ -6,6 +6,8 @@ Date : 2026-04-15
 
 Accepté. Révisé le 2026-11-02 pour remplacer les règles propres aux indicateurs
 par une prévalidation générique ; décision consolidée ici le 2026-11-03.
+Révisé le 2026-11-19 : le job `restore-staging` aligne les migrations Sqitch de
+la staging sur le backup (§8, « Alignement automatique de la staging »).
 Les anciennes règles restent consignées dans l’historique ci-dessous.
 
 ## Contexte
@@ -103,7 +105,7 @@ Ce remplacement du job historique `validate-restore` par deux jobs supprime la n
 Chaque job :
 
 1. Télécharge le backup depuis S3 (valide le roundtrip complet : backup → upload → download → restore)
-2. Vérifie la lisibilité de la table des matières et du registre Sqitch de l'archive, puis la compatibilité Sqitch avec la cible, avant toute mutation ; ce contrôle ne valide pas l'intégrité de toutes les données de l'archive
+2. Vérifie la lisibilité de la table des matières et du registre Sqitch de l'archive, puis la compatibilité Sqitch avec la cible, avant toute mutation ; ce contrôle ne valide pas l'intégrité de toutes les données de l'archive (sur la staging, les migrations en avance sur le backup sont annulées à cette étape puis redéployées après l'étape 4, cf. §8)
 3. Tronque les tables cibles dans l'ordre inverse des dépendances
 4. Restaure les tables prévues par `restore-config.yml` à partir du même dump
 5. Réinitialise les séquences PostgreSQL via `reset_sequences.sql`
@@ -211,7 +213,35 @@ Sans nouvelle migration, l’écart de versions du code ne bloque pas le contrô
 Sqitch. Des changements de `restore-config.yml`, de `restore.sh` ou de ses scripts
 peuvent néanmoins faire échouer la restauration. Autoriser des migrations
 différentes après répétition sur une base jetable constituerait un autre workflow ;
-aucun contournement automatique n’est ajouté ici.
+le contrôle lui-même n’est pas assoupli.
+
+#### Alignement automatique de la staging
+
+La staging suit `main` : dès qu’une migration est mergée sans être livrée en
+prod, elle est en avance sur le backup et le job nocturne était refusé chaque
+nuit. Accepter une cible en avance ne suffit pas : une migration de données
+(par exemple `plan_action/fiche_jauge_init`) ne serait pas rejouée sur les
+lignes restaurées.
+
+Quand la variable `SQITCH` (la commande sqitch, lancée depuis la racine du
+dépôt) est définie, et seulement si la cible contient toutes les migrations du
+backup plus d’autres :
+
+1. `check-restore-compatibility.sh` annule les migrations en trop
+   (`sqitch revert --to` la migration commune la plus récente), puis refait la
+   comparaison stricte, qui reste seule juge ;
+2. `restore.sh` charge les données ;
+3. `restore.sh` redéploie jusqu’à la migration de tête d’origine
+   (`sqitch deploy --to`), avant la remise à niveau des séquences et
+   l’anonymisation. Il ne déploie rien que la cible n’avait pas déjà.
+
+Le redéploiement est aussi tenté si la restauration échoue en cours de route,
+pour que le schéma corresponde de nouveau au code déployé. Une migration qui
+échoue sur les données de prod fait échouer le job et laisse la staging au
+schéma de la prod : c’est le signal qu’elle échouerait aussi à la release.
+
+Seul `restore-staging` définit `SQITCH`. La preprod, la restauration manuelle
+et l’usage local gardent le refus strict.
 
 Le registre ne prouve pas l’absence de modifications manuelles du schéma. La
 prévalidation ne contrôle pas toutes les colonnes, contraintes, extensions ou
@@ -224,8 +254,9 @@ base isolée. Suspendre les écritures et migrations pendant la restauration.
 
 L’étape "Test restore preflight in a disposable database" du
 [workflow de tests DB](../../.github/workflows/_ci-test-db.yml) utilise une base
-jetable et de vrais dumps. Elle vérifie quatre cas : un état Sqitch identique est
-accepté, un `script_hash` différent seul est accepté, un `change_id` différent
+jetable et de vrais dumps. Elle vérifie cinq cas : un état Sqitch identique est
+accepté, un `script_hash` différent seul est accepté, une migration en trop sur
+la cible est refusée sans `SQITCH` et annulée avec, un `change_id` différent
 est refusé, et l’absence de données pour une table requise est refusée. Les
 données de la cible doivent rester intactes après chaque refus. Cette couverture ciblée ne teste pas tous les cas limites du script.
 

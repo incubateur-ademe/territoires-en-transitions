@@ -264,6 +264,28 @@ if ! pg_restore --list "$DUMP_FILE" > /dev/null; then
     exit 1
 fi
 
+# With SQITCH set, the preflight reverts the migrations the target has ahead of
+# the backup (cf. check-restore-compatibility.sh). Put them back once the data is
+# loaded, and on any early exit so the schema matches the deployed code again.
+SQITCH_HEAD_BEFORE=""
+sqitch_head() {
+    "${PSQL[@]}" -d "$TO_DB_URL" -Atc "SELECT change_id FROM sqitch.changes ORDER BY committed_at DESC LIMIT 1"
+}
+redeploy_migrations() {
+    trap - EXIT
+    [ -n "$SQITCH_HEAD_BEFORE" ] || return 0
+    [ "$(sqitch_head)" != "$SQITCH_HEAD_BEFORE" ] || return 0
+    echo ""
+    echo "=== Redeploying the reverted Sqitch migrations (up to $SQITCH_HEAD_BEFORE) ==="
+    local sqitch
+    read -r -a sqitch <<< "$SQITCH"
+    "${sqitch[@]}" deploy --mode change --to "$SQITCH_HEAD_BEFORE" --target "db:pg://${TO_DB_URL#*://}"
+}
+if [ -n "${SQITCH:-}" ]; then
+    SQITCH_HEAD_BEFORE=$(sqitch_head)
+    trap redeploy_migrations EXIT
+fi
+
 TO_DB_URL="$TO_DB_URL" bash "$SCRIPT_DIR/check-restore-compatibility.sh" "$DUMP_FILE" "${RESTORE_TABLES[@]}"
 
 echo "Restoring to $(echo "$TO_DB_URL" | sed 's|://[^@]*@|://***@|') from $DUMP_FILE"
@@ -380,7 +402,7 @@ for group in "${GROUP_ORDER[@]}"; do
         if [ -n "$drop_not_valid_checks" ]; then
             "${PSQL[@]}" -d "$TO_DB_URL" -c "$drop_not_valid_checks" > /dev/null
             # Re-add the constraints even if the script exits early (set -e, signal).
-            trap 'echo "Re-adding NOT VALID check constraints on $table_key before exit..."; "${PSQL[@]}" -d "$TO_DB_URL" -c "$add_not_valid_checks" > /dev/null' EXIT
+            trap 'echo "Re-adding NOT VALID check constraints on $table_key before exit..."; "${PSQL[@]}" -d "$TO_DB_URL" -c "$add_not_valid_checks" > /dev/null; redeploy_migrations' EXIT
         fi
 
         # Don't use --exit-on-error or --single-transaction: pg_restore executes
@@ -413,7 +435,7 @@ for group in "${GROUP_ORDER[@]}"; do
         # Re-add the NOT VALID check constraints (pg_get_constraintdef keeps NOT VALID).
         if [ -n "$add_not_valid_checks" ]; then
             "${PSQL[@]}" -d "$TO_DB_URL" -c "$add_not_valid_checks" > /dev/null
-            trap - EXIT
+            trap redeploy_migrations EXIT
         fi
 
         if [ -n "$restore_stderr" ]; then
@@ -455,6 +477,9 @@ echo "Groups: $total_groups/$total_groups"
 echo "Tables restored: $TOTAL_RESTORED"
 echo "Tables skipped (duplicates): $TOTAL_SKIPPED"
 echo "Total time: ${TOTAL_MINUTES}m${TOTAL_SECONDS}s"
+
+# Before the sequence reset and the scrub: a migration may insert rows.
+redeploy_migrations
 
 # --- Post-restore: reset sequences to match restored data ---
 echo ""
