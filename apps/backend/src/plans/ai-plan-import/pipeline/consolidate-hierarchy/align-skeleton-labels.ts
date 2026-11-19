@@ -7,14 +7,13 @@ export type AxisLabels = { axe: string; sousAxe: string };
 
 const AXE_NUMBER = /^\s*(?:axe\s*)?(\d+|[ivx]+)\b(?!\.\d)/i;
 const SOUS_AXE_NUMBER = /^\s*(\d+(?:\.\d+)+)/;
-const NUMBER_PREFIX =
-  /^\s*(?:axe\s*)?(?:[ivx]+|\d+(?:\.\d+)*)\b\s*[:.)\-–—]?\s*/i;
 
 /**
  * Le modèle retape les libellés du squelette : une faute de frappe créait un
- * sous-axe fantôme, un numéro seul un sous-axe sans titre. Un libellé qui
- * désigne une entrée du squelette en reprend la graphie. Même numéro mais
- * autre titre : c'est un niveau que le squelette n'a pas, il reste tel quel.
+ * sous-axe fantôme, un numéro seul un sous-axe sans titre, le titre d'une
+ * action pris pour celui de sa mesure un second « 1.5 ». Un libellé reprend la
+ * graphie de l'entrée du squelette qu'il désigne : par son titre d'abord, par
+ * son numéro sinon. Sans l'un ni l'autre, il reste tel quel.
  */
 export const alignSkeletonLabels = (
   skeleton: PlanSkeleton
@@ -44,13 +43,16 @@ const alignLabel = (
     return label;
   }
   const numero = numberPattern.exec(label)?.[1]?.toLowerCase();
-  const hasTitle = label.replace(NUMBER_PREFIX, '').trim().length > 0;
-  const matches = candidates.filter((candidate) =>
-    numero === undefined
-      ? titlesMatch(label, candidate.label)
-      : candidate.numero.toLowerCase() === numero &&
-        (!hasTitle || titlesMatch(label, candidate.label))
+  const hasNumero = (candidate: SkeletonLabel) =>
+    candidate.numero.toLowerCase() === numero;
+  const sameTitle = candidates.filter((candidate) =>
+    titlesMatch(label, candidate.label)
   );
+  // Deux titres proches : le numéro départage. Aucun : le numéro désigne.
+  const matches =
+    sameTitle.length === 1
+      ? sameTitle
+      : (sameTitle.length > 1 ? sameTitle : candidates).filter(hasNumero);
   // Deux entrées possibles : rien ne dit laquelle, le libellé reste.
   return matches.length === 1 ? matches[0].label : label;
 };

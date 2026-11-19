@@ -32,6 +32,12 @@ const AXE = new RegExp(
   String.raw`^axe(?:\s+strat[ée]gique)?\s*${NUMBER}(\d{1,2}|[IVX]{1,4})(?!\p{L})${SEPARATOR}(.*)$`,
   'iu'
 );
+// « Axe 2 territoire (basée hors…) » : l'étiquette d'une colonne collée au
+// texte de sa voisine. Un titre d'axe sans séparateur commence par une capitale.
+const AXE_GLUED_TO_TEXT = new RegExp(
+  String.raw`^axe(?:\s+strat[ée]gique)?\s*${NUMBER}(?:\d{1,2}|[IVX]{1,4})\s+(.*)$`,
+  'iu'
+);
 const ORIENTATION = new RegExp(
   String.raw`^(?:orientation(?:\s+strat[ée]gique)?|objectif(?:\s+strat[ée]gique|\s+op[ée]rationnel)?|enjeu|d[ée]fi|priorit[ée]|th[ée]matique|volet|ambition|levier|chantier|pilier|sous[- ]axe)(?!\p{L})\s*${NUMBER}(\d+(?:\.\d+)*|[IVX]{1,4}|[A-Z])(?!\p{L})${SEPARATOR}(.*)$`,
   'iu'
@@ -54,6 +60,10 @@ const ROMAIN = /^([IVX]{1,4})(?:\s*[.)]|\s+[-–—])\s+(.{3,})$/u;
 // « 1 DANS L'ÉCO-RESPONSABILITÉ » : un numéro seul devant un titre en grande
 // police, souvent la fin d'un titre commencé à la ligne du dessus.
 const NUMERO_SEUL = /^(\d{1,2})(?:\s*[.)\-–—:]\s*|\s+)(.{3,})$/u;
+// « Actions 1-2-3 x x x » : la ligne d'un calendrier, cochée année par année.
+const CHECK_MARKS = /^(?:\(.*\)\s*)?(?:[x✓✔☑]\s*)+$/iu;
+const GLUED_NEXT_COLUMN =
+  /(?<=\p{Ll})(?=(?:Action|Fiche|Mesure|Objectif)\s*(?:n[°º]\s*)?\d)|\s+(?=(?:Action|Fiche|Mesure)\s*(?:n[°º]\s*)?\d{1,2}\.\d)/u;
 // Le contenu d'une fiche : un libellé de champ, pas un titre.
 const FICHE_LABEL =
   /^(description|contexte|objectifs?|pilote|porteur|structure porteuse|porteurs? de l['’]action|ma[iî]tr(?:e|ise) d['’]ouvrage|partenaires?(?: (?:et|\/) financeurs)?|financeurs?|calendrier|[ée]ch[ée]ance|planning|[ée]tapes de mise en œuvre|temps de mise en œuvre|budget|co[uû]t(?: estim[ée])?|financements?|sources? de financements?(?: et subventions)?|subventions?|indicateurs?(?: de suivi)?|cibles?|publics? vis[ée]s?|moyens(?: humains| financiers)?|r[ée]sultats attendus|gains? estim[ée]s|impacts? de l['’]action|trajectoire|actions? op[ée]rationnelles?|priorit[ée]|statut|[ée]tat d['’]avancement|gains? (?:ges|[ée]nerg[ée]tiques?))\s*[:：]?\s*$/iu;
@@ -94,12 +104,16 @@ export const matchHeading = (
     };
   }
   const axe = line.match(AXE);
+  if (axe && /^\p{Ll}/u.test(line.match(AXE_GLUED_TO_TEXT)?.[1] ?? '')) {
+    return null;
+  }
   if (axe) {
     return {
       kind: 'axe',
       level: 1,
       number: axe[1],
-      title: axe[2].trim(),
+      // « …les activitésAction 5.1 Accompagner… » : la colonne voisine, collée.
+      title: axe[2].split(GLUED_NEXT_COLUMN)[0].trim(),
       confidence: 1,
     };
   }
@@ -116,6 +130,9 @@ export const matchHeading = (
     };
   }
   const fiche = line.match(FICHE);
+  if (fiche && CHECK_MARKS.test(fiche[2].trim())) {
+    return null;
+  }
   if (fiche) {
     return {
       kind: 'fiche',

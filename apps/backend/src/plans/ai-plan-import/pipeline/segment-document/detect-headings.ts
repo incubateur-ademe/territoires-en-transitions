@@ -3,6 +3,7 @@ import {
   FICHE_LEVEL,
   HEADING_CONFIDENCE_THRESHOLD,
   HeadingMatch,
+  isFicheLabel,
   matchHeading,
   SECTION_LEVEL,
 } from './heading-patterns';
@@ -43,6 +44,12 @@ const SAME_ROW_TOLERANCE = 0.5;
 const MAX_NUMBER_GAP = 3;
 const MAX_PREFIX_LINES = 2;
 const MAX_PREFIX_LENGTH = 80;
+// « Fiche Action n°1.1 » seul sur sa ligne : le titre est dessous.
+const MAX_TITLE_BELOW_LINES = 3;
+const BULLET = /^(?:[o•●▪◦■□*\-–—]|\d{1,2}[.)])\s/u;
+// En dessous, « Action 1 » et « Fiche action 1 » sont deux façons de titrer
+// une fiche, pas deux niveaux.
+const MIN_NAMED_FICHES = 3;
 
 export const detectHeadings = (pages: DocumentPage[]): DetectedHeading[] => {
   const bodyFontSize = estimateBodyFontSize(pages);
@@ -89,11 +96,22 @@ export const detectHeadings = (pages: DocumentPage[]): DetectedHeading[] => {
                 isLarge,
               })
             );
-      const match = joined ?? alone;
-      if (!match) {
+      const found = joined ?? alone;
+      if (!found) {
         return;
       }
-      const lastLineIndex = joined ? continuation.lastLineIndex : lineIndex;
+      const below =
+        isExplicit(found, 'fiche') && found.title === ''
+          ? titleBelow(
+              page.lines,
+              joined ? continuation.lastLineIndex : lineIndex,
+              (other) => sizeOf(other) === 'large'
+            )
+          : null;
+      const match = below ? { ...found, title: below.title } : found;
+      const lastLineIndex =
+        below?.lastLineIndex ??
+        (joined ? continuation.lastLineIndex : lineIndex);
       skipUntil = lastLineIndex;
       headings.push({
         pageIndex: page.index,
@@ -110,7 +128,10 @@ export const detectHeadings = (pages: DocumentPage[]): DetectedHeading[] => {
     keepNumberSequence(
       dropIntertitleSections(
         demoteCapitalsBelowExplicitAxes(
-          dropSummaryRows(demoteBannersAboveFiches(detected), pages)
+          dropSummaryRows(
+            demoteBannersAboveFiches(dropActionsOfNamedFiches(detected, pages)),
+            pages
+          )
         ),
         pages
       )
@@ -122,6 +143,78 @@ export const detectHeadings = (pages: DocumentPage[]): DetectedHeading[] => {
 
 const isExplicit = (match: HeadingMatch, kind: HeadingMatch['kind']) =>
   match.kind === kind && match.confidence === 1;
+
+/**
+ * Un document qui titre ses fiches « Fiche action n°1.2 » écrit aussi
+ * « Action 1 – … » dans chacune, et « Action 1.2 … » dans son tableau
+ * récapitulatif : des étapes et des renvois, pas d'autres fiches.
+ */
+const dropActionsOfNamedFiches = (
+  headings: DetectedHeading[],
+  pages: DocumentPage[]
+): DetectedHeading[] => {
+  const pageByIndex = new Map(pages.map((page) => [page.index, page]));
+  const startsWith = (heading: DetectedHeading, pattern: RegExp) =>
+    isExplicit(heading.match, 'fiche') &&
+    pattern.test(
+      pageByIndex
+        .get(heading.pageIndex)
+        ?.lines[heading.lineIndex]?.text.trim() ?? ''
+    );
+  const namedFiches = headings.filter((heading) =>
+    startsWith(heading, /^fiche/iu)
+  );
+  return namedFiches.length < MIN_NAMED_FICHES
+    ? headings
+    : headings.filter(
+        (heading) => !startsWith(heading, /^actions?(?!\p{L})/iu)
+      );
+};
+
+/**
+ * Le titre d'une fiche annoncée seule sur sa ligne : la ligne du dessous, et
+ * sa suite tant qu'elle reste dans la même grande police ou commence par une
+ * minuscule. Une puce, un libellé de champ ou un autre titre l'arrête.
+ */
+const titleBelow = (
+  lines: PageLine[],
+  lineIndex: number,
+  isLargeLine: (line: PageLine) => boolean
+): { title: string; lastLineIndex: number } | null => {
+  const parts: string[] = [];
+  let lastLineIndex = lineIndex;
+  let length = 0;
+  for (
+    let index = lineIndex + 1;
+    index < lines.length && parts.length < MAX_TITLE_BELOW_LINES;
+    index++
+  ) {
+    const line = lines[index];
+    const text = line.text.trim();
+    const first = lines[lineIndex + 1];
+    const continues =
+      parts.length === 0
+        ? /^[\p{L}\p{N}«"“]/u.test(text)
+        : /^\p{Ll}/u.test(text) ||
+          (isLargeLine(line) &&
+            first.fontSize !== undefined &&
+            line.fontSize !== undefined &&
+            Math.abs(line.fontSize - first.fontSize) <= SAME_FONT_TOLERANCE);
+    length += text.length + 1;
+    if (
+      !continues ||
+      length > MAX_JOINED_EXPLICIT_LENGTH ||
+      BULLET.test(text) ||
+      isFicheLabel(text.split(/[:：]/u)[0]) ||
+      startsExplicitHeading(text)
+    ) {
+      break;
+    }
+    parts.push(text);
+    lastLineIndex = index;
+  }
+  return parts.length > 0 ? { title: parts.join(' '), lastLineIndex } : null;
+};
 
 /**
  * « 1- AMELIORER LA PERFORMANCE DES BATIMENTS » répété en haut de chaque

@@ -261,6 +261,66 @@ describe('detectHeadings sur un PCAET à fiches tabulaires', () => {
     ]);
   });
 
+  it('prend le titre sous « Fiche Action n°1.2 » ; ses « Action 1 – … » et celles du récapitulatif ne sont pas des fiches', () => {
+    const fiche = (numero: string, titre: string[]) => [
+      { text: `Fiche Action n°${numero}`, fontSize: 14 },
+      ...titre.map((text) => ({ text, fontSize: 14 })),
+      { text: 'o A réaliser : actions 1-2', fontSize: 10 },
+      { text: 'Action 1 - Diagnostiquer et orienter', fontSize: 10 },
+      ...body(2),
+      { text: 'Action 2 – Accompagner et former les habitants', fontSize: 10 },
+      ...body(2),
+      { text: 'Pilote : Direction Prévention', fontSize: 10 },
+      { text: 'Actions 1-2 x x x x x', fontSize: 10 },
+      { text: 'Action 2 X', fontSize: 10 },
+    ];
+
+    expect(
+      titles([
+        buildPage(0, [
+          { text: 'Axe 1 : Limiter les déchets verts', fontSize: 16 },
+          { text: 'Action 1.1 Développer une culture de', fontSize: 10 },
+          { text: 'Action 1.2 Accompagner les habitants', fontSize: 10 },
+          { text: 'Axe 2 territoire (basée hors de la ville)-', fontSize: 10 },
+          ...fiche('1.1', [
+            'Développer une culture de l’éco-exemplarité au sein de',
+            'la collectivité et des communes',
+          ]),
+        ]),
+        buildPage(1, fiche('1.2', ['Accompagner les habitants'])),
+        buildPage(2, fiche('1.3', ['Poursuivre le tri à la source'])),
+      ])
+    ).toEqual([
+      ['axe', 1, 'Limiter les déchets verts'],
+      [
+        'fiche',
+        3,
+        'Développer une culture de l’éco-exemplarité au sein de la collectivité et des communes',
+      ],
+      ['fiche', 3, 'Accompagner les habitants'],
+      ['fiche', 3, 'Poursuivre le tri à la source'],
+    ]);
+  });
+
+  it('garde « Action n » pour une fiche quand le document ne titre pas ses fiches autrement', () => {
+    expect(
+      titles([
+        buildPage(0, [
+          { text: 'Fiche action n°1 : Isoler les écoles', fontSize: 14 },
+          ...body(3),
+          { text: 'Action 2 - Rénover la mairie', fontSize: 14 },
+          ...body(3),
+          { text: 'Action 3 - Changer les chaudières', fontSize: 14 },
+          ...body(3),
+        ]),
+      ])
+    ).toEqual([
+      ['fiche', 3, 'Isoler les écoles'],
+      ['fiche', 3, 'Rénover la mairie'],
+      ['fiche', 3, 'Changer les chaudières'],
+    ]);
+  });
+
   it("ne prend pas les lignes d'un tableau récapitulatif pour des fiches", () => {
     expect(
       titles([

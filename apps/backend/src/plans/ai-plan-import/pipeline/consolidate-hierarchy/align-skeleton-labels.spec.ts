@@ -59,10 +59,19 @@ describe('alignSkeletonLabels', () => {
     });
   });
 
-  it('laisse tel quel un niveau que le squelette ne connaît pas, même sous un numéro qu’il emploie', () => {
+  it('rend à sa mesure une action dont le titre a été pris pour le sous-axe', () => {
+    expect(
+      align({
+        axe: 'Axe 1 : Un territoire résilient',
+        sousAxe: '1.5 Créer de nouveaux arrêts pour la ligne de bus',
+      }).sousAxe
+    ).toBe('1.5 Sobriété foncière');
+  });
+
+  it('laisse tel quel un niveau dont le squelette n’a ni le titre ni le numéro', () => {
     const labels = {
       axe: 'Axe 2 : Qualité de l’air',
-      sousAxe: '1.4 Préserver et restaurer la biodiversité',
+      sousAxe: '2.4 Préserver et restaurer la biodiversité',
     };
 
     expect(align(labels)).toEqual(labels);

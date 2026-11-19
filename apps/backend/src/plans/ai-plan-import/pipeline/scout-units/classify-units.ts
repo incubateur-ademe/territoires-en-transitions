@@ -35,8 +35,10 @@ type ClassifyEntry = z.output<typeof classifyUnitsResponseSchema>[number];
 
 export const CLASSIFY_BATCH_SIZE = 40;
 export const CLASSIFY_CONCURRENCY = 3;
-// Le début d'un extrait suffit à dire ce qu'il est.
-const PREVIEW_CHARS = 600;
+// Le début d'un extrait dit ce qu'il est ; sa fin montre les fiches qu'un
+// sommaire ou une page de garde cache derrière lui.
+const PREVIEW_HEAD_CHARS = 400;
+const PREVIEW_TAIL_CHARS = 200;
 const CLASSIFY_MAX_OUTPUT_TOKENS = 4_000;
 
 export type ClassifyUnitsResult = {
@@ -130,7 +132,13 @@ const classifyBatch = async (
 };
 
 const renderPreview = (unit: DocumentUnit, index: number): string => {
-  const preview = unit.text.replace(/\s+/g, ' ').slice(0, PREVIEW_CHARS);
+  const text = unit.text.replace(/\s+/g, ' ');
+  const preview =
+    text.length <= PREVIEW_HEAD_CHARS + PREVIEW_TAIL_CHARS
+      ? text
+      : `${text.slice(0, PREVIEW_HEAD_CHARS)} […] ${text.slice(
+          -PREVIEW_TAIL_CHARS
+        )}`;
   const place = [
     ...(unit.section ? [`partie « ${unit.section} »`] : []),
     ...unit.headingPath,

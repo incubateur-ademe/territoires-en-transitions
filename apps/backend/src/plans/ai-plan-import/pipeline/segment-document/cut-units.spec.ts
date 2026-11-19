@@ -52,6 +52,47 @@ describe('cutUnits', () => {
     expect(units[2].text).not.toContain('Rénover la mairie');
   });
 
+  it('range une fiche « 2.1 » sous l’axe 2 quand les axes ne sont nommés que dans le sommaire', () => {
+    const units = cut([
+      page(
+        0,
+        'Axe 1 Limiter les déchets verts',
+        'Axe 2 Acheter et consommer responsable',
+        'Axe 3 Réduire le tout venant en déchèterieAction 3.1 Caractériser'
+      ),
+      page(1, 'Fiche action n°1.1 : Jardiner au naturel', 'Pilote : Service'),
+      page(2, 'Fiche action n°2.1 : Consommer mieux', 'Pilote : Service'),
+      page(3, 'Fiche action n°3.1 : Trier', 'Pilote : Service'),
+    ]);
+
+    expect(
+      units
+        .filter((unit) => unit.kind === 'fiche')
+        .map((unit) => [unit.title, unit.headingPath])
+    ).toEqual([
+      ['1.1 Jardiner au naturel', ['1 Limiter les déchets verts']],
+      ['2.1 Consommer mieux', ['2 Acheter et consommer responsable']],
+      ['3.1 Trier', ['3 Réduire le tout venant en déchèterie']],
+    ]);
+  });
+
+  it('laisse une fiche sous l’axe titré juste au-dessus d’elle, quel que soit son numéro', () => {
+    const units = cut([
+      page(0, 'Axe 1 : Bâtiments', 'Axe 2 : Mobilité'),
+      page(1, 'Axe 2 : Mobilité', 'Action 1.3 : Covoiturage', 'Pilote : X'),
+      page(2, 'Axe 1 : Bâtiments', 'Action 2.4 : Isoler', 'Pilote : X'),
+    ]);
+
+    expect(
+      units
+        .filter((unit) => unit.kind === 'fiche')
+        .map((unit) => [unit.title, unit.headingPath])
+    ).toEqual([
+      ['1.3 Covoiturage', ['2 Mobilité']],
+      ['2.4 Isoler', ['1 Bâtiments']],
+    ]);
+  });
+
   it("ne prend pas le rappel de l'axe en bandeau d'une fiche pour une frontière", () => {
     const units = cut([
       page(

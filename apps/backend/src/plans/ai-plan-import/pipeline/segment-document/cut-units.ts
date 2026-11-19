@@ -22,6 +22,7 @@ export type CutUnitsOptions = {
 const FICHE_LABEL_WINDOW_LINES = 12;
 const FICHE_LABEL_MIN_COUNT = 3;
 const RETRO_OPEN_LOOKBACK_LINES = 6;
+const AXE_LEVEL = 1;
 
 type StackEntry = { level: number; label: string; number: string | null };
 
@@ -48,6 +49,7 @@ export const cutUnits = (
       heading.match,
     ])
   );
+  const axeOfFiche = axesGivenBeforeFiches(headings);
   const units: DocumentUnit[] = [];
   const stack: StackEntry[] = [];
   let section: string | undefined;
@@ -107,6 +109,17 @@ export const cutUnits = (
       if (heading && heading.level >= FICHE_LEVEL) {
         close();
         popTo(stack, FICHE_LEVEL);
+        const axe = axeOfFiche(heading);
+        if (axe && stack[0]?.label !== axe.label) {
+          // Un sous-axe de cet axe, titré parmi les fiches, reste.
+          const sousAxes = stack.filter(
+            (entry) =>
+              entry.level > AXE_LEVEL &&
+              entry.number?.startsWith(`${axe.number}.`)
+          );
+          stack.length = 0;
+          stack.push(axe, ...sousAxes);
+        }
         start('fiche', [unitLine], labelOf(heading));
         stack.push({
           level: FICHE_LEVEL,
@@ -165,6 +178,40 @@ export const cutUnits = (
     close();
     start('fiche', fiche, fiche[0].text.trim());
   }
+};
+
+/**
+ * Un plan qui ne nomme ses axes que dans un sommaire ou un tableau
+ * récapitulatif, puis enchaîne ses fiches « 1.1 », « 1.2 », « 2.1 » sans
+ * plus les rappeler : le numéro de la fiche dit son axe. Dès qu'un axe est
+ * titré parmi les fiches, c'est lui qui fait foi et rien n'est déduit.
+ */
+const axesGivenBeforeFiches = (
+  headings: DetectedHeading[]
+): ((fiche: HeadingMatch) => StackEntry | null) => {
+  const firstFiche = headings.findIndex(
+    ({ match }) => match.level >= FICHE_LEVEL
+  );
+  const isAxe = ({ match }: DetectedHeading) =>
+    match.level === AXE_LEVEL && match.number !== null;
+  const axes = new Map(
+    headings
+      .slice(0, Math.max(0, firstFiche))
+      .filter(isAxe)
+      .map(({ match }) => [
+        match.number as string,
+        { level: AXE_LEVEL, label: labelOf(match), number: match.number },
+      ])
+  );
+  if (
+    firstFiche < 0 ||
+    axes.size < 2 ||
+    headings.slice(firstFiche).some(isAxe)
+  ) {
+    return () => null;
+  }
+  return (fiche) =>
+    axes.get(fiche.number?.match(/^(\d{1,2})\.\d/)?.[1] ?? '') ?? null;
 };
 
 const popTo = (stack: StackEntry[], level: number) => {

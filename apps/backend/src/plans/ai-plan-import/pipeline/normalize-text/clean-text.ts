@@ -4,6 +4,10 @@ const LIGATURES: Record<string, string> = {
   '\uFB02': 'fl',
   '\uFB03': 'ffi',
   '\uFB04': 'ffl',
+  // Les ligatures « ti » et « tt » de Calibri, que certains PDF issus de Word
+  // rendent par « Ɵ » et « Ʃ » : « AcƟon », « meƩre ».
+  '\u019F': 'ti',
+  '\u01A9': 'tt',
 };
 
 // Glyphes sans correspondance Unicode (pdf.js rend U+0000) et demi-paires de
@@ -22,6 +26,9 @@ export const cleanText = (text: string): string =>
   text
     .replace(CONTROL_CHARACTERS, '')
     .replace(LONE_SURROGATES, '\uFFFD')
-    .replace(/[\uFB00-\uFB04]/g, (ligature) => LIGATURES[ligature] ?? ligature)
+    .replace(
+      /[\uFB00-\uFB04\u019F\u01A9]/g,
+      (ligature) => LIGATURES[ligature] ?? ligature
+    )
     .replace(/\u00A0/g, ' ')
     .replace(/ {2,}/g, ' ');

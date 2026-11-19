@@ -56,6 +56,41 @@ describe('detectTableHeader', () => {
     });
   });
 
+  it('écarte aussi la fiche d’exemple du modèle d’import, mais pas une première fiche réelle', () => {
+    const header = [
+      'Axe (x)',
+      'Titre de la fiche action',
+      'Descriptif',
+      'Statut',
+    ];
+    const notes = ['Champ texte', 'Champ texte', 'Champ texte', 'Champ liste'];
+    const real = [
+      '1. Bâtiments',
+      'Isoler les écoles',
+      'Par exemple en 2027',
+      '',
+    ];
+
+    expect(
+      detectTableHeader(
+        buildTextGrid('Plan', [
+          header,
+          notes,
+          [
+            '1. Un territoire désirable',
+            'Action 1 - Coordonner (ou) 1.1.1.1. Coordonner',
+            'La Collectivité Exemple organise des rencontres',
+            'En cours',
+          ],
+          real,
+        ])
+      )?.noteRows
+    ).toEqual([2, 3]);
+    expect(
+      detectTableHeader(buildTextGrid('Plan', [header, notes, real]))?.noteRows
+    ).toEqual([2]);
+  });
+
   it('ne prend pas une rangée de données pour une seconde rangée d’en-tête', () => {
     const grid: SheetGrid = buildTextGrid('Plan', [
       ['Action', 'Pilote', 'Statut'],

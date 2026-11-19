@@ -164,6 +164,25 @@ describe('matchHeading', () => {
     expect(matchHeading(line)).toMatchObject({ kind, level, number, title });
   });
 
+  it('écarte ce que la mise en page colle à un titre d’axe ou prend pour un titre', () => {
+    expect(
+      matchHeading('Axe 5 Réduire les déchets des activitésAction 5.1 Aider')
+        ?.title
+    ).toBe('Réduire les déchets des activités');
+    expect(
+      matchHeading('Axe 2 Consommer responsable Action 2.1 Accompagner')?.title
+    ).toBe('Consommer responsable');
+    expect(matchHeading('Axe 1 : Atteindre l’Objectif 2030')?.title).toBe(
+      'Atteindre l’Objectif 2030'
+    );
+    expect(
+      matchHeading('Axe 2 territoire (basée hors de la ville)-')
+    ).toBeNull();
+    expect(matchHeading('Axe 2 – vers une mobilité durable')?.kind).toBe('axe');
+    expect(matchHeading('Actions 1-2-3-5 x x x x x')).toBeNull();
+    expect(matchHeading('Action 6 X')).toBeNull();
+  });
+
   it('prend une ligne en majuscules pour un titre, plus sûrement en grande police', () => {
     expect(matchHeading('RÉNOVER LE PATRIMOINE BÂTI')).toMatchObject({
       kind: 'majuscules',
