@@ -8,7 +8,6 @@ import {
   IndicateurDetaille,
   IndicateurPeriodes,
 } from '@tet/domain/indicateurs';
-import { ReadElectrificationV4Snapshot } from '@tet/backend/plans/plans/electrification/config/read-electrification-v4-snapshot';
 import { ResourceType } from '@tet/domain/users';
 import assert from 'node:assert';
 import {
@@ -78,7 +77,7 @@ export class ResolveElectrificationEngagementsService {
         ),
       ]);
     }
-    const config = ReadElectrificationV4Snapshot.adapt(catalogue.data);
+    const config = catalogue.data;
     const structure = ResolveElectrificationStructureRules.resolve(
       draft,
       config
@@ -138,15 +137,10 @@ export class ResolveElectrificationEngagementsService {
     } of expected) {
       const extracted = engagement.cibles.find(({ key }) => key === cible.key);
       const rules = cible.reglesImport;
-      if (!rules)
-        return failure([
-          electrificationEngagementsIssue('INVALID_ENGAGEMENT_MAPPING'),
-        ]);
       const source = extracted?.source ?? engagement.source;
       const location = ElectrificationImportLocations.field(
         source.location,
-        cible.libelleSource ??
-          (engagementDefinition.cibles.length > 1 ? cible.key : undefined)
+        cible.libelleSource
       );
       const issue = (
         code: ElectrificationEngagementsErrorCode,
@@ -182,7 +176,7 @@ export class ResolveElectrificationEngagementsService {
         issue('INCOMPATIBLE_ENGAGEMENT_INDICATEUR');
         continue;
       }
-      const unit = cible.uniteImport ?? cible.unite;
+      const unit = cible.uniteImport;
       if (
         extracted?.unite != null &&
         extracted.unite !== cible.unite &&

@@ -69,7 +69,7 @@ export class SyncElectrificationDataService {
       count:
         'laureats' in candidate.data
           ? candidate.data.laureats.length
-          : candidate.data.fiches.actions?.length ?? 0,
+          : candidate.data.fiches.actions.length,
       excluded: candidate.excluded,
       published: publish && changed,
       status: !publish ? 'verified' : changed ? 'published' : 'unchanged',

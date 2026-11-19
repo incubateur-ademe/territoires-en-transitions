@@ -15,7 +15,6 @@ import {
   ElectrificationValueRequest,
 } from './electrification-value-interpretation.schema';
 
-import { ReadElectrificationV4Snapshot } from '@tet/backend/plans/plans/electrification/config/read-electrification-v4-snapshot';
 import { ElectrificationTargetValuesRules } from './electrification-target-values.rules';
 import { ElectrificationCatalogueRules } from '@tet/backend/plans/plans/electrification/publish-electrification-data/electrification-catalogue.rules';
 
@@ -35,7 +34,6 @@ export class ElectrificationEngagementsDocumentRules {
     catalogue: ElectrificationConfig,
     valueContext?: ElectrificationValueContext
   ): Result<Engagement[], ElectrificationIssue[]> {
-    catalogue = ReadElectrificationV4Snapshot.adapt(catalogue);
     const columns = this.getColumns(table[0] ?? []);
     if (!columns) {
       return failure([
@@ -101,12 +99,11 @@ export class ElectrificationEngagementsDocumentRules {
       const label = ElectrificationCatalogueRules.normalizeEngagementLabel(
         engagement.text
       );
-      const matchingLabels = catalogue.engagements.filter((item) =>
-        ElectrificationCatalogueRules.getEngagementLabels(item).some(
-          (text) =>
-            ElectrificationCatalogueRules.normalizeEngagementLabel(text) ===
-            label
-        )
+      const matchingLabels = catalogue.engagements.filter(
+        (item) =>
+          ElectrificationCatalogueRules.normalizeEngagementLabel(
+            item.libelleSource
+          ) === label
       );
       const candidates = matchingLabels.filter(
         (item) => item.axeNumero === Number(axeNumero)
@@ -130,9 +127,7 @@ export class ElectrificationEngagementsDocumentRules {
       ) {
         const available = catalogue.engagements.flatMap(
           ({ code, axeNumero: numero, libelleSource }) =>
-            numero === Number(axeNumero) && libelleSource
-              ? [{ code, label: libelleSource }]
-              : []
+            numero === Number(axeNumero) ? [{ code, label: libelleSource }] : []
         );
         if (available.length)
           valueContext?.onUnmatchedEngagement?.({
@@ -216,10 +211,6 @@ export class ElectrificationEngagementsDocumentRules {
     >['targets'] = [];
     for (const cible of definition.cibles) {
       const rules = cible.reglesImport;
-      if (!rules || !cible.uniteImport)
-        return failure([
-          Errors.issue('INVALID_ELECTRIFICATION_ENGAGEMENT', source.location),
-        ]);
       targets.push({
         key: cible.key,
         unit: cible.uniteImport,

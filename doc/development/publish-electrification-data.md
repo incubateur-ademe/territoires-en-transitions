@@ -8,7 +8,7 @@ versions publiées, sans interroger Grist.
 
 ## Configurer les environnements GitHub
 
-La PR C doit être déployée sur la cible. Le workflow doit être présent sur la
+Le backend de publication doit être déployé sur la cible. Le workflow doit être présent sur la
 branche par défaut pour être proposé dans l'onglet Actions. Utiliser une
 révision compatible avec le backend déployé.
 
@@ -57,7 +57,7 @@ vérifier cette continuité.
 ### Publier les références d’indicateurs
 
 1. Appliquer les migrations `indicateur/references-externes` et
-   `plan_action/electrification_data_selection` avant de déployer C.
+   `plan_action/electrification_data_selection` avant de déployer le backend de publication.
 2. Compléter et faire valider l’onglet "Références externes" du Sheets configuré
    par `INDICATEUR_DEFINITIONS_SHEET_ID`. Le WIP n’est ni lu ni publié.
 3. Utiliser les boutons existants de vérification puis de publication des
@@ -154,26 +154,16 @@ uniquement de republier le catalogue. Republier les indicateurs est nécessaire
 lorsque leurs définitions ou leurs correspondances changent.
 
 L'extraction utilise les libellés et règles du catalogue admis. Les cellules
-simples sont lues directement. Un code d'engagement exact dans la colonne
-"Engagement du programme" identifie directement l'engagement. Un libellé actuel
-ou déjà publié peut aussi le désigner, sans appel IA.
+simples sont lues directement. Un code exact dans la colonne "Engagement du
+programme" identifie l'engagement, même si sa formulation change. Le libellé du
+catalogue courant peut aussi le désigner sans appel IA. Une collision de libellés
+entre engagements du même axe, ou entre un libellé et le code d'un autre
+engagement, bloque la publication.
 
-La synchronisation conserve ces anciens libellés par code, pour le même axe et
-le même document Grist (indépendamment de sa page ou de son slug), si les clés,
-unités et années des cibles restent compatibles. Les premiers snapshots V4,
-qui peuvent ne pas avoir d'URL source, sont reconnus par leur contrat historique.
-Les libellés conservés font partie du nouveau snapshot ; les versions précédentes
-restent inchangées. Aucun ancien mapping TeT n'est repris. Une collision de
-libellés entre deux engagements du même axe bloque la publication.
-Un libellé actuel ou ancien ne peut pas non plus être égal au code d'un autre
-engagement, même dans un autre axe.
-
-Cette continuité permet d'importer les Word existants malgré un changement de
-formulation, notamment pour E05, sans modifier Grist ni déduire une équivalence
-à partir du texte. Sans historique publié ni code explicite, aucune identité
-n'est inventée. Un lien vers le document Grist entier ne suffit pas à identifier
-un engagement. Les liens TeT de fiches et d'indicateurs restent résolus par leurs
-identifiants, avec les contrôles d'accès habituels.
+Le document Grist entier ne désigne pas un engagement unique. Les liens TeT de
+fiches et d'indicateurs sont résolus par leurs identifiants, avec les contrôles
+d'accès habituels. Les rapprochements ne s'appuient sur aucun historique de
+libellés ni sur un catalogue embarqué dans le code.
 
 Pour une formulation inconnue ou une cellule
 numérique complexe, l'IA reçoit uniquement les engagements candidats de l'axe
@@ -184,26 +174,24 @@ reste une erreur. Les citations documentent la décision du modèle ; elles ne
 prouvent pas à elles seules l'équivalence sémantique des formulations.
 L'IA ne choisit jamais un indicateur TeT ni une conversion d'unité.
 
-Les nouveaux jobs utilisent le checkpoint V2, qui conserve les rapprochements
-d'engagements. Le worker accepte aussi les checkpoints V1 sans ce champ. Un job
-déjà admis en V1 conserve son format, y compris si sa lecture commence après
-le déploiement ; il ne demande pas de rapprochement IA des engagements.
-Le numéro du checkpoint doit correspondre au contrat admis pour le job.
-Un ancien worker ne peut pas reprendre un checkpoint V2 : terminer le déploiement
-des workers avant de lancer les nouveaux imports.
+Le catalogue exige les définitions complètes des engagements et de leurs cibles,
+ainsi que les listes d'actions, d'indicateurs et de sous-axes. Une liste vide est
+valide ; une liste absente ou `null` est rejetée. Une correspondance d'indicateur
+peut rester explicitement en attente de validation.
 
-Les définitions et règles lues dans Grist sont figées dans le catalogue
-(`engagementsFormat=2`), avec les correspondances TeT publiées. La reprise conserve le
-snapshot, les extractions et les citations admises sans nouvel appel IA. Les
-anciens snapshots restent lisibles sans réécriture. Déployer le backend avant
-de republier le catalogue. Les indicateurs sont publiés au préalable si leurs
-correspondances ont changé.
+Le worker utilise un seul format de checkpoint, qui conserve l'extraction, les
+rapprochements d'engagements, les citations et la version du catalogue admis. La
+reprise revérifie le contrat, les droits et les références TeT sans rappeler le
+modèle. Le versionnement permet de publier de nouvelles données sans modifier
+celles utilisées par un import en cours. Aucun lecteur ni conversion des formats
+précédents n'est maintenu. Les données de recette d'un format supprimé doivent
+être republiées au format courant et les imports concernés relancés.
 
 Si un import signale une correspondance d'engagement non validée, contrôler
 chaque clé utilisée, notamment les deux lignes `E07.total` et `E07.rapides`.
 Corriger le Sheets, publier les indicateurs puis synchroniser le catalogue
 sur la même cible. Lancer ensuite un nouvel import avec le document initial :
-la reprise d'un ancien job conserve son ancienne version du catalogue.
+la reprise conserve la version du catalogue admise pour ce job.
 
 Pour les lauréats, le lecteur utilise les trois colonnes existantes de
 `Territoires`, dans le document configuré par
@@ -292,10 +280,8 @@ En cas de refus :
 
 ## Administration et restauration par CLI
 
-- La PR C de publication (`feat/electrification-data-publication`), basée sur
-  la PR B d'import, est déployée dans le backend cible. Il expose
+- Le backend de publication est déployé dans la cible et expose
   `plans.plans.electrificationData` et dispose de son stockage Supabase privé.
-  La PR B seule conserve ses données embarquées et n'expose pas cette API.
 - L'opérateur est connecté à cet environnement avec un utilisateur
   `SUPER_ADMIN`. Le backend vérifie ce rôle en base et exige un token de
   session utilisateur. Les clés API, tokens avec permissions limitées et
@@ -429,7 +415,7 @@ La publication d'une liste ne modifie pas le feature flag de création.
 | Correspondance entre un code externe et un indicateur TeT                                                                           | Trois colonnes de "Références externes" : `source`, `codeExterne`, `identifiantReferentiel`.                                                                  |
 | Définitions des engagements, cibles, libellés et échéances                                                                          | `Code_signe` et `Parametre_signe` de `V1_3_Axes`, selon le contrat de lecture ci-dessus, puis publication du catalogue.                                       |
 | Validation et compléments TeT des actions absents de Grist : objectifs, ressources humaines, structures, partenaires, dates, statut | Catalogue publié, via l'administration existante. La synchronisation conserve ces champs ; les champs fournis par Grist sont toujours remplacés depuis Grist. |
-| Lauréats et correspondances collectivité                                                                                            | Annuaire Grist ; compatibilité du contrat de lecture à confirmer, comme indiqué plus haut.                                                                    |
+| Lauréats et correspondances collectivité                                                                                            | Table `Territoires` de l'annuaire Grist, selon le contrat de lecture décrit plus haut.                                                                    |
 | Valeurs, sélections et champs renseignés par la collectivité                                                                        | Document importé, selon les règles de priorité de l'import.                                                                                                   |
 | Structure, en-têtes et placeholders du document accepté                                                                             | Contrat du canevas officiel dans le code. Ces libellés ne nomment pas les axes du plan.                                                                       |
 | Étapes du pipeline, identifiants de provenance, connexions et stockage                                                              | Configuration technique dans le code.                                                                                                                         |
@@ -461,7 +447,7 @@ publiées ; elles ne sont pas recopiées dans ces dossiers.
 Le workflow construit le catalogue et ses engagements à partir de Grist.
 Les correspondances TeT des cibles et des indicateurs viennent des références
 Sheets publiées dans la cible, dès la première publication. Aucun mapping
-d'engagement, catalogue complet ni liste de lauréats n'est embarqué dans C.
+d'engagement, catalogue complet ni liste de lauréats n'est embarqué dans le code.
 
 Vérifier les références TeT et le périmètre de la liste dans l'environnement
 cible. Les correspondances en attente ne deviennent pas validées par la
@@ -469,60 +455,33 @@ publication. Les lauréats viennent exclusivement de l'annuaire. La démo
 `5460` peut être testée en mode super-admin, sans l'ajouter à l'annuaire ni
 publier de variante de la liste.
 
-1. Fermer temporairement `is-electrification-plan-creation-enabled`. Les
-   imports Électrification déjà admis doivent pouvoir terminer avec les
-   anciens workers. Dans le suivi existant des jobs, attendre qu'il ne reste
-   aucun import Électrification en attente, en cours ou programmé pour un
-   retry. Ne pas relancer manuellement un import échoué pendant cette bascule.
-2. Sauvegarder le contenu exact et la version des catalogues nécessaires aux
-   jobs existants avant de remplacer le backend. Si C est déjà déployée,
-   utiliser `export --version <version>` ; ses versions stockées sont conservées.
-   Pour une bascule depuis B, extraire `electrificationConfig` du domaine compilé
-   du commit effectivement déployé, avant la bascule. Grist actuel et les fixtures
-   de C ne permettent pas de reconstruire une ancienne version. Ne pas poursuivre
-   si un catalogue nécessaire manque. Les jobs en échec et leur historique sont
-   conservés ; ils n'empêchent pas le déploiement quand aucun retry n'est programmé.
-3. Appliquer les migrations `indicateur/references-externes` et
-   `plan_action/electrification_data_selection`, puis déployer la PR C,
-   avec toutes les API et tous les workers compatibles.
-   L'API de publication n'existe pas dans le backend de B :
-   la publication intervient après ce déploiement.
-4. Avec les commandes précédentes, vérifier puis publier d'abord les contenus
-   exacts des anciennes versions de catalogue nécessaires aux reprises.
-   Publier les définitions et références Sheets dans cette cible. Lancer
-   ensuite le workflow pour le catalogue souhaité, puis pour la
-   liste courante des lauréats. Chaque publication active sa version : le
-   catalogue souhaité doit donc être publié en dernier parmi les catalogues.
-   Exporter les jeux actifs, contrôler que leurs versions sont celles attendues
-   et les vérifier ; contrôler par
-   `export --version <version>` la disponibilité des catalogues des anciens
-   jobs. Ne pas réétiqueter les jobs pour leur attribuer un autre catalogue.
-5. Rouvrir le flag pour le périmètre de recette ou de production prévu. Les
-   jobs échoués peuvent être repris une fois leur catalogue publié, sous
-   réserve des autres contrôles de reprise.
+L'import Électrification n'est pas encore activé en production. La première
+mise en service utilise le contrat courant, sans migration de catalogues ou de
+checkpoints issus des versions de recette.
 
-En l'absence de version publiée, le parcours Électrification est indisponible ;
-aucun fallback ne masque cet état. Les imports génériques et PCAET ne dépendent
-pas de ces publications et continuent pendant cette bascule. Aucune mise en
-pause de leur queue n'est nécessaire pour publier ces données.
+1. Appliquer les migrations du dépôt, puis déployer le backend, le frontend et
+   tous les workers avant d'activer `is-electrification-plan-creation-enabled`.
+2. Publier les définitions et références Sheets dans la cible.
+3. Synchroniser le catalogue et les lauréats. Exporter et vérifier les deux jeux
+   actifs avec les commandes précédentes.
+4. Activer le flag pour le périmètre de recette ou de production prévu.
+
+Sans jeux de données valides publiés, le parcours Électrification est
+indisponible. Les imports génériques et PCAET sont indépendants de ces données.
 
 ## Revenir à une version antérieure
 
 Les versions sont des fichiers immuables dans Storage ; la sélection active et
 son audit sont dans la table PostgreSQL `electrification_data_selection`.
-La migration reprend les sélections existantes. Sauvegarder les deux supports.
+Sauvegarder les deux supports.
 Un échec d'activation laisse la sélection précédente intacte, même si le fichier
 candidat est déjà enregistré. Une erreur `PUBLICATION_CONFLICT` indique qu'une
 publication concurrente a changé la sélection, même si une restauration a
 réactivé la version initiale : relire l'état actif et préparer
 de nouveau la synchronisation avant de la relancer.
 
-Un rollback du backend doit conserver un lecteur compatible avec cette table.
-Ne pas revenir à un lecteur des anciens fichiers de sélection Storage : ces
-fichiers ne sont plus mis à jour. Suspendre les publications avant tout rollback
-et ne pas supprimer la table tant que des API ou workers l'utilisent.
-La restauration d'un contenu métier se fait par la procédure ci-dessous, sans
-revert de migration.
+La restauration d'un contenu métier utilise le contrat courant. Elle ne
+nécessite ni rollback du backend ni revert de migration.
 
 Exporter la version voulue avec `export --version <version>`, puis republier
 ce fichier inchangé. Cela réactive cette version sans supprimer les suivantes.

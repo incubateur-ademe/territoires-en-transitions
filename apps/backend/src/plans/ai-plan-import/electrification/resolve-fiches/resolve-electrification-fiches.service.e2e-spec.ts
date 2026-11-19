@@ -445,8 +445,8 @@ describe('Résolution des fiches actions Électrification', () => {
     ]);
   });
 
-  test('prépare une fiche et un indicateur libres sans correspondances de catalogue livrées', async () => {
-    config.fiches = { actions: null, indicateurs: null };
+  test('prépare une fiche et un indicateur libres avec un catalogue de références vide', async () => {
+    config.fiches = { actions: [], indicateurs: [] };
     fiche().indicateurs = [quantitatif()];
     const result = await created();
     expect(result.code).toBeNull();
@@ -725,19 +725,11 @@ describe('Résolution des fiches actions Électrification', () => {
   });
 
   test.each(['action', 'indicateur'] as const)(
-    'distingue le mapping %s indisponible du code inconnu dans un catalogue livré',
+    'refuse un code %s absent du catalogue',
     async (type) => {
-      if (type === 'action') {
-        fiche().reference = 'inconnu';
-        config.fiches.actions = null;
-      } else {
-        fiche().indicateurs = [quantitatif('inconnu')];
-        config.fiches.actions = [];
-        config.fiches.indicateurs = null;
-      }
-      await expectIssue('FICHES_CONFIG_UNAVAILABLE', 'configuration-error');
-      if (type === 'action') config.fiches.actions = [];
-      else config.fiches.indicateurs = [];
+      config.fiches = { actions: [], indicateurs: [] };
+      if (type === 'action') fiche().reference = 'inconnu';
+      else fiche().indicateurs = [quantitatif('inconnu')];
       await expectIssue('UNKNOWN_FICHE_REFERENCE');
     }
   );
@@ -767,8 +759,8 @@ describe('Résolution des fiches actions Électrification', () => {
     }
   );
 
-  test('signale une configuration manquante pour une sous-action référencée dans une fiche libre', async () => {
-    config.fiches.actions = null;
+  test('refuse une sous-action référencée sans correspondance dans une fiche libre', async () => {
+    config.fiches.actions = [];
     fiche().sousActions = [
       {
         source: source('sous-action'),
@@ -776,7 +768,7 @@ describe('Résolution des fiches actions Électrification', () => {
         champs: { titre: 'Sous-action documentaire' },
       },
     ];
-    await expectIssue('FICHES_CONFIG_UNAVAILABLE', 'configuration-error');
+    await expectIssue('UNKNOWN_FICHE_REFERENCE');
   });
 
   test.each(['action', 'indicateur'] as const)(
@@ -1829,21 +1821,6 @@ describe('Résolution des fiches actions Électrification', () => {
         { user: context.user }
       );
       expect(resumed).toEqual(success(result));
-      const { engagementInterpretations: _matches, ...saved } =
-        result.checkpoint;
-      const checkpointV1 = { ...saved, schemaVersion: 1 as const };
-      const resumedV1 = await prepareService.prepare(
-        {
-          catalogueVersion: config.version,
-          collectiviteId: context.collectiviteId,
-          schemaVersion: 1,
-          resumeFrom: checkpointV1,
-        },
-        { user: context.user }
-      );
-      expect(resumedV1).toEqual(
-        success({ ...result, checkpoint: checkpointV1 })
-      );
       action().validation = 'pending';
       const changed = await prepareService.prepare(
         {

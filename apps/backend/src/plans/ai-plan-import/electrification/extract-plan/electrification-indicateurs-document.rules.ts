@@ -46,7 +46,7 @@ export class ElectrificationIndicateursDocumentRules {
       return success(null);
     const label = titre ?? '';
     const unit = this.titleUnit(titre);
-    const mapping = catalogue.fiches.indicateurs?.find(
+    const mapping = catalogue.fiches.indicateurs.find(
       ({ code }) => code === ref.value
     );
     const declaredBoolean =

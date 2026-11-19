@@ -1,7 +1,6 @@
 import { ElectrificationConfig } from '@tet/domain/plans';
 import { ElectrificationDataIssue } from './publish-electrification-data.input';
 import { ElectrificationIssue } from '@tet/backend/plans/ai-plan-import/electrification/electrification-issue';
-import { ReadElectrificationV4Snapshot } from '../config/read-electrification-v4-snapshot';
 
 export const electrificationCatalogueErrors = {
   DUPLICATE_CATALOGUE_REFERENCE:
@@ -31,15 +30,6 @@ type ElectrificationCatalogueIssue = {
 
 /** Invariants du catalogue partagé entre publication et résolution des imports. */
 export class ElectrificationCatalogueRules {
-  static getEngagementLabels(
-    engagement: ElectrificationConfig['engagements'][number]
-  ): string[] {
-    return [
-      ...(engagement.libelleSource ? [engagement.libelleSource] : []),
-      ...(engagement.anciensLibelles ?? []),
-    ];
-  }
-
   /** Même identité de libellé à la publication et à la lecture du document. */
   static normalizeEngagementLabel(text: string): string {
     return text
@@ -63,12 +53,7 @@ export class ElectrificationCatalogueRules {
   /** Les correspondances sont vérifiées lors de la résolution des références utilisées. */
   static isValid(config: ElectrificationConfig): boolean {
     return (
-      config.sousAxes !== null &&
-      config.fiches.actions !== null &&
-      config.fiches.indicateurs !== null &&
-      (config.engagementsFormat === 2
-        ? config.engagements.length > 0
-        : ReadElectrificationV4Snapshot.isSupported(config)) &&
+      config.engagements.length > 0 &&
       this.validateStructure(config).length === 0 &&
       this.validateFiches(config).length === 0
     );
@@ -78,8 +63,8 @@ export class ElectrificationCatalogueRules {
     config: ElectrificationConfig
   ): ElectrificationCatalogueIssue[] {
     const invalid = () => [this.issue('INVALID_FICHES_CONFIG', 'fiches')];
-    const actions = config.fiches.actions ?? [];
-    const indicateurs = config.fiches.indicateurs ?? [];
+    const actions = config.fiches.actions;
+    const indicateurs = config.fiches.indicateurs;
     if (
       new Set(actions.map((a) => a.code)).size !== actions.length ||
       new Set(indicateurs.map((i) => i.code)).size !== indicateurs.length
@@ -89,7 +74,7 @@ export class ElectrificationCatalogueRules {
       if (
         !config.axes.some((a) => a.numero === action.axeNumero) ||
         (action.sousAxeNumero !== null &&
-          !config.sousAxes?.some(
+          !config.sousAxes.some(
             (a) =>
               a.numero === action.sousAxeNumero &&
               a.axeNumero === action.axeNumero
@@ -124,7 +109,7 @@ export class ElectrificationCatalogueRules {
       axeNumeros.add(axe.numero);
     });
     const sousAxeNumeros = new Set<string>();
-    catalogue.sousAxes?.forEach((sousAxe, index) => {
+    catalogue.sousAxes.forEach((sousAxe, index) => {
       const location = `catalogue.sousAxes[${index}]`;
       if (sousAxeNumeros.has(sousAxe.numero)) {
         issues.push(this.issue('DUPLICATE_CATALOGUE_REFERENCE', location));
@@ -142,37 +127,24 @@ export class ElectrificationCatalogueRules {
     }));
     catalogue.engagements.forEach((engagement, index) => {
       const location = `catalogue.engagements[${index}]`;
-      if (catalogue.engagementsFormat === 2) {
-        for (const [labelIndex, text] of this.getEngagementLabels(
-          engagement
-        ).entries()) {
-          const label = this.normalizeEngagementLabel(text);
-          const identity = JSON.stringify([engagement.axeNumero, label]);
-          const owner = labels.get(identity);
-          const conflictsWithCode = codeLabels.some(
-            (entry) => entry.label === label && entry.code !== engagement.code
-          );
-          if (
-            !label ||
-            conflictsWithCode ||
-            (owner !== undefined && owner !== engagement.code)
-          ) {
-            const field =
-              engagement.libelleSource && labelIndex === 0
-                ? 'libelleSource'
-                : `anciensLibelles[${
-                    labelIndex - Number(!!engagement.libelleSource)
-                  }]`;
-            issues.push(
-              this.issue(
-                'DUPLICATE_CATALOGUE_REFERENCE',
-                `${location}.${field}`
-              )
-            );
-          }
-          labels.set(identity, engagement.code);
-        }
+      const label = this.normalizeEngagementLabel(engagement.libelleSource);
+      const identity = JSON.stringify([engagement.axeNumero, label]);
+      const owner = labels.get(identity);
+      if (
+        !label ||
+        codeLabels.some(
+          (entry) => entry.label === label && entry.code !== engagement.code
+        ) ||
+        (owner !== undefined && owner !== engagement.code)
+      ) {
+        issues.push(
+          this.issue(
+            'DUPLICATE_CATALOGUE_REFERENCE',
+            `${location}.libelleSource`
+          )
+        );
       }
+      labels.set(identity, engagement.code);
       if (codes.has(engagement.code)) {
         issues.push(this.issue('DUPLICATE_CATALOGUE_REFERENCE', location));
       }
@@ -183,45 +155,32 @@ export class ElectrificationCatalogueRules {
       if ((engagement.actionTitre !== null) === engagement.cibles.length > 0) {
         issues.push(this.issue('INVALID_ENGAGEMENT_MAPPING', location));
       }
-      if (
-        catalogue.engagementsFormat === 2 &&
-        (!engagement.libelleSource ||
-          engagement.cibles.some(
-            (cible) =>
-              !cible.uniteImport ||
-              !cible.reglesImport ||
-              (cible.reglesImport.minimum !== null &&
-                cible.reglesImport.maximum !== null &&
-                cible.reglesImport.minimum > cible.reglesImport.maximum) ||
-              (cible.reglesImport.plafondCible !== null &&
-                (cible.reglesImport.plafondCible === cible.key ||
-                  !engagement.cibles.some(
-                    ({ key }) => key === cible.reglesImport?.plafondCible
-                  )))
-          ))
-      ) {
-        issues.push(this.issue('INVALID_ENGAGEMENT_MAPPING', location));
-      }
-      if (catalogue.engagementsFormat === 2) {
-        for (const cible of engagement.cibles) {
-          const seen = new Set([cible.key]);
-          let current = cible;
-          while (current.reglesImport?.plafondCible) {
-            const parent = engagement.cibles.find(
-              ({ key }) => key === current.reglesImport?.plafondCible
-            );
-            if (
-              !parent ||
-              seen.has(parent.key) ||
-              parent.uniteImport !== cible.uniteImport ||
-              parent.reglesImport?.annee !== cible.reglesImport?.annee
-            ) {
-              issues.push(this.issue('INVALID_ENGAGEMENT_MAPPING', location));
-              break;
-            }
-            seen.add(parent.key);
-            current = parent;
+      for (const cible of engagement.cibles) {
+        const rules = cible.reglesImport;
+        if (
+          rules.minimum !== null &&
+          rules.maximum !== null &&
+          rules.minimum > rules.maximum
+        ) {
+          issues.push(this.issue('INVALID_ENGAGEMENT_MAPPING', location));
+        }
+        const seen = new Set([cible.key]);
+        let current = cible;
+        while (current.reglesImport.plafondCible) {
+          const parent = engagement.cibles.find(
+            ({ key }) => key === current.reglesImport.plafondCible
+          );
+          if (
+            !parent ||
+            seen.has(parent.key) ||
+            parent.uniteImport !== cible.uniteImport ||
+            parent.reglesImport.annee !== rules.annee
+          ) {
+            issues.push(this.issue('INVALID_ENGAGEMENT_MAPPING', location));
+            break;
           }
+          seen.add(parent.key);
+          current = parent;
         }
       }
       const cibleKeys = new Set<string>();
@@ -264,7 +223,7 @@ export class ElectrificationCatalogueRules {
             : []
         )
     );
-    catalogue.fiches.indicateurs?.forEach((indicateur, index) => {
+    catalogue.fiches.indicateurs.forEach((indicateur, index) => {
       if (
         indicateur.type === 'quantitatif' &&
         indicateur.validation === 'validated'

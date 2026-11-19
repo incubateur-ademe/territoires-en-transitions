@@ -42,7 +42,6 @@ const engagements = [
 /** Catalogue synthétique : cas de résolution, sans copie du référentiel Grist. */
 export const electrificationCatalogueFixture: ElectrificationConfig = {
   version: 'test-catalogue',
-  engagementsFormat: 2,
   engagements: engagements.map(([code, axeNumero, unite]) => ({
     code,
     libelleSource:
@@ -70,6 +69,7 @@ export const electrificationCatalogueFixture: ElectrificationConfig = {
         : (code === 'E07' ? ['total', 'rapides'] : ['principale']).map(
             (key) => ({
               key,
+              libelleSource: key,
               identifiantReferentiel: `test-${code}-${key}`,
               unite,
               uniteImport: code === 'E09' ? 'Nombre' : unite,

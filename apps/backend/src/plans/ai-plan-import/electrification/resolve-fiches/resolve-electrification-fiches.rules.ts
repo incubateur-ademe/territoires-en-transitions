@@ -37,7 +37,7 @@ export class ResolveElectrificationFichesRules {
   }
 
   static matchesAxe(
-    action: NonNullable<ElectrificationConfig['fiches']['actions']>[number],
+    action: ElectrificationConfig['fiches']['actions'][number],
     axe: ResolvedElectrificationAxe,
     axes: ResolvedElectrificationAxe[]
   ): boolean {
@@ -52,9 +52,7 @@ export class ResolveElectrificationFichesRules {
   }
 
   static resolveDocuments(
-    aides: NonNullable<
-      ElectrificationConfig['fiches']['actions']
-    >[number]['aides'],
+    aides: ElectrificationConfig['fiches']['actions'][number]['aides'],
     location: string
   ): { documents: Lien[]; issues: ElectrificationIssue[] } {
     const documents: Lien[] = [];
@@ -77,10 +75,7 @@ export class ResolveElectrificationFichesRules {
   /** Le profil décide de la validité du code avant la préparation commune. */
   static resolveSousActions(
     fiche: ElectrificationFicheInput,
-    defaults:
-      | NonNullable<ElectrificationConfig['fiches']['actions']>[number]
-      | undefined,
-    catalogueAvailable: boolean
+    defaults: ElectrificationConfig['fiches']['actions'][number] | undefined
   ): Result<ResolvedSousActionImport[], ElectrificationIssue[]> {
     const result: ResolvedSousActionImport[] = [];
     const issues: ElectrificationIssue[] = [];
@@ -90,12 +85,7 @@ export class ResolveElectrificationFichesRules {
       );
       if (item.reference && !reference) {
         issues.push(
-          Errors.issue(
-            catalogueAvailable
-              ? 'UNKNOWN_FICHE_REFERENCE'
-              : 'FICHES_CONFIG_UNAVAILABLE',
-            item.source.location
-          )
+          Errors.issue('UNKNOWN_FICHE_REFERENCE', item.source.location)
         );
         continue;
       }

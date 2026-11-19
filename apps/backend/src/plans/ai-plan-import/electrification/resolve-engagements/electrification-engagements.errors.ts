@@ -44,11 +44,7 @@ export const electrificationEngagementsErrors = {
     message:
       "Le numéro d'axe ne figure pas dans le catalogue. Vérifiez le numéro dans le champ Axe de l'action à partir du référentiel fourni avec le canevas.",
   },
-  SUB_AXES_CATALOGUE_UNAVAILABLE: {
-    kind: 'configuration-error',
-    message:
-      "La correspondance des sous-axes manque dans le catalogue. Contactez le support TeT pour le compléter, puis relancez l'import avec le même document.",
-  },
+
   UNKNOWN_SUB_AXIS: {
     kind: 'document-error',
     message:

@@ -4,6 +4,11 @@ Date : 2026-11-11
 
 ## Statut
 
+**Décision du 19 novembre 2026 :** l'import n'est pas activé en production.
+Le [contrat unique](#contrat-unique-avant-activation-en-production---19-novembre-2026)
+remplace les dispositions de rétrocompatibilité consignées dans cet historique.
+La procédure applicable est le [guide de publication](../development/publish-electrification-data.md).
+
 Publication implémentée, déployée et données initiales publiées en préproduction
 le 11 novembre 2026. La synchronisation Grist des deux jeux par workflow GitHub
 manuel, décidée le 12 novembre, reste à déployer et qualifier avec les accès
@@ -90,7 +95,8 @@ références externes publiées avec les définitions TeT dans l'environnement c
 Sans correspondance publiée,
 un code reste `pending` ; un ancien mapping du catalogue actif ne le réactive pas.
 
-**Tolérance des libellés existants - décision du 19 novembre 2026.** L'identité
+**Tolérance des libellés existants - décision du 19 novembre 2026, remplacée par
+[Contrat unique avant activation](#contrat-unique-avant-activation-en-production---19-novembre-2026).** L'identité
 publiée de l'engagement prime sur sa formulation. La synchronisation peut conserver
 les anciens libellés du catalogue actif pour le même code, le même axe et le même
 document Grist, lorsque les clés, unités et échéances des cibles sont compatibles.
@@ -789,3 +795,39 @@ Les instantanés existants et leurs checkpoints restent inchangés. Les tests
 utilisent un extrait des 11 lignes Grist relues le 18 novembre, des codes et
 années synthétiques, ainsi qu'un fake LLM pour le rapprochement avec le canevas.
 La validation réelle du comportement sémantique du modèle reste humaine.
+
+
+## Contrat unique avant activation en production - 19 novembre 2026
+
+L'import de plan Électrification n'est pas encore activé en production, comme
+confirmé par le demandeur. Les breaking changes sont autorisés avant cette
+activation. Les dispositions de rétrocompatibilité des décisions précédentes
+sur les snapshots V4, les checkpoints V1 et la conservation des anciens libellés
+sont donc supprimées. La source Grist et les correspondances Sheets restent les
+sources de maintenance retenues.
+
+Le catalogue exige les libellés, unités et règles de chaque cible. Les listes
+d'actions, d'indicateurs et de sous-axes sont des tableaux, éventuellement vides,
+jamais des valeurs `null` représentant une configuration non livrée. Le worker
+ne produit et ne lit qu'un seul format de checkpoint. L'adapter V4, ses constantes
+métier, le marqueur `engagementsFormat`, les historiques de libellés et les
+branches de reprise V1 sont retirés. La migration de la sélection active ne
+recopie plus les anciens fichiers de sélection Storage.
+
+La reconnaissance directe utilise le code ou le libellé courant de l'engagement.
+Les autres formulations passent par le rapprochement IA contrôlé avec le
+catalogue admis. Un même code ne peut pas être réattribué à un autre engagement.
+Une URL TeT de fiche ou d'indicateur conserve son rôle d'identifiant ; une URL du
+document Grist entier ne désigne pas un engagement précis.
+
+Les révisions immuables de données restent nécessaires pour la publication
+concurrente, la restauration de contenu et la reprise d'un import en cours avec
+le catalogue qu'il a admis. Ce versionnement ne maintient aucun ancien format.
+Les compléments TeT des actions, absents de Grist, restent conservés lors des
+synchronisations : ils constituent des données courantes administrées.
+
+La première activation suit le [guide de publication](../development/publish-electrification-data.md#première-publication-dans-un-environnement).
+Les jeux de recette d'un format supprimé doivent être republiés et les imports
+concernés relancés. Aucune conversion automatique n'est ajoutée. Les tests de
+compatibilité retirée sont supprimés ; les contrôles du format courant, des
+reprises, des autorisations et de l'intégrité des valeurs restent couverts.

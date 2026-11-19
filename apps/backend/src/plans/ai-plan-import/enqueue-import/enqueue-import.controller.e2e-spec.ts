@@ -788,13 +788,16 @@ describe(
           }
         );
       if (reason === 'liste des actions absente')
-        catalogue.fiches.actions = null;
+        Reflect.deleteProperty(catalogue.fiches, 'actions');
       if (reason === 'référence en double')
         catalogue.axes.push({ ...catalogue.axes[0] });
       if (reason === 'rattachement invalide')
         catalogue.engagements[0].axeNumero = 999;
       if (reason === 'engagements incomplets')
-        delete catalogue.engagements[0].cibles[0].reglesImport;
+        Reflect.deleteProperty(
+          catalogue.engagements[0].cibles[0],
+          'reglesImport'
+        );
       if (reason === 'catalogue vide') {
         catalogue.axes = [];
         catalogue.engagements = [];

@@ -122,7 +122,6 @@ export class GenerateElectrificationImportService implements ImportGenerator {
           {
             ...start.data,
             catalogueVersion,
-            schemaVersion: job.options.schemaVersion,
             collectiviteId: job.collectiviteId,
             onCheckpoint: async (extracted) => {
               const saved = await this.jobs.saveCheckpoint(
