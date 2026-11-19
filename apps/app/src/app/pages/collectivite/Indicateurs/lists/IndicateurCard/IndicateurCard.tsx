@@ -28,6 +28,7 @@ import {
   useIndicateurChartInfo,
 } from '../../data/use-indicateur-chart';
 import { IndicateurCardSkeleton } from './indicateur-card.skeleton';
+import { IndicateurCardTitre } from './indicateur-card.titre';
 
 /** Props de la carte Indicateur */
 export type IndicateurCardProps = {
@@ -190,13 +191,21 @@ export const IndicateurCardBase = ({
             <Checkbox
               checked={selectState.selected}
               onChange={() => selectState.setSelected(indicateur)}
-              label={indicateur.titre}
+              label={
+                <IndicateurCardTitre
+                  ancestors={indicateur.ancestors}
+                  titre={indicateur.titre}
+                />
+              }
               labelClassname="!font-bold"
             />
           ) : (
             <>
               <div className="max-w-full font-bold line-clamp-2 text-primary-10">
-                {indicateur.titre}{' '}
+                <IndicateurCardTitre
+                  ancestors={indicateur.ancestors}
+                  titre={indicateur.titre}
+                />{' '}
                 {indicateur.unite && (
                   <span className="font-normal text-grey-6">
                     {`(${indicateur.unite})`}

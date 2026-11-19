@@ -32,6 +32,7 @@ export const indicateursLabels = {
   indicateurSousIndicateursErreur: 'Impossible de charger les sous-indicateurs',
   indicateurSousIndicateursGraphiqueAlternativeTableau:
     'Les mêmes valeurs sont dans le tableau sous le graphique',
+  indicateurSeparateurAncetres: '>',
   indicateurSousIndicateurDissocier: ({ label }: { label: string }) =>
     `Dissocier ${label}`,
   indicateurSousIndicateurDissocierInfo:
