@@ -15,10 +15,12 @@ import { CollectiviteWithContexteInstruction } from './collectivite-context/type
 
 /**
  * @param demandeAvisId Saisine désignée par l'URL d'un dossier, ou par le
- * dernier dossier ouvert ailleurs dans la collectivité ; sans elle, le contexte
- * rendu est la plus récente. **Tous les appelants d'une requête doivent passer
- * la même valeur** — `cache()` mémoïse par arguments, deux valeurs donneraient
- * deux contextes : côté app, les layouts passent par `getCollectiviteForRequest`.
+ * dernier dossier ouvert ailleurs dans la collectivité ; sans dossier désigné,
+ * pas de contexte : on n'est pas venu par l'instruction, la bannière n'a rien à
+ * annoncer (l'accès par saisine, lui, se lit dans `canVisitAsInstructeur`).
+ * **Tous les appelants d'une requête doivent passer la même valeur** —
+ * `cache()` mémoïse par arguments, deux valeurs donneraient deux contextes :
+ * côté app, les layouts passent par `getCollectiviteForRequest`.
  * @param demarcheId Démarche désignée de la même façon pour un dépôt en
  * élaboration, qui n'a pas de saisine à nommer. Deux scalaires plutôt qu'un objet : `cache()`
  * compare ses arguments par identité, un objet neuf à chaque appel ne serait
@@ -35,19 +37,13 @@ export const getCollectivite = cache(
       (c) => c.collectiviteId === collectiviteId
     );
 
-    // Sans dossier désigné, être membre dispense de chercher un contexte : on y
-    // est chez soi, la bannière n'a rien à annoncer, et la question coûterait une
-    // requête sur la quasi totalité des pages de collectivité.
-    //
-    // Pour un dossier désigné, en revanche, le contexte est ce qui *autorise*
-    // — et ce droit vient de la saisine, pas de la non-appartenance. Un agent
-    // porte parfois deux casquettes, membre d'un EPCI et correspondant d'un
-    // service saisi ; court-circuiter ici l'enfermait dehors, et le compte de
+    // Le contexte est ce qui *autorise* un dossier désigné — et ce droit vient
+    // de la saisine, pas de la non-appartenance. Un agent porte parfois deux
+    // casquettes, membre d'un EPCI et correspondant d'un service saisi ;
+    // court-circuiter les membres l'enfermait dehors, et le compte de
     // développement du seed, membre de tout, ne pouvait ouvrir aucun dossier.
     const contexteAResoudre =
-      demandeAvisId !== undefined ||
-      demarcheId !== undefined ||
-      !collectiviteUserIsMemberOf;
+      demandeAvisId !== undefined || demarcheId !== undefined;
 
     const [collectivite, contexteInstruction] = await Promise.all([
       collectiviteUserIsMemberOf ??
@@ -59,6 +55,16 @@ export const getCollectivite = cache(
 
     return { ...collectivite, contexteInstruction };
   }
+);
+
+/**
+ * Une saisine ouvre-t-elle cette collectivité à l'utilisateur, hors de tout
+ * dossier ? C'est la porte d'un agent de service non vérifié qui entre par
+ * l'annuaire ou un lien : il y entre, mais sans bannière d'instruction.
+ */
+export const canVisitAsInstructeur = cache(
+  async (collectiviteId: number): Promise<boolean> =>
+    (await fetchContexteInstruction(collectiviteId)) !== null
 );
 
 /**

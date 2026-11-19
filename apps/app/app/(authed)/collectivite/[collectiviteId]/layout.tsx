@@ -19,7 +19,12 @@ export default async function Layout({
 
   const [
     user,
-    { collectivite, demandeAvisId, demarcheId, isRememberedDossierStale },
+    {
+      demandeAvisId,
+      demarcheId,
+      isRememberedDossierStale,
+      isVisitAllowedByInstruction,
+    },
   ] = await Promise.all([getUser(), getCollectiviteForRequest(collectiviteId)]);
 
   const userIsNotInCollectivite = !user.collectivites.some(
@@ -33,11 +38,12 @@ export default async function Layout({
   // La saisine ouvre une troisième porte : l'agent d'un service qui instruit
   // cette collectivité y entre sans en être membre, et sans dépendre du rôle
   // vérifié — qui ne s'obtient aujourd'hui que par invitation, donc pas pour un
-  // compte rattaché à son service par ProConnect.
+  // compte rattaché à son service par ProConnect. Qu'il vienne ou non d'un
+  // dossier : seule la bannière en dépend.
   const userNotAllowedToVisitCollectivite =
     !hasRole(user, PlatformRole.VERIFIED) &&
     userIsNotInCollectivite &&
-    collectivite.contexteInstruction === null;
+    !isVisitAllowedByInstruction;
 
   return (
     // La bannière de contexte est rendue par `app-layout`, au-dessus du

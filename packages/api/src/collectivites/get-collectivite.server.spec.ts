@@ -5,7 +5,10 @@ import {
 import { ContexteInstruction } from '@tet/domain/demarches';
 import { permissionsByRole, PlatformRole } from '@tet/domain/users';
 import { getUser } from '../users/user-details.fetch.server';
-import { getCollectivite } from './get-collectivite.server';
+import {
+  canVisitAsInstructeur,
+  getCollectivite,
+} from './get-collectivite.server';
 
 vi.mock('server-only', () => ({}));
 vi.mock('../users/user-details.fetch.server', () => ({ getUser: vi.fn() }));
@@ -76,4 +79,38 @@ it('résout le contexte du dossier pour le super admin sans lui attribuer un ser
     permissions: permissionsByRole[PlatformRole.SUPPORT],
   });
   expect((await getCollectivite(20, 77)).contexteInstruction).toBeNull();
+});
+
+/**
+ * Entrer par l'annuaire ou un lien, ce n'est pas venir d'un dossier : pas de
+ * contexte, donc pas de bannière. La saisine ouvre toujours la collectivité.
+ */
+it('ne prête aucun contexte à l’agent d’un service sans dossier désigné, mais lui ouvre la collectivité', async () => {
+  vi.mocked(getUser).mockResolvedValue({
+    id: 'agent-dreal',
+    nom: 'Test',
+    prenom: 'Dominique',
+    email: 'dominique@example.test',
+    telephone: null,
+    cguAccepteesLe: null,
+    newEmail: undefined,
+    collectivites: [
+      {
+        collectiviteId: 10,
+        collectiviteNom: 'DREAL test',
+        collectiviteType: collectiviteTypeEnum.DREAL,
+        collectiviteAccesRestreint: false,
+        collectivitePreferences: defaultCollectivitePreferences,
+        role: null,
+        permissions: [],
+        audits: [],
+      },
+    ],
+    roles: [PlatformRole.CONNECTED],
+    permissions: [],
+  });
+
+  expect((await getCollectivite(20)).contexteInstruction).toBeNull();
+  expect((await getCollectivite(20, 77)).contexteInstruction).toEqual(contexte);
+  expect(await canVisitAsInstructeur(20)).toBe(true);
 });

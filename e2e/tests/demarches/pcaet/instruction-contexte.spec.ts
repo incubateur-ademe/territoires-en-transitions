@@ -5,6 +5,7 @@ import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authoriza
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import { DemarchePcaetStatus } from '@tet/domain/demarches';
 import { CollectiviteRole } from '@tet/domain/users';
+import type { Collectivites } from 'tests/collectivite/collectivites.fixture';
 import { test } from 'tests/main.fixture';
 import { databaseService } from 'tests/shared/database.service';
 import { InstructionPom } from './instruction.pom';
@@ -113,6 +114,76 @@ test.describe('Démarche PCAET - contexte d’instruction', () => {
     });
 
     await pom.goBackToDemandesAvis(dreal.data.id, demandeAvisId);
+  });
+
+  /**
+   * Le contexte d'instruction n'existe que si l'on vient d'un dossier : entrer
+   * dans une collectivité instruite par un lien ou l'annuaire, c'est la visiter
+   * comme n'importe qui. Quitter la collectivité oublie le dossier ouvert.
+   */
+  test.describe('sans passer par le dossier', () => {
+    const setup = async (collectivites: Collectivites) => {
+      const REGION = await pickFreeRegionCode(databaseService, 'dreal');
+      const { collectivite: dreal } =
+        await collectivites.addCollectiviteAndUser({
+          collectiviteArgs: {
+            type: 'dreal',
+            regionCode: REGION,
+            nom: 'DREAL e2e hors dossier',
+          },
+          userArgs: { role: CollectiviteRole.ADMIN, autoLogin: true },
+        });
+      const deposante = await collectivites.addCollectivite({
+        regionCode: REGION,
+        departementCode: '54',
+        nom: 'Deposante e2e hors dossier',
+      });
+      const demandeAvisId = await createDossierTransmis({
+        collectiviteId: deposante.data.id,
+        serviceId: dreal.data.id,
+      });
+      return { dreal, deposante, demandeAvisId };
+    };
+
+    test('un agent DREAL qui entre directement dans la collectivité instruite n’a pas de bannière', async ({
+      collectivites,
+      page,
+    }) => {
+      const { deposante } = await setup(collectivites);
+      const pom = new InstructionPom(page);
+
+      await page.goto(`/collectivite/${deposante.data.id}/plans`);
+      await pom.expectCollectiviteNavigation();
+      await expect(pom.banner).toBeHidden();
+    });
+
+    test('un agent DREAL qui retourne à son service oublie le dossier ouvert', async ({
+      collectivites,
+      page,
+    }) => {
+      const { dreal, deposante, demandeAvisId } = await setup(collectivites);
+      const pom = new InstructionPom(page);
+
+      await pom.goToDemandesAvis(dreal.data.id);
+      await pom.openDossier({
+        collectiviteInstruiteId: deposante.data.id,
+        demandeAvisId,
+      });
+      await pom.expectContexte({
+        collectiviteInstruiteId: deposante.data.id,
+        demandeAvisId,
+        collectiviteNom: deposante.data.nom,
+      });
+
+      // Retour à la liste sans le lien de la bannière, qui efface déjà le
+      // dossier mémorisé : c'est la sortie de la collectivité qui doit le faire.
+      await pom.goToDemandesAvis(dreal.data.id);
+      await expect(pom.row(demandeAvisId)).toBeVisible();
+
+      await page.goto(`/collectivite/${deposante.data.id}/plans`);
+      await pom.expectCollectiviteNavigation();
+      await expect(pom.banner).toBeHidden();
+    });
   });
 
   /**

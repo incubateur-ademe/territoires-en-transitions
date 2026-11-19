@@ -17,10 +17,14 @@ import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 import {
   clearDossierInstructionCookie,
+  clearDossierInstructionCookiesExcept,
   serializeDossierInstructionCookie,
   writeDossierInstructionCookie,
 } from './dossier-instruction-cookie';
-import { extractDossierInstructionRefFromPath } from './dossier-instruction-path';
+import {
+  extractCollectiviteIdFromPath,
+  extractDossierInstructionRefFromPath,
+} from './dossier-instruction-path';
 
 /**
  * L'agent d'un service qui consulte une collectivité qu'il instruit la visite :
@@ -28,13 +32,12 @@ import { extractDossierInstructionRefFromPath } from './dossier-instruction-path
  * dossier qu'il instruit et sa liste de dossiers.
  *
  * Le contexte vient du store de collectivité, alimenté par le layout de
- * collectivité. Il est déduit de la saisine à chaque rendu : la visite survit
- * donc à un rechargement comme à un lien partagé, et disparaît d'elle-même hors
- * des collectivités instruites.
+ * collectivité. Il n'existe que si l'on vient d'un dossier : entrer dans une
+ * collectivité instruite par l'annuaire ou un lien n'affiche pas de bannière.
  *
  * Sur la route du dossier, le hook mémorise celui-ci dans un cookie de session,
- * que le layout de collectivité relit ailleurs dans la collectivité ; le retour
- * à la liste des dossiers l'efface (cf. `dossier-instruction-cookie.ts`).
+ * que le layout de collectivité relit ailleurs dans la collectivité ; sortir de
+ * la collectivité l'efface (cf. `dossier-instruction-cookie.ts`).
  */
 export const useContexteInstructionVisit = (): VisitMode | null => {
   const { collectivite } = useCollectiviteContext();
@@ -63,7 +66,18 @@ export const useContexteInstructionVisit = (): VisitMode | null => {
     }
   }, [collectiviteId, dossierToRemember]);
 
-  if (!collectivite || !contexte) {
+  // D'après le chemin et non le store, qui garde la collectivité précédente
+  // sur les pages hors collectivité — la bannière n'y a pas sa place non plus.
+  const pathCollectiviteId = extractCollectiviteIdFromPath(pathname);
+  useEffect(() => {
+    clearDossierInstructionCookiesExcept(pathCollectiviteId);
+  }, [pathCollectiviteId]);
+
+  if (
+    !collectivite ||
+    !contexte ||
+    pathCollectiviteId !== collectivite.collectiviteId
+  ) {
     return null;
   }
 

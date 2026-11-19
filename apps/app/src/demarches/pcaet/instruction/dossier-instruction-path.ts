@@ -38,3 +38,19 @@ export function extractDossierInstructionRefFromPath(
 
   return match[1] ? { demarcheId: id } : { demandeAvisId: id };
 }
+
+const COLLECTIVITE_PATH = new RegExp(
+  `^${collectiviteBasePath}/(\\d+)(?:[/?#]|$)`
+);
+
+/**
+ * La collectivité dans laquelle on navigue, `null` hors de toute collectivité
+ * (profil, recherches, raccourci `/collectivite/tableau-de-bord`…).
+ */
+export function extractCollectiviteIdFromPath(
+  pathname: string | null | undefined
+): number | null {
+  const match = pathname ? COLLECTIVITE_PATH.exec(pathname) : null;
+  const id = match ? Number(match[1]) : null;
+  return id !== null && Number.isSafeInteger(id) && id > 0 ? id : null;
+}
