@@ -30,7 +30,7 @@ variable "network_plan" {
     Ces adresses sont le contrat entre ce stack et les stacks applicatifs :
     chaque stack déclare la même valeur dans sa propre variable
     private_ipv4_address. Les modifier ici sans les reporter dans nonprod/ et
-    preview/ casse le pilotage SSH par Coolify.
+    preview/ désaligne l'ACL du VPC.
 
     La prod n'est pas dans ce VPC : elle a son propre projet et son propre VPC
     (infra/prod), sans lien réseau avec celui-ci.
@@ -51,7 +51,7 @@ variable "network_plan" {
   }
   validation {
     condition     = contains(keys(var.network_plan), "platform")
-    error_message = "network_plan doit contenir une entrée 'platform' (le tier du control plane Coolify)."
+    error_message = "network_plan doit contenir une entrée 'platform' (le tier de la passerelle VPN)."
   }
 }
 
@@ -62,53 +62,9 @@ variable "acl_enabled" {
 }
 
 variable "acl_allow_return_traffic" {
-  description = "Ajoute les règles ACL de trafic retour (serveurs applicatifs -> control plane, port source 22). À laisser à true tant que le caractère stateful des ACL VPC Scaleway n'est pas vérifié sur l'infra réelle."
+  description = "Ajoute les règles ACL de trafic retour (serveurs applicatifs -> passerelle VPN). À laisser à true tant que le caractère stateful des ACL VPC Scaleway n'est pas vérifié sur l'infra réelle."
   type        = bool
   default     = true
-}
-
-# --- Control plane Coolify ---
-
-variable "coolify_name" {
-  description = "Nom de la VM Coolify."
-  type        = string
-  default     = "tet-platform-coolify"
-}
-
-variable "coolify_instance_type" {
-  description = "Type d'instance du control plane. Démarrer petit et monter après mesure : Coolify n'héberge aucune application métier."
-  type        = string
-  default     = "PRO2-XXS"
-}
-
-variable "coolify_root_volume_size_in_gb" {
-  description = "Taille du volume racine du control plane, en GB."
-  type        = number
-  default     = 50
-}
-
-variable "coolify_version" {
-  description = "Version stable de Coolify à installer (sans préfixe v). Source de vérité : https://cdn.coollabs.io/coolify/versions.json (clé coolify.v4.version)."
-  type        = string
-  default     = "4.7.1"
-}
-
-variable "coolify_fqdn" {
-  description = "FQDN du dashboard Coolify. Son enregistrement A est posé manuellement chez le registrar, l'apex n'étant pas géré ici."
-  type        = string
-  default     = "coolify.territoiresentransitions.fr"
-}
-
-variable "coolify_ssh_allowed_ips" {
-  description = "CIDR autorisés en SSH sur le control plane. C'est le bastion vers tous les serveurs applicatifs : n'y lister que les IP des opérateurs, jamais 0.0.0.0/0."
-  type        = list(string)
-  default     = []
-}
-
-variable "coolify_ssh_authorized_keys" {
-  description = "Clés publiques SSH des opérateurs, injectées sur l'utilisateur tet-ops du bastion."
-  type        = list(string)
-  default     = []
 }
 
 # --- Passerelle VPN des opérateurs ---
@@ -178,18 +134,6 @@ variable "database_backups_bucket_name" {
   description = "Nom du bucket Object Storage des dumps quotidiens de la BDD de prod. Doit être globalement unique."
   type        = string
   default     = "tet-database-backups"
-}
-
-variable "coolify_instance_backup_prefix" {
-  description = "Préfixe des backups de l'instance Coolify dans le bucket. Doit rester aligné sur instance_backup_prefix (infra/coolify)."
-  type        = string
-  default     = "coolify-instance"
-}
-
-variable "coolify_instance_backup_retention_days" {
-  description = "Durée de conservation des backups de l'instance Coolify, en jours."
-  type        = number
-  default     = 30
 }
 
 variable "backups_lock_days" {

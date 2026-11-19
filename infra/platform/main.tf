@@ -1,59 +1,15 @@
-# Socle transverse : réseau, control plane Coolify et stockage.
+# Socle transverse : réseau, passerelle VPN des opérateurs et stockage.
 # Rien ici n'appartient à un environnement applicatif — les stacks nonprod et
 # preview viennent s'y brancher.
 #
 # La prod est à part : projet Scaleway dédié (créé par un admin), VPC propre (créé par
-# infra/prod), aucun lien réseau avec le VPC partagé. Coolify la pilote en SSH
-# sur son IP publique, ouverte à la seule IP publique du control plane.
+# infra/prod), aucun lien réseau avec le VPC partagé. Coolify (instance de
+# l'incubateur) et le VPN la joignent en SSH sur son IP publique.
 
 locals {
   # Tiers portant un serveur applicatif. Le tier platform n'en fait pas partie :
-  # son serveur est le control plane, pas une cible de déploiement.
+  # il ne porte que la passerelle VPN.
   app_tiers = [for k, v in var.network_plan : k if k != "platform"]
-
-  platform_server_cidr = "${var.network_plan["platform"].server_ipv4_address}/32"
-
-  # Seul flux inter-Private Networks autorisé : le SSH du control plane vers
-  # chaque serveur applicatif. Tout le reste tombe dans le default_policy = drop,
-  # ce qui isole prod, nonprod et preview les uns des autres.
-  acl_ssh_rules = [
-    for tier in local.app_tiers : {
-      protocol    = "TCP"
-      source      = local.platform_server_cidr
-      destination = "${var.network_plan[tier].server_ipv4_address}/32"
-      # Plage explicite : bornes inclusives, 0-0 ne vise que le port 0 et
-      # droppe le SYN, émis depuis un port éphémère.
-      src_port_low  = 0
-      src_port_high = 65535
-      dst_port_low  = 22
-      dst_port_high = 22
-      action        = "accept"
-      description   = "SSH Coolify -> serveur ${tier}"
-    }
-  ]
-
-  # Trafic retour. Les ACL VPC Scaleway s'évaluent par direction : sans ces
-  # règles, les réponses SSH des serveurs applicatifs seraient droppées et
-  # Coolify verrait tous ses serveurs injoignables.
-  #
-  # À garder tant que le comportement n'a pas été confirmé sur l'infra réelle :
-  # une règle en trop est sans effet, une règle manquante coupe le pilotage.
-  acl_ssh_return_rules = var.acl_allow_return_traffic ? [
-    for tier in local.app_tiers : {
-      protocol      = "TCP"
-      source        = "${var.network_plan[tier].server_ipv4_address}/32"
-      destination   = local.platform_server_cidr
-      src_port_low  = 22
-      src_port_high = 22
-      # Plage éphémère Linux (ip_local_port_range) : seuls ports où reviennent
-      # les réponses SSH. Plus large, un serveur compromis émettant depuis le
-      # port 22 atteindrait n'importe quel service privé du control plane.
-      dst_port_low  = 32768
-      dst_port_high = 60999
-      action        = "accept"
-      description   = "Retour SSH serveur ${tier} -> Coolify"
-    }
-  ] : []
 
   # --- Passerelle VPN des opérateurs ---
   #
@@ -119,15 +75,12 @@ module "network" {
   acl_enabled        = var.acl_enabled
   acl_default_policy = "drop"
   acl_rules = concat(
-    local.acl_ssh_rules, local.acl_ssh_return_rules,
     local.vpn_acl_rules, local.vpn_acl_return_rules,
   )
 }
 
-# Accès des opérateurs aux serveurs et aux bases privées. Remplace le bastion
-# SSH du control plane, qui disparaît avec la migration vers l'instance
-# Coolify de l'incubateur (cf. RUNBOOKS.md « Migration vers l'instance
-# Coolify de l'incubateur »).
+# Accès des opérateurs aux serveurs et aux bases privées (cf. README « Accès aux
+# serveurs (VPN) »).
 module "vpn" {
   source = "../modules/vpn"
 
@@ -142,26 +95,6 @@ module "vpn" {
   ssh_authorized_keys     = var.vpn_ssh_authorized_keys
 }
 
-# Ancien control plane Coolify, remplacé par l'instance de l'incubateur. À
-# retirer après la bascule, avec acl_ssh_rules / acl_ssh_return_rules et les
-# variables coolify_* (cf. RUNBOOKS.md, étape « Décommissionner »).
-module "coolify" {
-  source = "../modules/coolify"
-
-  name                   = var.coolify_name
-  zone                   = var.scaleway_zone
-  instance_type          = var.coolify_instance_type
-  root_volume_size_in_gb = var.coolify_root_volume_size_in_gb
-  coolify_version        = var.coolify_version
-  fqdn                   = var.coolify_fqdn
-
-  private_network_id   = module.network.private_network_ids["platform"]
-  private_ipv4_address = var.network_plan["platform"].server_ipv4_address
-
-  ssh_allowed_ips     = var.coolify_ssh_allowed_ips
-  ssh_authorized_keys = var.coolify_ssh_authorized_keys
-}
-
 # --- Projet de production ---
 #
 # La prod vit dans son propre projet Scaleway (var.prod_project_id), où
@@ -171,9 +104,8 @@ module "coolify" {
 
 # --- Stockage des backups ---
 #
-# Bucket cible de tous les backups Coolify : bases des applications (via le S3
-# storage Coolify) et instance Coolify elle-même (infra/coolify,
-# terraform_data.instance_backup).
+# Bucket cible des backups des bases des applications (S3 storage de notre Team
+# Coolify).
 #
 # Projet Scaleway dédié (var.coolify_backups_project_id) : les permissions IAM Object
 # Storage valent pour un projet entier, pas pour un bucket. Dans le projet
@@ -203,21 +135,8 @@ resource "scaleway_object_bucket" "coolify_backups" {
     enabled = true
   }
 
-  # Rétention des backups de l'instance Coolify. Ceux-là ne passent pas par
-  # Coolify, qui ne peut donc pas les purger lui-même. Limitée au préfixe : les
-  # backups des applications gardent la rétention configurée dans Coolify.
-  lifecycle_rule {
-    id      = "coolify-instance-retention"
-    prefix  = "${var.coolify_instance_backup_prefix}/"
-    enabled = true
-
-    expiration {
-      days = var.coolify_instance_backup_retention_days
-    }
-  }
-
   # Sans cette règle, le versioning garde indéfiniment chaque backup supprimé
-  # (par Coolify ou par la règle ci-dessus) : le stockage grossit sans limite.
+  # (par Coolify) : le stockage grossit sans limite.
   lifecycle_rule {
     id      = "noncurrent-versions"
     enabled = true
@@ -261,7 +180,7 @@ resource "scaleway_object_bucket_lock_configuration" "coolify_backups" {
 # Bucket des dumps quotidiens de la BDD de prod (.github/workflows/backup-database.yml),
 # qui alimentent aussi les restaurations de staging et de preprod. Même verrou que
 # coolify_backups, mais dans son propre projet (var.database_backups_project_id) : les
-# dumps ne sont pas chiffrés, la clé Coolify (sur le control plane) ne doit ni
+# dumps ne sont pas chiffrés, la clé des backups Coolify ne doit ni
 # les lire ni en déposer un faux, que restore.sh restaurerait.
 #
 # Pas de règle d'expiration : la rétention (14 jours, puis 1 par semaine jusqu'à 4
@@ -318,15 +237,14 @@ resource "scaleway_object_bucket_lock_configuration" "database_backups" {
   }
 }
 
-# Clé dédiée aux backups, utilisée par le S3 storage Coolify et par le backup
-# de l'instance. L'application IAM, sa politique (objets du projet backups
+# Clé dédiée aux backups, utilisée par le S3 storage Coolify. L'application IAM, sa politique (objets du projet backups
 # uniquement, sans droit sur le cycle de vie, le verrou ni la politique du
 # bucket) et sa clé sont créées par l'admin de l'organisation.
 #
 # Terraform ne gère que le secret qui la porte, au format access_key|secret_key
 # lu par les scripts de infra/coolify. Sa valeur est déposée à la main (cf.
 # README) : elle n'entre donc pas dans le state. Le secret reste dans le projet
-# principal, avec les autres secrets du control plane.
+# principal, avec les autres secrets de la plateforme.
 resource "scaleway_secret" "coolify_backups_credentials" {
   name        = var.coolify_backups_credentials_secret_name
   description = "Clé Object Storage des backups Coolify (access_key|secret_key). Secret géré par Terraform (infra/platform), valeur déposée à la main."
