@@ -1,7 +1,7 @@
 # --- Observabilité : Cockpit du projet principal ---
 #
 # Un Cockpit par projet Scaleway : celui-ci couvre tout le projet principal
-# (preprod, staging, preview, control plane). La prod a le sien, dans le projet
+# (preprod, staging, preview, passerelle VPN). La prod a le sien, dans le projet
 # tet-prod. Ce stack le porte parce que la preprod est son premier client.
 # Définition commune aux deux : modules/cockpit.
 #

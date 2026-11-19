@@ -11,8 +11,7 @@ par un humain vivent dans **Secret Manager**. Ceux que Terraform génère ou lit
 injecter sont aussi dans le state : accéder au bucket `tet-tfstate` vaut accès à eux (cf.
 [Secrets à déposer](#secrets-à-déposer-à-la-main)).
 
-Procédures ponctuelles (restauration de base, bascule de prod, restauration de Coolify,
-montée de version) : [`RUNBOOKS.md`](RUNBOOKS.md).
+Procédures ponctuelles (restauration de base, bascule de prod) : [`RUNBOOKS.md`](RUNBOOKS.md).
 
 ## Vue d'ensemble
 
@@ -145,7 +144,7 @@ Ordre d'application : `platform → nonprod / prod / preview → coolify`.
 ```
 infra/
 ├── modules/             network, vpn, app-server, postgres, redis, cockpit,
-│                        cockpit-dashboards (coolify : ancien control plane, à retirer)
+│                        cockpit-dashboards
 ├── platform/            socle transverse
 ├── nonprod/ prod/ preview/   un stack par tier (nonprod porte aussi supabase-api/ et Cockpit)
 ├── coolify/             Coolify-as-code

@@ -52,43 +52,6 @@ output "vpn_sshd_host_public_key" {
   value       = module.vpn.sshd_host_public_key
 }
 
-# --- Control plane Coolify (ancien, à retirer après la bascule) ---
-
-output "coolify_server_id" {
-  description = "ID Scaleway de la VM Coolify."
-  value       = module.coolify.server_id
-}
-
-output "coolify_public_ip" {
-  description = "IP publique du control plane. Cible de l'enregistrement A du dashboard, et hôte de saut (ssh -J) vers les serveurs applicatifs."
-  value       = module.coolify.public_ip
-}
-
-output "coolify_sshd_host_public_key" {
-  description = "Clé d'hôte SSH du control plane, imposée par Terraform. Valeur coolify_sshd_host_public_key dans infra/coolify, et à épingler dans le known_hosts des opérateurs (bastion)."
-  value       = module.coolify.sshd_host_public_key
-}
-
-output "coolify_private_ip" {
-  description = "IP privée du control plane. Source des flux SSH autorisés par l'ACL du VPC."
-  value       = module.coolify.private_ip
-}
-
-output "coolify_endpoint" {
-  description = "URL de base de l'API Coolify (suffixe /api/v1 inclus). À reporter dans la variable coolify_endpoint du stack infra/coolify."
-  value       = module.coolify.endpoint
-}
-
-output "coolify_host_ssh_key_secret_name" {
-  description = "Nom du secret Secret Manager contenant la clé privée SSH host du control plane. Consommé par le stack infra/coolify."
-  value       = module.coolify.host_ssh_key_secret_name
-}
-
-output "coolify_host_ssh_public_key" {
-  description = "Clé publique SSH host autorisée sur root du control plane. Informative : déjà injectée par cloud-init."
-  value       = module.coolify.host_ssh_public_key
-}
-
 # --- Stockage ---
 
 output "coolify_backups_bucket_name" {

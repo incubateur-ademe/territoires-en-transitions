@@ -42,8 +42,7 @@ resource "scaleway_redis_cluster" "main" {
   password  = random_password.admin.result
 
   # Pas d'endpoint public : le provider Scaleway refuse acl avec
-  # private_network. Accès opérateur par tunnel SSH via le control plane
-  # (ssh -L via le control plane, cf. infra/README.md).
+  # private_network. Accès opérateur par le VPN (cf. infra/README.md).
   dynamic "private_network" {
     for_each = var.private_network_id != null ? [1] : []
     content {

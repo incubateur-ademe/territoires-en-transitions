@@ -18,8 +18,8 @@ variable "scaleway_zone" {
 # --- Réseau ---
 #
 # VPC propre à la prod, créé par ce stack. Seul lien avec infra/platform :
-# l'IP publique du control plane, reportée par valeur (pas de
-# terraform_remote_state, les stacks restent découplés).
+# l'IP publique de la passerelle VPN (ssh_allowed_ips), reportée par valeur
+# (pas de terraform_remote_state, les stacks restent découplés).
 
 variable "private_network_ipv4_subnet" {
   description = "CIDR du Private Network prod, dans le VPC prod."
