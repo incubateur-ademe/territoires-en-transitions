@@ -10,6 +10,8 @@ describe('toUpdateDiagnosticFailure', () => {
   it.each([
     'UNAUTHORIZED',
     'INVALID_VALUE',
+    'INDICATEUR_NOT_AVAILABLE',
+    'PERIODICITE_MISMATCH',
     'USER_VALUE_NOT_ALLOWED',
     'DATABASE_ERROR',
   ] as const)('conserve le code %s et sa cause', (error) => {
@@ -27,7 +29,12 @@ describe('updateDiagnosticIndicateursValeursErrorConfig', () => {
     updateDiagnosticIndicateursValeursErrorConfig
   );
 
-  it.each(['INVALID_VALUE', 'USER_VALUE_NOT_ALLOWED'] as const)(
+  it.each([
+    'INVALID_VALUE',
+    'INDICATEUR_NOT_AVAILABLE',
+    'PERIODICITE_MISMATCH',
+    'USER_VALUE_NOT_ALLOWED',
+  ] as const)(
     '%s est lancée en BAD_REQUEST avec le message de la cause',
     (error) => {
       expect(() =>
