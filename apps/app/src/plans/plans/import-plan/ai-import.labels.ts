@@ -1,5 +1,6 @@
 import { appLabels } from '@/app/labels/catalog';
 import type { RouterOutput } from '@tet/api';
+import type { ImportStepView } from './ai-import-steps.model';
 
 type ImportStatus = RouterOutput['plans']['aiImport']['getAiImportStatus'];
 
@@ -10,6 +11,20 @@ export const importStatusLabels: Record<ImportStatus['status'], string> = {
   done: appLabels.importPlanIaTermine,
   failed: appLabels.importPlanIaEchecCourt,
 };
+
+export const importStepStatusLabels: Record<ImportStepView['status'], string> =
+  {
+    done: appLabels.importPlanIaEtapeTerminee,
+    current: appLabels.importPlanIaEtapeEnCours,
+    waiting: appLabels.importPlanIaEtapeEnAttente,
+    failed: appLabels.importPlanIaEtapeEnEchec,
+    skipped: appLabels.importPlanIaEtapeIgnoree,
+  };
+
+export const importReportStepLabels = {
+  reading: appLabels.importPlanIaEtapeLecture,
+  extraction: appLabels.importPlanIaRapportEtapeExtraction,
+} satisfies Partial<Record<ImportStepView['name'], string>>;
 
 /** Libellés des remarques du compte rendu, par nature de remarque. */
 export const importIssueLabels = {

@@ -336,6 +336,12 @@ test('importe le DOCX avec le profil Électrification et conserve le rapport apr
   await expect(page.getByTestId('plans.import-ia.rapport')).toContainText(
     'Corriger la référence de la fiche.'
   );
+  await expect(
+    page.getByRole('group', { name: 'Lecture du document', exact: true })
+  ).toContainText('Terminée');
+  await expect(
+    page.getByRole('group', { name: 'Extraction des données', exact: true })
+  ).toContainText('Terminée');
   await expect(page.getByTestId('plans.import-ia.etapes')).toHaveCount(0);
   await page.reload();
   await expect(page.getByTestId('plans.import-ia.rapport')).toContainText(
@@ -471,6 +477,7 @@ test('réessaie depuis le détail avec les choix précédents et garde Nouvel im
     ...mock.status,
     status: 'failed',
     error: 'Traitement interrompu pendant la reprise.',
+    stepStates: { ...mock.status.stepStates, scouting: 'skipped' },
     retryDefaults: {
       planName: 'Plan précédent',
       planType: null,
@@ -523,6 +530,22 @@ test('réessaie depuis le détail avec les choix précédents et garde Nouvel im
   const report = page.getByTestId('plans.import-ia.rapport');
   const summary = report.getByRole('alert');
   await expect(summary).toHaveCount(1);
+  await expect(summary).toContainText("L'import a échoué");
+  const readingStatus = report.getByRole('group', {
+    name: 'Lecture du document',
+    exact: true,
+  });
+  const extractionStatus = report.getByRole('group', {
+    name: 'Extraction des données',
+    exact: true,
+  });
+  await expect(readingStatus).toContainText('Terminée');
+  await expect(extractionStatus).toContainText('En échec');
+  const readingBox = await readingStatus.boundingBox();
+  const extractionBox = await extractionStatus.boundingBox();
+  assert(readingBox && extractionBox);
+  expect(readingBox.y).toBe(extractionBox.y);
+  expect(extractionBox.x).toBeGreaterThan(readingBox.x);
   await expect(summary).toContainText(
     '2 erreurs détectées pendant cet import.'
   );
@@ -1008,6 +1031,16 @@ test('masque le plan incomplet depuis le détail d’un import en échec sur mob
   await expect(
     page.getByTestId('plans.import-ia.rapport').getByRole('listitem')
   ).toContainText('Renseignez une année de référence');
+  const readingBox = await page
+    .getByRole('group', { name: 'Lecture du document', exact: true })
+    .boundingBox();
+  const extractionBox = await page
+    .getByRole('group', { name: 'Extraction des données', exact: true })
+    .boundingBox();
+  assert(readingBox && extractionBox);
+  expect(extractionBox.y).toBeGreaterThanOrEqual(
+    readingBox.y + readingBox.height
+  );
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= window.innerWidth
@@ -1264,7 +1297,12 @@ test('retrouve un échec sans plan depuis une liste vide et réserve la reprise 
   collectivites,
 }) => {
   const mock = new AiImportFixture();
-  mock.status = { ...mock.status, status: 'failed', resumable: true };
+  mock.status = {
+    ...mock.status,
+    status: 'failed',
+    resumable: true,
+    stepStates: { ...mock.status.stepStates, reading: 'pending' },
+  };
   mock.recent = [mock.status];
   await mock.install(page);
   const { collectivite } = await collectivites.addCollectiviteAndUser({
@@ -1283,6 +1321,12 @@ test('retrouve un échec sans plan depuis une liste vide et réserve la reprise 
     report.getByRole('link', { name: 'Contacter le support' })
   ).toBeVisible();
   await expect(report).not.toContainText('Aucune remarque signalée.');
+  await expect(
+    report.getByRole('group', { name: 'Lecture du document', exact: true })
+  ).toContainText('En échec');
+  await expect(
+    report.getByRole('group', { name: 'Extraction des données', exact: true })
+  ).toContainText('Non commencée');
   await expect(
     page.getByTestId('plans.import-ia.reprendre-button')
   ).toHaveCount(0);

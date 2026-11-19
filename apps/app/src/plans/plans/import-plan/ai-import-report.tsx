@@ -1,11 +1,52 @@
 import { appLabels } from '@/app/labels/catalog';
 import type { RouterOutput } from '@tet/api';
 import { Alert, Badge, Button, Card, Icon } from '@tet/ui';
-import { importIssueHintLabels, importIssueLabels } from './ai-import.labels';
+import { capitalize } from '@tet/ui/labels/plural';
+import { cn } from '@tet/ui/utils/cn';
+import { StepStatusIcon } from './ai-import-progress';
+import { ImportStepStates, toImportStepViews } from './ai-import-steps.model';
+import {
+  importIssueHintLabels,
+  importIssueLabels,
+  importReportStepLabels,
+  importStepStatusLabels,
+} from './ai-import.labels';
 import { SupportChatLink } from './support-chat.link';
 
 type ImportStatus = RouterOutput['plans']['aiImport']['getAiImportStatus'];
 type ImportIssue = ImportStatus['report']['issues'][number];
+
+const ImportFailedSteps = ({
+  stepStates,
+}: {
+  stepStates: ImportStepStates;
+}) => (
+  <div className="grid gap-4 md:grid-cols-2">
+    {toImportStepViews(stepStates, { failed: true }).map(({ name, status }) => {
+      if (name !== 'reading' && name !== 'extraction') return null;
+      return (
+        <Card
+          key={name}
+          role="group"
+          aria-label={importReportStepLabels[name]}
+          className={cn('m-0 p-4 flex-row items-center gap-4 text-grey-8', {
+            'border-2 border-error-1': status === 'failed',
+          })}
+        >
+          <StepStatusIcon status={status} />
+          <div>
+            <p className="mb-0 font-bold">{importReportStepLabels[name]}</p>
+            <p className="mb-0 font-normal text-grey-7">
+              {status === 'waiting'
+                ? appLabels.importPlanIaEtapeNonCommencee
+                : capitalize(importStepStatusLabels[status])}
+            </p>
+          </div>
+        </Card>
+      );
+    })}
+  </div>
+);
 
 const ImportIssueCard = ({
   issue,
@@ -47,7 +88,10 @@ export const AiImportReport = ({
   onResume,
   isResuming = false,
 }: {
-  status: Pick<ImportStatus, 'status' | 'error' | 'report' | 'createdPlanId'>;
+  status: Pick<
+    ImportStatus,
+    'status' | 'error' | 'report' | 'createdPlanId' | 'stepStates'
+  >;
   onRetry: () => void;
   onResume?: () => void;
   isResuming?: boolean;
@@ -66,6 +110,7 @@ export const AiImportReport = ({
 
   return (
     <div className="flex flex-col gap-6" data-test="plans.import-ia.rapport">
+      {failed && <ImportFailedSteps stepStates={status.stepStates} />}
       <div role={failed ? 'alert' : 'status'}>
         <Alert
           state={failed ? 'error' : 'success'}
