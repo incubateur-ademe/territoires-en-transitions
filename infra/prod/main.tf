@@ -78,6 +78,15 @@ module "postgres" {
   settings = {
     "statement_timeout"                   = "600000"
     "idle_in_transaction_session_timeout" = "120000"
+    # Valeurs posées explicitement sur l'instance par la montée en PG 17
+    # (blue/green). Les déclarer évite que le plan les remette à null, ce qui
+    # peut redémarrer l'instance (max_connections).
+    "effective_cache_size"            = "1300"
+    "maintenance_work_mem"            = "150"
+    "max_connections"                 = "100"
+    "max_parallel_workers"            = "0"
+    "max_parallel_workers_per_gather" = "0"
+    "work_mem"                        = "4"
   }
 }
 
