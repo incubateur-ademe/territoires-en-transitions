@@ -15,7 +15,10 @@ import { randomUUID } from 'crypto';
 import { eq } from 'drizzle-orm';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { auditTable } from '@tet/backend/referentiels/labellisations/audit.table';
-import { addAuditeurPermission } from '@tet/backend/referentiels/labellisations/labellisations.test-fixture';
+import {
+  addAuditeurPermission,
+  createAudit,
+} from '@tet/backend/referentiels/labellisations/labellisations.test-fixture';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
 import { GeneratePreuvesArchiveWorker } from './generate-preuves-archive/generate-preuves-archive.worker';
 import {
@@ -85,7 +88,11 @@ describe('Archive de preuves - tRPC', () => {
 
     const [audit] = await db.db
       .insert(auditTable)
-      .values({ collectiviteId: collectivite.id, referentielId: 'cae' })
+      .values({
+        collectiviteId: collectivite.id,
+        referentielId: 'cae',
+        dateDebut: new Date().toISOString(),
+      })
       .returning();
     auditId = audit.id;
 
@@ -158,7 +165,6 @@ describe('Archive de preuves - tRPC', () => {
         errorMessage: null,
       });
     });
-
   });
 
   describe("Archive de preuves - Cas d'erreur", () => {
@@ -361,6 +367,152 @@ describe('Archive de preuves - tRPC', () => {
           referentielId: 'cae',
         })
       ).rejects.toThrow("Vous n'avez pas les permissions nécessaires");
+    });
+  });
+
+  describe('Archive de preuves - audit ciblé', () => {
+    async function requestArchiveAuditId(
+      setup: (collectiviteId: number) => Promise<void>
+    ): Promise<number | null> {
+      const fixture = await addTestCollectiviteAndUser(db, {
+        user: { role: CollectiviteRole.ADMIN },
+      });
+      await setup(fixture.collectivite.id);
+      const caller = router.createCaller({
+        user: getAuthUserFromUserCredentials(fixture.user),
+      });
+
+      const { archiveId } = await caller.referentiels.preuvesArchive.request({
+        collectiviteId: fixture.collectivite.id,
+        referentielId: 'cae',
+      });
+
+      const [archive] = await db.db
+        .select({ auditId: auditPreuvesArchiveTable.auditId })
+        .from(auditPreuvesArchiveTable)
+        .where(eq(auditPreuvesArchiveTable.id, archiveId));
+      return archive.auditId;
+    }
+
+    test("sans dossier de labellisation, l'archive n'est rattachée à aucun audit", async () => {
+      const auditId = await requestArchiveAuditId(async (collectiviteId) => {
+        await createAudit({
+          databaseService: db,
+          collectiviteId,
+          referentielId: 'cae',
+          dateDebut: null,
+        });
+      });
+
+      expect(auditId).toBeNull();
+    });
+
+    test("après clôture, cible le dernier audit clos plutôt que l'audit vierge recréé", async () => {
+      let dernierClosId = 0;
+      const auditId = await requestArchiveAuditId(async (collectiviteId) => {
+        await createAudit({
+          databaseService: db,
+          collectiviteId,
+          referentielId: 'cae',
+          dateDebut: '2023-01-01T00:00:00.000Z',
+          clos: true,
+        });
+        ({
+          audit: { id: dernierClosId },
+        } = await createAudit({
+          databaseService: db,
+          collectiviteId,
+          referentielId: 'cae',
+          dateDebut: '2025-01-01T00:00:00.000Z',
+          clos: true,
+        }));
+        await createAudit({
+          databaseService: db,
+          collectiviteId,
+          referentielId: 'cae',
+          dateDebut: null,
+        });
+      });
+
+      expect(auditId).toBe(dernierClosId);
+    });
+
+    test('cible un audit non démarré dont la demande est envoyée', async () => {
+      let demandeEnvoyeeId = 0;
+      const auditId = await requestArchiveAuditId(async (collectiviteId) => {
+        await createAudit({
+          databaseService: db,
+          collectiviteId,
+          referentielId: 'cae',
+          dateDebut: '2023-01-01T00:00:00.000Z',
+          clos: true,
+        });
+        ({
+          audit: { id: demandeEnvoyeeId },
+        } = await createAudit({
+          databaseService: db,
+          collectiviteId,
+          referentielId: 'cae',
+          dateDebut: null,
+          withDemande: true,
+        }));
+      });
+
+      expect(auditId).toBe(demandeEnvoyeeId);
+    });
+
+    test('cible un dossier clos sans démarrage plus récent que le dernier audit démarré', async () => {
+      let closSansDemarrageId = 0;
+      const auditId = await requestArchiveAuditId(async (collectiviteId) => {
+        await createAudit({
+          databaseService: db,
+          collectiviteId,
+          referentielId: 'cae',
+          dateDebut: '2023-01-01T00:00:00.000Z',
+          clos: true,
+        });
+        ({
+          audit: { id: closSansDemarrageId },
+        } = await createAudit({
+          databaseService: db,
+          collectiviteId,
+          referentielId: 'cae',
+          dateDebut: null,
+          clos: true,
+          withDemande: true,
+        }));
+        await createAudit({
+          databaseService: db,
+          collectiviteId,
+          referentielId: 'cae',
+          dateDebut: null,
+        });
+      });
+
+      expect(auditId).toBe(closSansDemarrageId);
+    });
+
+    test("un audit en cours l'emporte sur un audit clos plus ancien", async () => {
+      let enCoursId = 0;
+      const auditId = await requestArchiveAuditId(async (collectiviteId) => {
+        await createAudit({
+          databaseService: db,
+          collectiviteId,
+          referentielId: 'cae',
+          dateDebut: '2025-06-01T00:00:00.000Z',
+          clos: true,
+        });
+        ({
+          audit: { id: enCoursId },
+        } = await createAudit({
+          databaseService: db,
+          collectiviteId,
+          referentielId: 'cae',
+          dateDebut: '2024-01-01T00:00:00.000Z',
+        }));
+      });
+
+      expect(auditId).toBe(enCoursId);
     });
   });
 });

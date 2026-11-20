@@ -33,7 +33,7 @@ import {
 
 interface JobContext {
   user: AuthenticatedUser;
-  demandeId: number;
+  demandeId: number | null;
   referentielId: ReferentielId;
   archiveName: string;
 }
@@ -239,20 +239,17 @@ export class GeneratePreuvesArchiveService {
   }
 
   private async resolveDemandeId(
-    auditId: number
-  ): Promise<Result<number, GenerateArchiveFailure>> {
+    auditId: number | null
+  ): Promise<Result<number | null, GenerateArchiveFailure>> {
+    if (auditId === null) {
+      return success(null);
+    }
     try {
       const auditDetails = await this.getLabellisationService.getAudit(auditId);
       if (!auditDetails.success) {
         return nonRetryableFailure(`Audit ${auditId} introuvable`);
       }
-      const demandeId = auditDetails.data.demandeId;
-      if (demandeId == null) {
-        return nonRetryableFailure(
-          `Aucune demande de labellisation rattachée à l'audit ${auditId}`
-        );
-      }
-      return success(demandeId);
+      return success(auditDetails.data.demandeId ?? null);
     } catch (error) {
       // L'accès DB peut tomber transitoirement : laisser BullMQ relancer.
       return retryableFailure(

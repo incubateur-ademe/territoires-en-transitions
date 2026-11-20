@@ -21,10 +21,6 @@ export const preuvesArchiveErrorConfig: TrpcErrorHandlerConfig<PreuvesArchiveSpe
         code: 'NOT_FOUND',
         message: "L'archive de preuves demandée n'existe pas",
       },
-      AUDIT_NOT_FOUND: {
-        code: 'NOT_FOUND',
-        message: "Aucun audit en cours pour ce référentiel",
-      },
       ARCHIVE_STATUS_PARSE_ERROR: {
         code: 'INTERNAL_SERVER_ERROR',
         message: "Le statut de l'archive de preuves est invalide",

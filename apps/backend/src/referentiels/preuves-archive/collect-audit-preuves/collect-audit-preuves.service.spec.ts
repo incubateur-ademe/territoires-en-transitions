@@ -144,6 +144,28 @@ describe('CollectAuditPreuvesService', () => {
     );
   });
 
+  it('sans audit ni demande, ne collecte que les preuves des mesures', async () => {
+    const { service, listDocuments } = buildService();
+
+    const result = await service.collect({
+      ...baseInput,
+      auditId: null,
+      demandeId: null,
+    });
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    const scopes: DocumentScope[] = listDocuments.mock.calls.map(
+      ([scope]) => scope
+    );
+    expect(scopes.map(({ kind }) => kind)).toEqual([
+      'complementaire',
+      'reglementaire',
+    ]);
+    expect(result.data.demande.files).toEqual([]);
+    expect(result.data.audit.files).toEqual([]);
+  });
+
   it('fusionne complémentaires et réglementaires sous le bucket `mesure`', async () => {
     const { service } = buildService({
       complementaire: {

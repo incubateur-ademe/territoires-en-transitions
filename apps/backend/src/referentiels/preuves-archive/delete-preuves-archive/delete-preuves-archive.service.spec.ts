@@ -10,7 +10,11 @@ import {
 } from '../preuves-archive.errors';
 import { DeletePreuvesArchiveService } from './delete-preuves-archive.service';
 
-const input = { auditId: 10, requestedBy: 'owner-id' };
+const input = {
+  collectiviteId: 1,
+  referentielId: 'cae',
+  requestedBy: 'owner-id',
+};
 
 const EXPIRED = '2020-01-01T00:00:00.000Z';
 
@@ -92,7 +96,9 @@ describe('DeletePreuvesArchiveService', () => {
         makeArchive({ id: 'expiree', expiresAt: EXPIRED }),
         makeArchive({ id: 'fraiche' }),
       ]),
-      deleteByIds: success([makeArchive({ id: 'expiree', expiresAt: EXPIRED })]),
+      deleteByIds: success([
+        makeArchive({ id: 'expiree', expiresAt: EXPIRED }),
+      ]),
     });
 
     const result = await service.delete(input);
@@ -138,7 +144,9 @@ describe('DeletePreuvesArchiveService', () => {
   it('supprime quand même la ligne si la suppression du blob échoue', async () => {
     const { service, repository } = buildService({
       candidates: success([makeArchive({ id: 'expiree', expiresAt: EXPIRED })]),
-      deleteByIds: success([makeArchive({ id: 'expiree', expiresAt: EXPIRED })]),
+      deleteByIds: success([
+        makeArchive({ id: 'expiree', expiresAt: EXPIRED }),
+      ]),
       removeDocument: failure(PreuvesArchiveErrorEnum.GET_ARCHIVE_ERROR),
     });
 

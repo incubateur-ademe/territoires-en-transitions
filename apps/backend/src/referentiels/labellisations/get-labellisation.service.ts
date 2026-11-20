@@ -31,7 +31,18 @@ import {
   toReponseAttendue,
   StatutAvancementEnum,
 } from '@tet/domain/referentiels';
-import { and, desc, eq, getTableColumns, lte, not, sql } from 'drizzle-orm';
+import {
+  and,
+  asc,
+  desc,
+  eq,
+  getTableColumns,
+  isNotNull,
+  lte,
+  not,
+  or,
+  sql,
+} from 'drizzle-orm';
 import { HandleMesurePilotesService } from '../handle-mesure-pilotes/handle-mesure-pilotes.service';
 import { SnapshotsService } from '../snapshots/snapshots.service';
 import { auditTable } from './audit.table';
@@ -261,23 +272,38 @@ export class GetLabellisationService {
     return rows.length > 0;
   }
 
-  async getCurrentAudit(
+  /**
+   * Audit du dossier de labellisation le plus pertinent : l'audit non clos
+   * s'il correspond à un vrai dossier, sinon le dernier dossier clos. Un vrai
+   * dossier a démarré ou a une demande envoyée (même critère que la liste des
+   * dossiers) ; l'audit vierge recréé après une clôture est donc ignoré.
+   */
+  async getLatestDossierAudit(
     collectiviteId: number,
-    referentielId: ReferentielId,
-    tx?: Transaction
+    referentielId: ReferentielId
   ): Promise<Result<LabellisationAudit, GetDemandeOrAuditError>> {
     try {
-      const audit = await (tx ?? this.db)
-        .select()
+      const audit = await this.db
+        .select(getTableColumns(auditTable))
         .from(auditTable)
+        .leftJoin(
+          labellisationDemandeTable,
+          and(
+            eq(labellisationDemandeTable.id, auditTable.demandeId),
+            eq(labellisationDemandeTable.enCours, false)
+          )
+        )
         .where(
           and(
             eq(auditTable.collectiviteId, collectiviteId),
             eq(auditTable.referentielId, referentielId),
-            not(auditTable.clos)
+            or(
+              isNotNull(auditTable.dateDebut),
+              isNotNull(labellisationDemandeTable.id)
+            )
           )
         )
-        .orderBy(auditTable.dateDebut)
+        .orderBy(asc(auditTable.clos), desc(auditTable.id))
         .limit(1);
 
       if (!audit.length) {
