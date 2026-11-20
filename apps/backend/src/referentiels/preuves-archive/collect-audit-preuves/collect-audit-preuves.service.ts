@@ -21,10 +21,17 @@ export interface PreuvesByOrigin {
 interface CollectAuditPreuvesInput {
   collectiviteId: number;
   referentielId: ReferentielId;
-  demandeId: number;
-  auditId: number;
+  /** `null` sans audit ou sans demande : la section correspondante reste vide. */
+  demandeId: number | null;
+  auditId: number | null;
   user: AuthenticatedUser;
 }
+
+const NO_DOCUMENTS = success<CollectedDocuments>({
+  files: [],
+  missingFiles: [],
+  links: [],
+});
 
 @Injectable()
 export class CollectAuditPreuvesService {
@@ -62,45 +69,49 @@ export class CollectAuditPreuvesService {
           referentielId,
           canReadConfidentiel,
         }),
-        this.documents.listDocuments({
-          kind: 'labellisation',
-          collectiviteId,
-          demandeId,
-          canReadConfidentiel,
-        }),
-        this.documents.listDocuments({
-          kind: 'audit',
-          collectiviteId,
-          auditId,
-          canReadConfidentiel,
-        }),
+        demandeId === null
+          ? NO_DOCUMENTS
+          : this.documents.listDocuments({
+              kind: 'labellisation',
+              collectiviteId,
+              demandeId,
+              canReadConfidentiel,
+            }),
+        auditId === null
+          ? NO_DOCUMENTS
+          : this.documents.listDocuments({
+              kind: 'audit',
+              collectiviteId,
+              auditId,
+              canReadConfidentiel,
+            }),
       ]);
 
     if (!complementaire.success) {
       return this.scopeFailure({
         kind: 'complementaire',
-        auditId,
+        input,
         cause: complementaire.cause,
       });
     }
     if (!reglementaire.success) {
       return this.scopeFailure({
         kind: 'reglementaire',
-        auditId,
+        input,
         cause: reglementaire.cause,
       });
     }
     if (!labellisation.success) {
       return this.scopeFailure({
         kind: 'labellisation',
-        auditId,
+        input,
         cause: labellisation.cause,
       });
     }
     if (!audit.success) {
       return this.scopeFailure({
         kind: 'audit',
-        auditId,
+        input,
         cause: audit.cause,
       });
     }
@@ -121,15 +132,17 @@ export class CollectAuditPreuvesService {
 
   private scopeFailure({
     kind,
-    auditId,
+    input: { collectiviteId, referentielId, demandeId, auditId },
     cause,
   }: {
     kind: DocumentScopeKind;
-    auditId: number;
+    input: CollectAuditPreuvesInput;
     cause?: Error;
   }): Result<never, PreuvesArchiveError> {
     this.logger.error(
-      `Failed to collect the ${kind} documents of audit ${auditId}`
+      `Failed to collect the ${kind} documents (collectivite ${collectiviteId}, referentiel ${referentielId}, demande ${
+        demandeId ?? 'none'
+      }, audit ${auditId ?? 'none'})`
     );
     return failure(PreuvesArchiveErrorEnum.COLLECT_PREUVES_ERROR, cause);
   }

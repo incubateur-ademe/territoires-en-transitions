@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { AuditPreuvesArchiveStatusEnum } from '../models/audit-preuves-archive.table';
 import {
-  MAX_ARCHIVES_PER_AUDIT_USER,
+  MAX_ARCHIVES_PER_USER,
   selectArchivesToDelete,
   type DeletableArchive,
 } from './select-archives-to-delete';
@@ -25,15 +25,14 @@ const dayOf = (day: number) =>
 
 describe('selectArchivesToDelete', () => {
   it("ne supprime rien tant qu'il y a 10 archives fraîches ou moins", () => {
-    const archives = Array.from(
-      { length: MAX_ARCHIVES_PER_AUDIT_USER },
-      (_, i) => toArchive({ id: `a-${i}`, createdAt: dayOf(10 + i) })
+    const archives = Array.from({ length: MAX_ARCHIVES_PER_USER }, (_, i) =>
+      toArchive({ id: `a-${i}`, createdAt: dayOf(10 + i) })
     );
 
     expect(
       selectArchivesToDelete(archives, {
         now,
-        keepMostRecent: MAX_ARCHIVES_PER_AUDIT_USER,
+        keepMostRecent: MAX_ARCHIVES_PER_USER,
       })
     ).toEqual([]);
   });
@@ -45,7 +44,7 @@ describe('selectArchivesToDelete', () => {
 
     const deleted = selectArchivesToDelete(archives, {
       now,
-      keepMostRecent: MAX_ARCHIVES_PER_AUDIT_USER,
+      keepMostRecent: MAX_ARCHIVES_PER_USER,
     });
 
     expect(deleted.map((archive) => archive.id)).toEqual(['a-1', 'a-0']);
@@ -63,7 +62,7 @@ describe('selectArchivesToDelete', () => {
 
     const deleted = selectArchivesToDelete(archives, {
       now,
-      keepMostRecent: MAX_ARCHIVES_PER_AUDIT_USER,
+      keepMostRecent: MAX_ARCHIVES_PER_USER,
     });
 
     expect(deleted.map((archive) => archive.id)).toEqual(['expiree']);
@@ -77,7 +76,7 @@ describe('selectArchivesToDelete', () => {
         createdAt: dayOf(1),
         expiresAt: '2026-06-08T00:00:00.000Z',
       }),
-      ...Array.from({ length: MAX_ARCHIVES_PER_AUDIT_USER }, (_, i) =>
+      ...Array.from({ length: MAX_ARCHIVES_PER_USER }, (_, i) =>
         toArchive({ id: `a-${i}`, createdAt: dayOf(15 + i) })
       ),
     ];
@@ -85,7 +84,7 @@ describe('selectArchivesToDelete', () => {
     expect(
       selectArchivesToDelete(archives, {
         now,
-        keepMostRecent: MAX_ARCHIVES_PER_AUDIT_USER,
+        keepMostRecent: MAX_ARCHIVES_PER_USER,
       })
     ).toEqual([]);
   });
@@ -109,7 +108,7 @@ describe('selectArchivesToDelete', () => {
 
     const deleted = selectArchivesToDelete([...inFlight, ...completed], {
       now,
-      keepMostRecent: MAX_ARCHIVES_PER_AUDIT_USER,
+      keepMostRecent: MAX_ARCHIVES_PER_USER,
     });
 
     expect(deleted.map((archive) => archive.id)).toEqual(['c-0']);

@@ -95,7 +95,7 @@ export function getSwitchToTeBlockers(input: {
 ### 2. Lectures read-only — [get-labellisation.service.ts](apps/backend/src/referentiels/labellisations/get-labellisation.service.ts)
 
 - `isCotActif(collectiviteId)` : `select cot where collectiviteId and actif = true` (ne pas modifier `isCot()`).
-- `getCurrentDemandeAndAudit(collectiviteId, referentielId)` : read-only, **sans création** — audit non-`clos` le plus récent (réutiliser la requête de `getCurrentAudit`) ; demande = celle liée (`audit.demandeId`) sinon la dernière demande du couple (coll, ref) ; retourne `{ demande, audit }` (nullable) au format attendu par `getParcoursLabellisationStatus`.
+- `getCurrentDemandeAndAudit(collectiviteId, referentielId)` : read-only, **sans création** — audit non-`clos` le plus récent ; demande = celle liée (`audit.demandeId`) sinon la dernière demande du couple (coll, ref) ; retourne `{ demande, audit }` (nullable) au format attendu par `getParcoursLabellisationStatus`.
 
 ### 3. `SwitchToTeService` — [switch-to-te.service.ts](apps/backend/src/referentiels/switch-to-te/switch-to-te.service.ts)
 

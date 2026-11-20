@@ -72,7 +72,7 @@ export class RequestPreuvesArchiveService {
       );
     }
 
-    const auditIdResult = await this.resolveCurrentAuditId(
+    const auditIdResult = await this.resolveAuditId(
       collectiviteId,
       referentielId
     );
@@ -96,12 +96,13 @@ export class RequestPreuvesArchiveService {
     const archive = createResult.data;
 
     const deleted = await this.deleteService.delete({
-      auditId,
+      collectiviteId,
+      referentielId,
       requestedBy: user.id,
     });
     if (!deleted.success) {
       this.logger.error(
-        `Suppression des archives obsolètes (audit ${auditId}, user ${user.id}) échouée: ${deleted.error}`
+        `Suppression des archives obsolètes (collectivité ${collectiviteId}, référentiel ${referentielId}, user ${user.id}) échouée: ${deleted.error}`
       );
     }
 
@@ -134,30 +135,25 @@ export class RequestPreuvesArchiveService {
     return success({ archiveId: archive.id, status: archive.status });
   }
 
-  private async resolveCurrentAuditId(
+  /** `null` sans dossier de labellisation : l'archive n'aura que les preuves des mesures. */
+  private async resolveAuditId(
     collectiviteId: number,
     referentielId: ReferentielId
-  ): Promise<Result<number, PreuvesArchiveError>> {
-    const audit = await this.getLabellisationService.getCurrentAudit(
+  ): Promise<Result<number | null, PreuvesArchiveError>> {
+    const audit = await this.getLabellisationService.getLatestDossierAudit(
       collectiviteId,
       referentielId
     );
     if (audit.success) {
       return success(audit.data.id);
     }
-
     if (audit.error === 'NOT_FOUND') {
-      return failure(
-        PreuvesArchiveErrorEnum.AUDIT_NOT_FOUND,
-        new Error(
-          `Aucun audit en cours pour la collectivité ${collectiviteId} et le référentiel ${referentielId}`
-        )
-      );
+      return success(null);
     }
     return failure(
       PreuvesArchiveErrorEnum.CREATE_ARCHIVE_ERROR,
       new Error(
-        `Résolution de l'audit courant échouée (collectivité ${collectiviteId}, référentiel ${referentielId})`
+        `Résolution de l'audit échouée (collectivité ${collectiviteId}, référentiel ${referentielId})`
       )
     );
   }

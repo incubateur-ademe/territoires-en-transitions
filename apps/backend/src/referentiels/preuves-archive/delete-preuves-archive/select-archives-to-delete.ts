@@ -3,7 +3,7 @@ import {
   type AuditPreuvesArchive,
 } from '../models/audit-preuves-archive.table';
 
-export const MAX_ARCHIVES_PER_AUDIT_USER = 10;
+export const MAX_ARCHIVES_PER_USER = 10;
 
 export type DeletableArchive = Pick<
   AuditPreuvesArchive,

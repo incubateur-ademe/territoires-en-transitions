@@ -5,13 +5,14 @@ import { PREUVES_ARCHIVES_BUCKET } from '../preuves-archive.constants';
 import { type PreuvesArchiveError } from '../preuves-archive.errors';
 import { PreuvesArchiveRepository } from '../preuves-archive.repository';
 import {
-  MAX_ARCHIVES_PER_AUDIT_USER,
+  MAX_ARCHIVES_PER_USER,
   selectArchivesToDelete,
   type DeletableArchive,
 } from './select-archives-to-delete';
 
 export interface DeletePreuvesArchiveInput {
-  auditId: number;
+  collectiviteId: number;
+  referentielId: string;
   requestedBy: string;
 }
 
@@ -51,7 +52,7 @@ export class DeletePreuvesArchiveService {
 
     const toDelete = selectArchivesToDelete(candidates.data, {
       now: new Date(),
-      keepMostRecent: MAX_ARCHIVES_PER_AUDIT_USER,
+      keepMostRecent: MAX_ARCHIVES_PER_USER,
     });
     if (toDelete.length === 0) {
       return success(0);

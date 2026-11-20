@@ -7,6 +7,7 @@ import {
   AuditPreuvesArchive,
   type AuditPreuvesArchiveErrorCode,
   auditPreuvesArchiveDeletableStatuses,
+  auditPreuvesArchiveInFlightStatuses,
   auditPreuvesArchiveStatusSchema,
   AuditPreuvesArchiveStatus,
   AuditPreuvesArchiveStatusEnum,
@@ -20,7 +21,7 @@ import {
 export interface CreateArchiveInput {
   collectiviteId: number;
   referentielId: string;
-  auditId: number;
+  auditId: number | null;
   requestedBy: string;
   expiresAt: string;
 }
@@ -41,44 +42,21 @@ export class PreuvesArchiveRepository {
     input: CreateArchiveInput
   ): Promise<Result<AuditPreuvesArchive, PreuvesArchiveError>> {
     try {
-      const [created] = await this.db
-        .insert(auditPreuvesArchiveTable)
-        .values({
-          collectiviteId: input.collectiviteId,
-          referentielId: input.referentielId,
-          auditId: input.auditId,
-          requestedBy: input.requestedBy,
-          status: AuditPreuvesArchiveStatusEnum.PENDING,
-          expiresAt: input.expiresAt,
-        })
-        .onConflictDoNothing()
-        .returning();
-
-      if (created) {
-        return this.parseRow(created);
+      // 2 tentatives : le job in-flight en conflit peut se terminer entre
+      // l'INSERT et le SELECT ; l'INSERT suivant passe alors.
+      for (let attempt = 0; attempt < 2; attempt++) {
+        const row =
+          (await this.insertPending(input)) ?? (await this.findInFlight(input));
+        if (row) {
+          return this.parseRow(row);
+        }
       }
-
-      const [existing] = await this.db
-        .select()
-        .from(auditPreuvesArchiveTable)
-        .where(
-          and(
-            eq(auditPreuvesArchiveTable.auditId, input.auditId),
-            eq(auditPreuvesArchiveTable.requestedBy, input.requestedBy)
-          )
+      return failure(
+        PreuvesArchiveErrorEnum.CREATE_ARCHIVE_ERROR,
+        new Error(
+          'Aucune ligne créée ni job in-flight trouvé après ON CONFLICT'
         )
-        .limit(1);
-
-      if (!existing) {
-        return failure(
-          PreuvesArchiveErrorEnum.CREATE_ARCHIVE_ERROR,
-          new Error(
-            'Aucune ligne créée ni job in-flight trouvé après ON CONFLICT'
-          )
-        );
-      }
-
-      return this.parseRow(existing);
+      );
     } catch (error) {
       this.logger.error(`Création du job d'archive: ${getErrorMessage(error)}`);
       return failure(
@@ -86,6 +64,41 @@ export class PreuvesArchiveRepository {
         error instanceof Error ? error : new Error(getErrorMessage(error))
       );
     }
+  }
+
+  private async insertPending(input: CreateArchiveInput) {
+    const [created] = await this.db
+      .insert(auditPreuvesArchiveTable)
+      .values({
+        collectiviteId: input.collectiviteId,
+        referentielId: input.referentielId,
+        auditId: input.auditId,
+        requestedBy: input.requestedBy,
+        status: AuditPreuvesArchiveStatusEnum.PENDING,
+        expiresAt: input.expiresAt,
+      })
+      .onConflictDoNothing()
+      .returning();
+    return created;
+  }
+
+  private async findInFlight(input: CreateArchiveInput) {
+    const [existing] = await this.db
+      .select()
+      .from(auditPreuvesArchiveTable)
+      .where(
+        and(
+          eq(auditPreuvesArchiveTable.collectiviteId, input.collectiviteId),
+          eq(auditPreuvesArchiveTable.referentielId, input.referentielId),
+          eq(auditPreuvesArchiveTable.requestedBy, input.requestedBy),
+          inArray(
+            auditPreuvesArchiveTable.status,
+            auditPreuvesArchiveInFlightStatuses
+          )
+        )
+      )
+      .limit(1);
+    return existing;
   }
 
   async getByIdRaw(
@@ -174,9 +187,11 @@ export class PreuvesArchiveRepository {
       return this.parseRows(rows);
     } catch (error) {
       this.logger.error(
-        `Liste des archives (collectivité ${input.collectiviteId}, référentiel ${input.referentielId}, user ${input.requestedBy}): ${getErrorMessage(
-          error
-        )}`
+        `Liste des archives (collectivité ${
+          input.collectiviteId
+        }, référentiel ${input.referentielId}, user ${
+          input.requestedBy
+        }): ${getErrorMessage(error)}`
       );
       return failure(
         PreuvesArchiveErrorEnum.GET_ARCHIVE_ERROR,
@@ -186,7 +201,8 @@ export class PreuvesArchiveRepository {
   }
 
   async listForDeletion(input: {
-    auditId: number;
+    collectiviteId: number;
+    referentielId: string;
     requestedBy: string;
   }): Promise<Result<AuditPreuvesArchive[], PreuvesArchiveError>> {
     try {
@@ -195,7 +211,8 @@ export class PreuvesArchiveRepository {
         .from(auditPreuvesArchiveTable)
         .where(
           and(
-            eq(auditPreuvesArchiveTable.auditId, input.auditId),
+            eq(auditPreuvesArchiveTable.collectiviteId, input.collectiviteId),
+            eq(auditPreuvesArchiveTable.referentielId, input.referentielId),
             eq(auditPreuvesArchiveTable.requestedBy, input.requestedBy)
           )
         );
@@ -203,9 +220,11 @@ export class PreuvesArchiveRepository {
       return this.parseRows(rows);
     } catch (error) {
       this.logger.error(
-        `Liste des archives à supprimer (audit ${input.auditId}, user ${input.requestedBy}): ${getErrorMessage(
-          error
-        )}`
+        `Liste des archives à supprimer (collectivité ${
+          input.collectiviteId
+        }, référentiel ${input.referentielId}, user ${
+          input.requestedBy
+        }): ${getErrorMessage(error)}`
       );
       return failure(
         PreuvesArchiveErrorEnum.GET_ARCHIVE_ERROR,
@@ -219,14 +238,19 @@ export class PreuvesArchiveRepository {
    * supprime la ligne `pending` sinon elle bloque l'index unique partiel
    * jusqu'à expiration TTL.
    */
-  async deleteIfPending(id: string): Promise<Result<undefined, PreuvesArchiveError>> {
+  async deleteIfPending(
+    id: string
+  ): Promise<Result<undefined, PreuvesArchiveError>> {
     try {
       await this.db
         .delete(auditPreuvesArchiveTable)
         .where(
           and(
             eq(auditPreuvesArchiveTable.id, id),
-            eq(auditPreuvesArchiveTable.status, AuditPreuvesArchiveStatusEnum.PENDING)
+            eq(
+              auditPreuvesArchiveTable.status,
+              AuditPreuvesArchiveStatusEnum.PENDING
+            )
           )
         );
       return success(undefined);
@@ -381,9 +405,7 @@ export class PreuvesArchiveRepository {
 
       return this.parseRow(row);
     } catch (error) {
-      this.logger.error(
-        `Mise à jour du job ${id}: ${getErrorMessage(error)}`
-      );
+      this.logger.error(`Mise à jour du job ${id}: ${getErrorMessage(error)}`);
       return failure(
         PreuvesArchiveErrorEnum.UPDATE_ARCHIVE_ERROR,
         error instanceof Error ? error : new Error(getErrorMessage(error))

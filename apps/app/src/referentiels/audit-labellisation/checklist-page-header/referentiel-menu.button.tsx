@@ -1,8 +1,6 @@
 import { DownloadScoreModal } from '@/app/app/pages/collectivite/Referentiels/DownloadScore/download-score.modal';
 import { SaveScoreModal } from '@/app/app/pages/collectivite/Referentiels/SaveScore/save-score.modal';
 import { appLabels } from '@/app/labels/catalog';
-import { useOptionalChecklist } from '@/app/referentiels/audit-labellisation/checklist.context';
-import { isAuditActif } from '@/app/referentiels/audit-labellisation/checklist/is-audit-actif';
 import { useArchivesPanel } from '@/app/referentiels/archives-panel/archives-panel.provider';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
@@ -23,11 +21,10 @@ export const ReferentielMenuButton = ({
     referentielId
   );
 
-  const checklist = useOptionalChecklist();
-  const canAccessArchives =
-    checklist !== null &&
-    isAuditActif(checklist.cycle) &&
-    hasReferentielPermission('referentiels.read_confidentiel', referentielId);
+  const canAccessArchives = hasReferentielPermission(
+    'referentiels.read_confidentiel',
+    referentielId
+  );
   const { openPanel } = useArchivesPanel();
 
   const [isDownloadOpen, setIsDownloadOpen] = useState(false);

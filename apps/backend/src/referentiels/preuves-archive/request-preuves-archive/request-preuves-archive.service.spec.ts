@@ -1,7 +1,7 @@
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { failure, success } from '@tet/backend/utils/result.type';
 import { ReferentielId } from '@tet/domain/referentiels';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi, type Mock } from 'vitest';
 import {
   AuditPreuvesArchiveStatusEnum,
   type AuditPreuvesArchive,
@@ -51,15 +51,17 @@ function buildService({
   currentAudit?: CurrentAuditResult;
 } = {}) {
   const permissions = {
-    isAllowed: vi.fn().mockResolvedValue(
-      isAllowed
-        ? { success: true, data: undefined }
-        : { success: false, error: 'UNAUTHORIZED' }
-    ),
+    isAllowed: vi
+      .fn()
+      .mockResolvedValue(
+        isAllowed
+          ? { success: true, data: undefined }
+          : { success: false, error: 'UNAUTHORIZED' }
+      ),
   } as unknown;
 
   const getLabellisationService = {
-    getCurrentAudit: vi.fn().mockResolvedValue(currentAudit),
+    getLatestDossierAudit: vi.fn().mockResolvedValue(currentAudit),
   } as unknown;
 
   const repository = {
@@ -82,7 +84,12 @@ function buildService({
     queue as never
   );
 
-  return { service, deleteObsoleteArchives: deleteService.delete };
+  return {
+    service,
+    deleteObsoleteArchives: deleteService.delete,
+    createOrGetInFlight: (repository as { createOrGetInFlight: Mock })
+      .createOrGetInFlight,
+  };
 }
 
 describe('RequestPreuvesArchiveService', () => {
@@ -94,7 +101,8 @@ describe('RequestPreuvesArchiveService', () => {
     await service.request(requestInput);
 
     expect(deleteObsoleteArchives).toHaveBeenCalledWith({
-      auditId: 10,
+      collectiviteId: 1,
+      referentielId: 'cae',
       requestedBy: owner.id,
     });
   });
@@ -110,20 +118,16 @@ describe('RequestPreuvesArchiveService', () => {
     expect(result.success).toBe(true);
   });
 
-  it("échoue avec AUDIT_NOT_FOUND quand aucun audit n'est en cours", async () => {
-    const { service } = buildService({
+  it('sans audit démarré, crée une archive sans audit', async () => {
+    const { service, createOrGetInFlight } = buildService({
       currentAudit: { success: false, error: 'NOT_FOUND' },
     });
 
     const result = await service.request(requestInput);
 
-    expect(result).toEqual(
-      failure(
-        PreuvesArchiveErrorEnum.AUDIT_NOT_FOUND,
-        new Error(
-          'Aucun audit en cours pour la collectivité 1 et le référentiel cae'
-        )
-      )
+    expect(result.success).toBe(true);
+    expect(createOrGetInFlight).toHaveBeenCalledWith(
+      expect.objectContaining({ auditId: null })
     );
   });
 });

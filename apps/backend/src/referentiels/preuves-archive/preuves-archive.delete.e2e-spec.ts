@@ -64,7 +64,11 @@ describe('Archive de preuves - suppression (storage réel, sans mock)', () => {
 
     const [audit] = await db.db
       .insert(auditTable)
-      .values({ collectiviteId: collectivite.id, referentielId: 'cae' })
+      .values({
+        collectiviteId: collectivite.id,
+        referentielId: 'cae',
+        dateDebut: new Date().toISOString(),
+      })
       .returning();
     auditId = audit.id;
 
@@ -89,7 +93,9 @@ describe('Archive de preuves - suppression (storage réel, sans mock)', () => {
 
   test('une demande supprime réellement le blob et la ligne au-delà des 10 plus récentes', async () => {
     const storagePath = `e2e-delete/${randomUUID()}.zip`;
-    const notExpired = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+    const notExpired = new Date(
+      Date.now() + 7 * 24 * 60 * 60 * 1000
+    ).toISOString();
 
     const stored = await storage.storeDocument({
       bucketId: PREUVES_ARCHIVES_BUCKET,

@@ -40,12 +40,16 @@ export type AuditPreuvesArchiveStatus = z.infer<
 >;
 
 export const auditPreuvesArchiveInFlightStatuses: readonly AuditPreuvesArchiveStatus[] =
-  [AuditPreuvesArchiveStatusEnum.PENDING, AuditPreuvesArchiveStatusEnum.PROCESSING];
+  [
+    AuditPreuvesArchiveStatusEnum.PENDING,
+    AuditPreuvesArchiveStatusEnum.PROCESSING,
+  ];
 
-export const auditPreuvesArchiveDeletableStatuses: AuditPreuvesArchiveStatus[] = [
-  AuditPreuvesArchiveStatusEnum.COMPLETED,
-  AuditPreuvesArchiveStatusEnum.FAILED,
-];
+export const auditPreuvesArchiveDeletableStatuses: AuditPreuvesArchiveStatus[] =
+  [
+    AuditPreuvesArchiveStatusEnum.COMPLETED,
+    AuditPreuvesArchiveStatusEnum.FAILED,
+  ];
 
 /** Causes d'échec affichables à l'utilisateur·ice ; les autres restent `null`. */
 export const auditPreuvesArchiveErrorCodeSchema = z.enum([
@@ -65,9 +69,10 @@ export const auditPreuvesArchiveTable = pgTable(
       .notNull()
       .references(() => collectiviteTable.id, { onDelete: 'cascade' }),
     referentielId: text('referentiel_id').notNull(),
-    auditId: integer('audit_id')
-      .notNull()
-      .references(() => auditTable.id, { onDelete: 'cascade' }),
+    // NULL quand la collectivité n'a jamais été auditée sur ce référentiel.
+    auditId: integer('audit_id').references(() => auditTable.id, {
+      onDelete: 'cascade',
+    }),
     requestedBy: uuid('requested_by')
       .notNull()
       .references(() => authUsersTable.id, { onDelete: 'cascade' }),
@@ -83,7 +88,7 @@ export const auditPreuvesArchiveTable = pgTable(
   },
   (table) => [
     uniqueIndex('audit_preuves_archive_in_flight_unique')
-      .on(table.auditId, table.requestedBy)
+      .on(table.collectiviteId, table.referentielId, table.requestedBy)
       .where(sql`status IN ('pending', 'processing')`),
   ]
 );

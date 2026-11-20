@@ -178,6 +178,7 @@ describe('Archive de preuves - pipeline complet (ZIP réel)', () => {
         collectiviteId: collectivite.id,
         referentielId: 'cae',
         demandeId: demande.id,
+        dateDebut: new Date().toISOString(),
       })
       .returning();
     const demandeId = demande.id;
