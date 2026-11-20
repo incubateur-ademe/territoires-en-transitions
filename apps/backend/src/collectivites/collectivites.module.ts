@@ -40,6 +40,7 @@ import { MutateTagService } from '@tet/backend/collectivites/tags/mutate-tag/mut
 import { PersonneTagRouter } from '@tet/backend/collectivites/tags/personnes/personne-tag.router';
 import { PersonneTagService } from '@tet/backend/collectivites/tags/personnes/personne-tag.service';
 import { TransactionModule } from '@tet/backend/utils/transaction/transaction.module';
+import { TrackingModule } from '@tet/backend/utils/tracking/tracking.module';
 import { NotificationsModule } from '@tet/backend/utils/notifications/notifications.module';
 import { CollectiviteController } from './collectivite.controller';
 import { CollectivitesCoreModule } from './collectivites-core.module';
@@ -67,6 +68,7 @@ import { ListAdminContactsService } from './membres/list-admin-contacts/list-adm
 import { ListMembresService } from './membres/list-membres/list-membres.service';
 import { ListPendingInvitationsService } from './membres/list-pending-invitations/list-pending-invitations.service';
 import { CollectiviteMembresRouter } from './membres/membres.router';
+import { ConsumePendingInvitationsService } from './membres/consume-pending-invitations/consume-pending-invitations.service';
 import { InvitationService } from './membres/mutate-invitations/invitation.service';
 import { InvitationsRouter } from './membres/mutate-invitations/invitations.router';
 import { MutateMembresService } from './membres/mutate-membres/mutate-membres.service';
@@ -89,6 +91,7 @@ import { SiteRouter } from './site/site.router';
     TransactionModule,
     NotificationsModule,
     ScanFichiersModule,
+    TrackingModule,
   ],
   providers: [
     CollectivitesRouter,
@@ -100,6 +103,7 @@ import { SiteRouter } from './site/site.router';
     ListAdminContactsService,
     ListPendingInvitationsService,
     InvitationService,
+    ConsumePendingInvitationsService,
     SendInvitationService,
     InvitationsRouter,
     ResolveServiceRepository,
