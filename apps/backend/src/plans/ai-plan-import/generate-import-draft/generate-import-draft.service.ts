@@ -5,6 +5,7 @@ import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
 import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
+import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import {
   AI_PLAN_IMPORT_SOURCE_BUCKET,
   EVENT_AI_PLAN_IMPORT_FAILED,
@@ -62,7 +63,8 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
     private readonly stepRunRepository: AiPlanImportStepRunRepository,
     private readonly generic: GenerateGenericImportService,
     private readonly electrification: GenerateElectrificationImportService,
-    private readonly profiles: ValidateImportProfileService
+    private readonly profiles: ValidateImportProfileService,
+    private readonly transactionManager: TransactionManager
   ) {}
 
   /** Sans tâche planifiée, chaque démarrage purge les points de reprise expirés. */
@@ -247,15 +249,35 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
       report,
     }: ImportFailureOptions = {}
   ): Promise<Result<AiPlanImportJob, AiPlanImportError>> {
-    const marked = await this.jobRepository.markFailed({
-      id: jobId,
-      attempt,
-      error: message,
-      stepStates,
-      draft,
-      stats,
-      dropCheckpoint,
-      report,
+    // La garde de tentative verrouille le job avant son plan, comme la reprise.
+    // Aucun passage ne peut reprendre entre ces deux écritures.
+    const marked = await this.transactionManager.executeSingle<
+      AiPlanImportJob,
+      AiPlanImportError
+    >(async (tx) => {
+      const job = await this.jobRepository.markFailed(
+        {
+          id: jobId,
+          attempt,
+          error: message,
+          stepStates,
+          draft,
+          stats,
+          dropCheckpoint,
+          report,
+        },
+        tx
+      );
+      if (!job.success || job.data.createdPlanId === null) return job;
+
+      const planFailed =
+        await this.planVerificationRepository.markAsImportFailed(
+          job.data.createdPlanId,
+          tx
+        );
+      return planFailed.success
+        ? job
+        : failure(AiPlanImportErrorEnum.UPDATE_JOB_ERROR);
     });
     if (marked.success) {
       // markFailed ne réussit que lors de la transition vers l'échec :
@@ -272,18 +294,6 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
           `Import ${jobId}: notification d'échec impossible`,
           error
         );
-      }
-      if (marked.data.createdPlanId !== null) {
-        // Le plan reste visible en échec : la collectivité le supprime.
-        const planFailed =
-          await this.planVerificationRepository.markAsImportFailed(
-            marked.data.createdPlanId
-          );
-        if (!planFailed.success) {
-          this.logger.error(
-            `Import ${jobId}: plan ${marked.data.createdPlanId} non passé en échec (${planFailed.error})`
-          );
-        }
       }
       this.trackingService.capture({
         distinctId: marked.data.createdBy,

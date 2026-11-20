@@ -198,13 +198,17 @@ describe('ResumeImportService', () => {
     const result = await service.resume({ jobId: 'job-1' }, { user });
 
     expect(result).toEqual(failure(AiPlanImportErrorEnum.CREATE_JOB_ERROR));
-    expect(jobRepository.markFailed).toHaveBeenCalledWith({
-      id: 'job-1',
-      attempt: 1,
-      error: 'Étape scoring en échec (api_error)',
-    });
+    expect(jobRepository.markFailed).toHaveBeenCalledWith(
+      {
+        id: 'job-1',
+        attempt: 1,
+        error: 'Étape scoring en échec (api_error)',
+      },
+      {}
+    );
     expect(planVerificationRepository.markAsImportFailed).toHaveBeenCalledWith(
-      7
+      7,
+      {}
     );
   });
 

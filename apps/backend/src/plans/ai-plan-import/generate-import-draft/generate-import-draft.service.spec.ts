@@ -282,7 +282,8 @@ const buildService = (mocks: ReturnType<typeof buildMocks>) =>
     {} as GenerateElectrificationImportService,
     {
       authorizeExistingImport: async () => success(undefined),
-    } as unknown as ValidateImportProfileService
+    } as unknown as ValidateImportProfileService,
+    mocks.transactionManager
   );
 
 describe('GenerateImportDraftService', () => {
@@ -309,7 +310,8 @@ describe('GenerateImportDraftService', () => {
           id: 'job-1',
           attempt: 0,
           error: "Ce profil ou cette version d'import n'est pas pris en charge",
-        })
+        }),
+        {}
       );
       expect(
         vi.mocked(mocks.jobRepository.markFailed).mock.calls[0][0]
@@ -507,7 +509,8 @@ describe('GenerateImportDraftService', () => {
       expect.objectContaining({
         id: 'job-1',
         error: expect.stringContaining('Document trop long'),
-      })
+      }),
+      {}
     );
     expect(mocks.capture).toHaveBeenCalledWith({
       distinctId: 'user-1',
@@ -556,7 +559,8 @@ describe('GenerateImportDraftService', () => {
             expect.objectContaining({ titre: 'Action' }),
           ]),
         }),
-      })
+      }),
+      {}
     );
   });
 
@@ -588,7 +592,8 @@ describe('GenerateImportDraftService', () => {
             expect.objectContaining({ titre: 'Action' }),
           ]),
         }),
-      })
+      }),
+      {}
     );
   });
 
@@ -611,7 +616,8 @@ describe('GenerateImportDraftService', () => {
       expect.objectContaining({
         error:
           'Création du plan impossible : Erreur lors de la création du plan : DATABASE_ERROR',
-      })
+      }),
+      {}
     );
     expect(logged).toHaveBeenCalledWith(
       expect.stringContaining('valeur trop longue pour le titre')
@@ -639,7 +645,8 @@ describe('GenerateImportDraftService', () => {
     expect(mocks.jobRepository.markFailed).toHaveBeenCalledWith(
       expect.objectContaining({
         error: 'Étape extraction en échec (api_error 503)',
-      })
+      }),
+      {}
     );
     expect(mocks.capture).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -666,11 +673,14 @@ describe('GenerateImportDraftService', () => {
         message: 'Import interrompu: boom réseau',
       },
     });
-    expect(mocks.jobRepository.markFailed).toHaveBeenCalledWith({
-      id: 'job-1',
-      attempt: 0,
-      error: 'Import interrompu: boom réseau',
-    });
+    expect(mocks.jobRepository.markFailed).toHaveBeenCalledWith(
+      {
+        id: 'job-1',
+        attempt: 0,
+        error: 'Import interrompu: boom réseau',
+      },
+      {}
+    );
     expect(mocks.removeDocument).toHaveBeenCalledWith({
       bucketId: 'ai-plan-import-sources',
       key: '10/abc',
@@ -683,11 +693,14 @@ describe('GenerateImportDraftService', () => {
 
     await service.recordTerminalFailure('job-1', 'Import interrompu: stall');
 
-    expect(mocks.jobRepository.markFailed).toHaveBeenCalledWith({
-      id: 'job-1',
-      error: 'Import interrompu: stall',
-      attempt: 0,
-    });
+    expect(mocks.jobRepository.markFailed).toHaveBeenCalledWith(
+      {
+        id: 'job-1',
+        error: 'Import interrompu: stall',
+        attempt: 0,
+      },
+      {}
+    );
     expect(mocks.removeDocument).toHaveBeenCalledWith({
       bucketId: 'ai-plan-import-sources',
       key: '10/abc',
@@ -736,7 +749,7 @@ describe('GenerateImportDraftService', () => {
 
     await service.generate('job-1');
 
-    expect(mocks.markAsImportFailed).toHaveBeenCalledWith(7);
+    expect(mocks.markAsImportFailed).toHaveBeenCalledWith(7, {});
   });
 
   it("crée le plan d'un job lancé avant la création au lancement", async () => {
@@ -996,7 +1009,8 @@ describe('GenerateImportDraftService', () => {
             attempt: 1,
             error:
               'Le point de reprise de cet import est invalide ou incompatible',
-          })
+          }),
+          {}
         );
         expect(
           vi.mocked(mocks.jobRepository.markFailed).mock.calls[0][0]
@@ -1031,7 +1045,8 @@ describe('GenerateImportDraftService', () => {
           attempt: 1,
           error: expect.stringContaining('point de reprise'),
           dropCheckpoint: true,
-        })
+        }),
+        {}
       );
     });
 
@@ -1046,7 +1061,8 @@ describe('GenerateImportDraftService', () => {
       expect(result).toMatchObject({ success: true });
       expect(mocks.documentStorage.downloadDocument).not.toHaveBeenCalled();
       expect(mocks.jobRepository.markFailed).toHaveBeenCalledWith(
-        expect.objectContaining({ id: 'job-1', attempt: 1 })
+        expect.objectContaining({ id: 'job-1', attempt: 1 }),
+        {}
       );
       // Le point de reprise reste en place : une nouvelle reprise le relira.
       expect(
