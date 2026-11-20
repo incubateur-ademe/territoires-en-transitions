@@ -55,10 +55,11 @@ const BULLET = /^(?:[o•●▪◦■□*\-–—]|\d{1,2}[.)])\s/u;
 // une fiche, pas deux niveaux.
 const MIN_NAMED_FICHES = 3;
 const MARKDOWN_MARK = /^#{1,4}\s+/u;
-// Le choix entre fiche et étape ne se pose que si la moitié des fiches au
-// moins détaillent plusieurs étapes titrées.
+// Le choix entre fiche et étape ne se pose que si un quart des fiches au
+// moins détaillent plusieurs étapes titrées : 7 sur 16 dans un PLPDMA réel,
+// les autres fiches tenant en un seul bloc.
 const MIN_STEPS_PER_FICHE = 2;
-const DETAILED_FICHES_SHARE = 0.5;
+const DETAILED_FICHES_SHARE = 0.25;
 // Plus de pilotes que de fiches : le document les donne étape par étape.
 const PILOTES_PER_ETAPE_RATIO = 1.5;
 const PILOTE_LABEL =
@@ -68,7 +69,8 @@ export type DetectHeadingsOptions = {
   /**
    * `fiche` (par défaut) : « Fiche action n°1.2 » est la fiche, ses
    * « Action 1 – … » restent dans son texte. `etape` : chaque « Action 1 – … »
-   * est une fiche, et la fiche qui les porte devient un sous-axe.
+   * est une fiche, et la fiche qui les porte devient un sous-axe ; une fiche
+   * sans étape reste une fiche.
    */
   actionLevel?: ActionLevel;
 };
@@ -97,7 +99,9 @@ export const detectHeadings = (
     pages,
     isLargeLine
   );
-  return byEtape ? demoteNamedFiches(headings, named.fiches) : headings;
+  return byEtape
+    ? demoteNamedFiches(headings, [...named.stepsByFiche.keys()])
+    : headings;
 };
 
 /**
@@ -129,10 +133,21 @@ export const detectActionLevelDoubt = (
   const axes = uniqueByLabel(
     detected.filter((heading) => isExplicit(heading.match, 'axe'))
   );
+  // L'axe de la fiche montrée en exemple : son numéro préfixe celui de la
+  // fiche (« 1.2 » est dans l'axe 1), même titré seulement au récapitulatif.
+  const axeNumber = detailed[0].match.number?.match(/^(\d{1,2})\./u)?.[1];
+  const titledAxes = detected.filter(
+    ({ match }) => isExplicit(match, 'axe') && match.title !== ''
+  );
+  const exampleAxe =
+    titledAxes.find(({ match }) => match.number === axeNumber) ??
+    titledAxes[0] ??
+    axes[0];
   return {
     kind: 'action-level',
-    axes: axes[0] ? describeLevel(axes[0], axes.length) : null,
+    axes: exampleAxe ? describeLevel(exampleAxe, axes.length) : null,
     fiches: describeLevel(detailed[0], named.fiches.length),
+    fichesWithEtapes: named.stepsByFiche.size,
     etapes: describeLevel(firstEtape, named.nested.size),
     proposed:
       countPiloteLabels(pages) > named.fiches.length * PILOTES_PER_ETAPE_RATIO
@@ -142,7 +157,11 @@ export const detectActionLevelDoubt = (
 };
 
 const describeLevel = (heading: DetectedHeading, count: number) => ({
-  exampleTitle: heading.match.title,
+  exampleTitle:
+    heading.match.title ||
+    [heading.match.kind === 'axe' ? 'Axe' : '', heading.match.number]
+      .filter(Boolean)
+      .join(' '),
   examplePage: heading.pageIndex + 1,
   count,
 });
@@ -337,7 +356,12 @@ const classifyNamedFicheActions = (
         lastStep = step;
       }
       dropped.add(heading);
-      if (current && !ficheNumbers.has(heading.match.number)) {
+      // « Actions 1-2 x x » : une ligne du calendrier, pas une étape.
+      if (
+        current &&
+        startsWith(heading, /^action(?!\p{L})/iu) &&
+        !ficheNumbers.has(heading.match.number)
+      ) {
         nested.add(heading);
         stepsByFiche.set(current, [
           ...(stepsByFiche.get(current) ?? []),

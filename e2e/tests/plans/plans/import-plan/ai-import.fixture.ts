@@ -47,6 +47,7 @@ export const actionLevelQuestion: NonNullable<ImportStatus['question']> = {
     examplePage: 37,
     count: 16,
   },
+  fichesWithEtapes: 16,
   etapes: {
     exampleTitle: 'Diagnostiquer et orienter',
     examplePage: 37,
