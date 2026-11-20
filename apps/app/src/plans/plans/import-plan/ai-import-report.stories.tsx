@@ -10,6 +10,7 @@ const meta = {
       status: 'failed',
       error: null,
       createdPlanId: null,
+      content: null,
       stepStates: {
         reading: 'ok',
         scouting: 'skipped',

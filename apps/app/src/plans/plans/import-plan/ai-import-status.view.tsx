@@ -6,7 +6,9 @@ import { ErrorCard } from '@/app/utils/error/error.card';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTRPC, type RouterOutput } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
+import { Event, useEventTracker } from '@tet/ui';
 import { ReactElement, useEffect, useRef } from 'react';
+import { AiImportQuestion } from './ai-import-question';
 import { AiImportProgress } from './ai-import-progress';
 import { AiImportStagesList } from './ai-import-stages';
 import { toImportStageViews } from './ai-import-stages.model';
@@ -15,6 +17,7 @@ import {
   isInaccessibleAiImportError,
   type useGetAiImportStatus,
 } from './data/use-get-ai-import-status';
+import { useAnswerAiImportQuestion } from './data/use-answer-ai-import-question';
 
 export const AiImportStatusView = ({
   jobId,
@@ -36,6 +39,8 @@ export const AiImportStatusView = ({
   const trpc = useTRPC();
   const queryClient = useQueryClient();
   const { data: status, error, refetch } = statusQuery;
+  const answer = useAnswerAiImportQuestion();
+  const tracker = useEventTracker();
   const notifiedOutcome = useRef<string | null>(null);
 
   useEffect(() => {
@@ -77,6 +82,36 @@ export const AiImportStatusView = ({
 
   const failed = status.status === 'failed';
   const done = status.status === 'done';
+  // La question passe avant le suivi : l'import ne reprend qu'avec la réponse.
+  if (status.status === 'awaiting_answer' && status.question) {
+    const { question } = status;
+    return (
+      <section
+        className="flex flex-col gap-6"
+        data-test="plans.import-ia.suivi"
+      >
+        <h2 className="mb-0 text-xl">
+          {status.planName ?? appLabels.importPlanIaSansNom}
+        </h2>
+        <AiImportQuestion
+          key={jobId}
+          question={question}
+          isAnswering={answer.isPending}
+          onAnswer={(actionLevel) => {
+            tracker(Event.plans.importIa.repondreQuestion, {
+              jobId,
+              actionLevel,
+              proposed: question.proposed,
+            });
+            answer.mutate({
+              jobId,
+              answer: { kind: 'action-level', actionLevel },
+            });
+          }}
+        />
+      </section>
+    );
+  }
   if (renderStagesProgress && !failed && !done) {
     return (
       <section data-test="plans.import-ia.suivi">

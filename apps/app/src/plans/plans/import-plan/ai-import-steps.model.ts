@@ -78,7 +78,9 @@ export const toImportStepViews = (
     name,
     status: toDisplayStatus(
       stateOf(stepStates, name),
-      jobStatus !== 'pending' && isCurrent(name),
+      jobStatus !== 'pending' &&
+        jobStatus !== 'awaiting_answer' &&
+        isCurrent(name),
       failed
     ),
   }));
@@ -90,6 +92,7 @@ export const toImportStepViews = (
       status = 'done';
     } else if (
       jobStatus !== 'pending' &&
+      jobStatus !== 'awaiting_answer' &&
       steps.every(({ status }) => status === 'done' || status === 'skipped')
     ) {
       status = failed ? 'failed' : 'current';
