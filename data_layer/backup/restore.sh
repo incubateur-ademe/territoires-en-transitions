@@ -174,75 +174,66 @@ if [ "$DOWNLOAD_FROM_S3" = true ]; then
     export AWS_CONFIG_FILE="$SCRIPT_DIR/aws-config"
     unset AWS_PROFILE AWS_DEFAULT_PROFILE
 
-    # Mode "latest" : lister le bucket et choisir le backup avec la date la plus récente.
-    # Le pattern ancré (^...$) rejette les noms non-standards tels que backup-2026-04-18-partial.dump.
+    s3() {
+        AWS_ACCESS_KEY_ID="$BACKUP_AWS_ACCESS_KEY_ID" \
+        AWS_SECRET_ACCESS_KEY="$BACKUP_AWS_SECRET_ACCESS_KEY" \
+        aws s3 "$@" \
+          --endpoint-url "$BACKUP_ENDPOINT_URL" \
+          --region "$BACKUP_REGION"
+    }
+
+    # Les dumps sont rangés par préfixe de rétention (daily/, weekly/, monthly/, cf.
+    # backup.sh) ; un même dump peut être dans plusieurs. Le pattern ancré (^...$)
+    # rejette les noms non-standards tels que backup-2026-04-18-partial.dump.
+    if ! backup_listing=$(s3 ls "s3://$BACKUP_BUCKET/" --recursive); then
+        echo "Could not list backups in S3. Check the credentials and endpoint."
+        exit 1
+    fi
+    backup_keys=$(printf '%s\n' "$backup_listing" \
+      | awk '{print $NF}' \
+      | grep -E '^(daily|weekly|monthly)/backup-[0-9]{4}-[0-9]{2}-[0-9]{2}\.dump$' \
+      | sort -t/ -k2 || true)
+
+    if [ -z "$backup_keys" ]; then
+        echo "No backup files found in s3://$BACKUP_BUCKET/ (endpoint: $BACKUP_ENDPOINT_URL)"
+        exit 1
+    fi
+
+    # Mode "latest" : le backup avec la date la plus récente.
     if [ "$RESOLVE_LATEST" = true ]; then
-        if ! backup_listing=$(AWS_ACCESS_KEY_ID="$BACKUP_AWS_ACCESS_KEY_ID" \
-          AWS_SECRET_ACCESS_KEY="$BACKUP_AWS_SECRET_ACCESS_KEY" \
-          aws s3 ls "s3://$BACKUP_BUCKET/" \
-            --endpoint-url "$BACKUP_ENDPOINT_URL" \
-            --region "$BACKUP_REGION"); then
-            echo "Could not list backups in S3. Check the credentials and endpoint."
-            exit 1
-        fi
-        LATEST_BACKUP=$(printf '%s\n' "$backup_listing" \
-          | awk '{print $NF}' \
-          | grep -E '^backup-[0-9]{4}-[0-9]{2}-[0-9]{2}\.dump$' \
-          | sort \
-          | tail -1 || true)
-
-        if [ -z "$LATEST_BACKUP" ]; then
-            echo "No backup files found in s3://$BACKUP_BUCKET/ (endpoint: $BACKUP_ENDPOINT_URL)"
-            exit 1
-        fi
-
-        DATE=$(echo "$LATEST_BACKUP" | sed -E 's/^backup-([0-9]{4}-[0-9]{2}-[0-9]{2})\.dump$/\1/')
+        DATE=$(printf '%s\n' "$backup_keys" | tail -1 | sed -E 's|^.*/backup-(.*)\.dump$|\1|')
         echo "Latest backup resolved to: $DATE"
+    fi
+
+    BACKUP_KEY=$(printf '%s\n' "$backup_keys" | grep -F "/backup-$DATE.dump" | head -1 || true)
+    if [ -z "$BACKUP_KEY" ]; then
+        echo "No backup for $DATE in s3://$BACKUP_BUCKET/. Most recent backups available:"
+        printf '%s\n' "$backup_keys" | sed -E 's|^.*/||' | uniq | tail -5 | sed 's/^/  - /'
+        exit 1
     fi
 
     BACKUP_FILE="backup-$DATE.dump"
     DUMP_FILE="/tmp/backups/$BACKUP_FILE"
     mkdir -p /tmp/backups
 
-    echo "Downloading s3://$BACKUP_BUCKET/$BACKUP_FILE..."
-
-    if ! AWS_ACCESS_KEY_ID="$BACKUP_AWS_ACCESS_KEY_ID" \
-         AWS_SECRET_ACCESS_KEY="$BACKUP_AWS_SECRET_ACCESS_KEY" \
-         aws s3 cp "s3://$BACKUP_BUCKET/$BACKUP_FILE" "$DUMP_FILE" \
-           --endpoint-url "$BACKUP_ENDPOINT_URL" \
-           --region "$BACKUP_REGION"; then
-        echo ""
-        echo "Download failed for s3://$BACKUP_BUCKET/$BACKUP_FILE"
-        echo "Most recent backups available in the bucket:"
-        AWS_ACCESS_KEY_ID="$BACKUP_AWS_ACCESS_KEY_ID" \
-        AWS_SECRET_ACCESS_KEY="$BACKUP_AWS_SECRET_ACCESS_KEY" \
-        aws s3 ls "s3://$BACKUP_BUCKET/" \
-          --endpoint-url "$BACKUP_ENDPOINT_URL" \
-          --region "$BACKUP_REGION" 2>/dev/null \
-          | awk '{print $NF}' \
-          | grep -E '^backup-[0-9]{4}-[0-9]{2}-[0-9]{2}\.dump$' \
-          | sort \
-          | tail -5 \
-          | sed 's/^/  - /' || true
+    echo "Downloading s3://$BACKUP_BUCKET/$BACKUP_KEY..."
+    if ! s3 cp "s3://$BACKUP_BUCKET/$BACKUP_KEY" "$DUMP_FILE"; then
+        echo "Download failed for s3://$BACKUP_BUCKET/$BACKUP_KEY"
         exit 1
     fi
 
     echo "Download complete."
 
-    # Fetch backup metadata (non-fatal — older backups may not have it)
+    # Metadata du backup (non bloquant)
     METADATA_FILE="/tmp/backups/backup-$DATE.metadata.json"
     echo "Fetching backup metadata..."
-    if AWS_ACCESS_KEY_ID="$BACKUP_AWS_ACCESS_KEY_ID" \
-       AWS_SECRET_ACCESS_KEY="$BACKUP_AWS_SECRET_ACCESS_KEY" \
-       aws s3 cp "s3://$BACKUP_BUCKET/backup-$DATE.metadata.json" "$METADATA_FILE" \
-         --endpoint-url "$BACKUP_ENDPOINT_URL" \
-         --region "$BACKUP_REGION" 2>/dev/null; then
+    if s3 cp "s3://$BACKUP_BUCKET/${BACKUP_KEY%.dump}.metadata.json" "$METADATA_FILE" 2>/dev/null; then
         echo "=== Backup Metadata ==="
         cat "$METADATA_FILE"
         echo ""
         echo "========================"
     else
-        echo "No metadata file found (older backup). Continuing..."
+        echo "No metadata file found. Continuing..."
     fi
 fi
 

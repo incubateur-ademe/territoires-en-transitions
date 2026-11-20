@@ -183,10 +183,11 @@ resource "scaleway_object_bucket_lock_configuration" "coolify_backups" {
 # dumps ne sont pas chiffrés, la clé des backups Coolify ne doit ni
 # les lire ni en déposer un faux, que restore.sh restaurerait.
 #
-# Pas de règle d'expiration : la rétention (14 jours, puis 1 par semaine jusqu'à 4
-# semaines, puis 1 par mois jusqu'à 12 mois) est appliquée par data_layer/backup/cleanup.sh. Ses suppressions posent
-# des delete markers, purgés par la règle noncurrent-versions une fois le verrou
-# expiré.
+# Rétention par préfixe (cf. backup.sh) : chaque dump va dans daily/, celui du lundi
+# aussi dans weekly/, celui du 1er du mois aussi dans monthly/. Le cycle de vie
+# expire chaque préfixe, sans clé capable de supprimer. Une expiration pose un
+# delete marker ; la règle noncurrent-versions purge ensuite la version, une fois
+# le verrou expiré.
 resource "scaleway_object_bucket" "database_backups" {
   name       = var.database_backups_bucket_name
   region     = var.scaleway_region
@@ -210,6 +211,22 @@ resource "scaleway_object_bucket" "database_backups" {
 
     expiration {
       expired_object_delete_marker = true
+    }
+  }
+
+  # Durée de vie de chaque préfixe, en jours. daily ne doit pas descendre sous le
+  # verrou (backups_lock_days) : un dump expiré plus tôt resterait facturé jusqu'à
+  # son échéance.
+  dynamic "lifecycle_rule" {
+    for_each = { daily = 14, weekly = 28, monthly = 365 }
+    content {
+      id      = lifecycle_rule.key
+      prefix  = "${lifecycle_rule.key}/"
+      enabled = true
+
+      expiration {
+        days = lifecycle_rule.value
+      }
     }
   }
 

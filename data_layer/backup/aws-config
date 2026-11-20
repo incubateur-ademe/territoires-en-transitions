@@ -1,13 +1,12 @@
-# Config AWS CLI utilisée par backup.sh, restore.sh et cleanup.sh (via AWS_CONFIG_FILE),
+# Config AWS CLI utilisée par backup.sh et restore.sh (via AWS_CONFIG_FILE),
 # à la place de ~/.aws/config : les identifiants passent par les variables d'env.
 # et l'endpoint / la région par les options de chaque commande.
 #
 # Client de transfert classique forcé pour `aws s3 cp` (téléchargement dans
 # restore.sh) : le client CRT, choisi par défaut par les versions récentes de la
-# CLI, signait mal les requêtes vers l'ancien bucket Supabase (403
-# SignatureDoesNotMatch sur HeadObject). Conservé avec le bucket Scaleway, où le
-# client CRT n'a pas été testé. L'upload, lui, passe par `s3api put-object` (cf.
-# backup.sh) et n'est pas concerné.
+# CLI, a déjà signé mal des requêtes vers un endpoint S3-compatible (403
+# SignatureDoesNotMatch sur HeadObject). L'upload passe par `s3api put-object`
+# (cf. backup.sh) et n'est pas concerné.
 [default]
 s3 =
   preferred_transfer_client = classic

@@ -7,8 +7,6 @@ Date : 2026-04-15
 Accepté. Révisé le 2026-11-02 pour remplacer les règles propres aux indicateurs
 par une prévalidation générique ; décision consolidée ici le 2026-11-03.
 Les anciennes règles restent consignées dans l’historique ci-dessous.
-Révisé le 2026-11-17 : les dumps passent du projet Supabase `backups` à un bucket
-Scaleway sous Object Lock, avec une rétention ramenée à 12 mois (§3).
 
 ## Contexte
 
@@ -80,30 +78,24 @@ Les tables qui ne sont pas dans `restore-config.yml` (ex : `notifications`, `web
 
 ### 3. Stockage S3-compatible avec politique de rétention
 
-Les backups sont stockés sur un bucket S3-compatible via l'AWS CLI avec le flag `--endpoint-url`. Le format de nommage est `backup-YYYY-MM-DD.dump` (dates UTC).
+Les backups sont stockés sur un bucket S3-compatible via l'AWS CLI avec le flag `--endpoint-url`. Le format de nommage est `<préfixe>/backup-YYYY-MM-DD.dump` (dates UTC), accompagné de `backup-YYYY-MM-DD.metadata.json` sous le même préfixe.
 
-Le bucket est `tet-database-backups`, chez Scaleway (`fr-par`), déclaré dans la stack Terraform `infra/platform` :
+Le bucket est `tet-database-backups`, déclaré dans la stack Terraform `infra/platform` :
 
 - **Projet dédié** (`tet-database-backups`) : les permissions IAM Object Storage valent pour un projet entier et les dumps ne sont pas chiffrés. Une clé d'un autre projet (celle de Coolify notamment) ne peut ni les lire, ni déposer un faux dump que `restore.sh` restaurerait.
-- **Versioning et Object Lock COMPLIANCE de 14 jours** : pendant 14 jours, aucune version d'un dump ne peut être supprimée ni écrasée, quelle que soit la clé utilisée. Au-delà, la protection repose sur les seuls droits de la clé.
-- **Upload par `put-object` avec `Content-MD5`** : un bucket verrouillé l'exige, et `aws s3 cp` ne l'envoie pas toujours. Un PUT simple est limité à 5 Go ; `backup.sh` échoue explicitement au-delà, et il faudra alors passer à un upload multipart.
+- **Versioning et Object Lock COMPLIANCE de 14 jours** : pendant 14 jours, aucune version d'un dump ne peut être supprimée ni écrasée, quelle que soit la clé utilisée.
+- **Clé du workflow sans droit de suppression** : elle lit et écrit des objets, rien d'autre. Seul le cycle de vie du bucket supprime des dumps.
+- **Upload par `put-object` avec `Content-MD5`** : un bucket verrouillé l'exige, et `aws s3 cp` ne l'envoie pas toujours. Un PUT simple est limité à 5 Go ; `backup.sh` avertit à partir de 4 Go et échoue au-delà de 5 Go, et il faudra alors passer à un upload multipart.
 
-Tant que la base de prod est chez Supabase (AWS), ce bucket est chez un autre fournisseur que la base. Ce ne sera plus le cas une fois la prod migrée sur Scaleway `fr-par` (`infra/prod`) : base et backups partageront alors fournisseur et région, et une copie hors région sera à prévoir.
+**Politique de rétention** : `backup.sh` range chaque dump sous un ou plusieurs préfixes, et le cycle de vie du bucket expire chaque préfixe.
 
-**Politique de rétention** (gérée par `cleanup.sh`) :
+| Préfixe    | Contenu                        | Durée de vie |
+| ---------- | ------------------------------ | ------------ |
+| `daily/`   | tous les dumps                 | 14 jours     |
+| `weekly/`  | le dump du lundi               | 28 jours     |
+| `monthly/` | le dump du 1er du mois         | 365 jours    |
 
-| Période               | Rétention                                                                    |
-| --------------------- | ---------------------------------------------------------------------------- |
-| < 14 jours            | 1 backup par jour (tous conservés)                                           |
-| 14 jours → 4 semaines | 1 backup par semaine (le premier de la semaine), plus le premier de chaque mois |
-| 4 semaines → 12 mois  | 1 backup par mois (le plus ancien du mois)                                   |
-| > 12 mois             | Supprimé                                                                     |
-
-La fenêtre quotidienne est alignée sur la durée du verrou : un dump supprimé plus tôt resterait stocké et facturé jusqu'à l'échéance. Les seuils hebdomadaire et mensuel sont ramenés au lundi et au 1er du mois, pour que le backup retenu pour une semaine ou un mois ne sorte pas avant la fin de sa période. Les suppressions de `cleanup.sh` posent des delete markers ; les versions correspondantes sont purgées par la règle de cycle de vie du bucket (7 jours après être devenues non courantes, et pas avant la fin du verrou).
-
-Un garde-fou empêche de descendre sous un nombre minimum de backups (configurable, défaut : 1). `DRY_RUN=true` affiche les suppressions sans les faire ; `TODAY=YYYY-MM-DD` simule une autre date et n'est accepté qu'en dry-run.
-
-> **Historique :** jusqu'au 2026-11-17, les dumps étaient stockés dans un projet Supabase `backups`, sur une autre zone AWS que la prod, avec une rétention de 60 jours en quotidien puis 1 backup par mois jusqu'à 24 mois.
+`restore.sh` cherche une date sous les trois préfixes. La durée de vie de `daily/` est alignée sur le verrou : un dump expiré plus tôt resterait stocké et facturé jusqu'à l'échéance. L'expiration pose un delete marker ; la version est purgée 7 jours plus tard, et jamais avant la fin du verrou.
 
 ### 4. Restauration nocturne sur staging et preprod
 
@@ -269,12 +261,14 @@ de migrations.
 - Restauration vérifiée automatiquement chaque jour en CI
 - Diagnostic précis des erreurs de restauration grâce à l'approche table par table
 - Compatibilité code/données vérifiable via les métadonnées
-- Politique de rétention automatisée avec garde-fous
-- Dumps des 14 derniers jours immuables (Object Lock), y compris pour une clé compromise ou un bug de `cleanup.sh`
+- Dumps des 14 derniers jours immuables (Object Lock), quelle que soit la clé
+- Rétention appliquée par le bucket lui-même : aucun script de nettoyage, aucune clé capable de supprimer un dump
 
 ### Négatives
 
-- Au-delà de 14 jours, les dumps hebdomadaires et mensuels ne sont plus verrouillés : la clé du workflow, qui a le droit de suppression pour appliquer la rétention, peut les effacer
+- Au-delà de 14 jours, les dumps hebdomadaires et mensuels ne sont plus verrouillés : un opérateur Terraform (droits complets sur le projet) peut les supprimer ou raccourcir le cycle de vie
+- Si le backup du lundi ou du 1er du mois échoue, la semaine ou le mois n'a pas de dump conservé au-delà de 14 jours
+- Les dumps du lundi et du 1er du mois sont envoyés et stockés deux ou trois fois
 - Un dump de plus de 5 Go fait échouer le backup tant que l'upload multipart n'est pas écrit (cf. §3)
 
 - La restauration table par table est significativement plus lente (~150 appels `pg_restore` relisant chacun le dump complet)
@@ -337,15 +331,15 @@ autres domaines. Aucun de ces noms d’état n’intervient dans le contrôle ac
 │                                                                    │
 │  ┌─────────────┐    ┌────────────┐    ┌─────────────────────────┐ │
 │  │  backup.sh  │ →  │ S3 bucket  │    │  restore-staging        │ │
-│  │  pg_dump    │    │ backup-    │ ─→ │  restore.sh latest      │ │
-│  │  + metadata │    │  YYYY-MM-  │    │  → STAGING_DB_URL       │ │
-│  └──────┬──────┘    │  DD.dump   │    └─────────────────────────┘ │
-│         │           │ + metadata │                                 │
-│         ▼           └─────┬──────┘    ┌─────────────────────────┐ │
-│  ┌─────────────┐          ├──────→    │  restore-preprod        │ │
-│  │ cleanup.sh  │          │           │  restore.sh <D-1 date>  │ │
-│  │ rétention   │          │           │  → PREPROD_DB_URL       │ │
-│  └─────────────┘          │           └─────────────────────────┘ │
+│  │  pg_dump    │    │ daily/     │ ─→ │  restore.sh latest      │ │
+│  │  + metadata │    │ weekly/    │    │  → STAGING_DB_URL       │ │
+│  └─────────────┘    │ monthly/   │    └─────────────────────────┘ │
+│                     │ expirés par│                                 │
+│                     │ cycle de   │    ┌─────────────────────────┐ │
+│                     │ vie        │    │  restore-preprod        │ │
+│                     └─────┬──────┘ ─→ │  restore.sh <D-1 date>  │ │
+│                           │           │  → PREPROD_DB_URL       │ │
+│                           │           └─────────────────────────┘ │
 │                           ▼                                        │
 │                Each restore.sh: pg_restore table-by-table          │
 │                              ↓ reset_sequences.sql                 │
@@ -366,11 +360,10 @@ autres domaines. Aucun de ces noms d’état n’intervient dans le contrôle ac
 | `data_layer/backup/backup.sh`                      | Dump production + upload S3 + metadata                                                            |
 | `data_layer/backup/restore.sh`                     | Contrôle de compatibilité + restore ordonné + reset sequences + sanity                            |
 | `data_layer/backup/check-restore-compatibility.sh` | Contrôle de compatibilité entre le backup et le schéma cible avant restauration                   |
-| `data_layer/backup/cleanup.sh`                     | Nettoyage des backups obsolètes selon la politique de rétention                                   |
 | `data_layer/backup/reset_sequences.sql`            | Réinitialisation des séquences après restore data-only                                            |
 | `data_layer/backup/clean_data.sql`                 | Anonymisation des colonnes sensibles (cf. §7) + assertions intégrées                              |
 | `data_layer/backup/restore-config.yml`             | Source de vérité : liste des tables et groupes restaurés par `restore.sh`                         |
-| `.github/workflows/backup-database.yml`            | Orchestration CI : backup-production + restore-staging (latest) + restore-preprod (D-1) + cleanup |
+| `.github/workflows/backup-database.yml`            | Orchestration CI : backup-production + restore-staging (latest) + restore-preprod (D-1)           |
 | `.github/workflows/restore-database.yml`           | Restauration manuelle à la demande de la preprod ou de la staging (date ISO ou `latest`)          |
 
 ## Opérations courantes

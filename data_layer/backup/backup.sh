@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-DATE=$(date -u +%Y-%m-%d)
+read -r DATE WEEKDAY <<< "$(date -u '+%Y-%m-%d %u')"
 BACKUP_DIRECTORY="/tmp/backups"
 BACKUP_FILE="backup-$DATE.dump"
 
@@ -39,15 +39,27 @@ upload() {
   if [ "$size" -ge 4000000000 ]; then
     echo "::warning::$file fait $size octets, proche des 5 Go d'un PUT simple : prévoir un upload multipart."
   fi
-  AWS_ACCESS_KEY_ID="$BACKUP_AWS_ACCESS_KEY_ID" \
-  AWS_SECRET_ACCESS_KEY="$BACKUP_AWS_SECRET_ACCESS_KEY" \
-  aws s3api put-object \
-    --bucket "$BACKUP_BUCKET" --key "$(basename "$file")" \
-    --body "$file" \
-    --content-md5 "$(openssl md5 -binary "$file" | base64)" \
-    --endpoint-url "$BACKUP_ENDPOINT_URL" \
-    --region "$BACKUP_REGION" > /dev/null
+  local md5 prefix
+  md5=$(openssl md5 -binary "$file" | base64)
+  for prefix in "${PREFIXES[@]}"; do
+    AWS_ACCESS_KEY_ID="$BACKUP_AWS_ACCESS_KEY_ID" \
+    AWS_SECRET_ACCESS_KEY="$BACKUP_AWS_SECRET_ACCESS_KEY" \
+    aws s3api put-object \
+      --bucket "$BACKUP_BUCKET" --key "$prefix/$(basename "$file")" \
+      --body "$file" \
+      --content-md5 "$md5" \
+      --endpoint-url "$BACKUP_ENDPOINT_URL" \
+      --region "$BACKUP_REGION" > /dev/null
+    echo "Uploaded s3://$BACKUP_BUCKET/$prefix/$(basename "$file")"
+  done
 }
+
+# Rétention : chaque préfixe est expiré par le cycle de vie du bucket (infra/platform).
+# Tous les dumps vont dans daily/, celui du lundi aussi dans weekly/, celui du 1er du
+# mois aussi dans monthly/.
+PREFIXES=(daily)
+if [ "$WEEKDAY" = 1 ]; then PREFIXES+=(weekly); fi
+if [ "${DATE:8:2}" = 01 ]; then PREFIXES+=(monthly); fi
 
 mkdir -p "$BACKUP_DIRECTORY"
 
@@ -75,8 +87,6 @@ echo "Backup verified. Uploading to S3..."
 # Upload vers S3
 upload "$BACKUP_DIRECTORY/$BACKUP_FILE"
 
-echo "Backup uploaded to s3://$BACKUP_BUCKET/$BACKUP_FILE"
-
 # --- Metadata: backend version ---
 BACKEND_URL="${BACKEND_URL:-https://api.territoiresentransitions.fr}"
 METADATA_FILE="backup-$DATE.metadata.json"
@@ -88,5 +98,3 @@ curl -sf "$BACKEND_URL/version" -o "$BACKUP_DIRECTORY/$METADATA_FILE"
 echo "Uploading metadata to S3..."
 
 upload "$BACKUP_DIRECTORY/$METADATA_FILE"
-
-echo "Metadata uploaded to s3://$BACKUP_BUCKET/$METADATA_FILE"

@@ -184,9 +184,11 @@ credentials Terraform n'ont pas. Un admin crée donc, une fois :
      buckets dans le projet par défaut de la clé), transmise par un canal sûr puis déposée
      dans Secret Manager (cf. [Secrets à déposer](#secrets-à-déposer-à-la-main)).
 4. **L'application IAM `tet-database-backups`**, pour les dumps de la BDD de prod faits par
-   GitHub Actions : mêmes permissions que `tet-coolify-backups`, mais limitées au projet
-   `tet-database-backups`, qui est aussi le projet par défaut de sa clé. Sa clé va dans
-   l'environnement GitHub `prod` (cf. [Backups de la BDD de prod](#backups-de-la-bdd-de-prod)).
+   GitHub Actions : `ObjectStorageBucketsRead`, `ObjectStorageObjectsRead` et
+   `ObjectStorageObjectsWrite`, limités au projet `tet-database-backups`, qui est aussi le
+   projet par défaut de sa clé. Pas de `ObjectsDelete` : le cycle de vie du bucket fait la
+   rétention. Sa clé va dans l'environnement GitHub `prod` (cf.
+   [Backups de la BDD de prod](#backups-de-la-bdd-de-prod)).
 
 ### Bootstrap (une fois)
 
@@ -536,9 +538,12 @@ storage de notre Team), sous **Object Lock COMPLIANCE** (14 jours).
 
 Le workflow `.github/workflows/backup-database.yml` dumpe chaque nuit la BDD de prod
 (`data_layer/backup/backup.sh`), l'envoie dans le bucket `tet-database-backups` (stack
-`platform`), applique la rétention (`cleanup.sh` : tout sur 14 jours, puis 1 par semaine jusqu'à
-4 semaines, puis 1 par mois jusqu'à 12 mois) et restaure staging et preprod depuis ce bucket. Object Lock COMPLIANCE
+`platform`) et restaure staging et preprod depuis ce bucket. Object Lock COMPLIANCE
 (14 jours), comme `tet-coolify-backups`.
+
+La rétention est faite par le cycle de vie du bucket, par préfixe : tous les dumps sous
+`daily/` (14 jours), celui du lundi aussi sous `weekly/` (28 jours), celui du 1er du mois
+aussi sous `monthly/` (365 jours). La clé du workflow n'a donc pas le droit de supprimer.
 
 Variables et secrets de l'environnement GitHub `prod` :
 
@@ -554,13 +559,6 @@ Le bucket a son propre projet, `tet-database-backups` : les permissions IAM Obje
 valent pour un projet entier, et les dumps ne sont pas chiffrés. Dans le projet
 `tet-coolify-backups`, la clé Coolify pourrait les lire, ou déposer un faux dump que
 `restore.sh` restaurerait.
-
-Bascule depuis l'ancien bucket Supabase `prod-backups` : changer ces variables avant le
-premier run qui embarque la nouvelle rétention, sinon `cleanup.sh` l'applique à
-`prod-backups`. `restore-preprod` restaure le dump de la veille : copier
-`backup-<veille>.dump` (et son `.metadata.json`) dans `tet-database-backups` avant le premier
-run, ou accepter son échec cette nuit-là. L'historique reste dans `prod-backups`, à garder
-jusqu'à ce que le nouveau bucket ait fait ses preuves.
 
 ## DNS
 

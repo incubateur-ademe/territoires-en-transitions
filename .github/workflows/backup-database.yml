@@ -49,15 +49,6 @@ jobs:
           BACKEND_URL: ${{ vars.BACKEND_URL }}
         run: bash data_layer/backup/backup.sh
 
-      - name: Cleanup old backups
-        env:
-          BACKUP_AWS_ACCESS_KEY_ID: ${{ vars.BACKUP_AWS_ACCESS_KEY_ID }}
-          BACKUP_AWS_SECRET_ACCESS_KEY: ${{ secrets.BACKUP_AWS_SECRET_ACCESS_KEY }}
-          BACKUP_BUCKET: ${{ vars.BACKUP_BUCKET }}
-          BACKUP_REGION: ${{ vars.BACKUP_REGION }}
-          BACKUP_ENDPOINT_URL: ${{ vars.BACKUP_ENDPOINT_URL }}
-        run: bash data_layer/backup/cleanup.sh
-
   restore-staging:
     name: Restore de la BDD staging avec le backup le plus récent
     needs: [backup-production]

@@ -41,7 +41,7 @@ source infra/scripts/tf-env.sh && source infra/scripts/coolify-env.sh
 mkdir -p ~/tet-dumps && chmod 700 ~/tet-dumps
 node_modules/.bin/dotenvx run -q --env-keys-file=.env.keys -f .env -- bash -c '
   AWS_ACCESS_KEY_ID="$BACKUP_AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$BACKUP_AWS_SECRET_ACCESS_KEY" \
-  aws s3 cp "s3://$BACKUP_BUCKET/backup-AAAA-MM-JJ.dump" ~/tet-dumps/ \
+  aws s3 cp "s3://$BACKUP_BUCKET/daily/backup-AAAA-MM-JJ.dump" ~/tet-dumps/ \
     --endpoint-url "$BACKUP_ENDPOINT_URL" --region "$BACKUP_REGION"'
 
 # 3. Relire le tri du sommaire : ce qui est écarté, et les triggers sur auth.
