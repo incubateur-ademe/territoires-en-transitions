@@ -171,10 +171,12 @@ const dropActionsOfNamedFiches = (
   if (namedFiches.length < MIN_NAMED_FICHES) {
     return headings;
   }
-  // La suite des fiches nommées, quand elles se numérotent 1, 2, 3… Une
-  // fiche qui a ouvert ses étapes par « Action 1 » ne la prolonge plus.
+  // La suite des fiches nommées, quand elles se numérotent 1, 2, 3… Les
+  // étapes d'une fiche se suivent depuis « Action 1 » : un numéro qui rompt
+  // cette suite et prolonge celle des fiches ouvre une fiche autonome. Qui
+  // prolonge les deux (étapes 1, 2, 3 puis « Action 4 ») reste une étape.
   let lastFiche = 0;
-  let inSteps = false;
+  let lastStep: number | null = null;
   const continuesFiches = new Set<DetectedHeading>();
   for (const heading of headings) {
     const number = /^\d+$/u.test(heading.match.number ?? '')
@@ -182,13 +184,16 @@ const dropActionsOfNamedFiches = (
       : null;
     if (namedFiches.includes(heading)) {
       lastFiche = number ?? Number.NaN;
-      inSteps = false;
-    } else if (startsWith(heading, /^action(?!\p{L})/iu)) {
-      if (!inSteps && number !== null && number === lastFiche + 1) {
+      lastStep = null;
+    } else if (startsWith(heading, /^action(?!\p{L})/iu) && number !== null) {
+      const continuesSteps =
+        lastStep === null ? number === 1 : number === lastStep + 1;
+      if (number === lastFiche + 1 && !continuesSteps) {
         continuesFiches.add(heading);
         lastFiche = number;
-      } else if (number === 1) {
-        inSteps = true;
+        lastStep = null;
+      } else if (continuesSteps) {
+        lastStep = number;
       }
     }
   }
