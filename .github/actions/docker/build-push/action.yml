@@ -39,6 +39,14 @@ inputs:
       d'environnement au build).
     required: false
     default: 'false'
+  trusted-workflows:
+    description: >
+      Autres workflows du repo (chemin, ex. .github/workflows/cd-preprod.yml),
+      un par ligne, dont l'attestation suffit aussi à réutiliser l'image. C'est
+      ce qui permet de promouvoir l'image construite par cd-preprod au lieu de
+      la reconstruire. Ils doivent construire l'image avec les mêmes inputs.
+    required: false
+    default: ''
 
 # Le job appelant doit avoir les permissions `id-token: write` et
 # `attestations: write` (signature de l'attestation de provenance), en plus de
@@ -68,6 +76,7 @@ runs:
         SECRETS_INPUT: ${{ inputs.secrets }}
         PUSH: ${{ inputs.push }}
         REUSE_IMAGE: ${{ inputs.reuse-image }}
+        TRUSTED_WORKFLOWS: ${{ inputs.trusted-workflows }}
         GH_TOKEN: ${{ github.token }}
       run: |
         set -euo pipefail
@@ -84,14 +93,20 @@ runs:
         # reconstruit, ce qui réécrit le tag.
         if [ "$PUSH" = "true" ] && [ "$REUSE_IMAGE" = "true" ] \
           && docker buildx imagetools inspect "$IMAGE" >/dev/null 2>&1; then
-          if gh attestation verify "oci://$IMAGE" \
-            --repo "$GITHUB_REPOSITORY" \
-            --signer-workflow "${GITHUB_WORKFLOW_REF%@*}" \
-            --source-digest "$GITHUB_SHA" \
-            --deny-self-hosted-runners >/dev/null; then
-            echo "Image $IMAGE déjà publiée et attestée pour $GITHUB_SHA, réutilisation sans build."
-            exit 0
-          fi
+          signers=("${GITHUB_WORKFLOW_REF%@*}")
+          while IFS= read -r wf; do
+            [ -n "$wf" ] && signers+=("$GITHUB_REPOSITORY/$wf")
+          done <<< "$TRUSTED_WORKFLOWS"
+          for signer in "${signers[@]}"; do
+            if gh attestation verify "oci://$IMAGE" \
+              --repo "$GITHUB_REPOSITORY" \
+              --signer-workflow "$signer" \
+              --source-digest "$GITHUB_SHA" \
+              --deny-self-hosted-runners >/dev/null 2>&1; then
+              echo "Image $IMAGE déjà publiée et attestée par $signer pour $GITHUB_SHA, réutilisation sans build."
+              exit 0
+            fi
+          done
           echo "::warning::Image $IMAGE sans attestation valide pour $GITHUB_SHA : reconstruction."
         fi
 
@@ -179,7 +194,7 @@ runs:
     # ce que vérifie la réutilisation ci-dessus.
     - name: Atteste la provenance de l'image
       if: steps.build.outputs.digest != ''
-      uses: actions/attest-build-provenance@v4.2.2
+      uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
       with:
         subject-name: ${{ steps.build.outputs.name }}
         subject-digest: ${{ steps.build.outputs.digest }}

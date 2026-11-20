@@ -16,8 +16,10 @@
 #                      (le PATCH du tag exige write), jamais « root »
 #   APP_ID             ex. preprod/app
 #   IMAGE_TAG          (optionnel) tag de l'image à déployer, ex. le short SHA
-#                      du commit. Sans lui, redéploie la configuration en place :
-#                      la tête de branche pour une application Git
+#                      du commit, ou sha256-<hex> pour un digest, que Coolify
+#                      déploie en image@sha256:<hex> (cf. cd-prod.yml). Sans
+#                      lui, redéploie la configuration en place : la tête de
+#                      branche pour une application Git
 #                      (git-applications.tf)
 #   DEPLOY_TIMEOUT     (optionnel) secondes d'attente max, défaut 900
 #
@@ -62,8 +64,9 @@ api() { # api <méthode> <chemin> [fichier corps]
   cat "$_tmp/body"
 }
 
-app_uuid="$(api GET /applications | jq -r --arg m "$_marker" \
-  '[.[] | select((.description // "") | contains($m))] | first | .uuid // empty')"
+read -r app_uuid _previous_tag < <(api GET /applications | jq -r --arg m "$_marker" \
+  '[.[] | select((.description // "") | contains($m))] | first
+   | "\(.uuid // "") \(.docker_registry_image_tag // "")"') || true
 if [ -z "$app_uuid" ]; then
   echo "✗ Aucune application ne porte ${_marker}. Est-elle déclarée dans infra/coolify ?" >&2
   exit 1
@@ -76,8 +79,18 @@ if [ -n "${IMAGE_TAG:-}" ]; then
   api PATCH "/applications/${app_uuid}" "$_tmp/tag.json" >/dev/null
 fi
 deployment_uuid="$(api POST "/deploy?uuid=${app_uuid}&force=false" \
-  | jq -r '.deployments[0].deployment_uuid // empty')"
+  | jq -r '.deployments[0].deployment_uuid // empty')" || deployment_uuid=""
 if [ -z "$deployment_uuid" ]; then
+  # Rien n'a été déployé : on remet le tag d'avant, sinon Coolify afficherait
+  # une version qui ne tourne pas, que cd-prod lit pour la promouvoir.
+  # Seulement si le tag est encore le nôtre : un déploiement concurrent a pu
+  # le changer entre-temps, et on écraserait sa version.
+  # ponytail: relecture puis PATCH, pas atomique (fenêtre de quelques ms).
+  _current_tag="$(api GET "/applications/${app_uuid}" | jq -r '.docker_registry_image_tag // empty')" || _current_tag=""
+  if [ -n "${IMAGE_TAG:-}" ] && [ -n "$_previous_tag" ] && [ "$_current_tag" = "$IMAGE_TAG" ]; then
+    jq -n --arg tag "$_previous_tag" '{docker_registry_image_tag: $tag}' >"$_tmp/tag.json"
+    api PATCH "/applications/${app_uuid}" "$_tmp/tag.json" >/dev/null
+  fi
   echo "✗ Coolify n'a mis aucun déploiement en file." >&2
   exit 1
 fi

@@ -446,7 +446,9 @@ curl -sH "Authorization: Bearer $COOLIFY_TOKEN" "$COOLIFY_ENDPOINT/servers" | jq
 
 Terraform déclare les applications (image, domaines, port, healthcheck) mais **ne possède
 pas le tag d'image** : il ne le pose qu'à la création, puis l'ignore. C'est la CD
-(`.github/workflows/cd-preprod.yml` pour la preprod) qui choisit la version :
+(`.github/workflows/cd-preprod.yml` pour la preprod) qui choisit la version. La prod ne
+construit rien : `cd-prod.yml` promeut l'image qui tourne en preprod, vérifiée par son
+attestation et déployée par digest (tag Coolify `sha256-<hex>`). À la main :
 
 ```sh
 APP_ID=preprod/app IMAGE_TAG=<sha> infra/scripts/coolify-deploy.sh
@@ -652,6 +654,11 @@ Coolify, reconfigure le proxy : revérifier ensuite les flags ci-dessus.
 - **Applications** : `cd-preprod` construit et déploie app, backend et site sur la preprod
   Scaleway à chaque commit de `main` dont la Main CI passe (`coolify-deploy.sh`). Les
   workflows `cd-app`, `cd-backend` et `cd-site` ne servent plus que Koyeb.
+  Le token Coolify de la CD vit dans les environnements GitHub `preprod-scaleway` et
+  `prod-scaleway`, tous deux restreints à `main` ; `prod-scaleway` exige en plus
+  l'approbation de l'équipe TeT Admin. Ne pas le remettre en secret du repo : n'importe
+  quelle branche pourrait le lire. Un token Coolify vaut pour toute la Team : celui de la
+  preprod peut aussi déployer la prod, d'où la restriction à `main` des deux côtés.
 - **Infra (à venir)** : `fmt` + `validate` + `plan` en commentaire de PR sur `infra/**`,
   `apply` sur `main` avec approbation manuelle (GitHub Environments), authentification
   Scaleway par OIDC plutôt que par clés long-lived.

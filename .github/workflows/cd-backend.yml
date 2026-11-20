@@ -72,6 +72,8 @@ jobs:
           cache-scope: tet-backend
           push: ${{ !env.ACT }}
           reuse-image: ${{ github.event.inputs.force-rebuild != 'true' }}
+          # Image de main déjà construite par la CD de la preprod : promue telle quelle.
+          trusted-workflows: .github/workflows/cd-preprod.yml
           secrets: |
             bryntum_token=BRYNTUM_ACCESS_TOKEN
           build-args: |
