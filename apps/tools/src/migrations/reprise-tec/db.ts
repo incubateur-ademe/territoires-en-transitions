@@ -11,6 +11,12 @@ const getUrl = (variable: string): string => {
   return url;
 };
 
+export const getCible = (applicationName: string): Pool =>
+  new Pool({
+    connectionString: getUrl('SUPABASE_DATABASE_URL'),
+    application_name: applicationName,
+  });
+
 export const getDatabases = (
   applicationName: string
 ): { source: Pool; cible: Pool } => ({
@@ -18,8 +24,5 @@ export const getDatabases = (
     connectionString: getUrl('TEC_DATABASE_URL'),
     application_name: applicationName,
   }),
-  cible: new Pool({
-    connectionString: getUrl('SUPABASE_DATABASE_URL'),
-    application_name: applicationName,
-  }),
+  cible: getCible(applicationName),
 });
