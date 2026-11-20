@@ -90,3 +90,24 @@ export const trpcInServerFunction: TRPCClient<AppRouter> =
   createTRPCClient<AppRouter>({
     links: [getTrpcLoggerLink(), SERVER_HTTP_LINK],
   });
+
+/**
+ * Client des route handlers qui viennent d'ouvrir une session : le cookie de
+ * la requête entrante ne la porte pas encore (ou porte la précédente), le
+ * jeton d'accès fraîchement émis est donc transmis explicitement.
+ */
+export const makeTrpcClientForAccessToken = (
+  accessToken: string
+): TRPCClient<AppRouter> =>
+  createTRPCClient<AppRouter>({
+    links: [
+      getTrpcLoggerLink(),
+      httpLink({
+        url: getTrpcUrl(),
+        headers: ({ op }) => ({
+          Authorization: `Bearer ${accessToken}`,
+          ...setCorrelationIdInContextAndGetHeader({ op }),
+        }),
+      }),
+    ],
+  });
