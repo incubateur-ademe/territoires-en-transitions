@@ -659,6 +659,7 @@ describe('niveau de l’action : fiche ou étape', () => {
         examplePage: 1,
         count: 3,
       },
+      fichesWithEtapes: 3,
       etapes: {
         exampleTitle: 'Diagnostiquer et orienter',
         examplePage: 1,
@@ -727,6 +728,26 @@ describe('niveau de l’action : fiche ou étape', () => {
       ['fiche', 3, 'Diagnostiquer et orienter'],
       ['fiche', 3, 'Accompagner et former les habitants'],
     ]);
+  });
+
+  it('lu à l’étape, une fiche sans étape reste une fiche', () => {
+    const pages = [
+      ...plan(),
+      buildPage(3, [
+        { text: 'Fiche Action n°1.4', fontSize: 14 },
+        { text: 'Réduire les imprimés', fontSize: 14 },
+        ...body(3),
+      ]),
+    ];
+
+    expect(detectActionLevelDoubt(pages)).toMatchObject({
+      fiches: { count: 4 },
+      fichesWithEtapes: 3,
+      etapes: { count: 6 },
+    });
+    expect(
+      titles(detectHeadings(pages, { actionLevel: 'etape' })).slice(-1)
+    ).toEqual([['fiche', 3, 'Réduire les imprimés']]);
   });
 
   it('découpe à l’étape : une unité par étape, rangée sous sa fiche, le pilote de la fiche dans son chapeau', () => {

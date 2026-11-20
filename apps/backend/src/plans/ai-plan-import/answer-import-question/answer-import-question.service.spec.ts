@@ -51,6 +51,7 @@ const awaitingJob: AiPlanImportJob = {
     kind: 'action-level',
     axes: level('Limiter les déchets verts', 5),
     fiches: level('Accompagner les habitants', 16),
+    fichesWithEtapes: 16,
     etapes: level('Diagnostiquer et orienter', 54),
     proposed: 'fiche',
     answer: null,

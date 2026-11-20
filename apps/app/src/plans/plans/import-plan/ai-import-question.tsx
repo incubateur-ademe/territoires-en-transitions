@@ -67,8 +67,12 @@ export const AiImportQuestion = ({
         }
       : {
           axes: question.axes?.count ?? 0,
-          sousAxes: question.fiches.count,
-          actions: question.etapes.count,
+          // Une fiche sans étape reste une action.
+          sousAxes: question.fichesWithEtapes,
+          actions:
+            question.etapes.count +
+            question.fiches.count -
+            question.fichesWithEtapes,
           sousActions: 0,
         };
 

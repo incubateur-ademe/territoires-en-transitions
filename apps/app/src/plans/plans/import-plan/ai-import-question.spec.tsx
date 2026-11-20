@@ -5,12 +5,17 @@ import { AiImportQuestion } from './ai-import-question';
 
 const question = {
   kind: 'action-level' as const,
-  axes: { exampleTitle: 'Limiter les déchets verts', examplePage: 31, count: 5 },
+  axes: {
+    exampleTitle: 'Limiter les déchets verts',
+    examplePage: 31,
+    count: 5,
+  },
   fiches: {
     exampleTitle: 'Accompagner les habitants vers le jardinage au naturel',
     examplePage: 37,
     count: 16,
   },
+  fichesWithEtapes: 16,
   etapes: {
     exampleTitle: 'Diagnostiquer et orienter',
     examplePage: 37,
