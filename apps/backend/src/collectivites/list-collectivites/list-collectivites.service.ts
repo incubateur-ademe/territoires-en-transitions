@@ -15,6 +15,7 @@ import {
   CollectivitePublic,
   CollectiviteResume,
   CollectiviteType,
+  servicesDeconcentresTypes,
 } from '@tet/domain/collectivites';
 import {
   aliasedTable,
@@ -23,6 +24,7 @@ import {
   desc,
   eq,
   getTableColumns,
+  notInArray,
   SQL,
   sql,
   SQLWrapper,
@@ -216,6 +218,12 @@ export default class ListCollectivitesService {
 
     if (input?.type) {
       whereConditions.push(eq(collectiviteTable.type, input.type));
+    }
+
+    if (input?.joinableOnly) {
+      whereConditions.push(
+        notInArray(collectiviteTable.type, [...servicesDeconcentresTypes])
+      );
     }
 
     if (input?.natureInsee) {

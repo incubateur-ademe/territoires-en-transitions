@@ -15,6 +15,8 @@ export const listCollectiviteInputSchema = z
     siren: z.string().optional(),
     fieldsMode: listCollectivitesFieldsModeSchema.optional(),
     withRelations: z.boolean().optional(),
+    // Écarte les services déconcentrés, que `membres.join` refuse
+    joinableOnly: z.boolean().optional(),
   })
   .optional()
   .default({ limit: 20, fieldsMode: 'resume', page: 1 });

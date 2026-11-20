@@ -12,6 +12,7 @@ import {
 } from '@tet/backend/test';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { collectiviteTypeEnum } from '@tet/domain/collectivites';
 import { eq } from 'drizzle-orm';
 import { onTestFinished } from 'vitest';
 import { utilisateurIdentiteOidcTable } from '../models/utilisateur-identite-oidc.table';
@@ -141,6 +142,22 @@ describe('GetPreselectedCollectiviteRouter — pré-sélection par SIRET ProConn
     expect(
       await caller.users.authentications.oidc.getPreselectedCollectivite()
     ).toMatchObject({ collectiviteId: collectivite.id });
+  });
+
+  /** `membres.join` la refuserait : la proposer mène droit à une erreur. */
+  test('siret d\'un service déconcentré → pas de pré-sélection', async () => {
+    const siren = '999888444';
+    const { user, collectivite, authUser } = await creerContexte(siren);
+    await databaseService.db
+      .update(collectiviteTable)
+      .set({ type: collectiviteTypeEnum.DDT })
+      .where(eq(collectiviteTable.id, collectivite.id));
+    await lierIdentiteAvecSiret(user.id, `${siren}00019`);
+
+    const caller = router.createCaller({ user: authUser });
+    expect(
+      await caller.users.authentications.oidc.getPreselectedCollectivite()
+    ).toBeNull();
   });
 
   test('siret mal formé → pas de pré-sélection', async () => {
