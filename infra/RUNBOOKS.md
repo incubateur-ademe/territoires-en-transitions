@@ -128,6 +128,50 @@ conséquence. Ils faussent aussi le contrôle final : `rclone size` doit compter
 autant d'objets que `select count(*) from storage.objects`. Sinon, relancer la boucle de
 la passe 2 (`copyto` saute les objets déjà identiques).
 
+## Rencontres : après le premier apply
+
+L'isolation du rôle `rencontres` repose sur le privilège `none` de RDB
+([`prod/rencontres.tf`](prod/rencontres.tf)). Contrôlé le 2026-11-16, après le premier
+`terraform apply` de `infra/prod` : les deux points passent. À refaire si l'instance ou le
+rôle est recréé, **avant** de basculer `DATABASE_URL` :
+
+```sh
+# 1. Le plan doit être vide. Un diff permanent ou une erreur « couldn't retrieve
+#    privileges » sur scaleway_rdb_privilege.rencontres_tet : retirer la ressource
+#    (terraform state rm si le refresh échoue), puis juger sur le point 2.
+terraform -chdir=infra/prod plan
+
+# 2. Le rôle rencontres ne doit pas pouvoir ouvrir la base de TET. L'instance n'a
+#    pas d'endpoint public (pg_allowed_ips vide) et le VPN ne relaie pas le VPC de
+#    prod : tunnel SSH par le serveur de prod, VPN monté (cf. README, « Accès aux
+#    serveurs (VPN) »). Sa clé est dans le projet tet-prod.
+wg-quick up tet
+KEY="$(mktemp)" # 600 dès la création : clé root du serveur de prod
+scw secret version access-by-path project-id=<projet tet-prod> \
+  secret-name="$(terraform -chdir=infra/prod output -raw server_ssh_key_secret_name)" \
+  secret-path=/ revision=latest -o json | jq -r '.data' | base64 -d > "$KEY"
+PG="$(terraform -chdir=infra/prod output -raw rencontres_database_url | sed -E 's|.*@([^/]+)/.*|\1|')"
+# ExitOnForwardFailure : si un ancien tunnel tient déjà le port, échouer plutôt que
+# tester l'ancienne instance.
+ssh -fN -o ExitOnForwardFailure=yes -L 15432:"$PG" -i "$KEY" \
+  root@$(terraform -chdir=infra/prod output -raw server_ssh_host)
+
+export PGPASSWORD="$(terraform -chdir=infra/prod output -raw rencontres_db_password)" PGSSLMODE=require
+for db in rencontres tet; do
+  echo "== $db"
+  psql -h localhost -p 15432 -U rencontres -d "$db" -Atc 'select current_user, current_database()'
+done
+# Attendu : « rencontres|rencontres » (témoin : mot de passe et réseau fonctionnent),
+# puis un refus sur tet. Fermer le tunnel et effacer clé et mot de passe :
+pkill -f '15432:'; rm -f "$KEY"; unset PGPASSWORD
+```
+
+Si la connexion passe, ne pas basculer : le rôle peut appeler toute fonction de `tet`
+exécutable par `PUBLIC`. Tenter `REVOKE CONNECT ON DATABASE tet FROM PUBLIC` avec
+`tet_admin`, après avoir vérifié que les rôles de TET ont leur propre `CONNECT`. `tet_admin`
+n'est pas superuser et l'ordre peut être refusé : il reste alors une instance dédiée à
+rencontres.
+
 ## Lock Terraform fantôme
 
 Un apply interrompu brutalement peut laisser son `.tflock` dans le bucket de state :

@@ -5,8 +5,8 @@
 # dans Coolify. Noms alignés sur local.coolify_env_derived_secrets
 # (infra/coolify/env-manifest.tf) : tet-prod-<nom> dans /coolify-env/prod.
 #
-# Pour l'instant, seul Alloy : les secrets Postgres et Redis viendront avec
-# les applications TET.
+# Pour l'instant, Alloy et la clé S3 de rencontres : les secrets Postgres et
+# Redis viendront avec les applications TET.
 
 locals {
   coolify_env_secrets = {
@@ -21,6 +21,14 @@ locals {
     "cockpit-logs-push-url" = {
       description = "COCKPIT_LOGS_PUSH_URL d'Alloy : push Loki de la source de logs custom du Cockpit."
       value       = module.cockpit.logs_push_url
+    }
+    "rencontres-s3-access-key-id" = {
+      description = "S3_ACCESS_KEY_ID de rencontres : clé de l'application IAM tet-prod-rencontres-storage (rencontres.tf)."
+      value       = scaleway_iam_api_key.rencontres_storage.access_key
+    }
+    "rencontres-s3-secret-access-key" = {
+      description = "S3_SECRET_ACCESS_KEY de rencontres."
+      value       = scaleway_iam_api_key.rencontres_storage.secret_key
     }
   }
 }

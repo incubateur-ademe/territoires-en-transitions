@@ -58,6 +58,17 @@ jobs:
       - name: Lint
         run: docker run --rm -v "$PWD/infra:/data" -w /data "$TFLINT_IMAGE" --recursive
 
+      # IAM Object Storage rights cover the whole tet-prod project (the
+      # rencontres key can write objects there): a bucket without a policy is
+      # open to it. modules/bucket always sets one. A bucket made by hand stays
+      # out of reach of this check.
+      - name: Buckets in infra/prod go through modules/bucket
+        run: |
+          if grep -rn --include='*.tf' 'resource "scaleway_object_bucket"' infra/prod; then
+            echo "::error::infra/prod : créer les buckets par modules/bucket (cf. infra/README.md, Buckets de tet-prod)"
+            exit 1
+          fi
+
   scripts-and-observability:
     runs-on: ubuntu-latest
     timeout-minutes: 10

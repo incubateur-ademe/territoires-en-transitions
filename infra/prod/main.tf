@@ -23,6 +23,21 @@ module "network" {
 
 locals {
   private_network_id = module.network.private_network_ids["prod"]
+
+  # Opérateurs autorisés par les bucket policies de tet-prod (modules/bucket) :
+  # les membres du groupe IAM tet-admin. Lus dans l'IAM plutôt que listés ici
+  # (dépôt public) ou dans terraform.tfvars (la policy est un état partagé, et
+  # deux listes locales s'écraseraient). Un nouveau membre reçoit un 403 au
+  # refresh du bucket, qui bloque tout plan de ce stack, tant qu'un membre déjà
+  # autorisé n'a pas réappliqué.
+  bucket_admin_principals = concat(
+    [for id in data.scaleway_iam_group.tet_admin.user_ids : "user_id:${id}"],
+    [for id in data.scaleway_iam_group.tet_admin.application_ids : "application_id:${id}"],
+  )
+}
+
+data "scaleway_iam_group" "tet_admin" {
+  name = "tet-admin"
 }
 
 module "app_server" {
