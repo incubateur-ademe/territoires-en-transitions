@@ -26,6 +26,7 @@ import { useDuplicatePlan } from './data/use-duplicate-plan';
 import { useExportPlanAction } from './data/use-export-plan';
 import { usePlanAxesContext } from './plan-arborescence.view/plan-axes.context';
 import { usePlanCreationCapabilities } from '../use-plan-creation-capabilities';
+import { useAiImportAccess } from '../import-plan/data/use-ai-import-access';
 
 type RestreindreFicheState = 'closed' | 'private' | 'public';
 
@@ -40,7 +41,7 @@ export const PlanMenuButton = () => {
   const { hasCollectivitePermission } = useCurrentCollectivite();
   const trpc = useTRPC();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const canReadImport = hasCollectivitePermission('plans.fiches.import');
+  const { isAvailable: canReadImport } = useAiImportAccess();
   const { data: imports } = useQuery(
     trpc.plans.aiImport.listRecentAiImports.queryOptions(
       { collectiviteId: plan.collectiviteId, planId: plan.id, limit: 1 },

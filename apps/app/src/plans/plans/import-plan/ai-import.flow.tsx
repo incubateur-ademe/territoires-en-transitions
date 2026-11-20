@@ -23,6 +23,7 @@ import {
 } from './data/use-enqueue-ai-import';
 import { useGetCurrentAiImport } from './data/use-get-current-ai-import';
 import { useGetAiImportStatus } from './data/use-get-ai-import-status';
+import { useAiImportAccess } from './data/use-ai-import-access';
 
 const CheckingOngoingImport = () => (
   <div className="flex justify-center py-10">
@@ -70,6 +71,7 @@ export const AiImportFlow = ({
   demarcheId?: number;
 }) => {
   const collectiviteId = useCollectiviteId();
+  const { isAvailable: canReadImport } = useAiImportAccess();
   const tracker = useEventTracker();
   const { setToast } = useToastContext();
   const [{ importJobId, retryJobId }, setImportQuery] =
@@ -154,28 +156,34 @@ export const AiImportFlow = ({
                   ? appLabels.importPlanIaErreur
                   : appLabels.importPlanIaTermine
               }
-              description={appLabels.importPlanIaConsulterRapport}
+              description={
+                canReadImport
+                  ? appLabels.importPlanIaConsulterRapport
+                  : undefined
+              }
               footer={
-                <Button
-                  size="sm"
-                  variant="outlined"
-                  href={makeCollectivitePlanImportsUrl({
-                    collectiviteId,
-                    importJobId: jobId,
-                  })}
-                  onClick={() =>
-                    tracker(Event.plans.importIa.details, {
-                      origine,
-                      demarcheId,
-                      jobId,
-                      profile: status.profile,
-                      status: status.status,
-                    })
-                  }
-                  dataTest="plans.import-ia.voir-rapport"
-                >
-                  {appLabels.importPlanIaVoirRapport}
-                </Button>
+                canReadImport ? (
+                  <Button
+                    size="sm"
+                    variant="outlined"
+                    href={makeCollectivitePlanImportsUrl({
+                      collectiviteId,
+                      importJobId: jobId,
+                    })}
+                    onClick={() =>
+                      tracker(Event.plans.importIa.details, {
+                        origine,
+                        demarcheId,
+                        jobId,
+                        profile: status.profile,
+                        status: status.status,
+                      })
+                    }
+                    dataTest="plans.import-ia.voir-rapport"
+                  >
+                    {appLabels.importPlanIaVoirRapport}
+                  </Button>
+                ) : undefined
               }
             />
           </div>

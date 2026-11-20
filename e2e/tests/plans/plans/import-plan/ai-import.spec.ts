@@ -132,6 +132,11 @@ test('recharge les capacités d’import après désactivation du mode super-adm
     )
   ).toBeVisible();
   await selectElectrification(page);
+  await page.getByTestId('close-plans.import-ia.modal').click();
+  await expect(page).toHaveURL(new RegExp(`/plans/imports$`));
+  await expect(
+    page.getByTestId('plans.import-ia.nouveau-button')
+  ).toBeVisible();
   mock.capabilities.profiles = [
     { profile: 'annexe-3-electrification', available: false },
   ];
@@ -139,15 +144,20 @@ test('recharge les capacités d’import après désactivation du mode super-adm
   const refreshedCapabilities = page.waitForResponse((response) =>
     response.url().includes('plans.aiImport.getAiImportCapabilities')
   );
-  await page.getByTestId('close-plans.import-ia.modal').click();
-  await expect(page).toHaveURL(new RegExp(`/plans/imports$`));
   const superAdminMode = page
     .getByRole('checkbox', { name: 'Mode super-admin' })
     .first();
   await superAdminMode.click();
   await expect(superAdminMode).not.toBeChecked();
-  await page.getByTestId('plans.import-ia.nouveau-button').click();
   await refreshedCapabilities;
+  await expect(page.getByTestId('plans.import-ia.nouveau-button')).toHaveCount(
+    0
+  );
+  await expect(
+    page.getByRole('heading', { name: 'Accès non autorisé' })
+  ).toBeVisible();
+  await expect(page.getByTestId('plans.import-ia.historique')).toHaveCount(0);
+  await page.goto(`/collectivite/${collectivite.data.id}/plans/importer-ia`);
   await expect(page.getByTestId('ai-import.plan-type')).toBeVisible();
   await expect(
     page.getByText(/L'import IA n'est pas disponible/)
@@ -752,7 +762,7 @@ test('propose le compte rendu depuis la modale PCAET après échec et rechargeme
   expect(mock.enqueueCalls).toBe(1);
 });
 
-test('retrouve les imports paginés sans activer le lancement et ne redirige pas un compte rendu terminé', async ({
+test('retrouve les imports paginés avec accès et ne redirige pas un compte rendu terminé', async ({
   page,
   collectivites,
   plans,
@@ -760,7 +770,7 @@ test('retrouve les imports paginés sans activer le lancement et ne redirige pas
   const mock = new AiImportFixture();
   await mock.install(page);
   const { collectivite, user } = await collectivites.addCollectiviteAndUser({
-    userArgs: { autoLogin: true },
+    userArgs: supportUser,
   });
   const planId = await plans.create(user, {
     collectiviteId: collectivite.data.id,
@@ -833,7 +843,7 @@ test('retrouve les imports paginés sans activer le lancement et ne redirige pas
   expect(mock.enqueueCalls).toBe(0);
 });
 
-test("garde le formulaire et le suivi accessibles sans autoriser l'import quand le lancement est désactivé", async ({
+test("masque l'historique et refuse ses accès directs quand l'import est désactivé", async ({
   page,
   collectivites,
 }) => {
@@ -845,6 +855,9 @@ test("garde le formulaire et le suivi accessibles sans autoriser l'import quand 
     userArgs: { autoLogin: true },
   });
   await page.goto(`/collectivite/${collectivite.data.id}/plans`);
+  await expect(
+    page.getByRole('link', { name: 'Historique des imports', exact: true })
+  ).toHaveCount(0);
   await page
     .getByRole('button', { name: 'Ajouter un plan', exact: true })
     .click();
@@ -858,18 +871,25 @@ test("garde le formulaire et le suivi accessibles sans autoriser l'import quand 
   ).toBeVisible();
   await expect(page.getByTestId('ai-import.lancer')).toBeDisabled();
 
-  await page.goto(
-    `/collectivite/${collectivite.data.id}/plans/importer-ia?importJobId=${mock.status.jobId}`
-  );
-  await expect(
-    page.getByRole('heading', { name: 'Détails de l’import' })
-  ).toBeVisible();
-  await expect(page.getByTestId('plans.import-ia.suivi')).toBeVisible();
-  await expect(page.getByRole('textbox', { name: 'Nom du plan' })).toHaveCount(
-    0
-  );
-  await page.getByRole('button', { name: 'Réessayer', exact: true }).click();
-  await expect(page).not.toHaveURL(/importJobId=/);
+  for (const path of [
+    'imports',
+    `imports?importJobId=${mock.status.jobId}`,
+    `importer-ia?importJobId=${mock.status.jobId}`,
+  ]) {
+    await page.goto(`/collectivite/${collectivite.data.id}/plans/${path}`);
+    await expect(
+      page.getByRole('heading', { name: 'Accès non autorisé' })
+    ).toBeVisible();
+    await expect(page.getByTestId('plans.import-ia.historique')).toHaveCount(0);
+    await expect(page.getByTestId('plans.import-ia.suivi')).toHaveCount(0);
+    await expect(
+      page.getByTestId('plans.import-ia.nouveau-button')
+    ).toHaveCount(0);
+  }
+  expect(mock.cursors).toEqual([]);
+  expect(mock.statusCalls).toBe(0);
+
+  await page.goto(`/collectivite/${collectivite.data.id}/plans/importer-ia`);
   await expect(
     page.getByRole('textbox', { name: 'Nom du plan' })
   ).toBeVisible();
@@ -904,7 +924,7 @@ test("garde le formulaire et le suivi accessibles sans autoriser l'import quand 
   expect(mock.enqueueCalls).toBe(0);
 });
 
-test('retrouve les détails depuis le menu du plan importé, sans URL de suivi ni lancement activé', async ({
+test("affiche les détails dans le menu du plan seulement avec accès à l'import", async ({
   page,
   collectivites,
   plans,
@@ -953,6 +973,17 @@ test('retrouve les détails depuis le menu du plan importé, sans URL de suivi n
   await expect(page.getByTestId('plans.import-ia.rapport')).toBeVisible();
   await expect(page.getByRole('link', { name: 'Nouvel import' })).toBeVisible();
 
+  await page
+    .getByRole('navigation', { name: 'Navigation des imports de plans' })
+    .getByRole('link', { name: 'Plans', exact: true })
+    .click();
+  await expect(
+    page.getByRole('heading', { name: 'Plans', exact: true })
+  ).toBeVisible();
+  await expect(
+    page.getByRole('link', { name: 'Historique des imports', exact: true })
+  ).toHaveCount(0);
+
   await page.goto(
     `/collectivite/${collectivite.data.id}/plans/${manualPlanId}`
   );
@@ -964,6 +995,18 @@ test('retrouve les détails depuis le menu du plan importé, sans URL de suivi n
   await expect(details).toHaveCount(0);
   expect(mock.queriedPlanIds).toContain(manualPlanId);
 
+  const availableCapabilities = mock.capabilities;
+  mock.capabilities = { profiles: [] };
+  const queriesWithAccess = mock.queriedPlanIds.length;
+  await page.goto(`/collectivite/${collectivite.data.id}/plans/${planId}`);
+  await page.getByTestId('plans.plan.menu').click();
+  await expect(
+    page.getByRole('button', { name: 'Télécharger le plan (Excel)' })
+  ).toBeVisible();
+  await expect(details).toHaveCount(0);
+  expect(mock.queriedPlanIds).toHaveLength(queriesWithAccess);
+  mock.capabilities = availableCapabilities;
+
   const lecteur = await collectivite.addUser({ role: 'lecture' });
   await lecteur.login();
   await page.goto(`/collectivite/${collectivite.data.id}/plans/${planId}`);
@@ -974,6 +1017,11 @@ test('retrouve les détails depuis le menu du plan importé, sans URL de suivi n
   ).toBeVisible();
   await expect(details).toHaveCount(0);
   expect(mock.queriedPlanIds).toHaveLength(queriesBefore);
+  await page.goto(`/collectivite/${collectivite.data.id}/plans/imports`);
+  await expect(
+    page.getByRole('heading', { name: 'Accès non autorisé' })
+  ).toBeVisible();
+  await expect(page.getByTestId('plans.import-ia.historique')).toHaveCount(0);
   expect(mock.enqueueCalls).toBe(0);
   expect(mock.resumeCalls).toBe(0);
 });
@@ -1349,7 +1397,7 @@ test('retrouve un import déjà en cours et persiste son URL sans le relancer', 
   expect(mock.enqueueCalls).toBe(0);
 });
 
-test('retrouve un échec sans plan depuis une liste vide et réserve la reprise à l’équipe', async ({
+test("consulte un échec sans plan depuis l'historique et réserve la reprise à l'équipe", async ({
   page,
   collectivites,
 }) => {
@@ -1365,10 +1413,7 @@ test('retrouve un échec sans plan depuis une liste vide et réserve la reprise 
   const { collectivite } = await collectivites.addCollectiviteAndUser({
     userArgs: { autoLogin: true },
   });
-  await page.goto(`/collectivite/${collectivite.data.id}/plans`);
-  await page
-    .getByRole('link', { name: 'Historique des imports', exact: true })
-    .click();
+  await page.goto(`/collectivite/${collectivite.data.id}/plans/imports`);
   await page.getByRole('button', { name: 'Plan de test', exact: true }).click();
   const report = page.getByTestId('plans.import-ia.rapport');
   await expect(report.getByRole('alert')).toContainText(
