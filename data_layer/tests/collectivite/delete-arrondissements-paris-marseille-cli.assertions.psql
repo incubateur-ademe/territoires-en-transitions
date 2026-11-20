@@ -1,0 +1,37 @@
+-- Base jetable dédiée, vide hors pgTAP. Ce test commit ses fixtures pour
+-- exercer les vraies transactions du point d'entrée psql (dont READ ONLY).
+\set ON_ERROR_STOP on
+DO $$
+BEGIN
+    IF to_regclass('public.collectivite') IS NOT NULL
+        OR EXISTS (SELECT 1 FROM pg_namespace WHERE nspname IN ('storage', 'private')) THEN
+        RAISE EXCEPTION 'Ces tests nécessitent une base jetable vide';
+    END IF;
+END;
+$$;
+SELECT plan(5);
+CREATE SCHEMA storage;
+CREATE TABLE public.collectivite (id integer PRIMARY KEY, type text, commune_code text, nom text);
+CREATE TABLE storage.objects (id integer PRIMARY KEY, bucket_id text);
+CREATE TABLE public.collectivite_bucket (collectivite_id integer REFERENCES public.collectivite, bucket_id text);
+INSERT INTO public.collectivite VALUES
+    (1, 'commune', '13201', 'Marseille 1er'), (2, 'commune', '75101', 'Paris 1er'),
+    (3, 'commune', '13055', 'Marseille'), (4, 'commune', '75056', 'Paris');
+INSERT INTO public.collectivite_bucket VALUES (1, 'marseille-1'), (2, 'paris-1');
+
+\unset apply
+\ir ../../../apps/tools/src/migrations/delete-arrondissements-paris-marseille/delete-arrondissements-paris-marseille.sql
+SELECT is((SELECT count(*)::integer FROM public.collectivite), 4, 'Le CLI sans apply conserve les espaces');
+SELECT is(to_regclass('private.arrondissements_paris_marseille_cleanup'), NULL::regclass,
+    'La transaction READ ONLY ne crée pas d''archive');
+
+\set apply true
+\ir ../../../apps/tools/src/migrations/delete-arrondissements-paris-marseille/delete-arrondissements-paris-marseille.sql
+SELECT results_eq('SELECT commune_code FROM public.collectivite ORDER BY id', $$VALUES ('13055'::text), ('75056')$$,
+    'Le CLI apply commit uniquement la suppression des arrondissements');
+SELECT is((SELECT count(*)::integer FROM private.arrondissements_paris_marseille_cleanup), 4,
+    'Le CLI commit aussi les images des espaces et liens retirés');
+\ir ../../../apps/tools/src/migrations/delete-arrondissements-paris-marseille/delete-arrondissements-paris-marseille.sql
+SELECT is((SELECT count(*)::integer FROM private.arrondissements_paris_marseille_cleanup), 4,
+    'Le rejeu du CLI ne duplique pas les archives');
+SELECT * FROM finish();

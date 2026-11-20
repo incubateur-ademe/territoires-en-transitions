@@ -7,3 +7,4 @@ Le dossier [ADRs](./adr) contient les "Architecture Decision Records" - des docu
 ## Administration des données
 
 - [Publier le catalogue et les lauréats Électrification](development/publish-electrification-data.md)
+- [Nettoyer les espaces des arrondissements de Paris et Marseille](../apps/tools/src/migrations/delete-arrondissements-paris-marseille/README.md)
