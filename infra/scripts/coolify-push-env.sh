@@ -141,8 +141,8 @@ fi
 
 # --- Phase 2 : réconciliation ---
 
-api GET "/${_resource}/${app_uuid}/envs" \
-  | jq '[.[] | select((.is_preview // false) == false)]' >"$_tmp/current.json"
+api GET "/${_resource}/${app_uuid}/envs" >"$_tmp/all.json"
+jq '[.[] | select((.is_preview // false) == false)]' "$_tmp/all.json" >"$_tmp/current.json"
 
 _created=0 _updated=0 _unchanged=0 _deleted=0
 while IFS=$'\t' read -r _key _multiline; do
@@ -179,6 +179,8 @@ while IFS=$'\t' read -r _key _multiline; do
   esac
 done < <(jq -r '.[] | [.key, (.multiline // false | tostring)] | @tsv' "$_tmp/manifest.json")
 
+# Le prune voit aussi les copies preview que Coolify crée pour chaque variable
+# d'une application : sinon elles survivent au retrait de la clé.
 while IFS=$'\t' read -r _key _uuid; do
   if [ "$_prune" = "true" ]; then
     api DELETE "/${_resource}/${app_uuid}/envs/${_uuid}" >/dev/null
@@ -190,7 +192,7 @@ while IFS=$'\t' read -r _key _uuid; do
 done < <(jq -r --slurpfile m "$_tmp/manifest.json" '
   ($m[0] | map(.key)) as $keys
   | .[] | select(.key as $k | $keys | index($k) | not) | [.key, .uuid] | @tsv' \
-  "$_tmp/current.json")
+  "$_tmp/all.json")
 
 echo "✓ ${APP_ID} : ${_created} créée(s), ${_updated} mise(s) à jour, ${_unchanged} inchangée(s), ${_deleted} supprimée(s)."
 if [ $((_created + _updated + _deleted)) -gt 0 ]; then
