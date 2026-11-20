@@ -11,6 +11,10 @@ import {
   AiPlanImportProfileEnum,
   GENERIC_IMPORT_CONTRACT_VERSION,
 } from '../models/import-profile';
+import {
+  actionLevelDoubtSchema,
+  type ActionLevelDoubt,
+} from '../models/import-question';
 import { planSkeletonSchema, type PlanSkeleton } from '../models/plan-skeleton';
 import type { DocumentKind } from './document/document-page';
 import type { PipelineLlm } from './run-import-pipeline';
@@ -30,6 +34,15 @@ export type PipelineProgress = {
   warnings: string[];
 };
 
+/**
+ * Le doute relevé à la lecture, et les unités de chacune des deux lectures :
+ * la réponse choisit les siennes sans relire le document, déjà supprimé.
+ */
+export type PendingQuestion = {
+  question: ActionLevelDoubt;
+  unitsByLevel: { fiche: DocumentUnit[]; etape: DocumentUnit[] };
+};
+
 /** Ce que les étapes se transmettent, actions comprises. */
 export type PipelineState = {
   progress: PipelineProgress;
@@ -37,6 +50,8 @@ export type PipelineState = {
   units: DocumentUnit[] | null;
   skeleton: PlanSkeleton | null;
   source: SourceChunks;
+  /** Absent des points de reprise antérieurs à la question. */
+  pendingQuestion?: PendingQuestion | null;
 };
 
 export const PIPELINE_CHECKPOINT_SCHEMA_VERSION = 1;
@@ -121,6 +136,16 @@ export const pipelineCheckpointSchema = genericImportContractSchema.extend({
   chunks: z.array(z.string()),
   units: z.array(documentUnitSchema).nullable(),
   skeleton: planSkeletonSchema.nullable(),
+  pendingQuestion: z
+    .object({
+      question: actionLevelDoubtSchema,
+      unitsByLevel: z.object({
+        fiche: z.array(documentUnitSchema),
+        etape: z.array(documentUnitSchema),
+      }),
+    })
+    .nullable()
+    .optional(),
   source: z.object({
     chunks: z.array(z.string()),
     chunkIndexByAction: z.array(countSchema),
