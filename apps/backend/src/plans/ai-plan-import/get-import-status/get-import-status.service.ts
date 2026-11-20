@@ -117,6 +117,18 @@ const toOutput = (view: AiPlanImportJobStatusView): GetImportStatusOutput => ({
   createdPlanId: view.createdPlanId,
   resumable: view.resumable,
   withSecteurs: view.withSecteurs,
+  question: view.question && {
+    kind: view.question.kind,
+    axes: view.question.axes,
+    fiches: view.question.fiches,
+    fichesWithEtapes: view.question.fichesWithEtapes,
+    etapes: view.question.etapes,
+    proposed: view.question.proposed,
+    answer: view.question.answer && {
+      actionLevel: view.question.answer.actionLevel,
+    },
+  },
+  content: view.content,
   report: view.report ?? {
     // L'erreur historique n'a pas de catégorie fiable : ne pas l'attribuer
     // au document, ni inventer les avertissements qui n'ont pas été conservés.

@@ -6,6 +6,7 @@ import { FindPreviousImportRouter } from './ai-plan-import/find-previous-import/
 import { GetImportStatusRouter } from './ai-plan-import/get-import-status/get-import-status.router';
 import { GetImportCapabilitiesRouter } from './ai-plan-import/get-import-capabilities/get-import-capabilities.router';
 import { ResumeImportRouter } from './ai-plan-import/resume-import/resume-import.router';
+import { AnswerImportQuestionRouter } from './ai-plan-import/answer-import-question/answer-import-question.router';
 import { PlanRouter } from './plans/plans.router';
 import { SuiviPlanRouter } from './plans/suivi-plan/suivi-plan.router';
 import { GenerateReportsRouter } from './reports/generate-plan-report-pptx/generate-reports.router';
@@ -22,7 +23,8 @@ export class PlanMainRouter {
     private readonly getImportStatusRouter: GetImportStatusRouter,
     private readonly findPreviousImportRouter: FindPreviousImportRouter,
     private readonly resumeImportRouter: ResumeImportRouter,
-    private readonly getImportCapabilitiesRouter: GetImportCapabilitiesRouter
+    private readonly getImportCapabilitiesRouter: GetImportCapabilitiesRouter,
+    private readonly answerImportQuestionRouter: AnswerImportQuestionRouter
   ) {}
 
   router = this.trpc.router({
@@ -35,7 +37,8 @@ export class PlanMainRouter {
       this.getImportStatusRouter.router,
       this.findPreviousImportRouter.router,
       this.resumeImportRouter.router,
-      this.getImportCapabilitiesRouter.router
+      this.getImportCapabilitiesRouter.router,
+      this.answerImportQuestionRouter.router
     ),
   });
 

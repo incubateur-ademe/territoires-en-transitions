@@ -1,4 +1,6 @@
 import { DisableableField } from '../models/disableable-field';
+import type { ActionLevel, ActionLevelDoubt } from '../models/import-question';
+import { withActionLevelInstruction } from '../prompts/action-level-instruction';
 import {
   AiPlanImportProfileEnum,
   GENERIC_IMPORT_CONTRACT_VERSION,
@@ -26,7 +28,11 @@ import {
 import { scoutUnits } from './scout-units/scout-units';
 import { DocumentUnit } from './segment-document/document-unit';
 import { hasMergedRowGroups } from './segment-document/cut-tabular-units';
-import { segmentDocument } from './segment-document/segment-document';
+import {
+  DEFAULT_SEGMENT_OPTIONS,
+  detectDocumentActionLevelDoubt,
+  segmentDocument,
+} from './segment-document/segment-document';
 import { coalesceChunks } from './source-chunks/coalesce-chunks';
 import { SourceChunks } from './source-chunks/source-chunks';
 import { splitDocument } from './split-document/split-document';
@@ -56,6 +62,7 @@ import {
   type PipelineCheckpoint,
   type PipelineProgress,
   type PipelineState,
+  type PendingQuestion,
 } from './pipeline-checkpoint';
 import {
   type StepName,
@@ -127,6 +134,14 @@ export type RunImportPipelineInput = {
   onStepRun?: (run: ImportStepRun) => Promise<void>;
   /** Après chaque étape terminée : de quoi reprendre l'import à cet endroit. */
   onCheckpoint?: (checkpoint: PipelineCheckpoint) => Promise<void>;
+  /** Le niveau de l'action choisi par l'utilisateur, quand le document laissait le choix. */
+  actionLevel?: ActionLevel;
+  /**
+   * S'arrêter après la lecture quand le document laisse un doute sur le
+   * niveau de l'action, pour le demander. Sans cela, la lecture par fiche
+   * s'applique, comme avant la question.
+   */
+  pauseOnQuestion?: boolean;
 } & (
   | { document: ReadDocument; resumeFrom?: undefined }
   // Reprise : la lecture est faite, le document n'est pas relu.
@@ -138,6 +153,14 @@ export type PipelineOutcome =
       status: 'done';
       draft: PlanDraft;
       /** Ce qui a été écarté en route sans faire échouer l'import. */
+      warnings: string[];
+      stepStates: StepStates;
+      tokens: TokenUsage;
+    }
+  | {
+      /** Lecture faite, rien d'autre : le point de reprise attend la réponse. */
+      status: 'awaiting_answer';
+      question: ActionLevelDoubt;
       warnings: string[];
       stepStates: StepStates;
       tokens: TokenUsage;
@@ -219,12 +242,18 @@ export const runImportPipeline = async (
   if (input.resumeFrom) {
     // Les actions lues par le code sont dans `progress.actions` : la reprise
     // les retrouve sans relire le classeur.
-    const { progress, chunks, units, skeleton, source } = input.resumeFrom;
-    state = { progress, chunks, units, skeleton, source };
+    const { progress, chunks, units, skeleton, source, pendingQuestion } =
+      input.resumeFrom;
+    state = { progress, chunks, units, skeleton, source, pendingQuestion };
     tabularRowGroups = input.resumeFrom.tabularRowGroups;
   } else {
     const readingStartedAt = new Date();
-    const read = readSource(llm, input.document, input.disabledFields);
+    const read = readSource(
+      llm,
+      input.document,
+      input.disabledFields,
+      input.actionLevel
+    );
     await reportStepRun({
       step: 'reading',
       status: read.success ? 'ok' : 'failed',
@@ -251,6 +280,7 @@ export const runImportPipeline = async (
       source: analysis
         ? coalesceChunks(analysis.source, VERIFICATION_WINDOW_TOKENS)
         : { chunks: read.data.chunks, chunkIndexByAction: [] },
+      pendingQuestion: read.data.pendingQuestion,
     };
     tabularRowGroups = read.data.tabularRowGroups;
   }
@@ -283,13 +313,14 @@ export const runImportPipeline = async (
         maxInputTokens: llm.maxInputTokens,
       },
       ...state,
-      // Le contrat générique v1 reste textuel. Les coordonnées/liens du lecteur
-      // appartiennent au checkpoint documentaire du profil Électrification.
-      units:
-        state.units?.map((unit) => ({
-          ...unit,
-          lines: unit.lines.map(({ text, pageIndex }) => ({ text, pageIndex })),
-        })) ?? null,
+      units: state.units?.map(toTextUnit) ?? null,
+      pendingQuestion: state.pendingQuestion && {
+        question: state.pendingQuestion.question,
+        unitsByLevel: {
+          fiche: state.pendingQuestion.unitsByLevel.fiche.map(toTextUnit),
+          etape: state.pendingQuestion.unitsByLevel.etape.map(toTextUnit),
+        },
+      },
       progress,
     }) ?? Promise.resolve();
 
@@ -297,6 +328,25 @@ export const runImportPipeline = async (
     await checkpoint('reading');
   }
   await reportProgress(state.progress.stepStates);
+
+  // La question se pose avant le premier appel au modèle : la lecture est
+  // tout ce que l'utilisateur attend.
+  if (state.pendingQuestion) {
+    if (input.actionLevel) {
+      state.units = state.pendingQuestion.unitsByLevel[input.actionLevel];
+      state.pendingQuestion = null;
+    } else if (input.pauseOnQuestion) {
+      return {
+        status: 'awaiting_answer',
+        question: state.pendingQuestion.question,
+        warnings: state.progress.warnings,
+        stepStates: state.progress.stepStates,
+        tokens: state.progress.tokens,
+      };
+    } else {
+      state.pendingQuestion = null;
+    }
+  }
 
   const sequentialSteps: PipelineStep[] = [
     // Écarter ce qui ne contient pas d'action et relever le squelette du plan :
@@ -338,7 +388,10 @@ export const runImportPipeline = async (
             : failure({ kind: 'no_actions_extracted' as const });
         }
         const extraction = {
-          instructions: input.instructions,
+          instructions: withActionLevelInstruction(
+            input.instructions,
+            input.actionLevel
+          ),
           disabledFields: input.disabledFields,
           currentDate: input.currentDate,
           spreadsheet: tabular,
@@ -731,6 +784,7 @@ const markOk = (progress: Progress, name: StepName): Progress => ({
 type ReadSource = {
   chunks: string[];
   units: DocumentUnit[] | null;
+  pendingQuestion: PendingQuestion | null;
   /** Un tableur : ce que le code en a lu, le reste allant au modèle. */
   analysis: WorkbookAnalysis | null;
   tabularRowGroups: boolean;
@@ -744,7 +798,8 @@ type ReadSource = {
 const readSource = (
   llm: PipelineLlm,
   document: ReadDocument,
-  disabledFields: DisableableField[]
+  disabledFields: DisableableField[],
+  actionLevel: ActionLevel | undefined
 ): Result<ReadSource, ReadingError> => {
   const tome = detectDocumentTome(document);
   if (tome.verdict === 'wrong_tome') {
@@ -778,8 +833,28 @@ const readSource = (
         : workbook ?? []
     );
   if (llm.capabilities.strategy === 'segmented') {
-    const units = segmentDocument(modelDocument);
-    const total = units.length + (analysis?.actions.length ?? 0);
+    const question = detectDocumentActionLevelDoubt(modelDocument);
+    // Les deux lectures, faute de quoi la réponse ferait relire le document,
+    // supprimé dès la pause.
+    const unitsByLevel = question && {
+      fiche: segmentDocument(modelDocument, {
+        ...DEFAULT_SEGMENT_OPTIONS,
+        actionLevel: 'fiche',
+      }),
+      etape: segmentDocument(modelDocument, {
+        ...DEFAULT_SEGMENT_OPTIONS,
+        actionLevel: 'etape',
+      }),
+    };
+    const units = unitsByLevel
+      ? unitsByLevel[actionLevel ?? 'fiche']
+      : segmentDocument(modelDocument);
+    const total =
+      Math.max(
+        units.length,
+        unitsByLevel?.fiche.length ?? 0,
+        unitsByLevel?.etape.length ?? 0
+      ) + (analysis?.actions.length ?? 0);
     if (total > MAX_DOCUMENT_UNITS) {
       return failure({
         kind: 'document_too_long',
@@ -787,7 +862,16 @@ const readSource = (
         maxChunks: MAX_DOCUMENT_UNITS,
       });
     }
-    return success({ chunks: [], units, analysis, tabularRowGroups });
+    return success({
+      chunks: [],
+      units,
+      pendingQuestion:
+        question && unitsByLevel && !actionLevel
+          ? { question, unitsByLevel }
+          : null,
+      analysis,
+      tabularRowGroups,
+    });
   }
   const text = joinPages(modelDocument);
   const chunks =
@@ -810,8 +894,23 @@ const readSource = (
       maxChunks: MAX_DOCUMENT_CHUNKS,
     });
   }
-  return success({ chunks, units: null, analysis, tabularRowGroups });
+  return success({
+    chunks,
+    units: null,
+    pendingQuestion: null,
+    analysis,
+    tabularRowGroups,
+  });
 };
+
+/**
+ * Le contrat générique v1 reste textuel. Les coordonnées/liens du lecteur
+ * appartiennent au checkpoint documentaire du profil Électrification.
+ */
+const toTextUnit = (unit: DocumentUnit): DocumentUnit => ({
+  ...unit,
+  lines: unit.lines.map(({ text, pageIndex }) => ({ text, pageIndex })),
+});
 
 const describeReading = ({
   chunks,

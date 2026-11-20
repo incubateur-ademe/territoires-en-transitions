@@ -652,6 +652,37 @@ terminée.
 Un échec métier (document trop long, modèle en erreur) reste définitif
 (`attempts: 1`) : seule l'équipe peut le reprendre.
 
+## Question à l'utilisateur : le niveau de l'action
+
+Un document qui titre ses fiches « Fiche action n°1.2 » et y détaille
+plusieurs étapes « Action 1 – … » laisse deux lectures : la fiche est
+l'action et ses étapes des sous-actions, ou chaque étape est une action et la
+fiche un sous-axe. C'est une convention de la collectivité, pas du document :
+l'import la demande au lieu de la deviner.
+
+- **Détection** (`detectActionLevelDoubt`, `segment-document/detect-headings.ts`),
+  déterministe : au moins trois fiches nommées, et la moitié d'entre elles au
+  moins portent deux étapes ou plus. Une étape suit sa fiche sans titre d'axe
+  entre les deux, et son numéro n'est celui d'aucune fiche (« Action 1.2 » du
+  récapitulatif renvoie à la fiche 1.2). Le choix proposé est l'étape quand le
+  document donne plus d'un pilote et demi par fiche, la fiche sinon. Ni
+  tableur ni stratégie `whole-document` : pas de question.
+- **Pause** : après la lecture, avant le premier appel au modèle. Le point de
+  reprise `reading` garde les unités des deux lectures (`pendingQuestion`),
+  le document étant supprimé à la fin du passage. Le job passe
+  `awaiting_answer` et sa colonne `question` porte les exemples et les comptes
+  affichés à l'utilisateur.
+- **Réponse** (`answer-import-question/`, `plans.fiches.import` sur la
+  collectivité) : le job repasse `pending` sous un nouveau passage, la reprise
+  prend les unités de la lecture choisie et ajoute une phrase au bloc des
+  consignes de la structuration. Une seconde réponse est refusée (409).
+- **Sans réponse** : l'import occupe sa collectivité et son auteur (un import
+  en vol à la fois) mais pas le plafond global. Après sept jours, il échoue et
+  son plan passe en échec, au démarrage du backend, au prochain import ou à
+  une réponse tardive (`expire-import-questions/`).
+- Sans `pauseOnQuestion` (évals, specs), la lecture par fiche s'applique
+  comme avant, prompts inchangés.
+
 ## Statistiques des imports
 
 Chaque import laisse sa trace, sans appel supplémentaire au modèle :

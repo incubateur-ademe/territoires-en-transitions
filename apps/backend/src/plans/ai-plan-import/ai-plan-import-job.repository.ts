@@ -34,8 +34,16 @@ import { ImportReport, importReportSchema } from './models/import-report';
 import { ImportJobStats } from './models/import-job-stats';
 import { PlanDraft } from './models/plan-draft';
 import {
+  type ActionLevelDoubt,
+  type ImportAnswer,
+  importQuestionSchema,
+} from './models/import-question';
+import { z } from 'zod';
+import {
   AiPlanImportJob,
   aiPlanImportJobInFlightStatuses,
+  aiPlanImportJobProcessingStatuses,
+  ImportContentCounts,
   AiPlanImportJobOptions,
   AiPlanImportJobStatus,
   AiPlanImportJobStatusEnum,
@@ -51,6 +59,7 @@ import {
 } from './ai-plan-import.constants';
 import {
   AiPlanImportErrorEnum,
+  aiPlanImportJobErrorMessages,
   type AiPlanImportError,
 } from './ai-plan-import.errors';
 import { initialStepStates, StepStates } from './pipeline/run-import-pipeline';
@@ -104,15 +113,36 @@ const statusViewProjection = {
   report: sql<unknown>`${aiPlanImportJobTable.draft} -> 'report'`,
   resumable: sql<boolean>`coalesce(${isResumable}, false)`,
   withSecteurs: sql<boolean>`coalesce((${aiPlanImportJobTable.options} ->> 'withSecteurs')::boolean, false)`,
+  question: sql<unknown>`${aiPlanImportJobTable.question}`,
+  content: sql<unknown>`${aiPlanImportJobTable.stats} -> 'content'`,
 };
+
+const contentCountsSchema = z.object({
+  axes: z.number().int().nonnegative(),
+  sousAxes: z.number().int().nonnegative(),
+  actions: z.number().int().nonnegative(),
+  sousActions: z.number().int().nonnegative(),
+});
+
+const isAwaitingAnswer = eq(
+  aiPlanImportJobTable.status,
+  AiPlanImportJobStatusEnum.AWAITING_ANSWER
+);
+
+const isOverdue = lt(
+  aiPlanImportJobTable.modifiedAt,
+  sql`now() - make_interval(days => ${AI_PLAN_IMPORT_CHECKPOINT_RETENTION_DAYS})`
+);
 
 type StoredStatusView = Omit<
   AiPlanImportJobStatusView,
-  'profile' | 'report'
+  'profile' | 'report' | 'question' | 'content'
 > & {
   options: AiPlanImportJobOptions;
   checkpoint: unknown;
   report: unknown;
+  question: unknown;
+  content: unknown;
 };
 
 export type ListRecentAiImportsInput = {
@@ -145,12 +175,20 @@ export class AiPlanImportJobRepository {
     options,
     checkpoint,
     report,
+    question,
+    content,
     ...view
   }: StoredStatusView): AiPlanImportJobStatusView {
     const parsedReport = importReportSchema.safeParse(report);
     const retryDefaults = importRetryDefaultsSchema.safeParse(options);
+    const parsedQuestion = importQuestionSchema.safeParse(question);
+    const parsedContent = contentCountsSchema.safeParse(content);
     return {
       ...view,
+      question: parsedQuestion.success ? parsedQuestion.data : null,
+      content: parsedContent.success
+        ? (parsedContent.data satisfies ImportContentCounts)
+        : null,
       profile: resolveImportProfile(options.profile),
       report: parsedReport.success ? parsedReport.data : undefined,
       retryDefaults: retryDefaults.success ? retryDefaults.data : null,
@@ -465,7 +503,10 @@ export class AiPlanImportJobRepository {
         .select({ value: count() })
         .from(aiPlanImportJobTable)
         .where(
-          inArray(aiPlanImportJobTable.status, aiPlanImportJobInFlightStatuses)
+          inArray(
+            aiPlanImportJobTable.status,
+            aiPlanImportJobProcessingStatuses
+          )
         );
       return success(row.value);
     } catch (error) {
@@ -493,8 +534,149 @@ export class AiPlanImportJobRepository {
         attempt: sql`${aiPlanImportJobTable.attempt} + CASE WHEN ${aiPlanImportJobTable.status} = ${AiPlanImportJobStatusEnum.RUNNING} THEN 1 ELSE 0 END`,
         modifiedAt: new Date().toISOString(),
       },
-      allowedFromStatuses: aiPlanImportJobInFlightStatuses,
+      allowedFromStatuses: aiPlanImportJobProcessingStatuses,
     });
+  }
+
+  /**
+   * La lecture est faite et le document laisse un doute : le passage s'arrête
+   * là, le point de reprise attend la réponse.
+   */
+  async pauseForQuestion(input: {
+    id: string;
+    attempt: number;
+    question: ActionLevelDoubt;
+    stepStates: StepStates;
+  }): Promise<Result<AiPlanImportJob, AiPlanImportError>> {
+    return this.updateAndReturn({
+      id: input.id,
+      attempt: input.attempt,
+      patch: {
+        status: AiPlanImportJobStatusEnum.AWAITING_ANSWER,
+        question: { ...input.question, answer: null },
+        stepStates: input.stepStates,
+        modifiedAt: new Date().toISOString(),
+      },
+      allowedFromStatuses: [AiPlanImportJobStatusEnum.RUNNING],
+    });
+  }
+
+  /**
+   * Enregistre la réponse et remet l'import en file pour un nouveau passage.
+   * Une seule réponse passe : la seconde ne trouve plus d'import en attente.
+   */
+  async answerQuestion(
+    input: { id: string; answer: ImportAnswer; answeredBy: string },
+    tx: Transaction
+  ): Promise<Result<AiPlanImportJob, AiPlanImportError>> {
+    try {
+      const [candidate] = await tx
+        .select({ question: aiPlanImportJobTable.question })
+        .from(aiPlanImportJobTable)
+        .where(
+          and(
+            eq(aiPlanImportJobTable.id, input.id),
+            isAwaitingAnswer,
+            sql`NOT (${isOverdue})`
+          )
+        )
+        .for('update');
+      const question = importQuestionSchema.safeParse(candidate?.question);
+      if (
+        !candidate ||
+        !question.success ||
+        question.data.kind !== input.answer.kind
+      ) {
+        return failure(AiPlanImportErrorEnum.IMPORT_NOT_AWAITING_ANSWER);
+      }
+      const [row] = await tx
+        .update(aiPlanImportJobTable)
+        .set({
+          status: AiPlanImportJobStatusEnum.PENDING,
+          question: {
+            ...question.data,
+            answer: {
+              actionLevel: input.answer.actionLevel,
+              answeredBy: input.answeredBy,
+              answeredAt: new Date().toISOString(),
+            },
+          },
+          error: null,
+          attempt: sql`${aiPlanImportJobTable.attempt} + 1`,
+          modifiedAt: new Date().toISOString(),
+        })
+        .where(and(eq(aiPlanImportJobTable.id, input.id), isAwaitingAnswer))
+        .returning(jobColumns);
+      return row
+        ? success(row)
+        : failure(AiPlanImportErrorEnum.IMPORT_NOT_AWAITING_ANSWER);
+    } catch (error) {
+      this.logger.error(
+        `Réponse à la question du job ${input.id}: ${getErrorMessage(error)}`
+      );
+      return failure(AiPlanImportErrorEnum.UPDATE_JOB_ERROR, toError(error));
+    }
+  }
+
+  /** La file a refusé le nouveau passage : la question se pose de nouveau. */
+  async reopenQuestion(input: {
+    id: string;
+    attempt: number;
+  }): Promise<Result<AiPlanImportJob, AiPlanImportError>> {
+    const job = await this.getById(input.id);
+    if (!job.success) return job;
+    return this.updateAndReturn({
+      id: input.id,
+      attempt: input.attempt,
+      patch: {
+        status: AiPlanImportJobStatusEnum.AWAITING_ANSWER,
+        question: job.data.question && { ...job.data.question, answer: null },
+        modifiedAt: new Date().toISOString(),
+      },
+      allowedFromStatuses: [AiPlanImportJobStatusEnum.PENDING],
+    });
+  }
+
+  /**
+   * Sans tâche planifiée, chaque démarrage et chaque nouvel import arrêtent les
+   * imports restés sans réponse au-delà de la rétention : ils libèrent leur
+   * collectivité, et leur point de reprise, qui contient le document, part.
+   */
+  async expireAwaitingAnswers(): Promise<
+    Result<
+      {
+        id: string;
+        collectiviteId: number;
+        createdBy: string;
+        createdPlanId: number | null;
+      }[],
+      AiPlanImportError
+    >
+  > {
+    try {
+      const rows = await this.db
+        .update(aiPlanImportJobTable)
+        .set({
+          status: AiPlanImportJobStatusEnum.FAILED,
+          error: aiPlanImportJobErrorMessages.QUESTION_EXPIRED,
+          checkpoint: null,
+          finishedAt: new Date().toISOString(),
+          modifiedAt: new Date().toISOString(),
+        })
+        .where(and(isAwaitingAnswer, isOverdue))
+        .returning({
+          id: aiPlanImportJobTable.id,
+          collectiviteId: aiPlanImportJobTable.collectiviteId,
+          createdBy: aiPlanImportJobTable.createdBy,
+          createdPlanId: aiPlanImportJobTable.createdPlanId,
+        });
+      return success(rows);
+    } catch (error) {
+      this.logger.error(
+        `Expiration des imports sans réponse: ${getErrorMessage(error)}`
+      );
+      return failure(AiPlanImportErrorEnum.UPDATE_JOB_ERROR, toError(error));
+    }
   }
 
   async saveCheckpoint(
