@@ -150,4 +150,25 @@ describe('toImportStepViews', () => {
       { name: 'qualitativeReview', status: 'waiting' },
     ]);
   });
+
+  it("n'avance aucune etape pendant que l'import attend une reponse", () => {
+    const stepStates: ImportStepStates = {
+      reading: 'ok',
+      scouting: 'pending',
+      extraction: 'pending',
+      hierarchy: 'pending',
+      scoring: 'pending',
+      consolidation: 'pending',
+      enrichment: 'pending',
+      secteurs: 'pending',
+      qualitativeReview: 'pending',
+    };
+
+    const views = toImportStepViews(stepStates, {
+      jobStatus: 'awaiting_answer',
+    });
+
+    expect(views[0]).toEqual({ name: 'reading', status: 'done' });
+    expect(views.some(({ status }) => status === 'current')).toBe(false);
+  });
 });

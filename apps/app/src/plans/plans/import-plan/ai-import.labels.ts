@@ -10,6 +10,7 @@ export const importStatusLabels: Record<ImportStatus['status'], string> = {
   running: appLabels.importPlanIaEnCoursCourt,
   done: appLabels.importPlanIaTermine,
   failed: appLabels.importPlanIaEchecCourt,
+  awaiting_answer: appLabels.importPlanIaEnAttenteReponse,
 };
 
 export const importStepStatusLabels: Record<ImportStepView['status'], string> =

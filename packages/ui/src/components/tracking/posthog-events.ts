@@ -109,6 +109,7 @@ export const Event = {
       arrierePlan: 'plans:import-ia:arriere_plan_clic',
       reessayer: 'plans:import-ia:reessayer_clic',
       reprendre: 'plans:import-ia:reprendre_clic',
+      repondreQuestion: 'plans:import-ia:repondre_question_clic',
     },
   },
   fiches: {

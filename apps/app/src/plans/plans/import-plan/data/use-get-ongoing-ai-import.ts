@@ -19,6 +19,8 @@ export const useGetOngoingAiImport = (
   const { data: status } = useGetAiImportStatus(jobId);
   const isOngoing =
     jobId !== null && status?.status !== 'done' && status?.status !== 'failed';
+  /** L'import est arrêté sur sa question : il attend une réponse, pas le serveur. */
+  const isAwaitingAnswer = isOngoing && status?.status === 'awaiting_answer';
 
-  return { jobId, status, isOngoing };
+  return { jobId, status, isOngoing, isAwaitingAnswer };
 };

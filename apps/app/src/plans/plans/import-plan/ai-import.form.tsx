@@ -17,6 +17,7 @@ import { AiImportIntroductionAlert } from './ai-import-introduction.alert';
 import { useGetOngoingAiImport } from './data/use-get-ongoing-ai-import';
 import { PreviousAiImportAlert } from './previous-ai-import.alert';
 import { useAiImportForm } from './use-ai-import-form';
+import { PlanLevelsGuide } from './plan-levels.guide';
 
 const PLAN_NAME_INPUT_ID = 'ai-import-plan-name';
 
@@ -62,101 +63,112 @@ export const AiImportForm = ({
   const disableSubmit = isSubmitDisabled || isOngoing;
 
   return (
-    <form
-      onSubmit={handleSubmit((values) => {
-        if (disableSubmit) return;
-        return onSubmit({
-          ...values,
-          ...config.fixedExtractionOptions,
-          profile: config.profile,
-          confirmReimport: previousImport !== null,
-        });
-      })}
-      className="flex flex-col gap-6"
-    >
-      <AiImportIntroductionAlert description={config.description} />
-      <Field
-        title={appLabels.nomPlan}
-        htmlFor={PLAN_NAME_INPUT_ID}
-        state={errors.planName ? 'error' : 'default'}
-        message={errors.planName?.message}
-      >
-        <Input id={PLAN_NAME_INPUT_ID} type="text" {...register('planName')} />
-      </Field>
-      <Field
-        title={appLabels.typePlan}
-        hint={
-          lockedPlanTypeId !== undefined
-            ? appLabels.importPlanIaTypeVerrouille
-            : undefined
-        }
-      >
-        <Controller
-          control={control}
-          name="planType"
-          render={({ field }) => (
-            <Select
-              dataTest="ai-import.plan-type"
-              disabled={lockedPlanTypeId !== undefined}
-              options={planTypesOptions ?? []}
-              values={field.value ?? undefined}
-              onChange={(value) =>
-                field.onChange(typeof value === 'number' ? value : null)
-              }
-            />
-          )}
-        />
-      </Field>
-      <AiImportAvailabilityAlert
-        profiles={profiles}
-        profile={config.profile}
-        selectedPlanTypeId={selectedPlanTypeId}
-        isLoading={isLoadingPlanTypes || isLoadingProfiles}
-        isProfileAvailable={isProfileAvailable}
-      />
-      <AiImportFileField
-        control={control}
-        config={config}
-        error={errors.file}
-        suggestedFile={suggestedFile}
-        isLoadingSuggestedFile={isLoadingSuggestedFile}
-        selectFile={selectFile}
-        removeFile={() => resetField('file')}
-      />
-      <AiImportExtractionOptionsFields
-        control={control}
-        register={register}
-        config={config}
-        isSuperAdminRoleEnabled={isSuperAdminRoleEnabled}
-      />
-      {previousImport && (
-        <PreviousAiImportAlert previousImport={previousImport} />
-      )}
-      <div className="flex items-center justify-end gap-6 mt-6">
-        {cancelButton}
-        <Tooltip label={disabledOngoingReason}>
-          <span
-            className="inline-flex"
-            tabIndex={disabledOngoingReason ? 0 : undefined}
+    // Le repère se range à côté du formulaire quand la place le permet
+    // (modale large), dessous sinon (page d'import).
+    <div className="[container-type:inline-size]">
+      <div className="grid grid-cols-1 items-start gap-6 [@container(min-width:52rem)]:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+        <form
+          onSubmit={handleSubmit((values) => {
+            if (disableSubmit) return;
+            return onSubmit({
+              ...values,
+              ...config.fixedExtractionOptions,
+              profile: config.profile,
+              confirmReimport: previousImport !== null,
+            });
+          })}
+          className="flex flex-col gap-6"
+        >
+          <AiImportIntroductionAlert description={config.description} />
+          <Field
+            title={appLabels.nomPlan}
+            htmlFor={PLAN_NAME_INPUT_ID}
+            state={errors.planName ? 'error' : 'default'}
+            message={errors.planName?.message}
           >
-            <Button
-              type="submit"
-              disabled={disableSubmit}
-              icon="upload-2-line"
-              dataTest="ai-import.lancer"
-              className="disabled:pointer-events-none"
-            >
-              {isSubmitting ? (
-                <SpinnerLoader />
-              ) : previousImport ? (
-                appLabels.importPlanIaRelancerQuandMeme
-              ) : (
-                appLabels.importPlanIaLancer
+            <Input
+              id={PLAN_NAME_INPUT_ID}
+              type="text"
+              {...register('planName')}
+            />
+          </Field>
+          <Field
+            title={appLabels.typePlan}
+            hint={
+              lockedPlanTypeId !== undefined
+                ? appLabels.importPlanIaTypeVerrouille
+                : undefined
+            }
+          >
+            <Controller
+              control={control}
+              name="planType"
+              render={({ field }) => (
+                <Select
+                  dataTest="ai-import.plan-type"
+                  disabled={lockedPlanTypeId !== undefined}
+                  options={planTypesOptions ?? []}
+                  values={field.value ?? undefined}
+                  onChange={(value) =>
+                    field.onChange(typeof value === 'number' ? value : null)
+                  }
+                />
               )}
-            </Button>
-          </span>
-        </Tooltip>
+            />
+          </Field>
+          <AiImportAvailabilityAlert
+            profiles={profiles}
+            profile={config.profile}
+            selectedPlanTypeId={selectedPlanTypeId}
+            isLoading={isLoadingPlanTypes || isLoadingProfiles}
+            isProfileAvailable={isProfileAvailable}
+          />
+          <AiImportFileField
+            control={control}
+            config={config}
+            error={errors.file}
+            suggestedFile={suggestedFile}
+            isLoadingSuggestedFile={isLoadingSuggestedFile}
+            selectFile={selectFile}
+            removeFile={() => resetField('file')}
+          />
+          <AiImportExtractionOptionsFields
+            control={control}
+            register={register}
+            config={config}
+            isSuperAdminRoleEnabled={isSuperAdminRoleEnabled}
+          />
+          {previousImport && (
+            <PreviousAiImportAlert previousImport={previousImport} />
+          )}
+          <div className="flex items-center justify-end gap-6 mt-6">
+            {cancelButton}
+            <Tooltip label={disabledOngoingReason}>
+              <span
+                className="inline-flex"
+                tabIndex={disabledOngoingReason ? 0 : undefined}
+              >
+                <Button
+                  type="submit"
+                  disabled={disableSubmit}
+                  icon="upload-2-line"
+                  dataTest="ai-import.lancer"
+                  className="disabled:pointer-events-none"
+                >
+                  {isSubmitting ? (
+                    <SpinnerLoader />
+                  ) : previousImport ? (
+                    appLabels.importPlanIaRelancerQuandMeme
+                  ) : (
+                    appLabels.importPlanIaLancer
+                  )}
+                </Button>
+              </span>
+            </Tooltip>
+          </div>
+        </form>
+        <PlanLevelsGuide />
       </div>
-    </form>
+    </div>
   );
 };

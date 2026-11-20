@@ -327,6 +327,7 @@ const useCreatePlanAction = ({
     isEnabled: isAiPlanImportEnabled,
     isCheckingAvailability,
     isOngoing: isImportOngoing,
+    isAwaitingAnswer: isImportAwaitingAnswer,
     trackImport,
     setIsProgressDisplayed,
   } = useImportProgramme();
@@ -358,7 +359,9 @@ const useCreatePlanAction = ({
         },
       ]}
     >
-      {isImportOngoing ? (
+      {isImportAwaitingAnswer ? (
+        <span role="status">{appLabels.importPlanIaEnAttenteReponse}</span>
+      ) : isImportOngoing ? (
         <span role="status" className="inline-flex items-center gap-2">
           {appLabels.importPlanIaEnCoursCourt}
           <SpinnerLoader className="w-4 h-4" />

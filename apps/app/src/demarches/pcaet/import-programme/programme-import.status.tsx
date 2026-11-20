@@ -12,10 +12,12 @@ import {
   getImportStageLabel,
 } from '@/app/plans/plans/import-plan/ai-import-stages';
 import { useFindPreviousAiImport } from '@/app/plans/plans/import-plan/data/use-find-previous-ai-import';
+import { AiImportQuestion } from '@/app/plans/plans/import-plan/ai-import-question';
+import { useAnswerAiImportQuestion } from '@/app/plans/plans/import-plan/data/use-answer-ai-import-question';
 import { PlanStatusEnum } from '@tet/domain/plans';
 import type { DemarcheDocumentFichier } from '@tet/domain/demarches';
 import { useDemarcheTracker } from '@/app/demarches/use-demarche-tracker';
-import { Alert, Button, Event } from '@tet/ui';
+import { Alert, Button, Event, useEventTracker } from '@tet/ui';
 import useLocalStorage from 'react-use/lib/useLocalStorage';
 import { useImportProgramme } from './import-programme.context';
 
@@ -44,6 +46,41 @@ const ImportProgressCard = () => {
       <p className="m-0 text-xs text-grey-7">
         {appLabels.demarcheProgrammeCreationArrierePlan}
       </p>
+    </div>
+  );
+};
+
+/** L'import lancé ici attend le niveau de l'action : la question se pose ici. */
+const ImportQuestionCard = ({ demarcheId }: { demarcheId: number }) => {
+  const { ongoingJobId, ongoingStatus } = useImportProgramme();
+  const answer = useAnswerAiImportQuestion();
+  const tracker = useEventTracker();
+  const question = ongoingStatus?.question;
+  if (!ongoingJobId || !question) return null;
+
+  return (
+    <div
+      className="rounded-lg border border-primary-3 bg-white p-4"
+      data-test="demarches.pcaet.documents.import-question"
+    >
+      <AiImportQuestion
+        key={ongoingJobId}
+        question={question}
+        isAnswering={answer.isPending}
+        onAnswer={(actionLevel) => {
+          tracker(Event.plans.importIa.repondreQuestion, {
+            origine: 'etape_documents',
+            demarcheId,
+            jobId: ongoingJobId,
+            actionLevel,
+            proposed: question.proposed,
+          });
+          answer.mutate({
+            jobId: ongoingJobId,
+            answer: { kind: 'action-level', actionLevel },
+          });
+        }}
+      />
     </div>
   );
 };
@@ -108,6 +145,7 @@ export const ProgrammeImportStatus = ({
   const {
     isEnabled,
     isOngoing,
+    isAwaitingAnswer,
     ongoingStatus,
     startProgrammeImport,
     isStarting,
@@ -131,7 +169,11 @@ export const ProgrammeImportStatus = ({
   // Un import hors PCAET lancé ailleurs dans la collectivité ne concerne pas
   // ce programme d'actions.
   if (isOngoing && ongoingStatus?.withSecteurs !== false) {
-    return <ImportProgressCard />;
+    return isAwaitingAnswer ? (
+      <ImportQuestionCard demarcheId={demarcheId} />
+    ) : (
+      <ImportProgressCard />
+    );
   }
 
   if (previousImport?.planStatus === PlanStatusEnum.TO_VERIFY) {

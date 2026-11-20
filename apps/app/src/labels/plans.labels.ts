@@ -10,6 +10,38 @@ import { plural } from '@tet/ui/labels/plural';
 
 const nbIndicateurs = plural({ one: 'indicateur', other: 'indicateurs' });
 
+type ImportPlanContent = {
+  axes: number;
+  sousAxes: number;
+  actions: number;
+  sousActions: number;
+};
+
+const importPlanNiveau = {
+  axe: plural({ one: 'axe', other: 'axes' }),
+  sousAxe: plural({ one: 'sous-axe', other: 'sous-axes' }),
+  action: plural({ one: 'action', other: 'actions' }),
+  sousAction: plural({ one: 'sous-action', other: 'sous-actions' }),
+};
+
+/** « 5 axes, 16 actions et 54 sous-actions » : les niveaux vides sont tus. */
+const formatImportPlanContent = ({
+  axes,
+  sousAxes,
+  actions,
+  sousActions,
+}: ImportPlanContent): string =>
+  new Intl.ListFormat('fr', { type: 'conjunction' }).format([
+    importPlanNiveau.axe({ count: axes }),
+    ...(sousAxes > 0 ? [importPlanNiveau.sousAxe({ count: sousAxes })] : []),
+    importPlanNiveau.action({ count: actions }),
+    ...(sousActions > 0
+      ? [importPlanNiveau.sousAction({ count: sousActions })]
+      : []),
+  ]);
+
+const titreDeNiveau = plural({ one: 'titre', other: 'titres' });
+
 type PlanBudgetCalculArgs = {
   nbFiches: number;
   totalFiches: number | undefined;
@@ -440,6 +472,72 @@ export const plansLabels = {
   }) =>
     `Il a été importé le ${date} dans le plan « ${planNom} », toujours présent. Relancer l'import créera un second plan.`,
   importPlanIaRelancerQuandMeme: "Relancer l'import quand même",
+  importPlanIaTermineContenu: (content: ImportPlanContent): string =>
+    `Votre plan compte ${formatImportPlanContent(content)}.`,
+  importPlanIaEnAttenteReponse: 'Précision attendue',
+  importPlanIaQuestionDocumentLu:
+    'Votre document est lu. Une précision avant de créer le plan.',
+  importPlanIaQuestionTitre:
+    "Dans votre document, qu'est-ce qui est une action ?",
+  importPlanIaQuestionIntro:
+    "Une action est ce que vous pilotez : elle a un pilote, un calendrier, un statut. Une sous-action en est une étape. Deux niveaux de votre document peuvent être l'action : choisissez celui que vous voulez suivre.",
+  importPlanIaQuestionLegende:
+    "Le niveau de votre document qui devient l'action",
+  importPlanIaQuestionNiveauDocument: ({
+    page,
+    count,
+  }: {
+    page: number;
+    count: number;
+  }): string =>
+    `Dans votre document, page ${page} · ${titreDeNiveau({
+      count,
+    })} de ce niveau`,
+  importPlanIaQuestionDevient: 'devient',
+  importPlanIaQuestionChoixPropose: 'Choix proposé',
+  importPlanIaQuestionRaisonFiche:
+    'votre document présente ses actions en fiches.',
+  importPlanIaQuestionRaisonEtape:
+    'votre document donne un pilote à chaque étape.',
+  importPlanIaQuestionConsequenceFiche: (content: ImportPlanContent): string =>
+    `Votre plan aura environ ${formatImportPlanContent(
+      content
+    )}. Chaque action garde le pilote et le calendrier de sa fiche.`,
+  importPlanIaQuestionConsequenceEtape: (content: ImportPlanContent): string =>
+    `Votre plan aura environ ${formatImportPlanContent(
+      content
+    )}. Le pilote et le calendrier que votre document donne une seule fois par fiche ne seront pas repris dans chaque action.`,
+  importPlanIaQuestionContinuer: "Continuer l'import",
+  importPlanIaQuestionDelai:
+    "Sans réponse sous 7 jours, l'import s'arrête et vous pourrez le relancer.",
+  importPlanIaQuestionReponseEnregistree:
+    "Réponse enregistrée, l'import reprend",
+  importPlanIaQuestionAttenteDescription:
+    "L'import de ce plan attend une précision de votre part avant de créer les actions.",
+  importPlanIaQuestionRepondre: 'Répondre',
+  importPlanIaNiveauxTitre: 'Comment un plan est rangé',
+  importPlanIaNiveauxSousTitre:
+    'Quatre niveaux, emboîtés du plus large au plus précis.',
+  importPlanIaNiveaux: {
+    axe: {
+      definition: 'Un grand thème du plan.',
+      exemple: '« Axe 1 · Déchets verts et biodéchets »',
+    },
+    sousAxe: {
+      definition:
+        "Une partie d'un axe. Facultatif : beaucoup de plans n'en ont pas.",
+      exemple: '« 1.A · Jardiner sans déchets »',
+    },
+    action: {
+      definition:
+        'Ce que vous pilotez et suivez : un pilote, un calendrier, un budget, un statut.',
+      exemple: '« Accompagner les habitants vers le jardinage au naturel »',
+    },
+    sousAction: {
+      definition: "Une étape de l'action.",
+      exemple: '« Organiser des ateliers de compostage »',
+    },
+  },
   planImporteSupportQuestion:
     'Le plan proposé ne vous convient pas ? Vous avez besoin d’aide ? Contactez-nous via le',
   planImporteSupportLien: 'support en ligne',
