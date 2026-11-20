@@ -42,6 +42,7 @@ type OpenUnit = {
   title?: string;
   /** L'axe qui couvre l'unité, le sien quand elle s'ouvre sur son titre. */
   axe?: string;
+  keepsKind?: boolean;
 };
 
 /**
@@ -155,17 +156,7 @@ export const cutUnits = (
       if (heading && heading.level >= FICHE_LEVEL) {
         close();
         popTo(stack, FICHE_LEVEL);
-        const axe = heading.kind === 'fiche' ? axeOfFiche(heading) : null;
-        if (axe && stack[0]?.label !== axe.label) {
-          // Un sous-axe de cet axe, titré parmi les fiches, reste.
-          const sousAxes = stack.filter(
-            (entry) =>
-              entry.level > AXE_LEVEL &&
-              entry.number?.startsWith(`${axe.number}.`)
-          );
-          stack.length = 0;
-          stack.push(axe, ...sousAxes);
-        }
+        placeUnderDeducedAxe(heading);
         start('fiche', [unitLine], labelOf(heading));
         stack.push({
           level: FICHE_LEVEL,
@@ -177,6 +168,11 @@ export const cutUnits = (
       if (heading) {
         close();
         popTo(stack, heading.level);
+        // Une fiche lue comme le sous-axe de ses étapes.
+        const ficheAsSousAxe = heading.kind === 'fiche';
+        if (ficheAsSousAxe) {
+          placeUnderDeducedAxe(heading);
+        }
         // Le chemin d'une unité, ce sont ses ancêtres : son propre titre est dans son texte.
         start('section', [unitLine]);
         stack.push({
@@ -185,11 +181,13 @@ export const cutUnits = (
           number: heading.number,
         });
         open.axe = stack[0].label;
+        // Ses champs (pilote, calendrier…) n'en font pas une action.
+        open.keepsKind = ficheAsSousAxe;
         return;
       }
 
       open.lines.push(unitLine);
-      if (open.kind !== 'fiche' && isFicheLabel(line.text)) {
+      if (open.kind !== 'fiche' && !open.keepsKind && isFicheLabel(line.text)) {
         const position = open.lines.length - 1;
         labelsInWindow = [...labelsInWindow, position].filter(
           (index) => position - index < FICHE_LABEL_WINDOW_LINES
@@ -206,6 +204,19 @@ export const cutUnits = (
     mergeSmallUnits(units, options.minTokens, axeOfUnit),
     options
   );
+
+  function placeUnderDeducedAxe(heading: HeadingMatch) {
+    const axe = heading.kind === 'fiche' ? axeOfFiche(heading) : null;
+    if (axe && stack[0]?.label !== axe.label) {
+      // Un sous-axe de cet axe, titré parmi les fiches, reste.
+      const sousAxes = stack.filter(
+        (entry) =>
+          entry.level > AXE_LEVEL && entry.number?.startsWith(`${axe.number}.`)
+      );
+      stack.length = 0;
+      stack.push(axe, ...sousAxes);
+    }
+  }
 
   // Dans une liste de titres, l'axe qui suit une fiche ouvre les suivantes.
   // Seul en bas de sa page, il annonce aussi la fiche qui ouvre la suivante.
