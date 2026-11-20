@@ -45,7 +45,7 @@ export const AiImportHistoryView = ({
   const { isAvailable, isLoading } = useAiImportAccess();
 
   if (isLoading) {
-    return <SpinnerLoader className="mx-auto w-8 h-8" />;
+    return <SpinnerLoader className="mx-auto" />;
   }
   if (!isAvailable) {
     return <ErrorCard title={appLabels.erreurAccesTitre} />;
@@ -209,7 +209,7 @@ const AiImportHistoryContent = ({ showDetails }: { showDetails: boolean }) => {
           />
         ) : (
           <>
-            {imports.isPending && <SpinnerLoader className="mx-auto w-8 h-8" />}
+            {imports.isPending && <SpinnerLoader className="mx-auto" />}
             {imports.isError && (
               <ErrorCard
                 title={appLabels.importPlanIaHistoriqueErreur}

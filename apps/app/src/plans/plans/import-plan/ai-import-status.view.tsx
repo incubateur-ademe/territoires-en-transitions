@@ -73,7 +73,7 @@ export const AiImportStatusView = ({
       />
     );
   }
-  if (!status) return <SpinnerLoader className="mx-auto my-10 w-8 h-8" />;
+  if (!status) return <SpinnerLoader className="mx-auto my-4" />;
 
   const failed = status.status === 'failed';
   const done = status.status === 'done';

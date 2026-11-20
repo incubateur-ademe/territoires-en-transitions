@@ -4,7 +4,7 @@ import { StoredImportCheckpoint } from '../models/import-checkpoint';
 import { ImportJobStats } from '../models/import-job-stats';
 import { ImportReport } from '../models/import-report';
 import { PlanDraft } from '../models/plan-draft';
-import { PlanRecap } from '../notify-plan-imported/plan-recap';
+import { PlanRecap } from '../notify-plan-import/plan-recap';
 import { StepName, StepStates } from '../pipeline/run-import-pipeline';
 import { ImportJobTelemetry } from './import-job-telemetry';
 

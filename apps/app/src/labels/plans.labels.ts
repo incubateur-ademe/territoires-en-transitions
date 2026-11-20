@@ -328,7 +328,7 @@ export const plansLabels = {
     'PDF, Word (.docx), Excel (.xlsx) ou CSV, 25 Mo maximum',
   importElectrificationFormat: 'Annexe 3 de la convention signée sur Word',
   importElectrificationFormatErreur:
-    'Utilisez le canevas officiel V4 au format Word (.docx).',
+    'Utilisez le document de votre convention au format Word (.docx).',
   importElectrificationDescription:
     'Importez l’annexe 3 remplie de votre convention Électrification. Le plan sera créé après validation du document. Les sous-actions sont conservées et les actions référencées par un lien TeT sont rattachées sans modifier leurs données. Les budgets et financements ne sont pas importés.',
   importPlanIaProfilIndisponible:
@@ -350,6 +350,9 @@ export const plansLabels = {
     "Un plan lié au programme d'actions du PCAET est nécessairement de ce type.",
   importPlanIaPlanImporte: 'Plan importé',
   importPlanIaEnCoursCourt: 'Import en cours',
+  importPlanIaEnCours:
+    "La création se fait en arrière-plan : vous pouvez fermer cette fenêtre et continuer à naviguer. Vous recevrez un email à la fin de l'import, qu'il ait réussi ou échoué.",
+
   importPlanIaEtapeSecteurs:
     'Identification des secteurs et des effets attendus',
   importPlanIaEtapeEffetsAttendus: 'Identification des effets attendus',
@@ -367,8 +370,6 @@ export const plansLabels = {
   importPlanIaEtapeEnAttente: 'en attente',
   importPlanIaEtapeEnEchec: 'en échec',
   importPlanIaEtapeIgnoree: 'non nécessaire',
-  importPlanIaEtapeNonCommencee: 'Non commencée',
-  importPlanIaRapportEtapeExtraction: 'Extraction des données',
   importPlanIaEchecCourt: "Échec de l'import",
   importPlanIaHistorique: 'Historique des imports',
   importPlanIaNavigation: 'Navigation des imports de plans',

@@ -7,6 +7,8 @@ import {
 } from '@tet/backend/plans/plans/electrification/publish-electrification-data/electrification-data.test-fixture';
 import { ElectrificationDataService } from '@tet/backend/plans/plans/electrification/publish-electrification-data/electrification-data.service';
 import { getQueueToken } from '@nestjs/bullmq';
+import { render } from '@react-email/components';
+import { notificationTable } from '@tet/backend/utils/notifications/models/notification.table';
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
@@ -44,7 +46,7 @@ import {
   PlanStatusEnum,
 } from '@tet/domain/plans';
 import { CollectiviteRole, PlatformRole } from '@tet/domain/users';
-import { FeatureFlagEnum } from '@tet/domain/utils';
+import { FeatureFlagEnum, NotifiedOnEnum } from '@tet/domain/utils';
 import { and, eq, inArray, or, sql } from 'drizzle-orm';
 import assert from 'node:assert';
 import { randomUUID } from 'node:crypto';
@@ -69,7 +71,7 @@ import { GenerateImportDraftWorker } from '../generate-import-draft/generate-imp
 import { aiPlanImportJobTable } from '../models/ai-plan-import-job.table';
 import { aiPlanImportStepRunTable } from '../models/ai-plan-import-step-run.table';
 import { AiPlanImportProfileEnum } from '../models/import-profile';
-import { NotifyPlanImportedService } from '../notify-plan-imported/notify-plan-imported.service';
+import { NotifyPlanImportService } from '../notify-plan-import/notify-plan-import.service';
 import { buildInMemoryDocumentStorage } from '../pipeline/__fixtures__/in-memory-document-storage';
 import { buildElectrificationDocument } from './extract-plan/__fixtures__/electrification-document.test-fixture';
 import { PrepareElectrificationImportService } from './extract-plan/prepare-electrification-import.service';
@@ -298,7 +300,7 @@ describe(
         'notifyCreatedFiches'
       ).mockResolvedValue(undefined);
       vi.spyOn(
-        app.get(NotifyPlanImportedService),
+        app.get(NotifyPlanImportService),
         'notifyPlanImported'
       ).mockResolvedValue(failure('DATABASE_ERROR'));
       vi.spyOn(llm, 'complete');
@@ -307,6 +309,17 @@ describe(
 
     afterEach(async () => {
       vi.restoreAllMocks();
+      await db.db
+        .delete(notificationTable)
+        .where(
+          and(
+            eq(notificationTable.createdBy, user().id),
+            eq(
+              notificationTable.notifiedOn,
+              NotifiedOnEnum['PLANS.AI_IMPORT.FAILED']
+            )
+          )
+        );
       const axes = await readAxes();
       const metadataIds = axes.flatMap((axe) =>
         axe.indicateurSourceMetadonneeId === null
@@ -790,6 +803,10 @@ describe(
         key: job.sourcePath,
       });
 
+      vi.spyOn(
+        app.get(NotifyPlanImportService),
+        'notifyImportFailed'
+      ).mockRejectedValue(new Error('Notification indisponible'));
       await worker.generate(jobId);
 
       expect(await status(jobId)).toMatchObject({
@@ -832,6 +849,42 @@ describe(
           ],
         },
       });
+      const notifications = () =>
+        db.db
+          .select()
+          .from(notificationTable)
+          .where(
+            and(
+              eq(notificationTable.entityId, jobId),
+              eq(
+                notificationTable.notifiedOn,
+                NotifiedOnEnum['PLANS.AI_IMPORT.FAILED']
+              )
+            )
+          );
+      const pending = await notifications();
+      expect(pending).toHaveLength(1);
+      const notification = pending[0];
+      expect(notification).toMatchObject({
+        sendTo: user().id,
+        status: 'pending',
+        notificationData: {
+          jobId,
+          collectiviteId: collectiviteId(),
+          planName: 'Plan Électrification synthétique',
+        },
+      });
+      const content = await app
+        .get(NotifyPlanImportService)
+        .getFailedNotificationContent(notification);
+      assert(content.success);
+      expect(content.data.sendToEmail).toBe(fixture.user.email);
+      expect(await render(content.data.content)).toContain(
+        `/collectivite/${collectiviteId()}/plans/imports?importJobId=${jobId}`
+      );
+      // Le callback terminal du worker peut arriver après le traitement de l'erreur.
+      await worker.recordTerminalFailure(jobId, 'Callback terminal répété');
+      expect(await notifications()).toHaveLength(1);
       expect(await readAxes()).toEqual([]);
       expect(await readFiches()).toEqual([]);
       expect(llm.complete).not.toHaveBeenCalled();
@@ -859,7 +912,7 @@ describe(
       flagsEnabled = false;
       let committedAtNotification = false;
       const notification = vi
-        .mocked(app.get(NotifyPlanImportedService).notifyPlanImported)
+        .mocked(app.get(NotifyPlanImportService).notifyPlanImported)
         .mockImplementation(async ({ planId }) => {
           const job = await readJob(jobId);
           committedAtNotification =
@@ -1194,7 +1247,7 @@ describe(
         resumable: true,
       });
       expect(
-        app.get(NotifyPlanImportedService).notifyPlanImported
+        app.get(NotifyPlanImportService).notifyPlanImported
       ).not.toHaveBeenCalled();
       expect(
         app.get(ImportPlanService).notifyCreatedFiches
@@ -1304,7 +1357,7 @@ describe(
         createdPlanId: null,
       });
       expect(
-        app.get(NotifyPlanImportedService).notifyPlanImported
+        app.get(NotifyPlanImportService).notifyPlanImported
       ).not.toHaveBeenCalled();
     });
 
@@ -1341,14 +1394,14 @@ describe(
         ).success
       ).toBe(true);
       expect(
-        app.get(NotifyPlanImportedService).notifyPlanImported
+        app.get(NotifyPlanImportService).notifyPlanImported
       ).not.toHaveBeenCalled();
     });
 
     test('une exception de notification laisse le plan réussi et ne relance pas sa création', async () => {
       const jobId = await enqueue();
       vi.mocked(
-        app.get(NotifyPlanImportedService).notifyPlanImported
+        app.get(NotifyPlanImportService).notifyPlanImported
       ).mockRejectedValueOnce(new Error('Notification indisponible'));
 
       await worker.generate(jobId);

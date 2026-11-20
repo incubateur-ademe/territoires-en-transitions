@@ -46,6 +46,18 @@ export default class GetPlanUrlService {
     }`;
   }
 
+  getPlanImportUrl({
+    collectiviteId,
+    jobId,
+  }: {
+    collectiviteId: number;
+    jobId: string;
+  }) {
+    const appUrl = this.configService.get('APP_URL');
+    const query = new URLSearchParams({ importJobId: jobId });
+    return `${appUrl}/collectivite/${collectiviteId}/plans/imports?${query}`;
+  }
+
   getPlanDownloadReportUrl({
     collectiviteId,
     planId,

@@ -6,6 +6,7 @@ export const notifiedOnValues = [
   'plans.reports.generate_plan_report_completed',
   'plans.reports.generate_plan_report_failed',
   'plans.ai_import.plan_imported',
+  'plans.ai_import.failed',
   'demarches.pcaet.dossier_transmis_pour_avis',
   'demarches.pcaet.avis_recu',
   'demarches.pcaet.instruction_close',

@@ -1629,6 +1629,25 @@ des groupements et export Word. Les non-lauréats peuvent garder un plan
 Électrification ordinaire, sans initialisation conventionnelle ni reporting.
 Les plans existants ne sont ni migrés ni supprimés automatiquement.
 
+## Suivi et notification de l'import - 20 novembre 2026
+
+Les retours TT-67 du 19 novembre demandent de prévenir l'auteur après un échec
+comme après un succès. La notification d'échec passe par le service de
+notifications existant et renvoie vers le compte rendu du job. Elle est créée
+uniquement lors du passage effectif à l'état échoué ; un callback répété ne
+crée pas une seconde notification. Une erreur de notification reste journalisée
+et ne modifie pas le résultat de l'import.
+
+Le texte de progression annonce ces emails. Le compte rendu d'échec conserve
+les diagnostics et leurs consignes, sans les deux cadres lecture/extraction.
+Les loaders de suivi utilisent la taille commune du design system, avec moins
+d'espace avant les étapes. Cette correction ne change pas les droits d'accès
+à l'historique définis par #5946.
+
+Les tests locaux vérifient la notification en attente et son contenu, sans
+envoyer d'email ni appeler un modèle réel. La réception effective reste à
+qualifier sur l'environnement déployé avec sa configuration d'envoi.
+
 ## Alternatives et conséquences
 
 - **Modifier uniquement les prompts** ne couvre ni les identités stables,

@@ -26,8 +26,8 @@ import { useGetAiImportStatus } from './data/use-get-ai-import-status';
 import { useAiImportAccess } from './data/use-ai-import-access';
 
 const CheckingOngoingImport = () => (
-  <div className="flex justify-center py-10">
-    <SpinnerLoader className="w-8 h-8" />
+  <div className="flex justify-center py-4">
+    <SpinnerLoader />
   </div>
 );
 

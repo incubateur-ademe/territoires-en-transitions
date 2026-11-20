@@ -6,7 +6,7 @@ import {
 } from '@tet/backend/plans/plans/import-plan-aggregate/import-plan.service';
 import { PlanCreationError } from '@tet/backend/plans/plans/import-plan-aggregate/import.errors';
 import { PlanVerificationRepository } from '@tet/backend/plans/plans/verify-plan/plan-verification.repository';
-import { NotifyPlanImportedService } from '../notify-plan-imported/notify-plan-imported.service';
+import { NotifyPlanImportService } from '../notify-plan-import/notify-plan-import.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
@@ -202,9 +202,10 @@ const buildMocks = (overrides: MockOverrides = {}) => {
   } as unknown as PlanVerificationRepository;
 
   const notifyPlanImported = vi.fn(async () => success(undefined));
-  const notifyPlanImportedService = {
+  const notifyPlanImportService = {
+    notifyImportFailed: vi.fn(async () => success(undefined)),
     notifyPlanImported,
-  } as unknown as NotifyPlanImportedService;
+  } as unknown as NotifyPlanImportService;
 
   const transactionManager = {
     executeSingle: vi.fn(async (operation) => operation({} as Transaction)),
@@ -238,7 +239,7 @@ const buildMocks = (overrides: MockOverrides = {}) => {
     llm,
     importPlanService,
     planVerificationRepository,
-    notifyPlanImportedService,
+    notifyPlanImportService,
     transactionManager,
     trackingService,
     capture,
@@ -261,7 +262,7 @@ const buildService = (mocks: ReturnType<typeof buildMocks>) =>
     mocks.llm,
     mocks.importPlanService,
     mocks.planVerificationRepository,
-    mocks.notifyPlanImportedService,
+    mocks.notifyPlanImportService,
     mocks.trackingService,
     mocks.stepRunRepository,
     new GenerateGenericImportService(

@@ -11,6 +11,7 @@ import {
 } from '@tet/domain/utils';
 import { z } from 'zod';
 import NotifyPlanImportedEmail from './notify-plan-imported.email';
+import { NotifyPlanImportFailedEmail } from './notify-plan-import-failed.email';
 import { formatPlanRecap, planRecapSchema } from './plan-recap';
 
 /** Format du champ `notificationData`. */
@@ -26,13 +27,20 @@ type PlanImportedNotificationData = z.infer<
   typeof planImportedNotificationDataSchema
 >;
 
-/**
- * Prévient qui a lancé un import IA que son plan est créé et attend d'être
- * vérifié. Le message part par le circuit des notifications en attente.
- */
+const planImportFailedNotificationDataSchema = z.object({
+  collectiviteId: z.number(),
+  jobId: z.uuid(),
+  planName: z.string(),
+});
+
+type PlanImportFailedNotificationData = z.infer<
+  typeof planImportFailedNotificationDataSchema
+>;
+
+/** Prévient l'auteur de l'issue de son import, via les notifications en attente. */
 @Injectable()
-export class NotifyPlanImportedService {
-  private readonly logger = new Logger(NotifyPlanImportedService.name);
+export class NotifyPlanImportService {
+  private readonly logger = new Logger(NotifyPlanImportService.name);
 
   constructor(
     private readonly notificationsService: NotificationsService,
@@ -42,6 +50,10 @@ export class NotifyPlanImportedService {
     this.notificationsService.registerContentGenerator(
       NotifiedOnEnum['PLANS.AI_IMPORT.PLAN_IMPORTED'],
       (notification) => this.getNotificationContent(notification)
+    );
+    this.notificationsService.registerContentGenerator(
+      NotifiedOnEnum['PLANS.AI_IMPORT.FAILED'],
+      (notification) => this.getFailedNotificationContent(notification)
     );
   }
 
@@ -63,6 +75,52 @@ export class NotifyPlanImportedService {
       );
     }
     return created;
+  }
+
+  async notifyImportFailed({
+    createdBy,
+    ...notificationData
+  }: PlanImportFailedNotificationData & { createdBy: string }) {
+    const created = await this.notificationsService.createPendingNotification({
+      createdBy,
+      status: NotificationStatusEnum.PENDING,
+      sendTo: createdBy,
+      entityId: notificationData.jobId,
+      notifiedOn: NotifiedOnEnum['PLANS.AI_IMPORT.FAILED'],
+      notificationData,
+    });
+    if (!created.success) {
+      this.logger.error(
+        `Notification de l'import échoué ${notificationData.jobId} impossible : ${created.error}`
+      );
+    }
+    return created;
+  }
+
+  async getFailedNotificationContent(
+    notification: Notification
+  ): Promise<GetNotificationContentResult> {
+    const parsed = planImportFailedNotificationDataSchema.safeParse(
+      notification.notificationData
+    );
+    if (!parsed.success) return failure('PARSING_NOTIFICATION_DATA_ERROR');
+    const recipient = await this.listUsersService.getUserBasicInfo({
+      userId: notification.sendTo,
+    });
+    if (!recipient) return failure('USER_NOT_FOUND');
+    const { collectiviteId, jobId, planName } = parsed.data;
+    return success({
+      sendToEmail: recipient.email,
+      subject: `L'import de votre plan "${planName}" n'a pas abouti`,
+      content: NotifyPlanImportFailedEmail({
+        planName,
+        sendToEmail: recipient.email,
+        importUrl: this.getPlanUrlService.getPlanImportUrl({
+          collectiviteId,
+          jobId,
+        }),
+      }),
+    });
   }
 
   async getNotificationContent(

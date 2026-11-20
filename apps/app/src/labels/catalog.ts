@@ -860,8 +860,6 @@ export const appLabels = {
   importPlanIaOptionVerifications: 'Vérifier et consolider les actions',
   importPlanIaOptionSousActions: 'Mon document contient des sous-actions',
   importPlanIaLancer: "Lancer l'import",
-  importPlanIaEnCours:
-    'La création se fait en arrière-plan : vous pouvez fermer cette fenêtre et continuer à naviguer. Votre plan devrait être prêt dans quelques minutes.',
   importPlanIaErreur: "L'import a échoué",
   importPlanIaReessayer: 'Réessayer',
   importPlanIaEtapeLecture: 'Lecture du document',

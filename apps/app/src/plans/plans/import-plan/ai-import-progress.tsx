@@ -31,11 +31,7 @@ type VisibleStepStatus = Exclude<ImportStepView['status'], 'skipped'>;
 
 type VisibleStep = ImportStepView & { status: VisibleStepStatus };
 
-export const StepStatusIcon = ({
-  status,
-}: {
-  status: ImportStepView['status'];
-}) => {
+const StepStatusIcon = ({ status }: { status: ImportStepView['status'] }) => {
   switch (status) {
     case 'done':
       return (
@@ -50,7 +46,7 @@ export const StepStatusIcon = ({
         <Icon icon="close-circle-fill" size="lg" className="text-error-1" />
       );
     case 'current':
-      return <SpinnerLoader className="w-6 h-6 shrink-0" />;
+      return <SpinnerLoader className="shrink-0" />;
     case 'waiting':
     case 'skipped':
       return (
@@ -137,10 +133,10 @@ export const AiImportProgress = ({
   steps,
   withSecteurs = false,
 }: AiImportProgressProps) => (
-  <div className="flex flex-col gap-8 py-10">
+  <div className="flex flex-col gap-6 py-4">
     <div className="flex flex-col gap-4" data-test="plans.import-ia.chargement">
       <div role="status" className="flex items-center gap-3 text-primary-9">
-        <SpinnerLoader className="w-8 h-8 shrink-0" />
+        <SpinnerLoader className="shrink-0" />
         <p className="mb-0 font-bold">
           {pending
             ? appLabels.importPlanIaEnAttente

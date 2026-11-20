@@ -37,7 +37,7 @@ import {
   ImportFailureOptions,
   ImportGenerator,
 } from './generate-import.types';
-import { NotifyPlanImportedService } from '../notify-plan-imported/notify-plan-imported.service';
+import { NotifyPlanImportService } from '../notify-plan-import/notify-plan-import.service';
 import { ImportGenerationErrors } from './generate-import.errors';
 import { ValidateImportProfileService } from '../validate-import-profile/validate-import-profile.service';
 import { buildRequesterUser } from '@tet/backend/users/models/auth.models';
@@ -57,7 +57,7 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
     private readonly llm: LlmService,
     private readonly importPlanService: ImportPlanService,
     private readonly planVerificationRepository: PlanVerificationRepository,
-    private readonly notifyPlanImportedService: NotifyPlanImportedService,
+    private readonly notifyPlanImportService: NotifyPlanImportService,
     private readonly trackingService: TrackingService,
     private readonly stepRunRepository: AiPlanImportStepRunRepository,
     private readonly generic: GenerateGenericImportService,
@@ -258,6 +258,21 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
       report,
     });
     if (marked.success) {
+      // markFailed ne réussit que lors de la transition vers l'échec :
+      // un callback terminal répété ne crée pas une seconde notification.
+      try {
+        await this.notifyPlanImportService.notifyImportFailed({
+          createdBy: marked.data.createdBy,
+          collectiviteId: marked.data.collectiviteId,
+          jobId,
+          planName: marked.data.options.planName,
+        });
+      } catch (error) {
+        this.logger.error(
+          `Import ${jobId}: notification d'échec impossible`,
+          error
+        );
+      }
       if (marked.data.createdPlanId !== null) {
         // Le plan reste visible en échec : la collectivité le supprime.
         const planFailed =
@@ -364,7 +379,7 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
       this.logger.error(`Import ${job.id}: webhooks impossibles`, error);
     }
     try {
-      await this.notifyPlanImportedService.notifyPlanImported({
+      await this.notifyPlanImportService.notifyPlanImported({
         createdBy: job.createdBy,
         collectiviteId: job.collectiviteId,
         planId: created.planId,
