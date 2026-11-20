@@ -142,3 +142,19 @@ output "grafana_dashboards_url" {
   description = "Dossier des dashboards dans le Grafana du Cockpit prod (connexion IAM)."
   value       = module.cockpit.dashboards_folder_url
 }
+
+# --- rencontres ---
+
+output "rencontres_db_password" {
+  description = "Mot de passe du rôle rencontres, pour la restauration par l'endpoint public (PGPASSWORD)."
+  value       = random_password.rencontres.result
+  sensitive   = true
+}
+
+output "rencontres_database_url" {
+  description = "DATABASE_URL de rencontres par le réseau privé. À ranger dans le secret rencontres-database-url à la bascule (cf. rencontres.tf). sslmode=require : Prisma chiffre sans vérifier le certificat auto-signé de RDB. connection_limit=5 : taille de pool par PrismaClient, pas un plafond serveur (l'appli en instancie deux, soit 10 connexions au plus). Rien ne plafonne le rôle côté serveur."
+  value = format("postgres://%s:%s@%s:%d/%s?sslmode=require&connection_limit=5",
+    scaleway_rdb_user.rencontres.name, random_password.rencontres.result,
+  module.postgres.private_endpoint_ip, module.postgres.private_endpoint_port, scaleway_rdb_database.rencontres.name)
+  sensitive = true
+}

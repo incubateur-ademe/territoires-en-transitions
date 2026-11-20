@@ -187,6 +187,17 @@ credentials Terraform n'ont pas. Un admin crée donc, une fois :
    GitHub Actions : mêmes permissions que `tet-coolify-backups`, mais limitées au projet
    `tet-database-backups`, qui est aussi le projet par défaut de sa clé. Sa clé va dans
    l'environnement GitHub `prod` (cf. [Backups de la BDD de prod](#backups-de-la-bdd-de-prod)).
+5. **Pour `infra/prod`** (bucket de rencontres, [`prod/rencontres.tf`](prod/rencontres.tf)) :
+   - le groupe IAM `tet-admin`, avec pour membres **toutes** les identités qui appliquent
+     `infra/prod` : ce sont les seules autorisées par les bucket policies de `tet-prod`
+     (cf. [Buckets de `tet-prod`](#buckets-de-tet-prod--une-bucket-policy-par-bucket)) ;
+   - pour ces mêmes identités, sur l'organisation : `IAMGroupReadOnly` (chaque plan lit le
+     groupe) et `IAMApplicationManager` (l'apply crée l'application
+     `tet-prod-rencontres-storage` et sa clé). Pas `IAMManager`, qui donne aussi la main sur
+     les politiques et les projets. Sans ces droits, tout plan de `infra/prod` échoue en
+     403, pas seulement rencontres ;
+   - sur l'application `tet-prod-rencontres-storage`, une fois créée par l'apply : une
+     politique limitée à `tet-prod`, avec `ObjectStorageObjectsWrite` seulement.
 
 ### Bootstrap (une fois)
 
@@ -337,12 +348,14 @@ Ne pas faire tourner les deux à la fois (`sudo wg-quick down tet` avant l'impor
 ```sh
 wg-quick up tet
 
-# Un serveur, en root avec sa clé (prod : ajouter project-id=<projet tet-prod>)
+# Un serveur, en root avec sa clé (prod : ajouter project-id=<projet tet-prod>).
+# mktemp crée le fichier en 600 ; l'effacer en fin de session.
+KEY="$(mktemp)"
 scw secret version access-by-path \
   secret-name="$(terraform -chdir=infra/nonprod output -raw server_ssh_key_secret_name)" \
-  secret-path=/ revision=latest -o json | jq -r '.data' | base64 -d > /tmp/srv_key
-chmod 600 /tmp/srv_key
-ssh -i /tmp/srv_key root@$(terraform -chdir=infra/nonprod output -raw server_public_ip)
+  secret-path=/ revision=latest -o json | jq -r '.data' | base64 -d > "$KEY"
+ssh -i "$KEY" root@$(terraform -chdir=infra/nonprod output -raw server_public_ip)
+rm -f "$KEY"
 
 # Postgres preprod, en direct sur son IP privée
 psql "host=$(terraform -chdir=infra/nonprod output -raw pg_private_endpoint_ip) …"
@@ -490,6 +503,18 @@ Mise en service d'une entrée :
    Alloy du serveur (`<env>/alloy`, bouton **Redeploy** dans Coolify) : il ne relit
    `PROBE_TARGETS`, qui gagne la sonde HTTPS de l'application, qu'au démarrage. Mettre le
    service Koyeb en pause une fois le trafic basculé.
+
+### Buckets de `tet-prod` : une bucket policy par bucket
+
+Les permissions IAM Object Storage valent pour un projet entier. `tet-prod` héberge le bucket
+de rencontres ([`prod/rencontres.tf`](prod/rencontres.tf)), dont la clé applicative a le
+droit IAM d'écriture d'objets sur le projet. **Tout bucket de `tet-prod` se
+crée donc par [`modules/bucket`](modules/bucket)**, qui pose la bucket policy avec le bucket
+(les déclarations de l'application + les opérateurs) : un bucket sans policy reste ouvert à
+toute clé IAM du projet. Une bucket policy fonctionne en liste blanche : toute identité qui
+lance `terraform apply` sur `infra/prod` doit être membre du groupe IAM `tet-admin`, d'où
+[`prod/main.tf`](prod/main.tf) tire les opérateurs, sinon le refresh du bucket lui renvoie
+un 403. Après l'ajout d'un membre, un membre déjà autorisé réapplique `infra/prod`.
 
 ### Variables d'environnement (Secret Manager → Coolify)
 
