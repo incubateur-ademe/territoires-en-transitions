@@ -953,6 +953,36 @@ describe('listDossiersInstruction', () => {
 
       expect(result.items[0].deposeAvis).toBe(false);
     });
+
+    it('ne voit ni les collectivités de test ni le territoire de démo (-1)', async () => {
+      const deposantes = [
+        { type: 'test', nom: 'Kiwi test hors national' },
+        {
+          regionCode: '-1',
+          departementCode: '-1',
+          nom: 'Kiwi Syldavie hors national',
+        },
+        { departementCode: '-1', nom: 'Kiwi departement demo hors national' },
+      ] as const;
+
+      for (const collectivite of deposantes) {
+        const { collectivite: deposante, cleanup } =
+          await addTestCollectiviteAndUser(db, {
+            user: { role: CollectiviteRole.ADMIN },
+            collectivite: { ...collectivite, natureInsee: 'CA' },
+          });
+        onTestFinished(cleanup);
+        await creerDossier({
+          collectiviteId: deposante.id,
+          status: 'en_elaboration',
+          saisi: false,
+        });
+      }
+
+      const result = await listerNational({ recherche: 'kiwi' });
+
+      expect(result.items).toEqual([]);
+    });
   });
 
   describe('périmètre secondaire', () => {
