@@ -1,0 +1,131 @@
+# Promotion en prod (Coolify) des images qui tournent en preprod, sans rebuild.
+#
+# Pour chaque application : lit le tag déployé sur preprod/<app> dans Coolify,
+# vérifie que l'image a été construite par cd-preprod depuis main à ce commit
+# (attestation de provenance), puis déploie prod/<app> par digest. Un tag GHCR
+# est mutable, un digest non : la prod reçoit l'image testée en preprod, octet
+# pour octet.
+#
+# Prérequis : les applications prod existent dans Coolify
+# (application_environments de infra/coolify contient "prod"), et
+# l'environnement GitHub `prod-scaleway` porte COOLIFY_TOKEN (token « read » +
+# « write » + « deploy » de notre Team). Cet environnement est restreint à main
+# et exige l'approbation de l'équipe TeT Admin (réglages GitHub) : ce sont eux
+# qui protègent le token, pas ce fichier, qu'une branche peut modifier.
+# L'environnement `prod` reste sans approbation : les sauvegardes nocturnes
+# s'en servent.
+name: Promotion de la preprod en prod
+
+on:
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  promote:
+    name: Promeut ${{ matrix.app }}
+    # Échec rapide : l'environnement refuse de toute façon une autre branche.
+    if: github.ref == 'refs/heads/main'
+    environment:
+      name: prod-scaleway
+      url: ${{ matrix.url }}
+    concurrency:
+      group: cd-prod-${{ matrix.app }}
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      packages: read
+      attestations: read
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - app: app
+            url: https://app.territoiresentransitions.fr
+          - app: backend
+            url: https://api.territoiresentransitions.fr
+          - app: site
+            url: https://territoiresentransitions.fr
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - uses: ./.github/actions/docker/login
+        with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Résout et vérifie l'image de preprod
+        id: image
+        env:
+          APP: ${{ matrix.app }}
+          COOLIFY_ENDPOINT: ${{ vars.COOLIFY_ENDPOINT }}
+          COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          # Le token passe par stdin (-H @-), pas par la ligne de commande.
+          coolify() {
+            printf 'Authorization: Bearer %s\n' "$COOLIFY_TOKEN" \
+              | curl -sSf -H @- -H 'Accept: application/json' "$COOLIFY_ENDPOINT$1"
+          }
+
+          read -r uuid tag < <(coolify /applications \
+            | jq -r --arg m "(tet-app=preprod/$APP)" \
+              '[.[] | select((.description // "") | contains($m))] | first
+               | "\(.uuid // "") \(.docker_registry_image_tag // "")"') || true
+          if [[ ! "$tag" =~ ^[0-9a-f]{7,40}$ ]]; then
+            echo "::error::preprod/$APP : tag « $tag » inattendu (attendu : sha court d'un commit)."
+            exit 1
+          fi
+
+          # coolify-deploy.sh pose le tag avant de déployer : il ne désigne
+          # l'image qui tourne que si le dernier déploiement a abouti. Sinon
+          # (en cours, échoué, annulé) on ne promeut pas : la preprod doit
+          # d'abord repasser au vert.
+          status="$(coolify "/deployments/applications/$uuid?take=1" \
+            | jq -r '(.deployments? // .) | first | .status // empty')"
+          if [[ "$status" != finished ]]; then
+            echo "::error::preprod/$APP : dernier déploiement « $status ». Promotion refusée tant que $tag n'est pas déployé avec succès en preprod."
+            exit 1
+          fi
+
+          sha="$(git rev-parse --verify "${tag}^{commit}")"
+          git merge-base --is-ancestor "$sha" origin/main || {
+            echo "::error::$sha n'est pas sur main."
+            exit 1
+          }
+
+          image="ghcr.io/incubateur-ademe/tet-$APP"
+          digest="$(docker buildx imagetools inspect "$image:$tag" --format '{{json .Manifest}}' | jq -r .digest)"
+          [[ "$digest" =~ ^sha256:[0-9a-f]{64}$ ]] || {
+            echo "::error::Digest introuvable pour $image:$tag."
+            exit 1
+          }
+
+          # Vérifié sur le digest, pas sur le tag : c'est lui qu'on déploie.
+          gh attestation verify "oci://$image@$digest" \
+            --repo "$GITHUB_REPOSITORY" \
+            --signer-workflow "$GITHUB_REPOSITORY/.github/workflows/cd-preprod.yml" \
+            --source-ref refs/heads/main \
+            --source-digest "$sha" \
+            --deny-self-hosted-runners >/dev/null
+
+          echo "Promotion de $image@$digest (commit $sha)."
+          # Coolify lit un tag « sha256-<hex> » comme un digest (image@sha256:<hex>).
+          echo "coolify-tag=sha256-${digest#sha256:}" >> "$GITHUB_OUTPUT"
+
+      - name: Déploie ${{ matrix.app }} en prod
+        env:
+          COOLIFY_ENDPOINT: ${{ vars.COOLIFY_ENDPOINT }}
+          COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
+          APP_ID: prod/${{ matrix.app }}
+          IMAGE_TAG: ${{ steps.image.outputs.coolify-tag }}
+        run: infra/scripts/coolify-deploy.sh
