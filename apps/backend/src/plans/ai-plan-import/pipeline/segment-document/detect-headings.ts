@@ -171,29 +171,35 @@ const dropActionsOfNamedFiches = (
   if (namedFiches.length < MIN_NAMED_FICHES) {
     return headings;
   }
-  // La suite des fiches nommées, quand elles se numérotent 1, 2, 3… Les
-  // étapes d'une fiche se suivent depuis « Action 1 » : un numéro qui rompt
-  // cette suite et prolonge celle des fiches ouvre une fiche autonome. Qui
-  // prolonge les deux (étapes 1, 2, 3 puis « Action 4 ») reste une étape.
-  let lastFiche = 0;
+  // La suite des fiches nommées (1, 2, 3… ou 1.1, 1.2, 1.3…). Les étapes
+  // d'une fiche se suivent depuis « Action 1 » : un numéro qui rompt cette
+  // suite et prolonge celle des fiches ouvre une fiche autonome. Qui prolonge
+  // les deux (étapes 1, 2, 3 puis « Action 4 ») reste une étape ; qui reprend
+  // le numéro d'une fiche nommée est un renvoi du récapitulatif.
+  const ficheNumbers = new Set(namedFiches.map(({ match }) => match.number));
+  let lastFiche: string | null = null;
   let lastStep: number | null = null;
   const continuesFiches = new Set<DetectedHeading>();
   for (const heading of headings) {
-    const number = /^\d+$/u.test(heading.match.number ?? '')
-      ? Number(heading.match.number)
-      : null;
+    const number = heading.match.number;
     if (namedFiches.includes(heading)) {
-      lastFiche = number ?? Number.NaN;
+      lastFiche = number;
       lastStep = null;
     } else if (startsWith(heading, /^action(?!\p{L})/iu) && number !== null) {
+      const step = /^\d+$/u.test(number) ? Number(number) : null;
       const continuesSteps =
-        lastStep === null ? number === 1 : number === lastStep + 1;
-      if (number === lastFiche + 1 && !continuesSteps) {
+        step !== null &&
+        (lastStep === null ? step === 1 : step === lastStep + 1);
+      if (
+        !continuesSteps &&
+        !ficheNumbers.has(number) &&
+        nextNumbers(lastFiche).includes(number)
+      ) {
         continuesFiches.add(heading);
         lastFiche = number;
         lastStep = null;
       } else if (continuesSteps) {
-        lastStep = number;
+        lastStep = step;
       }
     }
   }
@@ -202,6 +208,21 @@ const dropActionsOfNamedFiches = (
       continuesFiches.has(heading) ||
       !startsWith(heading, /^actions?(?!\p{L})/iu)
   );
+};
+
+/** Les numéros qui suivent une fiche : « 3 » donne « 4 », « 1.3 » donne « 1.4 » et « 2.1 ». */
+const nextNumbers = (last: string | null): string[] => {
+  const parts = last?.split('.').map(Number) ?? [];
+  if (parts.length === 0 || parts.some(Number.isNaN)) {
+    return [];
+  }
+  const sibling = [...parts.slice(0, -1), parts[parts.length - 1] + 1];
+  return parts.length === 1
+    ? [sibling.join('.')]
+    : [
+        sibling.join('.'),
+        [...parts.slice(0, -2), parts[parts.length - 2] + 1, 1].join('.'),
+      ];
 };
 
 /**
