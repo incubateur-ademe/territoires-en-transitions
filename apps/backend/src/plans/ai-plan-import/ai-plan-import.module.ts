@@ -42,6 +42,9 @@ import { NotifyPlanImportService } from './notify-plan-import/notify-plan-import
 import { ResumeImportRouter } from './resume-import/resume-import.router';
 import { ResolveElectrificationEngagementsService } from './electrification/resolve-engagements/resolve-electrification-engagements.service';
 import { ResumeImportService } from './resume-import/resume-import.service';
+import { AnswerImportQuestionRouter } from './answer-import-question/answer-import-question.router';
+import { AnswerImportQuestionService } from './answer-import-question/answer-import-question.service';
+import { ExpireImportQuestionsService } from './expire-import-questions/expire-import-questions.service';
 import { PcaetImportProfileAdapter } from './pcaet/pcaet-import-profile.adapter';
 import { GenericImportProfileAdapter } from './generic/generic-import-profile.adapter';
 import { AiPlanImportProfileEnum } from '@tet/domain/plans';
@@ -115,12 +118,16 @@ import {
     NotifyPlanImportService,
     ResumeImportService,
     ResumeImportRouter,
+    ExpireImportQuestionsService,
+    AnswerImportQuestionService,
+    AnswerImportQuestionRouter,
   ],
   exports: [
     GetImportStatusRouter,
     GetImportCapabilitiesRouter,
     FindPreviousImportRouter,
     ResumeImportRouter,
+    AnswerImportQuestionRouter,
   ],
 })
 export class AiPlanImportModule {}

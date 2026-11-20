@@ -22,7 +22,10 @@ export const AI_PLAN_IMPORT_MAX_IN_FLIGHT_JOBS_PER_USER = 1;
 
 export const AI_PLAN_IMPORT_MAX_JOBS_PER_COLLECTIVITE_PER_DAY = 10;
 
-/** Délai pendant lequel l'équipe peut reprendre un import en échec. */
+/**
+ * Délai pendant lequel l'équipe peut reprendre un import en échec, et pendant
+ * lequel un import attend la réponse à sa question.
+ */
 export const AI_PLAN_IMPORT_CHECKPOINT_RETENTION_DAYS = 7;
 
 /**
@@ -45,5 +48,10 @@ export const EVENT_AI_PLAN_IMPORT_RESUME_REQUESTED =
   'plans:import-ia:resume_requested';
 /** Un passage du worker qui n'est pas le premier : reprise manuelle ou automatique. */
 export const EVENT_AI_PLAN_IMPORT_RESUMED = 'plans:import-ia:resumed';
+/** L'import s'arrête après la lecture pour demander le niveau de l'action. */
+export const EVENT_AI_PLAN_IMPORT_QUESTION_ASKED =
+  'plans:import-ia:question_asked';
+export const EVENT_AI_PLAN_IMPORT_QUESTION_ANSWERED =
+  'plans:import-ia:question_answered';
 /** Fin d'une étape du pipeline, réussie, sautée ou en échec. */
 export const EVENT_AI_PLAN_IMPORT_STEP_DONE = 'plans:import-ia:step_done';
