@@ -1,3 +1,4 @@
+import { useConsumePendingInvitations } from '@/app/collectivites/membres/consume-pending-invitations/use-consume-pending-invitations';
 import { appLabels } from '@/app/labels/catalog';
 import {
   Credentials,
@@ -38,6 +39,7 @@ export const useLoginState = ({
   const supabase = useSupabase();
 
   const trackEvent = useEventTracker();
+  const consumePendingInvitations = useConsumePendingInvitations();
 
   const getPasswordStrength = useGetPasswordStrength();
 
@@ -111,6 +113,7 @@ export const useLoginState = ({
         trackEvent(Event.auth.login.success, {
           methode: 'mot_de_passe' satisfies LoginMethod,
         });
+        await consumePendingInvitations();
         // et redirige sur la page voulue une fois authentifié
         router.push(redirectTo);
       }
@@ -161,7 +164,7 @@ export const useLoginState = ({
         methode: 'lien_magique' satisfies LoginMethod,
       });
 
-      // redirige
+      await consumePendingInvitations();
       router.push(redirectTo);
     }
 

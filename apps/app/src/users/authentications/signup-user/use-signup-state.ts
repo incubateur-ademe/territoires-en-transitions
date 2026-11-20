@@ -1,3 +1,4 @@
+import { useConsumePendingInvitations } from '@/app/collectivites/membres/consume-pending-invitations/use-consume-pending-invitations';
 import {
   isScoreStrongEnough,
   useGetPasswordStrength,
@@ -37,6 +38,7 @@ export const useSignupState = ({
   const supabase = useSupabase();
   const trpc = useTRPC();
   const trackEvent = useEventTracker();
+  const consumePendingInvitations = useConsumePendingInvitations();
 
   const { mutateAsync: updateUser } = useMutation(
     trpc.users.users.update.mutationOptions()
@@ -169,6 +171,7 @@ export const useSignupState = ({
       // acceptées.
       trackEvent(Event.auth.signup.success);
 
+      await consumePendingInvitations();
       router.replace(redirectTo);
     }
   };
