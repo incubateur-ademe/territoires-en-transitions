@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { buildHorizontalHierarchyWorkbook } from '../__fixtures__/build-test-workbook';
 import { buildDocument, buildPage } from '../document/document-page';
 import { readDocument } from '../read-document/read-document';
-import { detectHeadings } from './detect-headings';
+import { detectActionLevelDoubt, detectHeadings } from './detect-headings';
 import { segmentDocument } from './segment-document';
 import { renderUnit } from './render-unit';
 
@@ -612,5 +612,165 @@ describe('renderUnit', () => {
     expect(renderUnit(units[2], { index: 2, count: 3 })).toBe(
       "[Extrait 3/3 · page 1 · partie « PLAN D'ACTIONS » · 1 Bâtiments · fiche « 1.1 Isoler »]\nAction 1.1 : Isoler"
     );
+  });
+});
+
+describe('niveau de l’action : fiche ou étape', () => {
+  const fiche = (
+    numero: string,
+    titre: string,
+    { pilotesParEtape = false } = {}
+  ) => [
+    { text: `Fiche Action n°${numero}`, fontSize: 14 },
+    { text: titre, fontSize: 14 },
+    ...(pilotesParEtape
+      ? []
+      : [{ text: 'Pilote : Direction Prévention', fontSize: 10 }]),
+    { text: 'Action 1 - Diagnostiquer et orienter', fontSize: 10 },
+    ...body(2),
+    ...(pilotesParEtape ? [{ text: 'Pilote : Service A', fontSize: 10 }] : []),
+    { text: 'Action 2 – Accompagner et former les habitants', fontSize: 10 },
+    ...body(2),
+    ...(pilotesParEtape ? [{ text: 'Pilote : Service B', fontSize: 10 }] : []),
+  ];
+  const plan = (options: { pilotesParEtape?: boolean } = {}) => [
+    buildPage(0, [
+      { text: 'Axe 1 : Limiter les déchets verts', fontSize: 16 },
+      { text: 'Action 1.1 Développer une culture de', fontSize: 10 },
+      { text: 'Action 1.2 Accompagner les habitants', fontSize: 10 },
+      ...fiche('1.1', 'Développer une culture de l’éco-exemplarité', options),
+    ]),
+    buildPage(1, fiche('1.2', 'Accompagner les habitants', options)),
+    buildPage(2, fiche('1.3', 'Poursuivre le tri à la source', options)),
+  ];
+  const titles = (headings: ReturnType<typeof detectHeadings>) =>
+    headings.map(({ match }) => [match.kind, match.level, match.title]);
+
+  it('voit le doute quand les fiches nommées détaillent leurs étapes, sans compter le récapitulatif', () => {
+    expect(detectActionLevelDoubt(plan())).toEqual({
+      kind: 'action-level',
+      axes: {
+        exampleTitle: 'Limiter les déchets verts',
+        examplePage: 1,
+        count: 1,
+      },
+      fiches: {
+        exampleTitle: 'Développer une culture de l’éco-exemplarité',
+        examplePage: 1,
+        count: 3,
+      },
+      etapes: {
+        exampleTitle: 'Diagnostiquer et orienter',
+        examplePage: 1,
+        count: 6,
+      },
+      proposed: 'fiche',
+    });
+  });
+
+  it('propose l’étape quand le document donne un pilote à chaque étape', () => {
+    expect(
+      detectActionLevelDoubt(plan({ pilotesParEtape: true }))?.proposed
+    ).toBe('etape');
+  });
+
+  it('ne voit aucun doute sans fiches nommées ni étapes', () => {
+    expect(
+      detectActionLevelDoubt([
+        buildPage(0, [
+          { text: 'Fiche action n°1 : Isoler les écoles', fontSize: 14 },
+          ...body(3),
+          { text: 'Action 2 - Rénover la mairie', fontSize: 14 },
+          ...body(3),
+          { text: 'Action 3 - Changer les chaudières', fontSize: 14 },
+          ...body(3),
+        ]),
+      ])
+    ).toBeNull();
+    expect(
+      detectActionLevelDoubt([
+        buildPage(0, [
+          { text: 'Fiche Action n°1.1', fontSize: 14 },
+          { text: 'Isoler les écoles', fontSize: 14 },
+          ...body(3),
+          { text: 'Fiche Action n°1.2', fontSize: 14 },
+          { text: 'Rénover la mairie', fontSize: 14 },
+          ...body(3),
+          { text: 'Fiche Action n°1.3', fontSize: 14 },
+          { text: 'Changer les chaudières', fontSize: 14 },
+          { text: 'Action 1 - Une seule étape', fontSize: 10 },
+          ...body(3),
+        ]),
+      ])
+    ).toBeNull();
+  });
+
+  it('lit par défaut chaque fiche comme une action, comme avant', () => {
+    expect(titles(detectHeadings(plan()))).toEqual([
+      ['axe', 1, 'Limiter les déchets verts'],
+      ['fiche', 3, 'Développer une culture de l’éco-exemplarité'],
+      ['fiche', 3, 'Accompagner les habitants'],
+      ['fiche', 3, 'Poursuivre le tri à la source'],
+    ]);
+  });
+
+  it('lu à l’étape, chaque « Action N » est une fiche sous sa fiche devenue sous-axe', () => {
+    expect(titles(detectHeadings(plan(), { actionLevel: 'etape' }))).toEqual([
+      ['axe', 1, 'Limiter les déchets verts'],
+      ['fiche', 2, 'Développer une culture de l’éco-exemplarité'],
+      ['fiche', 3, 'Diagnostiquer et orienter'],
+      ['fiche', 3, 'Accompagner et former les habitants'],
+      ['fiche', 2, 'Accompagner les habitants'],
+      ['fiche', 3, 'Diagnostiquer et orienter'],
+      ['fiche', 3, 'Accompagner et former les habitants'],
+      ['fiche', 2, 'Poursuivre le tri à la source'],
+      ['fiche', 3, 'Diagnostiquer et orienter'],
+      ['fiche', 3, 'Accompagner et former les habitants'],
+    ]);
+  });
+
+  it('découpe à l’étape : une unité par étape, rangée sous sa fiche, le pilote de la fiche dans son chapeau', () => {
+    const units = segmentDocument(buildDocument('pdf', plan()), {
+      minTokens: 0,
+      maxTokens: 1000,
+      overlapTokens: 0,
+      actionLevel: 'etape',
+    });
+    const fiches = units.filter(({ kind }) => kind === 'fiche');
+
+    expect(
+      fiches.map(({ title, headingPath }) => [title, headingPath])
+    ).toEqual([
+      [
+        '1 Diagnostiquer et orienter',
+        [
+          '1 Limiter les déchets verts',
+          '1.1 Développer une culture de l’éco-exemplarité',
+        ],
+      ],
+      [
+        '2 Accompagner et former les habitants',
+        [
+          '1 Limiter les déchets verts',
+          '1.1 Développer une culture de l’éco-exemplarité',
+        ],
+      ],
+      [
+        '1 Diagnostiquer et orienter',
+        ['1 Limiter les déchets verts', '1.2 Accompagner les habitants'],
+      ],
+      [
+        '2 Accompagner et former les habitants',
+        ['1 Limiter les déchets verts', '1.2 Accompagner les habitants'],
+      ],
+      [
+        '1 Diagnostiquer et orienter',
+        ['1 Limiter les déchets verts', '1.3 Poursuivre le tri à la source'],
+      ],
+      [
+        '2 Accompagner et former les habitants',
+        ['1 Limiter les déchets verts', '1.3 Poursuivre le tri à la source'],
+      ],
+    ]);
   });
 });

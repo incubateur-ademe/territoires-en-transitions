@@ -6,10 +6,15 @@ import {
 } from '../document/document-page';
 import { cutTabularUnits } from './cut-tabular-units';
 import { cutUnits, CutUnitsOptions } from './cut-units';
-import { detectHeadings } from './detect-headings';
+import type { ActionLevelDoubt } from '../../models/import-question';
+import {
+  detectActionLevelDoubt,
+  detectHeadings,
+  DetectHeadingsOptions,
+} from './detect-headings';
 import { DocumentUnit, numberUnits } from './document-unit';
 
-export type SegmentDocumentOptions = CutUnitsOptions;
+export type SegmentDocumentOptions = CutUnitsOptions & DetectHeadingsOptions;
 
 // Une fiche action tient en une à trois pages : entre mille et quelques
 // milliers de tokens. En dessous, on regroupe ; au-dessus, on fenêtre.
@@ -29,9 +34,23 @@ export const segmentDocument = (
     ? pages.flatMap((page) =>
         cutTabularUnits(page, options.maxTokens, gridOfPage(document, page))
       )
-    : cutUnits(pages, detectHeadings(pages), options);
+    : cutUnits(
+        pages,
+        detectHeadings(pages, { actionLevel: options.actionLevel }),
+        options
+      );
   return numberUnits(units);
 };
+
+/** Un tableur se lit par rangées : la question des titres ne s'y pose pas. */
+export const detectDocumentActionLevelDoubt = (
+  document: ReadDocument
+): ActionLevelDoubt | null =>
+  isTabularKind(document.kind)
+    ? null
+    : detectActionLevelDoubt(
+        document.pages.filter((page) => page.source !== 'empty')
+      );
 
 /** La grille d'une page de tableur, dans le même ordre que les pages. */
 const gridOfPage = (
