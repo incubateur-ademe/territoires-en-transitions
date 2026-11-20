@@ -186,7 +186,7 @@ test.describe('Invitation de membre', () => {
     await clearMailpitMailbox(existingEmail);
   });
 
-  test('lien valide, utilisateur déjà connecté avec le bon email : consommation au clic', async ({
+  test('inscription sans le lien : invitation reprise dès la fin de l’inscription, le lien reste sans effet', async ({
     collectivites,
     page,
     context,
@@ -226,11 +226,11 @@ test.describe('Invitation de membre', () => {
         telephone: '0698765430',
       });
 
-      await expect(
-        inviteePage.getByRole('heading', {
-          name: 'Merci pour votre inscription !',
-        })
-      ).toBeVisible({ timeout: 15000 });
+      // L'invitation adressée à cet email est reprise sans clic sur le lien.
+      await expect(inviteePage).toHaveURL(
+        new RegExp(`/collectivite/${collectivite.data.id}/`),
+        { timeout: 15000 }
+      );
 
       await inviteePage.goto(
         invitationUrlPathForPlaywright(invitationEmail.url),
@@ -433,9 +433,11 @@ test.describe('Invitation de membre', () => {
         telephone: '0698765431',
       });
 
-      await expect(inviteePage).toHaveURL(/\/finaliser-mon-inscription/, {
-        timeout: 15000,
-      });
+      // Reprise par l'email du compte, insensible à la casse.
+      await expect(inviteePage).toHaveURL(
+        new RegExp(`/collectivite/${collectivite.data.id}/`),
+        { timeout: 15000 }
+      );
 
       const invitationPath = `/invitation/${invitationId}`;
       await inviteePage.goto(invitationPath, { waitUntil: 'load' });
