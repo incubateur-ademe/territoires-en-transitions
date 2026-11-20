@@ -9,6 +9,7 @@ import { randomUUID } from 'node:crypto';
 import { test } from 'tests/main.fixture';
 import { DemarchePcaetPom } from 'tests/demarches/pcaet/demarche-pcaet.pom';
 import {
+  actionLevelQuestion,
   AiImportFixture,
   importStatus,
   submitImport,
@@ -1529,4 +1530,44 @@ test("consulte un échec sans plan depuis l'historique et réserve la reprise à
   await expect(
     page.getByTestId('plans.import-ia.reprendre-button')
   ).toHaveCount(0);
+});
+
+test("pose la question du niveau de l'action, envoie le choix et reprend le suivi", async ({
+  page,
+  collectivites,
+}) => {
+  const mock = new AiImportFixture();
+  await mock.install(page);
+  const { collectivite } = await collectivites.addCollectiviteAndUser({
+    userArgs: { autoLogin: true },
+  });
+  mock.status = {
+    ...mock.status,
+    status: 'awaiting_answer',
+    question: actionLevelQuestion,
+  };
+  mock.current = mock.status;
+  await page.goto(
+    `/collectivite/${collectivite.data.id}/plans/importer-ia?importJobId=${mock.status.jobId}`
+  );
+
+  const question = page.getByTestId('plans.import-ia.question');
+  await expect(question).toContainText(
+    "Dans votre document, qu'est-ce qui est une action ?"
+  );
+  await expect(question).toContainText('Diagnostiquer et orienter');
+  await expect(
+    page.getByTestId('plans.import-ia.question.fiche')
+  ).toBeChecked();
+  await page.getByTestId('plans.import-ia.question.etape').check();
+  await expect(question).toContainText(
+    'environ 5 axes, 16 sous-axes et 54 actions'
+  );
+  await page.getByTestId('plans.import-ia.question.continuer').click();
+
+  await expect
+    .poll(() => mock.answers)
+    .toEqual([{ kind: 'action-level', actionLevel: 'etape' }]);
+  await expect(page.getByTestId('plans.import-ia.etapes')).toBeVisible();
+  await expect(question).toHaveCount(0);
 });

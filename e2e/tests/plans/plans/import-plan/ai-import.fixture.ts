@@ -30,6 +30,30 @@ export const importStatus: ImportStatus = {
     qualitativeReview: 'pending',
   },
   report: { issues: [], qualitativeReview: null },
+  question: null,
+  content: null,
+};
+
+/** La question d'un document qui titre ses fiches et détaille leurs étapes. */
+export const actionLevelQuestion: NonNullable<ImportStatus['question']> = {
+  kind: 'action-level',
+  axes: {
+    exampleTitle: 'Limiter les déchets verts',
+    examplePage: 31,
+    count: 5,
+  },
+  fiches: {
+    exampleTitle: 'Accompagner les habitants vers le jardinage au naturel',
+    examplePage: 37,
+    count: 16,
+  },
+  etapes: {
+    exampleTitle: 'Diagnostiquer et orienter',
+    examplePage: 37,
+    count: 54,
+  },
+  proposed: 'fiche',
+  answer: null,
 };
 
 /** Toutes les écritures IA sont interceptées : aucun job ni appel au modèle. */
@@ -47,6 +71,7 @@ export class AiImportFixture {
   cursors: Array<string | undefined> = [];
   queriedPlanIds: number[] = [];
   resumeCalls = 0;
+  answers: unknown[] = [];
   enqueueCalls = 0;
   enqueuedForms: FormData[] = [];
   statusCalls = 0;
@@ -145,6 +170,22 @@ export class AiImportFixture {
           this.current = this.status;
           data = { jobId: this.status.jobId };
           break;
+        case 'answerAiImportQuestion': {
+          const body = route.request().postDataJSON();
+          const answer = (body?.['0']?.json ?? body?.json ?? body)?.answer;
+          this.answers.push(answer);
+          this.status = {
+            ...this.status,
+            status: 'running',
+            question: this.status.question && {
+              ...this.status.question,
+              answer: { actionLevel: answer?.actionLevel },
+            },
+          };
+          this.current = this.status;
+          data = { jobId: this.status.jobId };
+          break;
+        }
         default:
           await route.abort();
           throw new Error(`Procédure IA inattendue : ${procedure}`);

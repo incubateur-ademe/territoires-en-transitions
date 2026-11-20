@@ -265,6 +265,8 @@ const AiImportHistoryContent = ({ showDetails }: { showDetails: boolean }) => {
                         ? 'error'
                         : item.status === 'done'
                         ? 'success'
+                        : item.status === 'awaiting_answer'
+                        ? 'warning'
                         : 'info'
                     }
                   />

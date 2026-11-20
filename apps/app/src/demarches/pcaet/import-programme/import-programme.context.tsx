@@ -37,6 +37,9 @@ type ImportProgrammeContextValue = {
   isEnabled: boolean;
   isCheckingAvailability: boolean;
   isOngoing: boolean;
+  /** L'import courant attend le niveau de l'action : il ne reprend qu'avec la réponse. */
+  isAwaitingAnswer: boolean;
+  ongoingJobId: string | null;
   /** Statut de l'import courant de la collectivité, suivi jusqu'à son terme. */
   ongoingStatus: ImportStatus | undefined;
   /**
@@ -94,6 +97,7 @@ export const ImportProgrammeProvider = ({ children }: PropsWithChildren) => {
     jobId: ongoingJobId,
     status: ongoingStatus,
     isOngoing,
+    isAwaitingAnswer,
   } = useGetOngoingAiImport(collectiviteId, {
     enabled: collectivite.hasCollectivitePermission('plans.fiches.import'),
   });
@@ -171,6 +175,12 @@ export const ImportProgrammeProvider = ({ children }: PropsWithChildren) => {
       });
       if (startedHere && !isProgressDisplayed.current) {
         setToast('error', appLabels.importPlanIaErreur);
+      }
+    } else if (ongoingStatus?.status === 'awaiting_answer') {
+      handledOutcome.current = outcome;
+      // La question s'affiche dans le suivi ; ailleurs, on prévient.
+      if (startedHere && !isProgressDisplayed.current) {
+        setToast('info', appLabels.importPlanIaQuestionAttenteDescription);
       }
     } else if (ongoingStatus) {
       // Import repris : sa prochaine issue, même un nouvel échec, est traitée.
@@ -271,6 +281,8 @@ export const ImportProgrammeProvider = ({ children }: PropsWithChildren) => {
       isEnabled,
       isCheckingAvailability,
       isOngoing,
+      isAwaitingAnswer,
+      ongoingJobId,
       ongoingStatus,
       startProgrammeImport,
       isStarting,
@@ -283,6 +295,8 @@ export const ImportProgrammeProvider = ({ children }: PropsWithChildren) => {
       isEnabled,
       isCheckingAvailability,
       isOngoing,
+      isAwaitingAnswer,
+      ongoingJobId,
       ongoingStatus,
       startProgrammeImport,
       isStarting,

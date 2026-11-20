@@ -2,6 +2,8 @@ import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 
 const POLLING_INTERVAL_MS = 2000;
+// En attente d'une réponse, le job ne bouge que si quelqu'un répond ailleurs.
+const AWAITING_ANSWER_POLLING_INTERVAL_MS = 10_000;
 
 const INACCESSIBLE_ERROR_CODES = [
   'NOT_FOUND',
@@ -31,7 +33,9 @@ export const useGetAiImportStatus = (jobId: string | null) => {
       if (status === 'done' || status === 'failed') return false;
       if (query.state.error && isInaccessibleAiImportError(query.state.error))
         return false;
-      return POLLING_INTERVAL_MS;
+      return status === 'awaiting_answer'
+        ? AWAITING_ANSWER_POLLING_INTERVAL_MS
+        : POLLING_INTERVAL_MS;
     },
   });
 };

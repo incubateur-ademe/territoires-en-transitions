@@ -25,6 +25,7 @@ import { ContentPanelWithHeader } from './content-panel-with-header';
 import { useCreateAxe } from './data/use-create-axe';
 import { useGetPlan } from './data/use-get-plan';
 import { ResumeAiImportButton } from '@/app/plans/plans/import-plan/resume-ai-import.button';
+import { AwaitingAnswerPlanAlert } from '@/app/plans/plans/import-plan/awaiting-answer-plan.alert';
 import {
   ImportedPlanBanner,
   SecteursManquantsBanner,
@@ -59,22 +60,29 @@ export const PlanView = ({ plan: initialPlanData, tab }: Props) => {
 
   if (!isPlanNavigable(plan)) {
     const isFailed = plan.status === PlanStatusEnum.FAILED;
+    const importAlert = (
+      <Alert
+        className="m-6"
+        state={isFailed ? 'error' : 'info'}
+        title={
+          isFailed
+            ? appLabels.importPlanIaEchecCourt
+            : appLabels.importPlanIaEnCoursCourt
+        }
+        description={
+          isFailed
+            ? appLabels.importPlanIaEchecDescription
+            : appLabels.importPlanIaEnCoursDescription
+        }
+      />
+    );
     return (
       <div role="status">
-        <Alert
-          className="m-6"
-          state={isFailed ? 'error' : 'info'}
-          title={
-            isFailed
-              ? appLabels.importPlanIaEchecCourt
-              : appLabels.importPlanIaEnCoursCourt
-          }
-          description={
-            isFailed
-              ? appLabels.importPlanIaEchecDescription
-              : appLabels.importPlanIaEnCoursDescription
-          }
-        />
+        {isFailed ? (
+          importAlert
+        ) : (
+          <AwaitingAnswerPlanAlert planId={plan.id} fallback={importAlert} />
+        )}
         {isFailed ? (
           <div className="mx-6">
             <ResumeAiImportButton planId={plan.id} />

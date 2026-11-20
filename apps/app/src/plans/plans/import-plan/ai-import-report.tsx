@@ -62,7 +62,10 @@ export const AiImportReport = ({
   onResume,
   isResuming = false,
 }: {
-  status: Pick<ImportStatus, 'status' | 'error' | 'report' | 'createdPlanId'>;
+  status: Pick<
+    ImportStatus,
+    'status' | 'error' | 'report' | 'createdPlanId' | 'content'
+  >;
   onRetry: () => void;
   onResume?: () => void;
   isResuming?: boolean;
@@ -98,6 +101,11 @@ export const AiImportReport = ({
           }
           description={
             <div className="flex flex-col gap-3 text-grey-8">
+              {!failed && status.content && (
+                <p className="mb-0">
+                  {appLabels.importPlanIaTermineContenu(status.content)}
+                </p>
+              )}
               {errorCount > 0 && (
                 <p className="mb-0">
                   {appLabels.importPlanIaErreursDetectees({

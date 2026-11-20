@@ -10,6 +10,7 @@ const meta = {
       status: 'failed',
       error: null,
       createdPlanId: null,
+      content: null,
       report: { issues: [], qualitativeReview: null },
     },
   },
