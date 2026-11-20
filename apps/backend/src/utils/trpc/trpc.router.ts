@@ -15,6 +15,7 @@ import { AssistantRouter } from '@tet/backend/utils/assistant/ask-assistant.rout
 import { BannerRouter } from '@tet/backend/utils/banner/banner.router';
 import { ContextStoreService } from '@tet/backend/utils/context/context.service';
 import { NotificationsRouter } from '@tet/backend/utils/notifications/notifications.router';
+import { ListFeatureFlagsRouter } from '@tet/backend/utils/tracking/list-feature-flags.router';
 import { captureException } from '@tet/backend/utils/error-tracking/capture-exception';
 import { createExpressMiddleware } from '@trpc/server/adapters/express';
 import type { Response } from 'express';
@@ -57,7 +58,8 @@ export class TrpcRouter {
     private readonly metricsRouter: MetricsRouter,
     private readonly notificationsRouter: NotificationsRouter,
     private readonly bannerRouter: BannerRouter,
-    private readonly assistantRouter: AssistantRouter
+    private readonly assistantRouter: AssistantRouter,
+    private readonly listFeatureFlagsRouter: ListFeatureFlagsRouter
   ) {}
 
   appRouter = this.trpc.router({
@@ -75,6 +77,7 @@ export class TrpcRouter {
     notifications: this.notificationsRouter.router,
     banner: this.bannerRouter.router,
     assistant: this.assistantRouter.router,
+    featureFlags: this.listFeatureFlagsRouter.router,
   });
 
   createCaller = this.trpc.createCallerFactory(this.appRouter);
