@@ -29,6 +29,8 @@ const toView = (
   qualitativeReview: null,
   resumable: false,
   withSecteurs: false,
+  question: null,
+  content: null,
   ...overrides,
 });
 

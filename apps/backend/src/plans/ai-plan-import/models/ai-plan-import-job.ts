@@ -7,6 +7,7 @@ import { ImportJobStats } from './import-job-stats';
 import { AiPlanImportProfile, AiPlanImportProfileEnum } from './import-profile';
 import { PlanDraft } from './plan-draft';
 import { ImportReport } from './import-report';
+import type { ImportQuestion } from './import-question';
 import type { ElectrificationImportOptions } from '../electrification/electrification-import-options';
 
 export const aiPlanImportJobStatusValues = [
@@ -14,6 +15,8 @@ export const aiPlanImportJobStatusValues = [
   'running',
   'done',
   'failed',
+  // Lecture faite, une précision est demandée avant de créer le plan.
+  'awaiting_answer',
 ] as const;
 
 export const AiPlanImportJobStatusEnum = createEnumObject(
@@ -24,7 +27,19 @@ export const aiPlanImportJobStatusSchema = z.enum(aiPlanImportJobStatusValues);
 
 export type AiPlanImportJobStatus = z.infer<typeof aiPlanImportJobStatusSchema>;
 
+/** Un import en cours : un seul par collectivité, un seul par utilisateur. */
 export const aiPlanImportJobInFlightStatuses: AiPlanImportJobStatus[] = [
+  AiPlanImportJobStatusEnum.PENDING,
+  AiPlanImportJobStatusEnum.RUNNING,
+  AiPlanImportJobStatusEnum.AWAITING_ANSWER,
+];
+
+/**
+ * Un import qui occupe la file. Celui qui attend une réponse n'y est plus :
+ * il ne compte pas dans le plafond global, et un job BullMQ en retard ne le
+ * relance pas.
+ */
+export const aiPlanImportJobProcessingStatuses: AiPlanImportJobStatus[] = [
   AiPlanImportJobStatusEnum.PENDING,
   AiPlanImportJobStatusEnum.RUNNING,
 ];
@@ -88,6 +103,8 @@ export type AiPlanImportJob = {
   startedAt: string | null;
   finishedAt: string | null;
   stats: ImportJobStats | null;
+  /** La précision demandée, et la réponse une fois donnée. */
+  question: ImportQuestion | null;
   /** Passage en cours : 0 au premier, un de plus à chaque reprise. */
   attempt: number;
   createdAt: string;
@@ -134,4 +151,14 @@ export type AiPlanImportJobStatusView = {
   /** Plan PCAET : l'étape des secteurs propose aussi les secteurs réglementaires. */
   withSecteurs: boolean;
   retryDefaults?: z.output<typeof importRetryDefaultsSchema> | null;
+  question: ImportQuestion | null;
+  /** Le plan créé, compté à la fin : absent des imports antérieurs et d'Électrification. */
+  content: ImportContentCounts | null;
+};
+
+export type ImportContentCounts = {
+  axes: number;
+  sousAxes: number;
+  actions: number;
+  sousActions: number;
 };

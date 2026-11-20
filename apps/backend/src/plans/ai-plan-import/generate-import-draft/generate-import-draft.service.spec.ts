@@ -41,6 +41,7 @@ import {
   LlmCallMetrics,
   sumLlmCallMetrics,
 } from '../pipeline/compute-import-metrics';
+import { ExpireImportQuestionsService } from '../expire-import-questions/expire-import-questions.service';
 
 /** Les événements du cycle de vie d'un import, sans le détail des étapes. */
 const lifecycleEvents = (capture: ReturnType<typeof vi.fn>): string[] =>
@@ -69,6 +70,7 @@ const job: AiPlanImportJob = {
   startedAt: null,
   finishedAt: null,
   stats: null,
+  question: null,
   attempt: 0,
   createdAt: '2026-06-10T00:00:00Z',
   modifiedAt: '2026-06-10T00:00:00Z',
@@ -285,7 +287,8 @@ const buildService = (mocks: ReturnType<typeof buildMocks>) =>
     {
       authorizeExistingImport: async () => success(undefined),
     } as unknown as ValidateImportProfileService,
-    mocks.transactionManager
+    mocks.transactionManager,
+    { expire: async () => undefined } as unknown as ExpireImportQuestionsService
   );
 
 describe('GenerateImportDraftService', () => {

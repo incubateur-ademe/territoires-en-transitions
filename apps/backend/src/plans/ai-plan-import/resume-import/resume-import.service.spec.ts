@@ -42,6 +42,7 @@ const failedJob: AiPlanImportJob = {
   startedAt: null,
   finishedAt: null,
   stats: null,
+  question: null,
   attempt: 0,
   createdAt: '2026-06-10T00:00:00Z',
   modifiedAt: '2026-06-10T00:00:00Z',

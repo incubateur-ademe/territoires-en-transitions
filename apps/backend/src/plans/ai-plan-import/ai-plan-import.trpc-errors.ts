@@ -36,7 +36,12 @@ export const aiPlanImportErrorConfig: TrpcErrorHandlerConfig<AiPlanImportSpecifi
       USER_IN_FLIGHT_JOB_EXISTS: {
         code: 'CONFLICT',
         message:
-          "Vous avez déjà un import en cours : attendez qu'il se termine pour en lancer un autre",
+          'Vous avez déjà un import en cours ou qui attend votre réponse : terminez-le pour en lancer un autre',
+      },
+      IMPORT_NOT_AWAITING_ANSWER: {
+        code: 'CONFLICT',
+        message:
+          "Cet import n'attend plus de réponse : elle a déjà été donnée ou le délai est passé",
       },
       DAILY_QUOTA_EXCEEDED: {
         code: 'TOO_MANY_REQUESTS',

@@ -31,10 +31,13 @@ export type GeneratedImport = {
   stats: ImportJobStats;
 };
 
+/** La lecture est faite ; l'import attend la réponse à sa question. */
+export type AwaitingAnswer = { awaitingAnswer: true };
+
 export interface ImportGenerator<Checkpoint = StoredImportCheckpoint> {
   generate(
     job: AiPlanImportJob,
     checkpoint: Checkpoint | null,
     telemetry: ImportJobTelemetry
-  ): Promise<Result<GeneratedImport, ImportGenerationFailure>>;
+  ): Promise<Result<GeneratedImport | AwaitingAnswer, ImportGenerationFailure>>;
 }
