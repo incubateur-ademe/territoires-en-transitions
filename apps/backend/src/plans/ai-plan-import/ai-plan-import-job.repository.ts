@@ -700,19 +700,22 @@ export class AiPlanImportJobRepository {
     });
   }
 
-  async markFailed(input: {
-    id: string;
-    /** Absent : l'échec vaut quel que soit le passage (échec terminal). */
-    attempt?: number;
-    error: string;
-    /** Absent : l'avancement en base reste celui de la dernière étape. */
-    stepStates?: StepStates;
-    draft?: PlanDraft;
-    report?: ImportReport;
-    stats?: ImportJobStats;
-    /** Point de reprise devenu inutilisable : l'import n'est plus reprenable. */
-    dropCheckpoint?: boolean;
-  }): Promise<Result<AiPlanImportJob, AiPlanImportError>> {
+  async markFailed(
+    input: {
+      id: string;
+      /** Absent : l'échec vaut quel que soit le passage (échec terminal). */
+      attempt?: number;
+      error: string;
+      /** Absent : l'avancement en base reste celui de la dernière étape. */
+      stepStates?: StepStates;
+      draft?: PlanDraft;
+      report?: ImportReport;
+      stats?: ImportJobStats;
+      /** Point de reprise devenu inutilisable : l'import n'est plus reprenable. */
+      dropCheckpoint?: boolean;
+    },
+    tx?: Transaction
+  ): Promise<Result<AiPlanImportJob, AiPlanImportError>> {
     return this.updateAndReturn({
       id: input.id,
       attempt: input.attempt,
@@ -730,6 +733,7 @@ export class AiPlanImportJobRepository {
         AiPlanImportJobStatusEnum.PENDING,
         AiPlanImportJobStatusEnum.RUNNING,
       ],
+      tx,
     });
   }
 

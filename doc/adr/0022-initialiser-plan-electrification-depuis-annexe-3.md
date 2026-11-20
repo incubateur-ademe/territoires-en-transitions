@@ -1654,6 +1654,12 @@ uniquement lors du passage effectif à l'état échoué ; un callback répété 
 crée pas une seconde notification. Une erreur de notification reste journalisée
 et ne modifie pas le résultat de l'import.
 
+Le passage en échec du job et de son plan est atomique, avec la garde de
+tentative et le même ordre de verrouillage que la reprise (job, puis plan).
+La notification intervient après le commit : une ancienne tentative ne peut
+plus remettre le plan en échec pendant une reprise. La remise en échec après
+un refus de la queue suit la même règle.
+
 Le texte de progression annonce ces emails. Le compte rendu d'échec conserve
 les diagnostics et leurs consignes, sans les deux cadres lecture/extraction.
 Les loaders de suivi utilisent la taille commune du design system, avec moins

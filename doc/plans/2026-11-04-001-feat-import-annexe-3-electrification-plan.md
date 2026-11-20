@@ -69,8 +69,7 @@ Les cases ci-dessous décrivent le code vérifié localement, pas une livraison.
 - [ ] Prévenir aussi par email en cas d'échec et adapter le texte de progression.
 - [x] Éviter le doublon d'une sous-action documentaire et de son complément
       catalogue lorsque le titre est exact et unique, en conservant sa date.
-- [x] Expliquer les décomptes 01 (11 actions + 8 sous-actions + 1 réponse Oui/Non
-      + 1 action d'engagement = 21) et 04a (13 actions, modèle et exemple exclus).
+- [x] Expliquer les décomptes 01 (11 actions + 8 sous-actions + 1 réponse Oui/Non + 1 action d'engagement = 21) et 04a (13 actions, modèle et exemple exclus).
 - [ ] Rejouer 04b avec son catalogue admis pour vérifier le comptage après
       correction des doublons.
 - [ ] Rejouer les documents de recette sur la version déployée.
@@ -128,10 +127,19 @@ Les cases cochées décrivent le code validé localement, pas son déploiement.
 - [x] Créer la notification d'échec dans le circuit existant, avec un lien vers
       le compte rendu ; éviter les doublons lors d'un callback répété.
 - [x] Préserver l'état échoué si la création de la notification échoue.
+- [x] Rendre atomique la mise en échec du job et du plan, y compris après un
+      refus de la queue ; notifier après commit pour préserver les reprises.
 - [x] Vérifier la largeur de l'historique et les comptes rendus sur desktop et mobile.
 - [ ] Vérifier la réception réelle des emails après déploiement.
 
-Validation : 94 tests backend passent en 39 s, avec IA simulée et sans envoi
+Validation après revue : 113 tests backend passent en 30 s, avec IA simulée
+et sans envoi d'email. Deux scénarios e2e ajoutés dans la suite existante
+reproduisent le défaut avant correction, puis vérifient l'atomicité en base et
+la reprise pendant une notification en attente. Ils réutilisent l'application
+et la base de la suite ; des mocks seuls ne vérifieraient pas l'atomicité.
+TypeScript backend et lint ciblé passent.
+
+Validation initiale : 94 tests backend passent en 39 s, avec IA simulée et sans envoi
 d'email ; 9 tests frontend de progression passent également. Les scénarios
 existants sont étendus pour couvrir la notification, son lien et les callbacks
 répétés. Les contrôles TypeScript frontend et backend passent.
@@ -283,7 +291,7 @@ préservent le comportement actuel sont déjà dans A.
 | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Profils et PCAET      | Profil public PCAET distinct utilisant le moteur multiformat commun ; reprise des anciens jobs PCAET `generic` avec leurs options et checkpoints inchangés.                                      |
 | Suivi et navigation   | Historique, accès persistant au job et aux erreurs, liens depuis le plan, absence de `planId` avant succès pour Électrification. Le générique/PCAET garde son plan immédiat.                     |
-| Lecture et extraction | Conservation des liens/localisations, parser des DOCX officiels V1 et V4, assistance IA limitée aux valeurs numériques non comprises, checkpoints compatibles.                                           |
+| Lecture et extraction | Conservation des liens/localisations, parser des DOCX officiels V1 et V4, assistance IA limitée aux valeurs numériques non comprises, checkpoints compatibles.                                   |
 | Persistance commune   | Structure explicite, raccordement des primitives de A, complétion sans écrasement, isolation des calculs et effets externes après commit.                                                        |
 | Schéma et provenance  | Migration additive sur `axe` et `fiche_action`, références catalogue et parent exact à l'import, engagements sélectionnés et métadonnée de source propre au plan. Aucune nouvelle entité métier. |
 | Jobs et admission     | Résolveurs de A raccordés, transaction finale, compte rendu, concurrence, reprise, contrôles de droits, d'éligibilité et de configuration.                                                       |
@@ -919,7 +927,7 @@ Les constats détaillés et leurs sources figurent dans
 | E09                     | Unité canonique `nb` intégrée dans A ; traduction documentaire ciblée dans B, également appliquée aux checkpoints lors d'une reprise.                                                                                                                                     |
 | Actions et sous-actions | 109 actions et 58 sous-actions intégrées, avec identités internes fixes, rattachements principaux, 89 liens d'indicateurs et 354 liens vers 107 ressources partagées. Le parent exact reste conservé à l'import.                                                          |
 | Indicateurs Grist       | 113 codes et métadonnées explicites intégrés, correspondances TeT `pending`. Faire préciser ces correspondances, le seuil ≥150 kW de `6-b`, les unités principales de `1-a`/`1-b`/`1-c`. Les recensements `9.1.1-a` et `11.1.1-a` sont annuels (décision du 12 novembre). |
-| Aides                   | Liens valides ajoutés dans "Documents". Décision du 19 novembre : omettre les aides sans URL sans avertissement, sans bloquer l'action. Une URL renseignée mais invalide reste bloquante.                                        |
+| Aides                   | Liens valides ajoutés dans "Documents". Décision du 19 novembre : omettre les aides sans URL sans avertissement, sans bloquer l'action. Une URL renseignée mais invalide reste bloquante.                                                                                 |
 | Lauréats                | A/B : 105 correspondances initiales. C : résolution des 77 identifiants publics Grist dans TeT ; 32 groupements exclus faute de porteur explicite. Aucun repli sur les porteurs provisoires ; choix Saint-Quentin à confirmer.                                            |
 | Préproduction           | Vérifier les jobs présents et leurs versions, déployer les définitions et qualifier le parcours complet. Le dump local ne prouve pas l'état actuel de la préproduction.                                                                                                   |
 

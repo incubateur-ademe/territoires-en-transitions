@@ -1401,6 +1401,80 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
       await expect(resume(jobId)).rejects.toMatchObject({ code: 'CONFLICT' });
     });
 
+    test.each(['plan', 'notification'] as const)(
+      'une reprise reste cohérente pendant la mise en échec (%s)',
+      async (pausedAt) => {
+        const { jobId, planId } = await enqueue(fields('Reprise concurrente'), {
+          source: csvSource(`reprise-concurrente-${pausedAt}`),
+          asOther: true,
+        });
+        let signalReached!: () => void;
+        let resumeExecution!: () => void;
+        const reached = new Promise<void>((resolve) => {
+          signalReached = resolve;
+        });
+        const release = new Promise<void>((resolve) => {
+          resumeExecution = resolve;
+        });
+        const pause = async () => {
+          signalReached();
+          await release;
+        };
+        const verification = app.get(PlanVerificationRepository);
+        const markAsImportFailed =
+          verification.markAsImportFailed.bind(verification);
+        const planFailure = vi
+          .spyOn(verification, 'markAsImportFailed')
+          .mockImplementationOnce(async (id, tx) => {
+            if (pausedAt === 'plan') await pause();
+            return markAsImportFailed(id, tx);
+          });
+        const notification = vi
+          .spyOn(app.get(NotifyPlanImportService), 'notifyImportFailed')
+          .mockImplementationOnce(async () => {
+            if (pausedAt === 'notification') await pause();
+            return success(undefined);
+          });
+        fakeLlmControl.failing = 'extraction';
+        const execution = generate(jobId);
+        onTestFinished(async () => {
+          resumeExecution();
+          await execution;
+          fakeLlmControl.failing = null;
+          planFailure.mockRestore();
+          notification.mockRestore();
+          // Ces deux scénarios ne consomment pas le quota des tests suivants.
+          await db.db
+            .delete(aiPlanImportJobTable)
+            .where(eq(aiPlanImportJobTable.id, jobId));
+        });
+
+        await reached;
+        if (pausedAt === 'plan') {
+          // Une autre connexion ne doit pas voir le job en échec avant son plan.
+          expect(await readJob(jobId)).toMatchObject({ status: 'running' });
+          expect(await readPlan(planId)).toMatchObject({ status: 'importing' });
+          resumeExecution();
+          await execution;
+        }
+        expect(await readJob(jobId)).toMatchObject({ status: 'failed' });
+        expect(await readPlan(planId)).toMatchObject({ status: 'failed' });
+        expect(await resume(jobId)).toEqual({ jobId });
+        resumeExecution();
+        await execution;
+
+        expect(await readJob(jobId)).toMatchObject({
+          status: 'pending',
+          attempt: 1,
+        });
+        expect(await readPlan(planId)).toMatchObject({ status: 'importing' });
+        fakeLlmControl.failing = null;
+        await generate(jobId);
+        expect(await readJob(jobId)).toMatchObject({ status: 'done' });
+        expect(await readPlan(planId)).toMatchObject({ status: 'to_verify' });
+      }
+    );
+
     test("reprend seul un import dont le processus s'est arrêté", async () => {
       const { jobId, planId } = await failAtExtraction('reprise-auto');
       // Un processus tué n'a pas le temps de marquer l'échec : le job reste

@@ -145,14 +145,32 @@ export class ResumeImportService {
     job: AiPlanImportJob,
     attempt: number
   ): Promise<void> {
-    const restored = await this.jobRepository.markFailed({
-      id: job.id,
-      attempt,
-      error: job.error ?? 'Reprise impossible',
+    const restored = await this.transactionManager.executeSingle<
+      AiPlanImportJob,
+      AiPlanImportError
+    >(async (tx) => {
+      const failed = await this.jobRepository.markFailed(
+        {
+          id: job.id,
+          attempt,
+          error: job.error ?? 'Reprise impossible',
+        },
+        tx
+      );
+      if (!failed.success || failed.data.createdPlanId === null) return failed;
+
+      const planFailed =
+        await this.planVerificationRepository.markAsImportFailed(
+          failed.data.createdPlanId,
+          tx
+        );
+      return planFailed.success
+        ? failed
+        : failure(AiPlanImportErrorEnum.UPDATE_JOB_ERROR);
     });
-    if (restored.success && job.createdPlanId !== null) {
-      await this.planVerificationRepository.markAsImportFailed(
-        job.createdPlanId
+    if (!restored.success) {
+      this.logger.error(
+        `Restauration de l'échec de l'import ${job.id}: ${restored.error}`
       );
     }
   }
