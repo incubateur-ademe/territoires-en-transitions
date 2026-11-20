@@ -20,6 +20,7 @@ import { isNotNil } from 'es-toolkit';
 import { useQueryStates } from 'nuqs';
 import { useState } from 'react';
 import { PlanCardDisplay } from '../components/card/plan.card';
+import { useAiImportAccess } from '../import-plan/data/use-ai-import-access';
 import { Filters } from './plan-card-with-filters.list/filters';
 import { PlanCardList } from './plan-card-with-filters.list/plan-card.list';
 import {
@@ -30,6 +31,7 @@ export const AllPlansView = () => {
   const tracker = useEventTracker();
   const collectivite = useCurrentCollectivite();
   const { collectiviteId, hasCollectivitePermission } = collectivite;
+  const { isEntryPointVisible } = useAiImportAccess();
 
   const [sortParams, setSortParams] = useQueryStates(sortURLParametersParser, {
     urlKeys: sortURLParametersNames,
@@ -55,7 +57,7 @@ export const AllPlansView = () => {
             {plansAvailable && hasCollectivitePermission('plans.mutate') && (
               <CreatePlanButton collectiviteId={collectiviteId} />
             )}
-            {hasCollectivitePermission('plans.fiches.import') && (
+            {isEntryPointVisible && (
               <Button
                 size="sm"
                 variant="outlined"

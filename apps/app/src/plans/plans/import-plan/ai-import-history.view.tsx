@@ -29,6 +29,7 @@ import { AiImportStatusView } from './ai-import-status.view';
 import { AiImportReport } from './ai-import-report';
 import { importStatusLabels } from './ai-import.labels';
 import { aiImportQueryState } from './ai-import.query-state';
+import { useAiImportAccess } from './data/use-ai-import-access';
 import {
   isInaccessibleAiImportError,
   useGetAiImportStatus,
@@ -41,18 +42,29 @@ export const AiImportHistoryView = ({
 }: {
   showDetails?: boolean;
 }) => {
+  const { isAvailable, isLoading } = useAiImportAccess();
+
+  if (isLoading) {
+    return <SpinnerLoader className="mx-auto w-8 h-8" />;
+  }
+  if (!isAvailable) {
+    return <ErrorCard title={appLabels.erreurAccesTitre} />;
+  }
+
+  return <AiImportHistoryContent showDetails={showDetails} />;
+};
+
+const AiImportHistoryContent = ({ showDetails }: { showDetails: boolean }) => {
   const tracker = useEventTracker();
   const canResume = hasPermission(useUser(), 'plans.fiches.import_resume');
   const resume = useResumeAiImport();
-  const { collectiviteId, hasCollectivitePermission } =
-    useCurrentCollectivite();
+  const { collectiviteId } = useCurrentCollectivite();
   const trpc = useTRPC();
   const router = useRouter();
   const [queryState, setImportQuery] = useQueryStates(aiImportQueryState, {
     history: 'push',
   });
   const importJobId = showDetails ? queryState.importJobId : null;
-  const canAccessImportForm = hasCollectivitePermission('plans.fiches.import');
   const { isOngoing: isOngoingImport } = useGetOngoingAiImport(collectiviteId);
   const statusQuery = useGetAiImportStatus(importJobId);
   const planId = statusQuery.data?.createdPlanId;
@@ -109,57 +121,53 @@ export const AiImportHistoryView = ({
             ? appLabels.importPlanIaDetails
             : appLabels.importPlanIaHistorique}
         </PageHeader.Title>
-        {(importJobId !== null || canAccessImportForm) && (
-          <PageHeader.Actions>
-            <div className="flex flex-wrap items-center gap-2">
-              {importJobId !== null && !openPlanDisabledReason && (
+        <PageHeader.Actions>
+          <div className="flex flex-wrap items-center gap-2">
+            {importJobId !== null && !openPlanDisabledReason && (
+              <Button
+                size="sm"
+                variant="outlined"
+                href={
+                  planId != null
+                    ? makeCollectivitePlanActionUrl({
+                        collectiviteId,
+                        planActionUid: String(planId),
+                      })
+                    : undefined
+                }
+                onClick={() =>
+                  tracker(Event.plans.importIa.ouvrirPlan, {
+                    origine: 'detail_import',
+                    jobId: importJobId,
+                    planId,
+                    profile: statusQuery.data?.profile,
+                    status: statusQuery.data?.status,
+                  })
+                }
+                dataTest="plans.import-ia.ouvrir-plan"
+              >
+                {appLabels.importPlanIaOuvrirPlan}
+              </Button>
+            )}
+            <Tooltip label={newImportDisabledReason}>
+              <span
+                className="inline-flex"
+                tabIndex={newImportDisabledReason ? 0 : undefined}
+              >
                 <Button
                   size="sm"
-                  variant="outlined"
-                  href={
-                    planId != null
-                      ? makeCollectivitePlanActionUrl({
-                          collectiviteId,
-                          planActionUid: String(planId),
-                        })
-                      : undefined
-                  }
-                  onClick={() =>
-                    tracker(Event.plans.importIa.ouvrirPlan, {
-                      origine: 'detail_import',
-                      jobId: importJobId,
-                      planId,
-                      profile: statusQuery.data?.profile,
-                      status: statusQuery.data?.status,
-                    })
-                  }
-                  dataTest="plans.import-ia.ouvrir-plan"
+                  icon="add-line"
+                  href={!newImportDisabledReason ? newImportUrl : undefined}
+                  disabled={!!newImportDisabledReason}
+                  className="disabled:pointer-events-none"
+                  dataTest="plans.import-ia.nouveau-button"
                 >
-                  {appLabels.importPlanIaOuvrirPlan}
+                  {appLabels.importPlanIaNouveau}
                 </Button>
-              )}
-              {canAccessImportForm && (
-                <Tooltip label={newImportDisabledReason}>
-                  <span
-                    className="inline-flex"
-                    tabIndex={newImportDisabledReason ? 0 : undefined}
-                  >
-                    <Button
-                      size="sm"
-                      icon="add-line"
-                      href={!newImportDisabledReason ? newImportUrl : undefined}
-                      disabled={!!newImportDisabledReason}
-                      className="disabled:pointer-events-none"
-                      dataTest="plans.import-ia.nouveau-button"
-                    >
-                      {appLabels.importPlanIaNouveau}
-                    </Button>
-                  </span>
-                </Tooltip>
-              )}
-            </div>
-          </PageHeader.Actions>
-        )}
+              </span>
+            </Tooltip>
+          </div>
+        </PageHeader.Actions>
       </PageHeader>
       <div className="bg-white border border-grey-3 rounded-lg shadow-sm p-6 md:p-8 flex flex-col gap-6">
         {importJobId !== null ? (
