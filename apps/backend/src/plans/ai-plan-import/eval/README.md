@@ -27,6 +27,14 @@ l'application à partir du type choisi dans le formulaire :
 make ai-import-eval f=plan-mobilite.pdf args='--type-plan "Plan Mobilité"'
 ```
 
+Quand le document laisse le choix du niveau de l'action (fiches nommées qui
+détaillent des étapes « Action 1 – … »), l'éval affiche la question que
+poserait l'application et lit par fiche. `--action-level` rejoue une réponse :
+
+```sh
+make ai-import-eval f=plpdma.pdf args='--action-level etape'
+```
+
 ## Profil Électrification
 
 Le profil par défaut est `generic`. Pour extraire les engagements du tableau A
