@@ -46,6 +46,7 @@ import {
   XLSX_MIME,
 } from './detect-source-mime-type';
 import { validateOoxmlArchive } from './validate-ooxml-archive';
+import { ExpireImportQuestionsService } from '../expire-import-questions/expire-import-questions.service';
 
 export type EnqueueImportInput = {
   collectiviteId: number;
@@ -69,6 +70,7 @@ export class EnqueueImportService {
     private readonly upsertPlanService: UpsertPlanService,
     private readonly planVerificationRepository: PlanVerificationRepository,
     private readonly capabilities: ValidateImportProfileService,
+    private readonly expireImportQuestions: ExpireImportQuestionsService,
     @InjectQueue(AI_PLAN_IMPORT_QUEUE_NAME)
     private readonly queue: Queue<AiPlanImportJobData>
   ) {}
@@ -139,6 +141,8 @@ export class EnqueueImportService {
       }
     }
 
+    // Un import resté sans réponse au-delà du délai ne bloque plus sa collectivité.
+    await this.expireImportQuestions.expire();
     const inFlight = await this.jobRepository.countInFlight();
     if (!inFlight.success) {
       return inFlight;

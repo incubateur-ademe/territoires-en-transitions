@@ -35,6 +35,7 @@ import { initialStepStates } from '../pipeline/run-import-pipeline';
 import { EnqueueImportService } from './enqueue-import.service';
 import { GenericImportProfileAdapter } from '../generic/generic-import-profile.adapter';
 import { PcaetImportProfileAdapter } from '../pcaet/pcaet-import-profile.adapter';
+import { ExpireImportQuestionsService } from '../expire-import-questions/expire-import-questions.service';
 
 const jobId = '9d760311-40ad-4d81-b1f7-1bd5666b09d2';
 
@@ -64,6 +65,7 @@ const job: AiPlanImportJob = {
   startedAt: null,
   finishedAt: null,
   stats: null,
+  question: null,
   attempt: 0,
   createdAt: '2026-06-11T00:00:00Z',
   modifiedAt: '2026-06-11T00:00:00Z',
@@ -259,6 +261,9 @@ const buildService = (overrides: MockOverrides = {}) => {
     {} as UpsertPlanService,
     planVerificationRepository,
     capabilities,
+    {
+      expire: vi.fn(async () => undefined),
+    } as unknown as ExpireImportQuestionsService,
     queue
   );
 

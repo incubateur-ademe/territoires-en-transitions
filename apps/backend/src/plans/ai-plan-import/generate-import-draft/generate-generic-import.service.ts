@@ -50,11 +50,13 @@ import { readDocument } from '../pipeline/read-document/read-document';
 import { ReadDocument } from '../pipeline/document/document-page';
 import {
   isCheckpointUsableBy,
+  PipelineOutcome,
   runImportPipeline,
   StepStates,
 } from '../pipeline/run-import-pipeline';
 import { ImportGenerationErrors } from './generate-import.errors';
 import {
+  AwaitingAnswer,
   GeneratedImport,
   ImportFailureOptions,
   ImportGenerationFailure,
@@ -83,7 +85,9 @@ export class GenerateGenericImportService implements ImportGenerator {
     job: AiPlanImportJob,
     storedCheckpoint: StoredImportCheckpoint | null,
     telemetry: ImportJobTelemetry
-  ): Promise<Result<GeneratedImport, ImportGenerationFailure>> {
+  ): Promise<
+    Result<GeneratedImport | AwaitingAnswer, ImportGenerationFailure>
+  > {
     const { attempt } = job;
     const parsed = storedCheckpoint
       ? parseImportCheckpoint(storedCheckpoint)
@@ -164,6 +168,8 @@ export class GenerateGenericImportService implements ImportGenerator {
       };
     }
 
+    // Sans point de reprise de la lecture, une réponse ne pourrait rien reprendre.
+    let readingSaved = usable !== null;
     const effetsAttendus = await this.effetAttenduService.getEffetAttendu();
     const planTypeLabel = await this.readPlanTypeLabel(job);
     const outcome = await runImportPipeline(this.llm, {
@@ -177,6 +183,8 @@ export class GenerateGenericImportService implements ImportGenerator {
       withVerifications: job.options.withVerifications,
       withSousActions: job.options.withSousActions,
       withSecteurs: job.options.withSecteurs ?? false,
+      pauseOnQuestion: true,
+      actionLevel: job.question?.answer?.actionLevel,
       planTypeLabel,
       effetsAttendus,
       onStepStatesChange: async (stepStates) => {
@@ -188,6 +196,9 @@ export class GenerateGenericImportService implements ImportGenerator {
           ...pipelineCheckpoint,
           documentStats: telemetry.documentStats(),
         });
+        if (saved.success && pipelineCheckpoint.completedStep === 'reading') {
+          readingSaved = true;
+        }
         if (!saved.success) {
           // L'import continue, mais ne pourra pas reprendre à cette étape.
           this.logger.error(
@@ -200,6 +211,9 @@ export class GenerateGenericImportService implements ImportGenerator {
 
     for (const warning of outcome.warnings) {
       this.logger.warn(`Import ${job.id}: ${warning}`);
+    }
+    if (outcome.status === 'awaiting_answer') {
+      return this.pauseForQuestion(job, outcome, readingSaved);
     }
     if (outcome.status === 'failed') {
       return this.failed(
@@ -389,6 +403,34 @@ export class GenerateGenericImportService implements ImportGenerator {
       )})`
     );
     return failure(message);
+  }
+
+  private async pauseForQuestion(
+    job: AiPlanImportJob,
+    outcome: Extract<PipelineOutcome, { status: 'awaiting_answer' }>,
+    readingSaved: boolean
+  ): Promise<Result<AwaitingAnswer, ImportGenerationFailure>> {
+    const failedPause = () =>
+      this.failed(
+        aiPlanImportJobErrorMessages.QUESTION_UNRECORDED,
+        'question_unrecorded',
+        { attempt: job.attempt, stepStates: outcome.stepStates }
+      );
+    if (!readingSaved) return failedPause();
+    const paused = await this.jobRepository.pauseForQuestion({
+      id: job.id,
+      attempt: job.attempt,
+      question: outcome.question,
+      stepStates: outcome.stepStates,
+    });
+    if (!paused.success) {
+      this.logger.error(
+        `Import ${job.id}: question non enregistrée (${paused.error})`
+      );
+      return failedPause();
+    }
+    this.logger.log(`Import ${job.id}: en attente du niveau de l'action`);
+    return success({ awaitingAnswer: true });
   }
 
   private failed(

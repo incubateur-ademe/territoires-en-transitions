@@ -8,6 +8,7 @@ import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
 import {
   AI_PLAN_IMPORT_SOURCE_BUCKET,
   EVENT_AI_PLAN_IMPORT_FAILED,
+  EVENT_AI_PLAN_IMPORT_QUESTION_ASKED,
   EVENT_AI_PLAN_IMPORT_RESUMED,
   EVENT_AI_PLAN_IMPORT_STEP_DONE,
   EVENT_AI_PLAN_IMPORT_SUCCEEDED,
@@ -41,6 +42,7 @@ import { NotifyPlanImportedService } from '../notify-plan-imported/notify-plan-i
 import { ImportGenerationErrors } from './generate-import.errors';
 import { ValidateImportProfileService } from '../validate-import-profile/validate-import-profile.service';
 import { buildRequesterUser } from '@tet/backend/users/models/auth.models';
+import { ExpireImportQuestionsService } from '../expire-import-questions/expire-import-questions.service';
 
 export type GenerateImportDraftError =
   | { kind: 'transition_failed'; jobId: string; cause: AiPlanImportError }
@@ -62,11 +64,16 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
     private readonly stepRunRepository: AiPlanImportStepRunRepository,
     private readonly generic: GenerateGenericImportService,
     private readonly electrification: GenerateElectrificationImportService,
-    private readonly profiles: ValidateImportProfileService
+    private readonly profiles: ValidateImportProfileService,
+    private readonly expireImportQuestions: ExpireImportQuestionsService
   ) {}
 
-  /** Sans tâche planifiée, chaque démarrage purge les points de reprise expirés. */
+  /**
+   * Sans tâche planifiée, chaque démarrage purge les points de reprise expirés
+   * et arrête les imports restés trop longtemps sans réponse.
+   */
   async onApplicationBootstrap(): Promise<void> {
+    await this.expireImportQuestions.expire();
     await this.jobRepository.purgeFailedCheckpoints();
   }
 
@@ -221,6 +228,19 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
           ...options,
           attempt: job.attempt,
         });
+      }
+      if ('awaitingAnswer' in imported.data) {
+        this.trackingService.capture({
+          distinctId: job.createdBy,
+          event: EVENT_AI_PLAN_IMPORT_QUESTION_ASKED,
+          properties: {
+            ...jobTrackingProperties(job),
+            collectiviteId: job.collectiviteId,
+            jobId: job.id,
+          },
+          groups: { collectivite: String(job.collectiviteId) },
+        });
+        return success(undefined);
       }
       await this.afterCommit(job, imported.data);
       return success(undefined);
