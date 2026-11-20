@@ -29,7 +29,7 @@ Règles
 - La liste des objectifs placée en tête d'un axe (« Objectifs de l'axe 1 : », puis ses lignes) ne range aucune action : ses lignes ne sont pas des sous-axes, même relevées comme des titres. Quand l'axe a aussi des titres numérotés qui regroupent ses actions (« Groupe d'actions 1.2 — … », « Mesure 1.2 … »), ce sont eux les sous-axes.
 - Un titre que la mise en page d'un tableau coupe sur plusieurs lignes est recomposé en entier ; un fragment qui n'en fait pas partie (une date, un nom d'organisme) est écarté.
 - Si le plan va directement des axes aux actions, laissez "sousAxes" vide : c'est fréquent et c'est la bonne réponse.
-- Seule exception aux titres de fiches : celui que les extraits de structure montrent regrouper plusieurs actions lettrées ou numérotées (« Mesure 1.1 … » suivie de « A. … », « B. … », ou « Groupe d'actions 1.2 ») est un sous-axe, pas une action.
+- Seule exception aux titres de fiches : celui que les extraits de structure, ou la mention « (regroupe : …) » de la liste des fiches, montrent regrouper plusieurs actions lettrées ou numérotées (« Mesure 1.1 … » suivie de « A. … », « B. … », ou « Groupe d'actions 1.2 ») est un sous-axe, pas une action.
 - Ne mettez aucune action dans le squelette.
 - Sans numérotation dans le document, numérotez les axes 1, 2, 3… et les sous-axes n.1, n.2…
 

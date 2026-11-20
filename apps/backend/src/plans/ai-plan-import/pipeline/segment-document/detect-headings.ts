@@ -148,7 +148,9 @@ const isExplicit = (match: HeadingMatch, kind: HeadingMatch['kind']) =>
 /**
  * Un document qui titre ses fiches « Fiche action n°1.2 » écrit aussi
  * « Action 1 – … » dans chacune, et « Action 1.2 … » dans son tableau
- * récapitulatif : des étapes et des renvois, pas d'autres fiches.
+ * récapitulatif : des étapes et des renvois, pas d'autres fiches. Une fiche
+ * autonome mêlée aux fiches nommées, elle, prolonge leur numérotation :
+ * « Action 4 » après les fiches 1, 2 et 3 est gardée.
  */
 const dropActionsOfNamedFiches = (
   headings: DetectedHeading[],
@@ -166,11 +168,35 @@ const dropActionsOfNamedFiches = (
   const namedFiches = headings.filter((heading) =>
     startsWith(heading, /^fiche/iu)
   );
-  return namedFiches.length < MIN_NAMED_FICHES
-    ? headings
-    : headings.filter(
-        (heading) => !startsWith(heading, /^actions?(?!\p{L})/iu)
-      );
+  if (namedFiches.length < MIN_NAMED_FICHES) {
+    return headings;
+  }
+  // La suite des fiches nommées, quand elles se numérotent 1, 2, 3… Une
+  // fiche qui a ouvert ses étapes par « Action 1 » ne la prolonge plus.
+  let lastFiche = 0;
+  let inSteps = false;
+  const continuesFiches = new Set<DetectedHeading>();
+  for (const heading of headings) {
+    const number = /^\d+$/u.test(heading.match.number ?? '')
+      ? Number(heading.match.number)
+      : null;
+    if (namedFiches.includes(heading)) {
+      lastFiche = number ?? Number.NaN;
+      inSteps = false;
+    } else if (startsWith(heading, /^action(?!\p{L})/iu)) {
+      if (!inSteps && number !== null && number === lastFiche + 1) {
+        continuesFiches.add(heading);
+        lastFiche = number;
+      } else if (number === 1) {
+        inSteps = true;
+      }
+    }
+  }
+  return headings.filter(
+    (heading) =>
+      continuesFiches.has(heading) ||
+      !startsWith(heading, /^actions?(?!\p{L})/iu)
+  );
 };
 
 /**

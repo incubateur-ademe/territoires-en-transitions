@@ -89,6 +89,20 @@ describe('detectTableHeader', () => {
     expect(
       detectTableHeader(buildTextGrid('Plan', [header, notes, real]))?.noteRows
     ).toEqual([2]);
+    expect(
+      detectTableHeader(
+        buildTextGrid('Plan', [
+          header,
+          notes,
+          [
+            '1. Bâtiments',
+            'Équiper les parkings',
+            'Installer 3 bornes (ou) 6 prises renforcées',
+            'À venir',
+          ],
+        ])
+      )?.noteRows
+    ).toEqual([2]);
   });
 
   it('ne prend pas une rangée de données pour une seconde rangée d’en-tête', () => {

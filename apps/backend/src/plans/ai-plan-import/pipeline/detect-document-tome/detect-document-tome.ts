@@ -50,7 +50,15 @@ const ACTION_PLAN_TITLES = [
   /^(?:le\s+)?(?:programme|plan)\s+d['’]actions?\b/i,
   /^fiches?[\s-]actions?\b/i,
   /^catalogue des actions\b/i,
-  /^(?:plan|programme) op[ée]rationnel\b/i,
+  /^plan op[ée]rationnel\b/i,
+].map(withTitlePrefix);
+
+/**
+ * Marqueurs des plans hors PCAET, plus courants en prose : ils font passer un
+ * document, mais jamais une EES titrée comme telle qui les cite au sommaire.
+ */
+const WEAK_ACTION_PLAN_TITLES = [
+  /^programme op[ée]rationnel\b/i,
   /^feuille de route\b/i,
   /^fiches?[\s-]projets?\b/i,
 ].map(withTitlePrefix);
@@ -102,10 +110,25 @@ export const detectDocumentTome = (document: ReadDocument): TomeDetection => {
   }
   const lines = titleZoneLines(document);
 
-  const claimsActionPlan = lines.some((line) =>
-    ACTION_PLAN_TITLES.some((pattern) => pattern.test(line))
+  const claims = (patterns: RegExp[]) =>
+    lines.some((line) => patterns.some((pattern) => pattern.test(line)));
+  if (claims(ACTION_PLAN_TITLES)) {
+    return { verdict: 'ok' };
+  }
+  const eesTitle = lines.find((line) =>
+    WRONG_TOME_TITLES.some(
+      ({ pattern, tome }) =>
+        tome === 'evaluation_environnementale' && pattern.test(line)
+    )
   );
-  if (claimsActionPlan) {
+  if (eesTitle) {
+    return {
+      verdict: 'wrong_tome',
+      tome: 'evaluation_environnementale',
+      evidence: eesTitle,
+    };
+  }
+  if (claims(WEAK_ACTION_PLAN_TITLES)) {
     return { verdict: 'ok' };
   }
 

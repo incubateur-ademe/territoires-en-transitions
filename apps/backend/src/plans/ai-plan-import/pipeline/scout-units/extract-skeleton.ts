@@ -43,7 +43,17 @@ export const extractSkeleton = async (
   const fiches = units.filter(
     (unit) => unit.kind === 'fiche' && unit.title && !unit.continued
   );
-  const ficheTitles = fiches.map((unit) => unit.title as string);
+  // Une mesure classée fiche n'entre pas dans les extraits de structure : ses
+  // actions lettrées sont citées avec son titre, seul indice du regroupement.
+  const ficheTitles = fiches.map((unit) => {
+    const lettered = letteredActionsOf(unit);
+    return lettered.length >= MIN_LETTERED_ACTIONS
+      ? `${unit.title} (regroupe : ${lettered
+          .slice(0, MAX_CITED_LETTERED_ACTIONS)
+          .map((line) => `« ${line.slice(0, MAX_CITED_LINE_LENGTH)} »`)
+          .join(', ')})`
+      : (unit.title as string);
+  });
   // Une « Mesure 1.1 » qui range ses actions A, B, C est leur sous-axe : le
   // prompt l'admet, le filtre ne doit pas la retirer ensuite.
   const actionTitles = fiches
@@ -84,10 +94,16 @@ export const extractSkeleton = async (
 
 const LETTERED_ACTION = /^[A-H]\s?[.–—-]\s+\p{Lu}/u;
 const MIN_LETTERED_ACTIONS = 2;
+const MAX_CITED_LETTERED_ACTIONS = 3;
+const MAX_CITED_LINE_LENGTH = 60;
+
+const letteredActionsOf = (unit: DocumentUnit): string[] =>
+  unit.lines
+    .map((line) => line.text.trim())
+    .filter((text) => LETTERED_ACTION.test(text));
 
 const groupsLetteredActions = (unit: DocumentUnit): boolean =>
-  unit.lines.filter((line) => LETTERED_ACTION.test(line.text.trim())).length >=
-  MIN_LETTERED_ACTIONS;
+  letteredActionsOf(unit).length >= MIN_LETTERED_ACTIONS;
 
 /**
  * Un sous-axe qui porte le titre d'une fiche est la fiche elle-même, vue dans
