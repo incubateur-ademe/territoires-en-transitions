@@ -4,6 +4,7 @@ import { DemarcheShell } from '@/app/demarches/components/shell';
 import { useDemarchePcaet } from '@/app/demarches/pcaet/data/use-demarche';
 import { useGetPcaetDiagnostic } from '@/app/demarches/pcaet/diagnostic/data/use-get-pcaet-diagnostic';
 import { DiagnosticTabs } from '@/app/demarches/pcaet/diagnostic/diagnostic.tabs';
+import { DownloadDemarcheExportButton } from '@/app/demarches/pcaet/exports/download-demarche-export.button';
 import { useDemarcheId } from '@/app/demarches/use-demarche-id';
 import { appLabels } from '@/app/labels/catalog';
 import { isDemarchePcaetEnCours } from '@tet/domain/demarches';
@@ -76,6 +77,12 @@ export const DemarchePcaetDiagnosticPage = () => {
             : estRappel
             ? appLabels.demarcheAvanceRappelDiagnosticDescription
             : appLabels.demarcheDiagnosticDescription
+        }
+        action={
+          <DownloadDemarcheExportButton
+            dossierRef={{ demarcheId, collectiviteId }}
+            type="indicateurs"
+          />
         }
       />
     </DemarcheShell>

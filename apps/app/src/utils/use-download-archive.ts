@@ -18,10 +18,16 @@ export const useDownloadArchive = ({
   mutationKey,
   route,
   params,
+  onSaved,
+  onSettled,
 }: {
   mutationKey: readonly unknown[];
   route: string;
   params?: Record<string, string | number>;
+  /** Appelé une fois le fichier enregistré ; ni en échec, ni sur annulation. */
+  onSaved?: () => void;
+  /** Appelé à la fin du téléchargement, qu'il ait abouti ou non. */
+  onSettled?: () => void;
 }): DownloadArchive => {
   const apiClient = useApiClient();
   const abortController = useRef<AbortController | null>(null);
@@ -38,7 +44,8 @@ export const useDownloadArchive = ({
 
     networkMode: 'always',
 
-    mutationFn: async () => {
+    /** `true` si le fichier a été enregistré, `false` si l'envoi a été annulé. */
+    mutationFn: async (): Promise<boolean> => {
       const controller = new AbortController();
       abortController.current = controller;
 
@@ -55,9 +62,10 @@ export const useDownloadArchive = ({
           );
         }
         await saveBlob(blob, filename);
+        return true;
       } catch (error) {
         if (isAbortError(error)) {
-          return;
+          return false;
         }
         throw error;
       } finally {
@@ -66,6 +74,14 @@ export const useDownloadArchive = ({
         }
       }
     },
+
+    onSuccess: (saved) => {
+      if (saved) {
+        onSaved?.();
+      }
+    },
+
+    onSettled,
 
     meta: {
       error: appLabels.telechargementFichierErreur,

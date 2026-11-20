@@ -6,7 +6,7 @@ import {
   DemarchePcaetTransitionEnum,
   type DemarchePcaet,
 } from '@tet/domain/demarches';
-import { GenerateDemarchePcaetExportsService } from '../generate-exports/generate-demarche-pcaet-exports.service';
+import { GenerateDemarchePcaetExportsService } from '../exports/generate-exports/generate-demarche-pcaet-exports.service';
 import { NotifyDossierTransmisService } from '../notifications/notify-dossier-transmis/notify-dossier-transmis.service';
 import type { ServiceSansCompte } from '../notifications/notify-dossier-transmis/notify-support-services-sans-compte.props';
 import { DemarchePcaetTransitionInput } from '../shared/demarche-pcaet-transition.input';
@@ -74,9 +74,9 @@ export class TransmettrePourAvisDemarchePcaetService {
             transaction
           );
 
-        // La photo du dossier tel qu'il est transmis, dans la même
-        // transaction : sans photo, pas de transmission — la saisine et les
-        // notifications sont annulées avec elle. En dernier : c'est l'étape
+        // Les exports figés du dossier tel qu'il est transmis, dans la même
+        // transaction : sans export figé, pas de transmission — la saisine et
+        // les notifications sont annulées avec elle. En dernier : c'est l'étape
         // la plus longue, et la seule à écrire hors de la base.
         const exports = await this.generateExportsService.generate(
           {

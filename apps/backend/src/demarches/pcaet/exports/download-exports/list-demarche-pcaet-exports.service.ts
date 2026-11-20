@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { Result, success } from '@tet/backend/utils/result.type';
-import { BuildDemarchePcaetWorkbooksService } from '../generate-exports/build-demarche-pcaet-workbooks.service';
+import { BuildDemarchePcaetWorkbooksService } from '../build-workbooks/build-demarche-pcaet-workbooks.service';
 import { DemarchePcaetExportsError } from './demarche-pcaet-exports.errors';
 import type { DemarchePcaetExportRef } from './demarche-pcaet-exports.input';
 import type {

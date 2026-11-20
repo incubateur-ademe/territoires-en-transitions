@@ -2,6 +2,7 @@
 
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { DemarcheShell } from '@/app/demarches/components/shell';
+import { DownloadDemarcheExportButton } from '@/app/demarches/pcaet/exports/download-demarche-export.button';
 import {
   findPcaetPlanType,
   makeProgrammeActionsPlanName,
@@ -61,6 +62,13 @@ export const DemarchePcaetPlanActionsPage = () => {
     notFound();
   }
 
+  const exportButton = (
+    <DownloadDemarcheExportButton
+      dossierRef={{ demarcheId, collectiviteId }}
+      type="plan"
+    />
+  );
+
   return (
     <DemarcheShell
       demarche={demarche}
@@ -82,6 +90,7 @@ export const DemarchePcaetPlanActionsPage = () => {
           demarcheId={demarcheId}
           typeLabels={appLabels.demarcheTypeLabels[demarche.type]}
           lectureSeule={demarche.lectureSeule}
+          action={exportButton}
         />
       ) : (
         <ProgrammeActionsSection
@@ -100,6 +109,7 @@ export const DemarchePcaetPlanActionsPage = () => {
               collectiviteNom,
             }),
           }}
+          exportAction={exportButton}
         />
       )}
     </DemarcheShell>

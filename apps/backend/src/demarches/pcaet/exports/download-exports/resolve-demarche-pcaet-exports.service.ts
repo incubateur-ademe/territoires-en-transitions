@@ -9,13 +9,13 @@ import {
 } from '@tet/domain/demarches';
 import { getErrorMessage } from '@tet/domain/utils';
 import { and, eq } from 'drizzle-orm';
-import { DemarchePcaetExportRepository } from '../generate-exports/demarche-pcaet-export.repository';
-import { DemarchePcaetLectureService } from '../shared/demarche-pcaet-lecture.service';
+import { DemarchePcaetExportRepository } from '../demarche-pcaet-export.repository';
+import { DemarchePcaetLectureService } from '../../shared/demarche-pcaet-lecture.service';
 import {
   DepotPermissionsService,
   type DossierConsultable,
-} from '../shared/depot-permissions.service';
-import type { DemarchePcaetExportRow } from '../shared/models/demarche-pcaet-export.table';
+} from '../../shared/depot-permissions.service';
+import type { DemarchePcaetExportRow } from '../../shared/models/demarche-pcaet-export.table';
 import {
   DemarchePcaetExportsError,
   DemarchePcaetExportsErrorEnum,

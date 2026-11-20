@@ -4,18 +4,18 @@ import CollectivitesService from '@tet/backend/collectivites/services/collectivi
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { getErrorMessage } from '@tet/domain/utils';
-import type { DemarchePcaetRef } from '../shared/demarche-pcaet-ref.repository';
+import type { DemarchePcaetRef } from '../../shared/demarche-pcaet-ref.repository';
 import {
   DEMARCHE_PCAET_EXPORT_TYPES,
   type DemarchePcaetExportTransition,
-} from '../shared/models/demarche-pcaet-export.table';
-import { BuildDemarchePcaetWorkbooksService } from './build-demarche-pcaet-workbooks.service';
-import { DemarchePcaetExportRepository } from './demarche-pcaet-export.repository';
-import { buildDemarchePcaetExportFilename } from './demarche-pcaet-export.rules';
+} from '../../shared/models/demarche-pcaet-export.table';
+import { BuildDemarchePcaetWorkbooksService } from '../build-workbooks/build-demarche-pcaet-workbooks.service';
+import { DemarchePcaetExportRepository } from '../demarche-pcaet-export.repository';
+import { buildDemarchePcaetExportFilename } from '../demarche-pcaet-export-filename.rules';
 import {
   buildDemarchePcaetExportPath,
   DemarchePcaetExportsStorageService,
-} from './demarche-pcaet-exports-storage.service';
+} from '../demarche-pcaet-exports-storage.service';
 import {
   DemarchePcaetExportErrorEnum,
   type DemarchePcaetExportError,
@@ -23,11 +23,11 @@ import {
 
 /**
  * Fige les classeurs d'un dépôt au moment d'une soumission (transmission pour
- * avis, publication) : une photo du dossier tel qu'il était, même si le plan
+ * avis, publication) : ils gardent le dossier tel qu'il était, même si le plan
  * est modifié ensuite.
  *
- * Appelé dans la transaction de la transition, et bloquant : pas de photo, pas
- * de soumission. Le stockage n'étant pas dans la transaction, l'appelant
+ * Appelé dans la transaction de la transition, et bloquant : pas d'export figé,
+ * pas de soumission. Le stockage n'étant pas dans la transaction, l'appelant
  * garde les chemins renvoyés et les passe à `discard` si elle est annulée.
  */
 @Injectable()

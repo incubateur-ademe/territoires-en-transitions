@@ -6,6 +6,7 @@ import { useDemarchePcaetPlans } from '@/app/demarches/pcaet/data/use-plans';
 import { appLabels, type DemarcheTypeLabels } from '@/app/labels/catalog';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ErrorCard } from '@/app/utils/error/error.card';
+import type { ReactNode } from 'react';
 
 /**
  * Rappel du programme d'actions, pendant la finalisation.
@@ -20,12 +21,14 @@ export const RappelPlanSection = ({
   demarcheId,
   typeLabels,
   lectureSeule = false,
+  action,
 }: {
   collectiviteId: number;
   demarcheId: number;
   typeLabels: DemarcheTypeLabels;
   /** Lu par un EPCI couvert, qui ne l'a pas transmis : pas un « rappel ». */
   lectureSeule?: boolean;
+  action?: ReactNode;
 }) => {
   const { plans, isLoading, isError, refetch } = useDemarchePcaetPlans({
     collectiviteId,
@@ -40,6 +43,7 @@ export const RappelPlanSection = ({
           : appLabels.demarcheAvanceRappelPlanLabel({ type: typeLabels })
       }
       description={appLabels.demarcheAvanceRappelPlanDescription}
+      action={action}
     >
       {isError ? (
         <ErrorCard

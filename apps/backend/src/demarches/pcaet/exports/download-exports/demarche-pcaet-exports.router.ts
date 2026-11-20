@@ -9,7 +9,10 @@ import {
 import { GetDemarchePcaetExportUrlService } from './get-demarche-pcaet-export-url.service';
 import { ListDemarchePcaetExportsService } from './list-demarche-pcaet-exports.service';
 
-/** `demarches.pcaet.exports` : les classeurs d'un dépôt, photo ou export du jour. */
+/**
+ * `demarches.pcaet.exports` : les classeurs d'un dépôt, export figé ou export
+ * du jour.
+ */
 @Injectable()
 export class DemarchePcaetExportsRouter {
   constructor(
