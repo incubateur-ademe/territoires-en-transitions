@@ -329,6 +329,50 @@ describe('detectHeadings sur un PCAET à fiches tabulaires', () => {
     ]);
   });
 
+  it('garde une fiche autonome « Action 4 » après trois fiches nommées', () => {
+    const named = (numero: string, titre: string) => [
+      { text: `Fiche action ${numero} : ${titre}`, fontSize: 14 },
+      ...body(3),
+    ];
+    expect(
+      titles([
+        buildPage(0, [
+          ...named('1', 'Isoler les écoles'),
+          ...named('2', 'Rénover le gymnase'),
+          ...named('3', 'Changer les chaudières'),
+          { text: 'Action 4 - Rénover la mairie', fontSize: 14 },
+          ...body(3),
+        ]),
+      ])
+    ).toEqual([
+      ['fiche', 3, 'Isoler les écoles'],
+      ['fiche', 3, 'Rénover le gymnase'],
+      ['fiche', 3, 'Changer les chaudières'],
+      ['fiche', 3, 'Rénover la mairie'],
+    ]);
+    // Ses étapes « Action 1, Action 2 » ne prolongent pas la suite des fiches.
+    const withSteps = (numero: string, titre: string) => [
+      ...named(numero, titre),
+      { text: 'Action 1 - Diagnostiquer', fontSize: 14 },
+      ...body(2),
+      { text: 'Action 2 - Réaliser', fontSize: 14 },
+      ...body(2),
+    ];
+    expect(
+      titles([
+        buildPage(0, [
+          ...withSteps('1', 'Isoler les écoles'),
+          ...withSteps('2', 'Rénover le gymnase'),
+          ...withSteps('3', 'Changer les chaudières'),
+        ]),
+      ])
+    ).toEqual([
+      ['fiche', 3, 'Isoler les écoles'],
+      ['fiche', 3, 'Rénover le gymnase'],
+      ['fiche', 3, 'Changer les chaudières'],
+    ]);
+  });
+
   it('garde « Action n » pour une fiche quand le document ne titre pas ses fiches autrement', () => {
     expect(
       titles([

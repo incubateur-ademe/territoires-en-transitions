@@ -76,6 +76,26 @@ describe('applyHierarchy', () => {
     expect(outcome.actions[1].sousActions).toHaveLength(1);
   });
 
+  it('garde deux actions de même titre rangées dans deux axes différents', () => {
+    const actions = [
+      anAction('Sensibiliser les habitants', { axe: 'Axe 1 : Bâtiments' }),
+      anAction('Sensibiliser les habitants', { axe: 'Axe 2 : Mobilité' }),
+      anAction('Sensibiliser les habitants', { axe: 'Axe 2 : Mobilité' }),
+    ];
+
+    const outcome = applyHierarchy(
+      actions,
+      [
+        { index: 0, axe: 'Axe 1 : Bâtiments', 'sous-axe': '', doublonDe: -1 },
+        { index: 1, axe: 'Axe 2 : Mobilité', 'sous-axe': '', doublonDe: 0 },
+        { index: 2, axe: 'Axe 2 : Mobilité', 'sous-axe': '', doublonDe: 1 },
+      ],
+      skeleton
+    );
+
+    expect(outcome.keptIndexes).toEqual([0, 1]);
+  });
+
   it('ignore un doublon qui pointe vers lui-même ou vers plus loin', () => {
     const actions = [anAction('A'), anAction('B')];
 

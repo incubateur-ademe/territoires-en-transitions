@@ -21,17 +21,26 @@ export const alignSkeletonLabels = (
   const axes = skeleton.axes.map((axe) => ({
     numero: axe.numero.trim(),
     label: `Axe ${axe.numero.trim()} : ${axe.titre.trim()}`,
-  }));
-  const sousAxes = skeleton.axes.flatMap((axe) =>
-    axe.sousAxes.map((sousAxe) => ({
+    sousAxes: axe.sousAxes.map((sousAxe) => ({
       numero: sousAxe.numero.trim(),
       label: `${sousAxe.numero.trim()} ${sousAxe.titre.trim()}`,
-    }))
-  );
-  return ({ axe, sousAxe }) => ({
-    axe: alignLabel(axe, axes, AXE_NUMBER),
-    sousAxe: alignLabel(sousAxe, sousAxes, SOUS_AXE_NUMBER),
-  });
+    })),
+  }));
+  const allSousAxes = axes.flatMap(({ sousAxes }) => sousAxes);
+  return ({ axe, sousAxe }) => {
+    const alignedAxe = alignLabel(axe, axes, AXE_NUMBER);
+    // Un sous-axe se cherche sous son axe : un titre d'un autre axe ne l'y
+    // déplace pas. Hors squelette, tous les sous-axes restent candidats.
+    const parent = axes.find(({ label }) => label === alignedAxe);
+    return {
+      axe: alignedAxe,
+      sousAxe: alignLabel(
+        sousAxe,
+        parent ? parent.sousAxes : allSousAxes,
+        SOUS_AXE_NUMBER
+      ),
+    };
+  };
 };
 
 const alignLabel = (

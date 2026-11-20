@@ -38,7 +38,9 @@ const NOTE_MIN_CELLS = 4;
 const NOTE_MAX_DISTINCT_SHARE = 0.5;
 // La fiche d'exemple du modèle d'import de la plateforme, sous ses consignes :
 // « Action 1 - … (ou) 1.1.1.1. … », portée par « La Collectivité Exemple ».
-const TEMPLATE_EXAMPLE = /\(ou\)\s+\d|collectivité exemple/iu;
+// La numérotation pointée après « (ou) » est celle du modèle : « 3 bornes
+// (ou) 6 prises » dans une vraie fiche n'y ressemble pas.
+const TEMPLATE_EXAMPLE = /\(ou\)\s+\d+(?:\.\d+)+|collectivité exemple/iu;
 // Un en-tête tient sur deux rangées au plus : une fusion plus haute qui en
 // part regroupe des données.
 const HEADER_MAX_MERGE_HEIGHT = 2;

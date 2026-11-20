@@ -19,11 +19,16 @@ export type ScoutUnitsResult = {
 // plan de la collectivité : une partie ainsi titrée n'est pas lue.
 const PARTNER_SECTION = /partenaire/i;
 // Un plan range ses fiches dans une partie à part (programme d'actions,
-// feuille de route, fiches projets), après le diagnostic et la stratégie :
-// quand cette partie est titrée et contient des fiches, le reste du document
-// n'a pas d'action à donner. Il ne sert plus qu'au squelette.
+// fiches actions), après le diagnostic et la stratégie : quand cette partie
+// est titrée et contient des fiches, le reste du document n'a pas d'action à
+// donner. Il ne sert plus qu'au squelette.
 const ACTION_PLAN_SECTION =
-  /(?:plan|programme) d['’]actions?|fiches?[\s-](?:actions?|projets?)|catalogue des actions|(?:plan|programme) op[ée]rationnel|feuille de route/i;
+  /(?:plan|programme) d['’]actions?|fiches?[\s-]actions?|catalogue des actions|plan op[ée]rationnel/i;
+// « Feuille de route mobilité », « Fiches projets » : une partie d'un plan
+// plus large, qui n'en réunit pas toujours toutes les fiches. Seule la prose
+// hors de cette partie est écartée ; ses autres fiches passent au tri.
+const PARTIAL_ACTION_PLAN_SECTION =
+  /fiches?[\s-]projets?|programme op[ée]rationnel|feuille de route/i;
 const MIN_FICHES_IN_ACTION_PLAN = 3;
 
 /**
@@ -43,13 +48,20 @@ export const scoutUnits = async (
   const readable = allUnits.filter(
     (unit) => !unit.section || !PARTNER_SECTION.test(unit.section)
   );
-  const actionPlan = readable.filter(
-    (unit) => unit.section && ACTION_PLAN_SECTION.test(unit.section)
-  );
-  const hasActionPlan =
-    actionPlan.filter((unit) => unit.kind === 'fiche').length >=
+  const inPart = (pattern: RegExp) =>
+    readable.filter((unit) => unit.section && pattern.test(unit.section));
+  const holdsFiches = (part: DocumentUnit[]) =>
+    part.filter((unit) => unit.kind === 'fiche').length >=
     MIN_FICHES_IN_ACTION_PLAN;
-  const units = hasActionPlan ? actionPlan : readable;
+  const actionPlan = inPart(ACTION_PLAN_SECTION);
+  const partialPlan = inPart(PARTIAL_ACTION_PLAN_SECTION);
+  const units = holdsFiches(actionPlan)
+    ? actionPlan
+    : holdsFiches(partialPlan)
+    ? readable.filter(
+        (unit) => partialPlan.includes(unit) || unit.kind === 'fiche'
+      )
+    : readable;
   const setAsideCount = allUnits.length - units.length;
   const classified = await classifyUnits(llm, {
     units,

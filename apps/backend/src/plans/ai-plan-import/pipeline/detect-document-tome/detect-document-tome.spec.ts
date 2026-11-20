@@ -67,6 +67,25 @@ describe('detectDocumentTome', () => {
     });
   });
 
+  it('refuse une EES dont le sommaire cite une feuille de route', () => {
+    const document = documentFromPages([
+      [
+        'Évaluation environnementale',
+        'Sommaire',
+        'Feuille de route ......... 20',
+      ],
+    ]);
+    expect(detectDocumentTome(document)).toMatchObject({
+      verdict: 'wrong_tome',
+      tome: 'evaluation_environnementale',
+    });
+    expect(
+      detectDocumentTome(
+        documentFromPages([['Feuille de route mobilité 2026-2030']])
+      )
+    ).toEqual({ verdict: 'ok' });
+  });
+
   it('ne prend pas « incidences du programme d’actions » pour un titre de programme', () => {
     const document = documentFromPages([
       ['Tome IV : Évaluation environnementale'],

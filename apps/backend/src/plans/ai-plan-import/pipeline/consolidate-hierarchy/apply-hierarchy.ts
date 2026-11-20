@@ -1,6 +1,10 @@
 import { omit } from 'es-toolkit';
 import { z } from 'zod';
-import { ExtractedAction, isPinnedAction } from '../../models/extracted-action';
+import {
+  axisPathOf,
+  ExtractedAction,
+  isPinnedAction,
+} from '../../models/extracted-action';
 import { PlanSkeleton } from '../../models/plan-skeleton';
 import { mergeActions } from '../extract-actions/merge-chunk-actions';
 import { alignSkeletonLabels, AxisLabels } from './align-skeleton-labels';
@@ -38,15 +42,29 @@ export const applyHierarchy = (
     ? alignSkeletonLabels(skeleton)
     : (labels: AxisLabels) => labels;
   const entryByIndex = new Map(entries.map((entry) => [entry.index, entry]));
+  // L'axe retenu pour une action : celui du modèle, sinon celui d'origine.
+  const axeOf = (index: number): string => {
+    const entry = entryByIndex.get(index);
+    return entry?.axe.trim()
+      ? align({ axe: entry.axe.trim(), sousAxe: '' }).axe
+      : axisPathOf(actions[index])[0] ?? '';
+  };
 
   const targetOf = new Map<number, number>();
   actions.forEach((action, index) => {
     const target = entryByIndex.get(index)?.doublonDe ?? -1;
+    // Deux actions de même titre dans deux axes sont deux actions.
+    const otherAxe =
+      target >= 0 &&
+      axeOf(index) !== '' &&
+      axeOf(target) !== '' &&
+      axeOf(index) !== axeOf(target);
     if (
       !isPinnedAction(action) &&
       target >= 0 &&
       target < index &&
-      target !== index
+      target !== index &&
+      !otherAxe
     ) {
       targetOf.set(index, resolveTarget(target, targetOf));
     }

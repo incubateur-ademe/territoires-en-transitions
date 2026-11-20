@@ -32,8 +32,10 @@ const AXE = new RegExp(
   String.raw`^axe(?:\s+strat[ée]gique)?\s*${NUMBER}(\d{1,2}|[IVX]{1,4})(?!\p{L})${SEPARATOR}(.*)$`,
   'iu'
 );
-// « Axe 2 territoire (basée hors…) » : l'étiquette d'une colonne collée au
-// texte de sa voisine. Un titre d'axe sans séparateur commence par une capitale.
+// « Axe 2 territoire (basée hors de la ville)- » : l'étiquette d'une colonne
+// collée au texte de sa voisine, en minuscule et coupé au bord de la colonne
+// (mot coupé, parenthèse restée ouverte). La minuscule seule ne suffit pas :
+// « Axe 2 développer les mobilités douces » est un axe.
 const AXE_GLUED_TO_TEXT = new RegExp(
   String.raw`^axe(?:\s+strat[ée]gique)?\s*${NUMBER}(?:\d{1,2}|[IVX]{1,4})\s+(.*)$`,
   'iu'
@@ -121,7 +123,8 @@ export const matchHeading = (
     };
   }
   const axe = line.match(AXE);
-  if (axe && /^\p{Ll}/u.test(line.match(AXE_GLUED_TO_TEXT)?.[1] ?? '')) {
+  const glued = line.match(AXE_GLUED_TO_TEXT)?.[1] ?? '';
+  if (axe && /^\p{Ll}/u.test(glued) && isCutAtColumnEdge(glued)) {
     return null;
   }
   if (axe) {
@@ -211,6 +214,10 @@ export const matchHeading = (
   }
   return null;
 };
+
+const isCutAtColumnEdge = (text: string): boolean =>
+  /[-–]$/u.test(text.trim()) ||
+  (text.match(/\(/gu)?.length ?? 0) > (text.match(/\)/gu)?.length ?? 0);
 
 const isSentence = (line: string): boolean =>
   line.endsWith('.') && line.split(/\s+/).length >= SENTENCE_MIN_WORDS;

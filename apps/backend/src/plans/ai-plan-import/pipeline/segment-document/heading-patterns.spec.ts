@@ -187,6 +187,13 @@ describe('matchHeading', () => {
       matchHeading('Axe 2 territoire (basée hors de la ville)-')
     ).toBeNull();
     expect(matchHeading('Axe 2 – vers une mobilité durable')?.kind).toBe('axe');
+    expect(matchHeading('Axe 2 développer les mobilités douces')).toMatchObject(
+      {
+        kind: 'axe',
+        number: '2',
+        title: 'développer les mobilités douces',
+      }
+    );
     expect(matchHeading('Actions 1-2-3-5 x x x x x')).toBeNull();
     expect(matchHeading('Action 6 X')).toBeNull();
   });

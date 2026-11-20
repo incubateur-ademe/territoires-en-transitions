@@ -66,6 +66,22 @@ describe('alignSkeletonLabels', () => {
         sousAxe: '1.5 Créer de nouveaux arrêts pour la ligne de bus',
       }).sousAxe
     ).toBe('1.5 Sobriété foncière');
+    // Le titre d'un sous-axe d'un autre axe ne l'emporte pas sur le numéro.
+    expect(
+      align({
+        axe: 'Axe 1 : Un territoire résilient',
+        sousAxe: "1.4 Développer la production locale d'énergies renouvelables",
+      })
+    ).toEqual({
+      axe: 'Axe 1 : Un territoire résilient',
+      sousAxe: '1.4 Désimperméabilisation et végétalisation',
+    });
+    expect(
+      align({
+        axe: 'Axe 1 : Un territoire résilient',
+        sousAxe: '1.4 Désimperméabilisaton et végétalisation',
+      }).sousAxe
+    ).toBe('1.4 Désimperméabilisation et végétalisation');
   });
 
   it('laisse tel quel un niveau dont le squelette n’a ni le titre ni le numéro', () => {

@@ -156,7 +156,7 @@ describe('extractSkeleton, avec des fiches', () => {
 
 describe('extractSkeleton, avec des mesures qui rangent des actions', () => {
   it('garde pour sous-axe la mesure aux actions lettrées, retire la fiche au titre écourté', async () => {
-    const { llm } = llmRouting(
+    const { llm, calls } = llmRouting(
       () => [],
       () => ({
         axes: [
@@ -199,6 +199,13 @@ describe('extractSkeleton, avec des mesures qui rangent des actions', () => {
         { numero: '1.1', titre: 'Développer l’usage du vélo' },
       ]);
     }
+    // Hors des extraits de structure, la mesure dit son regroupement.
+    expect(calls[0].prompt).toContain(
+      '1.1 Développer l’usage du vélo (regroupe : « A – Organiser des bourses à vélo », « B – Soutenir la réparation de vélos »)'
+    );
+    expect(calls[0].prompt).toContain(
+      '1.3 Faciliter l’organisation de manifestations responsables\n'
+    );
   });
 });
 
@@ -307,9 +314,25 @@ describe('scoutUnits', () => {
     }
   });
 
-  it.each(['PLAN D’ACTIONS À 2030', 'FICHES PROJETS', 'Feuille de route'])(
+  it.each([
+    [
+      'PLAN D’ACTIONS À 2030',
+      ['Action 1 : A', 'Action 2 : B', 'Action 3 : C'],
+      2,
+    ],
+    [
+      'FICHES PROJETS',
+      ['Action 1 : A', 'Action 2 : B', 'Action 3 : C', 'Fiche 7 | indicateur'],
+      1,
+    ],
+    [
+      'Feuille de route',
+      ['Action 1 : A', 'Action 2 : B', 'Action 3 : C', 'Fiche 7 | indicateur'],
+      1,
+    ],
+  ])(
     'ne lit que la partie actions quand elle est titrée et contient des fiches : %s',
-    async (plan) => {
+    async (plan, kept, discarded) => {
       const { llm, calls } = llmRouting((call) =>
         [...call.prompt.matchAll(/#(\d+) \|/g)].map((m) => ({
           index: Number(m[1]),
@@ -329,12 +352,10 @@ describe('scoutUnits', () => {
 
       expect(result.success).toBe(true);
       if (result.success) {
-        expect(result.data.keptUnits.map((u) => u.text)).toEqual([
-          'Action 1 : A',
-          'Action 2 : B',
-          'Action 3 : C',
-        ]);
-        expect(result.data.discardedCount).toBe(2);
+        // Une feuille de route ou des fiches projets n'excluent pas les
+        // fiches rangées ailleurs.
+        expect(result.data.keptUnits.map((u) => u.text)).toEqual(kept);
+        expect(result.data.discardedCount).toBe(discarded);
       }
       expect(calls[0].prompt).not.toContain('planter des arbres');
     }
