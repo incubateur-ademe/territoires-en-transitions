@@ -371,6 +371,26 @@ describe('detectHeadings sur un PCAET à fiches tabulaires', () => {
       ['fiche', 3, 'Rénover le gymnase'],
       ['fiche', 3, 'Changer les chaudières'],
     ]);
+    // Après les étapes 1 et 2 de la fiche 3, « Action 4 » rompt leur suite et
+    // prolonge celle des fiches : une fiche autonome, même sur une autre page.
+    expect(
+      titles([
+        buildPage(0, [
+          ...withSteps('1', 'Isoler les écoles'),
+          ...withSteps('2', 'Rénover le gymnase'),
+          ...withSteps('3', 'Changer les chaudières'),
+        ]),
+        buildPage(1, [
+          { text: 'Action 4 - Rénover la mairie', fontSize: 14 },
+          ...body(3),
+        ]),
+      ])
+    ).toEqual([
+      ['fiche', 3, 'Isoler les écoles'],
+      ['fiche', 3, 'Rénover le gymnase'],
+      ['fiche', 3, 'Changer les chaudières'],
+      ['fiche', 3, 'Rénover la mairie'],
+    ]);
   });
 
   it('garde « Action n » pour une fiche quand le document ne titre pas ses fiches autrement', () => {
