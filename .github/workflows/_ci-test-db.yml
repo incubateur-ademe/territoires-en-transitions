@@ -167,7 +167,7 @@ jobs:
           done <<< "$tables" | psql -X -v ON_ERROR_STOP=1 --dbname="$TO_DB_URL"
           psql -X -v ON_ERROR_STOP=1 --dbname="$TO_DB_URL" <<'SQL'
           CREATE SCHEMA sqitch;
-          CREATE TABLE sqitch.changes (project text, change_id text, script_hash text);
+          CREATE TABLE sqitch.changes (project text, change_id text, script_hash text, committed_at timestamptz DEFAULT clock_timestamp());
           INSERT INTO sqitch.changes VALUES ('test', repeat('a', 40), repeat('b', 40));
           INSERT INTO public.dcp VALUES (1, 'preserved');
           SQL
@@ -189,10 +189,19 @@ jobs:
           psql -X -v ON_ERROR_STOP=1 --dbname="$TO_DB_URL" \
               -c "UPDATE sqitch.changes SET script_hash = repeat('c', 40)"
           bash "$checker" "$workspace/complete.dump" public.dcp
+          # Target ahead of the backup: refused as is, reverted when SQITCH is set.
+          # The stand-in plays `sqitch revert -y --to <change_id> --target <uri>`.
+          psql -X -v ON_ERROR_STOP=1 --dbname="$TO_DB_URL" \
+              -c "INSERT INTO sqitch.changes VALUES ('test', repeat('d', 40), repeat('d', 40))"
+          expect_refusal "$workspace/complete.dump" 'different Sqitch migrations'
+          printf '%s\n' 'psql -X -v ON_ERROR_STOP=1 --dbname="$TO_DB_URL" -c "DELETE FROM sqitch.changes WHERE committed_at > (SELECT committed_at FROM sqitch.changes WHERE change_id = '"'"'$4'"'"')"' \
+              > "$workspace/sqitch"
+          SQITCH="bash $workspace/sqitch" bash "$checker" "$workspace/complete.dump" public.dcp
+          [[ $(psql -X -At --dbname="$TO_DB_URL" -c "SELECT string_agg(change_id, ',') FROM sqitch.changes") == $(printf 'a%.0s' {1..40}) ]]
           psql -X -v ON_ERROR_STOP=1 --dbname="$TO_DB_URL" \
               -c "UPDATE sqitch.changes SET change_id = repeat('c', 40)"
           expect_refusal "$workspace/complete.dump" 'different Sqitch migrations'
-          echo 'Preflight: matching registry and changed script_hash accepted; restore.sh refuses missing data and changed change_id without truncating dcp.'
+          echo 'Preflight: matching registry and changed script_hash accepted; extra target migration reverted with SQITCH; restore.sh refuses missing data, extra and changed change_id without truncating dcp.'
           BASH
 
       - name: Test periodicity constraints after deployment
