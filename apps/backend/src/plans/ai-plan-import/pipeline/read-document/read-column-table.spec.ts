@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { readColumnTable } from './read-column-table';
+import { ColumnTableContext, readColumnTable } from './read-column-table';
 import { PositionedItem } from './reconstruct-page-lines';
 
 const FONT = 10;
@@ -23,8 +23,10 @@ const header = [
   at(720, 100, 'Réalisation'),
 ];
 
-const textsOf = (items: PositionedItem[], previous = null) =>
-  readColumnTable(items, previous)?.lines.map((line) => line.text);
+const textsOf = (
+  items: PositionedItem[],
+  previous: ColumnTableContext | null = null
+) => readColumnTable(items, previous)?.lines.map((line) => line.text);
 
 describe('readColumnTable', () => {
   it('lit un tableau à en-tête rangée par rangée, cellules fusionnées comprises', () => {
@@ -275,5 +277,247 @@ describe('readColumnTable', () => {
 
     expect(readColumnTable(prose, null)).toBeNull();
     expect(readColumnTable(cartouche, null)).toBeNull();
+  });
+
+  describe('suite du tableau à la page suivante', () => {
+    const numberedTable = () =>
+      readColumnTable(
+        [
+          ...header,
+          at(390, 140, 'A 1 : Diagnostiquer'),
+          at(620, 140, 'CCPF'),
+          at(720, 140, '2024'),
+          at(390, 180, 'A 2 : Former'),
+          at(620, 180, 'CCPF'),
+          at(720, 180, '2025'),
+          at(390, 220, 'A 3 : Harmoniser'),
+          at(620, 220, 'CCPF'),
+          at(720, 220, '2026'),
+          at(50, 180, '1- GESTION DE LA RESSOURCE'),
+        ],
+        null
+      )?.context ?? null;
+
+    it("ne prend pas le cartouche d'une fiche, aligné sur les colonnes, pour la suite d'un tableau numéroté", () => {
+      const cartouche = [
+        at(50, 100, 'Pilote'),
+        at(390, 100, 'Service environnement'),
+        at(50, 120, 'Budget'),
+        at(390, 120, '12 000 €'),
+        at(50, 140, 'Calendrier'),
+        at(390, 140, '2024-2026'),
+        at(50, 160, 'Partenaires'),
+        at(390, 160, 'ADEME'),
+      ];
+
+      const lines = textsOf(cartouche, numberedTable()) ?? [];
+
+      expect(lines.some((line) => line.startsWith('## Pilote'))).toBe(false);
+    });
+
+    it('reprend les libellés pour une seule rangée numérotée', () => {
+      expect(
+        textsOf(
+          [
+            at(390, 60, 'A 4 : Animer un groupe'),
+            at(620, 60, 'SAFER'),
+            at(720, 60, '2027'),
+          ],
+          numberedTable()
+        )
+      ).toEqual([
+        'A 4 : Animer un groupe',
+        'Portage : SAFER',
+        'Réalisation : 2027',
+      ]);
+    });
+
+    it('reconnaît la suite d’un tableau sans numéros', () => {
+      const first = readColumnTable(
+        [
+          ...header,
+          at(390, 140, 'Diagnostiquer les usages'),
+          at(620, 140, 'CCPF'),
+          at(720, 140, '2024'),
+          at(390, 180, 'Former les exploitants'),
+          at(620, 180, 'CCPF'),
+          at(720, 180, '2025'),
+          at(390, 220, 'Harmoniser les tarifs'),
+          at(620, 220, 'CCPF'),
+          at(720, 220, '2026'),
+          at(50, 180, '1- GESTION DE LA RESSOURCE'),
+        ],
+        null
+      );
+
+      expect(
+        textsOf(
+          [
+            at(390, 60, 'Animer un groupe'),
+            at(620, 60, 'SAFER'),
+            at(720, 60, '2027'),
+            at(390, 100, 'Créer une commission'),
+            at(620, 100, 'SAFER'),
+            at(720, 100, '2028'),
+          ],
+          first?.context ?? null
+        )
+      ).toEqual([
+        'Animer un groupe',
+        'Portage : SAFER',
+        'Réalisation : 2027',
+        'Créer une commission',
+        'Portage : SAFER',
+        'Réalisation : 2028',
+      ]);
+    });
+  });
+
+  it('sépare des actions sans numéro aux rangées serrées quand les valeurs marquent chaque rangée', () => {
+    const small = (x: number, y: number, text: string): PositionedItem => ({
+      ...at(x, y, text),
+      fontSize: 8,
+    });
+    const items = [
+      ...header,
+      at(390, 140, 'Diagnostiquer les usages'),
+      at(390, 154, 'Former les exploitants'),
+      at(390, 168, 'Harmoniser les tarifs'),
+      small(620, 140, 'CCPF'),
+      small(620, 154, 'SAFER'),
+      small(620, 168, 'CDA'),
+      at(50, 154, '1- GESTION'),
+    ];
+
+    expect(textsOf(items)).toEqual([
+      '## 1- GESTION',
+      'Diagnostiquer les usages',
+      'Portage : CCPF',
+      'Former les exploitants',
+      'Portage : SAFER',
+      'Harmoniser les tarifs',
+      'Portage : CDA',
+    ]);
+  });
+
+  it('garde entier le titre numéroté sur deux lignes, face à une valeur sur deux lignes', () => {
+    const small = (x: number, y: number, text: string): PositionedItem => ({
+      ...at(x, y, text),
+      fontSize: 8,
+    });
+    const items = [
+      ...header,
+      at(390, 140, 'A 40 : Poursuivre'),
+      at(390, 154, "l'opération"),
+      small(620, 140, 'SERVICE'),
+      small(620, 154, 'DÉCHETS'),
+      at(390, 190, 'A 41 : Financer'),
+      at(390, 204, 'les équipements'),
+      small(620, 190, 'SERVICE'),
+      small(620, 204, 'DÉCHETS'),
+      at(390, 240, 'A 42 : Peser'),
+      small(620, 240, 'CCPF'),
+      at(50, 190, '1- GASPILLAGE'),
+    ];
+
+    expect(textsOf(items)?.slice(1, 3)).toEqual([
+      "A 40 : Poursuivre l'opération",
+      'Portage : SERVICE DÉCHETS',
+    ]);
+  });
+
+  it('garde entier un titre sur plusieurs lignes face à une valeur centrée', () => {
+    const items = [
+      ...header,
+      at(390, 140, 'Diagnostiquer les usages'),
+      at(390, 152, "de l'eau agricole"),
+      at(390, 164, 'sur tout le territoire'),
+      at(620, 152, 'CCPF'),
+      at(720, 152, '2024'),
+      at(390, 200, 'Former les exploitants'),
+      at(620, 200, 'SAFER'),
+      at(720, 200, '2025'),
+      at(390, 240, 'Harmoniser les tarifs'),
+      at(620, 240, 'CDA'),
+      at(720, 240, '2026'),
+      at(50, 200, '1- GESTION'),
+    ];
+
+    expect(textsOf(items)?.slice(1, 4)).toEqual([
+      "Diagnostiquer les usages de l'eau agricole sur tout le territoire",
+      'Portage : CCPF',
+      'Réalisation : 2024',
+    ]);
+  });
+
+  it("laisse vide le libellé d'une colonne sans en-tête, sans y prendre sa première valeur", () => {
+    const items = [
+      at(50, 100, 'Enjeux'),
+      at(200, 100, 'Objectifs'),
+      at(390, 100, 'Actions'),
+      at(720, 100, 'Réalisation'),
+      at(390, 125, 'A 1 : Diagnostiquer'),
+      at(620, 125, 'CCPF'),
+      at(720, 125, '2024'),
+      at(390, 165, 'A 2 : Former'),
+      at(620, 165, 'CCPF'),
+      at(720, 165, '2025'),
+      at(390, 205, 'A 3 : Harmoniser'),
+      at(620, 205, 'SAFER'),
+      at(720, 205, '2026'),
+      at(50, 165, '1- GESTION'),
+      at(200, 165, '- Limiter'),
+    ];
+
+    expect(textsOf(items)).toEqual([
+      '## 1- GESTION',
+      'Objectifs : - Limiter',
+      'A 1 : Diagnostiquer',
+      'CCPF',
+      'Réalisation : 2024',
+      'A 2 : Former',
+      'CCPF',
+      'Réalisation : 2025',
+      'A 3 : Harmoniser',
+      'SAFER',
+      'Réalisation : 2026',
+    ]);
+  });
+
+  it('garde sur chaque ligne les liens des cellules dont elle reprend le texte', () => {
+    const link = (text: string) => ({
+      text,
+      target: `https://exemple.fr/${text}`,
+      kind: 'hyperlink' as const,
+      location: { pageIndex: 0 },
+    });
+    const withLink = (item: PositionedItem): PositionedItem => ({
+      ...item,
+      links: [link(item.text)],
+    });
+    const items = [
+      ...header,
+      withLink(at(390, 140, 'A 1 : Diagnostiquer')),
+      withLink(at(620, 140, 'CCPF')),
+      at(720, 140, '2024'),
+      at(390, 180, 'A 2 : Former'),
+      at(620, 180, 'SAFER'),
+      at(720, 180, '2025'),
+      at(390, 220, 'A 3 : Harmoniser'),
+      at(620, 220, 'CDA'),
+      at(720, 220, '2026'),
+      withLink(at(50, 180, '1- GESTION')),
+    ];
+
+    const lines = readColumnTable(items, null)?.lines ?? [];
+    const linksOf = (text: string) =>
+      lines
+        .find((line) => line.text === text)
+        ?.links?.map((found) => found.text);
+
+    expect(linksOf('## 1- GESTION')).toEqual(['1- GESTION']);
+    expect(linksOf('A 1 : Diagnostiquer')).toEqual(['A 1 : Diagnostiquer']);
+    expect(linksOf('Portage : CCPF')).toEqual(['CCPF']);
+    expect(linksOf('Réalisation : 2024')).toBeUndefined();
   });
 });

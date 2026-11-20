@@ -160,6 +160,43 @@ describe('cutUnits', () => {
     expect(units.filter((unit) => unit.kind === 'section')).toHaveLength(1);
   });
 
+  it("n'attache pas à une fiche l'axe titré en bas de sa page quand la fiche suivante ouvre la page d'après", () => {
+    const fiche = (index: number, numero: number, axe: string) =>
+      page(
+        index,
+        `Action ${numero} : Favoriser la petite faune`,
+        axe,
+        'Contexte :',
+        'La fragmentation des milieux érode la biodiversité.'
+      );
+    const units = cut([
+      fiche(0, 30, 'Axe stratégique 4 : Gérer les espaces verts'),
+      fiche(1, 31, 'Axe stratégique 4 : Gérer les espaces verts'),
+      fiche(2, 32, 'Axe stratégique 5 : Bâtir des villes durables'),
+      page(
+        3,
+        'Action 33 : Planter des haies',
+        'Axe stratégique 6 : Sobriété foncière'
+      ),
+      page(
+        4,
+        'Action 34 : Réduire l’artificialisation',
+        'Contexte :',
+        'Les sols se referment.'
+      ),
+    ]);
+
+    expect(
+      units
+        .filter((unit) => unit.kind === 'fiche')
+        .slice(-2)
+        .map((unit) => [unit.title, unit.headingPath])
+    ).toEqual([
+      ['33 Planter des haies', ['5 Bâtir des villes durables']],
+      ['34 Réduire l’artificialisation', ['6 Sobriété foncière']],
+    ]);
+  });
+
   it("laisse l'axe suivant ouvrir la suite quand les fiches du document ne redisent pas le leur", () => {
     const units = cut([
       page(

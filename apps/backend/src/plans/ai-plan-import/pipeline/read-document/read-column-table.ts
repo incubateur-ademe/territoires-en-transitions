@@ -1,5 +1,5 @@
 import { matchColumnLabel } from '../analyze-workbook/match-column-label';
-import { PageLine } from '../document/document-page';
+import { DocumentLink, PageLine } from '../document/document-page';
 import {
   groupRows,
   linesFromPositionedItems,
@@ -17,6 +17,8 @@ export type ColumnTableContext = {
   mainIndex: number;
   /** Dernière cellule lue de chaque colonne de regroupement. */
   groupTexts: string[];
+  /** Ses rangées sont numérotées : sa suite doit l'être aussi. */
+  numbered: boolean;
 };
 
 type Cell = {
@@ -186,6 +188,7 @@ export const readColumnTable = (
       labels,
       mainIndex,
       groupTexts: table.groupTexts,
+      numbered: areNumbered(table.rows),
     },
   };
 };
@@ -410,13 +413,18 @@ const continueTable = (
     last++;
   }
   const columnIndexOf = columnOf(previous.ranges);
-  const used = new Set(
-    rows
-      .slice(first, last + 1)
-      .flat()
-      .map(columnIndexOf)
+  const items = rows.slice(first, last + 1).flat();
+  const used = new Set(items.map(columnIndexOf));
+  // L'alignement ne suffit pas : le cartouche d'une fiche (« Pilote »,
+  // « Budget ») tombe aussi dans les colonnes. Un tableau numéroté se
+  // poursuit par un numéro, qui confirme à lui seul une rangée unique.
+  const numbered = items.some(
+    (item) =>
+      columnIndexOf(item) === previous.mainIndex &&
+      ROW_NUMBER.test(item.text.trim())
   );
-  return last > first && used.has(previous.mainIndex) && used.size >= 2
+  const continues = previous.numbered ? numbered : last > first;
+  return continues && used.has(previous.mainIndex) && used.size >= 2
     ? { ranges: previous.ranges, first, last }
     : null;
 };
@@ -436,6 +444,11 @@ const sameColumns = (previous: Range[], current: Range[]): boolean =>
 const ROW_NUMBER =
   /^(?:[A-Z]{1,3}\s?\d{1,3}(?:\.\d{1,3})*\s*[:.)]?\s*\p{L}|\d{1,3}(?:\.\d{1,3})*\s*[:.)]\s?\p{L})/u;
 const MIN_NUMBERED_ROWS = 2;
+
+const areNumbered = (cells: Cell[]): boolean => {
+  const numbered = cells.filter((cell) => ROW_NUMBER.test(cell.text)).length;
+  return numbered > 0 && numbered >= cells.length / 2;
+};
 
 const cellOf = (lines: PageLine[]): Cell => ({
   text: lines.map((line) => line.text).join(' '),
@@ -535,8 +548,22 @@ const readHeader = (
     // Un libellé de colonne : quelques mots, jamais un titre numéroté.
     cell.text.split(/\s+/).length <= HEADER_MAX_WORDS &&
     !/^\d/.test(cell.text);
-  const headerCells = columns.map((column) =>
+  const candidates = columns.map((column) =>
     isHeaderCell(column.cells[0]) ? column.cells[0] : null
+  );
+  const known = candidates.filter(
+    (cell): cell is Cell =>
+      cell !== null && matchColumnLabel(cell.text) !== null
+  );
+  // La rangée d'en-tête s'arrête à ses libellés reconnus : sous un en-tête
+  // vide, la première valeur de la colonne commence plus bas, dans le corps.
+  const headerBottom = Math.max(...known.map((cell) => cell.bottom));
+  const headerCells = candidates.map((cell) =>
+    cell !== null &&
+    (matchColumnLabel(cell.text) !== null ||
+      cell.top <= headerBottom + ROW_ALIGNMENT_RATIO * cell.fontSize)
+      ? cell
+      : null
   );
   const roles = headerCells.map((cell) =>
     cell === null ? null : matchColumnLabel(cell.text)
@@ -648,10 +675,19 @@ const readColumnByColumn = (columns: Column[]): PageLine[] =>
     )
   );
 
-const toLine = (cell: Cell, text = cell.text): PageLine => ({
+const linksOf = (cells: Cell[]): DocumentLink[] =>
+  cells.flatMap((cell) => cell.lines.flatMap((line) => line.links ?? []));
+
+/** Une ligne à la place de la cellule, avec les liens du texte qu'elle porte. */
+const toLine = (
+  cell: Cell,
+  text = cell.text,
+  links = linksOf([cell])
+): PageLine => ({
   text,
   fontSize: cell.fontSize,
   y: cell.top,
+  ...(links.length > 0 ? { links } : {}),
 });
 
 const readRowByRow = ({
@@ -664,8 +700,11 @@ const readRowByRow = ({
   labels: string[];
   mainIndex: number;
   groupTexts: string[];
-}): { lines: PageLine[]; groupTexts: string[] } => {
-  const rows = columns[mainIndex].cells;
+}): { lines: PageLine[]; groupTexts: string[]; rows: Cell[] } => {
+  const rows = splitAtRowStarts(
+    columns[mainIndex].cells,
+    columns.slice(mainIndex + 1)
+  );
   // Seules les colonnes de droite portent une valeur par rangée : à gauche,
   // un regroupement couvre plusieurs rangées par nature.
   const cellsOf = (index: number) =>
@@ -682,7 +721,10 @@ const readRowByRow = ({
 
   rows.forEach((row, rowIndex) => {
     for (let index = 0; index < mainIndex; index++) {
-      const text = textOf(cellsOf(index), cellsOfRow[index][rowIndex]);
+      const { text, links } = textOf(
+        cellsOf(index),
+        cellsOfRow[index][rowIndex]
+      );
       if (text === '' || text === groupTexts[index]) {
         continue;
       }
@@ -693,23 +735,69 @@ const readRowByRow = ({
           row,
           index === 0 && text.length <= MAX_HEADING_LENGTH
             ? `## ${text}`
-            : labelled(index, text)
+            : labelled(index, text),
+          links
         )
       );
     }
     lines.push(toLine(row));
     for (let index = mainIndex + 1; index < columns.length; index++) {
-      const text = textOf(cellsOf(index), cellsOfRow[index][rowIndex]);
+      const { text, links } = textOf(
+        cellsOf(index),
+        cellsOfRow[index][rowIndex]
+      );
       if (text !== '') {
-        lines.push(toLine(row, labelled(index, text)));
+        lines.push(toLine(row, labelled(index, text), links));
       }
     }
   });
-  return { lines, groupTexts };
+  return { lines, groupTexts, rows };
 };
 
-const textOf = (cells: Cell[], cellIndexes: number[] | undefined): string =>
-  (cellIndexes ?? []).map((index) => cells[index].text).join(' ');
+const textOf = (
+  cells: Cell[],
+  cellIndexes: number[] | undefined
+): { text: string; links: DocumentLink[] } => {
+  const read = (cellIndexes ?? []).map((index) => cells[index]);
+  return {
+    text: read.map((cell) => cell.text).join(' '),
+    links: linksOf(read),
+  };
+};
+
+/**
+ * Des actions sans numéro, aux rangées serrées, se touchent et forment une
+ * seule cellule. Quand les valeurs de droite s'alignent en haut de chaque
+ * rangée, une ligne en face de laquelle chacune de ces colonnes ouvre une
+ * valeur ouvre une rangée. Des valeurs centrées sur leur rangée ne coupent
+ * rien, et des rangées numérotées sont déjà séparées par leur numéro.
+ */
+const splitAtRowStarts = (cells: Cell[], others: Column[]): Cell[] => {
+  if (areNumbered(cells)) {
+    return cells;
+  }
+  return cells.flatMap((cell) => {
+    const opensAt = (column: Column, line: PageLine) =>
+      column.cells.some(
+        (other) =>
+          Math.abs(other.top - (line.y ?? 0)) <=
+          ROW_ALIGNMENT_RATIO * cell.fontSize
+      );
+    const markers = others.filter((column) => opensAt(column, cell.lines[0]));
+    if (cell.lines.length < 2 || markers.length === 0) {
+      return [cell];
+    }
+    const parts: PageLine[][] = [];
+    cell.lines.forEach((line, index) => {
+      if (index === 0 || markers.every((column) => opensAt(column, line))) {
+        parts.push([line]);
+      } else {
+        parts[parts.length - 1].push(line);
+      }
+    });
+    return parts.map(cellOf);
+  });
+};
 
 const centerOf = (cell: Cell): number => (cell.top + cell.bottom) / 2;
 
