@@ -1429,11 +1429,14 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
             if (pausedAt === 'plan') await pause();
             return markAsImportFailed(id, tx);
           });
+        const notifications = app.get(NotifyPlanImportService);
+        const notifyImportFailed =
+          notifications.notifyImportFailed.bind(notifications);
         const notification = vi
-          .spyOn(app.get(NotifyPlanImportService), 'notifyImportFailed')
-          .mockImplementationOnce(async () => {
+          .spyOn(notifications, 'notifyImportFailed')
+          .mockImplementationOnce(async (input) => {
             if (pausedAt === 'notification') await pause();
-            return success(undefined);
+            return notifyImportFailed(input);
           });
         fakeLlmControl.failing = 'extraction';
         const execution = generate(jobId);
