@@ -9,6 +9,8 @@ import { z } from 'zod';
 import { PermissionService } from '../../../users/authorizations/permission.service';
 import { listPendingInvitationsInputSchema } from '../list-pending-invitations/list-pending-invitations.input';
 import { ListPendingInvitationsService } from '../list-pending-invitations/list-pending-invitations.service';
+import { consumePendingInvitationsErrorConfig } from '../consume-pending-invitations/consume-pending-invitations.errors';
+import { ConsumePendingInvitationsService } from '../consume-pending-invitations/consume-pending-invitations.service';
 import { createInvitationInputSchema } from './create-invitation.input';
 import { InvitationService } from './invitation.service';
 
@@ -19,11 +21,16 @@ export class InvitationsRouter {
     private readonly service: InvitationService,
     private readonly sendInvitationService: SendInvitationService,
     private readonly permissionService: PermissionService,
-    private readonly listPendingInvitationsService: ListPendingInvitationsService
+    private readonly listPendingInvitationsService: ListPendingInvitationsService,
+    private readonly consumePendingInvitationsService: ConsumePendingInvitationsService
   ) {}
 
   private readonly getResultDataOrThrowError = createTrpcErrorHandler(
     sendInvitationErrorConfig
+  );
+
+  private readonly getConsumePendingsDataOrThrowError = createTrpcErrorHandler(
+    consumePendingInvitationsErrorConfig
   );
 
   router = this.trpc.router({
@@ -66,6 +73,17 @@ export class InvitationsRouter {
       .mutation(({ ctx, input }) => {
         return this.service.consumeInvitation(input.invitationId, ctx.user);
       }),
+
+    /**
+     * Reprend les invitations adressées à l'email confirmé du compte connecté,
+     * pour qui l'a créé sans cliquer le lien du mail.
+     */
+    consumePendings: this.trpc.authedProcedure.mutation(async ({ ctx }) => {
+      const result = await this.consumePendingInvitationsService.consume({
+        user: ctx.user,
+      });
+      return this.getConsumePendingsDataOrThrowError(result);
+    }),
 
     deletePending: this.trpc.authedProcedure
       .input(

@@ -10,6 +10,7 @@ import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/pers
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { getErrorMessage } from '@tet/domain/utils';
 import { and, eq, inArray, sql } from 'drizzle-orm';
 import { UpdateUserRoleService } from '../../../users/authorizations/update-user-role/update-user-role.service';
@@ -239,82 +240,93 @@ export class InvitationService {
     }
 
     try {
-      await this.databaseService.db.transaction(async (trx) => {
-        // Consomme l'invitation
-        await trx
-          .update(invitationTable)
-          .set({ acceptedAt: new Date().toISOString() })
-          .where(eq(invitationTable.id, invitationId));
-
-        // Défini l'utilisateur comme étant vérifié
-        await this.roleUpdateService.setIsVerified(user.id, true, trx);
-
-        // Associe l'utilisateur à la collectivité
-        await trx
-          .insert(utilisateurCollectiviteAccessTable)
-          .values({
-            userId: user.id,
-            collectiviteId: invitation.collectiviteId,
-            isActive: true,
-            role: invitation.role,
-            invitationId: invitation.id,
-          })
-          .onConflictDoUpdate({
-            target: [
-              utilisateurCollectiviteAccessTable.userId,
-              utilisateurCollectiviteAccessTable.collectiviteId,
-            ],
-            set: {
-              isActive: sql.raw(
-                `excluded.${utilisateurCollectiviteAccessTable.isActive.name}`
-              ),
-              role: sql.raw(
-                `excluded.${utilisateurCollectiviteAccessTable.role.name}`
-              ),
-              invitationId: sql.raw(
-                `excluded.${utilisateurCollectiviteAccessTable.invitationId.name}`
-              ),
-            },
-          });
-
-        // Associe l'utilisateur aux tags de l'invitation et supprime les tags
-        const invitationTags = await trx
-          .select()
-          .from(invitationPersonneTagTable)
-          .where(eq(invitationPersonneTagTable.invitationId, invitationId));
-
-        for (const invitationTag of invitationTags) {
-          // Vérifie si le tag existe
-          // Vérifie à la fois l'id, le nom et la collectivité
-          // au cas où que le tag ait été supprimé depuis l'invitation
-          // et l'id ait été réassigné à un autre tag
-          const [tag] = await trx
-            .select()
-            .from(personneTagTable)
-            .where(
-              and(
-                eq(personneTagTable.id, invitationTag.tagId),
-                eq(personneTagTable.nom, invitationTag.tagNom),
-                eq(personneTagTable.collectiviteId, invitation.collectiviteId)
-              )
-            )
-            .limit(1);
-          if (tag) {
-            await this.personneTagService.changeTagAndDelete(
-              trx,
-              tag.id,
-              user.id,
-              user.id
-            );
-          }
-        }
-      });
+      await this.databaseService.db.transaction((trx) =>
+        this.applyInvitation(invitation, user.id, trx)
+      );
     } catch (error) {
       this.logger.error(error);
       this.logger.error(
         `Erreur lors de la gestion de l'invitation: ${getErrorMessage(error)}`
       );
       throw error;
+    }
+  }
+
+  /**
+   * Seul chemin qui écrit le droit d'une invitation, qu'elle soit consommée
+   * par son lien ou reprise par l'email du compte : les contrôles (révocation,
+   * consommation antérieure) restent à l'appelant.
+   */
+  async applyInvitation(
+    invitation: Pick<
+      typeof invitationTable.$inferSelect,
+      'id' | 'collectiviteId' | 'role'
+    >,
+    userId: string,
+    trx: Transaction
+  ): Promise<void> {
+    await trx
+      .update(invitationTable)
+      .set({ acceptedAt: new Date().toISOString() })
+      .where(eq(invitationTable.id, invitation.id));
+
+    await this.roleUpdateService.setIsVerified(userId, true, trx);
+
+    await trx
+      .insert(utilisateurCollectiviteAccessTable)
+      .values({
+        userId,
+        collectiviteId: invitation.collectiviteId,
+        isActive: true,
+        role: invitation.role,
+        invitationId: invitation.id,
+      })
+      .onConflictDoUpdate({
+        target: [
+          utilisateurCollectiviteAccessTable.userId,
+          utilisateurCollectiviteAccessTable.collectiviteId,
+        ],
+        set: {
+          isActive: sql.raw(
+            `excluded.${utilisateurCollectiviteAccessTable.isActive.name}`
+          ),
+          role: sql.raw(
+            `excluded.${utilisateurCollectiviteAccessTable.role.name}`
+          ),
+          invitationId: sql.raw(
+            `excluded.${utilisateurCollectiviteAccessTable.invitationId.name}`
+          ),
+        },
+      });
+
+    // Associe l'utilisateur aux tags de l'invitation et supprime les tags
+    const invitationTags = await trx
+      .select()
+      .from(invitationPersonneTagTable)
+      .where(eq(invitationPersonneTagTable.invitationId, invitation.id));
+
+    for (const invitationTag of invitationTags) {
+      // Id, nom et collectivité : le tag a pu être supprimé depuis
+      // l'invitation et son id réattribué à un autre.
+      const [tag] = await trx
+        .select()
+        .from(personneTagTable)
+        .where(
+          and(
+            eq(personneTagTable.id, invitationTag.tagId),
+            eq(personneTagTable.nom, invitationTag.tagNom),
+            eq(personneTagTable.collectiviteId, invitation.collectiviteId)
+          )
+        )
+        .limit(1);
+      if (tag) {
+        await this.personneTagService.changeTagAndDelete(
+          trx,
+          tag.id,
+          userId,
+          userId
+        );
+      }
     }
   }
 
