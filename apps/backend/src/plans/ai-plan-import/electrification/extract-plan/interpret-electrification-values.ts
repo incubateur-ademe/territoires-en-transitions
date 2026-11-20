@@ -66,8 +66,13 @@ export class InterpretElectrificationValues {
     });
     if (initial.success || (!requests.length && !unmatched.length))
       return initial;
-    if (this.hasUnrelatedErrors(initial.error, requests, unmatched))
-      return initial;
+    const unrelatedIssues = this.getUnrelatedErrors(
+      initial.error,
+      requests,
+      unmatched
+    );
+    // Le rapprochement des libellés reste nécessaire même si une autre cellule
+    // est invalide : sinon les engagements reconnus deviennent de faux positifs.
     for (const request of unmatched) {
       input.signal?.throwIfAborted();
       const completion = await llm.generateStructured({
@@ -83,6 +88,7 @@ export class InterpretElectrificationValues {
       });
       if (!completion.success)
         return failure([
+          ...unrelatedIssues,
           Errors.issue(
             'AI_ENGAGEMENT_INTERPRETATION_FAILED',
             request.source.location
@@ -97,6 +103,7 @@ export class InterpretElectrificationValues {
         !request.candidates.some(({ code }) => code === match.data.code)
       ) {
         return failure([
+          ...unrelatedIssues,
           Errors.issue(
             'INVALID_ELECTRIFICATION_ENGAGEMENT',
             request.source.location
@@ -122,7 +129,7 @@ export class InterpretElectrificationValues {
       if (!requests.length) return initial;
     }
     // Une erreur de structure, de date ou de statut n'est jamais confiée au modèle.
-    if (this.hasUnrelatedErrors(initial.error, requests)) return initial;
+    if (this.getUnrelatedErrors(initial.error, requests).length) return initial;
 
     const interpretations: ElectrificationValueInterpretation[] = [];
     for (const request of requests) {
@@ -185,12 +192,12 @@ export class InterpretElectrificationValues {
     return extracted;
   }
 
-  private static hasUnrelatedErrors(
+  private static getUnrelatedErrors(
     issues: ElectrificationIssue[],
     values: ElectrificationValueRequest[],
     engagements: ElectrificationEngagementMatchRequest[] = []
-  ): boolean {
-    return issues.some(
+  ): ElectrificationIssue[] {
+    return issues.filter(
       ({ location, code }) =>
         !values.some(
           (request) =>

@@ -52,9 +52,8 @@ import {
 } from 'vitest';
 import { GenerateImportDraftWorker } from '../../generate-import-draft/generate-import-draft.worker';
 import { AiPlanImportProfileEnum } from '../../models/import-profile';
-import { electrificationDocumentTemplate } from '@tet/backend/plans/plans/electrification/config/electrification-document-template.constants';
 import {
-  ELECTRIFICATION_CHECKPOINT_VERSION,
+  electrificationExtractionCheckpointSchema,
   ElectrificationExtractionCheckpoint,
 } from '../extract-plan/electrification-extraction-checkpoint.schema';
 import { ElectrificationExtractionResponse } from '../extract-plan/electrification-extraction.schema';
@@ -186,7 +185,7 @@ describe('Persistance atomique du plan Électrification', () => {
               champs: { titre: 'Sous-action catalogue' },
             },
           ],
-          indicateurCodes: [],
+          indicateurCodes: ['energie-test', 'jalon-test'],
           aides: [
             { titre: 'Aide catalogue', url: 'https://example.org/aide' },
             { titre: 'Même aide', url: 'https://example.org/aide' },
@@ -242,10 +241,10 @@ describe('Persistance atomique du plan Électrification', () => {
     });
     return {
       profile: AiPlanImportProfileEnum.ELECTRIFICATION,
-      schemaVersion: ELECTRIFICATION_CHECKPOINT_VERSION,
+      schemaVersion:
+        electrificationExtractionCheckpointSchema.shape.schemaVersion.value,
       catalogueVersion: catalogue.version,
       documentKind: 'docx',
-      templateVersion: electrificationDocumentTemplate.version,
       sources,
       interpretations: [],
       engagementInterpretations: [],
@@ -298,6 +297,7 @@ describe('Persistance atomique du plan Électrification', () => {
                 periodicite: 'annuelle',
                 resultat: { valeur: 0, periode: '2025' },
                 objectif: { valeur: 99, periode: '2030' },
+                objectifComplementaire: { valeur: 120, periode: '2035' },
               },
               {
                 type: 'quantitatif',
@@ -318,6 +318,7 @@ describe('Persistance atomique du plan Électrification', () => {
                 anneeResultat: 2025,
                 objectif: true,
                 anneeObjectif: 2030,
+                objectifComplementaire: { valeur: false, annee: 2028 },
               },
             ],
           },
@@ -612,6 +613,12 @@ describe('Persistance atomique du plan Électrification', () => {
           metadonneeId: null,
           resultat: 0,
         }),
+        expect.objectContaining({
+          indicateurId: context.catalogueIndicateur.id,
+          dateValeur: '2035-01-01',
+          metadonneeId: null,
+          objectif: 120,
+        }),
       ])
     );
     expect(
@@ -633,6 +640,10 @@ describe('Persistance atomique du plan Électrification', () => {
     expect(result.data.report.issues).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ code: 'EMPTY_ENGAGEMENT_TARGET' }),
+        expect.objectContaining({
+          code: 'BOOLEAN_INDICATEUR_OBSERVATION',
+          message: expect.stringContaining('Objectif : Non (2028).'),
+        }),
         expect.objectContaining({
           code: 'EXISTING_INDICATEUR_VALUE_PRESERVED',
           kind: 'preserved-data',

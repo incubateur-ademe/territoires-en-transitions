@@ -757,13 +757,8 @@ describe(
         status: 'done',
         createdPlanId: expect.any(Number),
       });
-      expect(done.report.issues).toContainEqual(
-        expect.objectContaining({
-          kind: 'warning',
-          code: 'AIDE_WITHOUT_URL_IGNORED',
-          location: expect.stringContaining('ChargeFrance'),
-          message: expect.stringContaining("l'action peut être importée"),
-        })
+      expect(done.report.issues).not.toContainEqual(
+        expect.objectContaining({ kind: 'warning' })
       );
       const fiches = await readFiches();
       const action = fiches.find(
@@ -832,9 +827,7 @@ describe(
               code: 'UNKNOWN_SUB_AXIS',
               location:
                 'Action "Action synthétique" > Sous-axe "1.999 - Quartier"',
-              message: expect.stringContaining(
-                "Vérifiez le numéro dans le champ Sous-axe de l'action"
-              ),
+              message: expect.stringContaining('Vérifiez le champ Sous-axe'),
             }),
           ],
         },

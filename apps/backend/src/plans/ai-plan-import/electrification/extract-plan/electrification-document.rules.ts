@@ -29,20 +29,6 @@ export class ElectrificationDocumentRules {
     for (const block of document.blocks) {
       if (block.type === 'paragraph') {
         const nextSection = this.section(block.text);
-        if (
-          nextSection === null &&
-          section !== 'excluded' &&
-          (block.text.trim() || block.links.length)
-        ) {
-          return failure([
-            Errors.issue(
-              'UNSUPPORTED_ELECTRIFICATION_STRUCTURE',
-              `Section ${section}, paragraphe ${
-                (block.location.lineIndex ?? 0) + 1
-              }`
-            ),
-          ]);
-        }
         section = nextSection ?? section;
         continue;
       }

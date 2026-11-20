@@ -1,10 +1,11 @@
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { escapeRegExp } from 'es-toolkit';
 import type { ImportSource } from '../../models/import-source.schema';
+import { ImportReferenceRules } from '../../resolve-import-reference/import-reference.rules';
 import type { ElectrificationIssue } from '../electrification-issue';
 import { ElectrificationImportLocations as Locations } from '../electrification-import-locations';
 import { ElectrificationExtractionErrors as Errors } from './electrification-extraction.errors';
-import { electrificationDocumentTemplate } from '@tet/backend/plans/plans/electrification/config/electrification-document-template.constants';
+import { electrificationEngagementsDocument } from '@tet/backend/plans/plans/electrification/config/electrification-engagements-document.config';
 import {
   ElectrificationDocumentDraft,
   electrificationDocumentDraftSchema,
@@ -120,7 +121,7 @@ export class ElectrificationExtractionRules {
             `cible:${engagement.source}:${engagement.code}:${cible.source}:${cible.key}`,
             Locations.field(
               location,
-              electrificationDocumentTemplate.engagements.columns.cible
+              electrificationEngagementsDocument.columns.cible
             )
           ),
         })),
@@ -258,8 +259,8 @@ export class ElectrificationExtractionRules {
             location,
             Locations.entity(
               'Indicateur',
-              child.titre,
-              ctx.byId.get(child.source)?.location
+              child.titre ?? child.reference.value,
+              `n°${index + 1}`
             )
           );
           return {
@@ -326,6 +327,14 @@ export class ElectrificationExtractionRules {
       return failure(
         Errors.issue('INVALID_EXTRACTION_REFERENCE', source.location)
       );
+    if (
+      !ImportReferenceRules.isUrlReference(input.value) &&
+      /\s+[/|]\s+|[,;]/u.test(input.value)
+    ) {
+      return failure(
+        Errors.valueIssue('CONFLICTING_EXTRACTION_REFERENCES', source)
+      );
+    }
     return success(input.value);
   }
 }

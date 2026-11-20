@@ -2,18 +2,15 @@ import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { z } from 'zod';
 import { AiPlanImportError } from '../../ai-plan-import.errors';
 import { AiPlanImportProfileEnum } from '../../models/import-profile';
-import { electrificationDocumentTemplate } from '@tet/backend/plans/plans/electrification/config/electrification-document-template.constants';
 import {
-  electrificationCheckpointVersionSchema,
   ElectrificationExtractionCheckpoint,
   electrificationExtractionCheckpointSchema,
 } from '../extract-plan/electrification-extraction-checkpoint.schema';
 
 const electrificationImportContractSchema = z.object({
   profile: z.literal(AiPlanImportProfileEnum.ELECTRIFICATION),
-  schemaVersion: electrificationCheckpointVersionSchema,
+  schemaVersion: electrificationExtractionCheckpointSchema.shape.schemaVersion,
   catalogueVersion: z.string().min(1),
-  templateVersion: z.literal(electrificationDocumentTemplate.version),
   contractVersion: z.never().optional(),
 });
 
@@ -34,8 +31,7 @@ export class ElectrificationImportContractRules {
       !contract ||
       !parsed.success ||
       parsed.data.catalogueVersion !== contract.catalogueVersion ||
-      parsed.data.schemaVersion !== contract.schemaVersion ||
-      parsed.data.templateVersion !== contract.templateVersion
+      parsed.data.schemaVersion !== contract.schemaVersion
     ) {
       return failure('INVALID_CHECKPOINT');
     }

@@ -207,7 +207,7 @@ export class ResolveElectrificationEngagementsService {
             : `inférieure ou égale à ${rules.maximum}`;
         issue(
           'INVALID_ENGAGEMENT_VALUE',
-          `Renseignez une valeur ${bounds} ${unit}.`
+          `Vous avez saisi ${extracted.valeur} ${unit}. Renseignez une valeur ${bounds} ${unit}.`
         );
       }
       const plafond = engagement.cibles.find(
@@ -223,7 +223,9 @@ export class ResolveElectrificationEngagementsService {
         );
         issue(
           'INCONSISTENT_ENGAGEMENT_TARGETS',
-          `La valeur ne peut pas dépasser la cible "${
+          `La valeur saisie (${
+            extracted.valeur
+          } ${unit}) ne peut pas dépasser la cible "${
             parent?.libelleSource ?? rules.plafondCible
           }" (${plafond.valeur} ${unit}).`
         );

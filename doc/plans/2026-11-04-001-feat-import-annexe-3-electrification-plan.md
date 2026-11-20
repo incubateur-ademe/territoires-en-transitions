@@ -7,7 +7,7 @@ date: 2026-11-04
 
 # Import du plan Électrification
 
-Dernière mise à jour : 2026-11-19.
+Dernière mise à jour : 2026-11-20.
 
 Ce plan applique l'[ADR 0022](../adr/0022-initialiser-plan-electrification-depuis-annexe-3.md)
 et l'[ADR 0024](../adr/0024-publier-donnees-electrification-sans-deploiement.md)
@@ -28,6 +28,73 @@ checkpoint sont pris en charge.
 Les [retours de recette TT-67 du 11 novembre][retours-tt67] sont intégrés au
 périmètre de B. Leur validation locale est décrite ci-dessous ; la recette
 de la version déployée reste à effectuer.
+
+## Retours de recette TT-67 - 20 novembre 2026
+
+Les décisions produit du 19 novembre et la clarification du 20 novembre
+sont intégrées à l'[ADR 0022](../adr/0022-initialiser-plan-electrification-depuis-annexe-3.md#révision-de-la-lecture-documentaire---20-novembre-2026).
+Les cases ci-dessous décrivent le code vérifié localement, pas une livraison.
+
+- [x] Accepter les canevas Word V1 et V4 : socle commun, cellules fusionnées,
+      champ de code d'action facultatif et deux objectifs datés de la V1.
+- [x] Conserver les codes connus et les liens des cellules référence/titre
+      fusionnées ; accepter la ponctuation des paramètres d'URL tout en
+      refusant les listes de codes dans une cellule.
+- [x] Isoler leurs différences structurelles dans les descriptions de formats
+      et l'adaptateur de tableaux. Le lecteur métier reçoit des cellules nommées
+      et conserve un contrat normalisé commun.
+- [x] Remplacer la configuration globale du canevas par des définitions ciblées
+      pour les engagements, actions et indicateurs, sans dupliquer les libellés.
+- [x] Retirer `templateVersion` des jobs et checkpoints Électrification.
+      Seul le contrat courant est accepté ; les anciens imports de recette
+      ne sont pas repris, conformément à la décision du 20 novembre.
+- [x] Garder le premier contrat de checkpoint en version 1, déclarée directement
+      dans son schéma et réutilisée par l'admission, l'extraction et la reprise.
+      Après la première mise en production, vérifier en revue la compatibilité
+      de toute évolution de structure ou de sens des données persistées.
+- [x] Préserver les deux objectifs sans écraser les valeurs existantes ;
+      refuser les objectifs contradictoires pour la même année et le même
+      indicateur catalogue, y compris entre fiches, avant toute écriture.
+- [x] Utiliser l'unité publiée pour un indicateur référencé par code et
+      distinguer une contradiction explicite d'une unité non répétée.
+- [x] Corriger les faux positifs d'engagement provoqués par une autre erreur
+      et préciser les diagnostics de champs, dates, axes et références.
+      Conserver les erreurs indépendantes si le rapprochement IA échoue.
+- [x] Ignorer le texte hors tableau et supprimer les avertissements d'aides
+      sans URL. Garder les erreurs par étapes, selon la décision produit.
+- [ ] Aligner les phrases Grist sur le Word officiel et republier le catalogue.
+      Point remonté sur TT-67, aucune modification de Grist.
+- [ ] Homogénéiser les loaders et espacements ; retirer les cadres
+      lecture/extraction du compte rendu d'échec ; vérifier la largeur de l'historique.
+- [ ] Prévenir aussi par email en cas d'échec et adapter le texte de progression.
+- [x] Éviter le doublon d'une sous-action documentaire et de son complément
+      catalogue lorsque le titre est exact et unique, en conservant sa date.
+- [x] Expliquer les décomptes 01 (11 actions + 8 sous-actions + 1 réponse Oui/Non
+      + 1 action d'engagement = 21) et 04a (13 actions, modèle et exemple exclus).
+- [ ] Rejouer 04b avec son catalogue admis pour vérifier le comptage après
+      correction des doublons.
+- [ ] Rejouer les documents de recette sur la version déployée.
+- [x] Classer le chargement de 15 minutes comme non reproduit, selon la décision
+      du 20 novembre. En cas de récidive, demander le lien avec `importJobId`.
+
+Validation : 185 tests backend de lecture/résolution/persistance réussis en
+41 s, dont des DOCX synthétiques reproduisant les cellules de la V1 ; les
+73 tests d'engagements et du parcours complet ont également réussi sur les
+corrections de diagnostics. Après ajout du rapprochement des sous-actions,
+les 180 tests du résolveur passent en 34 s, dont les cas de titres ambigus.
+IA simulée uniquement. Contrôle TypeScript backend
+réussi. Le comportement probabiliste du modèle et les données publiées restent
+à qualifier par une recette humaine.
+
+Après réorganisation des configurations et déclaration de la version dans le schéma, les
+252 tests e2e de lecture/résolution, admission et reprise passent en 59 s.
+Les reprises Électrification incompatibles sont refusées ; les scénarios V1/V4
+restent couverts. IA simulée, TypeScript backend et lint ciblé réussis.
+Le contrôle Nx des frontières de modules reste à la CI (graphe local absent).
+
+Après corrections de revue du 20 novembre : 198 tests de résolution/persistance
+réussis en 46 s. Les nouveaux cas reproduisaient les défauts avant correction ;
+aucun nouveau fichier de test. TypeScript backend et lint ciblé passent.
 
 ## Livraisons et avancement
 
@@ -192,7 +259,7 @@ préservent le comportement actuel sont déjà dans A.
 | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Profils et PCAET      | Profil public PCAET distinct utilisant le moteur multiformat commun ; reprise des anciens jobs PCAET `generic` avec leurs options et checkpoints inchangés.                                      |
 | Suivi et navigation   | Historique, accès persistant au job et aux erreurs, liens depuis le plan, absence de `planId` avant succès pour Électrification. Le générique/PCAET garde son plan immédiat.                     |
-| Lecture et extraction | Conservation des liens/localisations, parser du DOCX officiel V4, assistance IA limitée aux valeurs numériques non comprises, checkpoints compatibles.                                           |
+| Lecture et extraction | Conservation des liens/localisations, parser des DOCX officiels V1 et V4, assistance IA limitée aux valeurs numériques non comprises, checkpoints compatibles.                                           |
 | Persistance commune   | Structure explicite, raccordement des primitives de A, complétion sans écrasement, isolation des calculs et effets externes après commit.                                                        |
 | Schéma et provenance  | Migration additive sur `axe` et `fiche_action`, références catalogue et parent exact à l'import, engagements sélectionnés et métadonnée de source propre au plan. Aucune nouvelle entité métier. |
 | Jobs et admission     | Résolveurs de A raccordés, transaction finale, compte rendu, concurrence, reprise, contrôles de droits, d'éligibilité et de configuration.                                                       |
@@ -828,7 +895,7 @@ Les constats détaillés et leurs sources figurent dans
 | E09                     | Unité canonique `nb` intégrée dans A ; traduction documentaire ciblée dans B, également appliquée aux checkpoints lors d'une reprise.                                                                                                                                     |
 | Actions et sous-actions | 109 actions et 58 sous-actions intégrées, avec identités internes fixes, rattachements principaux, 89 liens d'indicateurs et 354 liens vers 107 ressources partagées. Le parent exact reste conservé à l'import.                                                          |
 | Indicateurs Grist       | 113 codes et métadonnées explicites intégrés, correspondances TeT `pending`. Faire préciser ces correspondances, le seuil ≥150 kW de `6-b`, les unités principales de `1-a`/`1-b`/`1-c`. Les recensements `9.1.1-a` et `11.1.1-a` sont annuels (décision du 12 novembre). |
-| Aides                   | Liens valides ajoutés dans "Documents". Réponse du 11 novembre : omettre les aides sans URL avec un avertissement, sans bloquer l'action. Évolution vérifiée localement dans B ; une URL renseignée mais invalide reste bloquante.                                        |
+| Aides                   | Liens valides ajoutés dans "Documents". Décision du 19 novembre : omettre les aides sans URL sans avertissement, sans bloquer l'action. Une URL renseignée mais invalide reste bloquante.                                        |
 | Lauréats                | A/B : 105 correspondances initiales. C : résolution des 77 identifiants publics Grist dans TeT ; 32 groupements exclus faute de porteur explicite. Aucun repli sur les porteurs provisoires ; choix Saint-Quentin à confirmer.                                            |
 | Préproduction           | Vérifier les jobs présents et leurs versions, déployer les définitions et qualifier le parcours complet. Le dump local ne prouve pas l'état actuel de la préproduction.                                                                                                   |
 

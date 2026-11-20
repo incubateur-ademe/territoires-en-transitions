@@ -73,8 +73,7 @@ import { aiPlanImportJobTable } from '../models/ai-plan-import-job.table';
 import { initialStepStates } from '../pipeline/run-import-pipeline';
 import { AI_PLAN_IMPORT_QUEUE_NAME } from '../ai-plan-import.queue';
 import { buildElectrificationDocument } from '../electrification/extract-plan/__fixtures__/electrification-document.test-fixture';
-import { electrificationDocumentTemplate } from '@tet/backend/plans/plans/electrification/config/electrification-document-template.constants';
-import { ELECTRIFICATION_CHECKPOINT_VERSION } from '../electrification/extract-plan/electrification-extraction-checkpoint.schema';
+import { electrificationExtractionCheckpointSchema } from '../electrification/extract-plan/electrification-extraction-checkpoint.schema';
 import { GenerateImportDraftWorker } from '../generate-import-draft/generate-import-draft.worker';
 import { AiPlanImportProfileEnum } from '../models/import-profile';
 import { buildInMemoryDocumentStorage } from '../pipeline/__fixtures__/in-memory-document-storage';
@@ -936,11 +935,12 @@ describe(
         .from(aiPlanImportJobTable)
         .where(eq(aiPlanImportJobTable.id, response.body.jobId));
       expect(job.createdPlanId).toBeNull();
+      expect(job.options).not.toHaveProperty('templateVersion');
       expect(job.options).toMatchObject({
         profile: AiPlanImportProfileEnum.ELECTRIFICATION,
-        schemaVersion: ELECTRIFICATION_CHECKPOINT_VERSION,
+        schemaVersion:
+          electrificationExtractionCheckpointSchema.shape.schemaVersion.value,
         catalogueVersion: catalogue.version,
-        templateVersion: electrificationDocumentTemplate.version,
         withSecteurs: false,
         planType: typeId,
         eligibility: {

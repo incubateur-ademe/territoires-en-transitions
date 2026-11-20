@@ -2,10 +2,7 @@ import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
 import { ListIndicateursService } from '@tet/backend/indicateurs/indicateurs/list-indicateurs/list-indicateurs.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import {
-  IndicateurPeriodes,
-  IndicateurPeriodicite,
-} from '@tet/domain/indicateurs';
+import { IndicateurPeriodicite } from '@tet/domain/indicateurs';
 import { ElectrificationConfig, StatutEnum } from '@tet/domain/plans';
 import { ElectrificationIssue } from '../electrification-issue';
 import { importReferenceErrors } from '../../resolve-import-reference/import-reference.errors';
@@ -13,17 +10,17 @@ import { ElectrificationImportLocations as Locations } from '../electrification-
 import { ImportReferenceRules } from '../../resolve-import-reference/import-reference.rules';
 import { ResolveImportReferenceService } from '../../resolve-import-reference/resolve-import-reference.service';
 import { ElectrificationFichesErrors as Errors } from './electrification-fiches.errors';
-import { electrificationDocumentTemplate } from '@tet/backend/plans/plans/electrification/config/electrification-document-template.constants';
+import { ResolveElectrificationIndicateursRules } from './resolve-electrification-indicateurs.rules';
+import { electrificationIndicateursDocument } from '@tet/backend/plans/plans/electrification/config/electrification-indicateurs-document.config';
 import {
   ElectrificationIndicateurInput,
   PreparedElectrificationIndicateur,
-  PreparedElectrificationIndicateurValeur,
 } from './electrification-fiches.schema';
 
 @Injectable()
 export class ResolveElectrificationIndicateursService {
   private static readonly REFERENCE_FIELD_LABEL =
-    electrificationDocumentTemplate.fiches.indicateurs.columns[0];
+    electrificationIndicateursDocument.fields.reference.label;
   private readonly logger = new Logger(
     ResolveElectrificationIndicateursService.name
   );
@@ -34,9 +31,9 @@ export class ResolveElectrificationIndicateursService {
   ) {}
 
   private static readonly RESULT_PERIOD_FIELD_LABEL =
-    electrificationDocumentTemplate.fiches.indicateurs.columns[2];
+    electrificationIndicateursDocument.fields.resultat.label;
   private static readonly TARGET_PERIOD_FIELD_LABEL =
-    electrificationDocumentTemplate.fiches.indicateurs.columns[3];
+    electrificationIndicateursDocument.fields.objectif.label;
 
   /** Appelé après validation de la structure, des sources et des droits d'import. */
   async resolveAll(
@@ -154,7 +151,7 @@ export class ResolveElectrificationIndicateursService {
     if (input.reference && mapping?.validation === 'pending')
       return failure([issue('FICHES_CONFIG_UNAVAILABLE')]);
     if (input.reference && !mapping)
-      return failure([issue('UNKNOWN_FICHE_REFERENCE')]);
+      return failure([issue('UNKNOWN_INDICATEUR_REFERENCE')]);
     if (mapping && mapping.type !== input.type)
       return failure([issue('INVALID_INDICATEUR_TYPE')]);
 
@@ -176,6 +173,28 @@ export class ResolveElectrificationIndicateursService {
             ResolveElectrificationIndicateursService.TARGET_PERIOD_FIELD_LABEL
           ),
         ]);
+      if (
+        input.objectifComplementaire?.valeur != null &&
+        input.objectifComplementaire.annee === null
+      )
+        return failure([
+          issue(
+            'MISSING_INDICATEUR_YEAR',
+            electrificationIndicateursDocument.fields.objectifComplementaire
+              .label
+          ),
+        ]);
+      if (
+        input.objectifComplementaire?.annee === input.anneeObjectif &&
+        input.objectif !== null &&
+        input.objectifComplementaire.valeur !== null &&
+        input.objectifComplementaire.valeur !== input.objectif
+      )
+        return failure([issue('CONFLICTING_INDICATEUR_OBJECTIVES')]);
+      const targetYear =
+        input.objectif === null && input.objectifComplementaire?.valeur != null
+          ? input.objectifComplementaire.annee
+          : input.anneeObjectif;
       return success({
         indicateur: {
           mode: 'sous-action',
@@ -185,14 +204,17 @@ export class ResolveElectrificationIndicateursService {
           statut:
             input.resultat === true ? StatutEnum.REALISE : StatutEnum.A_VENIR,
           dateFin:
-            input.anneeObjectif === null
+            targetYear === null
               ? null
-              : `${String(input.anneeObjectif).padStart(4, '0')}-12-31`,
+              : `${String(targetYear).padStart(4, '0')}-12-31`,
           observation: {
             resultat: input.resultat,
             anneeResultat: input.anneeResultat,
             objectif: input.objectif,
             anneeObjectif: input.anneeObjectif,
+            ...(input.objectifComplementaire
+              ? { objectifComplementaire: input.objectifComplementaire }
+              : {}),
           },
         },
         issues: input.resultat === null ? [issue('EMPTY_BOOLEAN_RESULT')] : [],
@@ -261,41 +283,11 @@ export class ResolveElectrificationIndicateursService {
       return failure([issue('INVALID_INDICATEUR_UNIT')]);
     if (input.periodicite !== null && input.periodicite !== periodicite)
       return failure([issue('INVALID_INDICATEUR_PERIODICITY', 'Périodicité')]);
-    const valeurs = new Map<string, PreparedElectrificationIndicateurValeur>();
-    for (const field of ['resultat', 'objectif'] as const) {
-      const valeur = input[field];
-      const fieldLabel =
-        field === 'resultat'
-          ? ResolveElectrificationIndicateursService.RESULT_PERIOD_FIELD_LABEL
-          : ResolveElectrificationIndicateursService.TARGET_PERIOD_FIELD_LABEL;
-      if (valeur.valeur === null) continue;
-      if (input.unite === null)
-        return failure([issue('MISSING_INDICATEUR_UNIT', fieldLabel)]);
-      if (valeur.periode === null)
-        return failure([
-          issue(
-            periodicite === 'annuelle'
-              ? 'MISSING_INDICATEUR_YEAR'
-              : 'INVALID_INDICATEUR_PERIOD',
-            fieldLabel
-          ),
-        ]);
-      if (input.periodicite === null)
-        return failure([
-          issue('INVALID_INDICATEUR_PERIODICITY', 'Périodicité'),
-        ]);
-      const periode = IndicateurPeriodes.tryParse(periodicite, valeur.periode);
-      if (!periode)
-        return failure([issue('INVALID_INDICATEUR_PERIOD', fieldLabel)]);
-      const dateValeur = IndicateurPeriodes.toDateValeur(periode);
-      const existing = valeurs.get(dateValeur) ?? {
-        dateValeur,
-        resultat: null,
-        objectif: null,
-      };
-      existing[field] = valeur.valeur;
-      valeurs.set(dateValeur, existing);
-    }
+    const valeurs = ResolveElectrificationIndicateursRules.resolveValeurs(
+      input,
+      periodicite
+    );
+    if (!valeurs.success) return valeurs;
     return success({
       indicateur: {
         mode: mapping ? 'catalogue' : 'create',
@@ -305,7 +297,7 @@ export class ResolveElectrificationIndicateursService {
         titre,
         unite,
         periodicite,
-        valeurs: [...valeurs.values()],
+        valeurs: valeurs.data,
       },
       issues: [],
     });

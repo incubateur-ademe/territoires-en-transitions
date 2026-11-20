@@ -17,10 +17,9 @@ import {
   ImportAdmissionInput,
 } from '../../validate-import-profile/import-admission.types';
 import {
-  ELECTRIFICATION_CHECKPOINT_VERSION,
+  electrificationExtractionCheckpointSchema,
   ElectrificationExtractionCheckpoint,
 } from '../extract-plan/electrification-extraction-checkpoint.schema';
-import { electrificationDocumentTemplate } from '@tet/backend/plans/plans/electrification/config/electrification-document-template.constants';
 import { ResolveElectrificationFichesRules } from '../resolve-fiches/resolve-electrification-fiches.rules';
 import { ElectrificationImportContractRules } from './electrification-import-contract.rules';
 import { BaseImportProfileAdapter } from '../../validate-import-profile/base-import-profile.adapter';
@@ -28,9 +27,8 @@ import { BaseImportProfileAdapter } from '../../validate-import-profile/base-imp
 type ElectrificationImportConfiguration = {
   profile: typeof AiPlanImportProfileEnum.ELECTRIFICATION;
   planType: number;
-  schemaVersion: number;
+  schemaVersion: ElectrificationExtractionCheckpoint['schemaVersion'];
   catalogueVersion: string;
-  templateVersion: string;
   eligibility: ElectrificationEligibilityDecision;
 };
 
@@ -172,9 +170,9 @@ export class ElectrificationImportProfileAdapter extends BaseImportProfileAdapte
     return success({
       profile: AiPlanImportProfileEnum.ELECTRIFICATION,
       planType: matchingTypes[0].id,
-      schemaVersion: ELECTRIFICATION_CHECKPOINT_VERSION,
+      schemaVersion:
+        electrificationExtractionCheckpointSchema.shape.schemaVersion.value,
       catalogueVersion: catalogue.data.version,
-      templateVersion: electrificationDocumentTemplate.version,
       eligibility: eligibility.data,
     });
   }

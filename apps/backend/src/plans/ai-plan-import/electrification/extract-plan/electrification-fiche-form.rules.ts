@@ -1,3 +1,4 @@
+import { ElectrificationIndicateursTableAdapter } from './electrification-indicateurs-table.adapter';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { ElectrificationConfig } from '@tet/domain/plans';
 import { ElectrificationIssue } from '../electrification-issue';
@@ -9,23 +10,20 @@ import {
   ElectrificationExtractionResponse as Response,
 } from './electrification-extraction.schema';
 import { ElectrificationIndicateursDocumentRules } from './electrification-indicateurs-document.rules';
-import { electrificationDocumentTemplate } from '@tet/backend/plans/plans/electrification/config/electrification-document-template.constants';
+import { electrificationFichesDocument } from '@tet/backend/plans/plans/electrification/config/electrification-fiches-document.config';
+import { electrificationIndicateursDocument as indicateurs } from '@tet/backend/plans/plans/electrification/config/electrification-indicateurs-document.config';
 import { ElectrificationValueContext } from './electrification-value-interpretation.schema';
 
-const {
-  fields: fieldDefinitions,
-  sousActions,
-  indicateurs,
-} = electrificationDocumentTemplate.fiches;
-export type ElectrificationFicheFieldName =
-  (typeof fieldDefinitions)[number]['key'];
+const { fields, sousActions } = electrificationFichesDocument;
+export type ElectrificationFicheFieldName = keyof typeof fields;
+const fieldDefinitions = (
+  Object.keys(fields) as ElectrificationFicheFieldName[]
+).map((key) => ({ key, ...fields[key] }));
 export type ElectrificationFicheFields = Map<
   ElectrificationFicheFieldName,
   { source: Source; value: string | null }
 >;
-const headings = electrificationDocumentTemplate.fiches.headings.map(
-  Values.normalize
-);
+const headings = electrificationFichesDocument.headings.map(Values.normalize);
 const noReference = { sourceId: null, value: null };
 type Fiche = Response['fiches'][number];
 
@@ -37,22 +35,24 @@ type FicheForm = {
   issues: ElectrificationIssue[];
 };
 
-/** Lit les sections du formulaire V4 et conserve la source de chaque champ. */
+/** Lit les sections communes et délègue les tableaux variables à leur adaptateur. */
 export class ElectrificationFicheFormRules {
   static read(
     rows: Source[][],
     catalogue: ElectrificationConfig,
     valueContext?: ElectrificationValueContext
   ): FicheForm {
-    const titleDefinition = fieldDefinitions.find(({ key }) => key === 'titre');
-    const titleCell = rows.find(
-      (row) =>
-        Values.normalize(row[0]?.text ?? '') ===
-        Values.normalize(titleDefinition?.label ?? '')
-    )?.[1];
+    const titleDefinition = fields.titre;
+    const titleCell = rows
+      .map((row) => [...new Map(row.map((cell) => [cell.id, cell])).values()])
+      .find(
+        (row) =>
+          Values.normalize(row[0]?.text ?? '') ===
+          Values.normalize(titleDefinition.label)
+      )?.[1];
     const actionLocation = Locations.entity(
       'Action',
-      titleCell ? Values.text(titleCell, titleDefinition?.placeholder) : null,
+      titleCell ? Values.text(titleCell, titleDefinition.placeholder) : null,
       rows[0]?.[0]?.location
     );
     const form: FicheForm = {
@@ -64,19 +64,32 @@ export class ElectrificationFicheFormRules {
     const { issues } = form;
     let section: 'fields' | ChildSection = 'fields';
     let hasChildrenHeader = false;
+    let childIndex = 0;
+    let indicateursAdapter: ElectrificationIndicateursTableAdapter | null =
+      null;
 
     for (const row of rows) {
       // Les fusions horizontales sont développées par le lecteur ; un champ reste unique.
       const originalCells = [
         ...new Map(row.map((cell) => [cell.id, cell])).values(),
       ];
-      const cells = this.locateRow(originalCells, section, actionLocation);
+      const cells =
+        section === 'indicateurs'
+          ? originalCells
+          : this.locateRow(
+              originalCells,
+              section,
+              actionLocation,
+              childIndex + 1
+            );
       if (!cells.some((cell) => cell.text.trim() || cell.links.length))
         continue;
       const childSection = this.getChildSection(cells);
       if (childSection) {
         section = childSection;
         hasChildrenHeader = false;
+        childIndex = 0;
+        indicateursAdapter = null;
         continue;
       }
       if (section === 'fields') {
@@ -85,23 +98,52 @@ export class ElectrificationFicheFormRules {
         continue;
       }
       if (!hasChildrenHeader) {
-        if (!this.isChildrenHeader(cells, section))
+        indicateursAdapter =
+          section === 'indicateurs'
+            ? ElectrificationIndicateursTableAdapter.fromHeader(row)
+            : null;
+        if (
+          section === 'indicateurs'
+            ? !indicateursAdapter
+            : !this.isSousActionsHeader(cells)
+        )
           issues.push(
             Errors.issue(
               'UNSUPPORTED_ELECTRIFICATION_STRUCTURE',
-              cells[0]?.location
+              Locations.field(
+                actionLocation,
+                section === 'sousActions'
+                  ? sousActions.heading
+                  : indicateurs.heading
+              )
             )
           );
         hasChildrenHeader = true;
         continue;
       }
+      childIndex += 1;
       if (section === 'sousActions') {
         const child = this.parseSousAction(cells);
         if (!child.success) issues.push(...child.error);
         else if (child.data) form.sousActions.push(child.data);
       } else {
+        const indicatorCells = indicateursAdapter?.read(
+          row,
+          actionLocation,
+          childIndex
+        );
+        if (!indicatorCells) {
+          if (indicateursAdapter)
+            issues.push(
+              Errors.issue(
+                'UNSUPPORTED_ELECTRIFICATION_STRUCTURE',
+                actionLocation
+              )
+            );
+          continue;
+        }
         const child = ElectrificationIndicateursDocumentRules.parse(
-          cells,
+          indicatorCells,
           catalogue,
           valueContext
         );
@@ -114,8 +156,9 @@ export class ElectrificationFicheFormRules {
 
   private static locateRow(
     cells: Source[],
-    section: 'fields' | ChildSection,
-    actionLocation: string
+    section: 'fields' | 'sousActions',
+    actionLocation: string,
+    childIndex: number
   ): Source[] {
     if (section === 'fields') {
       const field = fieldDefinitions.find(
@@ -130,19 +173,17 @@ export class ElectrificationFicheFormRules {
         ),
       }));
     }
-    const definition = electrificationDocumentTemplate.fiches[section];
-    const titleIndex = section === 'indicateurs' ? 1 : 0;
-    const title = cells[titleIndex];
+    const title = cells[0];
     const childLocation = Locations.entity(
-      section === 'indicateurs' ? 'Indicateur' : 'Sous-action',
-      title ? Values.text(title, definition.placeholders.titre) : null,
-      cells[0]?.location
+      'Sous-action',
+      title ? Values.text(title, sousActions.placeholders.titre) : null,
+      `n°${childIndex}`
     );
     return cells.map((cell, index) => ({
       ...cell,
       location: Locations.field(
         Locations.field(actionLocation, childLocation),
-        definition.columns[index]
+        sousActions.columns[index]
       ),
     }));
   }
@@ -176,10 +217,7 @@ export class ElectrificationFicheFormRules {
     const label = Values.normalize(cells[0]?.text ?? '');
     if (cells.length === 1 && headings.includes(label))
       return success(undefined);
-    if (
-      label ===
-      Values.normalize(electrificationDocumentTemplate.fiches.budgetLabel)
-    )
+    if (label === Values.normalize(electrificationFichesDocument.budgetLabel))
       return success(undefined);
     const field = fieldDefinitions.find(
       ({ label: expected }) => Values.normalize(expected) === label
@@ -195,7 +233,7 @@ export class ElectrificationFicheFormRules {
     const { key, placeholder } = field;
     if (fields.has(key)) {
       return failure([
-        Errors.issue('INVALID_ELECTRIFICATION_FIELD', cells[0].location),
+        Errors.issue('DUPLICATE_ELECTRIFICATION_FIELD', cells[0].location),
       ]);
     }
     fields.set(key, {
@@ -205,11 +243,8 @@ export class ElectrificationFicheFormRules {
     return success(undefined);
   }
 
-  private static isChildrenHeader(
-    row: Source[],
-    section: 'sousActions' | 'indicateurs'
-  ): boolean {
-    const expected = electrificationDocumentTemplate.fiches[section].columns;
+  private static isSousActionsHeader(row: Source[]): boolean {
+    const expected = sousActions.columns;
     return (
       row.length === expected.length &&
       row.every(
@@ -231,7 +266,10 @@ export class ElectrificationFicheFormRules {
     if (titre === null && date === null) return success(null);
     if (titre === null)
       return failure([
-        Errors.issue('INVALID_ELECTRIFICATION_FIELD', row[0].location),
+        Errors.issue(
+          'MISSING_ELECTRIFICATION_SOUS_ACTION_TITLE',
+          row[0].location
+        ),
       ]);
     const dateFin = date === null ? null : Values.date(date);
     if (date !== null && dateFin === null)

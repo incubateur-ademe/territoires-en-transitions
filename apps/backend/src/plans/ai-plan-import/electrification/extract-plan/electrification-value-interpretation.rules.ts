@@ -154,9 +154,6 @@ export class ElectrificationValueInterpretationRules {
     if (request.kind === 'observation') {
       return (
         value.key === 'valeur' &&
-        (value.unit === null ||
-          request.unit === null ||
-          value.unit === request.unit) &&
         (value.year === null ||
           request.year === null ||
           value.year === request.year)

@@ -1,5 +1,5 @@
 import { ElectrificationDataService } from '@tet/backend/plans/plans/electrification/publish-electrification-data/electrification-data.service';
-import { electrificationDocumentTemplate } from '@tet/backend/plans/plans/electrification/config/electrification-document-template.constants';
+import { electrificationFichesDocument } from '@tet/backend/plans/plans/electrification/config/electrification-fiches-document.config';
 import { Injectable, Logger } from '@nestjs/common';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
@@ -19,14 +19,13 @@ import {
 } from './electrification-fiches.schema';
 import { ResolveElectrificationFichesRules as Rules } from './resolve-electrification-fiches.rules';
 import { ResolveElectrificationIndicateursService } from './resolve-electrification-indicateurs.service';
+import { ResolveElectrificationIndicateursRules } from './resolve-electrification-indicateurs.rules';
 
 /** Résolution sans écriture : les liens existants ne transportent aucun champ à modifier. */
 @Injectable()
 export class ResolveElectrificationFichesService {
   private static readonly REFERENCE_FIELD_LABEL =
-    electrificationDocumentTemplate.fiches.fields.find(
-      ({ key }) => key === 'reference'
-    )?.label;
+    electrificationFichesDocument.fields.reference.label;
   private readonly logger = new Logger(
     ResolveElectrificationFichesService.name
   );
@@ -125,11 +124,7 @@ export class ResolveElectrificationFichesService {
           issue('INVALID_FICHE_AXIS');
           continue;
         }
-        const resolvedDocuments = Rules.resolveDocuments(
-          mapping?.aides ?? [],
-          fiche.source.location
-        );
-        issues.push(...resolvedDocuments.issues);
+        const resolvedDocuments = Rules.resolveDocuments(mapping?.aides ?? []);
         const sousActions = Rules.resolveSousActions(fiche, mapping);
         if (!sousActions.success) {
           issues.push(...sousActions.error);
@@ -151,11 +146,27 @@ export class ResolveElectrificationFichesService {
         const prepared: PreparedElectrificationFiche & { mode: 'create' } = {
           ...preparation.data,
           indicateurs: [],
-          documents: resolvedDocuments.documents,
+          documents: resolvedDocuments,
         };
         const seen = new Set<string>();
         const indicateurs = [...fiche.indicateurs];
         for (const indicateur of indicateurs) {
+          if (
+            mapping &&
+            indicateur.reference &&
+            !ImportReferenceRules.isUrlReference(indicateur.reference) &&
+            config.data.fiches.indicateurs.some(
+              ({ code }) => code === indicateur.reference
+            ) &&
+            !mapping.indicateurCodes.includes(indicateur.reference)
+          ) {
+            issues.push(
+              Errors.issue(
+                'INVALID_INDICATEUR_ACTION',
+                indicateur.source.location
+              )
+            );
+          }
           if (
             indicateur.reference &&
             !ImportReferenceRules.isUrlReference(indicateur.reference) &&
@@ -226,6 +237,13 @@ export class ResolveElectrificationFichesService {
       );
       return failure([Errors.issue('FICHE_RESOLUTION_FAILED')]);
     }
+    issues.push(
+      ...ResolveElectrificationIndicateursRules.validateObjectives(
+        result.fiches.flatMap((fiche) =>
+          fiche.mode === 'create' ? fiche.indicateurs : []
+        )
+      )
+    );
     if (
       issues.some(({ kind }) => kind !== 'warning' && kind !== 'preserved-data')
     )

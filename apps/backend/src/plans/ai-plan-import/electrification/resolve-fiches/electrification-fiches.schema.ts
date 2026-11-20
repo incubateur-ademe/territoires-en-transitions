@@ -25,6 +25,10 @@ const valeurSchema = z.strictObject({
   valeur: z.number().nullable(),
   periode: z.nullable(nonBlankTextSchema),
 });
+const objectifBooleenSchema = z.strictObject({
+  valeur: z.boolean().nullable(),
+  annee: z.number().int().min(1).max(9999).nullable(),
+});
 const indicateurBase = {
   source: importSourceSchema,
   reference: importReferenceSchema,
@@ -40,6 +44,7 @@ export const electrificationIndicateurInputSchema = z.discriminatedUnion(
       periodicite: z.nullable(nonBlankTextSchema),
       resultat: valeurSchema,
       objectif: valeurSchema,
+      objectifComplementaire: valeurSchema.optional(),
     }),
     z.strictObject({
       ...indicateurBase,
@@ -49,6 +54,7 @@ export const electrificationIndicateurInputSchema = z.discriminatedUnion(
       anneeResultat: z.number().int().min(1).max(9999).nullable(),
       objectif: z.boolean().nullable(),
       anneeObjectif: z.number().int().min(1).max(9999).nullable(),
+      objectifComplementaire: objectifBooleenSchema.optional(),
     }),
   ]
 );
@@ -96,6 +102,7 @@ export type PreparedElectrificationIndicateur =
         anneeResultat: number | null;
         objectif: boolean | null;
         anneeObjectif: number | null;
+        objectifComplementaire?: z.infer<typeof objectifBooleenSchema>;
       };
     };
 export type PreparedElectrificationFiche =

@@ -1,5 +1,9 @@
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import { ElectrificationConfig, StatutEnum } from '@tet/domain/plans';
+import {
+  ElectrificationConfig,
+  FicheImportRules,
+  StatutEnum,
+} from '@tet/domain/plans';
 import { ElectrificationIssue } from '../electrification-issue';
 import { ElectrificationDocumentValues as Values } from './electrification-document-values.rules';
 import { ElectrificationExtractionErrors as Errors } from './electrification-extraction.errors';
@@ -63,7 +67,7 @@ export class ElectrificationFichesDocumentRules {
     if (!axe || axe.value === null) {
       return failure([
         Errors.issue(
-          'INVALID_ELECTRIFICATION_FIELD',
+          'MISSING_ELECTRIFICATION_AXIS',
           axe?.source.location ?? fallbackSource?.location
         ),
       ]);
@@ -73,7 +77,7 @@ export class ElectrificationFichesDocumentRules {
     );
     if (/^(?:axe\s*)?\d/i.test(axe.value) && !match) {
       return failure([
-        Errors.issue('INVALID_ELECTRIFICATION_FIELD', axe.source.location),
+        Errors.valueIssue('INVALID_ELECTRIFICATION_AXIS', axe.source),
       ]);
     }
     const sousAxe = this.parseSousAxe(fields);
@@ -96,7 +100,7 @@ export class ElectrificationFichesDocumentRules {
     );
     if (/^(?:sous[- ]axe\s*)?\d/i.test(field.value) && !match) {
       return failure([
-        Errors.issue('INVALID_ELECTRIFICATION_FIELD', field.source.location),
+        Errors.valueIssue('INVALID_ELECTRIFICATION_SUB_AXIS', field.source),
       ]);
     }
     return success({
@@ -132,6 +136,16 @@ export class ElectrificationFichesDocumentRules {
         );
       }
     }
+    if (
+      FicheImportRules.validateFields(champs).includes('INVALID_FICHE_DATES')
+    ) {
+      issues.push(
+        Errors.valueIssue('INVALID_ELECTRIFICATION_DATES', {
+          text: `début : ${get('dateDebut')}, fin : ${get('dateFin')}`,
+          location: fields.get('dateFin')?.source.location,
+        })
+      );
+    }
     const statut = get('statut');
     if (statut !== null) {
       champs.statut =
@@ -140,10 +154,10 @@ export class ElectrificationFichesDocumentRules {
         ) ?? null;
       if (champs.statut === null) {
         issues.push(
-          Errors.issue(
-            'INVALID_ELECTRIFICATION_FIELD',
-            fields.get('statut')?.source.location
-          )
+          Errors.valueIssue('INVALID_ELECTRIFICATION_STATUS', {
+            text: statut,
+            location: fields.get('statut')?.source.location,
+          })
         );
       }
     }
