@@ -50,23 +50,23 @@ export const applyHierarchy = (
       : axisPathOf(actions[index])[0] ?? '';
   };
 
+  // Deux actions de même titre dans deux axes sont deux actions.
+  const inOtherAxe = (index: number, other: number): boolean =>
+    axeOf(index) !== '' && axeOf(other) !== '' && axeOf(index) !== axeOf(other);
+
   const targetOf = new Map<number, number>();
   actions.forEach((action, index) => {
     const target = entryByIndex.get(index)?.doublonDe ?? -1;
-    // Deux actions de même titre dans deux axes sont deux actions.
-    const otherAxe =
-      target >= 0 &&
-      axeOf(index) !== '' &&
-      axeOf(target) !== '' &&
-      axeOf(index) !== axeOf(target);
-    if (
-      !isPinnedAction(action) &&
-      target >= 0 &&
-      target < index &&
-      target !== index &&
-      !otherAxe
-    ) {
-      targetOf.set(index, resolveTarget(target, targetOf));
+    // Un index hors de la liste, ou qui ne précède pas l'action, est ignoré
+    // avant toute lecture.
+    if (isPinnedAction(action) || target < 0 || target >= index) {
+      return;
+    }
+    // Une cible sans axe peut elle-même pointer vers un autre axe : l'action
+    // d'origine compte aussi.
+    const origin = resolveTarget(target, targetOf);
+    if (!inOtherAxe(index, target) && !inOtherAxe(index, origin)) {
+      targetOf.set(index, origin);
     }
   });
   // Fusionner d'abord, rattacher ensuite : le rattachement décidé pour

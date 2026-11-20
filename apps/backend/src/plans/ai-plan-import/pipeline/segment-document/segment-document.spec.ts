@@ -393,6 +393,30 @@ describe('detectHeadings sur un PCAET à fiches tabulaires', () => {
     ]);
   });
 
+  it('garde une fiche autonome « Action 1.4 » après les fiches 1.1 à 1.3, pas leurs renvois', () => {
+    const named = (numero: string, titre: string) => [
+      { text: `Fiche action ${numero} : ${titre}`, fontSize: 14 },
+      ...body(3),
+    ];
+    expect(
+      titles([
+        buildPage(0, [
+          { text: 'Action 1.2 Rénover le gymnase', fontSize: 10 },
+          ...named('1.1', 'Isoler les écoles'),
+          ...named('1.2', 'Rénover le gymnase'),
+          ...named('1.3', 'Changer les chaudières'),
+          { text: 'Action 1.4 - Rénover la mairie', fontSize: 14 },
+          ...body(3),
+        ]),
+      ])
+    ).toEqual([
+      ['fiche', 3, 'Isoler les écoles'],
+      ['fiche', 3, 'Rénover le gymnase'],
+      ['fiche', 3, 'Changer les chaudières'],
+      ['fiche', 3, 'Rénover la mairie'],
+    ]);
+  });
+
   it('garde « Action n » pour une fiche quand le document ne titre pas ses fiches autrement', () => {
     expect(
       titles([
