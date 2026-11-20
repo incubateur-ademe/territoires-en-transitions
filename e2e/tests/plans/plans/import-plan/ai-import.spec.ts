@@ -1030,9 +1030,10 @@ test("affiche les détails dans le menu du plan seulement avec accès à l'impor
   await expect(
     page.getByRole('heading', { name: 'Plans', exact: true })
   ).toBeVisible();
+  // L'import est ouvert sans mode super-admin dès qu'un profil est disponible.
   await expect(
     page.getByRole('link', { name: 'Historique des imports', exact: true })
-  ).toHaveCount(0);
+  ).toBeVisible();
 
   await page.goto(
     `/collectivite/${collectivite.data.id}/plans/${manualPlanId}`
