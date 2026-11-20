@@ -21,6 +21,8 @@ export const actionLevelDoubtSchema = z.object({
   kind: z.literal('action-level'),
   axes: documentLevelSchema.nullable(),
   fiches: documentLevelSchema,
+  /** Les fiches qui détaillent des étapes : lues à l'étape, elles deviennent des sous-axes. */
+  fichesWithEtapes: z.number().int().nonnegative(),
   etapes: documentLevelSchema,
   proposed: actionLevelSchema,
 });
