@@ -1,0 +1,201 @@
+# Déploiement continu de la preprod Scaleway (Coolify) : chaque commit de main
+# dont la Main CI passe est construit puis déployé (app, backend, site).
+#
+# Les images sont celles des workflows cd-* : une par commit
+# (ghcr.io/incubateur-ademe/tet-<app>:<sha court>), configuration injectée au
+# démarrage. Les variables d'environnement sont poussées par infra/coolify
+# (Terraform) : ce workflow ne pose que le tag d'image et déclenche le
+# déploiement (infra/scripts/coolify-deploy.sh).
+name: Déploiement continu de la preprod
+
+run-name: Déploiement de ${{ github.event.workflow_run.head_sha }} sur la preprod Scaleway
+
+on:
+  workflow_run:
+    workflows: [Main CI]
+    types: [completed]
+
+permissions: {}
+
+jobs:
+  # Le commit déployé doit être la tête actuelle de main. Job à part, sans
+  # groupe de concurrence : un run obsolète (relance d'un vieux run) échoue ici
+  # avant que les jobs suivants n'annulent le build ou le déploiement du commit
+  # courant.
+  check:
+    name: Vérifie le commit
+    # - CI verte d'un push sur main, pas d'un lancement manuel sur une branche.
+    # - github.sha est la tête de main au déclenchement : si main a avancé
+    #   depuis (CI relancée sur un vieux commit), le commit plus récent
+    #   déploiera, on ne revient pas en arrière. C'est aussi ce que
+    #   docker/build-push atteste et vérifie (--source-digest $GITHUB_SHA).
+    #   Limite : un commit suivi d'un commit qui ne touche que du Markdown
+    #   (paths-ignore de la Main CI) attend le commit suivant.
+    # - Une relance garde le github.sha d'origine : la condition reste vraie
+    #   pour un vieux commit, d'où la comparaison à la tête actuelle de main.
+    if: >
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_branch == 'main' &&
+      github.event.workflow_run.head_sha == github.sha
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - name: Compare à la tête de main
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          main="$(gh api "repos/$GITHUB_REPOSITORY/commits/main" --jq .sha)"
+          if [ "$main" != "$GITHUB_SHA" ]; then
+            echo "::error::main est passée à $main : $GITHUB_SHA n'est plus à déployer."
+            exit 1
+          fi
+
+  # Build et déploiement sont deux jobs : celui qui exécute le build (et le
+  # code des dépendances) peut écrire dans GHCR mais n'a pas le token Coolify,
+  # celui qui déploie a le token mais aucun droit d'écriture.
+  build:
+    name: Build ${{ matrix.app }}
+    needs: check
+    # Au niveau du job, pas du workflow : un run sauté (CI rouge) n'annule
+    # pas le build en cours. Un commit plus récent, si.
+    concurrency:
+      group: cd-preprod-build-${{ matrix.app }}
+      cancel-in-progress: true
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    outputs:
+      # Identique pour toute la matrice : le sha court du commit. Calculé ici
+      # (clone complet) : sur un clone superficiel, git peut l'abréger plus court.
+      image-tag: ${{ steps.meta.outputs.git-short-hash }}
+    permissions:
+      contents: read
+      packages: write
+      # Signature de l'attestation de provenance (cf. docker-build-push).
+      id-token: write
+      attestations: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - app: app
+            # Téléversement des source maps PostHog (cf. cd-app.yml).
+            secrets: |
+              bryntum_token=BRYNTUM_ACCESS_TOKEN
+              posthog_api_key=POSTHOG_API_KEY
+            extra-build-args: |
+              POSTHOG_PROJECT_ID=${{ vars.POSTHOG_PROJECT_ID }}
+              POSTHOG_HOST=https://eu.posthog.com
+              GITHUB_ACTIONS=true
+              GITHUB_SHA=${{ github.sha }}
+              GITHUB_REF_NAME=main
+              GITHUB_REPOSITORY=${{ github.repository }}
+              GITHUB_SERVER_URL=${{ github.server_url }}
+          - app: backend
+            secrets: |
+              bryntum_token=BRYNTUM_ACCESS_TOKEN
+          - app: site
+            secrets: |
+              bryntum_token=BRYNTUM_ACCESS_TOKEN
+
+    steps:
+      # Sans ref : github.sha, la tête de main, que le job check a comparée à
+      # workflow_run.head_sha. Jamais le head_sha d'un payload : sur un
+      # workflow_run, il peut venir d'une branche.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - id: meta
+        uses: ./.github/actions/app/build-metadata
+
+      - uses: ./.github/actions/docker/login
+        with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - id: image
+        uses: ./.github/actions/docker/image-path
+        with:
+          username: incubateur-ademe
+          image: tet-${{ matrix.app }}
+          tag: ${{ steps.meta.outputs.git-short-hash }}
+
+      - name: Build et push de l'image ${{ matrix.app }}
+        uses: ./.github/actions/docker/build-push
+        env:
+          BRYNTUM_ACCESS_TOKEN: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}
+          POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
+        with:
+          dockerfile: apps/${{ matrix.app }}/Dockerfile
+          image: ${{ steps.image.outputs.path }}
+          cache-scope: tet-${{ matrix.app }}
+          # Réutilise l'image si ce workflow l'a déjà construite à ce commit
+          # (relance). Celles des workflows cd-* ne sont pas réutilisées :
+          # l'attestation vérifiée est celle de ce workflow.
+          reuse-image: true
+          secrets: ${{ matrix.secrets }}
+          build-args: |
+            GIT_SHORT_HASH=${{ steps.meta.outputs.git-short-hash }}
+            GIT_COMMIT_TIMESTAMP=${{ steps.meta.outputs.git-commit-timestamp }}
+            APPLICATION_VERSION=${{ steps.meta.outputs.application-version }}
+            ${{ matrix.extra-build-args }}
+
+  # Après les trois builds : on ne déploie pas une app sans le backend du même
+  # commit.
+  deploy:
+    name: Déploie ${{ matrix.app }}
+    needs: build
+    # Environnement restreint à main (réglage GitHub) : c'est lui qui porte
+    # COOLIFY_TOKEN, un workflow lancé depuis une branche ne peut pas le lire.
+    environment:
+      name: preprod-scaleway
+      url: ${{ matrix.url }}
+    # Un commit plus récent remplace le déploiement en cours.
+    concurrency:
+      group: cd-preprod-${{ matrix.app }}
+      cancel-in-progress: true
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - app: app
+            url: https://app.preprod.territoiresentransitions.fr
+          - app: backend
+            url: https://api.preprod.territoiresentransitions.fr
+          - app: site
+            url: https://preprod.territoiresentransitions.fr
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # Encore, juste avant de toucher Coolify : main a pu avancer pendant le
+      # build, ou ce job est relancé seul.
+      - name: Compare à la tête de main
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          main="$(gh api "repos/$GITHUB_REPOSITORY/commits/main" --jq .sha)"
+          if [ "$main" != "$GITHUB_SHA" ]; then
+            echo "::error::main est passée à $main : $GITHUB_SHA n'est plus à déployer."
+            exit 1
+          fi
+
+      - name: Déploie ${{ matrix.app }} sur Coolify
+        env:
+          COOLIFY_ENDPOINT: ${{ vars.COOLIFY_ENDPOINT }}
+          COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
+          APP_ID: preprod/${{ matrix.app }}
+          IMAGE_TAG: ${{ needs.build.outputs.image-tag }}
+        run: infra/scripts/coolify-deploy.sh

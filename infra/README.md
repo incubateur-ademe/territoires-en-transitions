@@ -441,7 +441,7 @@ curl -sH "Authorization: Bearer $COOLIFY_TOKEN" "$COOLIFY_ENDPOINT/servers" | jq
 
 Terraform déclare les applications (image, domaines, port, healthcheck) mais **ne possède
 pas le tag d'image** : il ne le pose qu'à la création, puis l'ignore. C'est la CD
-(`.github/workflows/cd-*.yml`, cible `preprod-scaleway`) qui choisit la version :
+(`.github/workflows/cd-preprod.yml` pour la preprod) qui choisit la version :
 
 ```sh
 APP_ID=preprod/app IMAGE_TAG=<sha> infra/scripts/coolify-deploy.sh
@@ -644,8 +644,9 @@ Coolify, reconfigure le proxy : revérifier ensuite les flags ci-dessus.
 
 ## CI/CD
 
-- **Applications** : les workflows `cd-app`, `cd-backend` et `cd-site` déploient sur la
-  preprod Scaleway (cible `preprod-scaleway`) via `coolify-deploy.sh`.
+- **Applications** : `cd-preprod` construit et déploie app, backend et site sur la preprod
+  Scaleway à chaque commit de `main` dont la Main CI passe (`coolify-deploy.sh`). Les
+  workflows `cd-app`, `cd-backend` et `cd-site` ne servent plus que Koyeb.
 - **Infra (à venir)** : `fmt` + `validate` + `plan` en commentaire de PR sur `infra/**`,
   `apply` sur `main` avec approbation manuelle (GitHub Environments), authentification
   Scaleway par OIDC plutôt que par clés long-lived.
