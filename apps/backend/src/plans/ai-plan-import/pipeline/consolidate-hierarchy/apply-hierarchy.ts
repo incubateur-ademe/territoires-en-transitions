@@ -50,10 +50,9 @@ export const applyHierarchy = (
       : axisPathOf(actions[index])[0] ?? '';
   };
 
-  // Deux actions de même titre dans deux axes sont deux actions.
-  const inOtherAxe = (index: number, other: number): boolean =>
-    axeOf(index) !== '' && axeOf(other) !== '' && axeOf(index) !== axeOf(other);
-
+  // Deux actions de même titre dans deux axes sont deux actions : un groupe
+  // de doublons ne réunit qu'un axe, même quand son action d'origine n'en a pas.
+  const groupAxe = new Map<number, string>();
   const targetOf = new Map<number, number>();
   actions.forEach((action, index) => {
     const target = entryByIndex.get(index)?.doublonDe ?? -1;
@@ -62,12 +61,14 @@ export const applyHierarchy = (
     if (isPinnedAction(action) || target < 0 || target >= index) {
       return;
     }
-    // Une cible sans axe peut elle-même pointer vers un autre axe : l'action
-    // d'origine compte aussi.
     const origin = resolveTarget(target, targetOf);
-    if (!inOtherAxe(index, target) && !inOtherAxe(index, origin)) {
-      targetOf.set(index, origin);
+    const axe = axeOf(index);
+    const known = groupAxe.get(origin) ?? axeOf(origin);
+    if (axe !== '' && known !== '' && axe !== known) {
+      return;
     }
+    targetOf.set(index, origin);
+    groupAxe.set(origin, known || axe);
   });
   // Fusionner d'abord, rattacher ensuite : le rattachement décidé pour
   // l'action conservée prime sur ce que son doublon portait.

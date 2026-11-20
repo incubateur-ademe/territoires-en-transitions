@@ -118,6 +118,26 @@ describe('applyHierarchy', () => {
     expect(outcome.keptIndexes).toEqual([0, 2, 3]);
   });
 
+  it('ne réunit pas deux axes autour d’une action d’origine sans axe', () => {
+    const actions = [
+      anAction('Sensibiliser les habitants', { axe: '', sousAxe: '' }),
+      anAction('Sensibiliser les habitants', { axe: 'Axe 1 : Bâtiments' }),
+      anAction('Sensibiliser les habitants', { axe: 'Axe 2 : Mobilité' }),
+    ];
+
+    const outcome = applyHierarchy(
+      actions,
+      [
+        { index: 0, axe: '', 'sous-axe': '', doublonDe: -1 },
+        { index: 1, axe: 'Axe 1 : Bâtiments', 'sous-axe': '', doublonDe: 0 },
+        { index: 2, axe: 'Axe 2 : Mobilité', 'sous-axe': '', doublonDe: 0 },
+      ],
+      skeleton
+    );
+
+    expect(outcome.keptIndexes).toEqual([0, 2]);
+  });
+
   it('ignore un doublon qui pointe vers lui-même ou vers plus loin', () => {
     const actions = [anAction('A'), anAction('B')];
 
