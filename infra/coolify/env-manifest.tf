@@ -238,15 +238,10 @@ locals {
 
       # Application Git (git-applications.tf). Base et fichiers sur tet-prod
       # depuis le 2026-11-20 : base rencontres de tet-prod-pg et bucket
-      # tet-prod-rencontres (infra/prod/rencontres.tf). Les fichiers envoyés
-      # avant la bascule restent sur Supabase Storage jusqu'à leur reprise
-      # (rencontres-tete#163).
+      # tet-prod-rencontres (infra/prod/rencontres.tf).
       rencontres = {
-        WEBSITE_URL  = { value = local.git_application_urls["prod/rencontres"] }
-        DATABASE_URL = { secret = "rencontres-database-url" }
-        # Plus lue par le code depuis rencontres-tete#162. Gardée pour un retour
-        # arrière, à retirer avec le projet Supabase.
-        SUPABASE_KEY         = { secret = "rencontres-supabase-key" }
+        WEBSITE_URL          = { value = local.git_application_urls["prod/rencontres"] }
+        DATABASE_URL         = { secret = "rencontres-database-url" }
         S3_BUCKET            = { value = "tet-prod-rencontres" }
         S3_ACCESS_KEY_ID     = { secret = "rencontres-s3-access-key-id" }
         S3_SECRET_ACCESS_KEY = { secret = "rencontres-s3-secret-access-key" }
