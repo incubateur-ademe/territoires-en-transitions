@@ -10,9 +10,10 @@ import { createdByNom, dcpTable } from '@tet/backend/users/models/dcp.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import type {
-  CollectiviteNatureType,
-  CollectiviteType,
+import {
+  collectiviteTypeEnum,
+  type CollectiviteNatureType,
+  type CollectiviteType,
 } from '@tet/domain/collectivites';
 import {
   DemarchePcaetStatusEnum,
@@ -66,6 +67,9 @@ export const NATURES_PORTEUSES_PCAET = [
   'METRO',
   'EPT',
 ] as const satisfies readonly CollectiviteNatureType[];
+
+/** Le code département et région du territoire fictif de démo. */
+const CODE_TERRITOIRE_TEST = '-1';
 
 export type DossierInstructionRow = {
   demarcheId: number | null;
@@ -184,10 +188,25 @@ export class ListDossiersInstructionRepository {
 
       const { national, maille, codes } = couvert;
 
-      // Aucun filtre au national : le service voit toutes les déposantes.
+      // Au national, aucun code à confronter : le service voit toutes les
+      // déposantes, sauf celles de test et le bac à sable de démo (code -1,
+      // la Syldavie). Ce dernier reste visible des services de test qui le
+      // couvrent, d'où une exclusion propre au national.
       // Ailleurs, un service sans territoire ne couvre personne.
       let filtrePerimetre: SQL | undefined;
-      if (!national) {
+      if (national) {
+        filtrePerimetre = and(
+          ne(collectiviteTable.type, collectiviteTypeEnum.TEST),
+          or(
+            isNull(collectiviteTable.departementCode),
+            ne(collectiviteTable.departementCode, CODE_TERRITOIRE_TEST)
+          ),
+          or(
+            isNull(collectiviteTable.regionCode),
+            ne(collectiviteTable.regionCode, CODE_TERRITOIRE_TEST)
+          )
+        );
+      } else {
         if (codes.length === 0) {
           return success(vide);
         }
