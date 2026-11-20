@@ -236,15 +236,16 @@ locals {
         BASE_URL = { value = local.git_application_urls["prod/aldo"] }
       })
 
-      # Application Git (git-applications.tf). Base Postgres et Storage sont
-      # encore sur leur projet Supabase Cloud, dont l'URL est en dur dans le
-      # dépôt. Cible, après bascule : bucket tet-prod-rencontres et Postgres de
-      # prod (infra/prod/rencontres.tf). Mettre ce commentaire à jour à chaque
-      # bascule.
+      # Application Git (git-applications.tf). Base et fichiers sur tet-prod
+      # depuis le 2026-11-20 : base rencontres de tet-prod-pg et bucket
+      # tet-prod-rencontres (infra/prod/rencontres.tf). Les fichiers envoyés
+      # avant la bascule restent sur Supabase Storage jusqu'à leur reprise
+      # (rencontres-tete#163).
       rencontres = {
         WEBSITE_URL  = { value = local.git_application_urls["prod/rencontres"] }
         DATABASE_URL = { secret = "rencontres-database-url" }
-        # À retirer avec le projet Supabase (retour arrière possible d'ici là).
+        # Plus lue par le code depuis rencontres-tete#162. Gardée pour un retour
+        # arrière, à retirer avec le projet Supabase.
         SUPABASE_KEY         = { secret = "rencontres-supabase-key" }
         S3_BUCKET            = { value = "tet-prod-rencontres" }
         S3_ACCESS_KEY_ID     = { secret = "rencontres-s3-access-key-id" }

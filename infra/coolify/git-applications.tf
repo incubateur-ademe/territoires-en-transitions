@@ -65,8 +65,8 @@ locals {
       branch  = "main"
       domains = ["https://aldo.territoiresentransitions.fr"]
     }
-    # Directement en prod, sans preprod. Base et Storage encore sur Supabase
-    # Cloud ; cible après bascule : infra/prod/rencontres.tf.
+    # Directement en prod, sans preprod. Base et fichiers sur tet-prod
+    # (infra/prod/rencontres.tf).
     "prod/rencontres" = {
       branch  = "main"
       domains = ["https://rencontres.territoiresentransitions.fr"]
