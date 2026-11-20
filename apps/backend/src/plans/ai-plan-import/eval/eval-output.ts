@@ -52,7 +52,11 @@ export type EvalTrace = {
   discardedUnits: TracedUnit[];
   /** Nombre d'actions après chaque étape : une perte se date. */
   actionsByStep: Partial<Record<StepName, number>>;
-  /** Titres relevés à l'extraction et absents ensuite : fondus comme doublons. */
+  /**
+   * Titres relevés à l'extraction et absents du brouillon : une différence de
+   * titres, pas une perte. L'action a pu être fondue dans un doublon ou
+   * seulement reformulée.
+   */
   titlesDroppedAfterExtraction: string[];
 };
 

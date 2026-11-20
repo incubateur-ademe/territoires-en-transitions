@@ -353,6 +353,43 @@ describe('scoutUnits', () => {
     ]);
   });
 
+  it('compte une fiche découpée en fenêtres comme une seule fiche', async () => {
+    const recap = (numbers: number[]) =>
+      buildUnit(
+        numbers.map((number) => ({
+          text: `Action à engager ${number} : Mener l'action ${number}`,
+          pageIndex: 0,
+        })),
+        [],
+        'section'
+      );
+    const windowed = (number: number) => [
+      unit(
+        `Action ${number} : Mener l’action ${number}. Pilote : Service`,
+        'fiche'
+      ),
+      buildUnit([{ text: 'Suite de la fiche', pageIndex: 1 }], [], 'fiche', {
+        continued: true,
+      }),
+    ];
+    const fiches = [...windowed(5), ...windowed(6)];
+    const allStructure = (call: Call) =>
+      [...call.prompt.matchAll(/#(\d+) \|/g)].map((m) => ({
+        index: Number(m[1]),
+        type: Number(m[1]) === 0 ? 'autre' : 'structure',
+      }));
+
+    const more = await scoutUnits(llmRouting(allStructure).llm, {
+      units: numberUnits([recap([1, 2, 3, 4, 5, 6]), ...fiches]),
+    });
+    const same = await scoutUnits(llmRouting(allStructure).llm, {
+      units: numberUnits([recap([5, 6]), ...fiches]),
+    });
+
+    expect(more.success && more.data.keptUnits[0].id).toBe('u0001');
+    expect(same.success && same.data.keptUnits[0].id).toBe('u0002-1');
+  });
+
   it.each([
     [
       'PLAN D’ACTIONS À 2030',

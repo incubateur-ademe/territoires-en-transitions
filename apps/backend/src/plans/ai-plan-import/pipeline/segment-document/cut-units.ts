@@ -97,7 +97,7 @@ export const cutUnits = (
           (heading.number !== null && entry.number === heading.number))
     );
 
-  for (const page of pages) {
+  for (const [pagePosition, page] of pages.entries()) {
     page.lines.forEach((line, lineIndex) => {
       const unitLine: UnitLine = { ...line, pageIndex: page.index };
       const heading = headingAt.get(`${page.index}:${lineIndex}`);
@@ -138,7 +138,7 @@ export const cutUnits = (
         open.lines.length <= FICHE_PATH_MAX_LINES &&
         open.lines[0].pageIndex === page.index &&
         !contradictsFicheNumber(fiche.number, heading) &&
-        !opensAnotherFiche(page.index, lineIndex)
+        !opensAnotherFiche(pagePosition, lineIndex)
       ) {
         popTo(stack, heading.level);
         stack.push({
@@ -208,10 +208,21 @@ export const cutUnits = (
   );
 
   // Dans une liste de titres, l'axe qui suit une fiche ouvre les suivantes.
-  function opensAnotherFiche(pageIndex: number, lineIndex: number): boolean {
-    return Array.from({ length: FICHE_PATH_BODY_LINES }, (_, offset) =>
-      headingAt.get(`${pageIndex}:${lineIndex + offset + 1}`)
-    ).some((next) => next !== undefined && next.level >= FICHE_LEVEL);
+  // Seul en bas de sa page, il annonce aussi la fiche qui ouvre la suivante.
+  function opensAnotherFiche(pagePosition: number, lineIndex: number): boolean {
+    const linesOf = (position: number, from: number) =>
+      (pages[position]?.lines ?? [])
+        .map((line, index) => ({
+          line,
+          heading: headingAt.get(`${pages[position].index}:${index}`),
+        }))
+        .slice(from)
+        .filter(({ line }) => line.text.trim() !== '');
+    const rest = linesOf(pagePosition, lineIndex + 1);
+    const endsPage = rest.every(({ heading }) => heading !== undefined);
+    return [...rest, ...(endsPage ? linesOf(pagePosition + 1, 0) : [])]
+      .slice(0, FICHE_PATH_BODY_LINES)
+      .some(({ heading }) => (heading?.level ?? 0) >= FICHE_LEVEL);
   }
 
   function retroOpenFiche(firstLabelIndex: number) {

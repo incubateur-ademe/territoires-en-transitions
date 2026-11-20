@@ -135,7 +135,10 @@ const numberedActionsOf = (unit: DocumentUnit): string[] =>
 const listActionsWithoutFiche = (
   units: DocumentUnit[]
 ): ((unit: DocumentUnit) => boolean) => {
-  const ficheCount = units.filter((unit) => unit.kind === 'fiche').length;
+  // Une fiche découpée en fenêtres reste une fiche.
+  const ficheCount = units.filter(
+    (unit) => unit.kind === 'fiche' && !unit.continued
+  ).length;
   const listed = new Set(
     units.filter((unit) => unit.kind !== 'fiche').flatMap(numberedActionsOf)
   ).size;
