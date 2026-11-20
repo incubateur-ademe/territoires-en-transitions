@@ -6,7 +6,6 @@ export type ElectrificationImportOptions = {
   profile: typeof AiPlanImportProfileEnum.ELECTRIFICATION;
   schemaVersion?: number;
   catalogueVersion?: string | null;
-  templateVersion?: string;
   contractVersion?: never;
   /** Décision d'admission : liste des lauréats ou exception super-admin sans liste. */
   eligibility?: ElectrificationEligibilityDecision;

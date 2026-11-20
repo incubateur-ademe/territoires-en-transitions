@@ -33,7 +33,7 @@ Le fichier `--catalogue` contient une publication du catalogue à qualifier ; il
 est obligatoire et validé avant tout appel au modèle. Aucun catalogue intégré
 au code ne sert de valeur par défaut.
 
-Ce profil accepte uniquement le canevas officiel V4 au format DOCX. Il lit
+Ce profil accepte les canevas officiels V1 et V4 au format DOCX. Il lit
 les tableaux et leurs libellés, conserve les sources et références
 documentaires, les homonymes et les sous-actions. Nest et le fournisseur de
 modèle sont initialisés uniquement si une valeur nécessite une interprétation.
@@ -45,10 +45,11 @@ Le JSON contient `checkpoint` (extraction typée, sources, versions et tokens),
 `report.issues` (erreurs documentaires ou de traitement) et la durée.
 Quand aucun appel n'est nécessaire, `provider: "deterministic"`,
 `metrics.calls: 0` et les tokens à zéro identifient une extraction sans modèle.
-Le checkpoint utilise uniquement la version définie dans
-[`ELECTRIFICATION_CHECKPOINT_VERSION`](../electrification/extract-plan/electrification-extraction-checkpoint.schema.ts).
-`templateVersion: "electrification-v4"`
-identifie le canevas officiel ; `catalogueVersion` identifie les correspondances métier.
+Le checkpoint utilise uniquement la version définie dans le champ `schemaVersion`
+de son [schéma](../electrification/extract-plan/electrification-extraction-checkpoint.schema.ts).
+Les formats Word sont reconnus par les en-têtes des tableaux ; ils ne portent
+pas une seconde version technique dans le checkpoint. `catalogueVersion`
+identifie les correspondances métier.
 `stage: "extraction"` et `referencesResolved: false` indiquent que les codes,
 URL, correspondances du catalogue et permissions restent à vérifier par le
 résolveur. Un statut `done` signifie seulement que l'extraction a réussi ;

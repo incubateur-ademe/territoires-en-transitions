@@ -8,13 +8,12 @@ import {
   ElectrificationDocumentSource,
   ElectrificationExtractionResponse,
 } from './electrification-extraction.schema';
-import { electrificationDocumentTemplate } from '@tet/backend/plans/plans/electrification/config/electrification-document-template.constants';
+import { electrificationEngagementsDocument } from '@tet/backend/plans/plans/electrification/config/electrification-engagements-document.config';
 import { ElectrificationValueInterpretationRules as Interpretation } from './electrification-value-interpretation.rules';
 import {
   ElectrificationValueContext,
   ElectrificationValueRequest,
 } from './electrification-value-interpretation.schema';
-
 import { ElectrificationCatalogueRules } from '@tet/backend/plans/plans/electrification/publish-electrification-data/electrification-catalogue.rules';
 
 type Table = ElectrificationDocumentSource[][];
@@ -62,7 +61,7 @@ export class ElectrificationEngagementsDocumentRules {
             ...cell,
             location: Locations.field(
               location,
-              electrificationDocumentTemplate.engagements.columns[column]
+              electrificationEngagementsDocument.columns[column]
             ),
           }
         );
@@ -79,6 +78,12 @@ export class ElectrificationEngagementsDocumentRules {
         );
         continue;
       }
+      const socle = electrificationEngagementsDocument.socleCommun;
+      if (
+        this.normalize(axeCell.text) === this.normalize(socle.axe) &&
+        this.normalize(selection.text) === this.normalize(socle.selection)
+      )
+        continue;
       if (axeCell.text.trim()) axe = axeCell.text;
 
       const retained = this.normalize(selection.text);
@@ -171,7 +176,7 @@ export class ElectrificationEngagementsDocumentRules {
     row: ElectrificationDocumentSource[]
   ): Columns | null {
     const labels = row.map((cell) => this.normalize(cell.text));
-    const expected = electrificationDocumentTemplate.engagements.columns;
+    const expected = electrificationEngagementsDocument.columns;
     const columns = {
       axe: labels.findIndex((label) =>
         label.startsWith(this.normalize(expected.axe))
@@ -203,7 +208,11 @@ export class ElectrificationEngagementsDocumentRules {
         Errors.issue('INVALID_ELECTRIFICATION_TARGET', source.location),
       ]);
     if (!definition.cibles.length)
-      return source.text.trim() ? invalid() : success([]);
+      return source.text.trim()
+        ? failure([
+            Errors.valueIssue('UNEXPECTED_ELECTRIFICATION_TARGET', source),
+          ])
+        : success([]);
     const targets: Extract<
       ElectrificationValueRequest,
       { kind: 'target' }

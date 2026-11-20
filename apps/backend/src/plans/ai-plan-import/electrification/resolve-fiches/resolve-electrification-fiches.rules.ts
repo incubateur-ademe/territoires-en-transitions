@@ -52,24 +52,14 @@ export class ResolveElectrificationFichesRules {
   }
 
   static resolveDocuments(
-    aides: ElectrificationConfig['fiches']['actions'][number]['aides'],
-    location: string
-  ): { documents: Lien[]; issues: ElectrificationIssue[] } {
+    aides: ElectrificationConfig['fiches']['actions'][number]['aides']
+  ): Lien[] {
     const documents: Lien[] = [];
-    const issues: ElectrificationIssue[] = [];
     for (const { titre, url } of aides) {
-      if (url === null) {
-        issues.push(
-          Errors.issue(
-            'AIDE_WITHOUT_URL_IGNORED',
-            `${location} — Aide "${titre}"`
-          )
-        );
-        continue;
-      }
+      if (url === null) continue;
       documents.push({ titre, url });
     }
-    return { documents, issues };
+    return documents;
   }
 
   /** Le profil décide de la validité du code avant la préparation commune. */
@@ -80,9 +70,9 @@ export class ResolveElectrificationFichesRules {
     const result: ResolvedSousActionImport[] = [];
     const issues: ElectrificationIssue[] = [];
     for (const item of fiche.sousActions) {
-      const reference = defaults?.sousActions.find(
-        (s) => s.code === item.reference
-      );
+      const reference = item.reference
+        ? defaults?.sousActions.find((s) => s.code === item.reference)
+        : this.findSousActionByTitle(item, fiche.sousActions, defaults);
       if (item.reference && !reference) {
         issues.push(
           Errors.issue('UNKNOWN_FICHE_REFERENCE', item.source.location)
@@ -91,11 +81,27 @@ export class ResolveElectrificationFichesRules {
       }
       result.push({
         source: item.source,
-        code: item.reference,
+        code: reference?.code ?? item.reference,
         champs: item.champs,
         defaults: reference?.champs ?? {},
       });
     }
     return issues.length ? failure(issues) : success(result);
+  }
+  /** Le Word ne porte pas de code enfant : seul un titre exact et unique est rapproché. */
+  private static findSousActionByTitle(
+    item: ElectrificationFicheInput['sousActions'][number],
+    sousActions: ElectrificationFicheInput['sousActions'],
+    action: ElectrificationConfig['fiches']['actions'][number] | undefined
+  ) {
+    const titre = item.champs.titre;
+    if (
+      !titre ||
+      sousActions.filter((s) => s.champs.titre === titre).length !== 1
+    )
+      return undefined;
+    const matches =
+      action?.sousActions.filter((s) => s.champs.titre === titre) ?? [];
+    return matches.length === 1 ? matches[0] : undefined;
   }
 }

@@ -4,11 +4,10 @@ import { ElectrificationConfig } from '@tet/domain/plans';
 import { AiPlanImportProfileEnum } from '../../models/import-profile';
 import { ReadDocument } from '../../pipeline/document/document-page';
 import { ElectrificationIssue } from '../electrification-issue';
-import { electrificationDocumentTemplate } from '@tet/backend/plans/plans/electrification/config/electrification-document-template.constants';
 import { ElectrificationDocumentRules } from './electrification-document.rules';
 import { ElectrificationEngagementsDocumentRules } from './electrification-engagements-document.rules';
 import {
-  ELECTRIFICATION_CHECKPOINT_VERSION,
+  electrificationExtractionCheckpointSchema,
   ElectrificationExtractionCheckpoint,
 } from './electrification-extraction-checkpoint.schema';
 import { ElectrificationExtractionRules } from './electrification-extraction.rules';
@@ -68,9 +67,10 @@ export class ExtractElectrificationPlan {
     if (!draft.success) return draft;
     return success({
       profile: AiPlanImportProfileEnum.ELECTRIFICATION,
-      schemaVersion: ELECTRIFICATION_CHECKPOINT_VERSION,
+      schemaVersion:
+        electrificationExtractionCheckpointSchema.shape.schemaVersion.value,
       engagementInterpretations: valueContext?.engagementInterpretations ?? [],
-      templateVersion: electrificationDocumentTemplate.version,
+
       catalogueVersion: catalogue.version,
       documentKind: 'docx',
       response,

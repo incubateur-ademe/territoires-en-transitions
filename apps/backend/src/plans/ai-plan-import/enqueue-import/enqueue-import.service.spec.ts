@@ -403,9 +403,9 @@ describe('EnqueueImportService', () => {
       expect(
         createWithinQuotas.mock.calls[0][0].options.schemaVersion
       ).toBeUndefined();
-      expect(
-        createWithinQuotas.mock.calls[0][0].options.templateVersion
-      ).toBeUndefined();
+      expect(createWithinQuotas.mock.calls[0][0].options).not.toHaveProperty(
+        'templateVersion'
+      );
     }
   );
 

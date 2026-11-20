@@ -100,7 +100,16 @@ export class ResolveElectrificationStructureRules {
           ({ numero }) => numero === axe.numero
         );
         if (!reference) {
-          issues.push(this.issue('UNKNOWN_AXIS', axe.source.location));
+          issues.push({
+            ...this.issue('UNKNOWN_AXIS', axe.source.location),
+            message: `L'axe ${
+              axe.numero
+            } ne figure pas dans le catalogue. Axes disponibles : ${catalogue.axes
+              .map(({ numero }) => numero)
+              .join(
+                ', '
+              )}. Vérifiez le champ Axe dans le référentiel fourni avec le canevas.`,
+          });
           continue;
         }
         axeKey = this.addNumberedAxe(axes, reference, axe.source);
@@ -121,7 +130,17 @@ export class ResolveElectrificationStructureRules {
           ({ numero }) => numero === sousAxe.numero
         );
         if (!reference) {
-          issues.push(this.issue('UNKNOWN_SUB_AXIS', sousAxe.source.location));
+          issues.push({
+            ...this.issue('UNKNOWN_SUB_AXIS', sousAxe.source.location),
+            message: `Le sous-axe ${
+              sousAxe.numero
+            } ne figure pas dans le catalogue. Sous-axes disponibles pour cet axe : ${
+              catalogue.sousAxes
+                .filter(({ axeNumero }) => axeNumero === axe.numero)
+                .map(({ numero }) => numero)
+                .join(', ') || 'aucun'
+            }. Vérifiez le champ Sous-axe dans le référentiel fourni avec le canevas.`,
+          });
           continue;
         }
         if (reference.axeNumero !== axe.numero) {

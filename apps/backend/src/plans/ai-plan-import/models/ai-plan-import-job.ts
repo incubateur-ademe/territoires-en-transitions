@@ -50,7 +50,6 @@ type GenericImportOptions = {
   contractVersion?: number;
   catalogueVersion?: null;
   schemaVersion?: never;
-  templateVersion?: never;
   eligibility?: never;
 };
 

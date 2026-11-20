@@ -1,3 +1,6 @@
+import { StatutEnum } from '@tet/domain/plans';
+import { electrificationEngagementsDocument } from '@tet/backend/plans/plans/electrification/config/electrification-engagements-document.config';
+import type { ElectrificationDocumentSource } from './electrification-extraction.schema';
 import { electrificationFichesErrors } from '../resolve-fiches/electrification-fiches.errors';
 import {
   createIssueFactory,
@@ -46,6 +49,57 @@ export const electrificationExtractionErrors = {
     message:
       'Le champ est manquant, répété ou illisible. Vérifiez la cellule indiquée dans le document.',
   },
+  MISSING_ELECTRIFICATION_AXIS: {
+    kind: 'document-error',
+    message:
+      "Renseignez l'axe de l'action (exemple : 1 ou Axe 1), ou le titre d'un axe propre au territoire.",
+  },
+  INVALID_ELECTRIFICATION_AXIS: {
+    kind: 'document-error',
+    message:
+      "Le champ Axe attend un numéro d'axe seul (exemple : 1). Pour un sous-axe, utilisez le champ Sous-axe.",
+  },
+  INVALID_ELECTRIFICATION_SUB_AXIS: {
+    kind: 'document-error',
+    message:
+      "Format attendu pour le sous-axe : 1.2, ou le titre d'un sous-axe propre au territoire.",
+  },
+  INVALID_ELECTRIFICATION_STATUS: {
+    kind: 'document-error',
+    message: `Statut non reconnu. Valeurs possibles : ${Object.values(
+      StatutEnum
+    ).join(', ')}.`,
+  },
+  DUPLICATE_ELECTRIFICATION_FIELD: {
+    kind: 'document-error',
+    message:
+      'Ce champ est renseigné plusieurs fois. Gardez une seule ligne pour ce champ.',
+  },
+  MISSING_ELECTRIFICATION_SOUS_ACTION_TITLE: {
+    kind: 'document-error',
+    message:
+      "L'intitulé de la sous-action est vide. Renseignez-le ou retirez la ligne.",
+  },
+  INVALID_ELECTRIFICATION_BOOLEAN: {
+    kind: 'document-error',
+    message:
+      "Cet indicateur attend Oui ou Non, avec l'année du résultat. Une valeur numérique ne peut pas être utilisée.",
+  },
+  CONFLICTING_INDICATEUR_UNITS: {
+    kind: 'document-error',
+    message:
+      "Des unités différentes sont indiquées. Gardez une seule unité, celle du catalogue si l'indicateur est référencé par code.",
+  },
+  UNEXPECTED_ELECTRIFICATION_TARGET: {
+    kind: 'document-error',
+    message:
+      "Cet engagement n'attend pas de cible chiffrée. Laissez la cellule de valeur vide.",
+  },
+  INVALID_ELECTRIFICATION_DATES: {
+    kind: 'document-error',
+    message:
+      'La date de fin est antérieure à la date de début. Corrigez les dates de cette action.',
+  },
   INVALID_ELECTRIFICATION_DATE: {
     kind: 'document-error',
     message:
@@ -58,12 +112,14 @@ export const electrificationExtractionErrors = {
   },
   INVALID_ELECTRIFICATION_ENGAGEMENT_TABLE: {
     kind: 'document-error',
-    message: 'Les colonnes du tableau A ne correspondent pas au canevas Word.',
+    message: `Tableau des engagements : les titres de colonnes ont été modifiés. Colonnes attendues : ${Object.values(
+      electrificationEngagementsDocument.columns
+    ).join(', ')}. Ne modifiez pas la ligne d'en-tête.`,
   },
   INVALID_ELECTRIFICATION_ENGAGEMENT: {
     kind: 'document-error',
     message:
-      "L'engagement du tableau A ne correspond pas à un engagement du catalogue dans cet axe.",
+      "Cet engagement n'a pas été reconnu. Ne modifiez pas la phrase de la colonne Engagement du programme. Contactez-nous avec votre document.",
   },
   INVALID_ELECTRIFICATION_SELECTION: {
     kind: 'document-error',
@@ -83,7 +139,7 @@ export const electrificationExtractionErrors = {
   INVALID_ELECTRIFICATION_DOCUMENT: {
     kind: 'document-error',
     message:
-      "Aucun engagement retenu dans le tableau A ni action renseignée dans la section B n'a été trouvé.",
+      "Aucun engagement retenu dans le tableau A ni action renseignée dans la section B n'a été trouvé. Vérifiez que vous avez importé l'annexe remplie et non le canevas vierge.",
   },
   INVALID_ELECTRIFICATION_EXTRACTION: {
     kind: 'document-error',
@@ -124,4 +180,15 @@ export const electrificationExtractionErrors = {
 
 export class ElectrificationExtractionErrors {
   static issue = createIssueFactory(electrificationExtractionErrors);
+
+  static valueIssue(
+    code: keyof typeof electrificationExtractionErrors,
+    source: Pick<ElectrificationDocumentSource, 'text'> & { location?: string }
+  ): ElectrificationIssue {
+    const issue = this.issue(code, source.location);
+    return {
+      ...issue,
+      message: `${issue.message} Valeur saisie : "${source.text}".`,
+    };
+  }
 }

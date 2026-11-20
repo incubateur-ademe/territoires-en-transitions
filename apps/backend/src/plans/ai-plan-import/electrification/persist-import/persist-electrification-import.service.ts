@@ -169,8 +169,13 @@ export class PersistElectrificationImportService {
         ? []
         : fiche.indicateurs.flatMap((indicateur) => {
             if (indicateur.mode !== 'sous-action') return [];
-            const { resultat, anneeResultat, objectif, anneeObjectif } =
-              indicateur.observation;
+            const {
+              resultat,
+              anneeResultat,
+              objectif,
+              anneeObjectif,
+              objectifComplementaire,
+            } = indicateur.observation;
             const observations = [
               resultat === null
                 ? null
@@ -178,6 +183,11 @@ export class PersistElectrificationImportService {
               objectif === null
                 ? null
                 : `Objectif : ${objectif ? 'Oui' : 'Non'} (${anneeObjectif}).`,
+              objectifComplementaire?.valeur == null
+                ? null
+                : `Objectif : ${
+                    objectifComplementaire.valeur ? 'Oui' : 'Non'
+                  } (${objectifComplementaire.annee}).`,
             ].filter(Boolean);
             return observations.length
               ? [

@@ -51,7 +51,7 @@ import {
   vi,
 } from 'vitest';
 import templateData from '../extract-plan/__fixtures__/electrification-v4.template.json';
-import { ELECTRIFICATION_CHECKPOINT_VERSION } from '../extract-plan/electrification-extraction-checkpoint.schema';
+import { electrificationExtractionCheckpointSchema } from '../extract-plan/electrification-extraction-checkpoint.schema';
 import { PrepareElectrificationImportService } from '../extract-plan/prepare-electrification-import.service';
 import { ReadDocument } from '../../pipeline/document/document-page';
 import { readDocument } from '../../pipeline/read-document/read-document';
@@ -468,6 +468,111 @@ describe('Résolution des fiches actions Électrification', () => {
     expect((await created()).indicateurs[0]).toMatchObject({ valeurs: [] });
   });
 
+  test.each(['quantitatif', 'booleen'] as const)(
+    'refuse deux objectifs différents pour la même année (%s)',
+    async (type) => {
+      const indicateur = type === 'quantitatif' ? quantitatif() : booleen();
+      if (indicateur.type === 'quantitatif') {
+        indicateur.objectifComplementaire = { valeur: 20, periode: '2030' };
+      } else {
+        indicateur.objectifComplementaire = { valeur: false, annee: 2030 };
+      }
+      fiche().indicateurs = [indicateur];
+      await expectIssue('CONFLICTING_INDICATEUR_OBJECTIVES');
+    }
+  );
+
+  test.each([
+    { valeur: 1, periode: '2030', conflit: true },
+    { valeur: 0, periode: '2030', conflit: false },
+    { valeur: 1, periode: '2035', conflit: false },
+  ])(
+    'compare les objectifs entre deux fiches : $valeur en $periode',
+    async ({ valeur, periode, conflit }) => {
+      const first = quantitatif('test-I');
+      first.objectif.valeur = 0;
+      fiche().indicateurs = [first];
+      const second = quantitatif('test-I');
+      second.source = source('indicateur-2');
+      second.objectif = { valeur: null, periode: null };
+      second.objectifComplementaire = { valeur, periode };
+      input.fiches.push({
+        ...structuredClone(fiche()),
+        source: source('fiche-2'),
+        indicateurs: [second],
+      });
+      if (conflit) {
+        await expectIssue('CONFLICTING_INDICATEUR_OBJECTIVES');
+      } else {
+        const result = await resolved();
+        expect(result.fiches).toHaveLength(2);
+        for (const item of result.fiches) {
+          assert(item.mode === 'create');
+          expect(item.indicateurs[0]).toMatchObject({
+            mode: 'catalogue',
+            indicateurId,
+          });
+        }
+      }
+    }
+  );
+
+  test('reconnaît un titre de sous-action exact et unique dans son action catalogue sans perdre la date saisie', async () => {
+    fiche().reference = 'test-A';
+    fiche().sousActions = [
+      {
+        source: {
+          key: 'enfant-document',
+          location: 'Action A > Sous-action A',
+        },
+        reference: null,
+        champs: { titre: 'Sous-action A', dateFin: '2028-06-01' },
+      },
+    ];
+    const result = await created();
+    expect(result.sousActions).toHaveLength(2);
+    expect(result.sousActions[0]).toMatchObject({
+      code: 'test-SA',
+      champs: {
+        titre: 'Sous-action A',
+        description: 'Description A',
+        dateFin: '2028-06-01',
+      },
+    });
+  });
+
+  test.each(['catalogue', 'document'] as const)(
+    'ne rapproche pas par titre des sous-actions homonymes dans le %s',
+    async (origin) => {
+      fiche().reference = 'test-A';
+      fiche().sousActions = [
+        {
+          source: {
+            key: 'enfant-document',
+            location: 'Action A > Sous-action A',
+          },
+          reference: null,
+          champs: { titre: 'Sous-action A' },
+        },
+      ];
+      if (origin === 'catalogue') {
+        config.fiches.actions[0].sousActions[1].champs.titre = 'Sous-action A';
+      } else {
+        fiche().sousActions.push({
+          ...fiche().sousActions[0],
+          source: { key: 'autre-enfant', location: 'Action A > Autre enfant' },
+        });
+      }
+      const result = await created();
+      expect(
+        result.sousActions.filter(({ code }) => code === null)
+      ).toHaveLength(origin === 'catalogue' ? 1 : 2);
+      expect(
+        result.sousActions.filter(({ code }) => code !== null)
+      ).toHaveLength(2);
+    }
+  );
+
   test('applique les champs documentaires puis les compléments sans doubler sous-actions et indicateurs', async () => {
     fiche().reference = 'test-A';
     fiche().champs = {
@@ -592,7 +697,7 @@ describe('Résolution des fiches actions Électrification', () => {
     expect(result.champs.ressources).toBe('Une personne dédiée');
   });
 
-  test('omet une aide sans URL avec un avertissement et conserve les aides liées et l’action', async () => {
+  test('omet une aide sans URL sans avertissement et conserve les aides liées et l’action', async () => {
     fiche().reference = 'test-A';
     action().aides = [
       { titre: 'Aide sans lien', url: null },
@@ -608,12 +713,8 @@ describe('Résolution des fiches actions Électrification', () => {
         champs: expect.objectContaining({ titre: fiche().champs.titre }),
       }),
     ]);
-    expect(result.report.issues).toContainEqual(
-      expect.objectContaining({
-        code: 'AIDE_WITHOUT_URL_IGNORED',
-        kind: 'warning',
-        location: `${fiche().source.location} — Aide "Aide sans lien"`,
-      })
+    expect(result.report.issues).not.toContainEqual(
+      expect.objectContaining({ kind: 'warning' })
     );
   });
 
@@ -626,11 +727,8 @@ describe('Résolution des fiches actions Électrification', () => {
     expect(result.fiches).toEqual([
       expect.objectContaining({ mode: 'create', documents: [] }),
     ]);
-    expect(result.report.issues).toContainEqual(
-      expect.objectContaining({
-        code: 'AIDE_WITHOUT_URL_IGNORED',
-        kind: 'warning',
-      })
+    expect(result.report.issues).not.toContainEqual(
+      expect.objectContaining({ kind: 'warning' })
     );
   });
 
@@ -733,7 +831,11 @@ describe('Résolution des fiches actions Électrification', () => {
       config.fiches = { actions: [], indicateurs: [] };
       if (type === 'action') fiche().reference = 'inconnu';
       else fiche().indicateurs = [quantitatif('inconnu')];
-      await expectIssue('UNKNOWN_FICHE_REFERENCE');
+      await expectIssue(
+        type === 'action'
+          ? 'UNKNOWN_FICHE_REFERENCE'
+          : 'UNKNOWN_INDICATEUR_REFERENCE'
+      );
     }
   );
 
@@ -797,6 +899,13 @@ describe('Résolution des fiches actions Électrification', () => {
       indicateurId,
       titre: 'Titre commun du catalogue TeT',
     });
+  });
+
+  test("refuse un indicateur d'une autre action de référence", async () => {
+    fiche().reference = 'test-A';
+    action().indicateurCodes = [];
+    fiche().indicateurs = [quantitatif('test-I')];
+    await expectIssue('INVALID_INDICATEUR_ACTION');
   });
 
   test('refuse une unité documentaire différente de l’unité principale du catalogue', async () => {
@@ -898,11 +1007,17 @@ describe('Résolution des fiches actions Électrification', () => {
     );
   });
 
-  test('ne déduit pas l’unité d’une valeur du document depuis le catalogue', async () => {
+  test("reprend l'unité du catalogue quand le document ne la répète pas", async () => {
     const indicateur = quantitatif('test-I');
     indicateur.unite = null;
     fiche().indicateurs = [indicateur];
-    await expectIssue('MISSING_INDICATEUR_UNIT');
+    expect((await created()).indicateurs[0]).toMatchObject({
+      unite: 'MWh',
+      valeurs: expect.arrayContaining([
+        expect.objectContaining({ resultat: 0 }),
+        expect.objectContaining({ objectif: 10 }),
+      ]),
+    });
   });
 
   test.each([
@@ -1364,12 +1479,175 @@ describe('Résolution des fiches actions Électrification', () => {
       expect(result.prepared.cibles).toEqual([]);
       expect(result.checkpoint).toMatchObject({
         profile: 'annexe-3-electrification',
-        schemaVersion: ELECTRIFICATION_CHECKPOINT_VERSION,
+        schemaVersion:
+          electrificationExtractionCheckpointSchema.shape.schemaVersion.value,
         catalogueVersion: config.version,
         documentKind: 'docx',
-        templateVersion: 'electrification-v4',
         tokens: emptyTokenUsage(),
       });
+    });
+
+    test.each(['separate', 'free', 'code', 'link', 'url'] as const)(
+      'lit le tableau V1 et ses cellules fusionnées : %s',
+      async (referenceKind) => {
+        const separateReference = referenceKind === 'separate';
+        const catalogueReference =
+          separateReference || referenceKind === 'code';
+        const linkedReference =
+          referenceKind === 'link' || referenceKind === 'url';
+        const url = `https://app.territoiresentransitions.fr/collectivite/${
+          context.collectiviteId
+        }/indicateurs/cae/${
+          definition().identifiantReferentiel
+        }?filtre=a,b;tri=nom`;
+        const mergedCell: Cell =
+          referenceKind === 'link'
+            ? { text: 'Indicateur existant', target: url }
+            : {
+                text:
+                  referenceKind === 'url'
+                    ? url
+                    : referenceKind === 'code'
+                    ? 'test-I'
+                    : 'Nombre de ménages',
+              };
+        const rows = actionRows();
+        const refIndex = rows.findIndex((row) =>
+          row[0].text.startsWith("Code de l'action de référence")
+        );
+        rows.splice(refIndex, 1);
+        const indicatorIndex =
+          rows.findIndex((row) => row[0].text === 'Indicateurs de suivi') + 1;
+        rows.splice(
+          indicatorIndex,
+          2,
+          [
+            { text: 'Code (facultatif)' },
+            { text: 'Indicateurs du Référentiel des actions', columnSpan: 2 },
+            { text: 'Valeur de résultat (avec son année de référence)' },
+            { text: "Valeur d'objectif à 2030", columnSpan: 2 },
+            { text: "Autre valeur d'objectif (avec son année)" },
+          ],
+          [
+            ...(separateReference
+              ? [
+                  { text: 'test-I' },
+                  { text: 'Nombre de ménages', columnSpan: 2 },
+                ]
+              : [{ ...mergedCell, columnSpan: 3 }]),
+            { text: '0 (2026)' },
+            { text: '1500', columnSpan: 2 },
+            { text: '2000 (2035)' },
+          ]
+        );
+        const engagements = structuredClone(template.sections[0].rows);
+        engagements.push([
+          { text: 'Aucun axe dédié' },
+          {
+            text: 'Socle fourni à tous les territoires, quel que soit l’engagement pris.',
+          },
+          { text: 'Oui (socle commun)' },
+          { text: 'Sans objet' },
+        ]);
+        await useForm({ engagements, fiches: [rows] });
+        const result = (await prepared()).prepared;
+        expect(result.engagements).toEqual([]);
+        expect(result.fiches).toHaveLength(1);
+        const fiche = result.fiches[0];
+        assert(fiche.mode === 'create');
+        if (linkedReference) {
+          expect(fiche.indicateurs).toEqual([
+            expect.objectContaining({ mode: 'link', indicateurId }),
+          ]);
+          return;
+        }
+        expect(fiche.indicateurs).toEqual([
+          expect.objectContaining({
+            mode: catalogueReference ? 'catalogue' : 'create',
+            unite: catalogueReference ? 'MWh' : 'Nombre',
+            valeurs: [
+              { dateValeur: '2026-01-01', resultat: 0, objectif: null },
+              { dateValeur: '2030-01-01', resultat: null, objectif: 1500 },
+              { dateValeur: '2035-01-01', resultat: null, objectif: 2000 },
+            ],
+          }),
+        ]);
+      }
+    );
+
+    test('ne transforme pas les engagements reconnus en erreurs quand une autre sélection est invalide', async () => {
+      const engagements = structuredClone(template.sections[0].rows);
+      engagements[1][2].text = 'Oui';
+      engagements[1][3].text = '0';
+      engagements[2][1].text = 'Peut-être';
+      config.engagements[0].libelleSource = 'Libellé du catalogue à rapprocher';
+      expectedInterpretationCalls = 1;
+      generate.mockResolvedValue(
+        success({
+          data: {
+            code: config.engagements[0].code,
+            quote: engagements[1][1].text,
+          },
+          tokens: emptyTokenUsage(),
+        })
+      );
+      await useForm({ engagements });
+      const issues = await expectExtractionIssue(
+        'INVALID_ELECTRIFICATION_SELECTION'
+      );
+      expect(issues).toHaveLength(1);
+    });
+
+    test.each(['provider', 'response'] as const)(
+      'conserve les erreurs de date si le rapprochement échoue : %s',
+      async (failureKind) => {
+        const engagements = structuredClone(template.sections[0].rows);
+        engagements[5][1].text = 'Engagement à rapprocher';
+        engagements[5][2].text = 'Oui';
+        await useForm({
+          engagements,
+          fiches: [actionRows({ 'Date de début prévisionnelle': '2026' })],
+        });
+        expectedInterpretationCalls = 1;
+        generate.mockResolvedValueOnce(
+          failureKind === 'provider'
+            ? failure({ kind: 'api_error', httpStatus: 503 })
+            : success({
+                data: { code: 'INVENTE', quote: engagements[5][1].text },
+                tokens: emptyTokenUsage(),
+              })
+        );
+        const issues = await expectExtractionIssue(
+          'INVALID_ELECTRIFICATION_DATE'
+        );
+        expect(issues).toContainEqual(
+          expect.objectContaining({
+            code:
+              failureKind === 'provider'
+                ? 'AI_ENGAGEMENT_INTERPRETATION_FAILED'
+                : 'INVALID_ELECTRIFICATION_ENGAGEMENT',
+          })
+        );
+        expect(issues).toHaveLength(2);
+      }
+    );
+
+    test('localise une sous-action sans titre dans son action parente', async () => {
+      const rows = actionRows();
+      const index =
+        rows.findIndex((row) => row[0].text === 'Sous-actions (facultatif)') +
+        2;
+      rows.splice(index, 1, [
+        { text: '', columnSpan: 4 },
+        { text: '31/12/2027' },
+      ]);
+      await useForm({ fiches: [rows] });
+      const issues = await expectExtractionIssue(
+        'MISSING_ELECTRIFICATION_SOUS_ACTION_TITLE'
+      );
+      expect(issues[0].location).toContain(
+        'Action "Action du document" > Sous-action > n°1'
+      );
     });
 
     test('écarte le modèle B vierge et l’exemple C sans perdre une fiche remplie', async () => {
@@ -1535,6 +1813,8 @@ describe('Résolution des fiches actions Électrification', () => {
       'duplicate-field',
       'unknown-table',
       'nested-table',
+      'unknown-indicator-header',
+      'merged-indicator-reference',
     ] as const)(
       'refuse une structure ambiguë sans omettre des données : %s',
       async (kind) => {
@@ -1549,6 +1829,14 @@ describe('Résolution des fiches actions Électrification', () => {
           rows.splice(8, 0, [
             { text: "Intitulé de l'action" },
             { text: 'Autre titre', columnSpan: 4 },
+          ]);
+        if (kind === 'unknown-indicator-header')
+          rows[22][2].text = 'Valeur modifiée sans année';
+        if (kind === 'merged-indicator-reference')
+          rows.splice(23, 1, [
+            { text: 'Nombre de ménages', columnSpan: 3 },
+            { text: '0 (2026)' },
+            { text: '1500' },
           ]);
         if (kind === 'unknown-table')
           extra = [
@@ -1573,7 +1861,7 @@ describe('Résolution des fiches actions Électrification', () => {
         await useForm({ fiches: [rows], extra });
         await expectExtractionIssue(
           kind === 'duplicate-field'
-            ? 'INVALID_ELECTRIFICATION_FIELD'
+            ? 'DUPLICATE_ELECTRIFICATION_FIELD'
             : 'UNSUPPORTED_ELECTRIFICATION_STRUCTURE'
         );
       }
@@ -1598,11 +1886,11 @@ describe('Résolution des fiches actions Électrification', () => {
       expect(onCheckpoint).not.toHaveBeenCalled();
     });
 
-    test('refuse le contenu ajouté hors des tableaux B pour éviter une omission', async () => {
+    test('ignore le texte libre hors des tableaux B', async () => {
       await useForm({
-        extra: [new Paragraph('Une autre action à importer hors du tableau')],
+        extra: [new Paragraph('Texte libre hors des tableaux')],
       });
-      await expectExtractionIssue('UNSUPPORTED_ELECTRIFICATION_STRUCTURE');
+      expect((await prepared()).prepared.fiches).toHaveLength(1);
     });
 
     test('refuse une section A non reconnue même si les fiches B sont lisibles', async () => {
@@ -1617,7 +1905,7 @@ describe('Résolution des fiches actions Électrification', () => {
       'refuse un numéro d’axe mal formé : %s',
       async (axe) => {
         await useForm({ fiches: [actionRows({ Axe: axe })] });
-        await expectExtractionIssue('INVALID_ELECTRIFICATION_FIELD');
+        await expectExtractionIssue('INVALID_ELECTRIFICATION_AXIS');
       }
     );
 
@@ -1625,23 +1913,29 @@ describe('Résolution des fiches actions Électrification', () => {
       await useForm({
         fiches: [actionRows({ 'Sous-axe (facultatif)': '1.1.2' })],
       });
-      await expectExtractionIssue('INVALID_ELECTRIFICATION_FIELD');
+      await expectExtractionIssue('INVALID_ELECTRIFICATION_SUB_AXIS');
     });
 
-    test('refuse un code et un lien réunis dans la même cellule de référence', async () => {
-      await useForm({
-        fiches: [
-          actionRows({
-            "Code de l'action de référence ou URL de l'action (facultatif)": {
-              prefix: 'test-A ',
-              text: 'Fiche existante',
-              target: `https://app.territoiresentransitions.fr/collectivite/${context.collectiviteId}/plans/fiches/123`,
-            },
-          }),
-        ],
-      });
-      await expectExtractionIssue('CONFLICTING_EXTRACTION_REFERENCES');
-    });
+    test.each(['hyperlink', 'codes'] as const)(
+      'refuse plusieurs références dans une cellule : %s',
+      async (kind) => {
+        await useForm({
+          fiches: [
+            actionRows({
+              "Code de l'action de référence ou URL de l'action (facultatif)":
+                kind === 'codes'
+                  ? 'test-A, autre-code; troisième-code'
+                  : {
+                      prefix: 'test-A ',
+                      text: 'Fiche existante',
+                      target: `https://app.territoiresentransitions.fr/collectivite/${context.collectiviteId}/plans/fiches/123`,
+                    },
+            }),
+          ],
+        });
+        await expectExtractionIssue('CONFLICTING_EXTRACTION_REFERENCES');
+      }
+    );
 
     test.each(['csv', 'xlsx', 'pdf'] as const)(
       'refuse le format %s pour ce profil',
@@ -1657,7 +1951,7 @@ describe('Résolution des fiches actions Électrification', () => {
       [
         "État d'avancement au moment de la signature",
         'Statut inconnu',
-        'INVALID_ELECTRIFICATION_FIELD',
+        'INVALID_ELECTRIFICATION_STATUS',
       ],
     ])(
       'refuse un champ invalide même pour une fiche référencée par URL : %s',
@@ -1852,7 +2146,6 @@ describe('Résolution des fiches actions Électrification', () => {
       'profile',
       'schemaVersion',
       'catalogueVersion',
-      'templateVersion',
       'engagementInterpretations',
     ] as const)('refuse une reprise incompatible : %s', async (field) => {
       const { checkpoint } = await prepared();
@@ -2530,7 +2823,7 @@ describe('Résolution des fiches actions Électrification', () => {
         ]);
         await useForm({ fiches: [rows] });
 
-        await expectExtractionIssue('INVALID_ELECTRIFICATION_INDICATEUR');
+        await expectExtractionIssue('INVALID_ELECTRIFICATION_BOOLEAN');
       });
 
       test('signale une cible que le modèle ne peut pas interpréter avec certitude', async () => {
@@ -2560,7 +2853,7 @@ describe('Résolution des fiches actions Électrification', () => {
         [
           "État d'avancement au moment de la signature",
           'Statut inconnu',
-          'INVALID_ELECTRIFICATION_FIELD',
+          'INVALID_ELECTRIFICATION_STATUS',
         ],
       ])(
         'valide une fiche liée avant toute interprétation des cibles : %s',
@@ -2688,9 +2981,7 @@ describe('Résolution des fiches actions Électrification', () => {
         const text = 'Le résultat atteint 42 kWh en 2025';
         await useObservation(text);
         respondWith([{ ...observationValue(), unit: 'kWh', quote: text }]);
-        await expectExtractionIssue(
-          'INVALID_ELECTRIFICATION_VALUE_INTERPRETATION'
-        );
+        await expectExtractionIssue('CONFLICTING_INDICATEUR_UNITS');
       });
 
       test('revérifie les citations du checkpoint sans rappeler le modèle', async () => {

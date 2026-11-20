@@ -370,7 +370,7 @@ describe('Résolution des engagements Électrification', () => {
     await expectIssue(
       'INVALID_ENGAGEMENT_VALUE',
       'document-error',
-      'Renseignez une valeur entre 10 et 80 %.'
+      'Vous avez saisi 90 %. Renseignez une valeur entre 10 et 80 %.'
     );
     input.engagements[0].cibles[0].valeur = 40;
     input.engagements[0].cibles[0].annee = 2030;

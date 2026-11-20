@@ -2,7 +2,7 @@
 
 Date : 2026-11-03
 
-Dernière mise à jour : 2026-11-16
+Dernière mise à jour : 2026-11-20
 
 **Décision du 11 novembre :** la publication du catalogue et des lauréats
 sans déploiement est isolée dans la [PR C dédiée — #5815](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5815), basée sur B
@@ -77,6 +77,110 @@ parcours intégré avec les données publiées de C.
 Les anciennes références aux lots 1B à 7A décrivent l'historique de conception,
 pas l'ordre de livraison courant. Leur traçabilité est conservée dans
 [l'historique](#historique-des-décisions-et-des-prs).
+
+## Révision de la lecture documentaire - 20 novembre 2026
+
+Les [retours TT-67 du 19 novembre][retours-tt67] confirment que les
+collectivités ont reçu la V1. La restriction initiale au Word V4 est remplacée :
+les deux canevas officiels sont acceptés, avec le même contrat documentaire
+normalisé. Cela ne réintroduit pas les anciens formats de catalogue ou de
+checkpoint retirés le 19 novembre.
+
+La lecture utilise un adaptateur de structure piloté par les descriptions
+V1/V4 dans `config/electrification-document-formats.config.ts`. Chaque en-tête
+de tableau sélectionne un format reconnu ; aucun format n'est déduit du nom
+du fichier ni du seul nombre de colonnes. L'adaptateur gère les cellules
+fusionnées et produit des cellules nommées (référence, titre, résultat,
+objectif, objectif complémentaire), avec leurs sources et localisations.
+Le lecteur de valeurs et les résolveurs restent communs, sans indices de
+colonnes ni conditions sur la version. Les champs et engagements identiques
+partagent leurs règles. Un en-tête inconnu ou ambigu est refusé.
+
+La sélection reste locale au tableau : une convention limitée aux engagements
+ou contenant un modèle vierge d'un autre canevas n'a pas à recevoir une version
+globale artificielle. Les versions de document ne changent pas le contrat du
+checkpoint normalisé. Ajouter un canevas de même structure demande une
+description et une fixture indépendante ; une nouvelle sémantique nécessitera
+une évolution explicite du lecteur, pas une accumulation d'options.
+
+Les définitions communes sont réparties dans `config` entre engagements,
+actions et indicateurs. Chaque champ d'action ou d'indicateur regroupe son
+libellé et, lorsqu'il existe, son texte d'aide sous une clé nommée.
+Le fichier global `electrification-document-template.constants.ts` est supprimé.
+
+La décision du 20 novembre retire aussi `templateVersion` : sa valeur
+`electrification-v4` ne décrivait plus les documents acceptés. Les imports
+Électrification sont encore en recette ; aucune compatibilité avec leurs
+anciens jobs ou checkpoints n'est attendue. La numérotation montée à 4 pendant
+les refactorings de recette est abandonnée : le premier contrat à livrer reste
+en version 1. Cette valeur est déclarée directement dans le champ `schemaVersion`
+du schéma du checkpoint. L'admission, l'extraction et le contrôle de reprise
+lisent ce même champ ; aucune constante de version séparée n'est conservée.
+Les imports de recette doivent être relancés depuis leur document, sans migration.
+Les imports génériques et PCAET conservent leurs règles de reprise.
+
+Après la première mise en production, toute modification incompatible de la
+structure ou du sens des données persistées devra incrémenter cette version.
+Cette vérification fait partie de la revue du contrat de reprise ; la validation
+du schéma ne peut pas détecter seule un changement de sens. Accepter un nouveau
+canevas Word ne change pas cette version si le checkpoint normalisé reste compatible.
+
+- La V1 comprend une ligne de socle commun, des cellules fusionnées et un
+  tableau d'indicateurs à cinq colonnes. L'absence de champ de code d'action
+  n'empêche pas la création d'une action libre. Une cellule référence/titre
+  fusionnée conserve un code connu du catalogue ou un lien ; les autres titres
+  restent des indicateurs libres. La ponctuation des paramètres d'une URL
+  ne la transforme pas en liste de références.
+- Les deux objectifs datés sont importés : l'objectif 2030 et l'objectif
+  complémentaire avec son année explicite. Deux objectifs différents pour
+  la même année sont refusés, y compris entre deux fiches qui utilisent le
+  même indicateur du catalogue. Cette comparaison précède toute écriture ;
+  des objectifs identiques ou datés d'années différentes sont acceptés.
+  Les valeurs déjà présentes dans TeT sont
+  préservées. Pour les réponses Oui/Non, les observations datées restent
+  dans le compte rendu, selon le mécanisme existant.
+- Un code d'indicateur utilise l'unité canonique publiée. Une unité explicite
+  contradictoire est refusée ; un titre commençant par "Nombre de" ne remplace
+  pas l'unité d'un indicateur référencé.
+- Le texte libre hors des tableaux est ignoré. Les aides sans URL sont
+  omises sans avertissement, conformément à la décision produit du 19 novembre,
+  qui remplace celle du 11 novembre.
+- Pour une action référencée par code, une sous-action sans code est rattachée
+  au catalogue si son titre est strictement identique et unique dans le document
+  et dans cette action du catalogue. Sa date et ses champs saisis sont conservés.
+  Des homonymes ou des titres différents restent distincts ; aucun rapprochement
+  approximatif n'est effectué.
+- Les diagnostics distinguent champs absents, doublons, formats incorrects,
+  dates incohérentes, références et unités. Les erreurs peuvent rester
+  présentées par étapes ; aucune collecte globale n'est exigée.
+- Le rapprochement des engagements reste exécuté si une autre cellule est
+  invalide, pour éviter les faux positifs. Un échec du modèle ou une réponse
+  invalide conserve les erreurs indépendantes déjà détectées, sans réintroduire
+  les diagnostics des engagements déjà rapprochés. La phrase officielle du Word reste
+  la référence. L'écart "gaz" / "gaz ou au fioul" constaté dans l'extraction
+  Grist du 18 novembre doit être aligné par l'équipe qui maintient Grist,
+  puis republié. Aucun alias métier n'est ajouté au code.
+
+Avant réorganisation des configurations : 185 tests des résolveurs de fiches et de la persistance
+réussis, dont la lecture de la V1 et les deux objectifs, avec base locale et
+IA simulée. Les 73 tests d'engagements et du parcours complet avaient aussi
+réussi sur les corrections de diagnostics. Le contrôle TypeScript backend
+passe. Ces preuves ne remplacent pas une recette de la version déployée ni
+la vérification du catalogue actif. Les retours sur l'interface, les emails,
+le comptage des actions et la durée d'import restent suivis dans le plan.
+
+Après réorganisation des configurations et déclaration de la version dans le schéma, les
+252 tests des suites e2e de lecture/résolution, admission et reprise passent
+en 59 s, avec PostgreSQL local et IA simulée. Ils couvrent V1/V4, les cellules
+fusionnées, les objectifs datés, les en-têtes inconnus et le refus des reprises
+Électrification incompatibles. TypeScript backend et lint ciblé passent ; la
+vérification Nx des frontières de modules reste à la CI, faute de graphe local.
+
+Après corrections de revue du 20 novembre, les 198 tests de résolution et de
+persistance passent en 46 s, avec PostgreSQL local et IA simulée. Les cas ajoutés
+reproduisaient les défauts avant correction : références fusionnées, ponctuation
+des URL, erreurs indépendantes masquées et objectifs contradictoires entre fiches.
+Les variantes acceptées restent couvertes. TypeScript backend et lint ciblé passent.
 
 ## Contexte
 
@@ -273,16 +377,16 @@ Une migration de données idempotente crée ce type s'il manque, sans modifier
 son ID s'il existe déjà. Son rollback conserve la ligne et les plans associés.
 Conserver le profil et la version du catalogue dans le job et ses checkpoints.
 Le checkpoint Électrification porte une seule version technique : `schemaVersion`.
-Le lot 5B enregistre cette même version dans le job, avec le canevas reconnu,
-pour contrôler leur concordance.
+Cette même version est enregistrée dans le job pour contrôler leur concordance.
 
 Avant toute reprise, l'API et le worker vérifient la compatibilité du checkpoint
 selon son profil, ainsi que la concordance du profil et du catalogue avec le job.
 Ce contrôle s'applique aussi à la dernière étape. Pour Électrification, il valide
-`schemaVersion`, sa concordance avec le job et le canevas reconnu. Le profil
+`schemaVersion` et sa concordance avec le job. Le profil
 générique conserve ses contrôles de contrat, de schéma et de LLM déjà livrés.
-Une ancienne version reste utilisable si elle est explicitement supportée ;
-les jobs génériques historiques sans métadonnées restent interprétés en v1.
+Pour le profil générique, une ancienne version reste utilisable si elle est
+explicitement supportée ; les jobs historiques sans métadonnées restent
+interprétés en v1.
 Un contrat inconnu ou une divergence bloque la reprise avec un diagnostic de
 compatibilité, en conservant source et checkpoint selon leur rétention. Aucun
 repli générique ni ré-extraction automatique avec un autre contrat ou catalogue.
@@ -384,8 +488,9 @@ signalée comme telle ; elle n'est pas déduite du libellé et les formules du
 tableur ne sont pas exécutées. Ce contrat documentaire, préparé dans le lot historique 3A, est repris dans
 la [PR B du plan](../plans/2026-11-04-001-feat-import-annexe-3-electrification-plan.md#pr-b--import-complet).
 
-**Implémentation du lot 3B, 9 novembre 2026.** Le profil accepte uniquement
-le canevas officiel V4 au format DOCX. Le lecteur conserve les tableaux,
+**Implémentation du lot 3B, 9 novembre 2026.** La première livraison acceptait
+uniquement le canevas officiel V4 au format DOCX. Cette restriction est remplacée
+par la révision V1/V4 du 20 novembre. Le lecteur conserve les tableaux,
 cellules et hyperliens avant l'aplatissement utilisé par l'import générique.
 L'[extracteur Électrification](https://github.com/incubateur-ademe/territoires-en-transitions/blob/feat/electrification-plan-import/apps/backend/src/plans/ai-plan-import/electrification/extract-plan/extract-electrification-plan.ts)
 reconnaît les sections et libellés du formulaire, sans dépendre d'indices de
@@ -395,9 +500,12 @@ les fiches vierges et l'exemple fictif C sont exclus. Des tableaux B dupliqués
 représentent des fiches distinctes, même lorsque leurs titres sont identiques.
 
 Le canevas officiel ne peut pas être modifié : il constitue le contrat d'entrée.
-La [définition du canevas officiel](../../apps/backend/src/plans/plans/electrification/config/electrification-document-template.constants.ts)
-regroupe ses libellés, textes d'aide et correspondances entre les lignes du
-tableau A et les codes d'engagement. Ces repères documentaires restent séparés
+Les configurations des [engagements](../../apps/backend/src/plans/plans/electrification/config/electrification-engagements-document.config.ts),
+des [actions](../../apps/backend/src/plans/plans/electrification/config/electrification-fiches-document.config.ts)
+et des [indicateurs](../../apps/backend/src/plans/plans/electrification/config/electrification-indicateurs-document.config.ts)
+définissent les champs et leurs textes d'aide. Les [formats Word](../../apps/backend/src/plans/plans/electrification/config/electrification-document-formats.config.ts)
+décrivent leurs différences structurelles. Les codes et phrases d'engagement
+proviennent du catalogue publié. Ces repères documentaires restent séparés
 des règles d'extraction et du catalogue métier. Une variante supplémentaire
 doit provenir d'un document observé et être couverte par les tests.
 Les titres d'axes attendus dans le Word appartiennent à cette définition du
@@ -440,13 +548,13 @@ nombre à son sens est correcte. L'évaluation doit donc mesurer séparément le
 rejets injustifiés et les valeurs incorrectes acceptées silencieusement.
 
 Le [checkpoint d'extraction](https://github.com/incubateur-ademe/territoires-en-transitions/blob/feat/electrification-plan-import/apps/backend/src/plans/ai-plan-import/electrification/extract-plan/electrification-extraction-checkpoint.schema.ts)
-est strict et propre au profil : `schemaVersion: 1`,
-`templateVersion: "electrification-v4"`, `documentKind: "docx"` et version du
+est strict et propre au profil : version technique courante définie dans son
+champ `schemaVersion`, `documentKind: "docx"` et version du
 catalogue. Il conserve le résultat documentaire, les sources originales et les
 interprétations acceptées, sans ID résolu. Les tokens sont comptabilisés lorsque
 l'assistance est utilisée, et restent à zéro sinon. `schemaVersion`
-est l'unique version technique du checkpoint. Les métadonnées de canevas et de
-catalogue identifient respectivement le document officiel et les correspondances métier.
+est l'unique version technique du checkpoint. La version du catalogue identifie
+les correspondances métier utilisées.
 La [préparation interne](https://github.com/incubateur-ademe/territoires-en-transitions/blob/feat/electrification-plan-import/apps/backend/src/plans/ai-plan-import/electrification/extract-plan/prepare-electrification-import.service.ts)
 vérifie les droits avant extraction et la compatibilité du checkpoint à la
 reprise, puis relance les résolveurs sur la configuration et les permissions
@@ -1873,7 +1981,7 @@ La composition A/B élargie doit être vérifiée séparément avant fusion :
   `generic` reprennent avec leurs contrats et leurs options d'origine.
   Aucun changement de profil n'est appliqué aux jobs existants.
 
-- Le DOCX officiel V4 et ses variantes synthétiques conservent toutes les
+- Les DOCX officiels V1 et V4 et leurs variantes synthétiques conservent toutes les
   valeurs attendues, les textes libres, les liens et les localisations.
   Les autres formats, structures inconnues et valeurs invalides dans les champs
   contrôlés sont refusés sans omission silencieuse. Une extraction entièrement
@@ -1896,7 +2004,7 @@ La composition A/B élargie doit être vérifiée séparément avant fusion :
   utilisées sont résolubles. Une référence inconnue, incohérente, inaccessible
   ou `pending`, y compris dans un complément automatique, bloque sans création
   de plan ; une cible absente reste vide ; aucune valeur n'est inventée.
-- Une aide sans URL est omise avec un avertissement sans empêcher la création
+- Une aide sans URL est omise sans avertissement et sans empêcher la création
   de l'action ; une URL d'aide renseignée mais invalide reste bloquante.
 - L'interface utilise "action" et un libellé d'upload compréhensible. Une
   relance après correction conserve titre, type et options, accepte le fichier
@@ -1962,7 +2070,11 @@ Aucun test automatisé ni agent ne déclenche un appel réel au modèle.
    Pour la recharge, [quelle référence couvre le seuil ≥150 kW de `6-b` ?][question-recharge]
    La confirmation des références d'engagement E07 ne suffit pas à établir
    l'équivalence de périmètre des indicateurs Grist.
-3. **Lauréats.** La source est l'annuaire Grist partagé dans
+3. **Phrases des engagements.** Aligner les formulations Grist sur le Word
+   officiel, puis republier le catalogue. L'écart "gaz" / "gaz ou au fioul"
+   reste suivi dans [TT-67][retours-tt67]. La correction des faux positifs
+   d'extraction ne garantit pas le résultat du rapprochement IA sur cet écart.
+4. **Lauréats.** La source est l'annuaire Grist partagé dans
    [TET-8065](https://app.notion.com/p/3e96523d57d780beb6cffcd9e04b01a9).
    Depuis la décision du 13 novembre, C utilise exclusivement ses identifiants
    publics pour retrouver les collectivités TeT : 77 territoires possèdent
@@ -1974,9 +2086,8 @@ Aucun test automatisé ni agent ne déclenche un appel réel au modèle.
    restent à qualifier ; détail et historique dans
    l'[ADR 0024](0024-publier-donnees-electrification-sans-deploiement.md#couverture-des-lauréats--décision-du-13-novembre-2026).
 
-La question des aides sans URL est fermée par la
-[réponse du 11 novembre][decision-aides] : elles sont omises avec un
-avertissement, sans bloquer l'action. La réponse d'Émeline du 12 novembre
+La décision produit du 19 novembre remplace la [réponse du 11 novembre][decision-aides] :
+les aides sans URL sont omises sans avertissement, sans bloquer l'action. La réponse d'Émeline du 12 novembre
 ferme le choix de périodicité des deux recensements : `9.1.1-a` et `11.1.1-a`
 sont annuels. Les unités et correspondances encore ouvertes restent à préciser.
 

@@ -25,6 +25,16 @@ export const electrificationFichesErrors = {
     message:
       'Cette référence ne figure pas dans le catalogue des actions Électrification.',
   },
+  UNKNOWN_INDICATEUR_REFERENCE: {
+    kind: 'document-error',
+    message:
+      'Ce code ne figure pas dans le catalogue des indicateurs. Vérifiez-le dans le référentiel fourni avec le canevas.',
+  },
+  INVALID_INDICATEUR_ACTION: {
+    kind: 'document-error',
+    message:
+      "Cet indicateur ne dépend pas de l'action de référence indiquée. Vérifiez les deux codes dans le référentiel fourni avec le canevas.",
+  },
   INVALID_FICHE_AXIS: {
     kind: 'document-error',
     message:
@@ -34,6 +44,11 @@ export const electrificationFichesErrors = {
     kind: 'preserved-data',
     message:
       "Seul le lien vers l'indicateur est préparé. Les champs et valeurs du document ne sont pas appliqués.",
+  },
+  CONFLICTING_INDICATEUR_OBJECTIVES: {
+    kind: 'document-error',
+    message:
+      'Deux objectifs différents sont renseignés pour la même année. Gardez une seule valeur pour cette année.',
   },
   INVALID_INDICATEUR_TYPE: {
     kind: 'document-error',
@@ -67,11 +82,6 @@ export const electrificationFichesErrors = {
     kind: 'configuration-error',
     message:
       "La définition de cet indicateur est absente ou incompatible avec le catalogue. Contactez le support TeT pour la vérifier, puis relancez l'import avec le même document.",
-  },
-  AIDE_WITHOUT_URL_IGNORED: {
-    kind: 'warning',
-    message:
-      "Le catalogue ne fournit pas de lien pour cette aide. Elle n'a pas été ajoutée aux documents ; l'action peut être importée. Aucune correction du document n'est nécessaire pour cet avertissement.",
   },
   EMPTY_BOOLEAN_RESULT: {
     kind: 'warning',

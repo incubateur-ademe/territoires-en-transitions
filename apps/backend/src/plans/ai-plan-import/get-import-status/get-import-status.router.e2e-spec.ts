@@ -25,10 +25,9 @@ import { ImportCheckpoint } from '../models/import-checkpoint';
 import { initialStepStates } from '../pipeline/run-import-pipeline';
 import { AiPlanImportProfileEnum } from '../models/import-profile';
 import {
-  ELECTRIFICATION_CHECKPOINT_VERSION,
+  electrificationExtractionCheckpointSchema,
   ElectrificationExtractionCheckpoint,
 } from '../electrification/extract-plan/electrification-extraction-checkpoint.schema';
-import { electrificationDocumentTemplate } from '@tet/backend/plans/plans/electrification/config/electrification-document-template.constants';
 
 /** Ces lectures ne doivent jamais déclencher un appel au fournisseur. */
 class ReadOnlyLlmRepository extends LlmRepository {
@@ -77,9 +76,9 @@ const genericContract = {
 
 const electrificationContract = {
   profile: AiPlanImportProfileEnum.ELECTRIFICATION,
-  schemaVersion: ELECTRIFICATION_CHECKPOINT_VERSION,
+  schemaVersion:
+    electrificationExtractionCheckpointSchema.shape.schemaVersion.value,
   catalogueVersion: electrificationConfig.version,
-  templateVersion: electrificationDocumentTemplate.version,
 } as const;
 
 const electrificationCheckpoint: ElectrificationExtractionCheckpoint = {
@@ -636,12 +635,14 @@ describe('Suivi des imports IA', () => {
     {
       name: 'version technique différente',
       checkpointPatch: {
-        schemaVersion: ELECTRIFICATION_CHECKPOINT_VERSION + 1,
+        schemaVersion: electrificationContract.schemaVersion + 1,
       },
     },
     {
-      name: 'canevas différent',
-      checkpointPatch: { templateVersion: 'unknown' },
+      name: 'version technique antérieure',
+      checkpointPatch: {
+        schemaVersion: electrificationContract.schemaVersion - 1,
+      },
     },
     {
       name: 'catalogue différent',
@@ -649,11 +650,9 @@ describe('Suivi des imports IA', () => {
     },
     {
       name: 'version technique du job différente',
-      optionsPatch: { schemaVersion: 1 },
-    },
-    {
-      name: 'canevas du job différent',
-      optionsPatch: { templateVersion: 'unknown' },
+      optionsPatch: {
+        schemaVersion: electrificationContract.schemaVersion + 1,
+      },
     },
     {
       name: 'version de contrat générique dans un job Électrification',
