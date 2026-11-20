@@ -1,3 +1,7 @@
+import type {
+  ActionLevel,
+  ActionLevelDoubt,
+} from '../../models/import-question';
 import { DocumentPage, PageLine } from '../document/document-page';
 import {
   FICHE_LEVEL,
@@ -51,8 +55,126 @@ const BULLET = /^(?:[o•●▪◦■□*\-–—]|\d{1,2}[.)])\s/u;
 // une fiche, pas deux niveaux.
 const MIN_NAMED_FICHES = 3;
 const MARKDOWN_MARK = /^#{1,4}\s+/u;
+// Le choix entre fiche et étape ne se pose que si la moitié des fiches au
+// moins détaillent plusieurs étapes titrées.
+const MIN_STEPS_PER_FICHE = 2;
+const DETAILED_FICHES_SHARE = 0.5;
+// Plus de pilotes que de fiches : le document les donne étape par étape.
+const PILOTES_PER_ETAPE_RATIO = 1.5;
+const PILOTE_LABEL =
+  /^(?:pilotes?|porteur|structure porteuse|porteurs? de l['’]action|ma[iî]tr(?:e|ise) d['’]ouvrage)/iu;
 
-export const detectHeadings = (pages: DocumentPage[]): DetectedHeading[] => {
+export type DetectHeadingsOptions = {
+  /**
+   * `fiche` (par défaut) : « Fiche action n°1.2 » est la fiche, ses
+   * « Action 1 – … » restent dans son texte. `etape` : chaque « Action 1 – … »
+   * est une fiche, et la fiche qui les porte devient un sous-axe.
+   */
+  actionLevel?: ActionLevel;
+};
+
+export const detectHeadings = (
+  pages: DocumentPage[],
+  { actionLevel = 'fiche' }: DetectHeadingsOptions = {}
+): DetectedHeading[] => {
+  const { detected, isLargeLine } = scanHeadings(pages);
+  const named = classifyNamedFicheActions(detected, pages);
+  const byEtape = actionLevel === 'etape' && named.nested.size > 0;
+  const kept = detected.filter(
+    (heading) =>
+      !named.dropped.has(heading) || (byEtape && named.nested.has(heading))
+  );
+
+  const headings = attachNumberPrefixes(
+    keepNumberSequence(
+      dropIntertitleSections(
+        demoteCapitalsBelowExplicitAxes(
+          dropSummaryRows(demoteBannersAboveFiches(kept), pages)
+        ),
+        pages
+      )
+    ),
+    pages,
+    isLargeLine
+  );
+  return byEtape ? demoteNamedFiches(headings, named.fiches) : headings;
+};
+
+/**
+ * Le doute que tranche aujourd'hui la lecture par défaut : un document dont la
+ * plupart des fiches nommées (« Fiche action n°1.2 ») détaillent plusieurs
+ * étapes titrées « Action 1 – … ». Selon la collectivité, l'action suivie est
+ * la fiche ou l'étape. `null` quand le document ne laisse pas ce choix.
+ */
+export const detectActionLevelDoubt = (
+  pages: DocumentPage[]
+): ActionLevelDoubt | null => {
+  const { detected } = scanHeadings(pages);
+  const named = classifyNamedFicheActions(detected, pages);
+  const detailed = named.fiches.filter(
+    (fiche) =>
+      (named.stepsByFiche.get(fiche)?.length ?? 0) >= MIN_STEPS_PER_FICHE
+  );
+  if (
+    named.fiches.length < MIN_NAMED_FICHES ||
+    detailed.length <
+      Math.max(MIN_NAMED_FICHES, named.fiches.length * DETAILED_FICHES_SHARE)
+  ) {
+    return null;
+  }
+  const firstEtape = named.stepsByFiche.get(detailed[0])?.[0];
+  if (!firstEtape) {
+    return null;
+  }
+  const axes = uniqueByLabel(
+    detected.filter((heading) => isExplicit(heading.match, 'axe'))
+  );
+  return {
+    kind: 'action-level',
+    axes: axes[0] ? describeLevel(axes[0], axes.length) : null,
+    fiches: describeLevel(detailed[0], named.fiches.length),
+    etapes: describeLevel(firstEtape, named.nested.size),
+    proposed:
+      countPiloteLabels(pages) > named.fiches.length * PILOTES_PER_ETAPE_RATIO
+        ? 'etape'
+        : 'fiche',
+  };
+};
+
+const describeLevel = (heading: DetectedHeading, count: number) => ({
+  exampleTitle: heading.match.title,
+  examplePage: heading.pageIndex + 1,
+  count,
+});
+
+const uniqueByLabel = (headings: DetectedHeading[]): DetectedHeading[] => {
+  const seen = new Set<string>();
+  return headings.filter(({ match }) => {
+    const key = match.number ?? match.title;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+};
+
+/** Les pilotes et porteurs donnés dans le document, un par action suivie. */
+const countPiloteLabels = (pages: DocumentPage[]): number =>
+  pages
+    .flatMap((page) => page.lines)
+    .filter((line) => {
+      const label = line.text
+        .trim()
+        .replace(MARKDOWN_MARK, '')
+        .split(/[:：]/u)[0];
+      return isFicheLabel(label) && PILOTE_LABEL.test(label.trim());
+    }).length;
+
+const scanHeadings = (
+  pages: DocumentPage[]
+): {
+  detected: DetectedHeading[];
+  isLargeLine: (line: PageLine) => boolean;
+} => {
   const bodyFontSize = estimateBodyFontSize(pages);
   const sizeOf = (line: PageLine) =>
     bodyFontSize === null || line.fontSize === undefined
@@ -125,37 +247,37 @@ export const detectHeadings = (pages: DocumentPage[]): DetectedHeading[] => {
     return headings;
   });
 
-  return attachNumberPrefixes(
-    keepNumberSequence(
-      dropIntertitleSections(
-        demoteCapitalsBelowExplicitAxes(
-          dropSummaryRows(
-            demoteBannersAboveFiches(dropActionsOfNamedFiches(detected, pages)),
-            pages
-          )
-        ),
-        pages
-      )
-    ),
-    pages,
-    (line) => sizeOf(line) === 'large'
-  );
+  return { detected, isLargeLine: (line) => sizeOf(line) === 'large' };
 };
 
 const isExplicit = (match: HeadingMatch, kind: HeadingMatch['kind']) =>
   match.kind === kind && match.confidence === 1;
 
+type NamedFicheActions = {
+  /** « Fiche action n°1.2 » : les fiches qui se nomment. */
+  fiches: DetectedHeading[];
+  /** Les « Action N » que la lecture par défaut retire. */
+  dropped: Set<DetectedHeading>;
+  /** Parmi eux, les étapes d'une fiche, à l'exclusion des renvois. */
+  nested: Set<DetectedHeading>;
+  stepsByFiche: Map<DetectedHeading, DetectedHeading[]>;
+};
+
 /**
  * Un document qui titre ses fiches « Fiche action n°1.2 » écrit aussi
  * « Action 1 – … » dans chacune, et « Action 1.2 … » dans son tableau
- * récapitulatif : des étapes et des renvois, pas d'autres fiches. Une fiche
- * autonome mêlée aux fiches nommées, elle, prolonge leur numérotation :
- * « Action 4 » après les fiches 1, 2 et 3 est gardée.
+ * récapitulatif : des étapes et des renvois, pas d'autres fiches. Une étape
+ * suit sa fiche sans titre d'axe entre les deux, et son numéro n'est celui
+ * d'aucune fiche : « Action 1.2 » du récapitulatif renvoie à la fiche 1.2.
+ * Une fiche autonome mêlée aux fiches nommées, elle, prolonge leur
+ * numérotation en rompant celle des étapes : « Action 4 » après les fiches 1,
+ * 2 et 3 (ou après les étapes 1 et 2 de la fiche 3), « Action 1.4 » après
+ * les fiches 1.1 à 1.3, est gardée.
  */
-const dropActionsOfNamedFiches = (
+const classifyNamedFicheActions = (
   headings: DetectedHeading[],
   pages: DocumentPage[]
-): DetectedHeading[] => {
+): NamedFicheActions => {
   const pageByIndex = new Map(pages.map((page) => [page.index, page]));
   const startsWith = (heading: DetectedHeading, pattern: RegExp) =>
     isExplicit(heading.match, 'fiche') &&
@@ -165,48 +287,88 @@ const dropActionsOfNamedFiches = (
         ?.lines[heading.lineIndex]?.text.trim()
         .replace(MARKDOWN_MARK, '') ?? ''
     );
-  const namedFiches = headings.filter((heading) =>
-    startsWith(heading, /^fiche/iu)
-  );
-  if (namedFiches.length < MIN_NAMED_FICHES) {
-    return headings;
+  const fiches = headings.filter((heading) => startsWith(heading, /^fiche/iu));
+  const empty: NamedFicheActions = {
+    fiches,
+    dropped: new Set(),
+    nested: new Set(),
+    stepsByFiche: new Map(),
+  };
+  if (fiches.length < MIN_NAMED_FICHES) {
+    return empty;
   }
-  // La suite des fiches nommées (1, 2, 3… ou 1.1, 1.2, 1.3…). Les étapes
-  // d'une fiche se suivent depuis « Action 1 » : un numéro qui rompt cette
-  // suite et prolonge celle des fiches ouvre une fiche autonome. Qui prolonge
-  // les deux (étapes 1, 2, 3 puis « Action 4 ») reste une étape ; qui reprend
-  // le numéro d'une fiche nommée est un renvoi du récapitulatif.
-  const ficheNumbers = new Set(namedFiches.map(({ match }) => match.number));
+  const ficheNumbers = new Set(fiches.map(({ match }) => match.number));
+  const stepsByFiche = new Map<DetectedHeading, DetectedHeading[]>();
+  const dropped = new Set<DetectedHeading>();
+  const nested = new Set<DetectedHeading>();
+  let current: DetectedHeading | null = null;
+  // Les suites des fiches (1, 2, 3… ou 1.1, 1.2…) et des étapes de la fiche
+  // en cours, qui se suivent depuis « Action 1 ».
   let lastFiche: string | null = null;
   let lastStep: number | null = null;
-  const continuesFiches = new Set<DetectedHeading>();
   for (const heading of headings) {
     const number = heading.match.number;
-    if (namedFiches.includes(heading)) {
+    if (fiches.includes(heading)) {
+      current = heading;
       lastFiche = number;
       lastStep = null;
-    } else if (startsWith(heading, /^action(?!\p{L})/iu) && number !== null) {
-      const step = /^\d+$/u.test(number) ? Number(number) : null;
+    } else if (startsWith(heading, /^actions?(?!\p{L})/iu)) {
+      const singular = startsWith(heading, /^action(?!\p{L})/iu);
+      const step =
+        number !== null && /^\d+$/u.test(number) ? Number(number) : null;
       const continuesSteps =
         step !== null &&
         (lastStep === null ? step === 1 : step === lastStep + 1);
       if (
+        singular &&
+        number !== null &&
         !continuesSteps &&
         !ficheNumbers.has(number) &&
         nextNumbers(lastFiche).includes(number)
       ) {
-        continuesFiches.add(heading);
+        // Une fiche autonome : gardée, et ses « Action » ne sont pas les
+        // étapes de la fiche précédente.
         lastFiche = number;
         lastStep = null;
-      } else if (continuesSteps) {
+        current = null;
+        continue;
+      }
+      if (singular && continuesSteps) {
         lastStep = step;
       }
+      dropped.add(heading);
+      if (current && !ficheNumbers.has(heading.match.number)) {
+        nested.add(heading);
+        stepsByFiche.set(current, [
+          ...(stepsByFiche.get(current) ?? []),
+          heading,
+        ]);
+      }
+    } else if (
+      // Un intertitre en majuscules dans la fiche ne la referme pas.
+      ['axe', 'orientation', 'section'].includes(heading.match.kind)
+    ) {
+      current = null;
     }
   }
-  return headings.filter(
-    (heading) =>
-      continuesFiches.has(heading) ||
-      !startsWith(heading, /^actions?(?!\p{L})/iu)
+  return { fiches, dropped, nested, stepsByFiche };
+};
+
+/**
+ * Lue à l'étape, la fiche qui se nomme devient le sous-axe de ses étapes.
+ * Elle garde sa nature de fiche : son numéro dit encore son axe.
+ */
+const demoteNamedFiches = (
+  headings: DetectedHeading[],
+  fiches: DetectedHeading[]
+): DetectedHeading[] => {
+  const keyOf = ({ pageIndex, lineIndex }: DetectedHeading) =>
+    `${pageIndex}:${lineIndex}`;
+  const ficheKeys = new Set(fiches.map(keyOf));
+  return headings.map((heading) =>
+    ficheKeys.has(keyOf(heading))
+      ? { ...heading, match: { ...heading.match, level: SOUS_AXE_LEVEL } }
+      : heading
   );
 };
 
