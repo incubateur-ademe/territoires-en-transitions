@@ -14,6 +14,7 @@ import {
   aiPlanImportProfileSchema,
 } from '../models/import-profile';
 import type { EvalRun, ManualReference } from './eval-metrics';
+import { type ActionLevel, actionLevelSchema } from '../models/import-question';
 
 const DECLARED_MIME_BY_EXTENSION: Record<string, string> = {
   '.pdf': 'application/pdf',
@@ -26,6 +27,7 @@ const USAGE = `Usage : run-ai-import-eval --file <pdf|docx|xlsx|csv> [--out <jso
   [--instructions "<consignes>"] [--no-verifications] [--no-sous-actions]
   [--profile generic|pcaet|annexe-3-electrification] [--catalogue <json>]
   [--type-plan "<libellé>"]   (hors PCAET : type du plan donné au modèle, ex. "Plan Mobilité")
+  [--action-level fiche|etape]   (réponse à la question du niveau de l'action, si le document la pose)
        --profile annexe-3-electrification --catalogue <json> : DOCX V4, aide IA ciblée si nécessaire, références non résolues
        (appels réels possibles : lancement humain uniquement)
        (incompatible avec --ref, --instructions, --no-verifications, --no-sous-actions et --lecture-seule)
@@ -50,6 +52,7 @@ export type GenericEvalInput = EvalFile & {
     instructions: string;
     withVerifications: boolean;
     withSousActions: boolean;
+    actionLevel: ActionLevel | undefined;
   };
 };
 
@@ -71,6 +74,7 @@ export const readEvalInput = async (): Promise<EvalInput | EvalExit> => {
       profile: { type: 'string', default: AiPlanImportProfileEnum.GENERIC },
       instructions: { type: 'string', default: '' },
       'type-plan': { type: 'string' },
+      'action-level': { type: 'string' },
       'no-verifications': { type: 'boolean', default: false },
       'no-sous-actions': { type: 'boolean', default: false },
       'lecture-seule': { type: 'boolean', default: false },
@@ -79,6 +83,12 @@ export const readEvalInput = async (): Promise<EvalInput | EvalExit> => {
   });
   if (values.help || !values.file) {
     return { mode: 'exit', code: values.help ? 0 : 1, message: USAGE };
+  }
+  const actionLevel = actionLevelSchema
+    .optional()
+    .safeParse(values['action-level']);
+  if (!actionLevel.success) {
+    return { mode: 'exit', code: 1, message: USAGE };
   }
   const profile = aiPlanImportProfileSchema.safeParse(values.profile);
   if (!profile.success) {
@@ -169,6 +179,7 @@ export const readEvalInput = async (): Promise<EvalInput | EvalExit> => {
       instructions: values.instructions,
       withVerifications: !values['no-verifications'],
       withSousActions: !values['no-sous-actions'],
+      actionLevel: actionLevel.data,
     },
   };
 };

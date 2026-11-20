@@ -13,6 +13,7 @@ import { ReadDocument } from '../pipeline/document/document-page';
 import { buildLlmOcrPage } from '../pipeline/read-document/llm-ocr-page';
 import { readDocument } from '../pipeline/read-document/read-document';
 import { runImportPipeline } from '../pipeline/run-import-pipeline';
+import { detectDocumentActionLevelDoubt } from '../pipeline/segment-document/segment-document';
 import { describeWorkbookAnalysis } from './describe-workbook-analysis';
 import {
   buildEvalOutput,
@@ -117,6 +118,21 @@ const evaluateGenericImport = async (
       return null;
     }
     printDocumentStats(document.data);
+    const question =
+      llm.capabilities.strategy === 'segmented'
+        ? detectDocumentActionLevelDoubt(document.data)
+        : null;
+    if (question) {
+      print(
+        `Question : action = « ${question.fiches.exampleTitle} » (${
+          question.fiches.count
+        }) ou « ${question.etapes.exampleTitle} » (${
+          question.etapes.count
+        }), proposé : ${question.proposed}, retenu : ${
+          input.options.actionLevel ?? 'fiche (par défaut)'
+        }`
+      );
+    }
 
     const startedAt = Date.now();
     let trace: EvalTrace | null = null;
@@ -137,7 +153,13 @@ const evaluateGenericImport = async (
         titlesByStep[completedStep] = progress.actions.map(
           (action) => action.titre
         );
-        trace = buildEvalTrace({ skeleton, units, allUnits, titlesByStep });
+        trace = buildEvalTrace({
+          skeleton,
+          units,
+          allUnits,
+          titlesByStep,
+          question,
+        });
       },
       onStepStatesChange: async (stepStates) => {
         const step = `pipeline ${JSON.stringify(stepStates)}, ${

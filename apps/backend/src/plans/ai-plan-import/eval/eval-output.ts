@@ -5,6 +5,7 @@ import { normalizeExtractedActions } from '../adapters/extracted-action-to-impor
 import type { PlanSkeleton } from '../models/plan-skeleton';
 import type { StepName } from '../pipeline/pipeline-step-states';
 import type { PipelineOutcome } from '../pipeline/run-import-pipeline';
+import type { ActionLevelDoubt } from '../models/import-question';
 import type { DocumentUnit } from '../pipeline/segment-document/document-unit';
 import {
   compareWithManualReference,
@@ -58,6 +59,8 @@ export type EvalTrace = {
    * seulement reformulée.
    */
   titlesDroppedAfterExtraction: string[];
+  /** La question qu'aurait posée l'import, que `--action-level` tranche. */
+  question: ActionLevelDoubt | null;
 };
 
 const START_CHARS = 100;
@@ -76,6 +79,7 @@ export const buildEvalTrace = ({
   units,
   allUnits,
   titlesByStep,
+  question,
 }: {
   skeleton: PlanSkeleton | null;
   units: UnitToTrace[] | null;
@@ -83,6 +87,7 @@ export const buildEvalTrace = ({
   allUnits: UnitToTrace[] | null;
   /** Les titres des actions après chaque étape terminée. */
   titlesByStep: Partial<Record<StepName, string[]>>;
+  question: ActionLevelDoubt | null;
 }): EvalTrace => {
   const kept = new Set((units ?? []).map((unit) => unit.id));
   const lastTitles = new Set(Object.values(titlesByStep).at(-1) ?? []);
@@ -101,6 +106,7 @@ export const buildEvalTrace = ({
     titlesDroppedAfterExtraction: (titlesByStep.extraction ?? []).filter(
       (title) => !lastTitles.has(title)
     ),
+    question,
   };
 };
 
@@ -110,7 +116,7 @@ export type EvalOutput = EvalRun & {
   model: string | undefined;
   generatedAt: string;
   options: GenericEvalInput['options'];
-  status: 'done' | 'failed';
+  status: PipelineOutcome['status'];
   error: string | null;
   warnings: string[];
   stepStates: unknown;
@@ -138,7 +144,11 @@ export const buildEvalOutput = ({
 }): EvalOutput => {
   // Un échec conserve les actions des étapes précédentes pour le diagnostic.
   const draft =
-    outcome.status === 'done' ? outcome.draft : outcome.partialDraft;
+    outcome.status === 'done'
+      ? outcome.draft
+      : outcome.status === 'failed'
+      ? outcome.partialDraft
+      : { actions: [], qualitativeReview: null };
   // La référence manuelle juge le plan normalisé tel qu'il sera créé ; les
   // métriques et les comparaisons entre runs portent sur le brouillon brut.
   const plan = {

@@ -155,7 +155,7 @@ describe.skipIf(!CCPG_XLSX)('analyzeWorkbook sur le classeur réel CCPG', () => 
           effetsAttendus: [],
         });
         if (outcome.status !== 'done') {
-          throw new Error(`Import en échec : ${outcome.failedStep}`);
+          throw new Error(`Import non terminé : ${outcome.status}`);
         }
         actions = outcome.draft.actions;
       });
