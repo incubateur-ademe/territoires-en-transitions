@@ -118,6 +118,7 @@ export const useRejoindreUneCollectivite = ({
       trpc.collectivites.collectivites.list.queryOptions({
         text: search,
         limit: NB_COLLECTIVITES_FETCH,
+        joinableOnly: true,
       })
     );
 

@@ -1,4 +1,5 @@
 import { INestApplication } from '@nestjs/common';
+import { addTestCollectivite } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   ensureCollectiviteRelationsImported,
   getAnonUser,
@@ -6,7 +7,9 @@ import {
 } from '@tet/backend/test';
 import { AuthRole, AuthUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { collectiviteTypeEnum } from '@tet/domain/collectivites';
 import { inferProcedureInput } from '@trpc/server';
+import { onTestFinished } from 'vitest';
 import {
   getTestApp,
   getTestDatabase,
@@ -122,6 +125,30 @@ describe('Route de recherche des collectivités', () => {
         text: 'NonExistentText',
       });
     expect(resultWithNonExistentText.length).toBe(0);
+  });
+
+  test(`joinableOnly écarte les services déconcentrés`, async () => {
+    const nom = `Rejoignable ${crypto.randomUUID()}`;
+    const epci = await addTestCollectivite(database, { nom: `${nom} EPCI` });
+    onTestFinished(epci.cleanup);
+    const ddt = await addTestCollectivite(database, {
+      nom: `${nom} DDT`,
+      type: collectiviteTypeEnum.DDT,
+    });
+    onTestFinished(ddt.cleanup);
+
+    const caller = router.createCaller({ user: anonUser });
+
+    const tous = await caller.collectivites.collectivites.list({ text: nom });
+    expect(tous.map((c) => c.id).sort()).toEqual(
+      [epci.collectivite.id, ddt.collectivite.id].sort()
+    );
+
+    const rejoignables = await caller.collectivites.collectivites.list({
+      text: nom,
+      joinableOnly: true,
+    });
+    expect(rejoignables.map((c) => c.id)).toEqual([epci.collectivite.id]);
   });
 
   describe('avec relations importées', () => {

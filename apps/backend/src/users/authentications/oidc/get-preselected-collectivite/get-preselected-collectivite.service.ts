@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { isServiceDeconcentre } from '@tet/domain/collectivites';
 import { and, desc, eq, isNotNull } from 'drizzle-orm';
 import { GetCollectiviteBySiretService } from '../get-collectivite-by-siret/get-collectivite-by-siret.service';
 import { utilisateurIdentiteOidcTable } from '../models/utilisateur-identite-oidc.table';
@@ -67,6 +68,15 @@ export class GetPreselectedCollectiviteService {
     if (!rapprochee) {
       this.logger.log(
         `Pas de pré-sélection pour le compte ${userId} : le SIRET ${identite.siret} ne désigne aucune collectivité`
+      );
+      return null;
+    }
+
+    // `membres.join` refuserait le rattachement : on ne propose pas une
+    // structure que l'agent ne peut pas rejoindre.
+    if (isServiceDeconcentre(rapprochee.type)) {
+      this.logger.log(
+        `Pas de pré-sélection pour le compte ${userId} : le SIRET ${identite.siret} désigne un service déconcentré (#${rapprochee.collectiviteId}, ${rapprochee.type})`
       );
       return null;
     }
