@@ -67,12 +67,12 @@ flowchart TB
 Non dessinés : les utilisateurs arrivent en HTTPS sur le Traefik de chaque serveur, et les
 serveurs tirent leurs images de `ghcr.io`.
 
-| Serveur                | Projet         | Rôle                                                     |
-| ---------------------- | -------------- | -------------------------------------------------------- |
-| `tet-platform-vpn`     | `tet`          | Passerelle WireGuard des opérateurs. Aucune application. |
-| `tet-prod-apps`        | **`tet-prod`** | Applications de production.                              |
-| `tet-nonprod-apps`     | `tet`          | Mutualisé : preprod **et** staging.                      |
-| `tet-preview-apps`     | `tet`          | Previews éphémères, une par pull request.                |
+| Serveur            | Projet         | Rôle                                                     |
+| ------------------ | -------------- | -------------------------------------------------------- |
+| `tet-platform-vpn` | `tet`          | Passerelle WireGuard des opérateurs. Aucune application. |
+| `tet-prod-apps`    | **`tet-prod`** | Applications de production.                              |
+| `tet-nonprod-apps` | `tet`          | Mutualisé : preprod **et** staging.                      |
+| `tet-preview-apps` | `tet`          | Previews éphémères, une par pull request.                |
 
 | Environnement | Postgres / Redis              |
 | ------------- | ----------------------------- |
@@ -329,6 +329,11 @@ première venue. Commandes à lancer depuis la racine du dépôt :
 Un « REMOTE HOST IDENTIFICATION HAS CHANGED » n'est jamais anodin : soit le serveur a été
 recréé (mettre à jour la ligne), soit la connexion est interceptée.
 
+Sur macOS, l'app WireGuard du Mac App Store remplace `wg-quick` :
+importer `tet.conf` (« Import tunnel(s) from file ») donne une icône
+dans la barre des menus, qui montre l'état du tunnel et le bascule sans `sudo`.
+Ne pas faire tourner les deux à la fois (`sudo wg-quick down tet` avant l'import).
+
 ```sh
 wg-quick up tet
 
@@ -381,11 +386,11 @@ serveurs et de la passerelle (`tls_private_key`), mots de passe des bases
 (`random_password`). Les droits sur `tet-tfstate` sont donc ceux d'un accès root aux
 serveurs : à réserver aux opérateurs Terraform.
 
-| Secret                                | Format                    | Contenu                                                                                     |
-| ------------------------------------- | ------------------------- | ------------------------------------------------------------------------------------------- |
-| `tet-platform-coolify-api-token`      | `<id>\|<token>`           | Token API `root` de notre Team Coolify (créé dans l'UI)                                     |
-| `tet-platform-vpn-private-key`        | sortie de `wg genkey`     | Clé privée WireGuard de la passerelle (cf. [VPN](#mise-en-place-une-fois))                  |
-| `tet-platform-ghcr-pull`              | `<github-username>\|<pat>` | PAT GitHub **classic**, scope `read:packages` seul, idéalement sur un machine user           |
+| Secret                                | Format                       | Contenu                                                                                           |
+| ------------------------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------- |
+| `tet-platform-coolify-api-token`      | `<id>\|<token>`              | Token API `root` de notre Team Coolify (créé dans l'UI)                                           |
+| `tet-platform-vpn-private-key`        | sortie de `wg genkey`        | Clé privée WireGuard de la passerelle (cf. [VPN](#mise-en-place-une-fois))                        |
+| `tet-platform-ghcr-pull`              | `<github-username>\|<pat>`   | PAT GitHub **classic**, scope `read:packages` seul, idéalement sur un machine user                |
 | `tet-platform-coolify-s3-credentials` | `<access_key>\|<secret_key>` | Clé de l'application IAM `tet-coolify-backups` (créée par l'admin). Coquille créée par `platform` |
 
 ```sh
@@ -412,14 +417,14 @@ printf '%s|%s' '<partie-1>' '<partie-2>' | scw secret version create "$_id" data
 Via le provider [`coolify-terraform/coolify`](https://registry.terraform.io/providers/coolify-terraform/coolify)
 et, là où il ne convient pas, des scripts d'API dans `scripts/` :
 
-| Quoi                                                | Comment                                                     |
-| --------------------------------------------------- | ----------------------------------------------------------- |
-| Clés SSH, serveurs, projet, environnements          | ressources natives (`plan` détecte le drift de l'UI)        |
-| Applications `app`, `backend`, `site`               | `coolify_application_docker_image` ([`applications.tf`](coolify/applications.tf)) |
-| Services `supabase-api` et Alloy                    | `coolify_service` ([`services.tf`](coolify/services.tf))    |
-| Variables d'environnement                           | script `coolify-push-env.sh`                                |
-| S3 storage (cible des backups Coolify)              | script `coolify-configure-s3-storage.sh`                    |
-| Login GHCR sur les serveurs                         | script `coolify-ghcr-docker-login.sh`                       |
+| Quoi                                       | Comment                                                                           |
+| ------------------------------------------ | --------------------------------------------------------------------------------- |
+| Clés SSH, serveurs, projet, environnements | ressources natives (`plan` détecte le drift de l'UI)                              |
+| Applications `app`, `backend`, `site`      | `coolify_application_docker_image` ([`applications.tf`](coolify/applications.tf)) |
+| Services `supabase-api` et Alloy           | `coolify_service` ([`services.tf`](coolify/services.tf))                          |
+| Variables d'environnement                  | script `coolify-push-env.sh`                                                      |
+| S3 storage (cible des backups Coolify)     | script `coolify-configure-s3-storage.sh`                                          |
+| Login GHCR sur les serveurs                | script `coolify-ghcr-docker-login.sh`                                             |
 
 Env vars, S3 et GHCR restent en scripts par choix : le provider stocke tout secret qu'il
 gère dans le state (aucun attribut write-only), et son API « bulk » d'env vars ignore
@@ -472,7 +477,7 @@ Mise en service d'une entrée :
    `APP_ID=<env>/<app> infra/scripts/coolify-deploy.sh` (sans `IMAGE_TAG` : tête de branche).
 3. Redéploiement au push : dans le dépôt GitHub, **Settings → Webhooks** →
    `https://<instance>/webhooks/source/github/events/manual`,
-   `application/json`, événement *push*, avec le secret de l'onglet **Webhooks** de
+   `application/json`, événement _push_, avec le secret de l'onglet **Webhooks** de
    l'application dans Coolify. Retirer ensuite l'auto-deploy du service Koyeb.
 4. Domaine hors `*.preprod` : le déclarer d'abord en `http://<nom>`. Avec `https://`,
    Traefik tenterait un certificat Let's Encrypt sur un nom qui pointe encore vers Koyeb, et
@@ -490,10 +495,10 @@ Mise en service d'une entrée :
 application, chaque variable : valeur en clair (`value`) ou nom de secret (`secret`), rangé
 sous `/coolify-env/<env>/tet-<env>-<nom>`.
 
-| Secret                                             | Coquille créée par                           | Valeur déposée par |
-| -------------------------------------------------- | -------------------------------------------- | ------------------ |
-| Dérivés de l'infra (URI Postgres, URI et CA Redis) | stack du tier (`nonprod/coolify-env-secrets.tf`) | Terraform      |
-| Applicatifs (clés Supabase, Brevo, Google…)        | `coolify/env-secrets.tf`                     | un opérateur       |
+| Secret                                             | Coquille créée par                               | Valeur déposée par |
+| -------------------------------------------------- | ------------------------------------------------ | ------------------ |
+| Dérivés de l'infra (URI Postgres, URI et CA Redis) | stack du tier (`nonprod/coolify-env-secrets.tf`) | Terraform          |
+| Applicatifs (clés Supabase, Brevo, Google…)        | `coolify/env-secrets.tf`                         | un opérateur       |
 
 ```sh
 terraform -chdir=infra/coolify output env_manual_secrets   # ce qui est attendu
@@ -562,10 +567,10 @@ jusqu'à ce que le nouveau bucket ait fait ses preuves.
 Tout reste chez Cloudflare, hors Terraform, en **DNS only** (Traefik émet lui-même ses
 certificats en HTTP-01) :
 
-| Nom                                            | Type | Cible                                                    |
-| ---------------------------------------------- | ---- | -------------------------------------------------------- |
-| `preprod`, `*.preprod`, `staging`, `*.staging` | A    | `terraform -chdir=infra/nonprod output -raw server_public_ip`   |
-| `preview`, `*.preview`                         | A    | `terraform -chdir=infra/preview output -raw server_public_ip`   |
+| Nom                                            | Type | Cible                                                         |
+| ---------------------------------------------- | ---- | ------------------------------------------------------------- |
+| `preprod`, `*.preprod`, `staging`, `*.staging` | A    | `terraform -chdir=infra/nonprod output -raw server_public_ip` |
+| `preview`, `*.preview`                         | A    | `terraform -chdir=infra/preview output -raw server_public_ip` |
 
 À reporter à la main si un serveur est recréé. Pas de sous-zones déléguées à Scaleway
 Domains : un domaine externe dont l'apex ne pointe pas sur les NS de Scaleway y est supprimé
@@ -580,12 +585,12 @@ l'instancie pour le projet principal (preprod, staging, preview), `prod/observab
 pour tet-prod. Les données de la prod restent dans son projet. PostHog garde l'analytics
 produit, l'error tracking et les traces du backend.
 
-| Source                                    | Collecte          | Contenu                                             |
-| ----------------------------------------- | ----------------- | --------------------------------------------------- |
-| RDB, Redis, Instances                     | Scaleway, gratuit | métriques produits + alertes préconfigurées         |
-| Hôte, conteneurs (cAdvisor), Traefik      | Alloy             | CPU, mémoire, disques, OOM, requêtes, latence       |
-| Sondes HTTPS (blackbox)                   | Alloy             | disponibilité, expiration TLS                       |
-| Logs des conteneurs Coolify               | Alloy             | stdout/stderr, labels `env`, `service`, `container` |
+| Source                               | Collecte          | Contenu                                             |
+| ------------------------------------ | ----------------- | --------------------------------------------------- |
+| RDB, Redis, Instances                | Scaleway, gratuit | métriques produits + alertes préconfigurées         |
+| Hôte, conteneurs (cAdvisor), Traefik | Alloy             | CPU, mémoire, disques, OOM, requêtes, latence       |
+| Sondes HTTPS (blackbox)              | Alloy             | disponibilité, expiration TLS                       |
+| Logs des conteneurs Coolify          | Alloy             | stdout/stderr, labels `env`, `service`, `container` |
 
 - **Cockpit** : sources custom (métriques 31 j, logs 14 j), token d'écriture d'Alloy, alert
   manager et destinataires (`alert_emails`). Token et URL de push vont dans Secret Manager,
