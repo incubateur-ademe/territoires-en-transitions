@@ -320,7 +320,9 @@ test('importe le DOCX avec le profil Électrification et conserve le rapport apr
   });
   await page.getByTestId('ai-import.lancer').click();
   await expect(
-    page.getByText('Utilisez le canevas officiel V4 au format Word (.docx).')
+    page.getByText(
+      'Utilisez le document de votre convention au format Word (.docx).'
+    )
   ).toBeVisible();
   await expect(page).not.toHaveURL(/importJobId=/);
   expect(mock.enqueueCalls).toBe(0);
@@ -409,10 +411,10 @@ test('importe le DOCX avec le profil Électrification et conserve le rapport apr
   );
   await expect(
     page.getByRole('group', { name: 'Lecture du document', exact: true })
-  ).toContainText('Terminée');
+  ).toHaveCount(0);
   await expect(
     page.getByRole('group', { name: 'Extraction des données', exact: true })
-  ).toContainText('Terminée');
+  ).toHaveCount(0);
   await expect(page.getByTestId('plans.import-ia.etapes')).toHaveCount(0);
   await page.reload();
   await expect(page.getByTestId('plans.import-ia.rapport')).toContainText(
@@ -617,13 +619,8 @@ test('réessaie depuis le détail avec les choix précédents et garde Nouvel im
     name: 'Extraction des données',
     exact: true,
   });
-  await expect(readingStatus).toContainText('Terminée');
-  await expect(extractionStatus).toContainText('En échec');
-  const readingBox = await readingStatus.boundingBox();
-  const extractionBox = await extractionStatus.boundingBox();
-  assert(readingBox && extractionBox);
-  expect(readingBox.y).toBe(extractionBox.y);
-  expect(extractionBox.x).toBeGreaterThan(readingBox.x);
+  await expect(readingStatus).toHaveCount(0);
+  await expect(extractionStatus).toHaveCount(0);
   await expect(summary).toContainText(
     '2 erreurs détectées pendant cet import.'
   );
@@ -848,6 +845,18 @@ test('retrouve les imports paginés avec accès et ne redirige pas un compte ren
   await expect(
     page.getByTestId('plans.import-ia.historique').getByRole('listitem')
   ).toHaveCount(20);
+  const headerBox = await page
+    .getByRole('region', {
+      name: 'Historique des imports',
+      exact: true,
+    })
+    .boundingBox();
+  const historyBox = await page
+    .getByTestId('plans.import-ia.historique')
+    .locator('..')
+    .boundingBox();
+  assert(headerBox && historyBox);
+  expect(historyBox.width).toBeCloseTo(headerBox.width, 0);
   await page
     .getByRole('button', { name: 'Voir les imports précédents' })
     .click();
@@ -1180,16 +1189,12 @@ test('masque le plan incomplet depuis le détail d’un import en échec sur mob
   await expect(
     page.getByTestId('plans.import-ia.rapport').getByRole('listitem')
   ).toContainText('Renseignez une année de référence');
-  const readingBox = await page
-    .getByRole('group', { name: 'Lecture du document', exact: true })
-    .boundingBox();
-  const extractionBox = await page
-    .getByRole('group', { name: 'Extraction des données', exact: true })
-    .boundingBox();
-  assert(readingBox && extractionBox);
-  expect(extractionBox.y).toBeGreaterThanOrEqual(
-    readingBox.y + readingBox.height
-  );
+  await expect(
+    page.getByRole('group', { name: 'Lecture du document', exact: true })
+  ).toHaveCount(0);
+  await expect(
+    page.getByRole('group', { name: 'Extraction des données', exact: true })
+  ).toHaveCount(0);
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= window.innerWidth
@@ -1476,10 +1481,10 @@ test("consulte un échec sans plan depuis l'historique et réserve la reprise à
   await expect(report).not.toContainText('Aucune remarque signalée.');
   await expect(
     report.getByRole('group', { name: 'Lecture du document', exact: true })
-  ).toContainText('En échec');
+  ).toHaveCount(0);
   await expect(
     report.getByRole('group', { name: 'Extraction des données', exact: true })
-  ).toContainText('Non commencée');
+  ).toHaveCount(0);
   await expect(
     page.getByTestId('plans.import-ia.reprendre-button')
   ).toHaveCount(0);

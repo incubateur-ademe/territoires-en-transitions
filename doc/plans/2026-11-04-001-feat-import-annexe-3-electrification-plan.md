@@ -116,6 +116,30 @@ Une case cochée décrit une étape réalisée, pas un déploiement. Les vérifi
 des anciennes PRs ne remplacent pas celles des compositions A, B et C.
 Le socle de contrats et d'API de suivi #5702 est déjà dans `main`.
 
+## Suivi et notifications TT-67 - 20 novembre 2026
+
+Ce complément est livré séparément des corrections du lecteur Word
+([#5949](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5949)).
+Les cases cochées décrivent le code validé localement, pas son déploiement.
+
+- [x] Utiliser la taille commune des loaders et réduire l'espace avant les étapes.
+- [x] Retirer les cadres lecture/extraction du compte rendu d'échec.
+- [x] Annoncer les emails de succès et d'échec dans le suivi.
+- [x] Créer la notification d'échec dans le circuit existant, avec un lien vers
+      le compte rendu ; éviter les doublons lors d'un callback répété.
+- [x] Préserver l'état échoué si la création de la notification échoue.
+- [x] Vérifier la largeur de l'historique et les comptes rendus sur desktop et mobile.
+- [ ] Vérifier la réception réelle des emails après déploiement.
+
+Validation : 94 tests backend passent en 39 s, avec IA simulée et sans envoi
+d'email ; 9 tests frontend de progression passent également. Les scénarios
+existants sont étendus pour couvrir la notification, son lien et les callbacks
+répétés. Les contrôles TypeScript frontend et backend passent.
+Quatre scénarios navigateur passent (DOCX, nouvel essai, échec sans plan et
+mobile). Dans le scénario d'historique, la largeur, la pagination et le compte
+rendu passent ; la suite vers le plan est bloquée localement par son SVG dans
+le serveur webpack de recette, la configuration du dépôt utilise Turbopack.
+
 ## PR A — Fondations sans changement utilisateur
 
 **But :** livrer les contrats et refactorings réutilisés par B en conservant

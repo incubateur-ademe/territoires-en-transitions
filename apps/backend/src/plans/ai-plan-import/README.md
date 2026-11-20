@@ -702,7 +702,7 @@ ORDER BY j.created_at DESC;
 | Sujet | Fichiers |
 |---|---|
 | Entrée HTTP, quotas, type de fichier | `enqueue-import/` |
-| Worker, persistance, e-mail | `generate-import-draft/`, `notify-plan-imported/` |
+| Worker, persistance, e-mail | `generate-import-draft/`, `notify-plan-import/` |
 | Suivi de progression | `get-import-status/`, frontend `apps/app/src/plans/plans/import-plan/` |
 | Reprise d'un import | `pipeline/pipeline-checkpoint.ts`, `resume-import/` |
 | Orchestration des étapes | `pipeline/run-import-pipeline.ts` |

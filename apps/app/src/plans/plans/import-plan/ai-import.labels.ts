@@ -21,11 +21,6 @@ export const importStepStatusLabels: Record<ImportStepView['status'], string> =
     skipped: appLabels.importPlanIaEtapeIgnoree,
   };
 
-export const importReportStepLabels = {
-  reading: appLabels.importPlanIaEtapeLecture,
-  extraction: appLabels.importPlanIaRapportEtapeExtraction,
-} satisfies Partial<Record<ImportStepView['name'], string>>;
-
 /** Libellés des remarques du compte rendu, par nature de remarque. */
 export const importIssueLabels = {
   'document-error': appLabels.importPlanIaDocumentErreur,

@@ -65,7 +65,7 @@ import {
   AI_PLAN_IMPORT_QUEUE_NAME,
   GENERATE_IMPORT_DRAFT_JOB_NAME,
 } from './ai-plan-import.queue';
-import { NotifyPlanImportedService } from './notify-plan-imported/notify-plan-imported.service';
+import { NotifyPlanImportService } from './notify-plan-import/notify-plan-import.service';
 import { ficheActionSecteurAttributionTable } from '@tet/backend/plans/fiches/fiche-secteurs/fiche-action-secteur-attribution.table';
 import { planActionTypeTable } from '@tet/backend/plans/fiches/shared/models/plan-action-type.table';
 import { PCAET_PLAN_TYPE_KEY } from '@tet/domain/demarches';
@@ -486,6 +486,17 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
           )
         )
       );
+    await db.db
+      .delete(notificationTable)
+      .where(
+        and(
+          eq(
+            notificationTable.notifiedOn,
+            NotifiedOnEnum['PLANS.AI_IMPORT.FAILED']
+          ),
+          inArray(notificationTable.createdBy, [user.id, otherUser.id])
+        )
+      );
     for (const planId of createdPlanIds) {
       await deletePlan(planId);
     }
@@ -784,7 +795,7 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
       },
     });
     const content = await app
-      .get(NotifyPlanImportedService)
+      .get(NotifyPlanImportService)
       .getNotificationContent(notification);
     expect(content).toMatchObject({
       success: true,
@@ -1139,7 +1150,7 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
                 failure(AiPlanImportErrorEnum.UPDATE_JOB_ERROR)
               );
       const notification = vi.spyOn(
-        app.get(NotifyPlanImportedService),
+        app.get(NotifyPlanImportService),
         'notifyPlanImported'
       );
       const secteurJobsBefore = completePlanSecteursJobs.length;
@@ -1595,7 +1606,7 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
         .spyOn(app.get(WebhookService), 'sendWebhookNotifications')
         .mockResolvedValue(undefined);
       const notification = vi.spyOn(
-        app.get(NotifyPlanImportedService),
+        app.get(NotifyPlanImportService),
         'notifyPlanImported'
       );
       onTestFinished(() => {
@@ -1629,7 +1640,7 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
               throw new Error('Webhook indisponible');
           });
         const notification = vi.spyOn(
-          app.get(NotifyPlanImportedService),
+          app.get(NotifyPlanImportService),
           'notifyPlanImported'
         );
         if (failedEffect === 'notification') {

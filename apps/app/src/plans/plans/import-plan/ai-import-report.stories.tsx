@@ -10,17 +10,6 @@ const meta = {
       status: 'failed',
       error: null,
       createdPlanId: null,
-      stepStates: {
-        reading: 'ok',
-        scouting: 'skipped',
-        extraction: 'pending',
-        hierarchy: 'skipped',
-        scoring: 'skipped',
-        consolidation: 'skipped',
-        enrichment: 'skipped',
-        secteurs: 'skipped',
-        qualitativeReview: 'skipped',
-      },
       report: { issues: [], qualitativeReview: null },
     },
   },
@@ -100,7 +89,6 @@ export const EchecTechnique: Story = {
     status: {
       ...meta.args.status,
       error: "Le service d'IA ne répond pas. Réessayez plus tard.",
-      stepStates: { ...meta.args.status.stepStates, reading: 'pending' },
     },
   },
 };

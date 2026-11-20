@@ -45,10 +45,10 @@ const StageIcon = ({ status }: { status: ImportStageView['status'] }) => {
         <Icon icon="close-circle-fill" size="md" className="text-error-1" />
       );
     case 'current':
-      return <SpinnerLoader className="w-5 h-5 shrink-0" />;
+      return <SpinnerLoader className="w-6 h-6 shrink-0" />;
     case 'waiting':
       return (
-        <span className="w-5 h-5 shrink-0 p-0.5">
+        <span className="w-6 h-6 shrink-0 p-0.5">
           <span className="block w-full h-full rounded-full border-2 border-grey-4" />
         </span>
       );

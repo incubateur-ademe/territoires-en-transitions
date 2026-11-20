@@ -38,7 +38,7 @@ import { GetImportStatusRouter } from './get-import-status/get-import-status.rou
 import { GetImportStatusService } from './get-import-status/get-import-status.service';
 import { GetImportCapabilitiesRouter } from './get-import-capabilities/get-import-capabilities.router';
 import { ValidateImportProfileService } from './validate-import-profile/validate-import-profile.service';
-import { NotifyPlanImportedService } from './notify-plan-imported/notify-plan-imported.service';
+import { NotifyPlanImportService } from './notify-plan-import/notify-plan-import.service';
 import { ResumeImportRouter } from './resume-import/resume-import.router';
 import { ResolveElectrificationEngagementsService } from './electrification/resolve-engagements/resolve-electrification-engagements.service';
 import { ResumeImportService } from './resume-import/resume-import.service';
@@ -112,7 +112,7 @@ import {
     GetImportCapabilitiesRouter,
     FindPreviousImportService,
     FindPreviousImportRouter,
-    NotifyPlanImportedService,
+    NotifyPlanImportService,
     ResumeImportService,
     ResumeImportRouter,
   ],
