@@ -86,7 +86,12 @@ export class ApikeysService {
   }
 
   async create(user: AuthUser, request: GenerateApiKeyRequest) {
-    if (!this.checkIfRightUserOrServiceRole(user, request.userId)) {
+    if (
+      !this.checkIfRightUserOrServiceRole(user, request.userId) ||
+      (user.role === AuthRole.AUTHENTICATED &&
+        (user.jwtPayload.client_id !== undefined ||
+          user.jwtPayload.permissions !== undefined))
+    ) {
       throw new ForbiddenException(
         `User ${user.id} is not authorized to generate an API key for user ${request.userId}`
       );
