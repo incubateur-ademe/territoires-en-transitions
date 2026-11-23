@@ -1,9 +1,11 @@
 import { expect } from '@playwright/test';
 import { test } from 'tests/main.fixture';
+import type { UserFixture } from 'tests/users/users.fixture';
 
 const PARENT_TITRE = 'Déchets collectés';
 
 test.describe("Sous-indicateurs d'un indicateur personnalisé", () => {
+  let owner: UserFixture;
   let collectiviteId: number;
   let parentId: number;
   let enfantIds: number[];
@@ -12,6 +14,7 @@ test.describe("Sous-indicateurs d'un indicateur personnalisé", () => {
     const { collectivite, user } = await collectivites.addCollectiviteAndUser({
       userArgs: { autoLogin: true },
     });
+    owner = user;
     collectiviteId = collectivite.data.id;
     parentId = await indicateurs.create(user, {
       collectiviteId,
@@ -124,5 +127,51 @@ test.describe("Sous-indicateurs d'un indicateur personnalisé", () => {
     await expect(
       page.getByRole('button', { name: 'Renommer Ménagers' })
     ).toBeVisible();
+  });
+
+  test('Supprimer une période efface les valeurs de tous les sous-indicateurs en un seul appel', async ({
+    page,
+    indicateurDetailPom,
+  }) => {
+    for (const indicateurId of enfantIds) {
+      for (const dateValeur of ['2022-01-01', '2023-01-01']) {
+        await owner.getTrpcClient().indicateurs.valeurs.upsert.mutate({
+          collectiviteId,
+          indicateurId,
+          periodicite: 'annuelle',
+          dateValeur,
+          resultat: 5,
+        });
+      }
+    }
+    const requestUrls: string[] = [];
+    page.on('request', (request) => requestUrls.push(request.url()));
+    await indicateurDetailPom.goto(collectiviteId, parentId);
+
+    await page
+      .getByRole('button', { name: 'Supprimer la période 2022', exact: true })
+      .click();
+    await page.getByRole('button', { name: 'Confirmer' }).click();
+
+    await expect(page.getByRole('columnheader', { name: /2022/ })).toHaveCount(
+      0
+    );
+    await expect(
+      page.getByRole('columnheader', { name: /2023/ })
+    ).toBeVisible();
+    await page.reload();
+    await expect(page.getByRole('columnheader', { name: /2022/ })).toHaveCount(
+      0
+    );
+    expect(
+      requestUrls.filter((url) =>
+        url.includes('indicateurs.valeurs.deletePeriode')
+      )
+    ).toHaveLength(1);
+    expect(
+      requestUrls.filter((url) =>
+        /indicateurs\.valeurs\.delete(?![A-Za-z])/.test(url)
+      )
+    ).toHaveLength(0);
   });
 });
