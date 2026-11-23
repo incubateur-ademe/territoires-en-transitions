@@ -81,6 +81,16 @@ export type CloseDossierLabellisationInput = z.infer<
   typeof closeDossierLabellisationInputSchema
 >;
 
+// Correction d'une étoile ou d'une date mal saisie sur un dossier déjà labellisé
+export const updateLabellisationInputSchema = z.object({
+  auditId: z.number().int(),
+  etoiles: z.number().int().min(1).max(5),
+  dateCra: z.iso.date(),
+});
+export type UpdateLabellisationInput = z.infer<
+  typeof updateLabellisationInputSchema
+>;
+
 export const listCotInputSchema = z.object({
   search: z.string().trim().optional(),
 });

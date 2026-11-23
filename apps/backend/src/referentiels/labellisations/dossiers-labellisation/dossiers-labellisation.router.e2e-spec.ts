@@ -144,6 +144,12 @@ describe('DossiersLabellisationRouter', () => {
       () => admin.removeAuditeur({ auditId, userId: user.id }),
       () => admin.closeDossier({ auditId, decision: 'clore' }),
       () =>
+        admin.updateLabellisation({
+          auditId,
+          etoiles: 4,
+          dateCra: '2026-06-10',
+        }),
+      () =>
         admin.toggleCotActif({
           collectiviteId: collectivite.id,
           actif: false,
@@ -443,6 +449,85 @@ describe('DossiersLabellisationRouter', () => {
       valideLabellisation: true,
       dateCnl: expect.stringContaining('2026-06-10'),
     });
+  });
+
+  test("corrige l'étoile d'un dossier labellisé, y compris la collectivité associée, et refuse sur une 1ère étoile", async () => {
+    const { collectivite } = await addTestCollectivite(db);
+    const { collectivite: associee } = await addTestCollectivite(db);
+    const audit = await addDossier({
+      collectiviteId: collectivite.id,
+      etoiles: '4',
+      dateDebut: '2026-01-15',
+      valide: true,
+      associatedCollectiviteId: associee.id,
+    });
+    const admin = caller().referentiels.labellisations.admin;
+    await admin.closeDossier({
+      auditId: audit.id,
+      decision: 'labelliser',
+      etoiles: 5,
+      dateCra: '2026-06-10',
+    });
+
+    await admin.updateLabellisation({
+      auditId: audit.id,
+      etoiles: 4,
+      dateCra: '2026-07-01',
+    });
+
+    for (const collectiviteId of [collectivite.id, associee.id]) {
+      expect(await getLabellisations(collectiviteId)).toEqual([
+        expect.objectContaining({
+          auditId: audit.id,
+          etoiles: 4,
+          obtenueLe: expect.stringContaining('2026-07-01'),
+        }),
+      ]);
+    }
+    expect(await getAudit(audit.id)).toMatchObject({
+      dateCnl: expect.stringContaining('2026-07-01'),
+    });
+
+    // Une autre labellisation existe déjà en 2024 pour la collectivité associée
+    await db.db.insert(labellisationTable).values({
+      collectiviteId: associee.id,
+      referentiel: ReferentielIdEnum.CAE,
+      etoiles: 2,
+      obtenueLe: '2024-03-01',
+    });
+    await expect(
+      admin.updateLabellisation({
+        auditId: audit.id,
+        etoiles: 4,
+        dateCra: '2024-12-01',
+      })
+    ).rejects.toMatchObject({ code: 'CONFLICT' });
+    expect(await getLabellisations(collectivite.id)).toEqual([
+      expect.objectContaining({
+        obtenueLe: expect.stringContaining('2026-07-01'),
+      }),
+    ]);
+
+    const { collectivite: premiere } = await addTestCollectivite(db);
+    const premiereEtoile = await addDossier({
+      collectiviteId: premiere.id,
+      etoiles: '1',
+    });
+    await admin.closeDossier({
+      auditId: premiereEtoile.id,
+      decision: 'valider_premiere_etoile',
+      date: '2026-06-10',
+    });
+    await expect(
+      admin.updateLabellisation({
+        auditId: premiereEtoile.id,
+        etoiles: 3,
+        dateCra: '2026-06-10',
+      })
+    ).rejects.toMatchObject({ code: 'BAD_REQUEST' });
+    expect(await getLabellisations(premiere.id)).toEqual([
+      expect.objectContaining({ etoiles: 1 }),
+    ]);
   });
 
   test("refuse de labelliser un audit non validé par l'auditeur", async () => {

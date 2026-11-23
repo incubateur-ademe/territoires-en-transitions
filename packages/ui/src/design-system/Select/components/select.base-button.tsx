@@ -21,6 +21,7 @@ export const SelectBaseButton = forwardRef(
   (
     {
       dataTest,
+      ariaLabel = 'ouvrir le menu',
       isOpen,
       options,
       values,
@@ -116,7 +117,7 @@ export const SelectBaseButton = forwardRef(
         ref={ref}
         data-test={dataTest}
         aria-expanded={isOpen}
-        aria-label="ouvrir le menu"
+        aria-label={ariaLabel}
         className={cn(
           'text-left rounded-lg border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden w-full',
           { 'rounded-b-none': isOpen },

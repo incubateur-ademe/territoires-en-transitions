@@ -12,6 +12,7 @@ const specificErrors = [
   'NOT_AUDITEUR',
   'AUDITEUR_EMAIL_NOT_FOUND',
   'LABELLISATION_ALREADY_EXISTS',
+  'LABELLISATION_NOT_FOUND',
   'COT_NOT_FOUND',
 ] as const;
 type SpecificError = (typeof specificErrors)[number];
@@ -52,6 +53,11 @@ export const dossiersLabellisationErrorConfig: TrpcErrorHandlerConfig<SpecificEr
         code: 'CONFLICT',
         message:
           'Une labellisation existe déjà pour cette collectivité, ce référentiel et cette année.',
+      },
+      LABELLISATION_NOT_FOUND: {
+        code: 'BAD_REQUEST',
+        message:
+          "Ce dossier n'a pas de labellisation actée après audit à corriger.",
       },
       COT_NOT_FOUND: {
         code: 'NOT_FOUND',

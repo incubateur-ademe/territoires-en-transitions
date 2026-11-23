@@ -107,6 +107,17 @@ export const useCloseDossierLabellisation = () => {
   );
 };
 
+export const useUpdateLabellisation = () => {
+  const trpc = useTRPC();
+  const invalidate = useInvalidateDossiers();
+  return useMutation(
+    trpc.referentiels.labellisations.admin.updateLabellisation.mutationOptions({
+      meta: { success: appLabels.labellisationsAdminLabellisationCorrigee },
+      onSuccess: invalidate,
+    })
+  );
+};
+
 export const useListCot = (search: string) => {
   const trpc = useTRPC();
   return useQuery(

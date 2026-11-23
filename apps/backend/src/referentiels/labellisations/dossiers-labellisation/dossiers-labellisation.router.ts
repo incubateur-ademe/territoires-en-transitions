@@ -15,6 +15,7 @@ import {
   removeAuditeurInputSchema,
   toggleCotActifInputSchema,
   updateDemandeLabellisationInputSchema,
+  updateLabellisationInputSchema,
 } from './dossiers-labellisation.input';
 import { HandleCotService } from './handle-cot.service';
 import { ListDossiersLabellisationService } from './list-dossiers-labellisation.service';
@@ -111,6 +112,14 @@ export class DossiersLabellisationRouter {
         .mutation(async ({ input, ctx: { user } }) =>
           this.getResultDataOrThrowError(
             await this.closeService.closeDossier(input, { user })
+          )
+        ),
+
+      updateLabellisation: this.trpc.authedProcedure
+        .input(updateLabellisationInputSchema)
+        .mutation(async ({ input, ctx: { user } }) =>
+          this.getResultDataOrThrowError(
+            await this.updateService.updateLabellisation(input, { user })
           )
         ),
 

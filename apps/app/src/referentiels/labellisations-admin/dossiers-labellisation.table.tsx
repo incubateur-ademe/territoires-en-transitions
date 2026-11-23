@@ -277,7 +277,8 @@ const OuvrirDossierButton = ({
 };
 
 const DossierCell = ({ dossier }: { dossier: DossierLabellisation }) => {
-  const etoiles = Number(dossier.etoiles ?? 0);
+  // Dossier labellisé : l'étoile obtenue, sinon l'étoile demandée
+  const etoiles = dossier.labellisationEtoiles ?? Number(dossier.etoiles ?? 0);
   return (
     <TableCell>
       <div className="flex flex-col gap-1">
