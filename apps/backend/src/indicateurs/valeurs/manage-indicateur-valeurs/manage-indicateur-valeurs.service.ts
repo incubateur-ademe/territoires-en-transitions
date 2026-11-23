@@ -30,6 +30,7 @@ import { ListIndicateursService } from '../../indicateurs/list-indicateurs/list-
 import { IndicateurValeursRepository } from '../indicateur-valeurs.repository';
 import { DeleteIndicateursValeursRequestType } from './delete-indicateur-valeurs.request';
 import { DeleteValeurIndicateur } from './delete-valeur-indicateur.request';
+import { DeleteValeursPeriode } from './delete-valeurs-periode.request';
 import { IndicateurValeurLockRepository } from '../indicateur-valeur-lock.repository';
 import { IndicateurValeursContext } from '../indicateur-valeurs-context.types';
 import {
@@ -85,6 +86,11 @@ export type IndicateurValeurDeletionListener<TContext = unknown> = {
     }
   ) => Promise<void>;
 };
+
+type PeriodeDeletion = Readonly<{
+  deletedValeurs: readonly IndicateurValeur[];
+  contextsByValeurId: ReadonlyMap<number, readonly unknown[]>;
+}>;
 
 /**
  * Application entrypoint for value workflows: permissions, transactions and
@@ -590,6 +596,155 @@ export default class ManageIndicateurValeursService {
   ): Promise<Result<IndicateurDetaille, IndicateurValeursError>> {
     return captureIndicateurValeursResult(() =>
       this.listIndicateursService.getIndicateur(scope)
+    );
+  }
+
+  deleteValeursPeriode(
+    periode: DeleteValeursPeriode,
+    user: AuthenticatedUser
+  ): Promise<Result<void, IndicateurValeursError>> {
+    return captureIndicateurValeursResultOf(() =>
+      this.executeDeleteValeursPeriode(periode, user)
+    );
+  }
+
+  private async executeDeleteValeursPeriode(
+    requestedPeriode: DeleteValeursPeriode,
+    user: AuthenticatedUser
+  ): Promise<Result<void, IndicateurValeursError>> {
+    const periode: DeleteValeursPeriode = {
+      ...requestedPeriode,
+      indicateurIds: [...new Set(requestedPeriode.indicateurIds)],
+    };
+    const canMutate = await this.canMutateIndicateurs({ periode, user });
+    if (!canMutate.success) return canMutate;
+
+    const deletion = await this.deleteValeursOfPeriode({ periode, user });
+    if (!deletion.success) return deletion;
+
+    await this.notifyValeursDeleted({
+      collectiviteId: periode.collectiviteId,
+      ...deletion.data,
+      user,
+    });
+    return success(undefined);
+  }
+
+  private async canMutateIndicateurs({
+    periode: { collectiviteId, indicateurIds },
+    user,
+  }: {
+    periode: DeleteValeursPeriode;
+    user: AuthenticatedUser;
+  }): Promise<Result<void, IndicateurValeursError>> {
+    const indicateursResult = await captureIndicateurValeursResult(() =>
+      this.listIndicateursService.listIndicateurs(
+        {
+          collectiviteId,
+          filters: { indicateurIds },
+          queryOptions: { page: 1, limit: indicateurIds.length },
+        },
+        user
+      )
+    );
+    if (!indicateursResult.success) return indicateursResult;
+
+    const { data: indicateurs } = indicateursResult.data;
+    const hasUnavailableIndicateur =
+      indicateurs.length !== indicateurIds.length;
+    if (hasUnavailableIndicateur) return failure('INDICATEUR_NOT_AVAILABLE');
+    return this.canMutateValeurs(user, collectiviteId, indicateurs);
+  }
+
+  private async listDeletionContexts(
+    { collectiviteId }: DeleteValeursPeriode,
+    valeurs: IndicateurValeur[]
+  ) {
+    return new Map(
+      await Promise.all(
+        valeurs.map(async ({ id, indicateurId }) => {
+          const contexts = await Promise.all(
+            this.valeurDeletionListeners.map((listener) =>
+              listener.onWillDelete({
+                collectiviteId,
+                indicateurId,
+                indicateurValeurId: id,
+              })
+            )
+          );
+          return [id, contexts] as const;
+        })
+      )
+    );
+  }
+
+  private deleteValeursOfPeriode({
+    periode,
+    user,
+  }: {
+    periode: DeleteValeursPeriode;
+    user: AuthenticatedUser;
+  }) {
+    const { collectiviteId, dateValeur } = periode;
+    return this.runInTransaction<PeriodeDeletion>(async (tx) => {
+      await this.indicateurLockRepository.lockForValueWrite(tx);
+      await this.lockRepository.lock([{ collectiviteId, dateValeur }], tx);
+
+      const valeursToDelete = await this.repository.listUserValeursAtDate(
+        periode,
+        tx
+      );
+      const hasNothingToDelete = valeursToDelete.length === 0;
+      if (hasNothingToDelete) {
+        return success({ deletedValeurs: [], contextsByValeurId: new Map() });
+      }
+
+      const contextsByValeurId = await this.listDeletionContexts(
+        periode,
+        valeursToDelete
+      );
+      const deletedValeurs = await this.repository.deleteUserValeurs(
+        { collectiviteId, ids: valeursToDelete.map(({ id }) => id) },
+        tx
+      );
+      const propagation = await this.reconciliation.propagateDeleted(
+        deletedValeurs,
+        { isUserTrusted: true, tx }
+      );
+      if (!propagation.success) return propagation;
+
+      await this.updateIndicateurService.updateIndicateursModifiedFields(
+        {
+          indicateurIds: deletedValeurs.map(({ indicateurId }) => indicateurId),
+          collectiviteId,
+          user,
+        },
+        tx
+      );
+      return success({ deletedValeurs, contextsByValeurId });
+    });
+  }
+
+  private async notifyValeursDeleted({
+    collectiviteId,
+    deletedValeurs,
+    contextsByValeurId,
+    user,
+  }: PeriodeDeletion & {
+    collectiviteId: number;
+    user: AuthenticatedUser;
+  }) {
+    await Promise.all(
+      deletedValeurs.flatMap(({ id, indicateurId }) =>
+        this.valeurDeletionListeners.map((listener, index) =>
+          listener.onDeleted(contextsByValeurId.get(id)?.[index], {
+            collectiviteId,
+            indicateurId,
+            indicateurValeurId: id,
+            user,
+          })
+        )
+      )
     );
   }
 
