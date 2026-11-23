@@ -147,3 +147,16 @@ output "rencontres_database_url" {
   module.postgres.private_endpoint_ip, module.postgres.private_endpoint_port, scaleway_rdb_database.rencontres.name)
   sensitive = true
 }
+
+# --- Storage API ---
+
+output "storage_s3_access_key_id" {
+  description = "Access key S3 de Storage API prod. À ranger dans le secret supabase-storage-s3-access-key-id (cf. storage.tf)."
+  value       = scaleway_iam_api_key.storage.access_key
+}
+
+output "storage_s3_secret_key" {
+  description = "Secret key S3 de Storage API prod. À ranger dans le secret supabase-storage-s3-secret-access-key (cf. storage.tf)."
+  value       = scaleway_iam_api_key.storage.secret_key
+  sensitive   = true
+}
