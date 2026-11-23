@@ -1,3 +1,4 @@
+import { PersonneTagOrUserWithContacts } from '@tet/domain/collectivites';
 import {
   CountByPropertyEnumType,
   FicheWithRelations,
@@ -5,7 +6,7 @@ import {
   ListFichesRequestFilters,
   ListFichesRequestFiltersKeys,
 } from '@tet/domain/plans';
-import { omit } from 'es-toolkit';
+import { pick } from 'es-toolkit';
 import { checkCompletion } from './completion';
 
 export type FichesRestreintesAccess = 'readable' | 'masked' | 'excluded';
@@ -101,6 +102,18 @@ export const getFichesRestreintesAccess = ({
   return 'masked';
 };
 
+const toPiloteWithoutContacts = (
+  pilote: PersonneTagOrUserWithContacts
+): PersonneTagOrUserWithContacts =>
+  pick(pilote, [
+    'nom',
+    'prenom',
+    'nomFamille',
+    'tagId',
+    'userId',
+    'collectiviteId',
+  ]);
+
 const toMaskedFicheRestreinte = (
   fiche: FicheWithRelations
 ): Omit<FicheWithRelations, 'completion'> => ({
@@ -118,9 +131,7 @@ const toMaskedFicheRestreinte = (
   createdAt: fiche.createdAt,
   modifiedAt: fiche.modifiedAt,
   restreint: fiche.restreint,
-  pilotes:
-    fiche.pilotes?.map((pilote) => omit(pilote, ['email', 'telephone'])) ??
-    null,
+  pilotes: fiche.pilotes?.map(toPiloteWithoutContacts) ?? null,
   services: fiche.services,
   plans: fiche.plans,
   axes: fiche.axes,
