@@ -62,6 +62,7 @@ export default class ExportIndicateursService {
     // autorisé ne peut pas forcer l'inclusion des indicateurs confidentiels.
     if (!canReadConfidentiel) {
       filters.estConfidentiel = false;
+      filters.sansAncetreConfidentiel = true;
     }
 
     // Résout l'ensemble des indicateurs via ListIndicateursService : source
@@ -127,6 +128,7 @@ export default class ExportIndicateursService {
       };
       if (!canReadConfidentiel) {
         enfantsFilters.estConfidentiel = false;
+        enfantsFilters.sansAncetreConfidentiel = true;
       }
       const enfantsResult = await this.listIndicateursService.listIndicateurs(
         {
