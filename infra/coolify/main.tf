@@ -202,34 +202,3 @@ resource "coolify_environment" "env" {
     prevent_destroy = true
   }
 }
-
-# --- S3 storage (backups) ---
-#
-# coolify_s3_storage existe, mais garde access key et secret dans le state. On
-# passe par l'API REST (GET/POST/PATCH /s3-storages + POST …/validate), credentials
-# lus dans Secret Manager par le script (R4).
-resource "terraform_data" "s3_storage" {
-  triggers_replace = [
-    var.s3_storage_name,
-    var.s3_bucket,
-    var.s3_endpoint,
-    var.s3_region,
-    var.s3_credentials_secret_name,
-    var.s3_credentials_revision,
-  ]
-
-  provisioner "local-exec" {
-    command = "${path.module}/../scripts/coolify-configure-s3-storage.sh"
-    environment = {
-      COOLIFY_ENDPOINT           = var.coolify_endpoint
-      SECRET_PROJECT_ID          = var.project_id
-      S3_STORAGE_NAME            = var.s3_storage_name
-      S3_ENDPOINT                = var.s3_endpoint
-      S3_BUCKET                  = var.s3_bucket
-      S3_REGION                  = var.s3_region
-      S3_CREDENTIALS_SECRET_NAME = var.s3_credentials_secret_name
-      S3_DESCRIPTION             = "Scaleway Object Storage (${var.s3_bucket}). Géré par Terraform (infra/coolify)."
-      # COOLIFY_TOKEN hérité de l'environnement (coolify-env.sh).
-    }
-  }
-}

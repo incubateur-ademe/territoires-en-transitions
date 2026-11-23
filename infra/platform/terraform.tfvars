@@ -4,7 +4,6 @@
 # Projets créés par l'admin de l'organisation (cf. README « Prérequis admin »).
 main_project_id             = "ddfb298c-fbcf-4b11-a133-76200482002d"
 prod_project_id             = "ab89df2d-0d28-4b5b-9ad8-74e5160e9a31"
-coolify_backups_project_id  = "1174f0ae-225a-4117-8bbe-83103876be40"
 database_backups_project_id = "6f1fbb1d-dbe8-4de6-bfdc-42b1a0c61404"
 
 # --- VPN des opérateurs (cf. README « Accès aux serveurs (VPN) ») ---
