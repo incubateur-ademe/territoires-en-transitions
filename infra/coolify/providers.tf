@@ -11,7 +11,7 @@ terraform {
       source  = "coolify-terraform/coolify"
       version = "~> 0.1.31"
     }
-    # scaleway : uniquement pour lire les clés privées depuis Secret Manager.
+    # scaleway : lectures seules (serveurs, clés depuis Secret Manager).
     scaleway = {
       source  = "scaleway/scaleway"
       version = "~> 2.79"

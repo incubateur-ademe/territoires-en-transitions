@@ -6,7 +6,7 @@ output "vpc_id" {
 }
 
 output "private_network_ids" {
-  description = "IDs des Private Networks, indexés par tier. Valeur à reporter dans la variable private_network_id des stacks applicatifs."
+  description = "IDs des Private Networks, indexés par tier."
   value       = module.network.private_network_ids
 }
 
@@ -23,7 +23,7 @@ output "network_plan" {
 # --- Passerelle VPN ---
 
 output "vpn_public_ip" {
-  description = "IP publique de la passerelle VPN. À ajouter à ssh_allowed_ips des stacks nonprod, preview et prod."
+  description = "IP publique de la passerelle VPN. Les stacks nonprod, preview et prod la lisent d'office (platform.tf)."
   value       = module.vpn.public_ip
 }
 

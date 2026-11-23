@@ -37,19 +37,14 @@ output "pg_instance_id" {
   value       = module.postgres.instance_id
 }
 
-output "pg_endpoint_ip" {
-  description = "IP publique de l'endpoint Postgres preprod (migration et accès opérateur)."
-  value       = module.postgres.endpoint_ip
-}
-
-output "pg_endpoint_port" {
-  description = "Port Postgres preprod sur l'endpoint public."
-  value       = module.postgres.endpoint_port
-}
-
 output "pg_private_endpoint_ip" {
-  description = "IP privée du Postgres preprod dans le VPC. C'est cette IP que les conteneurs doivent utiliser."
+  description = "IP privée du Postgres preprod dans le VPC. IP des conteneurs, et des opérateurs par le VPN."
   value       = module.postgres.private_endpoint_ip
+}
+
+output "pg_private_endpoint_port" {
+  description = "Port du Postgres preprod sur l'endpoint privé."
+  value       = module.postgres.private_endpoint_port
 }
 
 output "pg_admin_user" {
@@ -66,12 +61,6 @@ output "pg_admin_password" {
 output "pg_database_name" {
   description = "Nom de la base de données applicative."
   value       = module.postgres.database_name
-}
-
-output "pg_connection_uri" {
-  description = "URI Postgres publique (sslmode=require). Pour la migration initiale ; les apps utilisent pg_private_connection_uri."
-  value       = module.postgres.connection_uri
-  sensitive   = true
 }
 
 output "pg_private_connection_uri" {

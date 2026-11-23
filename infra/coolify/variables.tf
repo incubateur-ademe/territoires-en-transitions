@@ -34,30 +34,9 @@ variable "coolify_token" {
 
 # --- Serveurs applicatifs ---
 
-variable "app_servers" {
-  description = <<-EOT
-    Serveurs applicatifs à enregistrer dans Coolify, indexés par tier.
-
-    Chaque valeur provient des outputs du stack du tier correspondant :
-      name                = server_name
-      ssh_host            = server_public_ip  (l'instance Coolify de
-                            l'incubateur est hors de nos VPC)
-      ssh_key_secret_name = server_ssh_key_secret_name
-      sshd_host_public_key = server_sshd_host_public_key
-      ssh_key_project_id  = projet du secret, si ce n'est pas project_id
-                            (prod : terraform -chdir=../platform output -raw prod_project_id)
-
-    Le lien entre stacks se fait par valeurs et noms de secrets, jamais par
-    terraform_remote_state : les stacks restent découplés.
-  EOT
-  type = map(object({
-    name                 = string
-    ssh_host             = string
-    ssh_key_secret_name  = string
-    ssh_key_project_id   = optional(string)
-    sshd_host_public_key = string
-  }))
-  default = {}
+variable "prod_project_id" {
+  description = "UUID du projet Scaleway de production (tet-prod), où vivent le serveur prod et ses secrets."
+  type        = string
 }
 
 # --- GHCR ---

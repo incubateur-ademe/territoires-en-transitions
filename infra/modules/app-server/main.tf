@@ -14,7 +14,8 @@ terraform {
 }
 
 locals {
-  server_name = coalesce(var.name, "tet-${var.tier}-apps")
+  # Nom imposé : infra/platform et infra/coolify retrouvent le serveur par ce nom.
+  server_name = "tet-${var.tier}-apps"
   common_tags = concat(
     ["tet", "tier:${var.tier}", "managed-by:terraform"],
     var.tags,
@@ -43,6 +44,25 @@ resource "tls_private_key" "server" {
 # il n'y gagnerait rien de plus que ce qu'il a déjà.
 resource "tls_private_key" "sshd_host" {
   algorithm = "ED25519"
+}
+
+# Publique de la clé d'hôte, publiée pour infra/coolify qui la lit par data
+# source (vérification stricte de l'hôte). Rien de secret : Secret Manager sert
+# ici de point de publication entre stacks.
+#
+# Le serveur ignore les changements de user_data : remplacer
+# tls_private_key.sshd_host seul publierait une clé que le serveur n'a pas.
+# Une rotation passe par le remplacement du serveur (ou une réinstallation de
+# la clé sur la machine).
+resource "scaleway_secret" "sshd_host_public_key" {
+  name        = "tet-${var.tier}-server-sshd-host-public-key"
+  description = "Clé d'hôte SSH publique du serveur ${local.server_name}. Publiée par Terraform, lue par infra/coolify."
+  tags        = local.common_tags
+}
+
+resource "scaleway_secret_version" "sshd_host_public_key" {
+  secret_id = scaleway_secret.sshd_host_public_key.id
+  data      = trimspace(tls_private_key.sshd_host.public_key_openssh)
 }
 
 resource "scaleway_secret" "server_key" {

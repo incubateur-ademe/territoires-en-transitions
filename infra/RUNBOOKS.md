@@ -27,7 +27,7 @@ La cible est lue dans les outputs de `infra/nonprod` (`restore-preprod-db`) ou d
 
 ### Répétition sur preprod
 
-Prérequis : IP du poste dans `pg_allowed_ips` (`nonprod/terraform.tfvars`), `psql` et
+Prérequis : VPN des opérateurs monté (`wg-quick up tet`, la base n'a pas d'endpoint public), `psql` et
 `pg_restore` 15+, `rclone`.
 
 ```sh
@@ -72,7 +72,7 @@ chaque passage repart de zéro.
    (`tet-preprod-storage`, clés du secret `supabase-storage-s3-*`) :
 
    ```sh
-   psql "…tet_admin@<pg_endpoint_ip>…" -AtF $'\t' -c \
+   psql "…tet_admin@<pg_private_endpoint_ip>…" -AtF $'\t' -c \
      "select bucket_id, name, coalesce(version, '') from storage.objects" > objects.tsv
    while IFS=$'\t' read -r b n v; do
      printf 'supa:%s/%s\0scw:tet-preprod-storage/tet-preprod/%s/%s%s\0' \
@@ -142,7 +142,7 @@ rôle est recréé, **avant** de basculer `DATABASE_URL` :
 terraform -chdir=infra/prod plan
 
 # 2. Le rôle rencontres ne doit pas pouvoir ouvrir la base de TET. L'instance n'a
-#    pas d'endpoint public (pg_allowed_ips vide) et le VPN ne relaie pas le VPC de
+#    pas d'endpoint public et le VPN ne relaie pas le VPC de
 #    prod : tunnel SSH par le serveur de prod, VPN monté (cf. README, « Accès aux
 #    serveurs (VPN) »). Sa clé est dans le projet tet-prod.
 wg-quick up tet

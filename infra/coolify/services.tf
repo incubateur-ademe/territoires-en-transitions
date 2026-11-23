@@ -141,7 +141,7 @@ locals {
   # label des conteneurs.
   alloy_env_manifests = {
     for id, s in local.alloy_services : s.env => merge(local.coolify_env_common.alloy, {
-      SERVER_NAME = { value = var.app_servers[s.server].name }
+      SERVER_NAME = { value = local.app_servers[s.server].name }
       PROBE_TARGETS = { value = jsonencode([
         for p in local.alloy_probes : merge(
           { for k, v in p : k => v if k != "server" },

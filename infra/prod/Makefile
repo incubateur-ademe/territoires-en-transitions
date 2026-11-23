@@ -13,7 +13,7 @@ help:
 	@echo "                        dans le Cockpit du projet tet-prod (API Mimir)."
 	@echo ""
 	@echo "Prérequis : psql et pg_restore 15+, terraform output disponible,"
-	@echo "et IP du poste dans pg_allowed_ips (terraform.tfvars)."
+	@echo "et tunnel SSH vers la base (cf. infra/RUNBOOKS.md) : PGHOST/PGPORT locaux."
 
 # Export plutôt qu'interpolation shell : d peut contenir des espaces.
 restore-prod-db: export DUMP = $(d)

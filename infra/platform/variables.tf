@@ -100,12 +100,6 @@ variable "vpn_peers" {
   }
 }
 
-variable "vpn_routed_public_ips" {
-  description = "IP publiques des serveurs applicatifs (nonprod, preview, prod), joignables en SSH par le tunnel. Valeurs de : terraform -chdir=../<tier> output -raw server_public_ip."
-  type        = list(string)
-  default     = []
-}
-
 variable "vpn_ssh_allowed_ips" {
   description = "CIDR autorisés en SSH sur l'IP publique de la passerelle, en secours si le tunnel tombe. Vide par défaut."
   type        = list(string)
@@ -117,9 +111,8 @@ variable "vpn_ssh_allowed_ips" {
 }
 
 variable "vpn_ssh_authorized_keys" {
-  description = "Clés publiques SSH des opérateurs sur l'utilisateur tet-ops de la passerelle."
+  description = "Clés publiques SSH des opérateurs sur l'utilisateur tet-ops de la passerelle. Versionnée dans terraform.tfvars : une valeur locale écraserait celles des autres opérateurs."
   type        = list(string)
-  default     = []
 }
 
 # --- Stockage ---

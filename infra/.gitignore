@@ -14,13 +14,11 @@ tfplan
 *.tfplan
 *.tfplan.binary
 
-# Valeurs concrètes (peuvent contenir des secrets)
-# Les .tfvars.example sont versionnés en revanche.
+# Seul terraform.tfvars est versionné (aucun secret) : tout autre fichier de
+# variables reste local.
 *.tfvars
 *.tfvars.json
-!*.tfvars.example
-*.auto.tfvars
-*.auto.tfvars.json
+!terraform.tfvars
 
 # Override files locaux
 override.tf

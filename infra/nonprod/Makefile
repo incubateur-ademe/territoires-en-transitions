@@ -27,7 +27,7 @@ help:
 	@echo "                        dans le Cockpit du projet principal (API Mimir)."
 	@echo ""
 	@echo "Prérequis : psql installé (brew install libpq), terraform output disponible,"
-	@echo "et IP du poste dans pg_allowed_ips (terraform.tfvars)."
+	@echo "et VPN des opérateurs monté (wg-quick up tet) : la base n'a pas d'endpoint public."
 
 bootstrap-supabase-auth-roles-sql:
 	@command -v psql >/dev/null 2>&1 || { \
@@ -41,12 +41,11 @@ bootstrap-supabase-auth-roles-sql:
 	}
 	@echo "Lecture des outputs Terraform..."; \
 	pg_pwd=$$(terraform output -raw pg_admin_password); \
-	pg_host=$$(terraform output -raw pg_endpoint_ip); \
-	pg_port=$$(terraform output -raw pg_endpoint_port); \
+	pg_host=$$(terraform output -raw pg_private_endpoint_ip); \
+	pg_port=$$(terraform output -raw pg_private_endpoint_port); \
 	pg_user=$$(terraform output -raw pg_admin_user); \
 	pg_dbname=$$(terraform output -raw pg_database_name); \
 	auth_pwd=$$(terraform output -raw supabase_auth_admin_password); \
-	pg_private_ip=$$(terraform output -raw pg_private_endpoint_ip); \
 	echo "Connexion à $$pg_host:$$pg_port en tant que $$pg_user (dbname=$$pg_dbname)..."; \
 	PGPASSWORD="$$pg_pwd" psql \
 		"host=$$pg_host port=$$pg_port dbname=$$pg_dbname user=$$pg_user sslmode=require" \
@@ -56,12 +55,12 @@ bootstrap-supabase-auth-roles-sql:
 	echo ""; \
 	echo "DATABASE_URL pour GoTrue (utiliser l'IP privée du VPC dans Coolify) :"; \
 	echo ""; \
-	echo "    postgres://supabase_auth_admin:$$auth_pwd@$$pg_private_ip:$$pg_port/$$pg_dbname?sslmode=require&search_path=auth"; \
+	echo "    postgres://supabase_auth_admin:$$auth_pwd@$$pg_host:$$pg_port/$$pg_dbname?sslmode=require&search_path=auth"; \
 	echo ""; \
 	echo "Le mot de passe est aussi disponible via :"; \
 	echo "    terraform output -raw supabase_auth_admin_password"
 
-# Exécute un fichier SQL en tet_admin sur l'endpoint public de la RDB preprod.
+# Exécute un fichier SQL en tet_admin sur l'endpoint privé de la RDB preprod (VPN).
 # $(1) : chemin du fichier SQL.
 define run_admin_sql
 	@command -v psql >/dev/null 2>&1 || { \
@@ -71,8 +70,8 @@ define run_admin_sql
 	}
 	@test -f $(1) || { echo "Erreur : $(1) introuvable depuis $$(pwd)"; exit 1; }
 	@pg_pwd=$$(terraform output -raw pg_admin_password); \
-	pg_host=$$(terraform output -raw pg_endpoint_ip); \
-	pg_port=$$(terraform output -raw pg_endpoint_port); \
+	pg_host=$$(terraform output -raw pg_private_endpoint_ip); \
+	pg_port=$$(terraform output -raw pg_private_endpoint_port); \
 	pg_user=$$(terraform output -raw pg_admin_user); \
 	pg_dbname=$$(terraform output -raw pg_database_name); \
 	echo "Connexion à $$pg_host:$$pg_port en tant que $$pg_user (dbname=$$pg_dbname)..."; \
@@ -87,7 +86,7 @@ bootstrap-supabase-roles-sql:
 bootstrap-storage-sql:
 	$(call run_admin_sql,supabase-api/sql/003-bootstrap-storage.sql)
 	@storage_pwd=$$(terraform output -raw supabase_storage_admin_password); \
-	pg_port=$$(terraform output -raw pg_endpoint_port); \
+	pg_port=$$(terraform output -raw pg_private_endpoint_port); \
 	pg_dbname=$$(terraform output -raw pg_database_name); \
 	pg_private_ip=$$(terraform output -raw pg_private_endpoint_ip); \
 	echo ""; \

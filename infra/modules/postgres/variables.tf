@@ -73,15 +73,8 @@ variable "database_name" {
 }
 
 variable "private_network_id" {
-  description = "ID du Private Network Scaleway à attacher à l'instance RDB. Si null, aucun endpoint privé n'est créé. À passer depuis module.network.private_network_ids[<tier>]."
+  description = "ID du Private Network Scaleway à attacher à l'instance RDB, seul endpoint de l'instance. À passer depuis module.network.private_network_ids[<tier>]."
   type        = string
-  default     = null
-}
-
-variable "allowed_ips" {
-  description = "CIDR autorisés sur l'endpoint public ({ cidr = description }). Vide : pas d'endpoint public, accès uniquement par le Private Network. Pendant la migration, inclure : (1) IP du runner CI qui pilote le restore, (2) IP des postes opérateurs autorisés."
-  type        = map(string)
-  default     = {}
 }
 
 variable "tags" {
