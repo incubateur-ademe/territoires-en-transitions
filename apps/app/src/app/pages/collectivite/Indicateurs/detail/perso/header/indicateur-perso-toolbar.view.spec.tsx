@@ -2,21 +2,21 @@ import { appLabels } from '@/app/labels/catalog';
 import { fireEvent, render, screen } from '@testing-library/react';
 import type { IndicateurDetaille } from '@tet/domain/indicateurs';
 import { describe, expect, it, vi } from 'vitest';
-import type { IndicateurChartInfo } from '../../data/use-indicateur-chart';
-import { toIndicateurActions } from '../../table/to-indicateur-actions.fixture';
-import { IndicateurActionsProvider } from '../context/indicateur-actions.context';
-import { IndicateurDataProvider } from '../context/indicateur-data.context';
-import { IndicateurNouveauSousIndicateurProvider } from '../perso/context/indicateur-nouveau-sous-indicateur.context';
-import { IndicateurSousIndicateursTableProvider } from '../perso/context/indicateur-sous-indicateurs-table.context';
-import IndicateurToolbar from './indicateur-toolbar.view';
+import type { IndicateurChartInfo } from '../../../data/use-indicateur-chart';
+import { toIndicateurActions } from '../../../table/to-indicateur-actions.fixture';
+import { IndicateurActionsProvider } from '../../context/indicateur-actions.context';
+import { IndicateurDataProvider } from '../../context/indicateur-data.context';
+import { IndicateurNouveauSousIndicateurProvider } from '../context/indicateur-nouveau-sous-indicateur.context';
+import { IndicateurSousIndicateursTableProvider } from '../context/indicateur-sous-indicateurs-table.context';
+import { IndicateurPersoToolbar } from './indicateur-perso-toolbar.view';
 
-vi.mock('../../chart/indicateur-chart.png-export', () => ({
+vi.mock('../../../chart/indicateur-chart.png-export', () => ({
   IndicateurChartPngExport: () => (
     <div role="status" aria-label="export du graphique du parent" />
   ),
 }));
 vi.mock(
-  '../perso/sous-indicateurs/indicateur-sous-indicateurs-chart.png-export',
+  '../sous-indicateurs/indicateur-sous-indicateurs-chart.png-export',
   () => ({
     IndicateurSousIndicateursChartPngExport: () => (
       <div
@@ -43,12 +43,10 @@ const toIndicateur = ({
   } as IndicateurDetaille);
 
 const renderToolbar = ({
-  isPerso = true,
   canMutateIndicateur = true,
   enfants = [],
   hasValeurPropre = false,
 }: {
-  isPerso?: boolean;
   canMutateIndicateur?: boolean;
   enfants?: { id: number; titre: string }[];
   hasValeurPropre?: boolean;
@@ -74,10 +72,9 @@ const renderToolbar = ({
           <IndicateurNouveauSousIndicateurProvider
             value={{ id: null, onCreated, onNameEditingEnd: vi.fn() }}
           >
-            <IndicateurToolbar
+            <IndicateurPersoToolbar
               chartInfo={{ hasValeur: hasValeurPropre } as IndicateurChartInfo}
               hasCollectivitePermission={() => true}
-              isPerso={isPerso}
             />
           </IndicateurNouveauSousIndicateurProvider>
         </IndicateurSousIndicateursTableProvider>
@@ -89,7 +86,7 @@ const renderToolbar = ({
 
 const CREER = { name: appLabels.indicateurCreerSousIndicateur };
 
-describe('IndicateurToolbar : création d un sous-indicateur', () => {
+describe('IndicateurPersoToolbar : création d un sous-indicateur', () => {
   it("crée un sous-indicateur nommé à la suite des enfants directs et transmet l'identifiant créé pour le focus", () => {
     const { createSousIndicateur, onCreated } = renderToolbar({
       enfants: [
@@ -115,12 +112,6 @@ describe('IndicateurToolbar : création d un sous-indicateur', () => {
     expect(className).not.toContain('text-sm');
   });
 
-  it('ne propose pas la création pour un indicateur prédéfini', () => {
-    renderToolbar({ isPerso: false });
-
-    expect(screen.queryByRole('button', CREER)).toBeNull();
-  });
-
   it("ne propose pas la création sans le droit de modifier l'indicateur", () => {
     renderToolbar({ canMutateIndicateur: false });
 
@@ -135,7 +126,7 @@ const openOptions = (): void => {
   fireEvent.click(screen.getByRole('button', OPTIONS));
 };
 
-describe('IndicateurToolbar : téléchargement du graphique', () => {
+describe('IndicateurPersoToolbar : téléchargement du graphique', () => {
   it("propose de télécharger le graphique d'un perso qui a des sous-indicateurs, même sans valeur propre", () => {
     renderToolbar({ enfants: [{ id: 11, titre: 'Ménagers' }] });
 
@@ -145,7 +136,7 @@ describe('IndicateurToolbar : téléchargement du graphique', () => {
   });
 
   it('télécharge le graphique du parent pour un indicateur qui a des valeurs et pas de sous-indicateur', () => {
-    renderToolbar({ isPerso: false, hasValeurPropre: true });
+    renderToolbar({ hasValeurPropre: true });
 
     openOptions();
     fireEvent.click(screen.getByRole('button', TELECHARGER_LE_GRAPHIQUE));

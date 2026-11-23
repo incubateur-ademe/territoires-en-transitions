@@ -12,8 +12,8 @@ import {
 
 type Props = {
   indicateur: IndicateurDetaille;
-  isPerso: boolean;
-  isComposeSansAgregation: boolean;
+  hasPersoBadge: boolean;
+  isComposeSansAgregation?: boolean;
   isReadonly: boolean;
 };
 
@@ -27,8 +27,8 @@ type InfosVisibility = {
 
 export const getInfosVisibility = ({
   indicateur,
-  isPerso,
-  isComposeSansAgregation,
+  hasPersoBadge,
+  isComposeSansAgregation = false,
   isReadonly,
 }: Props): InfosVisibility => ({
   showPeriodicite: !isComposeSansAgregation,
@@ -36,14 +36,15 @@ export const getInfosVisibility = ({
   showServices: !isReadonly || (indicateur.services ?? []).length > 0,
   showParticipationScore: Boolean(indicateur.participationScore),
   showBadges:
-    !isComposeSansAgregation && (isPerso || Boolean(indicateur.hasOpenData)),
+    !isComposeSansAgregation &&
+    (hasPersoBadge || Boolean(indicateur.hasOpenData)),
 });
 
 export const hasIndicateurInfos = (props: Props): boolean =>
   Object.values(getInfosVisibility(props)).some(Boolean);
 
 export const IndicateurInfos = (props: Props) => {
-  const { indicateur, isPerso, isReadonly } = props;
+  const { indicateur, hasPersoBadge, isReadonly } = props;
   const { hasOpenData } = indicateur;
   const {
     showPeriodicite,
@@ -67,7 +68,7 @@ export const IndicateurInfos = (props: Props) => {
     ),
     showBadges && (
       <>
-        {isPerso && <BadgeIndicateurPerso />}
+        {hasPersoBadge && <BadgeIndicateurPerso />}
         {hasOpenData && <BadgeOpenData />}
       </>
     ),

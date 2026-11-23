@@ -1,44 +1,38 @@
 import type { IndicateurDetaille } from '@tet/domain/indicateurs';
 import { PermissionOperation } from '@tet/domain/users';
 import { PageHeader } from '@tet/ui';
-import { IndicateurChartInfo } from '../../data/use-indicateur-chart';
+import { ReactElement, ReactNode, useState } from 'react';
 import { useIndicateurActions } from '../context/indicateur-actions.context';
-import { ReactElement, useState } from 'react';
 import CheminIndicateur from './chemin-indicateur.view';
-import { hasIndicateurInfos, IndicateurInfos } from './indicateur-infos.view';
-import IndicateurToolbar from './indicateur-toolbar.view';
 
 type Props = {
   collectiviteId: number;
   indicateur: IndicateurDetaille;
-  chartInfo?: IndicateurChartInfo;
   hasCollectivitePermission: (permission: PermissionOperation) => boolean;
   isReadonly: boolean;
-  isPerso: boolean;
-  isComposeSansAgregation: boolean;
+  isTitleEditable: boolean;
+  hasUniteSuffix: boolean;
+  toolbar: ReactNode;
+  infos: ReactNode;
+  hasInfos: boolean;
 };
 
 const IndicateurHeader = ({
   collectiviteId,
   hasCollectivitePermission,
   indicateur,
-  chartInfo,
   isReadonly,
-  isPerso,
-  isComposeSansAgregation,
+  isTitleEditable,
+  hasUniteSuffix,
+  toolbar,
+  infos,
+  hasInfos,
 }: Props): ReactElement => {
   const { updateTitre } = useIndicateurActions();
   const { titre, unite } = indicateur;
-  const isTitleReadonly = isReadonly || !isPerso;
-  const uniteSuffix = isComposeSansAgregation ? null : (
+  const uniteSuffix = hasUniteSuffix ? (
     <sup className="ml-1 text-grey-6 font-medium">{`(${unite})`}</sup>
-  );
-  const showInfos = hasIndicateurInfos({
-    indicateur,
-    isPerso,
-    isComposeSansAgregation,
-    isReadonly,
-  });
+  ) : null;
 
   const [isSticky, setIsSticky] = useState(false);
 
@@ -46,20 +40,12 @@ const IndicateurHeader = ({
     <PageHeader sticky onStickyChange={setIsSticky}>
       <PageHeader.EditableTitle
         title={titre}
-        isReadonly={isTitleReadonly || isSticky}
+        isReadonly={isReadonly || !isTitleEditable || isSticky}
         onUpdate={(value) => updateTitre(value ?? '')}
         suffix={uniteSuffix}
       />
 
-      {!isReadonly && (
-        <PageHeader.Actions>
-          <IndicateurToolbar
-            chartInfo={chartInfo}
-            isPerso={isPerso}
-            hasCollectivitePermission={hasCollectivitePermission}
-          />
-        </PageHeader.Actions>
-      )}
+      {!isReadonly && <PageHeader.Actions>{toolbar}</PageHeader.Actions>}
 
       {hasCollectivitePermission('indicateurs.indicateurs.read') && (
         <PageHeader.Subtitle>
@@ -70,14 +56,7 @@ const IndicateurHeader = ({
         </PageHeader.Subtitle>
       )}
 
-      <PageHeader.Metadata visibleWhen={showInfos}>
-        <IndicateurInfos
-          indicateur={indicateur}
-          isPerso={isPerso}
-          isComposeSansAgregation={isComposeSansAgregation}
-          isReadonly={isReadonly}
-        />
-      </PageHeader.Metadata>
+      <PageHeader.Metadata visibleWhen={hasInfos}>{infos}</PageHeader.Metadata>
     </PageHeader>
   );
 };

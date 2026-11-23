@@ -2,28 +2,29 @@ import { appLabels } from '@/app/labels/catalog';
 import { ActivityLogModal } from '@/app/ui/shared/activity-log.modal';
 import { PermissionOperation } from '@tet/domain/users';
 import { Button, ButtonMenu, cn, MenuAction, Tooltip } from '@tet/ui';
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { DeleteIndicateurConfirmationModal } from '@/app/indicateurs/indicateurs/delete-indicateur-confirmation.modal';
 import { IndicateurChartPngExport } from '../../chart/indicateur-chart.png-export';
 import { IndicateurChartInfo } from '../../data/use-indicateur-chart';
 import { useIndicateurActions } from '../context/indicateur-actions.context';
 import { useIndicateurData } from '../context/indicateur-data.context';
-import { useIndicateurNouveauSousIndicateur } from '../perso/context/indicateur-nouveau-sous-indicateur.context';
-import { CreateSousIndicateurButton } from '../perso/sous-indicateurs/create-sous-indicateur.button';
-import { IndicateurSousIndicateursChartPngExport } from '../perso/sous-indicateurs/indicateur-sous-indicateurs-chart.png-export';
 
 type ModalType = 'activityLog' | 'deleting' | 'none';
 
 type Props = {
   chartInfo?: IndicateurChartInfo;
   hasCollectivitePermission: (permission: PermissionOperation) => boolean;
-  isPerso: boolean;
+  canDelete: boolean;
+  startAction?: ReactNode;
+  renderPngExport?: (params: { onDone: () => void }) => ReactNode;
 };
 
 const IndicateurToolbar = ({
   chartInfo,
   hasCollectivitePermission,
-  isPerso,
+  canDelete,
+  startAction,
+  renderPngExport,
 }: Props) => {
   const [currentModal, setCurrentModal] = useState<ModalType>('none');
   const [isExportingPng, setIsExportingPng] = useState(false);
@@ -32,10 +33,8 @@ const IndicateurToolbar = ({
   const { updateIndicateur, exportIndicateur, deleteIndicateur } =
     useIndicateurActions();
 
-  const { indicateur, canMutateIndicateur } = useIndicateurData();
-  const { onCreated } = useIndicateurNouveauSousIndicateur();
+  const { indicateur } = useIndicateurData();
   const { estFavori } = indicateur;
-  const hasSousIndicateurs = isPerso && indicateur.enfants.length > 0;
 
   const actions: MenuAction[] = [
     {
@@ -44,7 +43,7 @@ const IndicateurToolbar = ({
       onClick: exportIndicateur,
     },
     {
-      isVisible: hasSousIndicateurs || !!chartInfo?.hasValeur,
+      isVisible: renderPngExport !== undefined || !!chartInfo?.hasValeur,
       icon: 'image-line',
       label: appLabels.telechargerLeGraphiquePng,
       onClick: () => setIsExportingPng(true),
@@ -57,7 +56,8 @@ const IndicateurToolbar = ({
     },
     {
       isVisible:
-        isPerso && hasCollectivitePermission('indicateurs.indicateurs.delete'),
+        canDelete &&
+        hasCollectivitePermission('indicateurs.indicateurs.delete'),
       icon: 'delete-bin-6-line',
       label: appLabels.supprimerIndicateur,
       variant: 'destructive',
@@ -68,15 +68,7 @@ const IndicateurToolbar = ({
   return (
     <>
       <div className="flex items-center gap-2">
-        {isPerso && canMutateIndicateur && (
-          <CreateSousIndicateurButton
-            variant="primary"
-            size="xs"
-            parentId={indicateur.id}
-            childCount={indicateur.enfants.length}
-            onCreated={onCreated}
-          />
-        )}
+        {startAction}
         <Tooltip
           label={
             estFavori
@@ -121,18 +113,10 @@ const IndicateurToolbar = ({
         />
       )}
 
-      {isExportingPng && hasSousIndicateurs && (
-        <IndicateurSousIndicateursChartPngExport
-          indicateurId={indicateur.id}
-          isCumul={indicateur.totalEstCumulDesSousIndicateurs}
-          unite={indicateur.unite}
-          periodicite={indicateur.periodicite}
-          title={indicateur.titre}
-          onDone={() => setIsExportingPng(false)}
-        />
-      )}
+      {isExportingPng &&
+        renderPngExport?.({ onDone: () => setIsExportingPng(false) })}
 
-      {isExportingPng && !hasSousIndicateurs && chartInfo && (
+      {isExportingPng && renderPngExport === undefined && chartInfo && (
         <IndicateurChartPngExport
           chartInfo={chartInfo}
           title={indicateur.titre}

@@ -48,6 +48,44 @@ const eslintConfig = defineConfig([
       'react/jsx-no-literals': 'off',
     },
   },
+  {
+    files: [
+      'src/app/pages/collectivite/Indicateurs/detail/predefini/**/*.{ts,tsx}',
+    ],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['**/perso/**'],
+              message:
+                'Predefini components must not depend on the perso folder: share the code in a neutral folder of the detail page.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: [
+      'src/app/pages/collectivite/Indicateurs/detail/perso/**/*.{ts,tsx}',
+    ],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['**/predefini/**'],
+              message:
+                'Perso components must not depend on the predefini folder: share the code in a neutral folder of the detail page.',
+            },
+          ],
+        },
+      ],
+    },
+  },
 ]);
 
 export default eslintConfig;
