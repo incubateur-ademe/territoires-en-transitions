@@ -5,7 +5,7 @@ import { isIndicateurPerso } from '@tet/domain/indicateurs';
 import IndicateurHeader from './header/indicateur-header.view';
 import { useIndicateurChart } from './context/indicateur-chart.context';
 import { useIndicateurData } from './context/indicateur-data.context';
-import { IndicateurSousIndicateurs } from './content/sous-indicateurs/indicateur-sous-indicateurs.view';
+import { IndicateurSousIndicateurs } from './predefini/sous-indicateurs/indicateur-sous-indicateurs.view';
 import { IndicateurTabs } from './indicateur-tabs.view';
 
 export const IndicateurLayout = () => {

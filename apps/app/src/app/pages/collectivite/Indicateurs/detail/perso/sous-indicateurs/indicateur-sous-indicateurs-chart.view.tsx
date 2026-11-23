@@ -8,7 +8,7 @@ import PictoIndicateurVide from '@/app/ui/pictogrammes/PictoIndicateurVide';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { EmptyCard } from '@tet/ui';
 import { type JSX, useId, useMemo, useRef } from 'react';
-import { useIndicateurSousIndicateursChart } from '../../context/indicateur-sous-indicateurs-chart.context';
+import { useIndicateurSousIndicateursChart } from '../context/indicateur-sous-indicateurs-chart.context';
 import {
   type ChartPresentation,
   toSousIndicateursChartOption,

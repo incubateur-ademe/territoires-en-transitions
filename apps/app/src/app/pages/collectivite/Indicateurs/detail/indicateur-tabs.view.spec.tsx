@@ -19,21 +19,24 @@ vi.mock('./content/donnees/indicateur-donnees.view', () => ({
 vi.mock('./content/fiches-liees/indicateur-fiches-liees.view', () => ({
   IndicateurFichesLiees: () => null,
 }));
-vi.mock('./content/informations/indicateur-informations.view', () => ({
+vi.mock('./predefini/informations/indicateur-informations.view', () => ({
   IndicateurInformations: () => null,
 }));
-vi.mock('./content/mesures-liees/indicateur-mesures-liees.view', () => ({
+vi.mock('./predefini/mesures-liees/indicateur-mesures-liees.view', () => ({
   IndicateurMesuresLiees: () => null,
 }));
-vi.mock('./content/sous-indicateurs/indicateur-sous-indicateurs.view', () => ({
-  IndicateurSousIndicateurs: (props: {
-    enfantsIds: number[];
-    isReadonly: boolean;
-  }) => {
-    renderSousIndicateursListe(props);
-    return null;
-  },
-}));
+vi.mock(
+  './predefini/sous-indicateurs/indicateur-sous-indicateurs.view',
+  () => ({
+    IndicateurSousIndicateurs: (props: {
+      enfantsIds: number[];
+      isReadonly: boolean;
+    }) => {
+      renderSousIndicateursListe(props);
+      return null;
+    },
+  })
+);
 
 const toIndicateur = (collectiviteId: number | null): IndicateurDetaille =>
   ({

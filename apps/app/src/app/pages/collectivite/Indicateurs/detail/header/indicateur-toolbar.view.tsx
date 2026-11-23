@@ -8,9 +8,9 @@ import { IndicateurChartPngExport } from '../../chart/indicateur-chart.png-expor
 import { IndicateurChartInfo } from '../../data/use-indicateur-chart';
 import { useIndicateurActions } from '../context/indicateur-actions.context';
 import { useIndicateurData } from '../context/indicateur-data.context';
-import { useIndicateurNouveauSousIndicateur } from '../context/indicateur-nouveau-sous-indicateur.context';
-import { IndicateurSousIndicateursChartPngExport } from '../content/donnees/indicateur-sous-indicateurs-chart.png-export';
-import { CreateSousIndicateurButton } from '../content/sous-indicateurs/create-sous-indicateur.button';
+import { useIndicateurNouveauSousIndicateur } from '../perso/context/indicateur-nouveau-sous-indicateur.context';
+import { CreateSousIndicateurButton } from '../perso/sous-indicateurs/create-sous-indicateur.button';
+import { IndicateurSousIndicateursChartPngExport } from '../perso/sous-indicateurs/indicateur-sous-indicateurs-chart.png-export';
 
 type ModalType = 'activityLog' | 'deleting' | 'none';
 

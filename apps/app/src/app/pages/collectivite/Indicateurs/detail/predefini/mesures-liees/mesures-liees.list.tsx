@@ -1,6 +1,6 @@
 import ActionLinkedCard from '@/app/referentiels/actions/action.linked-card';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { useIndicateurMesuresLiees } from '../../context/indicateur-mesures-liees.context';
+import { useIndicateurMesuresLiees } from '../context/indicateur-mesures-liees.context';
 
 type MesuresLieesListeProps = {
   isReadonly: boolean;

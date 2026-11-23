@@ -14,7 +14,7 @@ import {
   type PropsWithChildren,
   useContext,
 } from 'react';
-import type { IndicateurPeriodeCommentaires } from '../../table/use-indicateur-periode-commentaires';
+import type { IndicateurPeriodeCommentaires } from '../../../table/use-indicateur-periode-commentaires';
 
 export type IndicateurSousIndicateursTableValue = {
   useSousIndicateursTable: (indicateurId: number) => SousIndicateursTableState;

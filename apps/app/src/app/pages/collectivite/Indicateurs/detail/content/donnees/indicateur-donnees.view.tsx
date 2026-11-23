@@ -2,23 +2,23 @@ import { isIndicateurPerso } from '@tet/domain/indicateurs';
 import { Divider } from '@tet/ui';
 import { useState } from 'react';
 import { useIndicateurActions } from '../../context/indicateur-actions.context';
-import { useIndicateurNouveauSousIndicateur } from '../../context/indicateur-nouveau-sous-indicateur.context';
+import { useIndicateurNouveauSousIndicateur } from '../../perso/context/indicateur-nouveau-sous-indicateur.context';
 import { useIndicateurChart } from '../../context/indicateur-chart.context';
 import { useIndicateurData } from '../../context/indicateur-data.context';
 import {
   INDICATEUR_PERSONNALISATION_IDENTIFIANT,
   IndicateurPersonnalisationQuestions,
-} from './indicateur-personnalisation.questions';
+} from '../../predefini/donnees/indicateur-personnalisation.questions';
 import IndicateurDetailChart from '../../../Indicateur/detail/IndicateurDetailChart';
 import { IndicateurValuesTabs } from '../../../Indicateur/detail/IndicateurValuesTabs';
-import { CreateSousIndicateurButton } from '../sous-indicateurs/create-sous-indicateur.button';
-import { IndicateurSousIndicateursTable } from '../sous-indicateurs/indicateur-sous-indicateurs-table.view';
+import { CreateSousIndicateurButton } from '../../perso/sous-indicateurs/create-sous-indicateur.button';
+import { IndicateurSousIndicateursTable } from '../../perso/sous-indicateurs/indicateur-sous-indicateurs-table.view';
 import { IndicateurCommentaireInput } from './indicateur-commentaire.input';
-import { IndicateurSousIndicateursChart } from './indicateur-sous-indicateurs-chart.view';
-import { IndicateurSourcesSelect } from './indicateur-sources.select';
-import { IndicateurUniteInput } from './indicateur-unite.input';
-import { ThematiquesIndicateurInput } from './thematiques-indicateur.input';
-import { TypeSegmentationSelect } from './type-segmentation.select';
+import { IndicateurSousIndicateursChart } from '../../perso/sous-indicateurs/indicateur-sous-indicateurs-chart.view';
+import { IndicateurSourcesSelect } from '../../predefini/donnees/indicateur-sources.select';
+import { IndicateurUniteInput } from '../../perso/donnees/indicateur-unite.input';
+import { ThematiquesIndicateurInput } from '../../perso/donnees/thematiques-indicateur.input';
+import { TypeSegmentationSelect } from '../../predefini/donnees/type-segmentation.select';
 
 export const IndicateurDonnees = () => {
   const { indicateur, canMutateIndicateur, canMutateValeur } =

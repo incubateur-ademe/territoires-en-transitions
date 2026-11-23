@@ -7,9 +7,9 @@ import { Tab, Tabs } from '@tet/ui';
 import { useIndicateurData } from './context/indicateur-data.context';
 import { IndicateurDonnees } from './content/donnees/indicateur-donnees.view';
 import { IndicateurFichesLiees } from './content/fiches-liees/indicateur-fiches-liees.view';
-import { IndicateurInformations } from './content/informations/indicateur-informations.view';
-import { IndicateurMesuresLiees } from './content/mesures-liees/indicateur-mesures-liees.view';
-import { IndicateurSousIndicateurs } from './content/sous-indicateurs/indicateur-sous-indicateurs.view';
+import { IndicateurInformations } from './predefini/informations/indicateur-informations.view';
+import { IndicateurMesuresLiees } from './predefini/mesures-liees/indicateur-mesures-liees.view';
+import { IndicateurSousIndicateurs } from './predefini/sous-indicateurs/indicateur-sous-indicateurs.view';
 
 export const IndicateurTabs = () => {
   const { indicateur, canMutateIndicateur } = useIndicateurData();

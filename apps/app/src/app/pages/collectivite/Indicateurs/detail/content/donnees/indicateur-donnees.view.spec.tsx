@@ -11,8 +11,8 @@ import {
 } from '../../context/indicateur-actions.context';
 import { IndicateurChartProvider } from '../../context/indicateur-chart.context';
 import { IndicateurDataProvider } from '../../context/indicateur-data.context';
-import { IndicateurNouveauSousIndicateurProvider } from '../../context/indicateur-nouveau-sous-indicateur.context';
-import { IndicateurSousIndicateursTableProvider } from '../../context/indicateur-sous-indicateurs-table.context';
+import { IndicateurNouveauSousIndicateurProvider } from '../../perso/context/indicateur-nouveau-sous-indicateur.context';
+import { IndicateurSousIndicateursTableProvider } from '../../perso/context/indicateur-sous-indicateurs-table.context';
 import { IndicateurDonnees } from './indicateur-donnees.view';
 
 vi.mock('../../../Indicateur/detail/IndicateurDetailChart', () => ({
@@ -27,20 +27,23 @@ vi.mock('../../../Indicateur/detail/IndicateurValuesTabs', () => ({
     </div>
   ),
 }));
-vi.mock('./indicateur-sous-indicateurs-chart.view', () => ({
-  IndicateurSousIndicateursChart: () => (
-    <div role="img" aria-label="graphique des sous-indicateurs" />
-  ),
-}));
+vi.mock(
+  '../../perso/sous-indicateurs/indicateur-sous-indicateurs-chart.view',
+  () => ({
+    IndicateurSousIndicateursChart: () => (
+      <div role="img" aria-label="graphique des sous-indicateurs" />
+    ),
+  })
+);
 vi.mock('./indicateur-commentaire.input', () => ({
   IndicateurCommentaireInput: () => null,
 }));
-vi.mock('./indicateur-unite.input', () => ({
+vi.mock('../../perso/donnees/indicateur-unite.input', () => ({
   IndicateurUniteInput: ({ parentTitre }: { parentTitre?: string }) => (
     <div role="group" aria-label="unité" data-parent={parentTitre} />
   ),
 }));
-vi.mock('./thematiques-indicateur.input', () => ({
+vi.mock('../../perso/donnees/thematiques-indicateur.input', () => ({
   ThematiquesIndicateurInput: () => null,
 }));
 

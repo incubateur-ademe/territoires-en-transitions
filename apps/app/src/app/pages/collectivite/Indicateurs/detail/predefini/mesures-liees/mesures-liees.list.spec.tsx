@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import {
   IndicateurMesuresLieesProvider,
   type MesuresLieesResult,
-} from '../../context/indicateur-mesures-liees.context';
+} from '../context/indicateur-mesures-liees.context';
 import { MesuresLieesListe } from './mesures-liees.list';
 
 vi.mock('@/app/referentiels/actions/action.linked-card', () => ({
