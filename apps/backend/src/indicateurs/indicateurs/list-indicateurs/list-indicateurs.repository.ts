@@ -608,6 +608,28 @@ export class ListIndicateursRepository {
       );
     }
 
+    if (filters.sansAncetreConfidentiel) {
+      whereConditions.push(
+        sql`NOT EXISTS (
+          WITH RECURSIVE ancestors AS (
+            SELECT groupe.parent AS id
+            FROM ${indicateurGroupeTable} AS groupe
+            WHERE groupe.enfant = ${indicateurDefinitionTable.id}
+            UNION ALL
+            SELECT groupe.parent
+            FROM ${indicateurGroupeTable} AS groupe
+            INNER JOIN ancestors ON groupe.enfant = ancestors.id
+          )
+          SELECT 1
+          FROM ancestors
+          INNER JOIN ${indicateurCollectiviteTable} AS ancestor_collectivite
+            ON ancestor_collectivite.indicateur_id = ancestors.id
+            AND ancestor_collectivite.collectivite_id = ${collectiviteId}
+          WHERE ancestor_collectivite.confidentiel
+        )`
+      );
+    }
+
     if (filters.isApplicable !== undefined) {
       // Même piège que pour `estConfidentiel` : `NULL = true` vaut NULL, les
       // indicateurs sans entrée dans `indicateur_collectivite` seraient exclus

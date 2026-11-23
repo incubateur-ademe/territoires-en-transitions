@@ -15,6 +15,7 @@ export const listIndicateursInputFiltersSchema = z.object({
   participationScore: z.boolean().optional(),
   estRempli: z.boolean().optional(),
   estConfidentiel: z.boolean().optional(),
+  sansAncetreConfidentiel: z.boolean().optional(),
   estFavori: z.boolean().optional(),
   isApplicable: z.boolean().optional(),
   estPerso: z.boolean().optional(),
