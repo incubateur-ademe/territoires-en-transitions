@@ -165,23 +165,6 @@
       }
     }
   },
-  "release": {
-    "groups": {
-      "platform": {
-        "projects": ["@tet/source", "app", "site", "backend"],
-        "projectsRelationship": "fixed"
-      }
-    },
-    "releaseTag": {
-      "pattern": "v{version}"
-    },
-    "changelog": {
-      "workspaceChangelog": {
-        "file": false,
-        "createRelease": "github"
-      }
-    }
-  },
   "packageManager": "pnpm",
   "analytics": false,
   "migrate": {

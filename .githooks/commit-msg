@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+subject=$(head -n 1 "$1")
+
+# Commits transitoires : réécrits ou absorbés avant d'arriver sur main.
+case "$subject" in
+	fixup!* | squash!* | amend!* | Merge\ *) exit 0 ;;
+esac
+
+printf '%s\n' "$subject" | "$(git rev-parse --show-toplevel)/.github/scripts/check-commit-messages.sh"

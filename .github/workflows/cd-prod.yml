@@ -38,6 +38,11 @@ jobs:
       contents: read
       packages: read
       attestations: read
+    # Un nom par application : chaque job de la matrice ne renseigne que le sien.
+    outputs:
+      sha-app: ${{ steps.image.outputs.sha-app }}
+      sha-backend: ${{ steps.image.outputs.sha-backend }}
+      sha-site: ${{ steps.image.outputs.sha-site }}
 
     strategy:
       fail-fast: false
@@ -121,6 +126,7 @@ jobs:
           echo "Promotion de $image@$digest (commit $sha)."
           # Coolify lit un tag « sha256-<hex> » comme un digest (image@sha256:<hex>).
           echo "coolify-tag=sha256-${digest#sha256:}" >> "$GITHUB_OUTPUT"
+          echo "sha-$APP=$sha" >> "$GITHUB_OUTPUT"
 
       - name: Déploie ${{ matrix.app }} en prod
         env:
@@ -129,3 +135,31 @@ jobs:
           APP_ID: prod/${{ matrix.app }}
           IMAGE_TAG: ${{ steps.image.outputs.coolify-tag }}
         run: infra/scripts/coolify-deploy.sh
+
+  # Une release GitHub par mise en production, une fois les trois applications
+  # promues. Job à part : il peut écrire dans le dépôt (tag et release) mais
+  # n'a pas le token Coolify. Le ruleset qui protège les tags v* doit laisser
+  # passer GitHub Actions.
+  release:
+    name: Publie la release
+    needs: promote
+    concurrency:
+      group: cd-prod-release
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Tague le commit promu et publie le changelog
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA_APP: ${{ needs.promote.outputs.sha-app }}
+          SHA_BACKEND: ${{ needs.promote.outputs.sha-backend }}
+          SHA_SITE: ${{ needs.promote.outputs.sha-site }}
+        run: .github/scripts/publish-release.sh "$SHA_APP" "$SHA_BACKEND" "$SHA_SITE"
