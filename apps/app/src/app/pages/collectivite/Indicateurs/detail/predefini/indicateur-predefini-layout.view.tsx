@@ -1,14 +1,13 @@
 'use client';
 
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { isIndicateurPerso } from '@tet/domain/indicateurs';
-import IndicateurHeader from './header/indicateur-header.view';
-import { useIndicateurChart } from './context/indicateur-chart.context';
-import { useIndicateurData } from './context/indicateur-data.context';
-import { IndicateurSousIndicateurs } from './predefini/sous-indicateurs/indicateur-sous-indicateurs.view';
-import { IndicateurTabs } from './indicateur-tabs.view';
+import { useIndicateurChart } from '../context/indicateur-chart.context';
+import { useIndicateurData } from '../context/indicateur-data.context';
+import IndicateurHeader from '../header/indicateur-header.view';
+import { IndicateurPredefiniTabs } from './indicateur-predefini-tabs.view';
+import { IndicateurSousIndicateurs } from './sous-indicateurs/indicateur-sous-indicateurs.view';
 
-export const IndicateurLayout = () => {
+export const IndicateurPredefiniLayout = () => {
   const { indicateur, canMutateIndicateur } = useIndicateurData();
   const { chartInfo } = useIndicateurChart();
   const { collectiviteId, hasCollectivitePermission } =
@@ -25,7 +24,7 @@ export const IndicateurLayout = () => {
         indicateur={indicateur}
         chartInfo={isComposeSansAgregation ? undefined : chartInfo}
         isReadonly={!canMutateIndicateur}
-        isPerso={isIndicateurPerso(indicateur)}
+        isPerso={false}
         isComposeSansAgregation={isComposeSansAgregation}
       />
 
@@ -36,7 +35,7 @@ export const IndicateurLayout = () => {
             isReadonly={!canMutateIndicateur}
           />
         ) : (
-          <IndicateurTabs />
+          <IndicateurPredefiniTabs />
         )}
       </div>
     </>

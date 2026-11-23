@@ -11,9 +11,9 @@ import {
 } from '../../context/indicateur-actions.context';
 import { IndicateurChartProvider } from '../../context/indicateur-chart.context';
 import { IndicateurDataProvider } from '../../context/indicateur-data.context';
-import { IndicateurNouveauSousIndicateurProvider } from '../../perso/context/indicateur-nouveau-sous-indicateur.context';
-import { IndicateurSousIndicateursTableProvider } from '../../perso/context/indicateur-sous-indicateurs-table.context';
-import { IndicateurDonnees } from './indicateur-donnees.view';
+import { IndicateurNouveauSousIndicateurProvider } from '../context/indicateur-nouveau-sous-indicateur.context';
+import { IndicateurSousIndicateursTableProvider } from '../context/indicateur-sous-indicateurs-table.context';
+import { IndicateurPersoDonnees } from './indicateur-perso-donnees.view';
 
 vi.mock('../../../Indicateur/detail/IndicateurDetailChart', () => ({
   default: ({ isReadonly }: { isReadonly: boolean }) => (
@@ -27,23 +27,20 @@ vi.mock('../../../Indicateur/detail/IndicateurValuesTabs', () => ({
     </div>
   ),
 }));
-vi.mock(
-  '../../perso/sous-indicateurs/indicateur-sous-indicateurs-chart.view',
-  () => ({
-    IndicateurSousIndicateursChart: () => (
-      <div role="img" aria-label="graphique des sous-indicateurs" />
-    ),
-  })
-);
-vi.mock('./indicateur-commentaire.input', () => ({
+vi.mock('../sous-indicateurs/indicateur-sous-indicateurs-chart.view', () => ({
+  IndicateurSousIndicateursChart: () => (
+    <div role="img" aria-label="graphique des sous-indicateurs" />
+  ),
+}));
+vi.mock('../../content/donnees/indicateur-commentaire.input', () => ({
   IndicateurCommentaireInput: () => null,
 }));
-vi.mock('../../perso/donnees/indicateur-unite.input', () => ({
+vi.mock('./indicateur-unite.input', () => ({
   IndicateurUniteInput: ({ parentTitre }: { parentTitre?: string }) => (
     <div role="group" aria-label="unité" data-parent={parentTitre} />
   ),
 }));
-vi.mock('../../perso/donnees/thematiques-indicateur.input', () => ({
+vi.mock('./thematiques-indicateur.input', () => ({
   ThematiquesIndicateurInput: () => null,
 }));
 
@@ -147,7 +144,7 @@ const renderDonnees = (indicateur: IndicateurDetaille) => {
                 onNameEditingEnd: vi.fn(),
               }}
             >
-              <IndicateurDonnees />
+              <IndicateurPersoDonnees />
             </IndicateurNouveauSousIndicateurProvider>
           </IndicateurSousIndicateursTableProvider>
         </IndicateurActionsProvider>
@@ -164,7 +161,7 @@ const valeursDuParent = { name: 'valeurs' };
 const graphiqueDuParent = { name: 'graphique' };
 const graphiqueDesSousIndicateurs = { name: 'graphique des sous-indicateurs' };
 
-describe('IndicateurDonnees : tableau des valeurs', () => {
+describe('IndicateurPersoDonnees : tableau des valeurs', () => {
   it('affiche le graphique et le tableau des sous-indicateurs à la place de ceux du parent pour un perso qui a des enfants', () => {
     const { useSousIndicateursTable } = renderDonnees(
       toIndicateur({
@@ -220,21 +217,6 @@ describe('IndicateurDonnees : tableau des valeurs', () => {
     ).toBeDefined();
   });
 
-  it('ne propose pas de créer un sous-indicateur pour un indicateur prédéfini', () => {
-    renderDonnees(
-      toIndicateur({
-        collectiviteId: null,
-        enfants: [{ id: 11, titre: 'Ménagers' }],
-      })
-    );
-
-    expect(
-      screen.queryByRole('button', {
-        name: appLabels.indicateurCreerSousIndicateur,
-      })
-    ).toBeNull();
-  });
-
   it("transmet à l'unité le titre du parent le plus proche d'un sous-indicateur", () => {
     renderDonnees(
       toIndicateur({
@@ -263,21 +245,6 @@ describe('IndicateurDonnees : tableau des valeurs', () => {
   it('garde le graphique et le tableau de valeurs du parent pour un perso sans enfant', () => {
     const { useSousIndicateursTable } = renderDonnees(
       toIndicateur({ collectiviteId: 1, enfants: [] })
-    );
-
-    expect(screen.getByRole('group', valeursDuParent)).toBeDefined();
-    expect(screen.queryByRole('table', sousIndicateursTable)).toBeNull();
-    expect(useSousIndicateursTable).not.toHaveBeenCalled();
-    expect(screen.getByRole('img', graphiqueDuParent)).toBeDefined();
-    expect(screen.queryByRole('img', graphiqueDesSousIndicateurs)).toBeNull();
-  });
-
-  it('garde le graphique et le tableau de valeurs du parent pour un indicateur prédéfini qui a des enfants', () => {
-    const { useSousIndicateursTable } = renderDonnees(
-      toIndicateur({
-        collectiviteId: null,
-        enfants: [{ id: 11, titre: 'Ménagers' }],
-      })
     );
 
     expect(screen.getByRole('group', valeursDuParent)).toBeDefined();
