@@ -180,7 +180,6 @@ locals {
   coolify_environment_names = {
     prod    = "production" # serveur dédié tet-prod-apps, Postgres et Redis managés
     preprod = "preprod"    # gate iso-prod, serveur tet-nonprod-apps, Postgres et Redis managés
-    staging = "staging"    # intégration continue de main, serveur tet-nonprod-apps, tout conteneurisé
     preview = "preview"    # previews éphémères par pull request, serveur tet-preview-apps
   }
 }

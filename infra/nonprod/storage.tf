@@ -14,7 +14,6 @@
 #     | infra/scripts/coolify-env-secret-set.sh preprod supabase-storage-s3-secret-access-key
 
 locals {
-  # staging : à ajouter avec son entrée dans le manifeste Coolify.
   storage_environments = toset(["preprod"])
 }
 

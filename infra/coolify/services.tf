@@ -27,7 +27,6 @@ locals {
   # var.application_environments jusqu'à la bascule DNS (cf. applications.tf).
   service_environments_catalog = {
     preprod = { server = "nonprod", supabase_api_host = "supabase-api.preprod.territoiresentransitions.fr" }
-    staging = { server = "nonprod", supabase_api_host = "supabase-api.staging.territoiresentransitions.fr" }
     prod    = { server = "prod", supabase_api_host = "supabase-api.territoiresentransitions.fr" }
   }
 
@@ -94,8 +93,7 @@ resource "terraform_data" "supabase_api_templates" {
 # sondes HTTPS et les logs des conteneurs (infra/observability/alloy). Un seul
 # Alloy par serveur : il voit tous les conteneurs de l'hôte. Il est rattaché à
 # un environnement Coolify (celui de ses sondes) parce qu'un service doit
-# l'être. Staging, qui partage le serveur nonprod, n'aura à ajouter que ses
-# sondes.
+# l'être.
 locals {
   alloy_dir = "${path.module}/../observability/alloy"
 

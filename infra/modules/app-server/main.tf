@@ -178,8 +178,7 @@ resource "scaleway_instance_server" "server" {
   security_group_id = scaleway_instance_security_group.server.id
   ip_id             = scaleway_instance_ip.server.id
 
-  # Le disque racine porte des données (Postgres de staging en nonprod, volumes
-  # Docker) : protégé contre la suppression via l'API, et conservé si le serveur
+  # Le disque racine porte des données (volumes Docker) : protégé contre la suppression via l'API, et conservé si le serveur
   # est détruit. Pour détruire volontairement, passer deletion_protection à
   # false et appliquer d'abord.
   protected = var.deletion_protection

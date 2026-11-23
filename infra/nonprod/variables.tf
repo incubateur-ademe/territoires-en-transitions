@@ -35,7 +35,7 @@ variable "server_private_ipv4_address" {
 # --- Serveur applicatif ---
 
 variable "server_instance_type" {
-  description = "Type d'instance du serveur nonprod. Doit absorber deux stacks applicatives (preprod + staging) plus le Postgres et le Redis conteneurisés de staging."
+  description = "Type d'instance du serveur nonprod. Porte la stack applicative de preprod (et aldo)."
   type        = string
   default     = "PRO2-XS"
 }

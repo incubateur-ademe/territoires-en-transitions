@@ -35,8 +35,7 @@ variable "network_plan" {
     La prod n'est pas dans ce VPC : elle a son propre projet et son propre VPC
     (infra/prod), sans lien réseau avec celui-ci.
 
-    staging n'a pas de Private Network propre, ses conteneurs vivent sur le
-    serveur nonprod. 10.0.3.0/24 est volontairement laissé libre : c'était
+    10.0.3.0/24 est volontairement laissé libre : c'était
     l'ancien PN prod, le garder libre évite toute confusion avec le VPC prod
     qui l'utilise.
   EOT

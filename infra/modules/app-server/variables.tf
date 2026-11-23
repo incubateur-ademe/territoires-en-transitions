@@ -1,5 +1,5 @@
 variable "tier" {
-  description = "Tier d'hébergement du serveur. Distinct de « environnement » : le tier nonprod porte à la fois preprod et staging."
+  description = "Tier d'hébergement du serveur. Distinct de « environnement » : le tier preview porte un environnement par pull request."
   type        = string
   validation {
     condition     = contains(["prod", "nonprod", "preview", "data"], var.tier)
