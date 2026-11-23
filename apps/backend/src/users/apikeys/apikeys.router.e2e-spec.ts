@@ -63,6 +63,28 @@ describe('Apikeys router test', () => {
     );
   });
 
+  test.each([
+    {
+      name: 'a restricted API key',
+      claims: { client_id: 'cid_test', permissions: ['indicateurs.valeurs.read'] },
+    },
+    { name: 'an unrestricted API key', claims: { client_id: 'cid_test' } },
+    { name: 'a scoped identity', claims: { permissions: [] } },
+  ])("Can't generate an API key with $name", async ({ claims }) => {
+    const caller = router.createCaller({
+      user: {
+        ...testUser,
+        jwtPayload: { ...testUser.jwtPayload, ...claims },
+      },
+    });
+
+    await expect(
+      caller.users.apikeys.create({ userId: testUser.id })
+    ).rejects.toThrowError(
+      /is not authorized to generate an API key for user/i
+    );
+  });
+
   test(`Can't delete an api key for another user`, async () => {
     const testUserCaller = router.createCaller({ user: testUser });
     const youloudoudouCaller = router.createCaller({ user: testUser2 });
