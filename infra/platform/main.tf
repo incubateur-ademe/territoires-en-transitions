@@ -144,25 +144,6 @@ module "vpn" {
 
 # --- Stockage des backups ---
 #
-# Ancien bucket des backups Coolify (projet tet-coolify-backups), inutilisé depuis la
-# migration vers le Coolify de l'incubateur : aucune base n'est gérée par Coolify.
-# Retiré du state sans destruction : l'Object Lock COMPLIANCE empêche de le vider avant
-# l'échéance des verrous. L'admin de l'organisation supprime le projet et son
-# application IAM. À retirer après le prochain apply.
-removed {
-  from = scaleway_object_bucket.coolify_backups
-  lifecycle {
-    destroy = false
-  }
-}
-
-removed {
-  from = scaleway_object_bucket_lock_configuration.coolify_backups
-  lifecycle {
-    destroy = false
-  }
-}
-
 # Bucket des dumps quotidiens de la BDD de prod (.github/workflows/backup-database.yml),
 # qui alimentent aussi les restaurations de staging et de preprod.
 #
