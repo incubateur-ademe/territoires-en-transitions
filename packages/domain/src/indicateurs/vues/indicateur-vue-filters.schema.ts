@@ -3,7 +3,8 @@ import { listIndicateursInputFiltersSchema } from '../indicateur/list-indicateur
 
 // Reject unsupported persisted criteria instead of silently broadening a vue.
 export const indicateurVueFiltersSchema = z.strictObject(
-  listIndicateursInputFiltersSchema.shape
+  listIndicateursInputFiltersSchema.omit({ sansAncetreConfidentiel: true })
+    .shape
 );
 
 export type IndicateurVueFilters = z.infer<typeof indicateurVueFiltersSchema>;
