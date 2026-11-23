@@ -1,47 +1,30 @@
 'use client';
 
-import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
-import { getIndicateurGroup } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
-import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
-import { RouterOutput } from '@tet/api';
-import { IndicateurPeriodes } from '@tet/domain/indicateurs';
-import { Alert, Button, Icon } from '@tet/ui';
-import Link from 'next/link';
-import { useState } from 'react';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import {
+  getHorizonParDefaut,
+  INDICATEURS_OBJECTIFS_HORIZONS,
+} from '@tet/domain/plans';
+import {
+  Alert,
+  Button,
+  ButtonGroup,
+  Icon,
+  SearchCombobox,
+  type SearchComboboxSelection,
+} from '@tet/ui';
+import { parseAsNumberLiteral, useQueryState } from 'nuqs';
+import { useMemo, useState } from 'react';
 import { useGetIndicateursObjectifs } from '../data/use-get-indicateurs-objectifs';
 import { SuiviPlanBloc } from '../suivi-plan.bloc';
+import { IndicateurObjectifCard } from './indicateur-objectif.card';
+import {
+  buildSearchIndicateursSuggestions,
+  filterIndicateursObjectifs,
+} from './search-indicateurs-objectifs';
 
-type IndicateurObjectif =
-  RouterOutput['plans']['suivi']['getIndicateursObjectifs'][number];
-
-const NB_INDICATEURS_VISIBLES = 10;
-
-const formatValeur = (
-  valeur: number,
-  { precision, unite }: Pick<IndicateurObjectif, 'precision' | 'unite'>
-) => `${toLocaleFixed(valeur, precision)} ${unite}`.trim();
-
-const Valeur = ({
-  valeur,
-  periode,
-  indicateur,
-}: {
-  valeur: number;
-  periode: string;
-  indicateur: IndicateurObjectif;
-}) => (
-  <span className="flex flex-col items-end">
-    <span className="font-bold">{formatValeur(valeur, indicateur)}</span>
-    <span className="text-xs text-grey-8">{periode}</span>
-  </span>
-);
-
-const AucuneValeur = () => (
-  <span className="text-grey-6">
-    {appLabels.indicateursObjectifsSansValeur}
-  </span>
-);
+const NB_INDICATEURS_VISIBLES = 6;
 
 export const IndicateursObjectifsBloc = ({
   collectiviteId,
@@ -53,20 +36,63 @@ export const IndicateursObjectifsBloc = ({
   const { data: indicateurs, isError } = useGetIndicateursObjectifs({
     planId,
   });
+  const { hasCollectivitePermission } = useCurrentCollectivite();
+  const canMutateValeurs = hasCollectivitePermission(
+    'indicateurs.valeurs.mutate'
+  );
+
+  const [horizon, setHorizon] = useQueryState(
+    'indicateursHorizon',
+    parseAsNumberLiteral(INDICATEURS_OBJECTIFS_HORIZONS).withDefault(
+      getHorizonParDefaut(new Date().getFullYear())
+    )
+  );
+  const [recherche, setRecherche] = useState('');
+  const [selectionIds, setSelectionIds] = useState<number[]>([]);
   const [isAllVisible, setIsAllVisible] = useState(false);
 
-  const indicateursVisibles =
-    indicateurs && !isAllVisible
-      ? indicateurs.slice(0, NB_INDICATEURS_VISIBLES)
-      : indicateurs;
-  const nbIndicateursMasques = indicateurs
-    ? indicateurs.length - NB_INDICATEURS_VISIBLES
-    : 0;
+  const getSuggestions = useMemo(
+    () =>
+      indicateurs ? buildSearchIndicateursSuggestions(indicateurs) : undefined,
+    [indicateurs]
+  );
+  const filtres = indicateurs
+    ? filterIndicateursObjectifs(indicateurs, { recherche, selectionIds })
+    : [];
+  const visibles = isAllVisible
+    ? filtres
+    : filtres.slice(0, NB_INDICATEURS_VISIBLES);
+  const nbMasques = filtres.length - NB_INDICATEURS_VISIBLES;
+
+  const selections: SearchComboboxSelection[] = selectionIds.map((id) => ({
+    id: String(id),
+    label: indicateurs?.find((indicateur) => indicateur.id === id)?.titre ?? '',
+  }));
+  const toggleSelection = (id: number) =>
+    setSelectionIds((ids) =>
+      ids.includes(id) ? ids.filter((i) => i !== id) : [...ids, id]
+    );
 
   return (
     <SuiviPlanBloc
       titre={appLabels.indicateursObjectifsTitre}
       dataTest="plans.suivi.indicateurs-objectifs"
+      actions={
+        <div className="flex items-center gap-2 text-sm text-grey-8">
+          {appLabels.indicateursObjectifsHorizon}
+          <ButtonGroup
+            size="xs"
+            label={appLabels.indicateursObjectifsHorizon}
+            activeButtonId={String(horizon)}
+            buttons={INDICATEURS_OBJECTIFS_HORIZONS.map((annee) => ({
+              id: String(annee),
+              children: String(annee),
+              onClick: () => setHorizon(annee),
+              'data-test': `plans.suivi.indicateurs-objectifs.horizon-${annee}`,
+            }))}
+          />
+        </div>
+      }
     >
       {isError ? (
         <Alert
@@ -82,88 +108,62 @@ export const IndicateursObjectifsBloc = ({
           {appLabels.indicateursObjectifsAucun}
         </p>
       ) : (
-        <div className="flex flex-col">
-          <table
-            className="w-full text-sm text-primary-9"
-            data-test="plans.suivi.indicateurs-objectifs.tableau"
-          >
-            <thead>
-              <tr className="text-xs text-grey-8 border-b border-grey-3">
-                <th className="py-2 font-normal text-left">
-                  {appLabels.indicateursObjectifsIndicateur}
-                </th>
-                <th className="py-2 font-normal text-right">
-                  {appLabels.indicateursObjectifsDerniereValeur}
-                </th>
-                <th className="py-2 font-normal text-right">
-                  {appLabels.indicateursObjectifsObjectif}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {indicateursVisibles?.map((indicateur) => (
-                <tr key={indicateur.id} className="border-b border-grey-3">
-                  <td className="py-2 pr-4">
-                    <Link
-                      href={makeCollectiviteIndicateursUrl({
-                        collectiviteId,
-                        indicateurView: getIndicateurGroup(
-                          indicateur.identifiantReferentiel
-                        ),
-                        indicateurId: indicateur.id,
-                        identifiantReferentiel:
-                          indicateur.identifiantReferentiel,
-                      })}
-                      className="text-primary-9 bg-none hover:underline"
-                      data-test="plans.suivi.indicateurs-objectifs.lien-indicateur"
-                    >
-                      {indicateur.titre}
-                    </Link>
-                  </td>
-                  <td className="py-2 text-right">
-                    {indicateur.derniereValeur ? (
-                      <Valeur
-                        valeur={indicateur.derniereValeur.valeur}
-                        periode={IndicateurPeriodes.format(
-                          IndicateurPeriodes.containing(
-                            indicateur.periodicite,
-                            indicateur.derniereValeur.dateValeur
-                          )
-                        )}
-                        indicateur={indicateur}
-                      />
-                    ) : (
-                      <AucuneValeur />
-                    )}
-                  </td>
-                  <td className="py-2 text-right">
-                    {indicateur.objectif ? (
-                      <Valeur
-                        valeur={indicateur.objectif.valeur}
-                        periode={String(indicateur.objectif.annee)}
-                        indicateur={indicateur}
-                      />
-                    ) : (
-                      <AucuneValeur />
-                    )}
-                  </td>
-                </tr>
+        <div className="flex flex-col gap-4">
+          <div data-html2canvas-ignore>
+            <SearchCombobox
+              label={appLabels.indicateursObjectifsRecherche}
+              placeholder={appLabels.indicateursObjectifsRecherche}
+              value={recherche}
+              onSearch={(value) => {
+                setRecherche(value);
+                setIsAllVisible(false);
+              }}
+              debounce={200}
+              getSuggestions={getSuggestions}
+              isOptionSelected={(option) =>
+                selectionIds.includes(Number(option.id))
+              }
+              onSelectOption={(option) => toggleSelection(Number(option.id))}
+              onDeselectOption={(option) => toggleSelection(Number(option.id))}
+              selections={selections}
+              onRemoveSelection={(id) => toggleSelection(Number(id))}
+              fieldClassName="w-full sm:w-[28rem]"
+              data-test="plans.suivi.indicateurs-objectifs.recherche"
+            />
+          </div>
+
+          {filtres.length === 0 ? (
+            <p className="mb-0 text-sm text-grey-8">
+              {appLabels.indicateursObjectifsAucunRecherche}
+            </p>
+          ) : (
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+              {visibles.map((indicateur) => (
+                <IndicateurObjectifCard
+                  key={indicateur.id}
+                  collectiviteId={collectiviteId}
+                  indicateur={indicateur}
+                  horizon={horizon}
+                  canMutateValeurs={canMutateValeurs}
+                />
               ))}
-            </tbody>
-          </table>
-          {nbIndicateursMasques > 0 && (
+            </div>
+          )}
+
+          {nbMasques > 0 && (
             <Button
               variant="unstyled"
               size="sm"
-              className="flex items-center gap-1 self-start mt-3 text-sm text-primary-9"
+              className="flex items-center gap-1 self-start text-sm text-primary-9"
               icon={isAllVisible ? 'arrow-up-s-line' : 'arrow-down-s-line'}
               iconPosition="right"
               onClick={() => setIsAllVisible((visible) => !visible)}
-              dataTest="plans.suivi.indicateurs-objectifs.voir-tout"
+              dataTest="plans.suivi.indicateurs-objectifs.voir-plus"
+              data-html2canvas-ignore
             >
               {isAllVisible
                 ? appLabels.indicateursObjectifsVoirMoins
-                : appLabels.indicateursObjectifsVoirTout(indicateurs.length)}
+                : appLabels.indicateursObjectifsVoirPlus(nbMasques)}
             </Button>
           )}
         </div>
