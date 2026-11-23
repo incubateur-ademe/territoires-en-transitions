@@ -5,6 +5,7 @@ import {
   ListFichesRequestFilters,
   ListFichesRequestFiltersKeys,
 } from '@tet/domain/plans';
+import { omit } from 'es-toolkit';
 import { checkCompletion } from './completion';
 
 export type FichesRestreintesAccess = 'readable' | 'masked' | 'excluded';
@@ -117,7 +118,9 @@ const toMaskedFicheRestreinte = (
   createdAt: fiche.createdAt,
   modifiedAt: fiche.modifiedAt,
   restreint: fiche.restreint,
-  pilotes: fiche.pilotes,
+  pilotes:
+    fiche.pilotes?.map((pilote) => omit(pilote, ['email', 'telephone'])) ??
+    null,
   services: fiche.services,
   plans: fiche.plans,
   axes: fiche.axes,
