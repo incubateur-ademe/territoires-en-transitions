@@ -33,7 +33,10 @@ export class InvitationService {
   async createInvitation(
     invitation: CreateInvitationInput,
     user: AuthenticatedUser
-  ): Promise<string | null> {
+  ): Promise<{
+    id: string;
+    acceptanceToken: string;
+  } | null> {
     // Vérifie si l'utilisateur invité existe déjà à partir de son adresse mail
     const [invitedUser] = await this.databaseService.db
       .select()
@@ -135,7 +138,10 @@ export class InvitationService {
             collectiviteId: invitation.collectiviteId,
             createdBy: user.id,
           })
-          .returning();
+          .returning({
+            id: invitationTable.id,
+            acceptanceToken: invitationTable.acceptanceToken,
+          });
 
         this.logger.log(
           `Crée l'invitation ${invitationAdded.id} pour l'email ${invitation.email}`
@@ -156,41 +162,43 @@ export class InvitationService {
             }))
           );
         }
-        return invitationAdded.id;
+        return invitationAdded;
       });
     }
   }
 
   /**
-   * Retourne l'email du destinataire d'une invitation à partir de son id opaque.
+   * Retourne l'email du destinataire d'une invitation à partir du jeton secret du lien.
    * Utilisé par la page d'atterrissage pour préremplir signup/login sans
    * exposer l'adresse dans l'URL du lien d'invitation.
    */
   async getInvitationEmail(
-    invitationId: string
+    acceptanceToken: string
   ): Promise<{ email: string } | null> {
     const [invitation] = await this.databaseService.db
       .select({ email: invitationTable.email })
       .from(invitationTable)
-      .where(eq(invitationTable.id, invitationId))
+      .where(eq(invitationTable.acceptanceToken, acceptanceToken))
       .limit(1);
 
     return invitation ?? null;
   }
 
-  async consumeInvitation(invitationId: string, user: AuthenticatedUser) {
-    this.logger.log(
-      `Consomme l'invitation ${invitationId} par l'utilisateur ${user.id}`
-    );
+  async consumeInvitation(acceptanceToken: string, user: AuthenticatedUser) {
     const [invitation] = await this.databaseService.db
-      .select()
+      .select({
+        id: invitationTable.id,
+        collectiviteId: invitationTable.collectiviteId,
+        role: invitationTable.role,
+        active: invitationTable.active,
+        consumed: invitationTable.consumed,
+      })
       .from(invitationTable)
-      .where(eq(invitationTable.id, invitationId))
+      .where(eq(invitationTable.acceptanceToken, acceptanceToken))
       .limit(1);
 
     if (!invitation) {
-      this.logger.error(`L'invitation ${invitationId} n'existe pas`);
-      throw new NotFoundException(`L'invitation ${invitationId} n'existe pas`);
+      throw new NotFoundException("L'invitation n'existe pas");
     }
 
     // L'email de l'invitation ne conditionne PAS la consommation : depuis la

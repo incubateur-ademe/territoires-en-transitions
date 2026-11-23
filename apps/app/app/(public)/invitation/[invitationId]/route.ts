@@ -12,11 +12,11 @@ export async function GET(
     params: Promise<{ invitationId: string }>;
   }
 ) {
-  const { invitationId } = await params;
+  const { invitationId: acceptanceToken } = await params;
 
   const invitation =
     await trpcInServerFunction.collectivites.membres.invitations.getEmail.query(
-      { invitationId }
+      { invitationId: acceptanceToken }
     );
 
   if (!invitation) {
@@ -47,14 +47,11 @@ export async function GET(
   try {
     await trpcInServerFunction.collectivites.membres.invitations.consume.mutate(
       {
-        invitationId,
+        invitationId: acceptanceToken,
       }
     );
-  } catch (error) {
-    console.error(
-      `Error consuming invitation ${invitationId}`,
-      JSON.stringify(error)
-    );
+  } catch {
+    console.error('Error consuming invitation');
 
     // Redirige vers la page de finalisation avec un message d'erreur
     redirect(

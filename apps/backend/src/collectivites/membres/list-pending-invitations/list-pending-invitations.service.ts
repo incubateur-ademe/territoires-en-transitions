@@ -48,6 +48,7 @@ export class ListPendingInvitationsService {
 
     const invitations = await (tx ?? this.databaseService.db)
       .select({
+        // Identifiant de gestion pour le renvoi, distinct du secret du lien.
         id: invitationTable.id,
         email: invitationTable.email,
         role: invitationTable.role,

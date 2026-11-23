@@ -116,6 +116,7 @@ export class SendInvitationService {
       const [invitation] = await this.databaseService.db
         .select({
           email: invitationTable.email,
+          acceptanceToken: invitationTable.acceptanceToken,
           collectiviteId: invitationTable.collectiviteId,
           pending: invitationTable.pending,
           active: invitationTable.active,
@@ -141,7 +142,7 @@ export class SendInvitationService {
         to: invitation.email,
         collectiviteId: invitation.collectiviteId,
         collectiviteNom: invitation.collectiviteNom,
-        invitationUrl: `${appUrl}/invitation/${input.invitationId}`,
+        invitationUrl: `${appUrl}/invitation/${invitation.acceptanceToken}`,
         urlType: 'invitation',
       });
     }
