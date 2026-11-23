@@ -207,6 +207,7 @@ locals {
         SUPABASE_SERVICE_ROLE_KEY = { secret = "supabase-service-role-key" }
 
         GOTRUE_DB_DATABASE_URL   = { secret = "gotrue-db-database-url" }
+        GOTRUE_DB_SSL_ROOT_CERT  = { secret = "postgres-tls-ca", multiline = true }
         STORAGE_DB_DATABASE_URL  = { secret = "storage-db-database-url" }
         STORAGE_DB_SSL_ROOT_CERT = { secret = "postgres-tls-ca", multiline = true }
 

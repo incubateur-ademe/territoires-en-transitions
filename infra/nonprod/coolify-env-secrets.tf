@@ -25,8 +25,8 @@ locals {
     # Mots de passe restreints à -_.!*~ (main.tf) : injectables sans
     # percent-encoding.
     "gotrue-db-database-url" = {
-      description = "GOTRUE_DB_DATABASE_URL de supabase-api preprod : rôle supabase_auth_admin, réseau privé, schéma auth."
-      value = format("postgres://%s:%s@%s:%d/%s?sslmode=require&search_path=auth",
+      description = "GOTRUE_DB_DATABASE_URL de supabase-api preprod : rôle supabase_auth_admin, réseau privé, schéma auth, TLS vérifié par postgres-tls-ca (écrite dans /tmp/rdb-ca.pem par le compose)."
+      value = format("postgres://%s:%s@%s:%d/%s?sslmode=verify-ca&sslrootcert=/tmp/rdb-ca.pem&search_path=auth",
         scaleway_rdb_user.supabase_auth_admin.name, random_password.supabase_auth_admin.result,
       module.postgres.private_endpoint_ip, module.postgres.private_endpoint_port, module.postgres.database_name)
     }
