@@ -166,6 +166,7 @@ describe('indicateur vue filters validation', () => {
     { page: 1 },
     { sort: ['titre'] },
     { futureCriterion: true },
+    { sansAncetreConfidentiel: true },
     { planIds: ['1'] },
     { planIds: [1.5] },
     { utilisateurPiloteIds: ['invalid-uuid'] },
