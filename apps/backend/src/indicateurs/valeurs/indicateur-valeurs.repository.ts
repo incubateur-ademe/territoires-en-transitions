@@ -9,6 +9,7 @@ import {
   GroupementCollectiviteType,
 } from '@tet/backend/collectivites/shared/models/groupement-collectivite.table';
 import { indicateurCollectiviteTable } from '@tet/backend/indicateurs/indicateur/indicateur-collectivite.table';
+import { indicateurGroupeTable } from '../shared/models/indicateur-groupe.table';
 import { indicateurDefinitionTable } from '@tet/backend/indicateurs/indicateur/indicateur-definition.table';
 import { indicateurSourceMetadonneeTable } from '@tet/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
 import { indicateurSourceTable } from '@tet/backend/indicateurs/shared/models/indicateur-source.table';
@@ -190,6 +191,29 @@ export class IndicateurValeursRepository {
     return conditions;
   }
 
+  private getConfidentielHeriteSql() {
+    return sql<boolean>`(
+      COALESCE(${indicateurCollectiviteTable.confidentiel}, false)
+      OR EXISTS (
+        WITH RECURSIVE ancestors AS (
+          SELECT groupe.parent AS id
+          FROM ${indicateurGroupeTable} AS groupe
+          WHERE groupe.enfant = ${indicateurValeurTable.indicateurId}
+          UNION ALL
+          SELECT groupe.parent
+          FROM ${indicateurGroupeTable} AS groupe
+          INNER JOIN ancestors ON groupe.enfant = ancestors.id
+        )
+        SELECT 1
+        FROM ancestors
+        INNER JOIN ${indicateurCollectiviteTable} AS ancestor_collectivite
+          ON ancestor_collectivite.indicateur_id = ancestors.id
+          AND ancestor_collectivite.collectivite_id = ${indicateurValeurTable.collectiviteId}
+        WHERE ancestor_collectivite.confidentiel
+      )
+    )`;
+  }
+
   async listIndicateurValeurs(
     options: ListIndicateurValeursQuery,
     tx?: Transaction
@@ -219,7 +243,7 @@ export class IndicateurValeursRepository {
         indicateurSourceMetadonnee: getTableColumns(
           indicateurSourceMetadonneeTable
         ),
-        confidentiel: indicateurCollectiviteTable.confidentiel,
+        confidentiel: this.getConfidentielHeriteSql(),
       })
       .from(indicateurValeurTable)
       .leftJoin(
