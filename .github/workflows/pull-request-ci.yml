@@ -14,6 +14,28 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Le changelog des releases est tiré des sujets de commit, et le rebase les
+  # amène tels quels sur main.
+  commits:
+    name: Messages de commit
+    if: ${{ !github.event.pull_request.draft }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          filter: tree:0
+          persist-credentials: false
+
+      - name: Vérifie la convention
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        run: git log --no-merges --format=%s "$BASE..$HEAD" | .github/scripts/check-commit-messages.sh
+
   ci:
     if: ${{ !github.event.pull_request.draft }}
     uses: ./.github/workflows/_ci.yml
