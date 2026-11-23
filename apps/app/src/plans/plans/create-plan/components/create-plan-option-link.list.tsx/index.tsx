@@ -5,11 +5,12 @@ import {
   makeCollectivitePlansActionsImporterUrl,
   makeCollectivitePlansActionsImporterIaUrl,
 } from '@/app/app/paths';
-import { Event, Icon, useEventTracker } from '@tet/ui';
+import { Event, useEventTracker } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
 import { BetaLabel } from '@/app/ui/beta.label';
 import { useAiImportAccess } from '@/app/plans/plans/import-plan/data/use-ai-import-access';
 import CreatePlanPicto from './create.svg';
+import ImportPlanSupportPicto from './import-support.svg';
 import ImportPlanPicto from './import.svg';
 import { Link } from './link';
 
@@ -57,7 +58,7 @@ export const CreatePlanOptionLinksList = ({
         dataTest="choix-creation-plan.demander-import"
         title={appLabels.importPlanSupportTitre}
         subTitle={appLabels.importPlanSupportSousTitre}
-        icon={<Icon icon="mail-send-line" className="w-16 h-16" />}
+        icon={<ImportPlanSupportPicto className="w-16 h-16" />}
         url={makeCollectivitePlansActionsImporterUrl({
           collectiviteId,
         })}

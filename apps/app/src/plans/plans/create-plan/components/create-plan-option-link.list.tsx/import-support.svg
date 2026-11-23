@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="70 82 740 700" width="123" height="117" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Cadre, en-tête, panneau gauche : teinte soutenue -->
+  <g stroke="#C3C3F7" stroke-width="22">
+    <path d="M91 608V114a11 11 0 0 1 11-11H732a11 11 0 0 1 11 11V420"/>
+    <path d="M91 608H443a11 11 0 0 0 11-11V212"/>
+    <path d="M91 210H548"/>
+    <path d="M620 210H743"/>
+  </g>
+  <!-- En-tête : points et barre -->
+  <g fill="#E1E1FB" stroke="none">
+    <circle cx="141" cy="162" r="11"/>
+    <circle cx="190" cy="162" r="11"/>
+    <circle cx="239" cy="162" r="11"/>
+  </g>
+  <path d="M435 162H690" stroke="#E1E1FB" stroke-width="20"/>
+  <!-- Grille 2x2 -->
+  <g stroke="#E1E1FB" stroke-width="20">
+    <rect x="165" y="305" width="75" height="75" rx="6"/>
+    <rect x="308" y="305" width="75" height="75" rx="6"/>
+    <rect x="165" y="447" width="75" height="75" rx="6"/>
+    <rect x="308" y="447" width="75" height="75" rx="6"/>
+    <!-- Table / chaise à droite -->
+    <path d="M527 435V282a12 12 0 0 1 12-12H660a12 12 0 0 1 12 12V412"/>
+    <path d="M527 380H672"/>
+  </g>
+  <!-- Badge : seul élément propre à cette icône -->
+  <g stroke="#E1E1FB" stroke-width="20">
+    <circle cx="645" cy="608" r="145"/>
+    <rect x="573" y="557" width="144" height="102" rx="14" stroke-width="18"/>
+    <path d="M580 568L645 621L710 568" stroke-width="18"/>
+  </g>
+</svg>
