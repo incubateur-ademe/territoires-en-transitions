@@ -1,9 +1,9 @@
 variable "environment" {
-  description = "Nom de l'environnement (preprod, staging, prod). Utilisé pour le nommage des ressources."
+  description = "Nom de l'environnement (preprod, prod). Utilisé pour le nommage des ressources."
   type        = string
   validation {
-    condition     = contains(["preprod", "staging", "prod", "preview"], var.environment)
-    error_message = "environment doit être l'une des valeurs : preprod, staging, prod, preview."
+    condition     = contains(["preprod", "prod", "preview"], var.environment)
+    error_message = "environment doit être l'une des valeurs : preprod, prod, preview."
   }
 }
 
@@ -14,7 +14,7 @@ variable "zone" {
 }
 
 variable "node_type" {
-  description = "Type de nœud Redis Scaleway. RED1-MICRO (400 MB) suffit pour preprod. RED1-XS (1 GB) pour staging/prod selon charge queue."
+  description = "Type de nœud Redis Scaleway. RED1-MICRO (400 MB) suffit pour preprod. RED1-XS (1 GB) pour la prod selon charge queue."
   type        = string
   default     = "RED1-MICRO"
 }
@@ -26,7 +26,7 @@ variable "redis_version" {
 }
 
 variable "cluster_size" {
-  description = "Nombre de nœuds. 1 pour standalone (preprod/staging), 3 minimum pour cluster HA (prod)."
+  description = "Nombre de nœuds. 1 pour standalone (preprod), 3 minimum pour cluster HA (prod)."
   type        = number
   default     = 1
 }

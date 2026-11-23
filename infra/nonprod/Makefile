@@ -1,4 +1,4 @@
-# Cibles utilitaires pour le tier nonprod (environnements preprod et staging).
+# Cibles utilitaires pour le tier nonprod (environnement preprod).
 # Toutes les commandes s'exécutent depuis ce dossier (infra/nonprod/).
 
 SHELL := /bin/bash

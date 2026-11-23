@@ -56,12 +56,12 @@ variable "ghcr_pull_credentials_revision" {
 # --- Applications ---
 
 variable "application_environments" {
-  description = "Environnements dont les applications sont déclarées dans Coolify (cf. applications.tf). Ouverture progressive : preprod d'abord, staging quand ses bases conteneurisées existent, prod à la bascule DNS."
+  description = "Environnements dont les applications sont déclarées dans Coolify (cf. applications.tf). Ouverture progressive : preprod d'abord, prod à la bascule DNS."
   type        = set(string)
   default     = ["preprod"]
   validation {
-    condition     = alltrue([for e in var.application_environments : contains(["preprod", "staging", "prod"], e)])
-    error_message = "application_environments n'accepte que preprod, staging et prod. Les previews sont créées par la CD, pas par Terraform."
+    condition     = alltrue([for e in var.application_environments : contains(["preprod", "prod"], e)])
+    error_message = "application_environments n'accepte que preprod et prod. Les previews sont créées par la CD, pas par Terraform."
   }
 }
 

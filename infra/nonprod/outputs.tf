@@ -11,7 +11,7 @@ output "server_name" {
 }
 
 output "server_public_ip" {
-  description = "IP publique du serveur nonprod. Cible des enregistrements DNS preprod et staging."
+  description = "IP publique du serveur nonprod. Cible des enregistrements DNS preprod."
   value       = module.app_server.public_ip
 }
 

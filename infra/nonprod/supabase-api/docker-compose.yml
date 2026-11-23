@@ -5,12 +5,12 @@
 #   /auth/v1/*    → gotrue:9999
 #   /storage/v1/* → storage:5000
 #
-# Un seul fichier pour tous les environnements : preprod et staging tournent
+# Un seul fichier pour tous les environnements : plusieurs peuvent tourner
 # sur le même serveur, derrière le même Traefik, dont l'espace de noms des
 # routeurs est global. Tout ce qui est propre à un environnement passe donc par
 # deux variables obligatoires :
 #   STACK_ENV          préfixe des routeurs / middlewares Traefik et TENANT_ID
-#                      (minuscules, chiffres, tirets : preprod, staging…)
+#                      (minuscules, chiffres, tirets : preprod, prod…)
 #   SUPABASE_API_HOST  sous-domaine servi, sans schéma
 #
 # Déployé dans Coolify par infra/coolify/services.tf, qui y dépose les

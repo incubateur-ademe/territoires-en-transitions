@@ -1,11 +1,7 @@
-# Tier nonprod : un serveur mutualisé portant deux environnements.
-#
-#   preprod — répétition générale iso-prod : Postgres et Redis managés, comme
-#             en production. C'est ce qui permet de détecter avant la prod les
-#             bugs liés au fait que l'admin RDB Scaleway n'est pas superuser.
-#   staging — intégration continue de main : Postgres et Redis conteneurisés,
-#             déployés comme ressources Coolify sur ce même serveur. Rien à
-#             provisionner ici pour eux.
+# Tier nonprod : le serveur de la preprod, répétition générale iso-prod.
+# Postgres et Redis managés, comme en production : c'est ce qui permet de
+# détecter avant la prod les bugs liés au fait que l'admin RDB Scaleway n'est
+# pas superuser.
 
 module "app_server" {
   source = "../modules/app-server"
@@ -42,9 +38,6 @@ module "postgres" {
   # Aligne les timeouts sur la conf Supabase Cloud actuelle :
   # statement_timeout=10min, idle_in_transaction_session_timeout=2min.
   # lock_timeout et idle_session_timeout restent au défaut PG (0).
-  #
-  # À rejouer en ALTER DATABASE sur le Postgres conteneurisé de staging, sans
-  # quoi staging ne reproduit pas le comportement de preprod et de la prod.
   settings = {
     "statement_timeout"                   = "600000"
     "idle_in_transaction_session_timeout" = "120000"

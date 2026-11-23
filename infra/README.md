@@ -28,7 +28,7 @@ flowchart TB
         vpn["tet-platform-vpn<br/>passerelle WireGuard"]
       end
       subgraph npn["tet-nonprod-pn 10.0.1.0/24"]
-        nonprod["tet-nonprod-apps<br/>preprod + staging"]
+        nonprod["tet-nonprod-apps<br/>preprod"]
         nrdb[(RDB + Redis<br/>preprod)]
       end
       subgraph pvpn["tet-preview-pn 10.0.4.0/24"]
@@ -73,7 +73,7 @@ serveurs tirent leurs images de `ghcr.io`.
 | ------------------ | -------------- | -------------------------------------------------------- |
 | `tet-platform-vpn` | `tet`          | Passerelle WireGuard des opérateurs. Aucune application. |
 | `tet-prod-apps`    | **`tet-prod`** | Applications de production.                              |
-| `tet-nonprod-apps` | `tet`          | Mutualisé : preprod **et** staging.                      |
+| `tet-nonprod-apps` | `tet`          | Preprod (et aldo preprod).                               |
 | `tet-preview-apps` | `tet`          | Previews éphémères, une par pull request.                |
 | `tet-data-apps`    | `tet`          | Stack d'analyse (Team Coolify « TeT - Data »). arm64.    |
 
@@ -81,7 +81,6 @@ serveurs tirent leurs images de `ghcr.io`.
 | ------------- | ----------------------------- |
 | prod          | managés Scaleway (RDB, Redis) |
 | preprod       | managés Scaleway (RDB, Redis) |
-| staging       | conteneurs Coolify            |
 | preview       | conteneurs Coolify, éphémères |
 | data          | RDB managé Scaleway (stats), sans Redis |
 
@@ -99,8 +98,8 @@ l'agent Alloy. Pour l'instant, seule la preprod est ouverte (`application_enviro
 
 Deux VPC **sans aucun lien** : `tet` (projet principal, un Private Network par tier hors
 prod) et `tet-prod` (un seul Private Network avec serveur, Postgres et Redis de prod).
-Staging vit sur le serveur nonprod, sans Private Network propre. `10.0.2.0/24` est le
-Private Network du tier data (VM data, RDB stats), sans route vers nonprod.
+`10.0.2.0/24` est le Private Network du tier data (VM data, RDB stats), sans route vers
+nonprod.
 
 - **Coolify** (instance de l'incubateur, hors de nos VPC) joint chaque serveur en SSH sur
   son **IP publique**. Le port 22 n'y est ouvert qu'aux `ssh_allowed_ips` du stack du tier :
@@ -634,8 +633,7 @@ variables lues dans Secret Manager). Restent à refaire à la main : les webhook
 applications Git et les flags de métriques Traefik de chaque serveur.
 
 Pas de S3 storage de backups dans notre Team : preprod et prod sont sur des RDB managées,
-et les bases de staging et des previews se recréent depuis les dumps de la BDD de prod
-(ci-dessous).
+et les bases des previews sont jetables.
 
 ## Backups de la BDD de prod
 
@@ -673,7 +671,7 @@ certificats en HTTP-01) :
 
 | Nom                                            | Type | Cible                                                         |
 | ---------------------------------------------- | ---- | ------------------------------------------------------------- |
-| `preprod`, `*.preprod`, `staging`, `*.staging` | A    | `terraform -chdir=infra/nonprod output -raw server_public_ip` |
+| `preprod`, `*.preprod`                         | A    | `terraform -chdir=infra/nonprod output -raw server_public_ip` |
 | `preview`, `*.preview`                         | A    | `terraform -chdir=infra/preview output -raw server_public_ip` |
 
 À reporter à la main si un serveur est recréé. Pas de sous-zones déléguées à Scaleway
@@ -685,7 +683,7 @@ migration de la prod.
 
 Monitoring et alerting passent par **Cockpit** (Grafana/Mimir/Loki managés par Scaleway),
 un par projet Scaleway, défini une fois dans `modules/cockpit` : `nonprod/observability.tf`
-l'instancie pour le projet principal (preprod, staging, preview), `prod/observability.tf`
+l'instancie pour le projet principal (preprod, preview), `prod/observability.tf`
 pour tet-prod. Les données de la prod restent dans son projet. PostHog garde l'analytics
 produit, l'error tracking et les traces du backend.
 
@@ -778,7 +776,7 @@ Coolify, reconfigure le proxy : revérifier ensuite les flags ci-dessus.
   bases privées) ou Tailscale (plan de contrôle chez un tiers).
 - **Backups dans un projet dédié**, bucket sous Object Lock COMPLIANCE : la clé des dumps
   ne voit que ce projet.
-- **Preprod iso-prod sur du managé**, staging et preview conteneurisés.
+- **Preprod iso-prod sur du managé**, previews conteneurisées. Pas de staging : il doublonnerait les previews.
 - **Mono-VM Coolify par tier** plutôt que Kapsule : pas d'orchestrateur K8s.
 - **Un state par stack**, liés par data sources (noms imposés par les modules), jamais
   par `terraform_remote_state` ni par report manuel d'outputs.

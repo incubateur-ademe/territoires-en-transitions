@@ -31,9 +31,7 @@ resource "scaleway_vpc" "main" {
 }
 
 # Un Private Network par tier. Le découpage suit les frontières de confiance,
-# pas les environnements logiques : staging n'a pas son propre PN puisque ses
-# conteneurs vivent sur le serveur nonprod et parlent à leur Postgres via le
-# réseau Docker local.
+# pas les environnements logiques.
 resource "scaleway_vpc_private_network" "main" {
   for_each = var.private_networks
 

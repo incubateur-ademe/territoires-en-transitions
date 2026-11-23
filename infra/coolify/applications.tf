@@ -59,14 +59,6 @@ locals {
         site    = ["https://preprod.territoiresentransitions.fr"]
       }
     }
-    staging = {
-      server = "nonprod"
-      domains = {
-        app     = ["https://app.staging.territoiresentransitions.fr"]
-        backend = ["https://api.staging.territoiresentransitions.fr", "https://app.staging.territoiresentransitions.fr/api"]
-        site    = ["https://staging.territoiresentransitions.fr"]
-      }
-    }
     prod = {
       server = "prod"
       domains = {
