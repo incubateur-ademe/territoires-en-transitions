@@ -1,5 +1,7 @@
 # Territoires en Transition
 
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/incubateur-ademe/territoires-en-transitions/badge)](https://scorecard.dev/viewer/?uri=github.com/incubateur-ademe/territoires-en-transitions)
+
 Dans le cadre des programmes d'accompagnement des collectivités dans leurs démarches de transition écologique, l'[ADEME (l'Agence de la transition écologique)](https://www.ademe.fr/) s'est associée à [beta.gouv.fr](https://beta.gouv.fr/).
 
 L'objectif : Aider les collectivités à prioriser la mise en œuvre des actions les plus impactantes pour réussir la transition écologique.
