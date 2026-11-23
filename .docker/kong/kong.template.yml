@@ -49,6 +49,17 @@ services:
           - /auth/v1/authorize
     plugins:
       - name: cors
+  # Clés publiques de signature, publiques sur Supabase Cloud : le backend les
+  # lit sans clé d'API.
+  - name: auth-v1-open-jwks
+    url: http://gotrue:9999/.well-known/jwks.json
+    routes:
+      - name: auth-v1-open-jwks
+        strip_path: true
+        paths:
+          - /auth/v1/.well-known/jwks.json
+    plugins:
+      - name: cors
 
   # GoTrue (authentification)
   - name: auth-v1

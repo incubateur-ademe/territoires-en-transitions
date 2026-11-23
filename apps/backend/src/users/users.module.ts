@@ -15,6 +15,7 @@ import { GetUserRolesAndPermissionsService } from './authorizations/get-user-rol
 import { UpdateUserRoleRouter } from './authorizations/update-user-role/update-user-role.router';
 import { UpdateUserRoleService } from './authorizations/update-user-role/update-user-role.service';
 import { ConvertJwtToAuthUserService } from './convert-jwt-to-auth-user.service';
+import { SupabaseSigningKeysService } from './supabase-signing-keys.service';
 import { AuthGuard } from './guards/auth.guard';
 import { LoginUserWithOidcProviderService } from './authentications/oidc/login-user-with-oidc-provider/login-user-with-oidc-provider.service';
 import { ConfirmOidcIdentityLinkedToUserRouter } from './authentications/oidc/confirm-oidc-identity-linked-to-user/confirm-oidc-identity-linked-to-user.router';
@@ -118,6 +119,7 @@ import { TransactionModule } from '@tet/backend/utils/transaction/transaction.mo
     UsersRouter,
 
     ConvertJwtToAuthUserService,
+    SupabaseSigningKeysService,
 
     ApikeysService,
     ApikeysRouter,
