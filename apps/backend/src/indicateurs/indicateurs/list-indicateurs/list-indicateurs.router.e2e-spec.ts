@@ -187,6 +187,38 @@ describe('ListIndicateursRouter', () => {
       expect(ancestorsById.get(petitEnfantId)).toEqual([racine, enfant]);
     });
 
+    test('expose dans le détail le drapeau de cumul des sous-indicateurs : coché à la création, décoché après mise à jour', async () => {
+      const { collectivite, user } = await addTestCollectiviteAndUser(
+        database,
+        { user: { role: CollectiviteRole.ADMIN } }
+      );
+      const caller = router.createCaller({
+        user: getAuthUserFromUserCredentials(user),
+      });
+      const racineId = await caller.indicateurs.indicateurs.create({
+        collectiviteId: collectivite.id,
+        titre: 'Déchets',
+        unite: 't',
+      });
+      const listRacine = async () => {
+        const { data } = await caller.indicateurs.indicateurs.list({
+          collectiviteId: collectivite.id,
+          filters: { indicateurIds: [racineId] },
+        });
+        return indicateurDetailleSchema.parse(data[0]);
+      };
+
+      expect((await listRacine()).totalEstCumulDesSousIndicateurs).toBe(true);
+
+      await caller.indicateurs.indicateurs.update({
+        collectiviteId: collectivite.id,
+        indicateurId: racineId,
+        indicateurFields: { totalEstCumulDesSousIndicateurs: false },
+      });
+
+      expect((await listRacine()).totalEstCumulDesSousIndicateurs).toBe(false);
+    });
+
     test("n'affiche que les racines d'une collectivité avec le seul filtre estPerso, pas leurs sous-indicateurs", async () => {
       const { collectivite, user } = await addTestCollectiviteAndUser(
         database,
