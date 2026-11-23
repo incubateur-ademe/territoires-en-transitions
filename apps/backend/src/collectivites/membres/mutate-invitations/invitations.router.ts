@@ -40,10 +40,13 @@ export class InvitationsRouter {
         this.listPendingInvitationsService.list(input, { user: ctx.user })
       ),
 
-    /** Résout le destinataire à partir de l'id opaque (lien d'invitation sans email). */
+    // Le paramètre historique invitationId contient le jeton du lien.
+    /** Résout le destinataire sans exposer son adresse dans le lien. */
     getEmail: this.trpc.publicProcedure
       .input(z.object({ invitationId: z.uuid() }))
-      .query(({ input }) => this.service.getInvitationEmail(input.invitationId)),
+      .query(({ input }) =>
+        this.service.getInvitationEmail(input.invitationId)
+      ),
 
     create: this.trpc.authedProcedure
       .input(createInvitationInputSchema)
@@ -56,7 +59,8 @@ export class InvitationsRouter {
           { collectiviteId: input.collectiviteId }
         );
 
-        return this.service.createInvitation(input, ctx.user);
+        const invitation = await this.service.createInvitation(input, ctx.user);
+        return invitation?.id ?? null;
       }),
 
     send: this.trpc.authedProcedure
@@ -69,7 +73,7 @@ export class InvitationsRouter {
       }),
 
     consume: this.trpc.authedProcedure
-      .input(z.object({ invitationId: z.string() }))
+      .input(z.object({ invitationId: z.uuid() }))
       .mutation(({ ctx, input }) => {
         return this.service.consumeInvitation(input.invitationId, ctx.user);
       }),

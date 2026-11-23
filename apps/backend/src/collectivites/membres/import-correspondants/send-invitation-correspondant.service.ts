@@ -10,7 +10,7 @@ import { InvitationCorrespondantEmail } from './invitation-correspondant.email';
 import { ServiceResolu } from './resolve-service.repository';
 
 export type CibleInvitation =
-  | { urlType: 'invitation'; invitationId: string }
+  | { urlType: 'invitation'; acceptanceToken: string }
   | { urlType: 'rattachement' };
 
 /** Le statut que le transport a rendu, tel que le rapport d'import le montre. */
@@ -76,7 +76,7 @@ export class SendInvitationCorrespondantService {
     const appUrl = this.configurationService.get('APP_URL').replace(/\/+$/, '');
 
     if (cible.urlType === 'invitation') {
-      return `${appUrl}/invitation/${cible.invitationId}`;
+      return `${appUrl}/invitation/${cible.acceptanceToken}`;
     }
 
     return buildCollectiviteRootUrl({

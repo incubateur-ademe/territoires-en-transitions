@@ -324,7 +324,7 @@ describe('Test les invitations', () => {
 
     // Consume l'invitation
     await caller.collectivites.membres.invitations.consume({
-      invitationId: invitationAdded.id,
+      invitationId: invitationAdded.acceptanceToken,
     });
 
     // Vérifie que l'invitation est consommée
@@ -388,7 +388,7 @@ describe('Test les invitations', () => {
     });
 
     await inviteeCaller.collectivites.membres.invitations.consume({
-      invitationId: invitationRow.id,
+      invitationId: invitationRow.acceptanceToken,
     });
 
     const access = await databaseService.db
@@ -428,7 +428,7 @@ describe('Test les invitations', () => {
     });
 
     await inviteeCaller.collectivites.membres.invitations.consume({
-      invitationId: invitationRow.id,
+      invitationId: invitationRow.acceptanceToken,
     });
 
     const access = await databaseService.db
@@ -473,7 +473,7 @@ describe('Test les invitations', () => {
 
     await expect(() =>
       inviteeCaller.collectivites.membres.invitations.consume({
-        invitationId: invitationRow.id,
+        invitationId: invitationRow.acceptanceToken,
       })
     ).rejects.toThrow(/révoquée/);
 
@@ -713,8 +713,21 @@ describe('Test envoi des emails d’invitation', () => {
     const [emailArg] = sendEmailSpy.mock.calls[0];
     expect(emailArg.to).toBe(invitationEmail);
     expect(emailArg.subject).toContain(collectivite.nom);
-    expect(emailArg.html).toContain(`/invitation/${invitationId}`);
+    const [invitation] = await databaseService.db
+      .select({ acceptanceToken: invitationTable.acceptanceToken })
+      .from(invitationTable)
+      .where(eq(invitationTable.id, invitationId));
+    expect(emailArg.html).toContain(
+      `/invitation/${invitation.acceptanceToken}`
+    );
+    expect(emailArg.html).not.toContain(`/invitation/${invitationId}`);
     expect(emailArg.html).not.toContain(encodeURIComponent(invitationEmail));
+    const anonymous = router.createCaller({ user: null });
+    await expect(
+      anonymous.collectivites.membres.invitations.getEmail({
+        invitationId: invitation.acceptanceToken,
+      })
+    ).resolves.toEqual({ email: invitationEmail });
   });
 
   test(`Envoie un mail de rattachement pour un utilisateur existant`, async () => {

@@ -21,6 +21,10 @@ export const invitationTable = utilisateurSchema.table('invitation', {
     .primaryKey()
     .notNull()
     .default(sql`gen_random_uuid()`),
+  acceptanceToken: uuid('acceptance_token')
+    .notNull()
+    .unique()
+    .default(sql`gen_random_uuid()`),
   role: collectiviteRolePgEnum('niveau').notNull(),
   email: text('email').notNull(),
   collectiviteId: integer('collectivite_id')

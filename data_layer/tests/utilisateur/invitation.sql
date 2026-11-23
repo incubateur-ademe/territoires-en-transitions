@@ -1,6 +1,6 @@
 begin;
 
-select plan(16);
+select plan(18);
 
 -------------------------
 -- Invitation creation --
@@ -81,17 +81,17 @@ select isnt_empty('select * from private_utilisateur_droit pud '
                   'The added user should have edition accès on the collectivité.');
 
 --- Add a non-registered user to get an invitation.
-select (add_user(10, 'no@no.no', 'edition') ->> 'invitation_id')::uuid as id
+select (add_user(10, 'no@no.no', 'edition') ->> 'invitation_id')::uuid as token
 into invitation;
 
-select ok(id is not null,
-          'When having admin droits on a collectivité add_user should return an invitation id.')
+select ok(token is not null,
+          'When having admin droits on a collectivité add_user should return an invitation token.')
 from invitation;
 
 select ok(ui.pending and ui.consumed = false,
           'The newly created invitation should be pending and not consumed.')
 from invitation i
-         join utilisateur.invitation ui on ui.id = i.id;
+         join utilisateur.invitation ui on ui.acceptance_token = i.token;
 
 
 ----------------------------
@@ -104,14 +104,24 @@ from test_add_random_user(null, null);
 select test.identify_as(user_id)
 from random_visitor;
 
-select consume_invitation(i.id::uuid)
+select consume_invitation(ui.id)
+from invitation i
+join utilisateur.invitation ui on ui.acceptance_token = i.token;
+
+select is(current_setting('response.status'), '403',
+          'A management ID should not redeem an invitation.');
+
+select is_empty('select * from private_utilisateur_droit pud join random_visitor rv on rv.user_id = pud.user_id;',
+                'A management ID should not grant access.');
+
+select consume_invitation(i.token)
 from invitation i;
 
 
 select ok(ui.pending = false and ui.consumed,
           'After being consumed the invitation should not pending and consumed.')
 from invitation i
-         join utilisateur.invitation ui on ui.id = i.id;
+         join utilisateur.invitation ui on ui.acceptance_token = i.token;
 
 
 select ok(have_admin_acces(10) = false,
@@ -134,7 +144,7 @@ from test_add_random_user(null, null);
 select test.identify_as(user_id)
 from random_vilain;
 
-select consume_invitation(i.id::uuid)
+select consume_invitation(i.token)
 from invitation i;
 
 select ok((select current_setting('response.status') = '403'),

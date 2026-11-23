@@ -251,8 +251,8 @@ export class ImportCorrespondantsService {
 
     try {
       // `createInvitation` fait les deux cas : elle pose le droit et rend `null`
-      // quand un compte existe, sinon elle crée le lien et rend son identifiant.
-      const invitationId = await this.invitationService.createInvitation(
+      // quand un compte existe, sinon elle crée l'invitation.
+      const invitation = await this.invitationService.createInvitation(
         {
           collectiviteId: service.collectiviteId,
           email,
@@ -265,8 +265,11 @@ export class ImportCorrespondantsService {
         to: email,
         service,
         role: decision.role,
-        cible: invitationId
-          ? { urlType: 'invitation', invitationId }
+        cible: invitation
+          ? {
+              urlType: 'invitation',
+              acceptanceToken: invitation.acceptanceToken,
+            }
           : { urlType: 'rattachement' },
       });
 
@@ -282,7 +285,7 @@ export class ImportCorrespondantsService {
 
       return {
         ...this.enResultat(decision),
-        statut: invitationId ? 'invite' : 'rattache',
+        statut: invitation ? 'invite' : 'rattache',
       };
     } catch (error) {
       // La ligne sort en erreur, les suivantes sont traitées quand même et le

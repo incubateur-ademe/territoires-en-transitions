@@ -177,7 +177,8 @@ describe('Import des correspondants de service', () => {
       });
 
       const html = (sendEmailSpy.mock.calls[0][0] as { html: string }).html;
-      expect(html).toContain(`/invitation/${invitation.id}`);
+      expect(html).toContain(`/invitation/${invitation.acceptanceToken}`);
+      expect(html).not.toContain(`/invitation/${invitation.id}`);
 
     });
 
