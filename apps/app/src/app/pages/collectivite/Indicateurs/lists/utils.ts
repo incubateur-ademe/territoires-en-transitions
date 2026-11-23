@@ -1,7 +1,10 @@
 import { ListIndicateursInputFilters } from '@tet/domain/indicateurs';
 
 export const indicateursNameToParams: Record<
-  keyof Omit<ListIndicateursInputFilters, 'indicateurIds' | 'axeIds'>,
+  keyof Omit<
+    ListIndicateursInputFilters,
+    'indicateurIds' | 'axeIds' | 'sansAncetreConfidentiel'
+  >,
   string
 > = {
   thematiqueIds: 't',
