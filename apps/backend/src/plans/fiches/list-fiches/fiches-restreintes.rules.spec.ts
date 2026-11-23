@@ -174,7 +174,7 @@ describe('maskFicheRestreinte - contacts des pilotes', () => {
       ],
     };
 
-    expect(maskFicheRestreinte(fiche).pilotes).toEqual([
+    expect(maskFicheRestreinte(fiche).pilotes).toStrictEqual([
       {
         tagId: 3,
         userId: '00000000-0000-0000-0000-000000000002',
@@ -182,6 +182,10 @@ describe('maskFicheRestreinte - contacts des pilotes', () => {
         collectiviteId: 10,
       },
     ]);
+  });
+
+  it("n'expose aucun référent d'une fiche restreinte", () => {
+    expect(maskFicheRestreinte(toFicheRestreinte()).referents).toBeNull();
   });
 });
 
