@@ -403,6 +403,37 @@ describe('calculateIndicateurTotalsByDate', () => {
     ]);
   });
 
+  it('masque à un visiteur la date du dernier résultat de chaque sous-indicateur d’un parent confidentiel, même quand ils ne le sont pas eux-mêmes', () => {
+    expect(
+      calculateIndicateurTotalsByDate({
+        ...visitor,
+        parentConfidentiel: true,
+        sousIndicateurs: [
+          toSerie({
+            '2022-01-01': { resultat: 1 },
+            '2023-01-01': { resultat: 2 },
+          }),
+          toSerie({
+            '2021-01-01': { resultat: 10 },
+            '2022-01-01': { resultat: 20 },
+          }),
+        ],
+      })
+    ).toEqual([
+      { dateValeur: '2021-01-01', resultat: oneOfTwo, objectif: noneOfTwo },
+      {
+        dateValeur: '2022-01-01',
+        resultat: { status: 'hidden' },
+        objectif: noneOfTwo,
+      },
+      {
+        dateValeur: '2023-01-01',
+        resultat: { status: 'hidden' },
+        objectif: noneOfTwo,
+      },
+    ]);
+  });
+
   it('ne masque que la date du dernier résultat non nul d’un sous-indicateur confidentiel', () => {
     expect(
       calculateIndicateurTotalsByDate({
