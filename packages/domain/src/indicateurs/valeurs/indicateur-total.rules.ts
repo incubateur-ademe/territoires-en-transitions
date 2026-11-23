@@ -135,17 +135,24 @@ const listOwnValeurByDate = ({
 const toFilledSousIndicateur = ({
   serie,
   kind,
+  isParentConfidentiel,
 }: {
   serie: SousIndicateurSerie;
   kind: ValeurKind;
+  isParentConfidentiel: boolean;
 }): FilledSousIndicateur => {
+  const isConfidentiel = serie.confidentiel || isParentConfidentiel;
   const sousIndicateurs = serie.sousIndicateurs.map((sousIndicateur) =>
-    toFilledSousIndicateur({ serie: sousIndicateur, kind })
+    toFilledSousIndicateur({
+      serie: sousIndicateur,
+      kind,
+      isParentConfidentiel: isConfidentiel,
+    })
   );
   const ownValeurByDate = listOwnValeurByDate({ serie, kind });
 
   return {
-    confidentiel: kind === 'resultat' && serie.confidentiel,
+    confidentiel: kind === 'resultat' && isConfidentiel,
     latestDate: findLatestDate([
       ...ownValeurByDate.keys(),
       ...listDates(sousIndicateurs),
@@ -271,10 +278,18 @@ export const calculateIndicateurTotalsByDate = ({
   sousIndicateurs: readonly SousIndicateurSerie[];
 }): readonly IndicateurTotalAtDate[] => {
   const resultatSousIndicateurs = sousIndicateurs.map((serie) =>
-    toFilledSousIndicateur({ serie, kind: 'resultat' })
+    toFilledSousIndicateur({
+      serie,
+      kind: 'resultat',
+      isParentConfidentiel: parentConfidentiel,
+    })
   );
   const objectifSousIndicateurs = sousIndicateurs.map((serie) =>
-    toFilledSousIndicateur({ serie, kind: 'objectif' })
+    toFilledSousIndicateur({
+      serie,
+      kind: 'objectif',
+      isParentConfidentiel: parentConfidentiel,
+    })
   );
 
   const dates = listSortedDates([

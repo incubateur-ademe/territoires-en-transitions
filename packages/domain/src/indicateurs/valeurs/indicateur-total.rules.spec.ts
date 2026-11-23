@@ -517,7 +517,7 @@ describe('calculateIndicateurTotalsByDate', () => {
     ]);
   });
 
-  it('masque au visiteur la dernière date avec un résultat d’un sous-indicateur d’un parent confidentiel même quand le total de cette date est incomplet', () => {
+  it('masque au visiteur la date du dernier résultat de chaque sous-indicateur d’un parent confidentiel, même quand le total de cette date est incomplet', () => {
     expect(
       calculateIndicateurTotalsByDate({
         ...visitor,
@@ -533,7 +533,7 @@ describe('calculateIndicateurTotalsByDate', () => {
     ).toEqual([
       {
         dateValeur: '2022-01-01',
-        resultat: { status: 'complete', valeur: 11 },
+        resultat: { status: 'hidden' },
         objectif: noneOfTwo,
       },
       {
@@ -544,7 +544,7 @@ describe('calculateIndicateurTotalsByDate', () => {
     ]);
   });
 
-  it('ne masque que la dernière date avec un résultat d’un parent confidentiel quand plusieurs dates ont un résultat', () => {
+  it('ne masque que les dates de dernier résultat des sous-indicateurs d’un parent confidentiel, pas les dates antérieures', () => {
     const resultats = calculateIndicateurTotalsByDate({
       ...visitor,
       parentConfidentiel: true,
@@ -563,7 +563,7 @@ describe('calculateIndicateurTotalsByDate', () => {
 
     expect(resultats).toEqual([
       { status: 'complete', valeur: 11 },
-      { status: 'complete', valeur: 22 },
+      { status: 'hidden' },
       { status: 'hidden' },
     ]);
   });
