@@ -95,11 +95,13 @@ export class UpsertGridValeursService {
         return failure('NOT_FOUND');
       }
 
-      await this.manageIndicateurValeursService.canMutateValeurs(
-        user,
-        collectiviteId,
-        indicateurs
-      );
+      const canMutate =
+        await this.manageIndicateurValeursService.canMutateValeurs(
+          user,
+          collectiviteId,
+          indicateurs
+        );
+      if (!canMutate.success) return toGridFailure(canMutate);
 
       for (const valeur of valeurs) {
         const indicateur = indicateursById[valeur.indicateurId];

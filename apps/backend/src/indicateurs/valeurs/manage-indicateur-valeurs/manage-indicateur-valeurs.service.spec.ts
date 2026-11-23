@@ -188,15 +188,19 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
           {} as never
         );
 
-        const result = service.canMutateValeurs(user, 42, []);
+        const result = await service.canMutateValeurs(user, 42, []);
 
         if (allowed) {
-          await expect(result).resolves.toBeUndefined();
+          expect(result).toEqual(success(undefined));
           expect(getUserRolesAndPermissions).toHaveBeenCalledWith({
             userId: user.id,
           });
         } else {
-          await expect(result).rejects.toBeInstanceOf(ForbiddenException);
+          expect(result).toMatchObject({
+            success: false,
+            error: 'UNAUTHORIZED',
+            cause: expect.any(ForbiddenException),
+          });
           expect(getUserRolesAndPermissions).not.toHaveBeenCalled();
         }
       }
@@ -1597,7 +1601,9 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
         indicateurLockRepository as never,
         transactionManager as never
       );
-      vi.spyOn(service, 'canMutateValeur').mockResolvedValue(true);
+      vi.spyOn(service, 'canMutateValeur').mockResolvedValue(
+        success(undefined)
+      );
 
       await expect(
         service.upsertValeur(
@@ -1653,10 +1659,12 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
         getIndicateur = vi.fn().mockResolvedValue({ id: 10 }),
         canMutateValeur,
         verrouEnEchec,
+        transactionManager = createTransactionManager({}),
       }: {
         getIndicateur?: ReturnType<typeof vi.fn>;
         canMutateValeur?: ReturnType<typeof vi.fn>;
         verrouEnEchec?: Error;
+        transactionManager?: unknown;
       }) => {
         const service = createManageIndicateurValeursService(
           {} as never,
@@ -1676,10 +1684,11 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
               [verrouPremierAppele]: vi.fn().mockRejectedValue(verrouEnEchec),
             }),
           } as never,
-          createTransactionManager({}) as never
+          transactionManager as never
         );
         vi.spyOn(service, 'canMutateValeur').mockImplementation(
-          (canMutateValeur ?? vi.fn().mockResolvedValue(true)) as never
+          (canMutateValeur ??
+            vi.fn().mockResolvedValue(success(undefined))) as never
         );
         return service;
       };
@@ -1704,7 +1713,12 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
         const service = toServiceWithMocks({
           canMutateValeur: vi
             .fn()
-            .mockRejectedValue(new ForbiddenException('Droits insuffisants')),
+            .mockResolvedValue(
+              failure(
+                'UNAUTHORIZED',
+                new ForbiddenException('Droits insuffisants')
+              )
+            ),
         });
 
         await expect(appeler(service)).resolves.toMatchObject({
@@ -1718,14 +1732,32 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
         const service = toServiceWithMocks({
           canMutateValeur: vi
             .fn()
-            .mockRejectedValue(
-              new UserIndicateurValeurNotAllowedException([10])
+            .mockResolvedValue(
+              failure(
+                'USER_VALUE_NOT_ALLOWED',
+                new UserIndicateurValeurNotAllowedException([10])
+              )
             ),
         });
 
         await expect(appeler(service)).resolves.toMatchObject({
           success: false,
           error: 'USER_VALUE_NOT_ALLOWED',
+        });
+      });
+
+      it("un rejet qui n'est pas une Error ressort en DATABASE_ERROR et non comme code d'erreur", async () => {
+        const service = toServiceWithMocks({
+          transactionManager: {
+            executeSingle: vi
+              .fn()
+              .mockResolvedValue(failure({ message: 'connexion perdue' })),
+          },
+        });
+
+        await expect(appeler(service)).resolves.toMatchObject({
+          success: false,
+          error: 'DATABASE_ERROR',
         });
       });
 

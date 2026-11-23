@@ -4,7 +4,10 @@ import { UpdateIndicateurService } from '@tet/backend/indicateurs/indicateurs/mu
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
+import {
+  TransactionManager,
+  type TransactionOperation,
+} from '@tet/backend/utils/transaction/transaction-manager.service';
 import {
   IndicateurDetaille,
   IndicateurPeriodiciteEnum,
@@ -14,7 +17,7 @@ import {
   IndicateurValeurCreate,
   IndicateurValeurWithIdentifiant,
 } from '@tet/domain/indicateurs';
-import { hasPermission, ResourceType } from '@tet/domain/users';
+import { hasPermission } from '@tet/domain/users';
 import { GetUserRolesAndPermissionsService } from '../../../users/authorizations/get-user-roles-and-permissions/get-user-roles-and-permissions.service';
 import {
   AuthenticatedOrServiceRoleUser,
@@ -31,8 +34,10 @@ import { IndicateurValeurLockRepository } from '../indicateur-valeur-lock.reposi
 import { IndicateurValeursContext } from '../indicateur-valeurs-context.types';
 import {
   captureIndicateurValeursResult,
-  getIndicateurValeursDataOrThrow,
+  captureIndicateurValeursResultOf,
   IndicateurValeursError,
+  isIndicateurValeursError,
+  toIndicateurValeursFailure,
 } from '../indicateur-valeurs.errors';
 import { GetIndicateursValeursResponse } from '../list-indicateur-valeurs/get-indicateur-valeurs.response';
 import {
@@ -249,85 +254,83 @@ export default class ManageIndicateurValeursService {
       );
     }
 
-    return captureIndicateurValeursResult(() =>
-      this.executeTransaction(async (tx) => {
-        // Même ordre de verrous que `deleteIndicateurValeurs` : graphe, puis table.
-        await this.indicateurLockRepository.lockForValueWrite(tx);
+    return this.runInTransaction(async (tx) => {
+      // Même ordre de verrous que `deleteIndicateurValeurs` : graphe, puis table.
+      await this.indicateurLockRepository.lockForValueWrite(tx);
 
-        const existing = await this.repository.listMetadonneeSourceValeurs(
-          { collectiviteIds, metadonneeId },
+      const existing = await this.repository.listMetadonneeSourceValeurs(
+        { collectiviteIds, metadonneeId },
+        tx
+      );
+      const key = (
+        v: Pick<
+          IndicateurValeurCreate,
+          'collectiviteId' | 'indicateurId' | 'dateValeur' | 'periodicite'
+        >
+      ) =>
+        `${v.collectiviteId}:${v.indicateurId}:${v.dateValeur}:${
+          v.periodicite ?? IndicateurPeriodiciteEnum.ANNUELLE
+        }`;
+      const existingByKey = new Map(existing.map((v) => [key(v), v]));
+      const precisions = await this.repository.listPrecisions(
+        [...new Set(valeurs.map(({ indicateurId }) => indicateurId))],
+        tx
+      );
+
+      const keptIds = new Set<number>();
+      const toWrite: IndicateurValeurCreate[] = [];
+      let updated = 0;
+      for (const valeur of valeurs) {
+        const stored = existingByKey.get(key(valeur));
+        if (!stored) {
+          toWrite.push(valeur);
+          continue;
+        }
+        keptIds.add(stored.id);
+        const objectif = isNil(valeur.objectif)
+          ? null
+          : round(
+              valeur.objectif,
+              precisions.get(valeur.indicateurId) ?? DEFAULT_ROUNDING_PRECISION
+            );
+        const unchanged =
+          stored.objectif === objectif &&
+          (stored.objectifCommentaire ?? null) ===
+            (valeur.objectifCommentaire ?? null);
+        if (!unchanged) {
+          toWrite.push(valeur);
+          updated++;
+        }
+      }
+
+      const upsertResult = await this.reconciliation.upsert(toWrite, {
+        isUserTrusted: true,
+        tx,
+      });
+      if (!upsertResult.success) return upsertResult;
+
+      const stale = existing.filter(({ id }) => !keptIds.has(id));
+      if (stale.length) {
+        await this.lockRepository.lock(stale, tx);
+        const deleted = await this.repository.deleteByIds(
+          stale.map(({ id }) => id),
           tx
         );
-        const key = (
-          v: Pick<
-            IndicateurValeurCreate,
-            'collectiviteId' | 'indicateurId' | 'dateValeur' | 'periodicite'
-          >
-        ) =>
-          `${v.collectiviteId}:${v.indicateurId}:${v.dateValeur}:${
-            v.periodicite ?? IndicateurPeriodiciteEnum.ANNUELLE
-          }`;
-        const existingByKey = new Map(existing.map((v) => [key(v), v]));
-        const precisions = await this.repository.listPrecisions(
-          [...new Set(valeurs.map(({ indicateurId }) => indicateurId))],
-          tx
+        const propagation = await this.reconciliation.propagateDeleted(
+          deleted,
+          { isUserTrusted: true, tx }
         );
+        if (!propagation.success) return propagation;
+      }
 
-        const keptIds = new Set<number>();
-        const toWrite: IndicateurValeurCreate[] = [];
-        let updated = 0;
-        for (const valeur of valeurs) {
-          const stored = existingByKey.get(key(valeur));
-          if (!stored) {
-            toWrite.push(valeur);
-            continue;
-          }
-          keptIds.add(stored.id);
-          const objectif = isNil(valeur.objectif)
-            ? null
-            : round(
-                valeur.objectif,
-                precisions.get(valeur.indicateurId) ??
-                  DEFAULT_ROUNDING_PRECISION
-              );
-          const unchanged =
-            stored.objectif === objectif &&
-            (stored.objectifCommentaire ?? null) ===
-              (valeur.objectifCommentaire ?? null);
-          if (!unchanged) {
-            toWrite.push(valeur);
-            updated++;
-          }
-        }
-
-        getIndicateurValeursDataOrThrow(
-          await this.reconciliation.upsert(toWrite, { isUserTrusted: true, tx })
-        );
-
-        const stale = existing.filter(({ id }) => !keptIds.has(id));
-        if (stale.length) {
-          await this.lockRepository.lock(stale, tx);
-          const deleted = await this.repository.deleteByIds(
-            stale.map(({ id }) => id),
-            tx
-          );
-          getIndicateurValeursDataOrThrow(
-            await this.reconciliation.propagateDeleted(deleted, {
-              isUserTrusted: true,
-              tx,
-            })
-          );
-        }
-
-        return {
-          created: toWrite.length - updated,
-          updated,
-          unchanged: valeurs.length - toWrite.length,
-          // `stale` exclut les totaux calculés (`listMetadonneeSourceValeurs`).
-          deleted: stale.length,
-        };
-      })
-    );
+      return success({
+        created: toWrite.length - updated,
+        updated,
+        unchanged: valeurs.length - toWrite.length,
+        // `stale` exclut les totaux calculés (`listMetadonneeSourceValeurs`).
+        deleted: stale.length,
+      });
+    });
   }
 
   async reconcileCollectiviteCalculatedIndicateurValeurs(
@@ -349,8 +352,12 @@ export default class ManageIndicateurValeursService {
       skipPermissionCheck?: boolean;
     } = {}
   ) {
-    if (!options.skipPermissionCheck)
-      this.permissionService.hasServiceRole(user);
+    if (!options.skipPermissionCheck) {
+      const serviceRoleCheck = await captureIndicateurValeursResult(async () =>
+        this.permissionService.hasServiceRole(user)
+      );
+      if (!serviceRoleCheck.success) return serviceRoleCheck;
+    }
     return this.reconciliation.recomputeAll(
       {
         collectiviteId: onlyForCollectiviteId,
@@ -359,30 +366,32 @@ export default class ManageIndicateurValeursService {
       { isUserTrusted: true }
     );
   }
-  private async executeTransaction<T>(
-    operation: (tx: Transaction) => Promise<T>
-  ): Promise<T> {
-    const result = await this.transactionManager.executeSingle<T, unknown>(
-      async (tx) => success(await operation(tx))
-    );
-    if (!result.success) {
-      throw typeof result.error === 'string' ? result : result.error;
-    }
-    return result.data;
+  private async runInTransaction<T>(
+    operation: TransactionOperation<T, IndicateurValeursError>
+  ): Promise<Result<T, IndicateurValeursError>> {
+    const result = await this.transactionManager.executeSingle<
+      T,
+      IndicateurValeursError | Error
+    >(operation);
+    if (result.success) return result;
+    return isIndicateurValeursError(result.error)
+      ? failure(result.error, result.cause)
+      : toIndicateurValeursFailure(result.error);
   }
+
   async canMutateValeur(
     user: AuthenticatedUser,
     collectiviteId: number,
     indicateur: IndicateurDetaille
-  ): Promise<boolean> {
-    await this.canMutateValeurs(user, collectiviteId, [indicateur]);
-    return true;
+  ): Promise<Result<void, IndicateurValeursError>> {
+    return this.canMutateValeurs(user, collectiviteId, [indicateur]);
   }
+
   async canMutateValeurs(
     user: AuthenticatedUser,
     collectiviteId: number,
     indicateurs: IndicateurDetaille[]
-  ): Promise<void> {
+  ): Promise<Result<void, IndicateurValeursError>> {
     // `authedProcedure` also accepts API-key JWTs whose permissions claim can
     // deliberately be narrower than the owner's collectivity role.
     const apiKeyPermissionResult = this.permissionService.isApiKeyAllowed(
@@ -390,11 +399,17 @@ export default class ManageIndicateurValeursService {
       'indicateurs.valeurs.mutate'
     );
     if (!apiKeyPermissionResult.success) {
-      throw new ForbiddenException(
-        "Droits insuffisants, la clé d'api n'a pas l'autorisation indicateurs.valeurs.mutate."
+      return failure(
+        'UNAUTHORIZED',
+        new ForbiddenException(
+          "Droits insuffisants, la clé d'api n'a pas l'autorisation indicateurs.valeurs.mutate."
+        )
       );
     }
-    assertUserIndicateurValeursAllowed(indicateurs);
+    const userValeursAllowed = await captureIndicateurValeursResult(async () =>
+      assertUserIndicateurValeursAllowed(indicateurs)
+    );
+    if (!userValeursAllowed.success) return userValeursAllowed;
 
     const userPermissionsResult =
       await this.getUserPermissionsService.getUserRolesAndPermissions({
@@ -402,8 +417,11 @@ export default class ManageIndicateurValeursService {
       });
 
     if (!userPermissionsResult.success) {
-      throw new ForbiddenException(
-        `Droits insuffisants, l'utilisateur ${user.id} n'a pas les droits pour muter les valeurs d'indicateur de la collectivité ${collectiviteId}`
+      return failure(
+        'UNAUTHORIZED',
+        new ForbiddenException(
+          `Droits insuffisants, l'utilisateur ${user.id} n'a pas les droits pour muter les valeurs d'indicateur de la collectivité ${collectiviteId}`
+        )
       );
     }
 
@@ -414,7 +432,7 @@ export default class ManageIndicateurValeursService {
         collectiviteId,
       })
     ) {
-      return;
+      return success(undefined);
     }
 
     if (
@@ -427,14 +445,14 @@ export default class ManageIndicateurValeursService {
         indicateur.pilotes?.some((p) => p.userId === user.id)
       )
     ) {
-      return;
+      return success(undefined);
     }
 
-    this.permissionService.throwForbiddenException(
-      user,
-      'indicateurs.valeurs.mutate',
-      ResourceType.COLLECTIVITE,
-      { collectiviteId }
+    return failure(
+      'UNAUTHORIZED',
+      new ForbiddenException(
+        `Droits insuffisants, l'utilisateur ${user.id} n'a pas l'autorisation indicateurs.valeurs.mutate sur la collectivité ${collectiviteId}`
+      )
     );
   }
 
@@ -442,7 +460,7 @@ export default class ManageIndicateurValeursService {
     data: UpsertValeurIndicateur,
     user: AuthenticatedUser
   ): Promise<Result<IndicateurValeur | undefined, IndicateurValeursError>> {
-    return captureIndicateurValeursResult(() =>
+    return captureIndicateurValeursResultOf(() =>
       this.executeUpsertValeur(data, user)
     );
   }
@@ -450,41 +468,48 @@ export default class ManageIndicateurValeursService {
   private async executeUpsertValeur(
     data: UpsertValeurIndicateur,
     user: AuthenticatedUser
-  ) {
+  ): Promise<Result<IndicateurValeur | undefined, IndicateurValeursError>> {
     const { collectiviteId, indicateurId } = data;
-    const indicateur = await this.listIndicateursService.getIndicateur({
+    const indicateurResult = await this.getIndicateur({
       collectiviteId,
       indicateurId,
     });
-    await this.canMutateValeur(user, collectiviteId, indicateur);
+    if (!indicateurResult.success) return indicateurResult;
+    const canMutate = await this.canMutateValeur(
+      user,
+      collectiviteId,
+      indicateurResult.data
+    );
+    if (!canMutate.success) return canMutate;
+
     const changed: IndicateurValeur[] = [];
-    const saved = await this.executeTransaction(async (tx) => {
-      const saved = getIndicateurValeursDataOrThrow(
-        await this.writer.saveSingle({ data }, { user, tx })
+    const saveResult = await this.runInTransaction(async (tx) => {
+      const savedResult = await this.writer.saveSingle({ data }, { user, tx });
+      if (!savedResult.success) return savedResult;
+      const savedValeur = savedResult.data;
+      if (!savedValeur) return success(undefined);
+      const calculatedResult = await this.reconciliation.propagateUpdated(
+        [savedValeur],
+        { isUserTrusted: true, tx }
       );
-      if (!saved) return undefined;
-      const calculated = getIndicateurValeursDataOrThrow(
-        await this.reconciliation.propagateUpdated([saved], {
-          isUserTrusted: true,
-          tx,
-        })
-      );
+      if (!calculatedResult.success) return calculatedResult;
       await this.updateIndicateurService.updateIndicateurModifiedFields(
         { indicateurId, collectiviteId, user },
         tx
       );
-      changed.push(saved, ...calculated);
-      return saved;
+      changed.push(savedValeur, ...calculatedResult.data);
+      return success(savedValeur);
     });
+    if (!saveResult.success) return saveResult;
     await this.publishValeurUpsertedEvents(changed, user);
-    return saved;
+    return saveResult;
   }
 
   deleteValeurIndicateur(
     data: DeleteValeurIndicateur,
     user: AuthenticatedUser
   ): Promise<Result<void, IndicateurValeursError>> {
-    return captureIndicateurValeursResult(() =>
+    return captureIndicateurValeursResultOf(() =>
       this.executeDeleteValeurIndicateur(data, user)
     );
   }
@@ -492,15 +517,21 @@ export default class ManageIndicateurValeursService {
   private async executeDeleteValeurIndicateur(
     data: DeleteValeurIndicateur,
     user: AuthenticatedUser
-  ) {
+  ): Promise<Result<void, IndicateurValeursError>> {
     const { collectiviteId, indicateurId, id } = data;
 
-    const indicateur = await this.listIndicateursService.getIndicateur({
+    const indicateurResult = await this.getIndicateur({
       indicateurId,
       collectiviteId,
     });
+    if (!indicateurResult.success) return indicateurResult;
+    const canMutate = await this.canMutateValeur(
+      user,
+      collectiviteId,
+      indicateurResult.data
+    );
+    if (!canMutate.success) return canMutate;
 
-    await this.canMutateValeur(user, collectiviteId, indicateur);
     const contexts = await Promise.all(
       this.valeurDeletionListeners.map((listener) =>
         listener.onWillDelete({
@@ -511,34 +542,36 @@ export default class ManageIndicateurValeursService {
       )
     );
 
-    await this.executeTransaction(async (tx) => {
+    const deletion = await this.runInTransaction(async (tx) => {
       await this.indicateurLockRepository.lockForValueWrite(tx);
 
       const existing = await this.repository.findUserValeur(
         { collectiviteId, indicateurId, id },
         tx
       );
-      if (!existing) return;
+      if (!existing) return success(undefined);
 
       await this.lockRepository.lock([existing], tx);
       const deleted = await this.repository.deleteUserValeur(
         { collectiviteId, indicateurId, id },
         tx
       );
-      if (!deleted) return;
+      if (!deleted) return success(undefined);
 
-      getIndicateurValeursDataOrThrow(
-        await this.reconciliation.propagateDeleted([deleted], {
-          isUserTrusted: true,
-          tx,
-        })
+      const propagation = await this.reconciliation.propagateDeleted(
+        [deleted],
+        { isUserTrusted: true, tx }
       );
+      if (!propagation.success) return propagation;
 
       await this.updateIndicateurService.updateIndicateurModifiedFields(
         { indicateurId, collectiviteId, user },
         tx
       );
+      return success(undefined);
     });
+    if (!deletion.success) return deletion;
+
     await Promise.all(
       this.valeurDeletionListeners.map((listener, index) =>
         listener.onDeleted(contexts[index], {
@@ -549,7 +582,17 @@ export default class ManageIndicateurValeursService {
         })
       )
     );
+    return success(undefined);
   }
+
+  private getIndicateur(
+    scope: Parameters<ListIndicateursService['getIndicateur']>[0]
+  ): Promise<Result<IndicateurDetaille, IndicateurValeursError>> {
+    return captureIndicateurValeursResult(() =>
+      this.listIndicateursService.getIndicateur(scope)
+    );
+  }
+
   deleteIndicateurValeurs(
     options: DeleteIndicateursValeursRequestType
   ): Promise<
@@ -558,27 +601,32 @@ export default class ManageIndicateurValeursService {
       IndicateurValeursError
     >
   > {
-    return captureIndicateurValeursResult(() =>
+    return captureIndicateurValeursResultOf(() =>
       this.executeDeleteIndicateurValeurs(options)
     );
   }
 
   private async executeDeleteIndicateurValeurs(
     options: DeleteIndicateursValeursRequestType
-  ) {
+  ): Promise<
+    Result<
+      { indicateurValeurIdsSupprimes: { id: number }[] },
+      IndicateurValeursError
+    >
+  > {
     this.logger.log(
       `Suppression des valeurs des indicateurs selon ces options : ${JSON.stringify(
         options
       )}`
     );
 
-    const deletedIds = await this.executeTransaction(async (tx) => {
+    const deletion = await this.runInTransaction(async (tx) => {
       // Le trigger statement-level arrive trop tard pour imposer l'ordre
       // graphe -> table : PostgreSQL a déjà pris le verrou de table du DELETE.
       await this.indicateurLockRepository.lockForValueWrite(tx);
 
       const candidates = await this.repository.listValeursToDelete(options, tx);
-      if (candidates.length === 0) return [];
+      if (candidates.length === 0) return success([]);
 
       // Une suppression en masse participe au même protocole par période que
       // les upserts. Supprimer les ids découverts donne une sémantique de
@@ -589,18 +637,18 @@ export default class ManageIndicateurValeursService {
         tx
       );
 
-      getIndicateurValeursDataOrThrow(
-        await this.reconciliation.propagateDeleted(deleted, {
-          isUserTrusted: true,
-          tx,
-        })
-      );
+      const propagation = await this.reconciliation.propagateDeleted(deleted, {
+        isUserTrusted: true,
+        tx,
+      });
+      if (!propagation.success) return propagation;
 
-      return deleted.map(({ id }) => ({ id }));
+      return success(deleted.map(({ id }) => ({ id })));
     });
+    if (!deletion.success) return deletion;
     this.logger.log(
-      `${deletedIds.length} valeurs d'indicateurs ont été supprimées`
+      `${deletion.data.length} valeurs d'indicateurs ont été supprimées`
     );
-    return { indicateurValeurIdsSupprimes: deletedIds };
+    return success({ indicateurValeurIdsSupprimes: deletion.data });
   }
 }

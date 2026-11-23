@@ -6,13 +6,21 @@ import { TrpcErrorHandlerConfig } from '@tet/backend/utils/trpc/trpc-error-handl
 import { match } from 'ts-pattern';
 import { UserIndicateurValeurNotAllowedException } from './write-indicateur-valeurs/user-indicateur-valeur.errors';
 
-export type IndicateurValeursError =
-  | 'UNAUTHORIZED'
-  | 'INVALID_VALUE'
-  | 'INDICATEUR_NOT_AVAILABLE'
-  | 'PERIODICITE_MISMATCH'
-  | 'USER_VALUE_NOT_ALLOWED'
-  | 'DATABASE_ERROR';
+const indicateurValeursErrors = [
+  'UNAUTHORIZED',
+  'INVALID_VALUE',
+  'INDICATEUR_NOT_AVAILABLE',
+  'PERIODICITE_MISMATCH',
+  'USER_VALUE_NOT_ALLOWED',
+  'DATABASE_ERROR',
+] as const;
+
+export type IndicateurValeursError = (typeof indicateurValeursErrors)[number];
+
+export const isIndicateurValeursError = (
+  error: unknown
+): error is IndicateurValeursError =>
+  indicateurValeursErrors.some((code) => code === error);
 
 export const indicateurValeursErrorConfig: TrpcErrorHandlerConfig<
   Extract<
@@ -58,6 +66,24 @@ export const toCommonFailure = ({
 }: IndicateurValeursFailure): Result<never, CommonError> =>
   failure(toCommonError(error), cause);
 
+export function toIndicateurValeursFailure(
+  error: unknown
+): Result<never, IndicateurValeursError> {
+  if (isFailedResult<IndicateurValeursError>(error)) return error;
+  const code =
+    error instanceof UserIndicateurValeurNotAllowedException
+      ? 'USER_VALUE_NOT_ALLOWED'
+      : error instanceof ForbiddenException
+      ? 'UNAUTHORIZED'
+      : error instanceof BadRequestException
+      ? 'INVALID_VALUE'
+      : 'DATABASE_ERROR';
+  return failure(
+    code,
+    error instanceof Error ? error : new Error(String(error))
+  );
+}
+
 /** Preserve the legacy cause while application services expose typed results. */
 export async function captureIndicateurValeursResult<T>(
   operation: () => Promise<T>
@@ -65,19 +91,7 @@ export async function captureIndicateurValeursResult<T>(
   try {
     return success(await operation());
   } catch (error) {
-    if (isFailedResult<IndicateurValeursError>(error)) return error;
-    const code =
-      error instanceof UserIndicateurValeurNotAllowedException
-        ? 'USER_VALUE_NOT_ALLOWED'
-        : error instanceof ForbiddenException
-        ? 'UNAUTHORIZED'
-        : error instanceof BadRequestException
-        ? 'INVALID_VALUE'
-        : 'DATABASE_ERROR';
-    return failure(
-      code,
-      error instanceof Error ? error : new Error(String(error))
-    );
+    return toIndicateurValeursFailure(error);
   }
 }
 
