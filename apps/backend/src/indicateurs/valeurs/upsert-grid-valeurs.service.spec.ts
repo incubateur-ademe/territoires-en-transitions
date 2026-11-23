@@ -26,7 +26,7 @@ const toServiceWithMocks = ({
   validation?: unknown;
 }) => {
   const manage = {
-    canMutateValeurs: vi.fn().mockResolvedValue(undefined),
+    canMutateValeurs: vi.fn().mockResolvedValue(success(undefined)),
     upsertIndicateurValeurs: vi.fn().mockResolvedValue(nestedUpsert),
     publishValeurUpsertedEvents: vi.fn().mockResolvedValue(undefined),
   };
