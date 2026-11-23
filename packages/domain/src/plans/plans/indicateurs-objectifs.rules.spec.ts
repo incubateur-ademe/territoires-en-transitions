@@ -1,9 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { IndicateurPeriodiciteEnum } from '../../indicateurs/indicateur/indicateur-periodicite.schema';
 import {
+  compareIndicateursObjectifs,
+  getHorizonParDefaut,
   LigneValeurIndicateurObjectif,
-  pickDerniereValeur,
-  pickObjectif,
+  listObjectifs,
+  pickObjectifAHorizon,
+  pickResultats,
 } from './indicateurs-objectifs.rules';
 
 const ligne = (
@@ -15,6 +18,7 @@ const ligne = (
   objectif: null,
   metadonneeId: null,
   sourceId: null,
+  sourceLibelle: null,
   ordreAffichage: null,
   dateVersion: null,
   ...partial,
@@ -27,6 +31,7 @@ const openData = (
 ) =>
   ligne({
     sourceId,
+    sourceLibelle: `Libellé ${sourceId}`,
     ordreAffichage,
     metadonneeId: 1,
     dateVersion: '2024-01-01T00:00:00',
@@ -35,31 +40,34 @@ const openData = (
 
 const ANNUELLE = IndicateurPeriodiciteEnum.ANNUELLE;
 
-describe('pickDerniereValeur', () => {
-  it('retient le résultat le plus récent de la collectivité, même si l’open data est plus récent', () => {
+describe('pickResultats', () => {
+  it('retient tous les résultats de la collectivité, dans l’ordre, même si l’open data existe', () => {
     expect(
-      pickDerniereValeur(
+      pickResultats(
         [
-          ligne({ dateValeur: '2021-01-01', resultat: 10 }),
           ligne({ dateValeur: '2023-01-01', resultat: 12 }),
-          ligne({ dateValeur: '2024-01-01', objectif: 5 }),
+          ligne({ dateValeur: '2021-01-01', resultat: 10 }),
+          ligne({ dateValeur: '2030-01-01', objectif: 5 }),
           openData('rare', 1, { dateValeur: '2024-01-01', resultat: 99 }),
         ],
         ANNUELLE
       )
     ).toEqual({
-      valeur: 12,
-      dateValeur: '2023-01-01',
-      sourceId: 'collectivite',
+      source: { type: 'collectivite' },
+      points: [
+        { dateValeur: '2021-01-01', valeur: 10 },
+        { dateValeur: '2023-01-01', valeur: 12 },
+      ],
     });
   });
 
-  it('se replie sur la source open data au plus petit ordre d’affichage', () => {
+  it('se replie sur la seule source open data au plus petit ordre d’affichage', () => {
     expect(
-      pickDerniereValeur(
+      pickResultats(
         [
           openData('citepa', 2, { dateValeur: '2023-01-01', resultat: 7 }),
           openData('rare', 1, { dateValeur: '2021-01-01', resultat: 3 }),
+          openData('rare', 1, { dateValeur: '2022-01-01', resultat: 4 }),
           openData('sans-ordre', null, {
             dateValeur: '2024-01-01',
             resultat: 1,
@@ -67,12 +75,18 @@ describe('pickDerniereValeur', () => {
         ],
         ANNUELLE
       )
-    ).toEqual({ valeur: 3, dateValeur: '2021-01-01', sourceId: 'rare' });
+    ).toEqual({
+      source: { type: 'open-data', libelle: 'Libellé rare' },
+      points: [
+        { dateValeur: '2021-01-01', valeur: 3 },
+        { dateValeur: '2022-01-01', valeur: 4 },
+      ],
+    });
   });
 
-  it('entre deux versions d’une même source, garde la plus récente', () => {
+  it('garde la version la plus récente d’une même date open data', () => {
     expect(
-      pickDerniereValeur(
+      pickResultats(
         [
           openData('rare', 1, {
             metadonneeId: 1,
@@ -88,13 +102,13 @@ describe('pickDerniereValeur', () => {
           }),
         ],
         ANNUELLE
-      )?.valeur
-    ).toBe(6);
+      )?.points
+    ).toEqual([{ dateValeur: '2022-01-01', valeur: 6 }]);
   });
 
   it('ignore les valeurs d’une autre périodicité que celle de l’indicateur', () => {
     expect(
-      pickDerniereValeur(
+      pickResultats(
         [
           ligne({ dateValeur: '2023-01-01', resultat: 12 }),
           ligne({
@@ -104,49 +118,78 @@ describe('pickDerniereValeur', () => {
           }),
         ],
         ANNUELLE
-      )?.valeur
-    ).toBe(12);
+      )?.points
+    ).toEqual([{ dateValeur: '2023-01-01', valeur: 12 }]);
   });
 
   it('renvoie null sans aucun résultat', () => {
-    expect(pickDerniereValeur([ligne({ objectif: 3 })], ANNUELLE)).toBeNull();
+    expect(pickResultats([ligne({ objectif: 3 })], ANNUELLE)).toBeNull();
   });
 });
 
-describe('pickObjectif', () => {
+describe('listObjectifs', () => {
+  it('liste les objectifs de la collectivité par année, sans trajectoire open data', () => {
+    expect(
+      listObjectifs([
+        ligne({ dateValeur: '2050-01-01', objectif: 0 }),
+        ligne({ dateValeur: '2030-12-01', objectif: 45 }),
+        ligne({ dateValeur: '2030-01-01', objectif: 50 }),
+        openData('snbc', 1, { dateValeur: '2036-01-01', objectif: 40 }),
+      ])
+    ).toEqual([
+      { annee: 2030, valeur: 45 },
+      { annee: 2050, valeur: 0 },
+    ]);
+  });
+});
+
+describe('pickObjectifAHorizon', () => {
   const objectifs = [
-    ligne({ dateValeur: '2020-01-01', objectif: 100 }),
-    ligne({ dateValeur: '2030-01-01', objectif: 50 }),
-    ligne({ dateValeur: '2050-01-01', objectif: 0 }),
+    { annee: 2026, valeur: 80 },
+    { annee: 2030, valeur: 50 },
+    { annee: 2050, valeur: 0 },
   ];
 
-  it('retient le prochain horizon, année courante comprise', () => {
-    expect(pickObjectif(objectifs, 2026)).toEqual({ annee: 2030, valeur: 50 });
-    expect(pickObjectif(objectifs, 2030)).toEqual({ annee: 2030, valeur: 50 });
+  it('retient le dernier objectif fixé jusqu’à l’horizon', () => {
+    expect(pickObjectifAHorizon(objectifs, 2030)).toEqual({
+      annee: 2030,
+      valeur: 50,
+    });
+    expect(pickObjectifAHorizon(objectifs, 2036)).toEqual({
+      annee: 2030,
+      valeur: 50,
+    });
+    expect(pickObjectifAHorizon(objectifs, 2050)).toEqual({
+      annee: 2050,
+      valeur: 0,
+    });
   });
 
-  it('retient le dernier horizon quand tous sont passés', () => {
-    expect(pickObjectif(objectifs, 2051)).toEqual({ annee: 2050, valeur: 0 });
+  it('renvoie null sans objectif avant l’horizon', () => {
+    expect(pickObjectifAHorizon([{ annee: 2050, valeur: 0 }], 2030)).toBeNull();
   });
+});
 
-  it('ne retient jamais une trajectoire open data', () => {
+describe('getHorizonParDefaut', () => {
+  it('propose le prochain horizon, sinon le dernier', () => {
+    expect(getHorizonParDefaut(2026)).toBe(2030);
+    expect(getHorizonParDefaut(2030)).toBe(2030);
+    expect(getHorizonParDefaut(2031)).toBe(2036);
+    expect(getHorizonParDefaut(2060)).toBe(2050);
+  });
+});
+
+describe('compareIndicateursObjectifs', () => {
+  it('place les favoris en tête, puis trie par titre', () => {
     expect(
-      pickObjectif(
-        [openData('snbc', 1, { dateValeur: '2030-01-01', objectif: 40 })],
-        2026
-      )
-    ).toBeNull();
-  });
-
-  it('garde l’objectif à la date la plus tardive d’un même horizon', () => {
-    expect(
-      pickObjectif(
-        [
-          ligne({ dateValeur: '2030-12-01', objectif: 45 }),
-          ligne({ dateValeur: '2030-01-01', objectif: 50 }),
-        ],
-        2026
-      )
-    ).toEqual({ annee: 2030, valeur: 45 });
+      [
+        { favori: false, titre: 'Émissions' },
+        { favori: true, titre: 'Zéro artificialisation' },
+        { favori: false, titre: 'Air' },
+        { favori: true, titre: 'Bâtiments' },
+      ]
+        .toSorted(compareIndicateursObjectifs)
+        .map(({ titre }) => titre)
+    ).toEqual(['Bâtiments', 'Zéro artificialisation', 'Air', 'Émissions']);
   });
 });

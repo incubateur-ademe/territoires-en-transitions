@@ -2,7 +2,6 @@ import { isNil } from 'es-toolkit';
 import { IndicateurPeriodicite } from '../../indicateurs/indicateur/indicateur-periodicite.schema';
 import { normalizeIndicateurReferenceObjectifs } from '../../indicateurs/valeurs/indicateur-reference-objectif.rules';
 import { IndicateurPeriodes } from '../../indicateurs/valeurs/indicateur-periodes';
-import { COLLECTIVITE_SOURCE_ID } from '../../indicateurs/valeurs/values.constants';
 
 /** Valeur d'un indicateur pour la collectivité du plan, avec sa source éventuelle */
 export type LigneValeurIndicateurObjectif = {
@@ -13,19 +12,23 @@ export type LigneValeurIndicateurObjectif = {
   // `null` pour une valeur saisie par la collectivité
   metadonneeId: number | null;
   sourceId: string | null;
+  sourceLibelle: string | null;
   ordreAffichage: number | null;
   dateVersion: string | null;
 };
 
-export type IndicateurDerniereValeur = {
-  valeur: number;
-  dateValeur: string;
-  sourceId: string;
-};
+export type IndicateurResultat = { dateValeur: string; valeur: number };
 
-export type IndicateurObjectifHorizon = {
-  valeur: number;
-  annee: number;
+export type IndicateurObjectifHorizon = { annee: number; valeur: number };
+
+/** D'où viennent les résultats affichés : la collectivité, sinon l'open data. */
+export type IndicateurResultatsSource =
+  | { type: 'collectivite' }
+  | { type: 'open-data'; libelle: string };
+
+export type IndicateurResultats = {
+  source: IndicateurResultatsSource;
+  points: IndicateurResultat[];
 };
 
 export type IndicateurObjectif = {
@@ -35,9 +38,16 @@ export type IndicateurObjectif = {
   unite: string;
   precision: number;
   periodicite: IndicateurPeriodicite;
-  derniereValeur: IndicateurDerniereValeur | null;
-  objectif: IndicateurObjectifHorizon | null;
+  favori: boolean;
+  resultats: IndicateurResultats | null;
+  objectifs: IndicateurObjectifHorizon[];
 };
+
+/** Les horizons proposés au choix, ceux des objectifs du dépôt PCAET. */
+export const INDICATEURS_OBJECTIFS_HORIZONS = [2030, 2036, 2050] as const;
+
+export type IndicateursObjectifsHorizon =
+  (typeof INDICATEURS_OBJECTIFS_HORIZONS)[number];
 
 const isFiniteNumber = (value: number | null | undefined): value is number =>
   !isNil(value) && Number.isFinite(value);
@@ -59,54 +69,66 @@ const compareOrdreSource = (
 };
 
 /**
- * Dernier résultat à la périodicité de l'indicateur : celui de la collectivité
- * s'il en existe un, sinon celui de la source open data à l'`ordreAffichage`
- * minimal. Entre deux versions d'une même source, la plus récente l'emporte.
+ * Les résultats d'une seule source, à la périodicité de l'indicateur : ceux de
+ * la collectivité s'il y en a, sinon ceux de la source open data à
+ * l'`ordreAffichage` minimal. Une date publiée par plusieurs versions de la
+ * source garde la plus récente.
  */
-export function pickDerniereValeur(
+export function pickResultats(
   lignes: LigneValeurIndicateurObjectif[],
   periodicite: IndicateurPeriodicite
-): IndicateurDerniereValeur | null {
+): IndicateurResultats | null {
   const resultats = lignes.filter(
     (l) => l.periodicite === periodicite && isFiniteNumber(l.resultat)
   );
-
   const collectivite = resultats.filter((l) => l.metadonneeId === null);
   const openData = resultats.filter((l) => l.metadonneeId !== null);
   const [sourcePrioritaire] = openData.toSorted(compareOrdreSource);
-  const candidates = collectivite.length
+
+  const retenues = collectivite.length
     ? collectivite
     : openData.filter((l) => l.sourceId === sourcePrioritaire?.sourceId);
-
-  const [ligne] = candidates.toSorted(
-    (a, b) =>
-      compareRecentFirst(a.dateValeur, b.dateValeur) ||
-      compareRecentFirst(a.dateVersion, b.dateVersion) ||
-      (b.metadonneeId ?? 0) - (a.metadonneeId ?? 0)
-  );
-  if (!ligne || !isFiniteNumber(ligne.resultat)) {
+  if (!retenues.length) {
     return null;
   }
+
+  const parDate = new Map<string, LigneValeurIndicateurObjectif>();
+  retenues
+    .toSorted(
+      (a, b) =>
+        compareRecentFirst(a.dateVersion, b.dateVersion) ||
+        (b.metadonneeId ?? 0) - (a.metadonneeId ?? 0)
+    )
+    .forEach((l) => {
+      if (!parDate.has(l.dateValeur)) {
+        parDate.set(l.dateValeur, l);
+      }
+    });
+
   return {
-    valeur: ligne.resultat,
-    dateValeur: ligne.dateValeur,
-    sourceId:
-      ligne.metadonneeId === null
-        ? COLLECTIVITE_SOURCE_ID
-        : ligne.sourceId ?? COLLECTIVITE_SOURCE_ID,
+    source: collectivite.length
+      ? { type: 'collectivite' }
+      : {
+          type: 'open-data',
+          libelle:
+            sourcePrioritaire?.sourceLibelle ??
+            sourcePrioritaire?.sourceId ??
+            '',
+        },
+    points: [...parDate.values()]
+      .map((l) => ({ dateValeur: l.dateValeur, valeur: l.resultat as number }))
+      .toSorted((a, b) => a.dateValeur.localeCompare(b.dateValeur)),
   };
 }
 
 /**
- * Objectif saisi par la collectivité au prochain horizon annuel (année
- * courante comprise), sinon au dernier horizon passé. Les trajectoires open
- * data (SNBC…) ne sont jamais retenues.
+ * Les objectifs saisis par la collectivité, un par année. Les trajectoires
+ * open data (SNBC…) ne sont jamais retenues.
  */
-export function pickObjectif(
-  lignes: LigneValeurIndicateurObjectif[],
-  anneeCourante: number
-): IndicateurObjectifHorizon | null {
-  const horizons = normalizeIndicateurReferenceObjectifs(
+export function listObjectifs(
+  lignes: LigneValeurIndicateurObjectif[]
+): IndicateurObjectifHorizon[] {
+  return normalizeIndicateurReferenceObjectifs(
     lignes.flatMap((l) =>
       l.metadonneeId === null && isFiniteNumber(l.objectif)
         ? [{ dateValeur: l.dateValeur, valeur: l.objectif }]
@@ -118,10 +140,33 @@ export function pickObjectif(
       valeur,
     }))
     .toSorted((a, b) => a.annee - b.annee);
+}
 
+/** L'objectif retenu pour un horizon : le dernier fixé jusqu'à cet horizon. */
+export function pickObjectifAHorizon(
+  objectifs: IndicateurObjectifHorizon[],
+  horizon: number
+): IndicateurObjectifHorizon | null {
+  return objectifs.filter(({ annee }) => annee <= horizon).at(-1) ?? null;
+}
+
+/** Le prochain horizon, année courante comprise, sinon le dernier. */
+export function getHorizonParDefaut(
+  anneeCourante: number
+): IndicateursObjectifsHorizon {
   return (
-    horizons.find(({ annee }) => annee >= anneeCourante) ??
-    horizons.at(-1) ??
-    null
+    INDICATEURS_OBJECTIFS_HORIZONS.find((h) => h >= anneeCourante) ??
+    INDICATEURS_OBJECTIFS_HORIZONS[INDICATEURS_OBJECTIFS_HORIZONS.length - 1]
   );
+}
+
+/** Les favoris de la collectivité d'abord, puis l'ordre alphabétique. */
+export function compareIndicateursObjectifs(
+  a: Pick<IndicateurObjectif, 'favori' | 'titre'>,
+  b: Pick<IndicateurObjectif, 'favori' | 'titre'>
+): number {
+  if (a.favori !== b.favori) {
+    return a.favori ? -1 : 1;
+  }
+  return a.titre.localeCompare(b.titre, 'fr');
 }
