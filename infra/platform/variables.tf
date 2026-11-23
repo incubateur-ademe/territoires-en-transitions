@@ -117,12 +117,6 @@ variable "vpn_ssh_authorized_keys" {
 
 # --- Stockage ---
 
-variable "coolify_backups_bucket_name" {
-  description = "Nom du bucket Object Storage des backups Coolify. Doit être globalement unique. Transverse à tous les environnements."
-  type        = string
-  default     = "tet-coolify-backups"
-}
-
 variable "database_backups_bucket_name" {
   description = "Nom du bucket Object Storage des dumps quotidiens de la BDD de prod. Doit être globalement unique."
   type        = string
@@ -130,7 +124,7 @@ variable "database_backups_bucket_name" {
 }
 
 variable "backups_lock_days" {
-  description = "Durée du verrou Object Lock (COMPLIANCE) appliqué à chaque objet du bucket de backups, en jours. Ne peut pas être raccourcie pour les objets déjà écrits."
+  description = "Durée du verrou Object Lock (COMPLIANCE) appliqué à chaque objet des buckets de backups, en jours. Ne peut pas être raccourcie pour les objets déjà écrits."
   type        = number
   default     = 14
 }
@@ -141,16 +135,10 @@ variable "backups_noncurrent_version_days" {
   default     = 7
 }
 
-variable "coolify_backups_credentials_secret_name" {
-  description = "Nom du secret Secret Manager portant la clé Object Storage des backups (access_key|secret_key). Doit rester aligné sur s3_credentials_secret_name (infra/coolify)."
-  type        = string
-  default     = "tet-platform-coolify-s3-credentials"
-}
-
 # --- Projets créés par l'admin de l'organisation ---
 
 variable "database_backups_project_id" {
-  description = "ID du projet Scaleway des dumps de la BDD de prod (tet-database-backups), créé par un admin de l'organisation. Séparé de tet-coolify-backups pour que la clé Coolify ne voie pas les dumps."
+  description = "ID du projet Scaleway des dumps de la BDD de prod (tet-database-backups), créé par un admin de l'organisation."
   type        = string
   validation {
     condition     = can(regex("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", var.database_backups_project_id))
@@ -164,14 +152,5 @@ variable "prod_project_id" {
   validation {
     condition     = can(regex("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", var.prod_project_id))
     error_message = "prod_project_id doit être un UUID de projet Scaleway."
-  }
-}
-
-variable "coolify_backups_project_id" {
-  description = "ID du projet Scaleway des backups Coolify (tet-coolify-backups), créé par un admin de l'organisation. Porte le bucket tet-coolify-backups."
-  type        = string
-  validation {
-    condition     = can(regex("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", var.coolify_backups_project_id))
-    error_message = "coolify_backups_project_id doit être un UUID de projet Scaleway."
   }
 }

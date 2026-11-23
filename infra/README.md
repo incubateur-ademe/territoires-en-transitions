@@ -45,10 +45,6 @@ flowchart TB
     end
   end
 
-  subgraph bk["Projet tet-coolify-backups"]
-    bucket[(tet-coolify-backups<br/>Object Lock COMPLIANCE)]
-  end
-
   subgraph dbk["Projet tet-database-backups"]
     dbbucket[(tet-database-backups<br/>Object Lock COMPLIANCE)]
   end
@@ -57,7 +53,6 @@ flowchart TB
   vpn -- "SSH, Postgres, Redis<br/>(IP privées)" --> nonprod & preview
   vpn -- "SSH IP publique" --> prod
   sm -- "env vars (à l'apply)" --> coolify
-  coolify -- "backups" --> bucket
   gha["GitHub Actions"] -- "dump quotidien BDD prod" --> dbbucket
   nonprod --- nrdb
   prod --- prdb
@@ -178,29 +173,24 @@ infra/
 Créer un projet ou une application IAM exige des droits d'organisation, que les
 credentials Terraform n'ont pas. Un admin crée donc, une fois :
 
-1. **Quatre projets** : `tet` (principal), `tet-prod`, `tet-coolify-backups` et
-   `tet-database-backups`. Leurs IDs vont dans `main_project_id`, `prod_project_id`,
-   `coolify_backups_project_id` et `database_backups_project_id` de
+1. **Trois projets** : `tet` (principal), `tet-prod` et `tet-database-backups`. Leurs
+   IDs vont dans `main_project_id`, `prod_project_id` et `database_backups_project_id` de
    `platform/terraform.tfvars`.
 2. **Les droits des opérateurs Terraform** sur ces projets :
    - `tet-prod` : serveur, VPC, IPAM, RDB, Redis, secrets et DNS. Le plus simple :
      `AllProductsFullAccess` limité à ce projet ;
-   - `tet-coolify-backups` et `tet-database-backups` : `ObjectStorageFullAccess` limité à
-     ces projets. Le verrou COMPLIANCE empêche quand même toute suppression de version avant
+   - `tet-database-backups` : `ObjectStorageFullAccess` limité à ce projet. Le verrou COMPLIANCE empêche quand même toute suppression de version avant
      l'échéance.
-3. **L'application IAM `tet-coolify-backups`** :
-   - une politique limitée à `tet-coolify-backups`, avec `ObjectStorageBucketsRead`,
+3. **L'application IAM `tet-database-backups`**, pour les dumps de la BDD de prod faits par
+   GitHub Actions :
+   - une politique limitée à `tet-database-backups`, avec `ObjectStorageBucketsRead`,
      `ObjectStorageObjectsRead`, `ObjectStorageObjectsWrite` et
      `ObjectStorageObjectsDelete`. Surtout pas `BucketsWrite` : la clé ne doit toucher ni
      le cycle de vie, ni le verrou, ni la politique du bucket ;
-   - une clé d'API dont le **projet par défaut est `tet-coolify-backups`** (l'API S3 résout les
-     buckets dans le projet par défaut de la clé), transmise par un canal sûr puis déposée
-     dans Secret Manager (cf. [Secrets à déposer](#secrets-à-déposer-à-la-main)).
-4. **L'application IAM `tet-database-backups`**, pour les dumps de la BDD de prod faits par
-   GitHub Actions : mêmes permissions que `tet-coolify-backups`, mais limitées au projet
-   `tet-database-backups`, qui est aussi le projet par défaut de sa clé. Sa clé va dans
+   - une clé d'API dont le **projet par défaut est `tet-database-backups`** (l'API S3 résout
+     les buckets dans le projet par défaut de la clé). Sa clé va dans
    l'environnement GitHub `prod` (cf. [Backups de la BDD de prod](#backups-de-la-bdd-de-prod)).
-5. **Pour `infra/prod`** (bucket de rencontres, [`prod/rencontres.tf`](prod/rencontres.tf)) :
+4. **Pour `infra/prod`** (bucket de rencontres, [`prod/rencontres.tf`](prod/rencontres.tf)) :
    - le groupe IAM `tet-admin`, avec pour membres **toutes** les identités qui appliquent
      `infra/prod` : ce sont les seules autorisées par les bucket policies de `tet-prod`
      (cf. [Buckets de `tet-prod`](#buckets-de-tet-prod--une-bucket-policy-par-bucket)) ;
@@ -414,7 +404,6 @@ serveurs : à réserver aux opérateurs Terraform.
 | `tet-platform-coolify-api-token`      | `<id>\|<token>`              | Token API `root` de notre Team Coolify (créé dans l'UI)                                           |
 | `tet-platform-vpn-private-key`        | sortie de `wg genkey`        | Clé privée WireGuard de la passerelle (cf. [VPN](#mise-en-place-une-fois))                        |
 | `tet-platform-ghcr-pull`              | `<github-username>\|<pat>`   | PAT GitHub **classic**, scope `read:packages` seul, idéalement sur un machine user                |
-| `tet-platform-coolify-s3-credentials` | `<access_key>\|<secret_key>` | Clé de l'application IAM `tet-coolify-backups` (créée par l'admin). Coquille créée par `platform` |
 
 ```sh
 # Créer le secret s'il n'existe pas (api-token, ghcr-pull)…
@@ -431,9 +420,7 @@ printf '%s|%s' '<partie-1>' '<partie-2>' | scw secret version create "$_id" data
   [`scripts/coolify-ghcr-docker-login.sh`](scripts/coolify-ghcr-docker-login.sh) écrit
   `/root/.docker/config.json` sur chaque serveur, en SSH : appliquer `coolify` connecté au VPN.
 - **Rotation** : déposer une nouvelle version du secret, incrémenter
-  `ghcr_pull_credentials_revision` ou `s3_credentials_revision` dans
-  `coolify/terraform.tfvars`, appliquer `coolify`. Pour S3, l'admin supprime ensuite
-  l'ancienne clé.
+  `ghcr_pull_credentials_revision` dans `coolify/terraform.tfvars`, appliquer `coolify`.
 
 ### Ce que gère le stack `coolify`
 
@@ -446,10 +433,9 @@ et, là où il ne convient pas, des scripts d'API dans `scripts/` :
 | Applications `app`, `backend`, `site`      | `coolify_application_docker_image` ([`applications.tf`](coolify/applications.tf)) |
 | Services `supabase-api` et Alloy           | `coolify_service` ([`services.tf`](coolify/services.tf))                          |
 | Variables d'environnement                  | script `coolify-push-env.sh`                                                      |
-| S3 storage (cible des backups Coolify)     | script `coolify-configure-s3-storage.sh`                                          |
 | Login GHCR sur les serveurs                | script `coolify-ghcr-docker-login.sh`                                             |
 
-Env vars, S3 et GHCR restent en scripts par choix : le provider stocke tout secret qu'il
+Env vars et GHCR restent en scripts par choix : le provider stocke tout secret qu'il
 gère dans le state (aucun attribut write-only), et son API « bulk » d'env vars ignore
 `is_multiline`/`is_literal`. Les scripts lisent Secret Manager à l'apply et n'écrivent rien
 dans le state. À revisiter si le provider gagne des attributs `*_wo`.
@@ -566,8 +552,9 @@ ce que contient notre Team se recrée par `terraform apply` (serveurs, applicati
 variables lues dans Secret Manager). Restent à refaire à la main : les webhooks GitHub des
 applications Git et les flags de métriques Traefik de chaque serveur.
 
-Les bases des applications sont sauvegardées par Coolify dans `tet-coolify-backups` (S3
-storage de notre Team), sous **Object Lock COMPLIANCE** (14 jours).
+Pas de S3 storage de backups dans notre Team : preprod et prod sont sur des RDB managées,
+et les bases de staging et des previews se recréent depuis les dumps de la BDD de prod
+(ci-dessous).
 
 ## Backups de la BDD de prod
 
@@ -575,22 +562,21 @@ Le workflow `.github/workflows/backup-database.yml` dumpe chaque nuit la BDD de 
 (`data_layer/backup/backup.sh`), l'envoie dans le bucket `tet-database-backups` (stack
 `platform`), applique la rétention (`cleanup.sh` : tout sur 14 jours, puis 1 par semaine jusqu'à
 4 semaines, puis 1 par mois jusqu'à 12 mois) et restaure staging et preprod depuis ce bucket. Object Lock COMPLIANCE
-(14 jours), comme `tet-coolify-backups`.
+(14 jours).
 
 Variables et secrets de l'environnement GitHub `prod` :
 
 | Nom                            | Type     | Valeur                                             |
 | ------------------------------ | -------- | -------------------------------------------------- |
 | `BACKUP_BUCKET`                | variable | output `database_backups_bucket_name`              |
-| `BACKUP_ENDPOINT_URL`          | variable | output `coolify_backups_s3_endpoint`               |
+| `BACKUP_ENDPOINT_URL`          | variable | output `database_backups_s3_endpoint`              |
 | `BACKUP_REGION`                | variable | `fr-par`                                           |
 | `BACKUP_AWS_ACCESS_KEY_ID`     | variable | access key de l'application `tet-database-backups` |
 | `BACKUP_AWS_SECRET_ACCESS_KEY` | secret   | secret key de la même application                  |
 
 Le bucket a son propre projet, `tet-database-backups` : les permissions IAM Object Storage
-valent pour un projet entier, et les dumps ne sont pas chiffrés. Dans le projet
-`tet-coolify-backups`, la clé Coolify pourrait les lire, ou déposer un faux dump que
-`restore.sh` restaurerait.
+valent pour un projet entier, et les dumps ne sont pas chiffrés. Dans un projet partagé,
+une autre clé pourrait les lire, ou déposer un faux dump que `restore.sh` restaurerait.
 
 Bascule depuis l'ancien bucket Supabase `prod-backups` : changer ces variables avant le
 premier run qui embarque la nouvelle rétention, sinon `cleanup.sh` l'applique à
@@ -709,7 +695,7 @@ Coolify, reconfigure le proxy : revérifier ensuite les flags ci-dessus.
 - **SSH** : IP publique filtrée sur l'instance Coolify et la passerelle VPN. Les opérateurs
   passent par **WireGuard** auto-hébergé plutôt que par un bastion SSH (accès direct aux
   bases privées) ou Tailscale (plan de contrôle chez un tiers).
-- **Backups dans un projet dédié**, bucket sous Object Lock COMPLIANCE : la clé des backups
+- **Backups dans un projet dédié**, bucket sous Object Lock COMPLIANCE : la clé des dumps
   ne voit que ce projet.
 - **Preprod iso-prod sur du managé**, staging et preview conteneurisés.
 - **Mono-VM Coolify par tier** plutôt que Kapsule : pas d'orchestrateur K8s.

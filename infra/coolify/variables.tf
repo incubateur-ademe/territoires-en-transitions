@@ -53,44 +53,6 @@ variable "ghcr_pull_credentials_revision" {
   default     = "1"
 }
 
-# --- S3 storage Coolify (Scaleway Object Storage) ---
-
-variable "s3_storage_name" {
-  description = "Nom du S3 storage dans Coolify (clé d'idempotence du script API)."
-  type        = string
-  default     = "tet-scaleway-s3"
-}
-
-variable "s3_bucket" {
-  description = "Nom du bucket Scaleway Object Storage. Valeur de : terraform -chdir=../platform output -raw coolify_backups_bucket_name"
-  type        = string
-  default     = "tet-coolify-backups"
-}
-
-variable "s3_endpoint" {
-  description = "Endpoint S3-compatible Scaleway (sans le nom du bucket)."
-  type        = string
-  default     = "https://s3.fr-par.scw.cloud"
-}
-
-variable "s3_region" {
-  description = "Région Object Storage Scaleway."
-  type        = string
-  default     = "fr-par"
-}
-
-variable "s3_credentials_secret_name" {
-  description = "Nom du secret SM contenant les credentials Object Storage au format <access_key>|<secret_key>. Créé par infra/platform (output coolify_backups_credentials_secret_name)."
-  type        = string
-  default     = "tet-platform-coolify-s3-credentials"
-}
-
-variable "s3_credentials_revision" {
-  description = "Compteur opaque à incrémenter après rotation des clés Object Storage (nouvelle clé dans infra/platform) pour les repousser dans Coolify et sur le control plane (les clés ne sont pas dans le state de ce stack)."
-  type        = string
-  default     = "1"
-}
-
 # --- Applications ---
 
 variable "application_environments" {
