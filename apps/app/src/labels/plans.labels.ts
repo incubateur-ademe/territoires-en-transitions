@@ -566,14 +566,26 @@ export const plansLabels = {
   evolutionStatutsErreurChargement:
     "Impossible de charger l'évolution des statuts",
   indicateursObjectifsTitre: 'Indicateurs et objectifs',
-  indicateursObjectifsIndicateur: 'Indicateur',
-  indicateursObjectifsDerniereValeur: 'Dernière valeur',
-  indicateursObjectifsObjectif: 'Objectif',
-  indicateursObjectifsSansValeur: '—',
+  indicateursObjectifsHorizon: 'Horizon',
+  indicateursObjectifsRecherche: 'Rechercher un indicateur',
+  indicateursObjectifsRechercheGroupe: 'Indicateurs',
+  indicateursObjectifsFavori: 'Favori',
+  indicateursObjectifsEnPeriode: (periode: string): string => `en ${periode}`,
+  indicateursObjectifsOpenData: (source: string): string =>
+    `Donnée open data issue de ${source}. Aucun résultat saisi par la collectivité.`,
+  indicateursObjectifsAucunResultat: 'Aucun résultat saisi',
+  indicateursObjectifsSaisirResultat: 'Saisir un résultat',
+  indicateursObjectifsSaisirObjectif: 'Saisir un objectif',
+  indicateursObjectifsSansObjectif: (horizon: number): string =>
+    `Aucun objectif d'ici ${horizon}`,
+  indicateursObjectifsObjectifAnnee: (annee: number): string =>
+    `Objectif ${annee} :`,
   indicateursObjectifsAucun:
     "Aucun indicateur n'est lié aux actions ou aux axes de ce plan.",
-  indicateursObjectifsVoirTout: (count: number): string =>
-    `Voir tout (${count} ${count > 1 ? 'indicateurs' : 'indicateur'})`,
+  indicateursObjectifsAucunRecherche:
+    'Aucun indicateur ne correspond à la recherche.',
+  indicateursObjectifsVoirPlus: (count: number): string =>
+    `Voir plus (${count} ${count > 1 ? 'indicateurs' : 'indicateur'})`,
   indicateursObjectifsVoirMoins: 'Voir moins',
   indicateursObjectifsErreurChargement:
     'Impossible de charger les indicateurs du plan',
