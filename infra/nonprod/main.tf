@@ -15,12 +15,12 @@ module "app_server" {
   instance_type          = var.server_instance_type
   root_volume_size_in_gb = var.server_root_volume_size_in_gb
 
-  private_network_id   = var.private_network_id
+  private_network_id   = local.private_network_id
   private_ipv4_address = var.server_private_ipv4_address
 
   # Port 22 ouvert à la seule instance Coolify de l'incubateur et à la
   # passerelle VPN des opérateurs.
-  ssh_allowed_ips     = var.ssh_allowed_ips
+  ssh_allowed_ips     = local.ssh_allowed_ips
   ssh_authorized_keys = var.server_ssh_authorized_keys
 }
 
@@ -33,9 +33,8 @@ module "postgres" {
   engine             = "PostgreSQL-17"
   is_ha_cluster      = false
   volume_size_in_gb  = var.pg_volume_size_in_gb
-  allowed_ips        = var.pg_allowed_ips
   database_name      = "tet"
-  private_network_id = var.private_network_id
+  private_network_id = local.private_network_id
 
   backup_schedule_frequency = 24
   backup_schedule_retention = 7
@@ -122,5 +121,5 @@ module "redis" {
   zone               = var.scaleway_zone
   node_type          = var.redis_node_type
   cluster_size       = 1
-  private_network_id = var.private_network_id
+  private_network_id = local.private_network_id
 }

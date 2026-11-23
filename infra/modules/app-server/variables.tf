@@ -7,12 +7,6 @@ variable "tier" {
   }
 }
 
-variable "name" {
-  description = "Nom du serveur. Si null, vaut tet-<tier>-apps."
-  type        = string
-  default     = null
-}
-
 variable "zone" {
   description = "Zone Scaleway où provisionner le serveur."
   type        = string

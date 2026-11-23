@@ -53,7 +53,7 @@ module "app_server" {
 
   # Port 22 ouvert à la seule instance Coolify de l'incubateur et à la
   # passerelle VPN des opérateurs.
-  ssh_allowed_ips     = var.ssh_allowed_ips
+  ssh_allowed_ips     = local.ssh_allowed_ips
   ssh_authorized_keys = var.server_ssh_authorized_keys
 }
 
@@ -66,7 +66,6 @@ module "postgres" {
   engine             = "PostgreSQL-17"
   is_ha_cluster      = var.pg_is_ha_cluster
   volume_size_in_gb  = var.pg_volume_size_in_gb
-  allowed_ips        = var.pg_allowed_ips
   database_name      = "tet"
   private_network_id = local.private_network_id
 

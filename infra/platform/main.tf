@@ -6,7 +6,47 @@
 # infra/prod), aucun lien réseau avec le VPC partagé. Coolify (instance de
 # l'incubateur) et le VPN la joignent en SSH sur son IP publique.
 
+# IP publiques des serveurs applicatifs, lues sur l'infra réelle. Les serveurs
+# dépendent de ce stack (réseau, VPN) : la lecture est donc souple. Sur une
+# infra vide, la liste est vide ; un second apply de platform, après les
+# stacks de tier, ajoute leurs IP aux routes du tunnel.
+#
+# L'ordre (nonprod, preview, prod) fixe celui des routes dans le cloud-init de
+# la passerelle : le changer la remplace.
+data "scaleway_instance_servers" "app" {
+  for_each = {
+    nonprod = var.main_project_id
+    preview = var.main_project_id
+    prod    = var.prod_project_id
+  }
+
+  name       = "tet-${each.key}-apps"
+  project_id = each.value
+  zone       = var.scaleway_zone
+}
+
+# Lecture souple, mais pas muette : un serveur absent sort sa route du tunnel,
+# et le plan ne le montre pas (user_data sensible). Avertissement seulement :
+# sur une infra vide, c'est l'état attendu.
+check "app_servers_routed" {
+  assert {
+    condition = alltrue([
+      for tier, ds in data.scaleway_instance_servers.app :
+      length([for s in ds.servers : s if s.name == "tet-${tier}-apps"]) == 1
+    ])
+    error_message = "Serveur applicatif absent (ou en double) : sa route sort du tunnel VPN. Réappliquer platform une fois le serveur recréé."
+  }
+}
+
 locals {
+  app_server_public_ips = flatten([
+    for tier in ["nonprod", "preview", "prod"] : [
+      for s in data.scaleway_instance_servers.app[tier].servers : [
+        for ip in s.public_ips : ip.address if ip.family == "inet"
+      ] if s.name == "tet-${tier}-apps"
+    ]
+  ])
+
   # Tiers portant un serveur applicatif. Le tier platform n'en fait pas partie :
   # il ne porte que la passerelle VPN.
   app_tiers = [for k, v in var.network_plan : k if k != "platform"]
@@ -18,7 +58,7 @@ locals {
   # sur son IP publique, qui autorise celle de la passerelle).
   vpn_routed_cidrs = concat(
     [for tier, plan in var.network_plan : plan.ipv4_subnet],
-    [for ip in var.vpn_routed_public_ips : "${ip}/32"],
+    [for ip in local.app_server_public_ips : "${ip}/32"],
   )
 
   vpn_server_cidr = "${var.vpn_private_ipv4_address}/32"

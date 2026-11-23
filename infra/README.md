@@ -135,9 +135,22 @@ Ordre d'application : `platform → nonprod / prod / preview → coolify`.
 
 - **Un state par stack**, dans le bucket `tet-tfstate`, avec locking natif
   (`use_lockfile`, cf. [Bootstrap](#bootstrap-une-fois)).
-- **Pas de `terraform_remote_state`** : chaque flèche est un report manuel d'outputs
-  (IDs de Private Network, IP du VPN, IPs des serveurs, noms de secrets) dans le
-  `terraform.tfvars` du stack suivant. Les stacks restent découplés.
+- **Liens entre stacks par data sources**, jamais par `terraform_remote_state` ni par
+  report manuel d'outputs : chaque stack lit sur l'infra réelle ce que le précédent a créé
+  (Private Network, IP de la passerelle VPN, serveurs), par les noms qu'imposent les
+  modules (`tet-<tier>-pn`, `tet-<tier>-apps`, `tet-platform-vpn`). Ce qui n'existe que
+  dans un state est publié dans Secret Manager : la clé d'hôte SSH des serveurs
+  (`tet-<tier>-server-sshd-host-public-key`), lue par `coolify`.
+- **Une seule flèche à rebours** : `platform` lit les IP publiques des serveurs
+  applicatifs pour les router dans le tunnel. La lecture est souple (liste vide si les
+  serveurs n'existent pas, avec un avertissement du bloc `check`) : sur une infra vide,
+  réappliquer `platform` après les stacks de tier.
+- **Passerelle VPN absente** : les stacks de tier ne se planifient plus (ils lisent son IP).
+  En secours, passer son IP à la main : `terraform plan -var vpn_public_ip=<IP>`.
+- **`terraform.tfvars` versionné** : il ne porte aucun secret (ceux-ci arrivent par
+  `TF_VAR_` ou Secret Manager). Les clés SSH des opérateurs y sont, commentées
+  `prenom.nom` (pas d'e-mail). Aucune valeur propre au poste : la base preprod se joint par
+  le VPN, sans endpoint public.
 - `coolify` a son propre state parce qu'il suppose Coolify **déjà joignable** : le `plan`
   de l'infra Scaleway n'exige pas que l'application tourne.
 
@@ -227,7 +240,6 @@ Avant le premier apply de `platform`, déposer `tet-platform-vpn-private-key` (c
 source infra/scripts/tf-env.sh
 
 cd infra/platform
-cp terraform.tfvars.example terraform.tfvars && $EDITOR terraform.tfvars
 terraform init
 terraform plan -out=tfplan
 terraform apply tfplan
@@ -237,15 +249,11 @@ terraform apply tfplan
 `SCW_*` (provider) et `TF_VAR_scaleway_secret_key` (provider Grafana). Il **retire**
 `SCW_DEFAULT_PROJECT_ID` : le provider le préférerait au `project_id` de chaque stack.
 
-Pour un stack applicatif, reporter les valeurs de `platform` dans son `terraform.tfvars` :
+Les stacks applicatifs lisent ce que `platform` a créé (Private Network, IP de la
+passerelle VPN, ajoutée d'office à `ssh_allowed_ips`) : rien à reporter.
 
-```sh
-terraform -chdir=platform output -json private_network_ids | jq -r .nonprod
-terraform -chdir=platform output -raw vpn_public_ip   # + IP de l'instance Coolify → ssh_allowed_ips
-```
-
-Une fois les stacks applicatifs appliqués, reporter leur `server_public_ip` dans
-`vpn_routed_public_ips` de `platform`, réappliquer `platform`, puis mettre à jour
+Sur une infra vide, une fois les stacks applicatifs appliqués, réappliquer `platform` : il
+ajoute alors les IP publiques des serveurs aux routes du tunnel. Mettre ensuite à jour
 `AllowedIPs` dans la configuration WireGuard de chaque opérateur
 (`vpn_client_allowed_ips`) : sans cela, le tunnel ne relaie pas les IP publiques des
 serveurs.
@@ -275,7 +283,7 @@ Le `.terraform.lock.hcl` de chaque stack est versionné : il fige les versions d
 
 Les opérateurs passent par une passerelle **WireGuard** (`tet-platform-vpn`, module
 [`modules/vpn`](modules/vpn)). Le tunnel relaie le VPC `tet` (SSH, Postgres et Redis de
-nonprod et preview, filtrés par l'ACL) et les IP publiques des serveurs (`vpn_routed_public_ips`),
+nonprod et preview, filtrés par l'ACL) et les IP publiques des serveurs (lues par `platform`),
 dont la prod. La passerelle masque ses clients derrière son IP : les serveurs, l'ACL et
 les security groups ne voient qu'elle.
 
@@ -302,7 +310,9 @@ wg genkey | scw secret version create \
 2. Dans `platform/terraform.tfvars`, ajouter
    `"<prenom.nom>" = { public_key = "<publique>", address = "10.99.0.<n>" }` à `vpn_peers`
    et, s'il doit administrer la passerelle (`ssh tet-ops@10.99.0.1`), sa clé SSH publique à
-   `vpn_ssh_authorized_keys`. Appliquer `platform`.
+   `vpn_ssh_authorized_keys`. Appliquer `platform`, puis ajouter la même clé à
+   `server_ssh_authorized_keys` des stacks `nonprod`, `preview` et `prod` pour qu'il
+   accède aux serveurs.
 3. Sa configuration (`/etc/wireguard/tet.conf`, ou l'app WireGuard) :
 
 ```ini
@@ -703,8 +713,8 @@ Coolify, reconfigure le proxy : revérifier ensuite les flags ci-dessus.
   ne voit que ce projet.
 - **Preprod iso-prod sur du managé**, staging et preview conteneurisés.
 - **Mono-VM Coolify par tier** plutôt que Kapsule : pas d'orchestrateur K8s.
-- **Un state par stack**, liés par valeurs et noms de secrets, jamais par
-  `terraform_remote_state`.
+- **Un state par stack**, liés par data sources (noms imposés par les modules), jamais
+  par `terraform_remote_state` ni par report manuel d'outputs.
 - **GoTrue self-hosté** plutôt que tout Supabase : préserve `JWT_SECRET`, schéma `auth`,
   bcrypt.
 - **Sous-domaines dédiés par service** plutôt que reverse proxy unique.

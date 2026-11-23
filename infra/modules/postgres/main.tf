@@ -13,10 +13,6 @@ terraform {
   }
 }
 
-locals {
-  public_endpoint = length(var.allowed_ips) > 0
-}
-
 resource "random_password" "admin" {
   length  = 32
   special = true
@@ -54,22 +50,13 @@ resource "scaleway_rdb_instance" "main" {
 
   settings = var.settings
 
-  # Endpoint public (load balancer Scaleway), créé seulement si des IP y sont
-  # autorisées. Une instance RDB sans règle d'ACL accepte 0.0.0.0/0 : ne jamais
-  # exposer l'endpoint public sans ACL. Le bloc doit être explicite dès qu'un
-  # private_network est déclaré, sinon Scaleway ne crée pas l'endpoint public.
-  # Vider allowed_ips supprime l'endpoint public (fin de migration).
-  dynamic "load_balancer" {
-    for_each = local.public_endpoint ? [1] : []
-    content {}
-  }
-
-  dynamic "private_network" {
-    for_each = var.private_network_id != null ? [1] : []
-    content {
-      pn_id       = var.private_network_id
-      enable_ipam = true
-    }
+  # Réseau privé seulement : les conteneurs y sont, les opérateurs y arrivent
+  # par le VPN. Pas d'endpoint public (load balancer) : sans ACL, Scaleway
+  # l'ouvrirait à 0.0.0.0/0. Retirer ce bloc ne supprime pas un endpoint
+  # existant : le supprimer à la main (scw rdb endpoint delete).
+  private_network {
+    pn_id       = var.private_network_id
+    enable_ipam = true
   }
 
   tags = concat(
@@ -83,11 +70,6 @@ resource "scaleway_rdb_instance" "main" {
 
   lifecycle {
     prevent_destroy = true
-
-    precondition {
-      condition     = local.public_endpoint || var.private_network_id != null
-      error_message = "L'instance n'aurait aucun endpoint : renseigner private_network_id ou allowed_ips."
-    }
   }
 }
 
@@ -103,22 +85,3 @@ resource "scaleway_rdb_privilege" "admin" {
   permission    = "all"
 }
 
-# Le provider exige au moins une règle : pas de ressource ACL sans endpoint public.
-resource "scaleway_rdb_acl" "main" {
-  count = local.public_endpoint ? 1 : 0
-
-  instance_id = scaleway_rdb_instance.main.id
-
-  dynamic "acl_rules" {
-    for_each = var.allowed_ips
-    content {
-      ip          = acl_rules.key
-      description = acl_rules.value
-    }
-  }
-}
-
-moved {
-  from = scaleway_rdb_acl.main
-  to   = scaleway_rdb_acl.main[0]
-}

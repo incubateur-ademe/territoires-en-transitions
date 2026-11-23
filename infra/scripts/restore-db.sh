@@ -106,13 +106,16 @@ on_exit() {
 }
 trap on_exit EXIT
 
-# --- Connexion : endpoint public de la RDB cible, en tet_admin ---
+# --- Connexion à la RDB cible, en tet_admin ---
+# Endpoint privé, seul endpoint des bases : par le VPN des opérateurs en
+# preprod. Le VPN ne relaie pas le VPC de prod : y ouvrir un tunnel SSH par le
+# serveur de prod et passer PGHOST/PGPORT (cf. RUNBOOKS.md).
 # Paramètres libpq par l'environnement, jamais d'URI : le mot de passe contient
 # des caractères réservés, et ne passe pas par argv.
 echo "→ Lecture des outputs de infra/${_tf_dir}…"
 export PGHOST PGPORT PGDATABASE PGUSER PGPASSWORD
-PGHOST="$(terraform -chdir="$_tf" output -raw pg_endpoint_ip)"
-PGPORT="$(terraform -chdir="$_tf" output -raw pg_endpoint_port)"
+PGHOST="${PGHOST:-$(terraform -chdir="$_tf" output -raw pg_private_endpoint_ip)}"
+PGPORT="${PGPORT:-$(terraform -chdir="$_tf" output -raw pg_private_endpoint_port)}"
 PGDATABASE="$(terraform -chdir="$_tf" output -raw pg_database_name)"
 PGUSER="$(terraform -chdir="$_tf" output -raw pg_admin_user)"
 PGPASSWORD="$(terraform -chdir="$_tf" output -raw pg_admin_password)"
@@ -120,7 +123,7 @@ export PGSSLMODE=require PGCONNECT_TIMEOUT=10 PGOPTIONS="-c client_min_messages=
 PSQL=(psql -X -w -v ON_ERROR_STOP=1 -q)
 
 "${PSQL[@]}" -Atc 'select 1' >/dev/null || {
-  echo "✗ Connexion impossible à ${PGHOST}:${PGPORT} : IP du poste dans pg_allowed_ips ?" >&2
+  echo "✗ Connexion impossible à ${PGHOST}:${PGPORT} : VPN monté (preprod) ou tunnel SSH (prod) ?" >&2
   exit 1
 }
 

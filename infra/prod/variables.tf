@@ -1,5 +1,10 @@
 variable "project_id" {
-  description = "UUID du projet Scaleway de production, distinct du projet principal. Valeur de : terraform -chdir=../platform output -raw prod_project_id"
+  description = "UUID du projet Scaleway de production (tet-prod), distinct du projet principal."
+  type        = string
+}
+
+variable "main_project_id" {
+  description = "UUID du projet Scaleway principal (tet), où vit la passerelle VPN des opérateurs."
   type        = string
 }
 
@@ -18,8 +23,7 @@ variable "scaleway_zone" {
 # --- Réseau ---
 #
 # VPC propre à la prod, créé par ce stack. Seul lien avec infra/platform :
-# l'IP publique de la passerelle VPN (ssh_allowed_ips), reportée par valeur
-# (pas de terraform_remote_state, les stacks restent découplés).
+# l'IP publique de la passerelle VPN, lue par data source (platform.tf).
 
 variable "private_network_ipv4_subnet" {
   description = "CIDR du Private Network prod, dans le VPC prod."
@@ -34,7 +38,7 @@ variable "server_private_ipv4_address" {
 }
 
 variable "ssh_allowed_ips" {
-  description = "CIDR autorisés sur le port 22 public du serveur : IP de sortie de l'instance Coolify de l'incubateur, et IP publique de la passerelle VPN des opérateurs (terraform -chdir=../platform output -raw vpn_public_ip). Si l'une change, réappliquer ce stack, sinon Coolify ou les opérateurs perdent l'accès."
+  description = "CIDR autorisés sur le port 22 public du serveur, en plus de la passerelle VPN des opérateurs (ajoutée d'office, cf. platform.tf) : en pratique l'IP de sortie de l'instance Coolify de l'incubateur. Si elle change, réappliquer ce stack, sinon Coolify perd l'accès."
   type        = list(string)
   validation {
     condition = length(var.ssh_allowed_ips) > 0 && alltrue([
@@ -59,9 +63,8 @@ variable "server_root_volume_size_in_gb" {
 }
 
 variable "server_ssh_authorized_keys" {
-  description = "Clés publiques SSH des opérateurs sur l'utilisateur tet-ops. L'accès se fait par le VPN des opérateurs."
+  description = "Clés publiques SSH des opérateurs sur l'utilisateur tet-ops. L'accès se fait par le VPN des opérateurs. Versionnée dans terraform.tfvars : une valeur locale écraserait celles des autres opérateurs."
   type        = list(string)
-  default     = []
 }
 
 # --- Postgres managé (prod) ---
@@ -96,12 +99,6 @@ variable "pg_backup_schedule_retention" {
   default     = 30
 }
 
-variable "pg_allowed_ips" {
-  description = "CIDR autorisés à joindre le Postgres de production via l'endpoint public. Vide (défaut) : pas d'endpoint public, les conteneurs passent par le réseau privé. À renseigner le temps de la migration, puis à revider."
-  type        = map(string)
-  default     = {}
-}
-
 # --- Redis managé (prod) ---
 
 variable "redis_node_type" {
@@ -130,5 +127,15 @@ variable "alert_emails" {
   validation {
     condition     = length(var.alert_emails) > 0
     error_message = "Au moins un destinataire : sans contact, les alertes ne partent nulle part."
+  }
+}
+
+variable "vpn_public_ip" {
+  description = "Secours : IP publique de la passerelle VPN, à passer (-var) quand la passerelle n'existe plus et que ssh_allowed_ips doit changer quand même. Null (défaut) : lue sur l'infra (platform.tf)."
+  type        = string
+  default     = null
+  validation {
+    condition     = var.vpn_public_ip == null || can(regex("^\\d+\\.\\d+\\.\\d+\\.\\d+$", var.vpn_public_ip))
+    error_message = "vpn_public_ip : une adresse IPv4, sans masque."
   }
 }

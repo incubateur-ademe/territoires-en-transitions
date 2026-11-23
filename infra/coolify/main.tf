@@ -8,10 +8,62 @@
 # State distinct des stacks d'infrastructure : cette couche suppose Coolify
 # joignable.
 
+# --- Serveurs applicatifs, lus sur l'infra des stacks de tier ---
+#
+# Noms imposés par modules/app-server (tet-<tier>-…) : rien à recopier depuis
+# les outputs des autres stacks, qui doivent seulement avoir été appliqués.
 locals {
-  # Projet où lire la clé SSH de chaque serveur : la prod a le sien.
+  # Projet Scaleway de chaque tier : la prod a le sien.
   server_key_project_ids = {
-    for k, v in var.app_servers : k => coalesce(v.ssh_key_project_id, var.project_id)
+    nonprod = var.project_id
+    preview = var.project_id
+    prod    = var.prod_project_id
+  }
+}
+
+# Data source au pluriel : le singulier (scaleway_instance_server) copierait
+# dans le state le user_data des serveurs, qui porte leur clé privée d'hôte
+# SSH. Le filtre name étant une recherche partielle, on exige le nom exact.
+data "scaleway_instance_servers" "app" {
+  for_each = local.server_key_project_ids
+
+  name       = "tet-${each.key}-apps"
+  project_id = each.value
+
+  lifecycle {
+    postcondition {
+      condition     = length([for s in self.servers : s if s.name == "tet-${each.key}-apps"]) == 1
+      error_message = "Serveur tet-${each.key}-apps introuvable (ou en double) : appliquer infra/${each.key} d'abord."
+    }
+  }
+}
+
+data "scaleway_secret_version" "sshd_host_public_key" {
+  for_each = local.server_key_project_ids
+
+  secret_name = "tet-${each.key}-server-sshd-host-public-key"
+  project_id  = each.value
+  revision    = "latest"
+}
+
+locals {
+  # ssh_host : l'IP publique. L'instance Coolify de l'incubateur est hors de
+  # nos VPC.
+  app_server = {
+    for tier, _ in local.server_key_project_ids : tier => [
+      for s in data.scaleway_instance_servers.app[tier].servers : s if s.name == "tet-${tier}-apps"
+    ][0]
+  }
+
+  app_servers = {
+    for tier, _ in local.server_key_project_ids : tier => {
+      name                = local.app_server[tier].name
+      ssh_host            = one([for ip in local.app_server[tier].public_ips : ip.address if ip.family == "inet"])
+      ssh_key_secret_name = "tet-${tier}-server-ssh-key"
+      # Clé publique : nonsensitive, sinon le provider (data sensible) masque
+      # la sortie du provisioner GHCR.
+      sshd_host_public_key = nonsensitive(base64decode(data.scaleway_secret_version.sshd_host_public_key[tier].data))
+    }
   }
 }
 
@@ -20,7 +72,7 @@ locals {
 # Une clé par serveur : révoquer l'accès à un serveur compromis ne doit pas
 # casser les autres.
 data "scaleway_secret_version" "server_key" {
-  for_each = var.app_servers
+  for_each = local.app_servers
 
   secret_name = each.value.ssh_key_secret_name
   project_id  = local.server_key_project_ids[each.key]
@@ -28,7 +80,7 @@ data "scaleway_secret_version" "server_key" {
 }
 
 resource "coolify_private_key" "server" {
-  for_each = var.app_servers
+  for_each = local.app_servers
 
   name        = "${each.value.name}-root"
   description = "Clé root du serveur ${each.value.name}. Gérée par Terraform (infra/coolify). Privée dans Secret Manager (${each.value.ssh_key_secret_name})."
@@ -40,7 +92,7 @@ resource "coolify_private_key" "server" {
 # opérateurs (ssh_allowed_ips des stacks de tier).
 #
 # Le provider supprime un serveur en ?force=true, donc avec toutes les
-# ressources qu'il héberge : prevent_destroy. Retirer un tier de app_servers
+# ressources qu'il héberge : prevent_destroy. Retirer un tier de server_key_project_ids
 # est un geste en deux temps, comme pour les secrets : `terraform state rm`
 # puis suppression dans l'UI (qui, elle, refuse tant qu'il reste des
 # ressources).
@@ -48,7 +100,7 @@ resource "coolify_private_key" "server" {
 # Coolify ne renvoie pas private_key_uuid en GET : le provider garde la valeur
 # du HCL. Rotation de clé = update in-place, jamais de replace.
 resource "coolify_server" "app" {
-  for_each = var.app_servers
+  for_each = local.app_servers
 
   name             = each.value.name
   description      = "Tier ${each.key}. Géré par Terraform (infra/${each.key}). (tet-server=${each.key})"
@@ -84,7 +136,7 @@ resource "coolify_server_docker_cleanup" "app" {
 # Le PAT reste hors state : lecture scw + SSH dans le script (R4). Rejouer
 # après rotation : incrémenter ghcr_pull_credentials_revision.
 resource "terraform_data" "ghcr_docker_login" {
-  for_each = var.app_servers
+  for_each = local.app_servers
 
   triggers_replace = [
     each.value.ssh_host,

@@ -23,14 +23,8 @@ variable "scaleway_zone" {
 
 # --- Réseau ---
 #
-# Valeurs produites par infra/platform. Référencées par valeur et non par
-# terraform_remote_state : les stacks restent découplés, au prix d'un report
-# manuel après le premier apply de platform.
-
-variable "private_network_id" {
-  description = "ID du Private Network nonprod. Valeur de : terraform -chdir=../platform output -json private_network_ids | jq -r .nonprod"
-  type        = string
-}
+# Le Private Network et l'IP de la passerelle VPN, créés par infra/platform,
+# sont lus par data source (platform.tf).
 
 variable "server_private_ipv4_address" {
   description = "IP privée fixe du serveur nonprod. Doit correspondre à network_plan[\"nonprod\"].server_ipv4_address dans infra/platform, sinon l'ACL du VPC bloque le SSH de Coolify."
@@ -53,7 +47,7 @@ variable "server_root_volume_size_in_gb" {
 }
 
 variable "ssh_allowed_ips" {
-  description = "CIDR autorisés sur le port 22 public du serveur : IP de sortie de l'instance Coolify de l'incubateur, et IP publique de la passerelle VPN des opérateurs (terraform -chdir=../platform output -raw vpn_public_ip). Si l'une change, réappliquer ce stack, sinon Coolify ou les opérateurs perdent l'accès."
+  description = "CIDR autorisés sur le port 22 public du serveur, en plus de la passerelle VPN des opérateurs (ajoutée d'office, cf. platform.tf) : en pratique l'IP de sortie de l'instance Coolify de l'incubateur. Si elle change, réappliquer ce stack, sinon Coolify perd l'accès."
   type        = list(string)
   validation {
     condition = length(var.ssh_allowed_ips) > 0 && alltrue([
@@ -64,9 +58,8 @@ variable "ssh_allowed_ips" {
 }
 
 variable "server_ssh_authorized_keys" {
-  description = "Clés publiques SSH des opérateurs sur l'utilisateur tet-ops. L'accès se fait par le VPN des opérateurs."
+  description = "Clés publiques SSH des opérateurs sur l'utilisateur tet-ops. L'accès se fait par le VPN des opérateurs. Versionnée dans terraform.tfvars : une valeur locale écraserait celles des autres opérateurs."
   type        = list(string)
-  default     = []
 }
 
 # --- Postgres managé (preprod) ---
@@ -81,12 +74,6 @@ variable "pg_volume_size_in_gb" {
   description = "Taille du volume Postgres en GB. Les seules données de la prod restaurée pèsent ~8 GB avant index : 10 GB saturent pendant la restauration (le volume passe en disk_full, l'instance en lecture seule). Le volume s'agrandit à chaud mais ne se réduit pas : réduire impose de recréer l'instance."
   type        = number
   default     = 20
-}
-
-variable "pg_allowed_ips" {
-  description = "CIDR autorisés à joindre le Postgres preprod via l'endpoint public. Les conteneurs passent par le réseau privé : n'y lister que les accès opérateur et les runners de restore."
-  type        = map(string)
-  default     = {}
 }
 
 # --- Redis managé (preprod) ---
@@ -105,5 +92,15 @@ variable "alert_emails" {
   validation {
     condition     = length(var.alert_emails) > 0
     error_message = "Au moins un destinataire : sans contact, les alertes ne partent nulle part."
+  }
+}
+
+variable "vpn_public_ip" {
+  description = "Secours : IP publique de la passerelle VPN, à passer (-var) quand la passerelle n'existe plus et que ssh_allowed_ips doit changer quand même. Null (défaut) : lue sur l'infra (platform.tf)."
+  type        = string
+  default     = null
+  validation {
+    condition     = var.vpn_public_ip == null || can(regex("^\\d+\\.\\d+\\.\\d+\\.\\d+$", var.vpn_public_ip))
+    error_message = "vpn_public_ip : une adresse IPv4, sans masque."
   }
 }
