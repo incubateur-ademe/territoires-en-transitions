@@ -544,12 +544,11 @@ export class OidcController {
   private async resolveAuthenticatedUserId(
     req: Request
   ): Promise<string | null> {
-    const supabaseUrl = this.configurationService.get('SUPABASE_URL');
-    const jwt = await extractAccessTokenFromSupabaseCookie(
-      req,
-      supabaseUrl,
-      this.configurationService.get('SUPABASE_AUTH_COOKIE_NAME')
-    );
+    const jwt = await extractAccessTokenFromSupabaseCookie(req, {
+      supabaseUrl: this.configurationService.get('SUPABASE_URL'),
+      appUrl: this.configurationService.get('APP_URL'),
+      cookieName: this.configurationService.get('SUPABASE_AUTH_COOKIE_NAME'),
+    });
     if (!jwt) {
       return null;
     }

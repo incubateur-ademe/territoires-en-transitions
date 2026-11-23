@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 // Neutralise le guard `server-only` (non disponible en environnement jsdom)
 vi.mock('server-only', () => ({}));
 
-// Le proxy ne fait plus que : rafraîchir la session Supabase, poser la CSP/CORS
+// Le proxy ne fait plus que : rafraîchir la session Supabase, poser la CSP
 // et une garde *optimiste* (session absente sur route protégée → /login avec
 // redirect_to). Toutes les décisions dépendantes des données (DCP,
 // collectivités) sont testées au niveau de la DAL / des layouts (voir
@@ -138,24 +138,15 @@ describe('proxy — en-têtes de sécurité', () => {
 });
 
 describe('proxy — CORS', () => {
-  it('origine autorisée → Access-Control-Allow-Origin présent + en-têtes CORS toujours présents', async () => {
+  it("ne pose aucun en-tête CORS : rien n'appelle l'app depuis une autre origine", async () => {
     mockSession(undefined);
     const response = await proxy(
-      makeRequest('/', { origin: 'https://site.territoiresentransitions.fr' })
+      makeRequest('/', {
+        origin: 'https://1-app.preview.territoiresentransitions.fr',
+      })
     );
 
-    // En environnement de test, isAllowedOrigin renvoie true → l'origine est renvoyée.
-    expect(response.headers.get('Access-Control-Allow-Origin')).toBe(
-      'https://site.territoiresentransitions.fr'
-    );
-    expect(response.headers.get('Access-Control-Allow-Credentials')).toBe(
-      'true'
-    );
-    expect(response.headers.get('Access-Control-Allow-Methods')).toBe(
-      'GET,DELETE,PATCH,POST,PUT,OPTIONS'
-    );
-    expect(response.headers.get('Access-Control-Allow-Headers')).toContain(
-      'authorization'
-    );
+    expect(response.headers.get('Access-Control-Allow-Origin')).toBeNull();
+    expect(response.headers.get('Access-Control-Allow-Credentials')).toBeNull();
   });
 });

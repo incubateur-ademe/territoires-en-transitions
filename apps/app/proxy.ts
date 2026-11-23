@@ -3,7 +3,6 @@ import { getNextResponseWithUpdatedSupabaseSession } from '@tet/api/utils/supaba
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { getContentSecurityPolicy } from './content-security-policy.config';
-import { applyCorsHeaders } from './cors.config';
 import {
   authVerifyPath,
   invitationPath,
@@ -77,8 +76,6 @@ export async function proxy(request: NextRequest) {
       : supabaseResponse;
 
   response.headers.set('Content-Security-Policy', contentSecurityPolicy);
-
-  applyCorsHeaders(response.headers, request.headers.get('origin'));
 
   return response;
 }

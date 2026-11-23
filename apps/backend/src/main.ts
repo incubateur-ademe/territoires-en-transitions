@@ -1,11 +1,13 @@
 // WARNING: Do these imports first
 import './utils/telemetry-init';
 // Other imports
+import type { CorsOptionsDelegate } from '@nestjs/common/interfaces/external/cors-options.interface';
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { json, NextFunction, Request, Response } from 'express';
 import v8 from 'v8';
 import { AppModule } from './app.module';
+import ConfigurationService from './utils/config/configuration.service';
 import { ContextRouteParametersInterceptor } from './utils/context/context-route-parameters.interceptor';
 import { ContextStoreService } from './utils/context/context.service';
 import { initGoogleCloudCredentials } from './utils/google-sheets/gcloud.helper';
@@ -58,12 +60,18 @@ async function bootstrap() {
 
   const { httpAdapter } = app.get(HttpAdapterHost);
 
-  // When credentials: 'include' is used in the tRPC client, CORS requires a specific
-  // origin (not '*'). origin: true reflects the request's Origin header.
-  app.enableCors({
-    origin: true, // Reflect request origin (e.g. http://localhost:3000)
-    credentials: true,
-  });
+  // Toute origine peut appeler l'API (site, intégrations par clé d'API), mais
+  // seule l'app peut le faire avec le cookie de session : sinon n'importe quel
+  // sous-domaine du même site (une preview) lirait les réponses au nom de
+  // l'utilisateur connecté. Cf. aussi `extractAccessTokenFromSupabaseCookie`.
+  const appOrigin = new URL(app.get(ConfigurationService).get('APP_URL'))
+    .origin;
+  const corsOptions: CorsOptionsDelegate<Request> = (req, callback) =>
+    callback(null, {
+      origin: true,
+      credentials: req.headers.origin === appOrigin,
+    });
+  app.enableCors(corsOptions);
 
   app.useGlobalPipes(new CustomZodValidationPipe(contextStoreService));
 
