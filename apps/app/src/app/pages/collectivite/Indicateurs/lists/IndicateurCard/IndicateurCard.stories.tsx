@@ -55,6 +55,7 @@ const indicateur = {
   mesures: [],
   hasOpenData: false,
   estAgregation: false,
+  totalEstCumulDesSousIndicateurs: true,
   estRempli: true,
 } satisfies IndicateurDetaille;
 

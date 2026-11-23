@@ -48,6 +48,7 @@ const detailedFieldsShape = {
   ...indicateurRelationsSchema.shape,
   hasOpenData: z.boolean(),
   estAgregation: z.boolean(),
+  totalEstCumulDesSousIndicateurs: z.boolean(),
   estRempli: z.boolean(),
 };
 
