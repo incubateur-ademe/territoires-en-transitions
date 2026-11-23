@@ -5,6 +5,7 @@ import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { ResourceType } from '@tet/domain/users';
 import IndicateurValeursService from './manage-indicateur-valeurs/manage-indicateur-valeurs.service';
 import { deleteValeurIndicateurSchema } from './manage-indicateur-valeurs/delete-valeur-indicateur.request';
+import { deleteValeursPeriodeSchema } from './manage-indicateur-valeurs/delete-valeurs-periode.request';
 import { getIndicateurTotalsInputSchema } from './get-indicateur-totals/get-indicateur-totals.input';
 import { GetIndicateurTotalsService } from './get-indicateur-totals/get-indicateur-totals.service';
 import { getMoyenneCollectivitesRequestSchema } from './get-moyenne-indicateur-valeurs/get-moyenne-collectivites.request';
@@ -79,6 +80,12 @@ export class IndicateurValeursRouter {
           input,
           ctx.user
         );
+        return this.getIndicateurValeursResultOrThrow(result);
+      }),
+    deletePeriode: this.trpc.authedProcedure
+      .input(deleteValeursPeriodeSchema)
+      .mutation(async ({ input, ctx }) => {
+        const result = await this.service.deleteValeursPeriode(input, ctx.user);
         return this.getIndicateurValeursResultOrThrow(result);
       }),
     average: this.trpc.authedProcedure

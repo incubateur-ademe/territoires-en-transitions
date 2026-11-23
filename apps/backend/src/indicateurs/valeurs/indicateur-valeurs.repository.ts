@@ -423,6 +423,31 @@ export class IndicateurValeursRepository {
     return rows[0];
   }
 
+  async listUserValeursAtDate(
+    {
+      collectiviteId,
+      indicateurIds,
+      dateValeur,
+    }: {
+      collectiviteId: number;
+      indicateurIds: readonly number[];
+      dateValeur: string;
+    },
+    tx?: Transaction
+  ): Promise<IndicateurValeur[]> {
+    return (tx ?? this.databaseService.db)
+      .select()
+      .from(indicateurValeurTable)
+      .where(
+        and(
+          eq(indicateurValeurTable.collectiviteId, collectiviteId),
+          inArray(indicateurValeurTable.indicateurId, [...indicateurIds]),
+          eq(indicateurValeurTable.dateValeur, dateValeur),
+          isNull(indicateurValeurTable.metadonneeId)
+        )
+      );
+  }
+
   async updateUserValeur(
     key: UserValeurKey,
     fields: UserValeurFields,
@@ -493,6 +518,22 @@ export class IndicateurValeursRepository {
       )
       .returning();
     return rows[0];
+  }
+
+  async deleteUserValeurs(
+    { collectiviteId, ids }: { collectiviteId: number; ids: readonly number[] },
+    tx?: Transaction
+  ): Promise<IndicateurValeur[]> {
+    return (tx ?? this.databaseService.db)
+      .delete(indicateurValeurTable)
+      .where(
+        and(
+          eq(indicateurValeurTable.collectiviteId, collectiviteId),
+          inArray(indicateurValeurTable.id, [...ids]),
+          isNull(indicateurValeurTable.metadonneeId)
+        )
+      )
+      .returning();
   }
 
   upsertValeursWithoutMetadata(
