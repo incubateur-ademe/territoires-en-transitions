@@ -5,10 +5,12 @@ import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import { and, eq, sql } from 'drizzle-orm';
+import { Etoile } from '@tet/domain/referentiels';
+import { and, eq, inArray, sql } from 'drizzle-orm';
 import { auditTable } from '../audit.table';
 import { auditeurTable } from '../auditeur.table';
 import { labellisationDemandeTable } from '../labellisation-demande.table';
+import { labellisationTable } from '../labellisation.table';
 import { checkLabellisationsAdmin } from './check-labellisations-admin.utils';
 import {
   DossiersLabellisationError,
@@ -18,6 +20,7 @@ import {
   AddAuditeurInput,
   RemoveAuditeurInput,
   UpdateDemandeLabellisationInput,
+  UpdateLabellisationInput,
 } from './dossiers-labellisation.input';
 
 @Injectable()
@@ -58,6 +61,85 @@ export class UpdateDossierLabellisationService {
       .where(eq(labellisationDemandeTable.id, demandeId));
 
     return success(undefined);
+  }
+
+  /**
+   * Corrige l'étoile ou la date d'une labellisation actée après audit (erreur
+   * de saisie à la décision), sans rouvrir le dossier. L'étoile décidée ne vit
+   * que dans `labellisation` : ni la demande (étoile demandée) ni le snapshot
+   * (étoile calculée) ne sont touchés. La date est aussi portée par l'audit.
+   */
+  async updateLabellisation(
+    { auditId, etoiles, dateCra }: UpdateLabellisationInput,
+    { user }: ServiceSecondArg
+  ): Promise<Result<void, DossiersLabellisationError>> {
+    const isAllowed = await checkLabellisationsAdmin(
+      this.permissionService,
+      user
+    );
+    if (!isAllowed.success) {
+      return isAllowed;
+    }
+
+    return this.db.transaction(async (tx) => {
+      const [audit] = await tx
+        .select({ valide: auditTable.valide })
+        .from(auditTable)
+        .where(eq(auditTable.id, auditId));
+      if (!audit) {
+        return failure(DossiersLabellisationErrorEnum.DOSSIER_NOT_FOUND);
+      }
+
+      // Démarche conjointe : la ligne de la collectivité associée suit
+      const labellisations = await tx
+        .select({
+          collectiviteId: labellisationTable.collectiviteId,
+          referentiel: labellisationTable.referentiel,
+        })
+        .from(labellisationTable)
+        .where(eq(labellisationTable.auditId, auditId))
+        .for('update');
+      // Sans audit validé, c'est une 1ère étoile : rien à corriger
+      if (!audit.valide || !labellisations.length) {
+        return failure(DossiersLabellisationErrorEnum.LABELLISATION_NOT_FOUND);
+      }
+
+      // Une seule labellisation par collectivité, référentiel et année : la
+      // nouvelle date ne doit pas tomber sur l'année d'une autre labellisation.
+      const [conflict] = await tx
+        .select({ id: labellisationTable.id })
+        .from(labellisationTable)
+        .where(
+          and(
+            inArray(
+              labellisationTable.collectiviteId,
+              labellisations.map((l) => l.collectiviteId)
+            ),
+            eq(labellisationTable.referentiel, labellisations[0].referentiel),
+            sql`${labellisationTable.auditId} is distinct from ${auditId}`,
+            sql`extract(year from ${labellisationTable.obtenueLe}) = ${Number(
+              dateCra.slice(0, 4)
+            )}`
+          )
+        )
+        .limit(1);
+      if (conflict) {
+        return failure(
+          DossiersLabellisationErrorEnum.LABELLISATION_ALREADY_EXISTS
+        );
+      }
+
+      await tx
+        .update(labellisationTable)
+        .set({ etoiles: etoiles as Etoile, obtenueLe: dateCra })
+        .where(eq(labellisationTable.auditId, auditId));
+      await tx
+        .update(auditTable)
+        .set({ dateCnl: dateCra })
+        .where(eq(auditTable.id, auditId));
+
+      return success(undefined);
+    });
   }
 
   async addAuditeur(

@@ -333,6 +333,9 @@ export const referentielsLabels = {
   labellisationsAdminConfirmerDescription:
     'Le dossier sera clos : cette décision est définitive.',
   labellisationsAdminConfirmer: 'Confirmer',
+  labellisationsAdminCorrigerLabellisation: 'Corriger',
+  labellisationsAdminCorrigerLabellisationTitre: 'Corriger la labellisation',
+  labellisationsAdminLabellisationCorrigee: 'La labellisation a été corrigée',
   labellisationsAdminDemandeModifiee: 'La demande a été modifiée',
 
   /** Fiche dossier : demande de 1ère étoile */

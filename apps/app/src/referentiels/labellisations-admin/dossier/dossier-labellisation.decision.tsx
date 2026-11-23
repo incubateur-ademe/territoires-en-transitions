@@ -21,6 +21,7 @@ import { format } from 'date-fns';
 import {
   DossierLabellisation,
   useCloseDossierLabellisation,
+  useUpdateLabellisation,
 } from '../data/use-dossiers-labellisation';
 import {
   formatShortDate,
@@ -59,6 +60,10 @@ export const DossierLabellisationDecision = ({
             {appLabels.labellisationsAdminLabelliseeLe(
               formatShortDate(dossier.labellisationObtenueLe) ?? ''
             )}
+            {/* Une 1ère étoile (sans audit validé) n'a rien à corriger */}
+            {dossier.valide && (
+              <CorrigerLabellisationButton dossier={dossier} />
+            )}
           </div>
         )}
       </DossierSection>
@@ -72,6 +77,95 @@ export const DossierLabellisationDecision = ({
     >
       <DossierLabellisationDecisionActions dossier={dossier} />
     </DossierSection>
+  );
+};
+
+/** Corrige une étoile mal saisie à la décision, sans rouvrir le dossier. */
+const CorrigerLabellisationButton = ({
+  dossier,
+}: {
+  dossier: DossierLabellisation;
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [etoiles, setEtoiles] = useState(dossier.labellisationEtoiles ?? 1);
+  const initialDate = dossier.labellisationObtenueLe?.slice(0, 10) ?? '';
+  const [date, setDate] = useState(initialDate);
+  const dateId = useId();
+  const { mutate, isPending } = useUpdateLabellisation();
+
+  return (
+    <>
+      <Button
+        size="xs"
+        variant="outlined"
+        dataTest="referentiels.labellisations-admin.corriger-labellisation"
+        onClick={() => {
+          // Repart du dossier : une annulation précédente ne doit rien laisser
+          setEtoiles(dossier.labellisationEtoiles ?? 1);
+          setDate(initialDate);
+          setIsOpen(true);
+        }}
+      >
+        {appLabels.labellisationsAdminCorrigerLabellisation}
+      </Button>
+      {isOpen && (
+        <Modal
+          openState={{ isOpen: true, setIsOpen }}
+          title={appLabels.labellisationsAdminCorrigerLabellisationTitre}
+          size="sm"
+          render={() => (
+            <div className="flex flex-col gap-4">
+              <DossierModalHeader dossier={dossier} />
+              <Field title={appLabels.labellisationsAdminEtoileObtenue}>
+                <Select
+                  dataTest="referentiels.labellisations-admin.corriger-labellisation-select"
+                  ariaLabel={appLabels.labellisationsAdminEtoileObtenue}
+                  options={Object.values(EtoileEnum).map((value) => ({
+                    value,
+                    label: formatEtoile(value),
+                  }))}
+                  values={etoiles}
+                  onChange={(value) =>
+                    value && setEtoiles(Number(value) as typeof etoiles)
+                  }
+                />
+              </Field>
+              <Field
+                title={appLabels.labellisationsAdminDateLabellisation}
+                htmlFor={dateId}
+              >
+                <Input
+                  id={dateId}
+                  type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  data-test="referentiels.labellisations-admin.corriger-labellisation-date"
+                />
+              </Field>
+            </div>
+          )}
+          renderFooter={({ close }) => (
+            <ModalFooterOKCancel
+              btnCancelProps={{ onClick: close, size: 'sm' }}
+              btnOKProps={{
+                size: 'sm',
+                children: appLabels.labellisationsAdminConfirmer,
+                disabled:
+                  isPending ||
+                  !date ||
+                  (etoiles === dossier.labellisationEtoiles &&
+                    date === initialDate),
+                onClick: () =>
+                  mutate(
+                    { auditId: dossier.auditId, etoiles, dateCra: date },
+                    { onSuccess: () => setIsOpen(false) }
+                  ),
+              }}
+            />
+          )}
+        />
+      )}
+    </>
   );
 };
 
@@ -297,6 +391,7 @@ const DecisionModal = ({
             <Field title={appLabels.labellisationsAdminEtoileObtenue}>
               <Select
                 dataTest="referentiels.labellisations-admin.decision-etoile"
+                ariaLabel={appLabels.labellisationsAdminEtoileObtenue}
                 options={Object.values(EtoileEnum).map((value) => ({
                   value,
                   label: formatEtoile(value),

@@ -56,6 +56,8 @@ export type SelectProps = Pick<
 > & {
   /** Id pour les tests e2e */
   dataTest?: string;
+  /** Nom accessible du bouton (« ouvrir le menu » par défaut) */
+  ariaLabel?: string;
   /** Liste des options */
   options: Array<SelectOption>;
   /** Appelée à la sélection d'une option (reçoit la valeur de l'option cliquée) */
@@ -298,6 +300,7 @@ export const SelectBase = (props: SelectProps) => {
       ) : (
         <SelectBaseButton
           dataTest={dataTest}
+          ariaLabel={props.ariaLabel}
           values={arrayValues}
           enableDisplayLimitValue={enableDisplayLimitValue}
           options={options}

@@ -220,7 +220,7 @@ const HistoriqueSection = ({
       key: `audit-${audit.auditId}`,
       date: audit.dateFin ?? audit.envoyeeLe ?? audit.dateDebut,
       sujet: audit.sujet,
-      etoiles: audit.etoiles,
+      etoiles: audit.labellisationEtoiles ?? audit.etoiles,
       statut: appLabels.labellisationsAdminStatut[audit.statut],
     })),
     // Labellisations sans audit sur la plateforme (1ères étoiles, reprises)
