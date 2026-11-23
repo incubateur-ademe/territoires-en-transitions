@@ -31,8 +31,6 @@ describe('Suivi du plan : indicateurs et objectifs', () => {
   let visiteur: AuthenticatedUser;
   let collectiviteId: number;
 
-  const anneeCourante = new Date().getFullYear();
-
   beforeAll(async () => {
     app = await getTestApp();
     router = await getTestRouter(app);
@@ -97,6 +95,7 @@ describe('Suivi du plan : indicateurs et objectifs', () => {
     titre: string,
     options: {
       estConfidentiel?: boolean;
+      estFavori?: boolean;
       valeurs?: { dateValeur: string; resultat?: number; objectif?: number }[];
     } = {}
   ) =>
@@ -110,50 +109,70 @@ describe('Suivi du plan : indicateurs et objectifs', () => {
       .createCaller({ user })
       .plans.suivi.getIndicateursObjectifs({ planId });
 
-  it('liste les indicateurs des fiches et des axes, une ligne par indicateur, avec dernière valeur et prochain objectif', async () => {
+  it('liste les indicateurs des fiches et des axes, une carte par indicateur, avec ses résultats et ses objectifs, favoris en tête', async () => {
     const { planId, axeId } = await createPlan();
     const indicateurFiche = await createIndicateur('B - émissions', {
       valeurs: [
         { dateValeur: '2021-01-01', resultat: 120 },
         { dateValeur: '2023-01-01', resultat: 100 },
-        { dateValeur: '2020-01-01', objectif: 130 },
-        { dateValeur: `${anneeCourante + 4}-01-01`, objectif: 60 },
-        { dateValeur: `${anneeCourante + 24}-01-01`, objectif: 0 },
+        { dateValeur: '2030-01-01', objectif: 60 },
+        { dateValeur: '2050-01-01', objectif: 0 },
       ],
     });
     const indicateurAxe = await createIndicateur('A - consommation');
+    const indicateurFavori = await createIndicateur('Z - favori', {
+      estFavori: true,
+    });
     await createFiche({ axeId, indicateurIds: [indicateurFiche] });
-    await createFiche({ axeId, indicateurIds: [indicateurFiche] });
+    await createFiche({
+      axeId,
+      indicateurIds: [indicateurFiche, indicateurFavori],
+    });
     await db.db
       .insert(axeIndicateurTable)
       .values({ axeId, indicateurId: indicateurAxe, createdBy: admin.id });
 
     const indicateurs = await getIndicateursObjectifs(admin, planId);
 
+    const definition = {
+      identifiantReferentiel: null,
+      unite: 'tCO2e',
+      precision: expect.any(Number),
+      periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+    };
     expect(indicateurs).toEqual([
       {
-        id: indicateurAxe,
-        identifiantReferentiel: null,
-        titre: 'A - consommation',
-        unite: 'tCO2e',
-        precision: expect.any(Number),
-        periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
-        derniereValeur: null,
-        objectif: null,
+        ...definition,
+        id: indicateurFavori,
+        titre: 'Z - favori',
+        favori: true,
+        resultats: null,
+        objectifs: [],
       },
       {
+        ...definition,
+        id: indicateurAxe,
+        titre: 'A - consommation',
+        favori: false,
+        resultats: null,
+        objectifs: [],
+      },
+      {
+        ...definition,
         id: indicateurFiche,
-        identifiantReferentiel: null,
         titre: 'B - émissions',
-        unite: 'tCO2e',
-        precision: expect.any(Number),
-        periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
-        derniereValeur: {
-          valeur: 100,
-          dateValeur: '2023-01-01',
-          sourceId: 'collectivite',
+        favori: false,
+        resultats: {
+          source: { type: 'collectivite' },
+          points: [
+            { dateValeur: '2021-01-01', valeur: 120 },
+            { dateValeur: '2023-01-01', valeur: 100 },
+          ],
         },
-        objectif: { valeur: 60, annee: anneeCourante + 4 },
+        objectifs: [
+          { annee: 2030, valeur: 60 },
+          { annee: 2050, valeur: 0 },
+        ],
       },
     ]);
   });
@@ -193,12 +212,10 @@ describe('Suivi du plan : indicateurs et objectifs', () => {
     const [pourAdmin] = await getIndicateursObjectifs(admin, planId);
     const [pourVisiteur] = await getIndicateursObjectifs(visiteur, planId);
 
-    expect(pourAdmin.derniereValeur?.valeur).toBe(12);
-    expect(pourVisiteur.derniereValeur).toEqual({
-      valeur: 10,
-      dateValeur: '2022-01-01',
-      sourceId: 'collectivite',
-    });
+    expect(pourAdmin.resultats?.points.at(-1)?.valeur).toBe(12);
+    expect(pourVisiteur.resultats?.points).toEqual([
+      { dateValeur: '2022-01-01', valeur: 10 },
+    ]);
   });
 
   it('se replie sur l’open data sans résultat de la collectivité', async () => {
@@ -236,10 +253,9 @@ describe('Suivi du plan : indicateurs et objectifs', () => {
 
     const [indicateur] = await getIndicateursObjectifs(admin, planId);
 
-    expect(indicateur.derniereValeur).toEqual({
-      valeur: 42,
-      dateValeur: '2022-01-01',
-      sourceId,
+    expect(indicateur.resultats).toEqual({
+      source: { type: 'open-data', libelle: 'Source test' },
+      points: [{ dateValeur: '2022-01-01', valeur: 42 }],
     });
   });
 

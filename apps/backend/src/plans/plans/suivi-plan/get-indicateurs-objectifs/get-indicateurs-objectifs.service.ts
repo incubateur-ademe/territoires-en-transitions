@@ -4,9 +4,10 @@ import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.uti
 import { Result, success } from '@tet/backend/utils/result.type';
 import { maskDernierResultat } from '@tet/domain/indicateurs';
 import {
+  compareIndicateursObjectifs,
   IndicateurObjectif,
-  pickDerniereValeur,
-  pickObjectif,
+  listObjectifs,
+  pickResultats,
 } from '@tet/domain/plans';
 import { groupBy } from 'es-toolkit';
 import { GetPlanError } from '../../get-plan/get-plan.errors';
@@ -81,8 +82,6 @@ export class GetIndicateursObjectifsService {
       (valeur) => valeur.indicateurId
     );
 
-    const anneeCourante = new Date().getFullYear();
-
     return success(
       definitionsResult.data
         .map(({ confidentiel, ...definition }) => {
@@ -98,14 +97,11 @@ export class GetIndicateursObjectifsService {
               : valeurs;
           return {
             ...definition,
-            derniereValeur: pickDerniereValeur(
-              valeursVisibles,
-              definition.periodicite
-            ),
-            objectif: pickObjectif(valeursVisibles, anneeCourante),
+            resultats: pickResultats(valeursVisibles, definition.periodicite),
+            objectifs: listObjectifs(valeursVisibles),
           };
         })
-        .sort((a, b) => a.titre.localeCompare(b.titre, 'fr'))
+        .sort(compareIndicateursObjectifs)
     );
   }
 }

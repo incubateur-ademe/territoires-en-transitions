@@ -24,6 +24,7 @@ export type IndicateurObjectifDefinition = {
   precision: number;
   periodicite: IndicateurPeriodicite;
   confidentiel: boolean;
+  favori: boolean;
 };
 
 @Injectable()
@@ -67,6 +68,7 @@ export class GetIndicateursObjectifsRepository {
           precision: indicateurDefinitionTable.precision,
           periodicite: indicateurDefinitionTable.periodicite,
           confidentiel: indicateurCollectiviteTable.confidentiel,
+          favori: indicateurCollectiviteTable.favoris,
         })
         .from(indicateurDefinitionTable)
         .leftJoin(
@@ -83,6 +85,7 @@ export class GetIndicateursObjectifsRepository {
       return rows.map((row) => ({
         ...row,
         confidentiel: row.confidentiel ?? false,
+        favori: row.favori ?? false,
       }));
     });
   }
@@ -114,6 +117,7 @@ export class GetIndicateursObjectifsRepository {
           objectif: indicateurValeurTable.objectif,
           metadonneeId: indicateurValeurTable.metadonneeId,
           sourceId: indicateurSourceMetadonneeTable.sourceId,
+          sourceLibelle: indicateurSourceTable.libelle,
           ordreAffichage: indicateurSourceTable.ordreAffichage,
           dateVersion: indicateurSourceMetadonneeTable.dateVersion,
         })
