@@ -160,6 +160,31 @@ describe('maskFicheRestreinte', () => {
   });
 });
 
+describe('maskFicheRestreinte - contacts des pilotes', () => {
+  it("n'expose ni email ni téléphone des pilotes d'une fiche restreinte", () => {
+    const fiche: FicheWithRelations = {
+      ...toFicheRestreinte(),
+      pilotes: [
+        {
+          ...pilote,
+          userId: '00000000-0000-0000-0000-000000000002',
+          email: 'leo.bazin@example.org',
+          telephone: '0102030405',
+        },
+      ],
+    };
+
+    expect(maskFicheRestreinte(fiche).pilotes).toEqual([
+      {
+        tagId: 3,
+        userId: '00000000-0000-0000-0000-000000000002',
+        nom: 'Léo Bazin',
+        collectiviteId: 10,
+      },
+    ]);
+  });
+});
+
 describe('hasFilterOnMaskedField', () => {
   it('ne voit aucun champ masqué dans des filtres sur le statut, le pilote et le plan', () => {
     expect(
