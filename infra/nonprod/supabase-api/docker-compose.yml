@@ -23,6 +23,9 @@ services:
   gotrue:
     image: supabase/auth:v2.197.0
     restart: unless-stopped
+    # pgx ne lit la CA que dans un fichier (sslrootcert de l'URL) : on écrit
+    # celle de la RDB avant de lancer GoTrue (CMD de l'image : auth).
+    entrypoint: [sh, -c, 'printf "%s\n" "$$GOTRUE_DB_SSL_ROOT_CERT" > /tmp/rdb-ca.pem && exec auth']
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9999/health"]
       interval: 30s
@@ -35,8 +38,12 @@ services:
 
       # Connexion DB : rôle supabase_auth_admin, créé par Terraform
       # (scaleway_rdb_user). search_path=auth pointe GoTrue sur son schéma.
+      # L'URL porte sslmode=verify-ca&sslrootcert=/tmp/rdb-ca.pem : chaîne
+      # vérifiée par la CA ci-dessous. verify-ca et pas verify-full : l'hôte
+      # est une IP privée, absente du certificat.
       GOTRUE_DB_DRIVER: postgres
       GOTRUE_DB_DATABASE_URL: ${GOTRUE_DB_DATABASE_URL}
+      GOTRUE_DB_SSL_ROOT_CERT: ${GOTRUE_DB_SSL_ROOT_CERT:?CA de la RDB requise}
 
       # JWT : strictement identique au projet Supabase de l'environnement, pour préserver tokens
       # et refresh tokens existants.
