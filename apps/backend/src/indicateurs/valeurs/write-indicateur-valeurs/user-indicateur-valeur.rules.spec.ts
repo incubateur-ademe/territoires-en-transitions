@@ -1,35 +1,23 @@
 import { describe, expect, it } from 'vitest';
-import { checkUserIndicateurValeursAllowed } from './user-indicateur-valeur.rules';
+import { getIndicateurIdsWithoutUserValeur } from './user-indicateur-valeur.rules';
 
-describe('checkUserIndicateurValeursAllowed', () => {
-  it('accepte des indicateurs qui acceptent une valeur utilisateur', () => {
-    const allowance = checkUserIndicateurValeursAllowed([
+describe('getIndicateurIdsWithoutUserValeur', () => {
+  it('ne retourne aucun identifiant quand tous les indicateurs acceptent une valeur utilisateur', () => {
+    const protectedIds = getIndicateurIdsWithoutUserValeur([
       { id: 1, sansValeurUtilisateur: false },
       { id: 2, sansValeurUtilisateur: false },
     ]);
 
-    expect(allowance).toEqual({ success: true, data: undefined });
+    expect(protectedIds).toEqual([]);
   });
 
-  it('accepte une liste vide', () => {
-    const allowance = checkUserIndicateurValeursAllowed([]);
-
-    expect(allowance).toEqual({ success: true, data: undefined });
-  });
-
-  it('refuse en citant chaque indicateur protégé, et seulement ceux-là', () => {
-    const allowance = checkUserIndicateurValeursAllowed([
+  it('retourne chaque indicateur protégé, et seulement ceux-là', () => {
+    const protectedIds = getIndicateurIdsWithoutUserValeur([
       { id: 1, sansValeurUtilisateur: false },
       { id: 2, sansValeurUtilisateur: true },
       { id: 3, sansValeurUtilisateur: true },
     ]);
 
-    expect(allowance).toEqual({
-      success: false,
-      error: 'USER_VALUE_NOT_ALLOWED',
-      cause: new Error(
-        "Les indicateurs 2, 3 n'acceptent pas de valeur utilisateur"
-      ),
-    });
+    expect(protectedIds).toEqual([2, 3]);
   });
 });

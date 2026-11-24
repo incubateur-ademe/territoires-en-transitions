@@ -13,11 +13,6 @@ describe('IndicateurValeursRules.getCanonicalDateValeur', () => {
       expected: '2026-01-01',
     },
     {
-      periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
-      dateValeur: '2026-01-01',
-      expected: '2026-01-01',
-    },
-    {
       periodicite: IndicateurPeriodiciteEnum.SEMESTRIELLE,
       dateValeur: '2026-07-01',
       expected: '2026-07-01',
@@ -40,7 +35,7 @@ describe('IndicateurValeursRules.getCanonicalDateValeur', () => {
         { id: 7, periodicite }
       );
 
-      expect(canonical).toEqual({ success: true, data: expected });
+      expect(canonical).toBe(expected);
     }
   );
 
@@ -62,20 +57,14 @@ describe('IndicateurValeursRules.getCanonicalDateValeur', () => {
       dateValeur: 'pas-une-date',
     },
   ] as const)(
-    'refuse $dateValeur en $periodicite avec le détail dans la cause',
+    'retourne null pour $dateValeur en $periodicite',
     ({ periodicite, dateValeur }) => {
       const canonical = IndicateurValeursRules.getCanonicalDateValeur(
         dateValeur,
         { id: 7, periodicite }
       );
 
-      expect(canonical).toEqual({
-        success: false,
-        error: 'INVALID_VALUE',
-        cause: new Error(
-          `Date de valeur ${dateValeur} non canonique pour l'indicateur 7 (${periodicite})`
-        ),
-      });
+      expect(canonical).toBeNull();
     }
   );
 });
@@ -96,18 +85,15 @@ describe('IndicateurValeursRules.normalize', () => {
     });
 
     expect(normalized).toEqual({
-      success: true,
-      data: {
-        ...valeur,
-        periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
-        dateValeur: '2026-01-01',
-        resultat: 12.35,
-        objectif: null,
-      },
+      ...valeur,
+      periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+      dateValeur: '2026-01-01',
+      resultat: 12.35,
+      objectif: null,
     });
   });
 
-  it('refuse une date non canonique pour la périodicité de la valeur', () => {
+  it('retourne null pour une date non canonique pour la périodicité de la valeur', () => {
     const normalized = IndicateurValeursRules.normalize(
       {
         ...valeur,
@@ -117,12 +103,6 @@ describe('IndicateurValeursRules.normalize', () => {
       { id: 7, precision: 2 }
     );
 
-    expect(normalized).toEqual({
-      success: false,
-      error: 'INVALID_VALUE',
-      cause: new Error(
-        "Date de valeur 2026-06-15 non canonique pour l'indicateur 7 (mensuelle)"
-      ),
-    });
+    expect(normalized).toBeNull();
   });
 });
