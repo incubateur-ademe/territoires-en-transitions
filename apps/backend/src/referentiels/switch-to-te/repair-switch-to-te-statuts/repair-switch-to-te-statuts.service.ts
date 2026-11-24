@@ -164,7 +164,8 @@ export class RepairSwitchToTeStatutsService {
             avecReferentielsOrigine: false,
             patchActionStatuts: (actionStatuts) =>
               applyRepairDecisionsToActionStatuts(actionStatuts, decisions),
-          }
+          },
+          'internal'
         );
       scoreApres = buildScoreMapByActionId(scoresPayload.scores).get(
         TE_ROOT_ACTION_ID

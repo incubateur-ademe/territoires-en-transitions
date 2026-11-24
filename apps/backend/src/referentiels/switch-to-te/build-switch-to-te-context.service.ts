@@ -95,7 +95,7 @@ export class BuildSwitchToTeContextService {
         ReferentielIdEnum.TE,
         collectiviteId,
         { avecReferentielsOrigine: false },
-        user
+        user ?? 'internal'
       );
 
     const teScoreMap = buildScoreMapByActionId(scoresPayload.scores);

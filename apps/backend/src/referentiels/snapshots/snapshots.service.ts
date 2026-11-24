@@ -349,7 +349,7 @@ export class SnapshotsService {
             auditId,
             snapshotNom: nom,
           },
-          user
+          'internal'
         );
 
       return await this.saveSnapshotForScoreResponse(
