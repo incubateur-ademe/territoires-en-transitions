@@ -310,6 +310,22 @@ const evolution = (depart: number, valeur: number) =>
 const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
 
 /**
+ * L'évolution visée par l'objectif par rapport au départ, comme dans le dépôt
+ * (« −41 % par rapport à 2015 »). Elle se lit même sans barre de chemin
+ * parcouru. `null` sans départ, depuis un départ nul, ou si l'objectif n'est
+ * pas postérieur au départ.
+ */
+export function computeEvolutionObjectif(
+  depart: IndicateurValeurAnnee | null,
+  cible: IndicateurObjectifHorizon | null
+): number | null {
+  if (!depart || !cible || cible.annee <= depart.annee) {
+    return null;
+  }
+  return evolution(depart.valeur, cible.valeur);
+}
+
+/**
  * Où en est un indicateur de son objectif. Le chemin parcouru vaut
  * `(dernier - départ) / (objectif - départ)`, valable à la hausse comme à la
  * baisse ; il est comparé au temps écoulé pour dire si l'indicateur tient le
@@ -359,7 +375,7 @@ export function computeAvancementObjectif({
     chemin,
     tempsEcoule,
     evolutionDepuisDepart: evolution(depart.valeur, dernier.valeur),
-    evolutionObjectif: evolution(depart.valeur, cible.valeur),
+    evolutionObjectif: computeEvolutionObjectif(depart, cible),
     etat: getEtat({
       chemin,
       tempsEcoule,

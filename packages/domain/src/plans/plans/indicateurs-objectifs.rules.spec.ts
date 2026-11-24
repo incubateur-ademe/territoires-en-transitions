@@ -4,6 +4,7 @@ import {
   buildDepot,
   compareIndicateursObjectifs,
   computeAvancementObjectif,
+  computeEvolutionObjectif,
   pickDepart,
   pickDernier,
   getHorizonParDefaut,
@@ -416,6 +417,35 @@ describe('buildDepot', () => {
         [{ dateValeur: '2030-01-01', resultat: 95, objectif: 90 }],
         2026
       ).departDepot
+    ).toBeNull();
+  });
+});
+
+describe('computeEvolutionObjectif', () => {
+  it('se lit même sans résultat postérieur au départ', () => {
+    expect(
+      computeEvolutionObjectif(
+        { annee: 2018, valeur: 250 },
+        { annee: 2030, valeur: 200 }
+      )
+    ).toBeCloseTo(-0.2);
+  });
+
+  it('renvoie null sans départ, depuis zéro ou pour un objectif non postérieur', () => {
+    expect(
+      computeEvolutionObjectif(null, { annee: 2030, valeur: 1 })
+    ).toBeNull();
+    expect(
+      computeEvolutionObjectif(
+        { annee: 2018, valeur: 0 },
+        { annee: 2030, valeur: 1 }
+      )
+    ).toBeNull();
+    expect(
+      computeEvolutionObjectif(
+        { annee: 2030, valeur: 5 },
+        { annee: 2030, valeur: 1 }
+      )
     ).toBeNull();
   });
 });
