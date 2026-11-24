@@ -16,6 +16,7 @@ import {
 } from './electrification-value-interpretation.schema';
 import { ElectrificationCatalogueRules } from '@tet/backend/plans/plans/electrification/publish-electrification-data/electrification-catalogue.rules';
 import { ElectrificationEngagementValuesRules } from '../resolve-engagements/electrification-engagement-values.rules';
+import { ElectrificationEngagementsErrors } from '../resolve-engagements/electrification-engagements.errors';
 
 type Table = ElectrificationDocumentSource[][];
 type Engagement = ElectrificationExtractionResponse['engagements'][number];
@@ -157,7 +158,7 @@ export class ElectrificationEngagementsDocumentRules {
 
       if (selectedCodes.has(definition.code)) {
         issues.push(
-          ElectrificationEngagementValuesRules.duplicate(
+          ElectrificationEngagementsErrors.duplicate(
             definition.code,
             engagement.location
           )

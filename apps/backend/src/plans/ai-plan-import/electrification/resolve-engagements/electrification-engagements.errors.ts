@@ -125,3 +125,62 @@ export type ElectrificationEngagementsErrorCode =
 export const electrificationEngagementsIssue = createIssueFactory(
   electrificationEngagementsErrors
 );
+
+/** Messages contextualisés des contrôles d'engagements. */
+export class ElectrificationEngagementsErrors {
+  static duplicate(code: string, location?: string): ElectrificationIssue {
+    return {
+      ...electrificationEngagementsIssue('DUPLICATE_ENGAGEMENT', location),
+      message: `L'engagement ${code} est sélectionné plusieurs fois. Gardez une seule ligne pour cet engagement.`,
+    };
+  }
+
+  static outOfBounds(
+    {
+      value,
+      unit,
+      minimum,
+      maximum,
+    }: {
+      value: number;
+      unit: string;
+      minimum: number | null;
+      maximum: number | null;
+    },
+    location?: string
+  ): ElectrificationIssue {
+    const bounds =
+      minimum !== null && maximum !== null
+        ? `entre ${minimum} et ${maximum}`
+        : minimum !== null
+        ? `supérieure ou égale à ${minimum}`
+        : `inférieure ou égale à ${maximum}`;
+    return {
+      ...electrificationEngagementsIssue('INVALID_ENGAGEMENT_VALUE', location),
+      message: `Vous avez saisi ${value} ${unit}. Renseignez une valeur ${bounds} ${unit}.`,
+    };
+  }
+
+  static inconsistentTargets(
+    {
+      value,
+      unit,
+      ceilingLabel,
+      ceilingValue,
+    }: {
+      value: number;
+      unit: string;
+      ceilingLabel: string;
+      ceilingValue: number;
+    },
+    location?: string
+  ): ElectrificationIssue {
+    return {
+      ...electrificationEngagementsIssue(
+        'INCONSISTENT_ENGAGEMENT_TARGETS',
+        location
+      ),
+      message: `La valeur saisie (${value} ${unit}) ne peut pas dépasser la cible "${ceilingLabel}" (${ceilingValue} ${unit}).`,
+    };
+  }
+}
