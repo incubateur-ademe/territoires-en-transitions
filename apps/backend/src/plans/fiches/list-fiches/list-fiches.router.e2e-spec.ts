@@ -6,6 +6,7 @@ import { partenaireTagTable } from '@tet/backend/collectivites/tags/partenaire-t
 import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
 import { serviceTagTable } from '@tet/backend/collectivites/tags/service-tag.table';
 import { structureTagTable } from '@tet/backend/collectivites/tags/structure-tag.table';
+import { ficheActionBudgetTable } from '@tet/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
 import { ficheActionNoteTable } from '@tet/backend/plans/fiches/fiche-action-note/fiche-action-note.table';
 import { ficheActionSharingTable } from '@tet/backend/plans/fiches/share-fiches/fiche-action-sharing.table';
 import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
@@ -16,6 +17,7 @@ import { ficheActionIndicateurTable } from '@tet/backend/plans/fiches/shared/mod
 import { ficheActionLibreTagTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-libre-tag.table';
 import { ficheActionLienTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-lien.table';
 import { ficheActionPartenaireTagTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-partenaire-tag.table';
+import { ficheActionPiloteTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-pilote.table';
 import { ficheActionReferentTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-referent.table';
 import { ficheActionServiceTagTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-service-tag.table';
 import { ficheActionSousThematiqueTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-sous-thematique.table';
@@ -38,7 +40,7 @@ import {
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { withOnTestFinished } from '@tet/backend/utils/test-fixture.utils';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
-import { StatutEnum } from '@tet/domain/plans';
+import { ListFichesRequestFilters, StatutEnum } from '@tet/domain/plans';
 import { CollectiviteRole } from '@tet/domain/users';
 import { eq, inArray } from 'drizzle-orm';
 import { uniq } from 'es-toolkit';
@@ -3557,5 +3559,184 @@ describe('ListFichesRouter', () => {
     const ids = data.map((f) => f.id);
     expect(ids).toContain(ficheActive.id);
     expect(ids).not.toContain(ficheDeleted.id);
+  });
+
+  test('Forme d’une fiche complète : plans, axes, pilotes, budgets et complétude', async () => {
+    const { collectivite: autreCollectivite } = await addTestCollectivite(db);
+    const autreCollectiviteId = autreCollectivite.id;
+    const { user: membre } = await addTestUser(db, {
+      collectiviteId: autreCollectiviteId,
+      role: CollectiviteRole.ADMIN,
+      prenom: 'Camille',
+      nom: 'Pilote',
+    });
+
+    const [plan] = await db.db
+      .insert(axeTable)
+      .values({ nom: 'Plan forme', collectiviteId: autreCollectiviteId })
+      .returning();
+    const [axe] = await db.db
+      .insert(axeTable)
+      .values({
+        nom: 'Axe forme',
+        collectiviteId: autreCollectiviteId,
+        parent: plan.id,
+        plan: plan.id,
+      })
+      .returning();
+    const [sousAxe] = await db.db
+      .insert(axeTable)
+      .values({
+        nom: 'Sous-axe forme',
+        collectiviteId: autreCollectiviteId,
+        parent: axe.id,
+        plan: plan.id,
+      })
+      .returning();
+    const [personne] = await db.db
+      .insert(personneTagTable)
+      .values({
+        nom: 'Pilote tag forme',
+        collectiviteId: autreCollectiviteId,
+      })
+      .returning();
+    const [fiche] = await db.db
+      .insert(ficheActionTable)
+      .values({
+        titre: 'Fiche complète',
+        description: 'Description complète',
+        statut: StatutEnum.EN_COURS,
+        collectiviteId: autreCollectiviteId,
+      })
+      .returning();
+    await db.db.insert(ficheActionAxeTable).values({
+      ficheId: fiche.id,
+      axeId: sousAxe.id,
+      createdBy: membre.id,
+    });
+    await db.db.insert(ficheActionPiloteTable).values([
+      { ficheId: fiche.id, tagId: personne.id, createdBy: membre.id },
+      { ficheId: fiche.id, userId: membre.id, createdBy: membre.id },
+    ]);
+    const [budget] = await db.db
+      .insert(ficheActionBudgetTable)
+      .values({
+        ficheId: fiche.id,
+        type: 'investissement',
+        unite: 'HT',
+        annee: 2026,
+        budgetPrevisionnel: 1000,
+        budgetReel: 500,
+      })
+      .returning();
+
+    const caller = router.createCaller({
+      user: getAuthUserFromUserCredentials(membre),
+    });
+    const listFiche = async (filters: ListFichesRequestFilters) => {
+      const { data } = await caller.plans.fiches.listFiches({
+        collectiviteId: autreCollectiviteId,
+        filters: { ficheIds: [fiche.id], ...filters },
+      });
+      expect(data).toHaveLength(1);
+      return data[0];
+    };
+
+    const ficheAvecAncetres = await listFiche({ withAxesAncestors: true });
+
+    expect({
+      plans: ficheAvecAncetres.plans,
+      axes: [...(ficheAvecAncetres.axes ?? [])].sort((a, b) => a.id - b.id),
+      pilotes: [...(ficheAvecAncetres.pilotes ?? [])].sort((a, b) =>
+        (a.nom ?? '').localeCompare(b.nom ?? '')
+      ),
+      budgets: ficheAvecAncetres.budgets,
+      completion: ficheAvecAncetres.completion,
+    }).toEqual({
+      plans: [
+        {
+          id: plan.id,
+          nom: 'Plan forme',
+          collectiviteId: autreCollectiviteId,
+          type: null,
+        },
+      ],
+      axes: [
+        {
+          id: plan.id,
+          nom: 'Plan forme',
+          collectiviteId: autreCollectiviteId,
+          parentId: null,
+          // la base renseigne le plan d'une racine avec son propre id
+          planId: plan.id,
+          axeLevel: 3,
+        },
+        {
+          id: axe.id,
+          nom: 'Axe forme',
+          collectiviteId: autreCollectiviteId,
+          parentId: plan.id,
+          planId: plan.id,
+          axeLevel: 2,
+        },
+        {
+          id: sousAxe.id,
+          nom: 'Sous-axe forme',
+          collectiviteId: autreCollectiviteId,
+          parentId: axe.id,
+          planId: plan.id,
+          axeLevel: 1,
+        },
+      ],
+      pilotes: [
+        {
+          tagId: null,
+          userId: membre.id,
+          prenom: 'Camille',
+          nomFamille: 'Pilote',
+          nom: 'Camille Pilote',
+          email: membre.email,
+          telephone: null,
+        },
+        {
+          tagId: personne.id,
+          userId: null,
+          prenom: null,
+          nomFamille: null,
+          nom: 'Pilote tag forme',
+          email: null,
+          telephone: null,
+        },
+      ],
+      budgets: [
+        {
+          id: budget.id,
+          ficheId: fiche.id,
+          type: 'investissement',
+          unite: 'HT',
+          annee: 2026,
+          budgetPrevisionnel: 1000,
+          budgetReel: 500,
+          estEtale: false,
+        },
+      ],
+      completion: {
+        ficheId: fiche.id,
+        isCompleted: true,
+        fields: [
+          { field: 'titre', isCompleted: true },
+          { field: 'description', isCompleted: true },
+          { field: 'statut', isCompleted: true },
+          { field: 'pilotes', isCompleted: true },
+        ],
+      },
+    });
+
+    // sans withAxesAncestors, seul l'axe direct est rendu
+    const ficheSansAncetres = await listFiche({});
+    expect(ficheSansAncetres.axes).toEqual([
+      expect.objectContaining({ id: sousAxe.id, axeLevel: 1 }),
+    ]);
+    expect(ficheSansAncetres.plans).toEqual(ficheAvecAncetres.plans);
   });
 });
