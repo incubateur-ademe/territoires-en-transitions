@@ -38,6 +38,30 @@ describe('IndicateurUniteInput', () => {
     expect(updateUnite).toHaveBeenCalledWith('kg');
   });
 
+  it("affiche l'unité reçue après le premier rendu, comme celle héritée du parent une fois rechargée", () => {
+    const { rerender } = render(
+      <IndicateurUniteInput
+        titre="Verre"
+        unite=""
+        hasSousIndicateurs={false}
+        parentTitre="Déchets"
+        updateUnite={vi.fn()}
+      />
+    );
+
+    rerender(
+      <IndicateurUniteInput
+        titre="Verre"
+        unite="t"
+        hasSousIndicateurs={false}
+        parentTitre="Déchets"
+        updateUnite={vi.fn()}
+      />
+    );
+
+    expect(getUniteInput().value).toBe('t');
+  });
+
   it("désactive le champ d'un sous-indicateur et n'affiche pas directement l'explication", () => {
     render(
       <IndicateurUniteInput

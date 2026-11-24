@@ -1,5 +1,5 @@
 import { appLabels } from '@/app/labels/catalog';
-import { Field, Input } from '@tet/ui';
+import { Field, Input, Tooltip } from '@tet/ui';
 import { useId, useState } from 'react';
 import { ConfirmChangeUnite } from './confirm-change-unite';
 
@@ -21,9 +21,18 @@ export const IndicateurUniteInput = ({
   updateUnite,
 }: Props) => {
   const [uniteInput, setUniteInput] = useState(unite);
+  const [uniteReceived, setUniteReceived] = useState(unite);
+  if (unite !== uniteReceived) {
+    setUniteReceived(unite);
+    setUniteInput(unite);
+  }
   const [uniteToConfirm, setUniteToConfirm] = useState<string | null>(null);
   const inputId = useId();
+  const descriptionId = useId();
   const isInheritedFromParent = parentTitre !== undefined;
+  const uniteDuParent = isInheritedFromParent
+    ? appLabels.indicateurUniteDuParent({ parent: parentTitre })
+    : undefined;
 
   const saveUnite = (value: string): void => {
     if (hasSousIndicateurs && value !== unite) {
@@ -37,24 +46,31 @@ export const IndicateurUniteInput = ({
     <>
       <Field
         title={appLabels.indicateurUnite}
-        hint={
-          isInheritedFromParent
-            ? appLabels.indicateurUniteDuParent({ parent: parentTitre })
-            : undefined
-        }
         htmlFor={inputId}
         className="max-w-72"
         small
       >
-        <Input
-          id={inputId}
-          type="text"
-          displaySize="sm"
-          value={uniteInput}
-          onChange={(evt) => setUniteInput(evt.target.value)}
-          onBlur={(evt) => saveUnite(evt.target.value)}
-          disabled={disabled || isInheritedFromParent}
-        />
+        <Tooltip label={uniteDuParent}>
+          <div className="flex flex-col">
+            <Input
+              id={inputId}
+              type="text"
+              displaySize="sm"
+              value={uniteInput}
+              onChange={(evt) => setUniteInput(evt.target.value)}
+              onBlur={(evt) => saveUnite(evt.target.value)}
+              disabled={disabled || isInheritedFromParent}
+              aria-describedby={
+                uniteDuParent === undefined ? undefined : descriptionId
+              }
+            />
+            {uniteDuParent !== undefined && (
+              <span id={descriptionId} className="sr-only">
+                {uniteDuParent}
+              </span>
+            )}
+          </div>
+        </Tooltip>
       </Field>
       {uniteToConfirm !== null && (
         <ConfirmChangeUnite
