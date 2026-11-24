@@ -1039,15 +1039,18 @@ test("affiche les détails dans le menu du plan seulement avec accès à l'impor
   await expect(
     page.getByRole('heading', { name: 'Plans', exact: true })
   ).toBeVisible();
-  // Pour le moment, l'entrée de l'import reste réservée au mode super-admin.
+  // Pour le moment, l'entrée de l'import reste réservée au mode super-admin,
+  // sauf sur l'app de développement local.
+  const { environment } = await (await page.request.get('/version')).json();
+  const entryCount = Number(environment === 'dev');
   await expect(
     page.getByRole('link', { name: 'Historique des imports', exact: true })
-  ).toHaveCount(0);
+  ).toHaveCount(entryCount);
   await page
     .getByRole('button', { name: 'Ajouter un plan', exact: true })
     .click();
   await expect(page.getByTestId('choix-creation-plan.importer-ia')).toHaveCount(
-    0
+    entryCount
   );
 
   await page.goto(
