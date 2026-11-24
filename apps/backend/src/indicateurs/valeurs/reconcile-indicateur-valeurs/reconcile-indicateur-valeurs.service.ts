@@ -60,7 +60,7 @@ export class ReconcileIndicateurValeursService {
   ): Promise<
     Result<IndicateurValeurWithIdentifiant[], IndicateurValeursError>
   > {
-    return this.upsertBatch(valeurs, context, {});
+    return this.upsertBatch(valeurs, context, { undoWritesOnFailure: true });
   }
 
   private upsertWithinPropagation(
@@ -69,7 +69,7 @@ export class ReconcileIndicateurValeursService {
   ): Promise<
     Result<IndicateurValeurWithIdentifiant[], IndicateurValeursError>
   > {
-    return this.upsertBatch(valeurs, context, { undoWritesOnFailure: false });
+    return this.upsertBatch(valeurs, context, {});
   }
 
   private async upsertBatch(
@@ -367,8 +367,7 @@ export class ReconcileIndicateurValeursService {
               { collectiviteIds: batch, indicateurs },
               { ...context, tx }
             ),
-          context.tx,
-          { undoWritesOnFailure: false }
+          context.tx
         );
         results.push(...getIndicateurValeursDataOrThrow(result));
         this.logger.log(

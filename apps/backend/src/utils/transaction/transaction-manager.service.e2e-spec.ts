@@ -144,13 +144,17 @@ describe('TransactionManager', () => {
       expect(result.data.operationTx).toBe(result.data.outerTx);
     });
 
-    it('annule les écritures de l’opération en échec et conserve celles de l’appelant', async () => {
+    it('avec undoWritesOnFailure, annule les écritures de l’opération en échec et conserve celles de l’appelant', async () => {
       await transactionManager.executeSingle(async (outerTx) => {
         await insertProbe(outerTx, 'appelant');
-        await transactionManager.executeSingle(async (tx) => {
-          await insertProbe(tx, 'opération en échec');
-          return failure('UNAUTHORIZED');
-        }, outerTx);
+        await transactionManager.executeSingle(
+          async (tx) => {
+            await insertProbe(tx, 'opération en échec');
+            return failure('UNAUTHORIZED');
+          },
+          outerTx,
+          { undoWritesOnFailure: true }
+        );
         return success(undefined);
       });
 
@@ -223,7 +227,7 @@ describe('TransactionManager', () => {
       expect(await listProbeLabels()).toEqual([]);
     });
 
-    it('relance l’erreur d’origine quand le nettoyage du savepoint échoue lui-même', async () => {
+    it('avec undoWritesOnFailure, relance l’erreur d’origine quand le nettoyage du savepoint échoue lui-même', async () => {
       const unexpected = new Error('bug imprévu');
       const cleanupFailure = new Error('connexion perdue');
       const loggedError = vi.spyOn(Logger.prototype, 'error');
@@ -235,7 +239,8 @@ describe('TransactionManager', () => {
               vi.spyOn(tx, 'execute').mockRejectedValueOnce(cleanupFailure);
               throw unexpected;
             },
-            outerTx
+            outerTx,
+            { undoWritesOnFailure: true }
           );
           return success(innerResult);
         }
@@ -248,7 +253,7 @@ describe('TransactionManager', () => {
       );
     });
 
-    it('rend la transaction utilisable après une erreur SQL interceptée par l’opération', async () => {
+    it('avec undoWritesOnFailure, rend la transaction utilisable après une erreur SQL interceptée par l’opération', async () => {
       const outerResult = await transactionManager.executeSingle(
         async (outerTx) => {
           const innerResult = await transactionManager.executeSingle(
@@ -262,7 +267,8 @@ describe('TransactionManager', () => {
               }
               return success(undefined);
             },
-            outerTx
+            outerTx,
+            { undoWritesOnFailure: true }
           );
           await insertProbe(outerTx, 'après l’erreur');
           return success(innerResult);
@@ -276,7 +282,7 @@ describe('TransactionManager', () => {
       expect(await listProbeLabels()).toEqual(['après l’erreur']);
     });
 
-    it('annule les écritures de toutes les opérations quand l’une d’elles échoue', async () => {
+    it('avec undoWritesOnFailure, annule les écritures de toutes les opérations quand l’une d’elles échoue', async () => {
       const result = await transactionManager.executeSingle(async (outerTx) => {
         await insertProbe(outerTx, 'appelant');
         const operations = await transactionManager.executeTransaction(
@@ -287,7 +293,8 @@ describe('TransactionManager', () => {
             },
             async () => failure('UNAUTHORIZED'),
           ],
-          outerTx
+          outerTx,
+          { undoWritesOnFailure: true }
         );
         return success(operations);
       });
@@ -302,7 +309,7 @@ describe('TransactionManager', () => {
       expect(await listProbeLabels()).toEqual(['appelant']);
     });
 
-    it('annule l’opération intermédiaire quand l’opération imbriquée échoue et qu’elle propage l’échec', async () => {
+    it('avec undoWritesOnFailure, annule l’opération intermédiaire quand l’opération imbriquée échoue et qu’elle propage l’échec', async () => {
       await transactionManager.executeSingle(async (outerTx) => {
         await insertProbe(outerTx, 'appelant');
         const intermediateResult = await transactionManager.executeSingle(
@@ -313,12 +320,14 @@ describe('TransactionManager', () => {
                 await insertProbe(tx, 'imbriquée');
                 return failure('UNAUTHORIZED');
               },
-              intermediateTx
+              intermediateTx,
+              { undoWritesOnFailure: true }
             );
             if (!nestedResult.success) return nestedResult;
             return success(undefined);
           },
-          outerTx
+          outerTx,
+          { undoWritesOnFailure: true }
         );
         return success(intermediateResult);
       });
@@ -326,19 +335,24 @@ describe('TransactionManager', () => {
       expect(await listProbeLabels()).toEqual(['appelant']);
     });
 
-    it('conserve l’opération intermédiaire quand elle ignore l’échec de l’opération imbriquée', async () => {
+    it('avec undoWritesOnFailure, conserve l’opération intermédiaire quand elle ignore l’échec de l’opération imbriquée', async () => {
       await transactionManager.executeSingle(async (outerTx) => {
         await insertProbe(outerTx, 'appelant');
         const intermediateResult = await transactionManager.executeSingle(
           async (intermediateTx) => {
             await insertProbe(intermediateTx, 'intermédiaire');
-            await transactionManager.executeSingle(async (tx) => {
-              await insertProbe(tx, 'imbriquée');
-              return failure('UNAUTHORIZED');
-            }, intermediateTx);
+            await transactionManager.executeSingle(
+              async (tx) => {
+                await insertProbe(tx, 'imbriquée');
+                return failure('UNAUTHORIZED');
+              },
+              intermediateTx,
+              { undoWritesOnFailure: true }
+            );
             return success(undefined);
           },
-          outerTx
+          outerTx,
+          { undoWritesOnFailure: true }
         );
         return success(intermediateResult);
       });
@@ -347,7 +361,7 @@ describe('TransactionManager', () => {
     });
   });
 
-  describe('avec une transaction partagée sans annulation des écritures de l’opération', () => {
+  describe('avec une transaction partagée, par défaut (sans savepoint)', () => {
     it('retourne l’échec et conserve les écritures de l’opération dans la transaction de l’appelant', async () => {
       const outerResult = await transactionManager.executeSingle(
         async (outerTx) => {
@@ -357,8 +371,7 @@ describe('TransactionManager', () => {
               await insertProbe(tx, 'écriture conservée');
               return failure('UNAUTHORIZED');
             },
-            outerTx,
-            { undoWritesOnFailure: false }
+            outerTx
           );
           return success(innerResult);
         }
@@ -379,20 +392,16 @@ describe('TransactionManager', () => {
 
       const outerResult = await transactionManager.executeSingle(
         async (outerTx) => {
-          await transactionManager.executeSingle(
-            async (tx) => {
-              try {
-                await tx.execute(
-                  sql`insert into ${probeTable} (label) values (null)`
-                );
-              } catch {
-                return failure('DATABASE_ERROR');
-              }
-              return success(undefined);
-            },
-            outerTx,
-            { undoWritesOnFailure: false }
-          );
+          await transactionManager.executeSingle(async (tx) => {
+            try {
+              await tx.execute(
+                sql`insert into ${probeTable} (label) values (null)`
+              );
+            } catch {
+              return failure('DATABASE_ERROR');
+            }
+            return success(undefined);
+          }, outerTx);
           nextWriteOutcome = await insertProbe(outerTx, 'après l’erreur').catch(
             (error: unknown) => error
           );
@@ -418,8 +427,7 @@ describe('TransactionManager', () => {
               await insertProbe(tx, 'opération');
               return failure('UNAUTHORIZED');
             },
-            outerTx,
-            { undoWritesOnFailure: false }
+            outerTx
           );
           return innerResult;
         }
