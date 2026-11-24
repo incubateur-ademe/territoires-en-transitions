@@ -10,7 +10,12 @@ import {
 } from '@tet/domain/indicateurs';
 import { groupBy, isNil, partition, round } from 'es-toolkit';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { failure, Result, success } from '@tet/backend/utils/result.type';
+import {
+  combineResults,
+  failure,
+  Result,
+  success,
+} from '@tet/backend/utils/result.type';
 import { IndicateurValeursRules } from '../indicateur-valeurs.rules';
 import { FillMissingIndicateurValeursRules } from './fill-missing-indicateur-valeurs.rules';
 import { AuthenticatedUser } from '../../../users/models/auth.models';
@@ -25,7 +30,7 @@ import {
   IndicateurValeursError,
 } from '../indicateur-valeurs.errors';
 import { UpsertValeurIndicateur } from './upsert-valeur-indicateur.request';
-import { assertUserIndicateurValeursAllowed } from './user-indicateur-valeur.rules';
+import { checkUserIndicateurValeursAllowed } from './user-indicateur-valeur.rules';
 import {
   PreparedIndicateurValeurs,
   ValidateIndicateurValeursWriteService,
@@ -104,8 +109,15 @@ export class WriteIndicateurValeursService {
     const indicateurs = getIndicateurValeursDataOrThrow(
       await this.validationService.validate(input, context)
     );
-    const valeurs = input.valeurs.map((valeur) =>
-      IndicateurValeursRules.normalize(valeur, indicateurs[valeur.indicateurId])
+    const valeurs = getIndicateurValeursDataOrThrow(
+      combineResults(
+        input.valeurs.map((valeur) =>
+          IndicateurValeursRules.normalize(
+            valeur,
+            indicateurs[valeur.indicateurId]
+          )
+        )
+      )
     );
     await this.lockRepository.lock(valeurs, context.tx);
     return { valeurs, indicateurs };
@@ -180,16 +192,22 @@ export class WriteIndicateurValeursService {
             'INDICATEUR_NOT_AVAILABLE',
             new Error(`Indicateur definition not found for id ${indicateurId}`)
           );
-        assertUserIndicateurValeursAllowed([lockedIndicateur]);
+        const userValeursAllowed = checkUserIndicateurValeursAllowed([
+          lockedIndicateur,
+        ]);
+        if (!userValeursAllowed.success) return userValeursAllowed;
         const periodicite =
           data.periodicite ?? IndicateurPeriodiciteEnum.ANNUELLE;
-        const dateValeur =
+        const canonicalDateValeurResult =
           data.dateValeur === undefined
-            ? undefined
+            ? success(undefined)
             : IndicateurValeursRules.getCanonicalDateValeur(data.dateValeur, {
                 id: indicateurId,
                 periodicite,
               });
+        if (!canonicalDateValeurResult.success)
+          return canonicalDateValeurResult;
+        const dateValeur = canonicalDateValeurResult.data;
         const now = new Date().toISOString();
         const fields = {
           resultat: !isNil(data.resultat)

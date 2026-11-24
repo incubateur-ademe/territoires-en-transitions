@@ -22,7 +22,7 @@ import {
   captureIndicateurValeursResultOf,
   IndicateurValeursError,
 } from '../indicateur-valeurs.errors';
-import { assertUserIndicateurValeursAllowed } from './user-indicateur-valeur.rules';
+import { checkUserIndicateurValeursAllowed } from './user-indicateur-valeur.rules';
 import { getIndicateurDataOrThrow } from '../../indicateur/indicateur-nature.utils';
 
 export type PreparedIndicateurValeurs = {
@@ -98,7 +98,11 @@ export class ValidateIndicateurValeursWriteService {
       const indicateursById = keyBy(indicateurs, (d) => d.id);
       const enforceUserRules =
         !isUserTrusted && user?.role === AuthRole.AUTHENTICATED;
-      if (enforceUserRules) assertUserIndicateurValeursAllowed(indicateurs);
+      if (enforceUserRules) {
+        const userValeursAllowed =
+          checkUserIndicateurValeursAllowed(indicateurs);
+        if (!userValeursAllowed.success) return userValeursAllowed;
+      }
       const availability = await this.checkIndicateurValeursAvailableForWrite(
         input.valeurs,
         indicateursById,
