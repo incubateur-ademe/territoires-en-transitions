@@ -6,6 +6,7 @@ import {
   getTestDatabase,
 } from '@tet/backend/test';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { success } from '@tet/backend/utils/result.type';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { CollectiviteRole } from '@tet/domain/users';
 import { onTestFinished } from 'vitest';
@@ -135,7 +136,7 @@ describe('Chemins et compteurs des indicateurs', () => {
     ).resolves.toBe(1);
     await expect(
       app.get(ListIndicateursService).getPersonnalisesCount(input, scope.user)
-    ).resolves.toBe(2);
+    ).resolves.toEqual(success(2));
   });
 
   test('refuse un jeton sans permission de lecture, même pour un administrateur', async () => {
@@ -170,6 +171,10 @@ describe('Chemins et compteurs des indicateurs', () => {
       app
         .get(ListIndicateursService)
         .getPersonnalisesCount(input, restrictedUser)
-    ).rejects.toThrow(/Droits insuffisants/);
+    ).resolves.toMatchObject({
+      success: false,
+      error: 'UNAUTHORIZED',
+      cause: { message: expect.stringMatching(/Droits insuffisants/) },
+    });
   });
 });

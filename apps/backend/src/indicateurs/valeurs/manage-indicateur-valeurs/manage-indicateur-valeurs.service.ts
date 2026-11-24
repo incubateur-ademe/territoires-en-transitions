@@ -36,6 +36,7 @@ import { IndicateurValeursContext } from '../indicateur-valeurs-context.types';
 import {
   captureIndicateurValeursResult,
   captureIndicateurValeursResultOf,
+  fromListIndicateursFailure,
   IndicateurValeursError,
   isIndicateurValeursError,
   toIndicateurValeursFailure,
@@ -593,12 +594,12 @@ export default class ManageIndicateurValeursService {
     return success(undefined);
   }
 
-  private getIndicateur(
+  private async getIndicateur(
     scope: Parameters<ListIndicateursService['getIndicateur']>[0]
   ): Promise<Result<IndicateurDetaille, IndicateurValeursError>> {
-    return captureIndicateurValeursResult(() =>
-      this.listIndicateursService.getIndicateur(scope)
-    );
+    const indicateur = await this.listIndicateursService.getIndicateur(scope);
+    if (!indicateur.success) return fromListIndicateursFailure(indicateur);
+    return indicateur;
   }
 
   deleteValeursPeriode(
@@ -639,17 +640,17 @@ export default class ManageIndicateurValeursService {
     periode: DeleteValeursPeriode;
     user: AuthenticatedUser;
   }): Promise<Result<void, IndicateurValeursError>> {
-    const indicateursResult = await captureIndicateurValeursResult(() =>
-      this.listIndicateursService.listIndicateurs(
-        {
-          collectiviteId,
-          filters: { indicateurIds },
-          queryOptions: { page: 1, limit: indicateurIds.length },
-        },
-        user
-      )
+    const indicateursResult = await this.listIndicateursService.listIndicateurs(
+      {
+        collectiviteId,
+        filters: { indicateurIds },
+        queryOptions: { page: 1, limit: indicateurIds.length },
+      },
+      user
     );
-    if (!indicateursResult.success) return indicateursResult;
+    if (!indicateursResult.success) {
+      return fromListIndicateursFailure(indicateursResult);
+    }
 
     const { data: indicateurs } = indicateursResult.data;
     const hasUnavailableIndicateur =

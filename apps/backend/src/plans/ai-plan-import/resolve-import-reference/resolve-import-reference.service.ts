@@ -118,35 +118,34 @@ export class ResolveImportReferenceService {
     if (!permission.success)
       return this.reject('IMPORT_REFERENCE_UNAUTHORIZED', reference);
 
-    try {
-      // Résoudre dans la collectivité cible : global, propre ou groupement autorisé.
-      // Les valeurs de la collectivité présente dans l'URL ne sont jamais lues.
-      const result = await this.indicateurs.listIndicateurs(
-        {
-          collectiviteId,
-          filters:
-            parsed.data.indicateurId !== undefined
-              ? { indicateurIds: [parsed.data.indicateurId] }
-              : {
-                  identifiantsReferentiel: [parsed.data.identifiantReferentiel],
-                },
-          queryOptions: { page: 1, limit: 2 },
-        },
-        user
-      );
-      return result.data.length === 1
-        ? success({ indicateurId: result.data[0].id })
-        : this.reject('INDICATEUR_REFERENCE_UNAVAILABLE', reference);
-    } catch (error) {
-      if (error instanceof ForbiddenException) {
+    // Résoudre dans la collectivité cible : global, propre ou groupement autorisé.
+    // Les valeurs de la collectivité présente dans l'URL ne sont jamais lues.
+    const listResult = await this.indicateurs.listIndicateurs(
+      {
+        collectiviteId,
+        filters:
+          parsed.data.indicateurId !== undefined
+            ? { indicateurIds: [parsed.data.indicateurId] }
+            : {
+                identifiantsReferentiel: [parsed.data.identifiantReferentiel],
+              },
+        queryOptions: { page: 1, limit: 2 },
+      },
+      user
+    );
+    if (!listResult.success) {
+      if (listResult.error === 'UNAUTHORIZED') {
         return this.reject('INDICATEUR_REFERENCE_UNAVAILABLE', reference);
       }
       this.logger.error(
         'Impossible de résoudre l’indicateur du lien TeT',
-        error
+        listResult.cause
       );
       return this.reject('IMPORT_REFERENCE_RESOLUTION_FAILED', reference);
     }
+    return listResult.data.data.length === 1
+      ? success({ indicateurId: listResult.data.data[0].id })
+      : this.reject('INDICATEUR_REFERENCE_UNAVAILABLE', reference);
   }
 
   private reject(

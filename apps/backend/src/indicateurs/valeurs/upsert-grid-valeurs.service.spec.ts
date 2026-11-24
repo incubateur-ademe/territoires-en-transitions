@@ -39,7 +39,9 @@ const toServiceWithMocks = ({
     transactionManager as never,
     manage as never,
     {
-      listIndicateurs: vi.fn().mockResolvedValue({ data: [indicateur] }),
+      listIndicateurs: vi
+        .fn()
+        .mockResolvedValue(success({ data: [indicateur] })),
     } as never,
     { updateIndicateursModifiedFields: vi.fn() } as never,
     {

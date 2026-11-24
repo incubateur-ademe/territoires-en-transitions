@@ -7,6 +7,7 @@ import {
 } from '@nestjs/swagger';
 import { ApiUsageEnum } from '@tet/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@tet/backend/utils/api/api-usage.decorator';
+import { createControllerErrorHandler } from '@tet/backend/utils/nest/controller-error-handler';
 import {
   type IndicateurDetaille,
   indicateurDetailleSchema,
@@ -19,6 +20,7 @@ import { TokenInfo } from '../../../users/decorators/token-info.decorators';
 import type { AuthenticatedUser } from '../../../users/models/auth.models';
 import { toPublicApiParents } from './list-indicateurs.adapter';
 import { listIndicateursApiRequestSchema } from './list-indicateurs.api-request';
+import { listIndicateursErrorConfig } from './list-indicateurs.errors';
 import { listIndicateursInputSchema } from './list-indicateurs.input';
 import { ListIndicateursService } from './list-indicateurs.service';
 
@@ -39,6 +41,10 @@ export class ListIndicateursController {
   constructor(
     private readonly listIndicateursService: ListIndicateursService
   ) {}
+
+  private readonly getResultDataOrThrowError = createControllerErrorHandler(
+    listIndicateursErrorConfig
+  );
 
   @ApiUsage([ApiUsageEnum.EXTERNAL_API])
   @Get('indicateurs')
@@ -67,9 +73,8 @@ export class ListIndicateursController {
       },
     });
 
-    const result = await this.listIndicateursService.listIndicateurs(
-      input,
-      user
+    const result = this.getResultDataOrThrowError(
+      await this.listIndicateursService.listIndicateurs(input, user)
     );
 
     const mapToNonBreakingPublicApiOutput = (

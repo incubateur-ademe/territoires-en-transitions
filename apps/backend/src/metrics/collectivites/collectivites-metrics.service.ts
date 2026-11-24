@@ -7,6 +7,7 @@ import { PermissionService } from '@tet/backend/users/authorizations/permission.
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { ResourceType } from '@tet/domain/users';
+import { getListIndicateursDataOrThrow } from '../../indicateurs/indicateurs/list-indicateurs/list-indicateurs.errors';
 import { ListIndicateursService } from '../../indicateurs/indicateurs/list-indicateurs/list-indicateurs.service';
 import { LabellisationRecord } from '../../referentiels/labellisations/list-labellisations.api-response';
 
@@ -94,7 +95,8 @@ export class CollectivitesMetricsService {
       this.listIndicateursService
         .getFavorisCount({ collectiviteId }, user)
         .then((favorisCount) => {
-          response.indicateurs.favoris = favorisCount;
+          response.indicateurs.favoris =
+            getListIndicateursDataOrThrow(favorisCount);
           return;
         })
     );
@@ -103,7 +105,8 @@ export class CollectivitesMetricsService {
       this.listIndicateursService
         .getPersonnalisesCount({ collectiviteId }, user)
         .then((personnalisesCount) => {
-          response.indicateurs.personnalises = personnalisesCount;
+          response.indicateurs.personnalises =
+            getListIndicateursDataOrThrow(personnalisesCount);
           return;
         })
     );
