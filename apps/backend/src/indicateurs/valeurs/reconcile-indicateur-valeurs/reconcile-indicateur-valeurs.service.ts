@@ -61,18 +61,22 @@ export class ReconcileIndicateurValeursService {
     const prepared = await this.validationService.prepare(valeurs, context);
     if (!prepared.success) return prepared;
     return captureIndicateurValeursResult(async () => {
-      const result = await this.transactionManager.executeSingle(async (tx) => {
-        const written = await this.writer.saveBatch(prepared.data, {
-          ...context,
-          tx,
-        });
-        if (!written.success) return written;
-        const dependent = written.data.length
-          ? await this.propagateUpdated(written.data, { ...context, tx })
-          : success([]);
-        if (!dependent.success) return dependent;
-        return success([...written.data, ...dependent.data]);
-      }, context.tx);
+      const result = await this.transactionManager.executeSingle(
+        async (tx) => {
+          const written = await this.writer.saveBatch(prepared.data, {
+            ...context,
+            tx,
+          });
+          if (!written.success) return written;
+          const dependent = written.data.length
+            ? await this.propagateUpdated(written.data, { ...context, tx })
+            : success([]);
+          if (!dependent.success) return dependent;
+          return success([...written.data, ...dependent.data]);
+        },
+        context.tx,
+        { undoWritesOnFailure: false }
+      );
       return getIndicateurValeursDataOrThrow(result);
     });
   }
@@ -99,31 +103,35 @@ export class ReconcileIndicateurValeursService {
   > {
     if (valeurs.length === 0) return success({ valeurs: [], conflits: [] });
     return captureIndicateurValeursResult(async () => {
-      const result = await this.transactionManager.executeSingle(async (tx) => {
-        const writeContext = {
-          user: context.user,
-          metadataAuthorization: context.metadataAuthorization,
-          tx,
-        };
-        const prepared = await this.validationService.prepare(
-          valeurs,
-          writeContext
-        );
-        if (!prepared.success) return prepared;
-        const written = await this.writer.fillMissing(
-          prepared.data,
-          writeContext
-        );
-        if (!written.success) return written;
-        const dependent = written.data.valeurs.length
-          ? await this.propagateUpdated(written.data.valeurs, writeContext)
-          : success([]);
-        if (!dependent.success) return dependent;
-        return success({
-          valeurs: [...written.data.valeurs, ...dependent.data],
-          conflits: written.data.conflits,
-        });
-      }, context.tx);
+      const result = await this.transactionManager.executeSingle(
+        async (tx) => {
+          const writeContext = {
+            user: context.user,
+            metadataAuthorization: context.metadataAuthorization,
+            tx,
+          };
+          const prepared = await this.validationService.prepare(
+            valeurs,
+            writeContext
+          );
+          if (!prepared.success) return prepared;
+          const written = await this.writer.fillMissing(
+            prepared.data,
+            writeContext
+          );
+          if (!written.success) return written;
+          const dependent = written.data.valeurs.length
+            ? await this.propagateUpdated(written.data.valeurs, writeContext)
+            : success([]);
+          if (!dependent.success) return dependent;
+          return success({
+            valeurs: [...written.data.valeurs, ...dependent.data],
+            conflits: written.data.conflits,
+          });
+        },
+        context.tx,
+        { undoWritesOnFailure: false }
+      );
       return getIndicateurValeursDataOrThrow(result);
     });
   }
@@ -338,7 +346,8 @@ export class ReconcileIndicateurValeursService {
               { collectiviteIds: batch, indicateurs },
               { ...context, tx }
             ),
-          context.tx
+          context.tx,
+          { undoWritesOnFailure: false }
         );
         results.push(...getIndicateurValeursDataOrThrow(result));
         this.logger.log(

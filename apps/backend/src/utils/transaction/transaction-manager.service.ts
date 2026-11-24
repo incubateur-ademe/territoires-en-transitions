@@ -2,12 +2,14 @@ import { Injectable, Logger } from '@nestjs/common';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import { sql } from 'drizzle-orm';
+import { Name, sql } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
 
 export type TransactionOperation<T, E = string> = (
   tx: Transaction
 ) => Promise<Result<T, E>>;
+
+export type TransactionExecutionOptions = { undoWritesOnFailure?: boolean };
 
 @Injectable()
 export class TransactionManager {
@@ -24,7 +26,8 @@ export class TransactionManager {
    */
   async executeTransaction<T, E = string>(
     operations: TransactionOperation<T, E>[],
-    tx?: Transaction
+    tx?: Transaction,
+    options: TransactionExecutionOptions = {}
   ): Promise<Result<T[], E>> {
     try {
       const runOperations = async (transaction: Transaction) => {
@@ -41,7 +44,12 @@ export class TransactionManager {
       };
 
       if (tx) {
-        return success(await this.runInSavepoint(tx, runOperations));
+        const { undoWritesOnFailure = true } = options;
+        return success(
+          undoWritesOnFailure
+            ? await this.runInSavepoint(tx, runOperations)
+            : await runOperations(tx)
+        );
       }
 
       const results = await this.databaseService.db.transaction(runOperations);
@@ -77,9 +85,17 @@ export class TransactionManager {
       await tx.execute(sql`release savepoint ${savepoint}`);
       return result;
     } catch (error) {
+      await this.undoSavepoint(tx, savepoint);
+      throw error;
+    }
+  }
+
+  private async undoSavepoint(tx: Transaction, savepoint: Name): Promise<void> {
+    try {
       await tx.execute(sql`rollback to savepoint ${savepoint}`);
       await tx.execute(sql`release savepoint ${savepoint}`);
-      throw error;
+    } catch (cleanupError) {
+      this.logger.error('Savepoint cleanup failed:', cleanupError);
     }
   }
 
@@ -93,9 +109,10 @@ export class TransactionManager {
    */
   async executeSingle<T, E = string>(
     operation: TransactionOperation<T, E>,
-    tx?: Transaction
+    tx?: Transaction,
+    options: TransactionExecutionOptions = {}
   ): Promise<Result<T, E>> {
-    const result = await this.executeTransaction([operation], tx);
+    const result = await this.executeTransaction([operation], tx, options);
     if (!result.success) {
       return failure(result.error, result.cause);
     }
@@ -103,12 +120,6 @@ export class TransactionManager {
   }
 }
 
-/**
- * Un `Result` d'échec relancé en exception a cette forme (cf.
- * `executeTransaction` ci-dessus) — exporté pour les services qui composent
- * un appel partageant `tx` vers un autre service basé sur `TransactionManager`
- * et doivent récupérer ce Result plutôt que le laisser remonter tel quel.
- */
 export function isFailedResult<E>(
   error: unknown
 ): error is Extract<Result<unknown, E>, { success: false }> {
