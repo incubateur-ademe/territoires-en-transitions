@@ -394,9 +394,12 @@ describe('Rattrapage des statuts TE des collectivités déjà basculées', () =>
     await setPcaet(adminCaller, collectiviteId, true);
     const { scoresPayload } = await app
       .get(ScoresService)
-      .computeScoreForCollectivite(ReferentielIdEnum.TE, collectiviteId, {
-        avecReferentielsOrigine: false,
-      });
+      .computeScoreForCollectivite(
+        ReferentielIdEnum.TE,
+        collectiviteId,
+        { avecReferentielsOrigine: false },
+        'internal'
+      );
     const score = buildScoreMapByActionId(scoresPayload.scores).get(
       TE_SOUS_MESURE_REPRISE
     );

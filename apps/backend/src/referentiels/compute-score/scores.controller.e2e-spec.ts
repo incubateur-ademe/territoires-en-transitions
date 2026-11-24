@@ -1,12 +1,18 @@
 import { INestApplication } from '@nestjs/common';
+import {
+  addTestCollectivite,
+  addTestCollectiviteAndUser,
+} from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { ImportActionDefinitionCoremeasureType } from '@tet/backend/referentiels/import-referentiel/import-action-definition.dto';
 import {
   ReferentielIdEnum,
   ReferentielLabelEnum,
   ScoresPayload,
 } from '@tet/domain/referentiels';
+import { CollectiviteRole } from '@tet/domain/users';
 import { default as request } from 'supertest';
-import { getTestApp } from '../../../test/app-utils';
+import { getTestApp, getTestDatabase } from '../../../test/app-utils';
+import { getAuthToken } from '../../../test/auth-utils';
 
 describe('Referentiels scoring routes', () => {
   let app: INestApplication;
@@ -91,6 +97,48 @@ describe('Referentiels scoring routes', () => {
     expect(Object.keys(firstCollectiviteScore.scores.scoresTag).sort()).toEqual(
       [...expectedTags].sort()
     );
+  });
+
+  test('protège les scores courants, historiques et dérivés dans un lot mixte', async () => {
+    const db = await getTestDatabase(app);
+    const { collectivite: publicCollectivite } = await addTestCollectivite(db, {
+      accesRestreint: false,
+    });
+    const { collectivite: privateCollectivite, user } =
+      await addTestCollectiviteAndUser(db, {
+        collectivite: { accesRestreint: true },
+        user: { role: CollectiviteRole.LECTURE },
+      });
+
+    const scores = (ids: number[], options = '') =>
+      request(app.getHttpServer()).get(
+        `/referentiels/te/scores?collectiviteIds=${ids.join(',')}${options}`
+      );
+    const anon = `Bearer ${process.env.SUPABASE_ANON_KEY}`;
+    const mixedIds = [publicCollectivite.id, privateCollectivite.id];
+    const date = '&date=2026-01-01T00:00:00.000Z';
+
+    await scores([publicCollectivite.id])
+      .set('Authorization', anon)
+      .expect(200);
+    for (const options of ['', date, '&avecReferentielsOrigine=true']) {
+      await scores(mixedIds, options).set('Authorization', anon).expect(403);
+    }
+
+    const memberToken = await getAuthToken({
+      email: user.email ?? '',
+      password: user.password,
+    });
+    for (const options of ['', date, '&avecReferentielsOrigine=true']) {
+      const response = await scores(mixedIds, options)
+        .set('Authorization', `Bearer ${memberToken}`)
+        .expect(200);
+      expect(
+        response.body.collectiviteScores.map(
+          (score: ScoresPayload) => score.collectiviteId
+        )
+      ).toEqual(mixedIds);
+    }
   });
 
   afterAll(async () => {

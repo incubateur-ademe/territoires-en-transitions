@@ -4,7 +4,6 @@ import DocumentService from '@tet/backend/collectivites/documents/document.servi
 import { ScoreIndicatifService } from '@tet/backend/referentiels/score-indicatif/score-indicatif.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import {
-  CollectiviteAvecType,
   PersonnalisationReponsesPayload,
   PreuveDto,
 } from '@tet/domain/collectivites';
@@ -30,26 +29,18 @@ import {
   StatutAvancementEnum,
   TreeOfActionsIncludingScore,
 } from '@tet/domain/referentiels';
-import {
-  CollectiviteRole,
-  PermissionOperationEnum,
-  ResourceType,
-} from '@tet/domain/users';
+import { ResourceType } from '@tet/domain/users';
 import { chunk, isNil, pick, round } from 'es-toolkit';
 import { DateTime } from 'luxon';
 import { PersonnalisationConsequencesByActionId } from '../../collectivites/personnalisations/models/personnalisation-consequence.dto';
 import PersonnalisationsExpressionService from '../../collectivites/personnalisations/services/personnalisations-expression.service';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
-import {
-  AuthenticatedUser,
-  AuthUser as InternalAuthUser,
-} from '../../users/models/auth.models';
+import type { AuthUser } from '../../users/models/auth.models';
 import { ActionPersonnalisationsService } from '../action-personnalisations/action-personnalisations.service';
 import { ListActionExplicationsRepository } from '../actions/list-action-explications/list-action-explications.repository';
 import { ListActionStatutsRepository } from '../actions/list-action-statuts/list-action-statuts.repository';
 import { CorrelatedActionsWithScoreFields } from '../correlated-actions/correlated-actions.dto';
 import { CorrelatedActionWithScore } from '../correlated-actions/referentiel-action-origine-with-score.dto';
-import { GetReferentielDefinitionService } from '../definitions/get-referentiel-definition/get-referentiel-definition.service';
 import {
   GetReferentielService,
   ReferentielResponse,
@@ -81,7 +72,6 @@ export default class ScoresService {
     private readonly permissionService: PermissionService,
     private readonly collectivitesService: CollectivitesService,
     private readonly getReferentielsService: GetReferentielService,
-    private readonly getReferentielDefinitionService: GetReferentielDefinitionService,
     private readonly actionPersonnalisationsService: ActionPersonnalisationsService,
     private readonly personnalisationsExpressionService: PersonnalisationsExpressionService,
     private readonly labellisationService: LabellisationService,
@@ -90,32 +80,6 @@ export default class ScoresService {
     private readonly listActionStatutsRepository: ListActionStatutsRepository,
     private readonly listActionExplicationsRepository: ListActionExplicationsRepository
   ) {}
-
-  private async checkCollectiviteAndReferentielWithAccess(
-    collectiviteId: number,
-    referentielId: ReferentielId,
-    tokenInfo?: InternalAuthUser,
-    niveauAccesMinimum = CollectiviteRole.LECTURE
-  ): Promise<CollectiviteAvecType> {
-    // Check read access if a date is given (historical data)
-    if (tokenInfo) {
-      await this.permissionService.assertAllowed(
-        tokenInfo,
-        niveauAccesMinimum === CollectiviteRole.LECTURE
-          ? 'referentiels.read_confidentiel'
-          : PermissionOperationEnum['REFERENTIELS.MUTATE'],
-        ResourceType.REFERENTIEL,
-        { collectiviteId, referentielId }
-      );
-    }
-    await this.getReferentielDefinitionService.getReferentielDefinition(
-      referentielId
-    );
-
-    return getDataOrThrow(
-      await this.collectivitesService.getCollectiviteAvecType(collectiviteId)
-    );
-  }
 
   private buildActionWithScore(
     action: ActionTreeNode<
@@ -898,7 +862,7 @@ export default class ScoresService {
   async computeScoreForMultipleCollectivite(
     referentielId: ReferentielId,
     parameters: GetReferentielMultipleScoresRequestType,
-    tokenInfo?: AuthenticatedUser
+    user: AuthUser
   ): Promise<{
     referentielVersion: string;
     collectiviteScores: ScoresPayload[];
@@ -934,10 +898,9 @@ export default class ScoresService {
           this.computeScoreForCollectivite(
             referentielId,
             collectiviteId,
-            parameters,
-            tokenInfo,
-            referentiel,
-            true
+            { ...parameters },
+            user,
+            referentiel
           ).then((result) => result.scoresPayload)
         )
       );
@@ -961,9 +924,8 @@ export default class ScoresService {
         actionStatuts: ActionStatutsByActionId
       ) => ActionStatutsByActionId;
     },
-    user?: InternalAuthUser,
-    referentiel?: ReferentielResponse,
-    noCheck?: boolean
+    access: AuthUser | 'internal',
+    referentiel?: ReferentielResponse
   ): Promise<{
     scoresPayload: ScoresPayload;
     personnalisationReponsesPayload: PersonnalisationReponsesPayload;
@@ -971,6 +933,20 @@ export default class ScoresService {
     this.logger.log(
       `Calcul du score  de la collectivité ${collectiviteId} pour le referentiel ${referentielId} à la date ${parameters.date} et pour le jalon ${parameters.jalon} (Depuis referentiels origine: ${parameters.avecReferentielsOrigine})`
     );
+    const collectiviteInfo = getDataOrThrow(
+      await this.collectivitesService.getCollectiviteAvecType(collectiviteId)
+    );
+
+    // The sandbox supports anonymous scoring for public collectivités.
+    if (access !== 'internal' && collectiviteInfo.accesRestreint) {
+      await this.permissionService.assertAllowed(
+        access,
+        'referentiels.read_confidentiel',
+        ResourceType.REFERENTIEL,
+        { collectiviteId, referentielId }
+      );
+    }
+
     let auditId: number | undefined = undefined;
     if (parameters.jalon) {
       if (parameters.date && !parameters.auditId) {
@@ -1062,26 +1038,6 @@ export default class ScoresService {
           400
         );
       }
-    }
-
-    const niveauAccess: CollectiviteRole = CollectiviteRole.LECTURE;
-    // if (parameters.snapshot) {
-    //   niveauAccess = CollectiviteAccessLevel.EDITION;
-    // }
-
-    let collectiviteInfo: undefined | CollectiviteAvecType;
-    if (!noCheck && niveauAccess !== CollectiviteRole.LECTURE) {
-      // Lecture allowed for anonymous access
-      collectiviteInfo = await this.checkCollectiviteAndReferentielWithAccess(
-        collectiviteId,
-        referentielId,
-        user,
-        niveauAccess
-      );
-    } else {
-      collectiviteInfo = getDataOrThrow(
-        await this.collectivitesService.getCollectiviteAvecType(collectiviteId)
-      );
     }
 
     if (!referentiel) {
@@ -1214,6 +1170,7 @@ export default class ScoresService {
       const scores = await this.computeScoreFromReferentielsOrigine(
         collectiviteId,
         parameters,
+        access,
         referentiel.itemsTree as ActionTreeNode<
           ActionDefinitionEssential &
             Partial<ScoreFields> &
@@ -1473,6 +1430,7 @@ export default class ScoresService {
   private async computeScoreFromReferentielsOrigine(
     collectiviteId: number,
     parameters: GetReferentielScoresRequestType,
+    access: AuthUser | 'internal',
     referentiel: ActionTreeNode<
       ActionDefinitionEssential &
         Partial<ScoreFields> &
@@ -1529,7 +1487,8 @@ export default class ScoresService {
         {
           ...parameters,
           avecReferentielsOrigine: false,
-        }
+        },
+        access
       ).then((result) => result.scoresPayload);
       referentielsOriginePromiseScores.push(result);
     });

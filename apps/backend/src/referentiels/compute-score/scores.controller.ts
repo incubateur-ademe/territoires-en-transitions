@@ -2,7 +2,7 @@ import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiExcludeEndpoint, ApiTags } from '@nestjs/swagger';
 import { AllowAnonymousAccess } from '@tet/backend/users/decorators/allow-anonymous-access.decorator';
 import { TokenInfo } from '@tet/backend/users/decorators/token-info.decorators';
-import type { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import type { AuthUser } from '@tet/backend/users/models/auth.models';
 import { ApiUsageEnum } from '@tet/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@tet/backend/utils/api/api-usage.decorator';
 import type { ReferentielId } from '@tet/domain/referentiels';
@@ -27,7 +27,7 @@ export class ReferentielsScoringController {
   async getReferentielMultipleScorings(
     @Param('referentiel_id') referentielId: ReferentielId,
     @Query() parameters: GetReferentielMultipleScoresRequestClass,
-    @TokenInfo() tokenInfo: AuthenticatedUser
+    @TokenInfo() tokenInfo: AuthUser
   ) {
     return await this.scoresService.computeScoreForMultipleCollectivite(
       referentielId,
