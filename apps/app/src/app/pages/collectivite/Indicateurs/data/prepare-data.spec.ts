@@ -516,4 +516,106 @@ describe('prepareData', () => {
       resultats.sources.some(({ source }) => source.startsWith('snbc'))
     ).toBe(false);
   });
+
+  describe('versions successives d’une même source', () => {
+    const withCitepaVersions = (
+      valeurs: { dateValeur: string; resultat: number; metadonneeId: number }[]
+    ) => {
+      const indicateur = structuredClone(fixture.indicateurs[0]);
+      indicateur.sources = {
+        citepa: {
+          ...indicateur.sources.citepa,
+          metadonnees: [
+            { id: 11, sourceId: 'citepa', dateVersion: '2025-01-01' },
+            { id: 12, sourceId: 'citepa', dateVersion: '2026-01-01' },
+          ],
+          valeurs: valeurs.map((valeur, index) => ({
+            ...valeur,
+            id: index + 1,
+            collectiviteId: 1,
+            periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+          })),
+        },
+      } as unknown as IndicateurSources['sources'];
+      return prepareData(indicateur, 'resultat', false);
+    };
+
+    test('restent sur une seule série quand leurs années ne se chevauchent pas', () => {
+      const result = withCitepaVersions([
+        { dateValeur: '2009-01-01', resultat: 1, metadonneeId: 11 },
+        { dateValeur: '2010-01-01', resultat: 2, metadonneeId: 12 },
+      ]);
+      expect(result.sources).toHaveLength(1);
+      expect(result.sources[0].seriesKey).toBeUndefined();
+      expect(result.sources[0].periodiciteSource).toBeUndefined();
+      // la ligne fusionnée est décrite par la version la plus récente
+      expect(result.sources[0].metadonnees[0].id).toBe(12);
+      expect(result.sources[0].valeurs.map(({ valeur }) => valeur)).toEqual([
+        1, 2,
+      ]);
+    });
+
+    test('sont séparées quand deux versions portent une valeur la même année', () => {
+      const result = withCitepaVersions([
+        { dateValeur: '2026-01-01', resultat: 0, metadonneeId: 11 },
+        { dateValeur: '2026-01-01', resultat: 20, metadonneeId: 12 },
+      ]);
+      expect(
+        result.sources.map(({ metadonnees, valeurs }) => [
+          metadonnees.map(({ id }) => id),
+          valeurs.map(({ valeur }) => valeur),
+        ])
+      ).toEqual([
+        [[11], [0]],
+        [[12], [20]],
+      ]);
+      expect(
+        new Set(result.sources.map(({ seriesKey }) => seriesKey)).size
+      ).toBe(2);
+    });
+
+    test('sont séparées quand deux dates historiques tombent la même année', () => {
+      const result = withCitepaVersions([
+        { dateValeur: '2026-01-01', resultat: 0, metadonneeId: 11 },
+        { dateValeur: '2026-06-01', resultat: 20, metadonneeId: 12 },
+      ]);
+      expect(result.sources).toHaveLength(2);
+    });
+
+    test('suivent les conflits fournis pour aligner les segments empilés', () => {
+      const indicateur = structuredClone(fixture.indicateurs[0]);
+      indicateur.sources = {
+        citepa: {
+          ...indicateur.sources.citepa,
+          metadonnees: [{ id: 12, sourceId: 'citepa', dateVersion: '' }],
+          valeurs: [
+            {
+              id: 1,
+              collectiviteId: 1,
+              dateValeur: '2025-01-01',
+              resultat: 30,
+              metadonneeId: 12,
+              periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+            },
+          ],
+        },
+      } as unknown as IndicateurSources['sources'];
+      const sansConflit = prepareData(
+        indicateur,
+        'resultat',
+        false,
+        [],
+        new Map()
+      );
+      const avecConflit = prepareData(
+        indicateur,
+        'resultat',
+        false,
+        [],
+        new Map([['citepa', new Set([IndicateurPeriodiciteEnum.ANNUELLE])]])
+      );
+      expect(sansConflit.sources[0].seriesKey).toBeUndefined();
+      expect(avecConflit.sources[0].seriesKey).toBe('citepa:annuelle-12');
+    });
+  });
 });

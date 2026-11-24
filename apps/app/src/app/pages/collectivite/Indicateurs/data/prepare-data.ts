@@ -2,11 +2,14 @@
 
 import { RouterOutput } from '@tet/api';
 import {
+  getPeriodicitesAvecVersionsEnConflit,
+  getSerieKey,
   IndicateurPeriode,
   IndicateurPeriodes,
   IndicateurPeriodiciteEnum,
   IndicateurValeurGroupee,
   IndicateurValeursGroupeeParSource,
+  sortVersionsRecentesDabord,
 } from '@tet/domain/indicateurs';
 import { SourceType } from '../types';
 
@@ -55,7 +58,9 @@ export const prepareData = (
   data: IndicateurSources | undefined,
   type: SourceType,
   avecDonneesCollectiviteVides: boolean,
-  additionalSources: readonly PreparedSource[] = []
+  additionalSources: readonly PreparedSource[] = [],
+  /** Conflits de versions évalués sur plusieurs indicateurs (segments empilés). */
+  periodicitesEnConflitParSource?: ReadonlyMap<string, ReadonlySet<string>>
 ): PreparedData => {
   // conserve uniquement les sources ayant des valeurs pour le type de données voulu
   const { collectivite, ...autresSources } = data?.sources || {};
@@ -73,10 +78,13 @@ export const prepareData = (
     (sourceData) => {
       if (!data) return [];
       const groups = new Map<string, IndicateurSourceValeur[]>();
+      const periodicitesEnConflit =
+        periodicitesEnConflitParSource?.get(sourceData.source) ??
+        getPeriodicitesAvecVersionsEnConflit(sourceData.valeurs);
       for (const value of sourceData.valeurs.toSorted((a, b) =>
         a.dateValeur.localeCompare(b.dateValeur)
       )) {
-        const key = `${value.periodicite}:${value.metadonneeId ?? 'local'}`;
+        const key = getSerieKey(value, periodicitesEnConflit);
         const group = groups.get(key);
         if (group) group.push(value);
         else groups.set(key, [value]);
@@ -85,8 +93,10 @@ export const prepareData = (
       if (!groups.size) groups.set('empty', []);
       return Array.from(groups, ([key, values]) => ({
         ...sourceData,
+        // `key` porte la version quand elle est en conflit (y compris dans un
+        // autre segment) : la série doit alors être identifiée comme telle.
         ...(groups.size > 1 ||
-        (values[0] && values[0].periodicite !== data.definition.periodicite)
+        (values[0] && key !== data.definition.periodicite)
           ? {
               seriesKey: `${sourceData.source}:${key}`,
               periodiciteSource: values[0]?.periodicite,
@@ -109,7 +119,10 @@ export const prepareData = (
             commentaire: value[`${type}Commentaire`],
           };
         }),
-        metadonnees: (sourceData.metadonnees || []).filter(
+        // `metadonnees[0]` (libellé, infobulle) est la version la plus récente.
+        metadonnees: sortVersionsRecentesDabord(
+          sourceData.metadonnees || []
+        ).filter(
           (metadata) =>
             !values.length ||
             values.some((value) => value.metadonneeId === metadata.id)

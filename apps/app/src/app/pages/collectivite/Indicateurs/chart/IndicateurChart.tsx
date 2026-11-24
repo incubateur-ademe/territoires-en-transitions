@@ -137,9 +137,12 @@ const prepareSegmentsDataset = (chartInfo: IndicateurChartInfo) => {
 
     return {
       id: `${id}:${source.seriesKey ?? source.source}`,
-      stackKey: `total:${source.source}:${
-        source.periodiciteSource ?? source.valeurs[0]?.periode.periodicite
-      }:${metadonnee?.id ?? 'local'}`,
+      // Même clé que `seriesKey` : la version n'y figure que si les versions
+      // se chevauchent, pour que les segments fusionnés s'empilent ensemble.
+      stackKey: `total:${
+        source.seriesKey ??
+        `${source.source}:${source.valeurs[0]?.periode.periodicite}`
+      }`,
       name: `${name}${
         source.type === 'objectif'
           ? ` (${appLabels.indicateurObjectif({ plural: true })})`
