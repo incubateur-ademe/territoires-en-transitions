@@ -48,6 +48,7 @@ export type ElectrificationValueRequest = {
         key: string;
         unit: string;
         year: number;
+        ceilingKey: string | null;
         labels: string[];
         units: string[];
       }[];

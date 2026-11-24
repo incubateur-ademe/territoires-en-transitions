@@ -15,6 +15,7 @@ import {
   ElectrificationValueRequest,
 } from './electrification-value-interpretation.schema';
 import { ElectrificationCatalogueRules } from '@tet/backend/plans/plans/electrification/publish-electrification-data/electrification-catalogue.rules';
+import { ElectrificationEngagementValuesRules } from '../resolve-engagements/electrification-engagement-values.rules';
 
 type Table = ElectrificationDocumentSource[][];
 type Engagement = ElectrificationExtractionResponse['engagements'][number];
@@ -44,6 +45,7 @@ export class ElectrificationEngagementsDocumentRules {
 
     const engagements: Engagement[] = [];
     const issues: ElectrificationIssue[] = [];
+    const selectedCodes = new Set<string>();
     let axe = '';
     for (const row of table.slice(1)) {
       if (row.every((cell) => !cell.text.trim())) continue;
@@ -153,6 +155,15 @@ export class ElectrificationEngagementsDocumentRules {
         continue;
       }
 
+      if (selectedCodes.has(definition.code)) {
+        issues.push(
+          ElectrificationEngagementValuesRules.duplicate(
+            definition.code,
+            engagement.location
+          )
+        );
+      }
+      selectedCodes.add(definition.code);
       const targets = this.parseTargets(
         definition,
         cible,
@@ -163,6 +174,15 @@ export class ElectrificationEngagementsDocumentRules {
         issues.push(...targets.error);
         continue;
       }
+      issues.push(
+        ...ElectrificationEngagementValuesRules.validate(
+          definition,
+          targets.data.map((target) => ({
+            ...target,
+            location: cible.location,
+          }))
+        )
+      );
       engagements.push({
         code: definition.code,
         source: engagement.id,
@@ -213,6 +233,10 @@ export class ElectrificationEngagementsDocumentRules {
             Errors.valueIssue('UNEXPECTED_ELECTRIFICATION_TARGET', source),
           ])
         : success([]);
+    if (Values.isApproximate(source.text))
+      return failure([
+        Errors.valueIssue('APPROXIMATE_ELECTRIFICATION_VALUE', source),
+      ]);
     const targets: Extract<
       ElectrificationValueRequest,
       { kind: 'target' }
@@ -223,6 +247,7 @@ export class ElectrificationEngagementsDocumentRules {
         key: cible.key,
         unit: cible.uniteImport,
         year: rules.annee,
+        ceilingKey: rules.plafondCible,
         labels: rules.libelles,
         units: rules.unites,
       });

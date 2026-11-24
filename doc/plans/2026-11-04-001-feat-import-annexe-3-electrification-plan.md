@@ -7,7 +7,7 @@ date: 2026-11-04
 
 # Import du plan Électrification
 
-Dernière mise à jour : 2026-11-20.
+Dernière mise à jour : 2026-11-24.
 
 Ce plan applique l'[ADR 0022](../adr/0022-initialiser-plan-electrification-depuis-annexe-3.md)
 et l'[ADR 0024](../adr/0024-publier-donnees-electrification-sans-deploiement.md)
@@ -28,6 +28,44 @@ checkpoint sont pris en charge.
 Les [retours de recette TT-67 du 11 novembre][retours-tt67] sont intégrés au
 périmètre de B. Leur validation locale est décrite ci-dessous ; la recette
 de la version déployée reste à effectuer.
+
+## Retours de recette TT-67 - 24 novembre 2026
+
+Les décisions et limites sont détaillées dans l'[ADR 0022](../adr/0022-initialiser-plan-electrification-depuis-annexe-3.md#corrections-de-la-recette-du-24-novembre-2026).
+Les corrections ci-dessous concernent le code ; leur déploiement et leur
+recette restent à faire.
+
+- [x] Lire sans IA les quantités explicitement nommées et "X dont Y", à partir
+      des libellés, unités et relations d'inclusion du catalogue.
+- [x] Ignorer les textes d'aide du modèle vierge V1 et conserver les contrôles
+      sur les fiches remplies.
+- [x] Accepter une action référencée par code sans sous-axe : la conserver sous
+      son axe, tout en refusant un axe ou sous-axe explicite incompatible.
+- [x] Réutiliser les contrôles d'engagements dès la lecture pour signaler les
+      doublons, les pourcentages hors bornes et les sous-cibles supérieures au total,
+      même si une autre cellule est invalide.
+- [x] Préciser les erreurs simples : valeur approximative, code inconnu,
+      lien d'une autre collectivité et périodicité attendue. Conserver les
+      autorisations de partage et les erreurs par étapes.
+- [x] Retenir Grist comme référence métier, selon la décision du 24 novembre,
+      en remplacement de la demande d'aligner Grist sur le Word.
+- [ ] Faire corriger et rediffuser le Word par l'équipe métier, notamment E05.
+- [ ] Obtenir la confirmation d'Émeline sur l'annuel pour tous. Les quatre
+      références trimestrielles sont `1.2.1-a`, `1.2.1-b`, `1.2.2-a` et `9.2.1-a`.
+      Prévoir les définitions annuelles et mappings ou une migration dédiée,
+      après inventaire des valeurs existantes ; ne pas changer leur périodicité
+      par le seul import du Sheets.
+- [ ] Compléter les URL d'aides dans Grist. Aucun changement de l'import attendu.
+- [x] Relever la validation produit du plan maximal en production :
+      109 actions + 58 sous-actions + 2 actions d'engagement = 169 fiches.
+- [ ] Déployer ces corrections puis rejouer V1, V4 avec E07, les erreurs 02a/02b/02c
+      et le cas sans sous-axe. Rejouer 03 après correction des périodicités.
+
+Validation locale : 276 tests des trois suites e2e existantes de fiches,
+engagements et références passent en 25 s. Les nouveaux cas réutilisent le
+vrai lecteur DOCX et le faux LLM ; aucun nouveau fichier de tests ni appel
+à un modèle réel. Typage backend/specs et lint ciblé vérifiés. La recette
+déployée reste ouverte.
 
 ## Retours de recette TT-67 - 20 novembre 2026
 
@@ -62,8 +100,8 @@ Les cases ci-dessous décrivent le code vérifié localement, pas une livraison.
       Conserver les erreurs indépendantes si le rapprochement IA échoue.
 - [x] Ignorer le texte hors tableau et supprimer les avertissements d'aides
       sans URL. Garder les erreurs par étapes, selon la décision produit.
-- [ ] Aligner les phrases Grist sur le Word officiel et republier le catalogue.
-      Point remonté sur TT-67, aucune modification de Grist.
+- [x] Remplacer la demande d'aligner Grist sur le Word par la décision du
+      24 novembre : Grist fait référence ; correction du Word suivie ci-dessus.
 - [ ] Homogénéiser les loaders et espacements ; retirer les cadres
       lecture/extraction du compte rendu d'échec ; vérifier la largeur de l'historique.
 - [ ] Prévenir aussi par email en cas d'échec et adapter le texte de progression.

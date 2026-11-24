@@ -46,8 +46,9 @@ export class ResolveElectrificationFichesRules {
       : axe;
     return (
       parent?.numero === String(action.axeNumero) &&
-      (action.sousAxeNumero === null ||
-        (axe.parentKey !== null && axe.numero === action.sousAxeNumero))
+      (axe.parentKey === null ||
+        action.sousAxeNumero === null ||
+        axe.numero === action.sousAxeNumero)
     );
   }
 
@@ -75,7 +76,7 @@ export class ResolveElectrificationFichesRules {
         : this.findSousActionByTitle(item, fiche.sousActions, defaults);
       if (item.reference && !reference) {
         issues.push(
-          Errors.issue('UNKNOWN_FICHE_REFERENCE', item.source.location)
+          Errors.unknownReference(item.reference, item.source.location)
         );
         continue;
       }

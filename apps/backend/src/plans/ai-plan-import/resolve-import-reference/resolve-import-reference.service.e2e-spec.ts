@@ -281,7 +281,7 @@ describe('Résolution des liens TeT pour un import', () => {
     const fiche = await createFiche({ collectiviteId: autre.collectiviteId });
     expectFailure(
       await resolveFiche(ficheUrl(fiche.id, autre.collectiviteId)),
-      'FICHE_REFERENCE_UNAVAILABLE'
+      'FICHE_REFERENCE_OTHER_COLLECTIVITE'
     );
   });
 
@@ -303,7 +303,7 @@ describe('Résolution des liens TeT pour un import', () => {
     });
     expectFailure(
       await resolveFiche(ficheUrl(fiche.id, 2147483647)),
-      'FICHE_REFERENCE_UNAVAILABLE'
+      'FICHE_REFERENCE_OTHER_COLLECTIVITE'
     );
   });
 
@@ -321,7 +321,7 @@ describe('Résolution des liens TeT pour un import', () => {
       .where(eq(ficheActionSharingTable.ficheId, fiche.id));
     expectFailure(
       await resolveFiche(ficheUrl(fiche.id, autre.collectiviteId)),
-      'FICHE_REFERENCE_UNAVAILABLE'
+      'FICHE_REFERENCE_OTHER_COLLECTIVITE'
     );
   });
 

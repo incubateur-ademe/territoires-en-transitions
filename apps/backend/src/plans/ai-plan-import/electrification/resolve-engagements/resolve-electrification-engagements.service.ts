@@ -22,6 +22,7 @@ import {
 import { ElectrificationIssue } from '../electrification-issue';
 import { ElectrificationImportLocations } from '../electrification-import-locations';
 import { ResolveElectrificationStructureRules } from './resolve-electrification-structure.rules';
+import { ElectrificationEngagementValuesRules } from './electrification-engagement-values.rules';
 
 /** Prépare uniquement des identités et des cibles ; aucune écriture métier. */
 @Injectable()
@@ -91,7 +92,6 @@ export class ResolveElectrificationEngagementsService {
       assert(definition); // La structure a déjà validé chaque code.
       return definition.cibles.map((cible) => ({
         engagement,
-        definition,
         cible,
       }));
     });
@@ -129,12 +129,24 @@ export class ResolveElectrificationEngagementsService {
       ]);
     }
 
-    const issues: ElectrificationIssue[] = [];
-    for (const {
-      engagement,
-      definition: engagementDefinition,
-      cible,
-    } of expected) {
+    const issues = draft.engagements.flatMap((engagement) => {
+      const definition = config.engagements.find(
+        ({ code }) => code === engagement.code
+      );
+      assert(definition);
+      return ElectrificationEngagementValuesRules.validate(
+        definition,
+        engagement.cibles.map((cible) => ({
+          ...cible,
+          location: ElectrificationImportLocations.field(
+            cible.source.location,
+            definition.cibles.find(({ key }) => key === cible.key)
+              ?.libelleSource
+          ),
+        }))
+      );
+    });
+    for (const { engagement, cible } of expected) {
       const extracted = engagement.cibles.find(({ key }) => key === cible.key);
       const rules = cible.reglesImport;
       const source = extracted?.source ?? engagement.source;
@@ -192,42 +204,6 @@ export class ResolveElectrificationEngagementsService {
         issue(
           'INVALID_ENGAGEMENT_PERIOD',
           `Renseignez la cible en ${unit} pour l'année ${rules.annee}.`
-        );
-      }
-      if (
-        extracted?.valeur != null &&
-        ((rules.minimum !== null && extracted.valeur < rules.minimum) ||
-          (rules.maximum !== null && extracted.valeur > rules.maximum))
-      ) {
-        const bounds =
-          rules.minimum !== null && rules.maximum !== null
-            ? `entre ${rules.minimum} et ${rules.maximum}`
-            : rules.minimum !== null
-            ? `supérieure ou égale à ${rules.minimum}`
-            : `inférieure ou égale à ${rules.maximum}`;
-        issue(
-          'INVALID_ENGAGEMENT_VALUE',
-          `Vous avez saisi ${extracted.valeur} ${unit}. Renseignez une valeur ${bounds} ${unit}.`
-        );
-      }
-      const plafond = engagement.cibles.find(
-        ({ key }) => key === rules.plafondCible
-      );
-      if (
-        extracted?.valeur != null &&
-        plafond?.valeur != null &&
-        extracted.valeur > plafond.valeur
-      ) {
-        const parent = engagementDefinition.cibles.find(
-          ({ key }) => key === rules.plafondCible
-        );
-        issue(
-          'INCONSISTENT_ENGAGEMENT_TARGETS',
-          `La valeur saisie (${
-            extracted.valeur
-          } ${unit}) ne peut pas dépasser la cible "${
-            parent?.libelleSource ?? rules.plafondCible
-          }" (${plafond.valeur} ${unit}).`
         );
       }
       if (extracted?.valeur == null) {

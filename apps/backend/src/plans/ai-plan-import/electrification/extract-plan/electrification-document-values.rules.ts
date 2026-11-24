@@ -16,12 +16,14 @@ export class ElectrificationDocumentValues {
 
   static text(
     source: ElectrificationDocumentSource,
-    placeholder?: string
+    placeholder?: string | readonly string[]
   ): string | null {
     const text = source.text.trim();
     return !text ||
       (placeholder !== undefined &&
-        this.normalize(text) === this.normalize(placeholder))
+        (typeof placeholder === 'string' ? [placeholder] : placeholder).some(
+          (value) => this.normalize(text) === this.normalize(value)
+        ))
       ? null
       : text;
   }
@@ -51,6 +53,12 @@ export class ElectrificationDocumentValues {
     if (!new RegExp(`^${this.NUMBER_LITERAL}$`).test(value)) return null;
     const number = Number(this.numericLiteral(value));
     return Number.isFinite(number) ? number : null;
+  }
+
+  static isApproximate(text: string): boolean {
+    return /\b(?:environ|approximativement|a peu pres)\b/u.test(
+      this.normalize(text)
+    );
   }
 
   static date(text: string): string | null {

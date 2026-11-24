@@ -1,4 +1,5 @@
 import { prepareFicheErrors } from '../../prepare-fiche/prepare-fiche.errors';
+import { IndicateurPeriodicite } from '@tet/domain/indicateurs';
 import {
   createIssueFactory,
   ElectrificationIssue,
@@ -99,4 +100,25 @@ export const electrificationFichesErrors = {
 
 export class ElectrificationFichesErrors {
   static issue = createIssueFactory(electrificationFichesErrors);
+
+  static unknownReference(
+    reference: string,
+    location?: string
+  ): ElectrificationIssue {
+    return {
+      ...this.issue('UNKNOWN_FICHE_REFERENCE', location),
+      message: `Le code "${reference}" n'existe pas dans le catalogue des actions Électrification. Vérifiez-le dans le référentiel des actions.`,
+    };
+  }
+
+  static incompatiblePeriodicity(
+    expected: IndicateurPeriodicite,
+    supplied: string,
+    location?: string
+  ): ElectrificationIssue {
+    return {
+      ...this.issue('INVALID_INDICATEUR_PERIODICITY', location),
+      message: `La périodicité de cet indicateur est ${expected}, mais le document fournit une valeur de périodicité ${supplied}. Contactez le support TeT avec votre document pour vérifier la définition à utiliser. Ne répartissez pas une valeur annuelle entre plusieurs périodes.`,
+    };
+  }
 }

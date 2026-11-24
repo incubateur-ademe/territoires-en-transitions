@@ -2,7 +2,7 @@
 
 Date : 2026-11-03
 
-Dernière mise à jour : 2026-11-20
+Dernière mise à jour : 2026-11-24
 
 **Décision du 11 novembre :** la publication du catalogue et des lauréats
 sans déploiement est isolée dans la [PR C dédiée — #5815](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5815), basée sur B
@@ -77,6 +77,61 @@ parcours intégré avec les données publiées de C.
 Les anciennes références aux lots 1B à 7A décrivent l'historique de conception,
 pas l'ordre de livraison courant. Leur traçabilité est conservée dans
 [l'historique](#historique-des-décisions-et-des-prs).
+
+## Corrections de la recette du 24 novembre 2026
+
+La [recette de Clément en production][retours-tt67] signale encore une lecture
+variable de la cible E07, le rejet du modèle vierge V1 et celui d'une action
+référencée par code lorsque son sous-axe facultatif est vide.
+
+- Les quantités explicitement nommées, notamment "120 bornes publiques dont
+  30 rapides", sont lues sans IA. Les noms des cibles, unités et relations
+  d'inclusion viennent du catalogue publié. Une liste de nombres sans libellés,
+  une unité inconnue ou une phrase dont le sens reste ambigu conserve les
+  garde-fous de l'assistance IA ; aucun ordre de cibles n'est supposé.
+- Les textes d'aide V1 sont décrits dans la configuration des formats, sélectionnée
+  par l'en-tête du tableau d'indicateurs. Le modèle vierge est ignoré ; une
+  fiche remplie conserve ses contrôles, y compris sur un statut invalide.
+- Sans sous-axe renseigné, l'action reste directement sous l'axe demandé.
+  Son code doit appartenir à cet axe. Un sous-axe explicite reste contrôlé.
+- La lecture des engagements réutilise les contrôles de doublons et de bornes
+  du résolveur : un pourcentage supérieur à 100 et une sous-cible supérieure
+  au total ne sont plus masqués par une autre erreur d'extraction. Les erreurs
+  restent présentées par étapes, conformément à la décision produit.
+- Les diagnostics précisent la valeur approximative, le code d'action inconnu
+  et la périodicité attendue. Un lien non utilisable dans une autre collectivité
+  reçoit un message distinct ; une action partagée autorisée reste réutilisable.
+  Le diagnostic n'expose pas l'existence d'une action inaccessible.
+
+**Source des engagements.** La décision de Clément du 24 novembre remplace
+la demande d'alignement du 20 novembre : Grist fait référence, le Word doit
+être corrigé par l'équipe métier. Le lecteur accepte les phrases publiées
+du catalogue ; il n'ajoute pas d'équivalence codée en dur entre les périmètres
+"gaz" et "gaz ou fioul". Les documents déjà diffusés avec cette différence
+restent concernés jusqu'à correction du Word.
+
+**Périodicités.** Clément propose l'annuel pour tous les indicateurs ; la
+confirmation d'Émeline reste attendue. Quatre définitions sont trimestrielles
+dans le relevé Sheets du 24 novembre : `elec_1_2_1_a`, `elec_1_2_1_b`,
+`elec_1_2_2_a` et `elec_9_2_1_a` (codes Grist `1.2.1-a`, `1.2.1-b`,
+`1.2.2-a`, `9.2.1-a`). Les deux premières bloquent le document 03 de la recette.
+Une périodicité déjà créée est immuable dans TeT : après validation métier,
+prévoir une nouvelle définition annuelle et son mapping, ou une migration
+dédiée après inventaire des valeurs. Une modification du Sheets seule ne
+suffit pas. Aucun découpage artificiel d'une valeur annuelle n'est effectué.
+
+Les liens d'aides manquants restent à compléter dans Grist, sans modification
+de l'import. Les aides sans URL restent omises sans avertissement. La recette
+confirme le plan maximal : 109 actions, 58 sous-actions catalogue et deux
+actions issues des engagements, soit 169 fiches.
+
+**Validation locale du 24 novembre.** Les trois suites e2e existantes de
+résolution des fiches, des engagements et des liens TeT passent : 276 tests
+en 25 s, avec base locale et faux LLM. Les scénarios ajoutés couvrent le
+modèle vierge V1, les cibles nommées issues d'un catalogue différent, les
+erreurs simultanées d'engagements et le sous-axe facultatif. Les contrôles
+TypeScript backend et specs, ainsi que le lint ciblé, passent. Aucun import
+IA réel ni recette de la version déployée n'a été lancé pour ces corrections.
 
 ## Révision de la lecture documentaire - 20 novembre 2026
 
@@ -156,10 +211,12 @@ canevas Word ne change pas cette version si le checkpoint normalisé reste compa
 - Le rapprochement des engagements reste exécuté si une autre cellule est
   invalide, pour éviter les faux positifs. Un échec du modèle ou une réponse
   invalide conserve les erreurs indépendantes déjà détectées, sans réintroduire
-  les diagnostics des engagements déjà rapprochés. La phrase officielle du Word reste
-  la référence. L'écart "gaz" / "gaz ou au fioul" constaté dans l'extraction
-  Grist du 18 novembre doit être aligné par l'équipe qui maintient Grist,
-  puis republié. Aucun alias métier n'est ajouté au code.
+  les diagnostics des engagements déjà rapprochés. La demande du 20 novembre
+  prenait le Word comme référence et demandait l'alignement de Grist sur son
+  périmètre "gaz". Elle est remplacée par la
+  [décision du 24 novembre](#corrections-de-la-recette-du-24-novembre-2026) :
+  Grist fait référence, le Word doit être corrigé. Aucun alias métier n'est
+  ajouté au code.
 
 Avant réorganisation des configurations : 185 tests des résolveurs de fiches et de la persistance
 réussis, dont la lecture de la V1 et les deux objectifs, avec base locale et
@@ -2111,10 +2168,10 @@ Aucun test automatisé ni agent ne déclenche un appel réel au modèle.
    Pour la recharge, [quelle référence couvre le seuil ≥150 kW de `6-b` ?][question-recharge]
    La confirmation des références d'engagement E07 ne suffit pas à établir
    l'équivalence de périmètre des indicateurs Grist.
-3. **Phrases des engagements.** Aligner les formulations Grist sur le Word
-   officiel, puis republier le catalogue. L'écart "gaz" / "gaz ou au fioul"
-   reste suivi dans [TT-67][retours-tt67]. La correction des faux positifs
-   d'extraction ne garantit pas le résultat du rapprochement IA sur cet écart.
+3. **Phrases des engagements.** Corriger le Word pour reprendre les formulations
+   de Grist, selon la décision du 24 novembre. L'écart "gaz" / "gaz ou au fioul"
+   reste suivi dans [TT-67][retours-tt67] ; ce changement de périmètre ne doit
+   pas être compensé par un alias dans le code.
 4. **Lauréats.** La source est l'annuaire Grist partagé dans
    [TET-8065](https://app.notion.com/p/3e96523d57d780beb6cffcd9e04b01a9).
    Depuis la décision du 13 novembre, C utilise exclusivement ses identifiants
@@ -2126,6 +2183,11 @@ Aucun test automatisé ni agent ne déclenche un appel réel au modèle.
    à confirmer auprès du métier. Les droits de lecture et le workflow réel
    restent à qualifier ; détail et historique dans
    l'[ADR 0024](0024-publier-donnees-electrification-sans-deploiement.md#couverture-des-lauréats--décision-du-13-novembre-2026).
+5. **Indicateurs trimestriels.** Confirmer avec Émeline la proposition annuelle
+   de Clément pour les quatre références listées dans les
+   [corrections du 24 novembre](#corrections-de-la-recette-du-24-novembre-2026),
+   puis publier les définitions et correspondances adaptées. La périodicité
+   existante ne peut pas être changée par le seul import du Sheets.
 
 La décision produit du 19 novembre remplace la [réponse du 11 novembre][decision-aides] :
 les aides sans URL sont omises sans avertissement, sans bloquer l'action. La réponse d'Émeline du 12 novembre

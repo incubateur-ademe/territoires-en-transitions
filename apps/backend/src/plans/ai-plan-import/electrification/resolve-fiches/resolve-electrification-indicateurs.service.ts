@@ -282,7 +282,13 @@ export class ResolveElectrificationIndicateursService {
     if (input.unite !== null && input.unite !== unite)
       return failure([issue('INVALID_INDICATEUR_UNIT')]);
     if (input.periodicite !== null && input.periodicite !== periodicite)
-      return failure([issue('INVALID_INDICATEUR_PERIODICITY', 'Périodicité')]);
+      return failure([
+        Errors.incompatiblePeriodicity(
+          periodicite,
+          input.periodicite,
+          Locations.field(input.source.location, 'Périodicité')
+        ),
+      ]);
     const valeurs = ResolveElectrificationIndicateursRules.resolveValeurs(
       input,
       periodicite

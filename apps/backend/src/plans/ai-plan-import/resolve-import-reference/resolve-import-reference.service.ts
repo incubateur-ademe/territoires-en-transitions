@@ -50,6 +50,15 @@ export class ResolveImportReferenceService {
     if (!permission.success)
       return this.reject('IMPORT_REFERENCE_UNAUTHORIZED', reference);
 
+    // Le diagnostic utilise seulement la collectivité déjà visible dans l'URL.
+    // Une action partagée reste autorisée, même si son lien vient d'ailleurs.
+    const unavailable = () =>
+      this.reject(
+        parsed.data.collectiviteId === collectiviteId
+          ? 'FICHE_REFERENCE_UNAVAILABLE'
+          : 'FICHE_REFERENCE_OTHER_COLLECTIVITE',
+        reference
+      );
     try {
       const result = await this.fiches.getFicheById(
         parsed.data.ficheId,
@@ -57,8 +66,7 @@ export class ResolveImportReferenceService {
         user,
         tx
       );
-      if (!result.success)
-        return this.reject('FICHE_REFERENCE_UNAVAILABLE', reference);
+      if (!result.success) return unavailable();
       const fiche = result.data;
       const scopes = [
         fiche.collectiviteId,
@@ -66,7 +74,7 @@ export class ResolveImportReferenceService {
       ];
       // Une lecture publique ou des droits sur une autre collectivité ne suffisent pas.
       if (!scopes.includes(parsed.data.collectiviteId)) {
-        return this.reject('FICHE_REFERENCE_UNAVAILABLE', reference);
+        return unavailable();
       }
       const access = await this.fichePermissions.canLinkFicheToCollectivite(
         fiche.id,
@@ -74,12 +82,10 @@ export class ResolveImportReferenceService {
         user,
         tx
       );
-      return access
-        ? success({ ficheId: fiche.id })
-        : this.reject('FICHE_REFERENCE_UNAVAILABLE', reference);
+      return access ? success({ ficheId: fiche.id }) : unavailable();
     } catch (error) {
       if (error instanceof ForbiddenException) {
-        return this.reject('FICHE_REFERENCE_UNAVAILABLE', reference);
+        return unavailable();
       }
       this.logger.error(
         'Impossible de résoudre la fiche action du lien TeT',
