@@ -42,6 +42,11 @@ export const indicateursLabels = {
   indicateurUnite: 'Unité',
   indicateurUniteDuParent: ({ parent }: { parent: string }) =>
     `Ce sous-indicateur s'appuie sur l'unité de son indicateur parent, ${parent}`,
+  indicateurUniteChangementTitre: "Changer l'unité",
+  indicateurUniteChangementSousIndicateursTitre:
+    "En changeant l'unité de l'indicateur, l'unité de tous ses sous-indicateurs sera également mise à jour.",
+  indicateurUniteChangementSousIndicateursDescription:
+    "Cette nouvelle unité s'applique à tous les sous-indicateurs, quel que soit leur niveau. Les valeurs déjà saisies ne sont pas converties.",
   indicateurCumulSousIndicateurs: 'Cumul des sous-indicateurs',
   indicateurResultatRecentModePrive: 'Résultat récent en mode privé',
   indicateurResultatRecentModePriveInfo:
