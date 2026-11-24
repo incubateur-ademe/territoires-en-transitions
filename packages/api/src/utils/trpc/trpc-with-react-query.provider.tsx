@@ -14,13 +14,11 @@ import {
 } from '@trpc/client';
 import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server';
 import { createTRPCContext } from '@trpc/tanstack-react-query';
-import type { SupabaseClient } from '@supabase/supabase-js';
 import { getQueryClient } from './react-query-client';
 
 import type { AppRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { useEffect, useState } from 'react';
 import { listenForCrossTabQueryInvalidation } from '../react-query/cross-tab-invalidation';
-import { useSupabase } from '../supabase/use-supabase';
 import {
   getBrowserTrpcUrl,
   getTrpcLoggerLink,
@@ -54,27 +52,19 @@ export type TRPCUseMutationResult<TVariables, TData> = UseMutationResult<
 >;
 
 /**
- * Le jeton de session part en `Authorization: Bearer`, pas par le cookie : le
- * backend n'a ainsi pas besoin que le cookie de session soit visible sur son
- * domaine (cookie limité à l'hôte de l'app). Sans client Supabase (site), les
- * appels sont anonymes.
+ * `credentials: 'include'` n'est accepté par le backend (CORS) que depuis
+ * l'origine de l'app : le site appelle donc sans credentials.
  */
 export function getTrpcClient(
-  supabase?: SupabaseClient
+  credentials: RequestCredentials = 'same-origin'
 ): TRPCClient<AppRouter> {
   return createTRPCClient<AppRouter>({
     links: [
       getTrpcLoggerLink(),
       httpLink({
         url: getBrowserTrpcUrl(),
-        headers: async (opts) => {
-          const accessToken = (await supabase?.auth.getSession())?.data.session
-            ?.access_token;
-          return {
-            ...setCorrelationIdInContextAndGetHeader(opts),
-            ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
-          };
-        },
+        headers: (opts) => setCorrelationIdInContextAndGetHeader(opts),
+        fetch: (url, options) => fetch(url, { ...options, credentials }),
       }),
     ],
   });
@@ -85,8 +75,7 @@ export function TrpcWithReactQueryProvider({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const supabase = useSupabase();
-  const [trpcClient] = useState(() => getTrpcClient(supabase));
+  const [trpcClient] = useState(() => getTrpcClient('include'));
 
   const queryClient = getQueryClient();
 

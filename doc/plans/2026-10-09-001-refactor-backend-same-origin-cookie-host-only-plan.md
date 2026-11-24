@@ -32,9 +32,9 @@ Objectif : faire passer les appels navigateur → backend par l'origine de l'app
 | ----------------------------------- | --------- | --------------------------- |
 | 0 — nom de cookie par environnement | fait      | sans objet (Supabase cloud) |
 | 1 — proxy same-origin `app.…/api`   | fait      | à la bascule Coolify        |
-| 1 bis — CORS et jeton en `Bearer`   | code prêt | code prêt, à déployer       |
+| 1 bis — CORS resserré               | code prêt | code prêt, à déployer       |
 | 2 — OIDC sur l'origine de l'app     | à faire   | à la bascule (ou 2 bis)     |
-| 3 — cookie `__Host-`                | à faire   | après 1 bis et 2            |
+| 3 — cookie `__Host-`                | à faire   | après 1, 1 bis et 2         |
 
 ## Pourquoi
 
@@ -230,32 +230,33 @@ Points de vigilance :
   backend local et un faux LLM, ou faire valider l'upload par un humain.
 - Requêtes longues (exports) : vérifier les timeouts Traefik.
 
-## Phase 1 bis — CORS et jeton en `Bearer` (indépendante du proxy)
+## Phase 1 bis — CORS resserré (indépendante du proxy)
 
-Rend le backend indépendant du cookie cross-origin : c'est ce qui permet la
-phase 3 en prod **avant** la bascule Coolify. Sans impact sur les sessions.
+Sans impact sur les sessions.
 
-1b.1. Client tRPC navigateur (`trpc-with-react-query.provider.tsx`) : envoie
-`Authorization: Bearer <access_token>` (session du client Supabase) et
-n'utilise plus `credentials: 'include'`. Le backend l'acceptait déjà en
-repli, et le client REST (`use-api-client.ts`) le faisait déjà.
-1b.2. Backend, CORS (`main.ts`) : toute origine reste acceptée (site,
+1b.1. Backend, CORS (`main.ts`) : toute origine reste acceptée (site,
 intégrations par clé d'API), mais `Access-Control-Allow-Credentials` n'est
 renvoyé qu'à l'origine de `APP_URL`.
-1b.3. Backend, cookie (`supabase-cookie-parser.ts`) : le cookie de session
+1b.2. Backend, cookie (`supabase-cookie-parser.ts`) : le cookie de session
 n'est honoré que sans en-tête `Origin` (navigation, appel serveur) ou si
 `Origin` est celle de `APP_URL`. Garde côté serveur : le CORS n'empêche
 pas une requête « simple » d'être exécutée.
+1b.3. Client tRPC navigateur : `credentials: 'include'` réservé au provider de
+l'app ; le formulaire de contact du site appelle sans credentials.
 1b.4. App : suppression de `apps/app/cors.config.ts` et de `isAllowedOrigin`
 (plus aucun appelant cross-origin depuis la fin de `apps/auth`).
 
-**Ordre de déploiement : app et site d'abord, backend ensuite.** Le formulaire
-de contact du site utilisait `credentials: 'include'` ; déployé avant lui, le
+**Ordre de déploiement : site d'abord, backend ensuite.** Le formulaire de
+contact du site utilisait `credentials: 'include'` ; déployé avant lui, le
 backend lui refuserait la lecture de la réponse.
 
 À vérifier après déploiement : apps de test Koyeb (`BACKEND_TEST_URL`) et
-`trpc-ui`, qui appellent le backend depuis une autre origine — ils passent
-désormais par le `Bearer`.
+`trpc-ui`, qui appellent le backend depuis une autre origine que `APP_URL` —
+le cookie n'y est plus accepté.
+
+Écarté : envoyer le jeton en `Authorization: Bearer` depuis le navigateur pour
+se passer du proxy. Le proxy same-origin (phase 1) couvre le même besoin et
+règle en plus l'OIDC.
 
 ## Phase 2 — OIDC sur l'origine de l'app (⚠ action humaine)
 
@@ -296,7 +297,7 @@ Koyeb (deux apps distinctes, pas de routage par chemin), deux options :
 ## Phase 3 — Cookie Supabase host-only `__Host-`
 
 N'attend plus la bascule GoTrue : avec les previews, c'est un prérequis à leur
-ouverture. Prérequis : phases 1 bis et 2 (ou 2 bis) dans l'environnement visé.
+ouverture. Prérequis : phases 1, 1 bis et 2 dans l'environnement visé.
 Preprod d'abord.
 
 3.1. `getCookieOptions()` : piloté par le nom. Si
@@ -338,7 +339,7 @@ repli sur l'ancien nom (3.2) et la migration de cookie (3.3).
 ## Ordre de déploiement
 
 1. ~~Phases 0 et 1 sur preprod.~~
-2. Phase 1 bis partout (app et site, puis backend).
+2. Phase 1 bis partout (site, puis backend).
 3. Phases 2 et 3 sur preprod.
 4. Prod : phase 2 (à la bascule Coolify) ou 2 bis (avant), puis phase 3.
 5. **Ouverture des previews : pas avant l'étape 4.**
