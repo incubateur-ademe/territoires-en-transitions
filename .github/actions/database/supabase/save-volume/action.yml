@@ -14,6 +14,12 @@ runs:
       uses: ./.github/actions/database/supabase/volume-path
       id: get_image_path
 
+    # Copie à froid : une copie de PGDATA pendant que Postgres écrit peut être
+    # incohérente. SIGINT = arrêt rapide (clients déconnectés, checkpoint).
+    - name: Stop db
+      shell: bash
+      run: docker stop --signal SIGINT --timeout 120 supabase_db_tet
+
     - name: Create image from volume
       shell: bash
       run: >
@@ -32,6 +38,11 @@ runs:
         echo "::endgroup"
 
         echo "Image '${{ steps.get_image_path.outputs.path }}' created"
+
+    - name: Restart db
+      if: ${{ always() }}
+      shell: bash
+      run: docker start supabase_db_tet
 
     - name: Push image (ci)
       if: ${{ success() && inputs.push == 'true' }}

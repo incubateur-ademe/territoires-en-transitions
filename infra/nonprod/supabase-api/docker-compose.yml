@@ -100,10 +100,11 @@ services:
       # Supabase Cloud) : GoTrue refuse le header `apikey` en preflight, et
       # Storage ne gère pas du tout CORS. Le middleware répond seul aux
       # preflights et écrase les headers CORS de GoTrue sur les réponses.
+      # `*` ne couvre pas Authorization (spec Fetch) : il est nommé.
       - traefik.http.middlewares.tet-${STACK_ENV}-cors.headers.accesscontrolalloworiginlist=*
       - traefik.http.middlewares.tet-${STACK_ENV}-cors.headers.accesscontrolallowmethods=GET,HEAD,POST,PUT,PATCH,DELETE,OPTIONS
-      - traefik.http.middlewares.tet-${STACK_ENV}-cors.headers.accesscontrolallowheaders=*
-      - traefik.http.middlewares.tet-${STACK_ENV}-cors.headers.accesscontrolexposeheaders=X-Total-Count,Link,X-Supabase-Api-Version
+      - traefik.http.middlewares.tet-${STACK_ENV}-cors.headers.accesscontrolallowheaders=Authorization,*
+      - traefik.http.middlewares.tet-${STACK_ENV}-cors.headers.accesscontrolexposeheaders=X-Total-Count,Link,X-Supabase-Api-Version,Location,Upload-Offset,Upload-Length,Tus-Resumable
       - traefik.http.middlewares.tet-${STACK_ENV}-cors.headers.accesscontrolmaxage=3600
       - traefik.http.routers.tet-${STACK_ENV}-gotrue.middlewares=tet-${STACK_ENV}-cors,tet-${STACK_ENV}-gotrue-strip
       - traefik.http.routers.tet-${STACK_ENV}-gotrue.service=tet-${STACK_ENV}-gotrue
@@ -163,6 +164,9 @@ services:
       FILE_SIZE_LIMIT: 2147483648
       UPLOAD_FILE_SIZE_LIMIT: 2147483648
       UPLOAD_FILE_SIZE_LIMIT_STANDARD: 2147483648
+      # URL de reprise TUS préfixées de /storage/v1 (X-Forwarded-Prefix posé par
+      # le stripprefix Traefik) : sans lui, le PATCH suivant tombe en 404.
+      REQUEST_ALLOW_X_FORWARDED_PATH: "true"
 
       # Backend S3 → Scaleway Object Storage (région PAR).
       STORAGE_BACKEND: s3

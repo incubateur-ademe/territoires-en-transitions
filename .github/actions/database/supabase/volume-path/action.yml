@@ -21,7 +21,7 @@ runs:
       with:
         # A physical backup must match the CLI's Postgres image and configuration,
         # including its collation library, not only the application migrations.
-        string: ${{ hashFiles('data_layer', 'apps/backend/**/samples/*.csv', 'supabase/config.toml', 'supabase/jwt-signing-keys.json', '.github/actions/database/supabase/start/action.yml') }}
+        string: ${{ hashFiles('data_layer', 'apps/backend/**/samples/*.csv', 'supabase/config.toml', 'supabase/jwt-signing-keys.json', '.github/actions/database/supabase/start/action.yml', '.github/actions/database/supabase/save-volume/action.yml') }}
 
     - name: Get image path
       uses: ./.github/actions/docker/image-path
