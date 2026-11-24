@@ -42,9 +42,11 @@ import { withOnTestFinished } from '@tet/backend/utils/test-fixture.utils';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { ListFichesRequestFilters, StatutEnum } from '@tet/domain/plans';
 import { CollectiviteRole } from '@tet/domain/users';
+import { subMonths } from 'date-fns';
 import { eq, inArray } from 'drizzle-orm';
 import { uniq } from 'es-toolkit';
 import { createFiche, createFiches } from '../fiches.test-fixture';
+import { createListFichesScenario } from './list-fiches.test-fixture';
 
 describe('ListFichesRouter', () => {
   let app: INestApplication;
@@ -3738,5 +3740,225 @@ describe('ListFichesRouter', () => {
       expect.objectContaining({ id: sousAxe.id, axeLevel: 1 }),
     ]);
     expect(ficheSansAncetres.plans).toEqual(ficheAvecAncetres.plans);
+  });
+
+  describe('Filtres et pagination sur une collectivité dédiée', () => {
+    const createScenario = () => createListFichesScenario({ router, db });
+
+    test('Fetch avec filtre sur note récente (WITH_RECENT) ou sans note récente (WITHOUT_RECENT)', async () => {
+      const scenario = await createScenario();
+      const ficheNoteRecente = await scenario.createAction('Note récente');
+      const ficheNoteAncienne = await scenario.createAction('Note ancienne');
+      await scenario.createAction('Sans note');
+      const ficheNotesMixtes = await scenario.createAction(
+        'Notes récente et ancienne'
+      );
+
+      const now = new Date();
+      const addNote = (ficheId: number, modifiedAt: Date) =>
+        db.db.insert(ficheActionNoteTable).values({
+          ficheId,
+          dateNote: '2024-01-01',
+          note: 'Note de suivi',
+          createdBy: scenario.admin.id,
+          modifiedBy: scenario.admin.id,
+          modifiedAt: modifiedAt.toISOString(),
+        });
+      await addNote(ficheNoteRecente.id, now);
+      await addNote(ficheNoteAncienne.id, subMonths(now, 13));
+      await addNote(ficheNotesMixtes.id, now);
+      await addNote(ficheNotesMixtes.id, subMonths(now, 13));
+
+      // une seule note récente suffit, même si la fiche a aussi une note ancienne
+      expect(await scenario.listTitres({ notes: 'WITH_RECENT' })).toEqual([
+        'Note récente',
+        'Notes récente et ancienne',
+      ]);
+      // WITHOUT_RECENT = aucune note modifiée depuis moins d'un an,
+      // y compris les fiches sans aucune note ; exclut donc la fiche mixte
+      expect(await scenario.listTitres({ notes: 'WITHOUT_RECENT' })).toEqual([
+        'Note ancienne',
+        'Sans note',
+      ]);
+    });
+
+    type NoneOrAnyOfCase = {
+      lien: string;
+      /** crée les deux identifiants : celui sélectionné dans le filtre, puis un autre */
+      createIds: (
+        scenario: Awaited<ReturnType<typeof createScenario>>
+      ) => Promise<[number, number] | [string, string]>;
+      linkFiche: (
+        ficheId: number,
+        id: number | string,
+        createdBy: string
+      ) => Promise<unknown>;
+      buildFilters: (selectedId: number | string) => ListFichesRequestFilters;
+    };
+
+    const createPersonneTags = async (
+      scenario: Awaited<ReturnType<typeof createScenario>>
+    ): Promise<[number, number]> => {
+      const selected = await scenario.createPersonnePilote('Personne choisie');
+      const other = await scenario.createPersonnePilote('Autre personne');
+      return [selected.tagId, other.tagId];
+    };
+
+    const createUserIds = async (
+      scenario: Awaited<ReturnType<typeof createScenario>>
+    ): Promise<[string, string]> => [scenario.admin.id, otherUserId];
+
+    test.each<NoneOrAnyOfCase>([
+      {
+        lien: 'pilote (personne)',
+        createIds: createPersonneTags,
+        linkFiche: (ficheId, tagId, createdBy) =>
+          db.db
+            .insert(ficheActionPiloteTable)
+            .values({ ficheId, tagId: tagId as number, createdBy }),
+        buildFilters: (tagId) => ({
+          noPilote: true,
+          personnePiloteIds: [tagId as number],
+        }),
+      },
+      {
+        lien: 'pilote (utilisateur)',
+        createIds: createUserIds,
+        linkFiche: (ficheId, userId, createdBy) =>
+          db.db
+            .insert(ficheActionPiloteTable)
+            .values({ ficheId, userId: userId as string, createdBy }),
+        buildFilters: (userId) => ({
+          noPilote: true,
+          utilisateurPiloteIds: [userId as string],
+        }),
+      },
+      {
+        lien: 'référent (personne)',
+        createIds: createPersonneTags,
+        linkFiche: (ficheId, tagId, createdBy) =>
+          db.db
+            .insert(ficheActionReferentTable)
+            .values({ ficheId, tagId: tagId as number, createdBy }),
+        buildFilters: (tagId) => ({
+          noReferent: true,
+          personneReferenteIds: [tagId as number],
+        }),
+      },
+      {
+        lien: 'référent (utilisateur)',
+        createIds: createUserIds,
+        linkFiche: (ficheId, userId, createdBy) =>
+          db.db
+            .insert(ficheActionReferentTable)
+            .values({ ficheId, userId: userId as string, createdBy }),
+        buildFilters: (userId) => ({
+          noReferent: true,
+          utilisateurReferentIds: [userId as string],
+        }),
+      },
+      {
+        lien: 'service pilote',
+        createIds: async ({ collectiviteId }) => {
+          const [selected, other] = await db.db
+            .insert(serviceTagTable)
+            .values([
+              { nom: 'Service choisi', collectiviteId },
+              { nom: 'Autre service', collectiviteId },
+            ])
+            .returning();
+          return [selected.id, other.id];
+        },
+        linkFiche: (ficheId, serviceTagId) =>
+          db.db
+            .insert(ficheActionServiceTagTable)
+            .values({ ficheId, serviceTagId: serviceTagId as number }),
+        buildFilters: (serviceTagId) => ({
+          noServicePilote: true,
+          servicePiloteIds: [serviceTagId as number],
+        }),
+      },
+      {
+        lien: 'tag personnalisé',
+        createIds: async ({ collectiviteId }) => {
+          const [selected, other] = await db.db
+            .insert(libreTagTable)
+            .values([
+              { nom: 'Tag choisi', collectiviteId },
+              { nom: 'Autre tag', collectiviteId },
+            ])
+            .returning();
+          return [selected.id, other.id];
+        },
+        linkFiche: (ficheId, libreTagId) =>
+          db.db
+            .insert(ficheActionLibreTagTable)
+            .values({ ficheId, libreTagId: libreTagId as number }),
+        buildFilters: (libreTagId) => ({
+          noTag: true,
+          libreTagsIds: [libreTagId as number],
+        }),
+      },
+    ])(
+      'Fetch avec filtre « aucun » combiné en OU avec une sélection : $lien',
+      async ({ createIds, linkFiche, buildFilters }) => {
+        const scenario = await createScenario();
+        const [selectedId, otherId] = await createIds(scenario);
+        await scenario.createAction('Sans lien');
+        const ficheSelectionnee = await scenario.createAction(
+          'Lien sélectionné'
+        );
+        const ficheAutre = await scenario.createAction('Autre lien');
+        await linkFiche(ficheSelectionnee.id, selectedId, scenario.admin.id);
+        await linkFiche(ficheAutre.id, otherId, scenario.admin.id);
+
+        expect(await scenario.listTitres(buildFilters(selectedId))).toEqual([
+          'Lien sélectionné',
+          'Sans lien',
+        ]);
+      }
+    );
+
+    test('Pagination : la page demandée suit le tri et count donne le total', async () => {
+      const scenario = await createScenario();
+      // créées dans le désordre pour que l'ordre ne vienne que du tri
+      for (const titre of [
+        'Fiche D',
+        'Fiche B',
+        'Fiche E',
+        'Fiche A',
+        'Fiche C',
+      ]) {
+        await scenario.createAction(titre);
+      }
+      const sort = [{ field: 'titre' as const, direction: 'asc' as const }];
+      const titres = (fiches: { titre: string | null }[]) =>
+        fiches.map(({ titre }) => titre);
+
+      const page2 = await scenario.listFiches({}, { sort, limit: 2, page: 2 });
+      expect(titres(page2.data)).toEqual(['Fiche C', 'Fiche D']);
+      expect(page2.count).toBe(5);
+      expect(page2.nextPage).toBe(3);
+
+      const page3 = await scenario.listFiches({}, { sort, limit: 2, page: 3 });
+      expect(titres(page3.data)).toEqual(['Fiche E']);
+      expect(page3.count).toBe(5);
+      expect(page3.nextPage).toBeNull();
+
+      // sans page, la page 1 est appliquée par défaut
+      const sansPage = await scenario.listFiches({}, { sort, limit: 2 });
+      expect(titres(sansPage.data)).toEqual(['Fiche A', 'Fiche B']);
+      expect(sansPage.count).toBe(5);
+
+      const toutes = await scenario.listFiches({}, { sort, limit: 'all' });
+      expect(titres(toutes.data)).toEqual([
+        'Fiche A',
+        'Fiche B',
+        'Fiche C',
+        'Fiche D',
+        'Fiche E',
+      ]);
+      expect(toutes.count).toBe(5);
+    });
   });
 });
