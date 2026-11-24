@@ -1,4 +1,4 @@
-import type { Estimate } from '@tet/leviers-ges';
+import type { Estimate } from 'leviers-ges';
 import type { EstimateLevierGesResponse } from './estimate-levier-ges.response';
 
 export const toEstimateLevierGesResponse = (

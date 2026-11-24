@@ -3,17 +3,17 @@ import {
   createCsvDataSource,
   createEstimator,
   type Estimator,
-} from '@tet/leviers-ges';
+} from 'leviers-ges';
 import { dirname, join } from 'node:path';
 
 export const LEVIERS_GES_ESTIMATOR = Symbol('LEVIERS_GES_ESTIMATOR');
 
 /**
- * Les jeux de données (CSV) sont embarqués dans le package `@tet/leviers-ges`,
+ * Les jeux de données (CSV) sont embarqués dans le package `leviers-ges`,
  * à côté de son `package.json`.
  */
 const resolveDataDirectory = (): string =>
-  join(dirname(require.resolve('@tet/leviers-ges/package.json')), 'data');
+  join(dirname(require.resolve('leviers-ges/package.json')), 'data');
 
 /**
  * L'estimator est un singleton : la source CSV charge ses jeux de données

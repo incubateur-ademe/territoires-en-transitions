@@ -1,7 +1,6 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import type { Estimator, RequestInput } from '@tet/leviers-ges';
+import type { EstimationError, Estimator, RequestInput } from 'leviers-ges';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import type { EstimationError } from '@tet/leviers-ges';
 import type { EstimateLevierGesRequest } from './estimate-levier-ges.request';
 import type { EstimateLevierGesResponse } from './estimate-levier-ges.response';
 import { LEVIERS_GES_ESTIMATOR } from './leviers-ges-estimator.provider';

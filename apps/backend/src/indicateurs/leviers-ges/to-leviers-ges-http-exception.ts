@@ -5,7 +5,7 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import type { EstimationError } from '@tet/leviers-ges';
+import type { EstimationError } from 'leviers-ges';
 import { match } from 'ts-pattern';
 
 /**
