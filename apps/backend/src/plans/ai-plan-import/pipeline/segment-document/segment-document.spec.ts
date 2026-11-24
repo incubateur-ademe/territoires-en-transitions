@@ -582,6 +582,77 @@ describe('detectHeadings sur un PCAET à fiches tabulaires', () => {
   });
 });
 
+describe('fiches données dans un cartouche « Titre de l’action »', () => {
+  const fiche = (index: number, numero: string, titre: string[]) =>
+    buildPage(index, [
+      { text: 'Axe stratégique AXE 1 : S’adapter aux enjeux du futur' },
+      { text: `Titre de l’action ${numero} ${titre[0]}` },
+      ...titre.slice(1).map((text) => ({ text })),
+      { text: 'Enjeux Créer une organisation capable de penser la suite.' },
+      { text: 'Synthèse A. Définir un groupe de réflexion interservices' },
+      { text: 'B. Elargir les missions du conseil d’exploitation' },
+      { text: 'Descriptif' },
+      {
+        text: `Action ${numero.replace(
+          '.',
+          ''
+        )}A. Définir un groupe de réflexion`,
+      },
+      { text: 'Pour organiser efficacement une réflexion interservices.' },
+    ]);
+  const pages = [
+    buildPage(0, [
+      { text: 'AXE 1 :' },
+      { text: 'S’adapter aux enjeux du futur' },
+    ]),
+    fiche(1, '1.1', [
+      'Anticiper et planifier les réponses aux défis qui',
+      'viennent',
+    ]),
+    fiche(2, '1.2', ['Planifier les mobilités touristiques']),
+    fiche(3, '1.3', ['Accompagner les acteurs du tourisme']),
+  ];
+
+  it('ouvre une fiche à chaque titre du cartouche, recollé, sans prendre « Action 1A » pour une fiche', () => {
+    expect(
+      detectHeadings(pages)
+        .filter(({ match }) => match.kind === 'fiche')
+        .map(({ match }) => [match.number, match.title])
+    ).toEqual([
+      ['1.1', 'Anticiper et planifier les réponses aux défis qui viennent'],
+      ['1.2', 'Planifier les mobilités touristiques'],
+      ['1.3', 'Accompagner les acteurs du tourisme'],
+    ]);
+  });
+
+  it("range chaque fiche sous l'axe, titré par le rappel du cartouche", () => {
+    const units = segmentDocument(buildDocument('pdf', pages), {
+      minTokens: 0,
+      maxTokens: 1000,
+      overlapTokens: 0,
+    });
+
+    expect(
+      units
+        .filter((unit) => unit.kind === 'fiche')
+        .map((unit) => [unit.title, unit.headingPath])
+    ).toEqual([
+      [
+        '1.1 Anticiper et planifier les réponses aux défis qui viennent',
+        ['1 S’adapter aux enjeux du futur'],
+      ],
+      [
+        '1.2 Planifier les mobilités touristiques',
+        ['1 S’adapter aux enjeux du futur'],
+      ],
+      [
+        '1.3 Accompagner les acteurs du tourisme',
+        ['1 S’adapter aux enjeux du futur'],
+      ],
+    ]);
+  });
+});
+
 describe('renderUnit', () => {
   it('situe l’extrait et marque les changements de page', () => {
     const [unit] = segmentDocument(
@@ -611,6 +682,25 @@ describe('renderUnit', () => {
 
     expect(renderUnit(units[2], { index: 2, count: 3 })).toBe(
       "[Extrait 3/3 · page 1 · partie « PLAN D'ACTIONS » · 1 Bâtiments · fiche « 1.1 Isoler »]\nAction 1.1 : Isoler"
+    );
+  });
+
+  it('dit d’un morceau de fiche qu’il en est la suite', () => {
+    const units = segmentDocument(
+      buildDocument('pdf', [
+        buildPage(0, [
+          { text: 'Action 1.1 : Isoler' },
+          ...Array.from({ length: 40 }, (_, i) => ({
+            text: `Un paragraphe de description de la fiche, numéro ${i}.`,
+          })),
+        ]),
+      ]),
+      { minTokens: 0, maxTokens: 200, overlapTokens: 0 }
+    );
+
+    expect(units.length).toBeGreaterThan(1);
+    expect(renderUnit(units[1], { index: 1, count: units.length })).toContain(
+      '· suite de la fiche « 1.1 Isoler »]'
     );
   });
 });

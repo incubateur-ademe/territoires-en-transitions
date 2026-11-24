@@ -124,6 +124,7 @@ export const cutUnits = (
             heading.kind === 'majuscules' &&
             heading.level >= 2))
       ) {
+        completeLabel(heading);
         open.lines.push(unitLine);
         return;
       }
@@ -216,6 +217,26 @@ export const cutUnits = (
       );
       stack.length = 0;
       stack.push(axe, ...sousAxes);
+    }
+  }
+
+  // « AXE 1 : » seul sur sa ligne, puis « Axe stratégique AXE 1 : S'adapter
+  // aux enjeux du futur » dans le cartouche de la fiche : le rappel complète
+  // le titre, pour les fiches qui suivent.
+  function completeLabel(heading: HeadingMatch) {
+    const entry = stack.find(
+      (candidate) =>
+        candidate.level === heading.level &&
+        heading.number !== null &&
+        candidate.number === heading.number
+    );
+    const label = labelOf(heading);
+    if (
+      entry &&
+      label.length > entry.label.length &&
+      label.startsWith(entry.label)
+    ) {
+      entry.label = label;
     }
   }
 

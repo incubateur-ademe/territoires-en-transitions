@@ -11,7 +11,10 @@ import {
   ExtractedAction,
   ExtractedSousAction,
 } from '../models/extracted-action';
-import { stripTitleNumbers, unifyAxisLabels } from './normalize-plan-labels';
+import {
+  normalizeTitleNumbers,
+  unifyAxisLabels,
+} from './normalize-plan-labels';
 import { removeDuplicatedContent } from './remove-duplicated-content';
 import { textToRichText } from './text-to-rich-text';
 
@@ -68,7 +71,7 @@ export const normalizeExtractedActions = (
   // Dédoublonné sur les titres encore numérotés : « Fiche 3 » et « Fiche 7 »
   // de même intitulé sont deux fiches.
   const deduped = dedupeExtractedActions(capped);
-  const cleaned = removeDuplicatedContent(stripTitleNumbers(deduped));
+  const cleaned = removeDuplicatedContent(normalizeTitleNumbers(deduped));
   return {
     actions: cleaned.actions,
     truncatedCount,

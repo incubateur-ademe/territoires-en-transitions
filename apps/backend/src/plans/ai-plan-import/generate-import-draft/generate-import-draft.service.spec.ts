@@ -577,7 +577,7 @@ describe('GenerateImportDraftService', () => {
         stepStates: undefined,
         draft: expect.objectContaining({
           actions: expect.arrayContaining([
-            expect.objectContaining({ titre: 'Action' }),
+            expect.objectContaining({ titre: '1.1.1 Action' }),
           ]),
         }),
       }),
@@ -610,7 +610,7 @@ describe('GenerateImportDraftService', () => {
         stepStates: undefined,
         draft: expect.objectContaining({
           actions: expect.arrayContaining([
-            expect.objectContaining({ titre: 'Action' }),
+            expect.objectContaining({ titre: '1.1.1 Action' }),
           ]),
         }),
       }),

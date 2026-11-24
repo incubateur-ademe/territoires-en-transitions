@@ -45,7 +45,7 @@ Règles d'extraction
 - ${OTHER_PLAN_PASSAGES_RULE}
 - ${PARTNER_COMMITMENTS_RULE}
 - Ne jamais inventer d'information ni de chiffre. Un champ absent du texte reste "".
-- Les lignes "[Extrait …]" et "[page N]" sont des repères de découpage : ne les reprenez pas. Quand un repère donne « fiche « … » », c'est le titre complet de la fiche, même si le texte le coupe sur plusieurs lignes : reprenez-le pour "titre", avec les règles de format ci-dessous. Seule exception : un titre qui regroupe plusieurs actions, au sens de la règle suivante, donne leur sous-axe.
+- Les lignes "[Extrait …]" et "[page N]" sont des repères de découpage : ne les reprenez pas. Quand un repère donne « fiche « … » », c'est le titre complet de la fiche, même si le texte le coupe sur plusieurs lignes : reprenez-le pour "titre", avec les règles de format ci-dessous. Seule exception : un titre qui regroupe plusieurs actions, au sens de la règle suivante, donne leur sous-axe. Un repère « suite de la fiche « … » » prolonge cette fiche, coupée en plusieurs extraits : son contenu revient à la même action, sous exactement le même titre ; n'en faites pas une nouvelle action.
 - ${ACTION_LEVEL_RULE}
 - Le rappel de l'objectif ou de l'axe en tête d'une fiche (« 1- AMELIORER LA PERFORMANCE DES BATIMENTS » au-dessus de « ACTION 2 - … ») donne le sous-axe ou l'axe de la fiche : ce n'est jamais une action.
 - Le texte peut venir d'un PDF converti, avec des artefacts de mise en page : retirez seulement les artefacts manifestes, conservez l'orthographe et les majuscules des noms propres et sigles.${regleTableur}

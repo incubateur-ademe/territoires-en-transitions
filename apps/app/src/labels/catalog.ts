@@ -853,6 +853,10 @@ export const appLabels = {
     'L’import automatique est en cours d’amélioration et peut contenir des erreurs. Relisez votre plan, vous pourrez ensuite le modifier.',
   importPlanIaChampFichier: 'Document à importer',
   importPlanIaChampInstructions: "Précisions pour l'IA (facultatif)",
+  importPlanIaChampInstructionsAide:
+    "Pour guider l'import, décrivez la structure de votre plan à partir de sa première action : axe, sous-axe, titre, description, objectifs, sous-actions. L'IA s'appuiera sur cet exemple pour lire le reste du document.",
+  importPlanIaChampInstructionsExemple:
+    'Ex. : Axe : « AXE 1 – S’adapter aux enjeux du futur » ; Sous-axe : aucun ; Action : « 1.1 Anticiper… » ; Description : rubrique « Enjeux » ; Sous-actions : éléments A, B, C de la « Synthèse »',
   importPlanIaFichierRequis: 'Un document est requis',
   importPlanIaNomRequis: 'Le nom du plan est requis',
   importPlanIaFormatNonSupporte:
