@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import type { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import {
+  catchDatabaseFailure,
+  toDatabaseFailure,
+} from '@tet/backend/utils/database/catch-database-failure';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import {
   Indicateur,
@@ -19,12 +23,11 @@ import {
   IndicateurValeursWriteContext,
 } from '../indicateur-valeurs-context.types';
 import {
-  captureIndicateurValeursResultOf,
   IndicateurValeursError,
+  toMutatePermissionDeniedFailure,
 } from '../indicateur-valeurs.errors';
 import { toUserValeurNotAllowedFailure } from './user-indicateur-valeur.errors';
 import { getIndicateurIdsWithoutUserValeur } from './user-indicateur-valeur.rules';
-import { getIndicateurDataOrThrow } from '../../indicateur/indicateur-nature.utils';
 
 export type PreparedIndicateurValeurs = {
   valeurs: IndicateurValeurCreate[];
@@ -41,61 +44,70 @@ export class ValidateIndicateurValeursWriteService {
   prepare(
     valeurs: IndicateurValeurCreate[],
     context: IndicateurValeursContext
-  ) {
-    return captureIndicateurValeursResultOf(
-      async (): Promise<
-        Result<PreparedIndicateurValeurs, IndicateurValeursError>
-      > => {
-        const { user, isUserTrusted = false } = context;
-        if (!isUserTrusted && user) {
-          for (const collectiviteId of new Set(
-            valeurs.map((v) => v.collectiviteId)
-          )) {
-            await this.permissionService.assertAllowed(
-              user,
-              PermissionOperationEnum['INDICATEURS.VALEURS.MUTATE'],
-              ResourceType.COLLECTIVITE,
-              { collectiviteId },
-              context.tx
-            );
-          }
-        } else if (!isUserTrusted) {
-          return failure(
-            'UNAUTHORIZED',
-            new Error(
-              'Un contexte utilisateur ou une capacité interne explicite est requis pour écrire des valeurs'
-            )
+  ): Promise<Result<PreparedIndicateurValeurs, IndicateurValeursError>> {
+    return catchDatabaseFailure(async () => {
+      const { user, isUserTrusted = false } = context;
+      if (!isUserTrusted && user) {
+        for (const collectiviteId of new Set(
+          valeurs.map((v) => v.collectiviteId)
+        )) {
+          const permission = await this.permissionService.isAllowed(
+            user,
+            PermissionOperationEnum['INDICATEURS.VALEURS.MUTATE'],
+            ResourceType.COLLECTIVITE,
+            { collectiviteId },
+            context.tx
           );
+          if (!permission.success) {
+            return toMutatePermissionDeniedFailure({
+              userId: user.id,
+              collectiviteId,
+              isApiKeyDenied: !this.permissionService.isApiKeyAllowed(
+                user,
+                PermissionOperationEnum['INDICATEURS.VALEURS.MUTATE']
+              ).success,
+            });
+          }
         }
-        return success({
-          valeurs: valeurs.map((valeur) =>
-            !isUserTrusted && user?.role === AuthRole.AUTHENTICATED && user.id
-              ? {
-                  ...valeur,
-                  calculAuto: false,
-                  calculAutoIdentifiantsManquants: null,
-                  createdBy: user.id,
-                  modifiedBy: user.id,
-                }
-              : valeur
-          ),
-        });
+      } else if (!isUserTrusted) {
+        return failure(
+          'UNAUTHORIZED',
+          new Error(
+            'Un contexte utilisateur ou une capacité interne explicite est requis pour écrire des valeurs'
+          )
+        );
       }
-    );
+      return success({
+        valeurs: valeurs.map((valeur) =>
+          !isUserTrusted && user?.role === AuthRole.AUTHENTICATED && user.id
+            ? {
+                ...valeur,
+                calculAuto: false,
+                calculAutoIdentifiantsManquants: null,
+                createdBy: user.id,
+                modifiedBy: user.id,
+              }
+            : valeur
+        ),
+      });
+    });
   }
 
   validate(
     input: PreparedIndicateurValeurs,
     context: IndicateurValeursWriteContext
-  ) {
-    return captureIndicateurValeursResultOf(async () => {
+  ): Promise<Result<Record<number, Indicateur>, IndicateurValeursError>> {
+    return catchDatabaseFailure(async () => {
       const { tx, user, isUserTrusted = false } = context;
       const indicateurIds = [
         ...new Set(input.valeurs.map((v) => v.indicateurId)),
       ];
-      const indicateurs = getIndicateurDataOrThrow(
-        await this.indicateurLockRepository.lockIndicateurs(indicateurIds, tx)
+      const locked = await this.indicateurLockRepository.lockIndicateurs(
+        indicateurIds,
+        tx
       );
+      if (!locked.success) return toDatabaseFailure(locked);
+      const indicateurs = locked.data;
       const indicateursById = keyBy(indicateurs, (d) => d.id);
       const enforceUserRules =
         !isUserTrusted && user?.role === AuthRole.AUTHENTICATED;

@@ -1809,7 +1809,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
         lockGroupementMemberships: vi.fn(),
       };
       const permissionService = {
-        assertAllowed: vi.fn().mockResolvedValue(undefined),
+        isAllowed: vi.fn().mockResolvedValue(success(undefined)),
       };
       const collectiviteIndicateursRepository = {
         listCollectiviteIndicateurs: vi.fn().mockResolvedValue(
@@ -1886,7 +1886,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
         success([{ ...saved, sourceId: 'rare', indicateurIdentifiant: null }])
       );
 
-      expect(permissionService.assertAllowed).toHaveBeenCalledOnce();
+      expect(permissionService.isAllowed).toHaveBeenCalledOnce();
       expect(indicateurLockRepository.lockIndicateurs).toHaveBeenCalledWith(
         [10],
         tx
@@ -1916,7 +1916,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
         upsertValeursWithoutMetadata: vi.fn().mockResolvedValue([]),
       };
       const permissionService = {
-        assertAllowed: vi.fn().mockResolvedValue(undefined),
+        isAllowed: vi.fn().mockResolvedValue(success(undefined)),
       };
       const collectiviteIndicateursRepository = {
         listCollectiviteIndicateurs: vi
@@ -2179,7 +2179,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
         upsertValeursWithMetadata: vi.fn(),
       };
       const permissionService = {
-        assertAllowed: vi.fn().mockResolvedValue(undefined),
+        isAllowed: vi.fn().mockResolvedValue(success(undefined)),
       };
       const collectiviteIndicateursRepository = {
         listCollectiviteIndicateurs: vi
