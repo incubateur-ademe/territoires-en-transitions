@@ -14,7 +14,11 @@ import {
   SearchCombobox,
   type SearchComboboxSelection,
 } from '@tet/ui';
-import { parseAsNumberLiteral, useQueryState } from 'nuqs';
+import {
+  parseAsNumberLiteral,
+  parseAsStringLiteral,
+  useQueryState,
+} from 'nuqs';
 import { useMemo, useState } from 'react';
 import { useGetIndicateursObjectifs } from '../data/use-get-indicateurs-objectifs';
 import { SuiviPlanBloc } from '../suivi-plan.bloc';
@@ -22,9 +26,17 @@ import { IndicateurObjectifCard } from './indicateur-objectif.card';
 import {
   buildSearchIndicateursSuggestions,
   filterIndicateursObjectifs,
+  INDICATEURS_OBJECTIFS_FILTRES_SOURCE,
+  IndicateursObjectifsFiltreSource,
 } from './search-indicateurs-objectifs';
 
 const NB_INDICATEURS_VISIBLES = 6;
+
+const FILTRE_SOURCE_LABELS: Record<IndicateursObjectifsFiltreSource, string> = {
+  tous: appLabels.indicateursObjectifsAfficherTous,
+  reglementaires: appLabels.indicateursObjectifsAfficherReglementaires,
+  plan: appLabels.indicateursObjectifsAfficherPlan,
+};
 
 export const IndicateursObjectifsBloc = ({
   collectiviteId,
@@ -47,6 +59,12 @@ export const IndicateursObjectifsBloc = ({
       getHorizonParDefaut(new Date().getFullYear())
     )
   );
+  const [source, setSource] = useQueryState(
+    'indicateursSource',
+    parseAsStringLiteral(INDICATEURS_OBJECTIFS_FILTRES_SOURCE).withDefault(
+      'tous'
+    )
+  );
   const [recherche, setRecherche] = useState('');
   const [selectionIds, setSelectionIds] = useState<number[]>([]);
   const [isAllVisible, setIsAllVisible] = useState(false);
@@ -56,8 +74,16 @@ export const IndicateursObjectifsBloc = ({
       indicateurs ? buildSearchIndicateursSuggestions(indicateurs) : undefined,
     [indicateurs]
   );
+  // badges et filtre de source n'ont de sens que pour un plan du dépôt PCAET
+  const hasReglementaires =
+    indicateurs?.some(({ sources }) => sources.includes('reglementaire')) ??
+    false;
   const filtres = indicateurs
-    ? filterIndicateursObjectifs(indicateurs, { recherche, selectionIds })
+    ? filterIndicateursObjectifs(indicateurs, {
+        recherche,
+        selectionIds,
+        source: hasReglementaires ? source : 'tous',
+      })
     : [];
   const visibles = isAllVisible
     ? filtres
@@ -109,7 +135,10 @@ export const IndicateursObjectifsBloc = ({
         </p>
       ) : (
         <div className="flex flex-col gap-4">
-          <div data-html2canvas-ignore>
+          <div
+            className="flex flex-wrap items-center gap-x-6 gap-y-3"
+            data-html2canvas-ignore
+          >
             <SearchCombobox
               label={appLabels.indicateursObjectifsRecherche}
               placeholder={appLabels.indicateursObjectifsRecherche}
@@ -130,6 +159,27 @@ export const IndicateursObjectifsBloc = ({
               fieldClassName="w-full sm:w-[28rem]"
               data-test="plans.suivi.indicateurs-objectifs.recherche"
             />
+            {hasReglementaires && (
+              <div className="flex items-center gap-2 text-sm text-grey-8">
+                {appLabels.indicateursObjectifsAfficher}
+                <ButtonGroup
+                  size="xs"
+                  label={appLabels.indicateursObjectifsAfficher}
+                  activeButtonId={source}
+                  buttons={INDICATEURS_OBJECTIFS_FILTRES_SOURCE.map(
+                    (filtre) => ({
+                      id: filtre,
+                      children: FILTRE_SOURCE_LABELS[filtre],
+                      onClick: () => {
+                        setSource(filtre);
+                        setIsAllVisible(false);
+                      },
+                      'data-test': `plans.suivi.indicateurs-objectifs.afficher-${filtre}`,
+                    })
+                  )}
+                />
+              </div>
+            )}
           </div>
 
           {filtres.length === 0 ? (
@@ -145,6 +195,7 @@ export const IndicateursObjectifsBloc = ({
                   indicateur={indicateur}
                   horizon={horizon}
                   canMutateValeurs={canMutateValeurs}
+                  showSources={hasReglementaires}
                 />
               ))}
             </div>

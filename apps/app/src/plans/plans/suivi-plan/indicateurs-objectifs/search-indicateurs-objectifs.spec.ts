@@ -10,22 +10,38 @@ const indicateurs = [
     titre: 'Émissions de gaz à effet de serre',
     identifiantReferentiel: 'cae_1.a',
     favori: true,
+    sources: ['reglementaire' as const, 'plan' as const],
   },
   {
     id: 2,
     titre: 'Consommation énergétique finale',
     identifiantReferentiel: 'cae_2.a',
     favori: false,
+    sources: ['reglementaire' as const],
   },
   {
     id: 3,
     titre: 'Logements rénovés',
     identifiantReferentiel: null,
     favori: false,
+    sources: ['plan' as const],
   },
 ];
 
 describe('filterIndicateursObjectifs', () => {
+  it('filtre par source : réglementaires, ou liés au plan', () => {
+    const ids = (source: 'tous' | 'reglementaires' | 'plan') =>
+      filterIndicateursObjectifs(indicateurs, {
+        recherche: '',
+        selectionIds: [],
+        source,
+      }).map(({ id }) => id);
+
+    expect(ids('tous')).toEqual([1, 2, 3]);
+    expect(ids('reglementaires')).toEqual([1, 2]);
+    expect(ids('plan')).toEqual([1, 3]);
+  });
+
   it('garde tout sans recherche ni étiquette', () => {
     expect(
       filterIndicateursObjectifs(indicateurs, {
