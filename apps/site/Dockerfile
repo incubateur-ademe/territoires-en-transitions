@@ -35,7 +35,7 @@ COPY --parents package.json apps/*/package.json packages/*/package.json e2e/pack
 RUN --mount=type=secret,id=bryntum_token,env=BRYNTUM_ACCESS_TOKEN \
     env "pnpm_config_//npm.bryntum.com/:_authToken=$BRYNTUM_ACCESS_TOKEN" pnpm install -r --offline --frozen-lockfile
 
-COPY . .
+COPY --exclude=data_layer . .
 
 ENV NEXT_TELEMETRY_DISABLED=1
 

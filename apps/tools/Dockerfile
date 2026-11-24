@@ -47,7 +47,7 @@ RUN --mount=type=secret,id=bryntum_token,env=BRYNTUM_ACCESS_TOKEN \
 FROM manifests AS builder
 RUN --mount=type=secret,id=bryntum_token,env=BRYNTUM_ACCESS_TOKEN \
     env "pnpm_config_//npm.bryntum.com/:_authToken=$BRYNTUM_ACCESS_TOKEN" pnpm install -r --offline --frozen-lockfile
-COPY . .
+COPY --exclude=data_layer . .
 # `nx build tools` (aliased by this script) also builds the workspace
 # packages it depends on, i.e. domain. `backend` itself is built too since
 # tools imports its compiled output directly.
