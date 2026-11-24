@@ -257,8 +257,8 @@ const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
  * rythme d'une trajectoire linéaire.
  *
  * `null` (pas de barre) si une valeur manque, si le départ est déjà l'objectif,
- * si l'objectif n'est pas postérieur au départ, ou si le dernier résultat est
- * antérieur au départ.
+ * si l'objectif n'est pas postérieur au départ, ou si aucun résultat n'est
+ * postérieur au départ : il n'y a encore rien à mesurer.
  */
 export function computeAvancementObjectif({
   depart,
@@ -276,7 +276,7 @@ export function computeAvancementObjectif({
     !dernier ||
     !cible ||
     cible.annee <= depart.annee ||
-    dernier.annee < depart.annee
+    dernier.annee <= depart.annee
   ) {
     return null;
   }
