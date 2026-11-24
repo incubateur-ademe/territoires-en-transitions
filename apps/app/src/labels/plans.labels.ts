@@ -8,6 +8,8 @@ import {
 } from '@tet/domain/plans';
 import { plural } from '@tet/ui/labels/plural';
 
+const nbIndicateurs = plural({ one: 'indicateur', other: 'indicateurs' });
+
 type PlanBudgetCalculArgs = {
   nbFiches: number;
   totalFiches: number | undefined;
@@ -585,7 +587,7 @@ export const plansLabels = {
   indicateursObjectifsAucunRecherche:
     'Aucun indicateur ne correspond à la recherche.',
   indicateursObjectifsVoirPlus: (count: number): string =>
-    `Voir plus (${count} ${count > 1 ? 'indicateurs' : 'indicateur'})`,
+    `Voir plus (${nbIndicateurs({ count })})`,
   indicateursObjectifsVoirMoins: 'Voir moins',
   indicateursObjectifsErreurChargement:
     'Impossible de charger les indicateurs du plan',

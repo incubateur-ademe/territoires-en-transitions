@@ -122,6 +122,37 @@ describe('pickResultats', () => {
     ).toEqual([{ dateValeur: '2023-01-01', valeur: 12 }]);
   });
 
+  it('masque le dernier résultat de la collectivité à la périodicité de l’indicateur, sans égard aux autres', () => {
+    expect(
+      pickResultats(
+        [
+          ligne({ dateValeur: '2022-01-01', resultat: 10 }),
+          ligne({ dateValeur: '2023-01-01', resultat: 12 }),
+          ligne({
+            periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
+            dateValeur: '2024-03-01',
+            resultat: 1,
+          }),
+        ],
+        ANNUELLE,
+        { maskDernierResultatCollectivite: true }
+      )?.points
+    ).toEqual([{ dateValeur: '2022-01-01', valeur: 10 }]);
+  });
+
+  it('ne bascule pas sur l’open data quand le seul résultat de la collectivité est masqué', () => {
+    expect(
+      pickResultats(
+        [
+          ligne({ dateValeur: '2023-01-01', resultat: 21 }),
+          openData('rare', 1, { dateValeur: '2022-01-01', resultat: 7 }),
+        ],
+        ANNUELLE,
+        { maskDernierResultatCollectivite: true }
+      )
+    ).toBeNull();
+  });
+
   it('renvoie null sans aucun résultat', () => {
     expect(pickResultats([ligne({ objectif: 3 })], ANNUELLE)).toBeNull();
   });

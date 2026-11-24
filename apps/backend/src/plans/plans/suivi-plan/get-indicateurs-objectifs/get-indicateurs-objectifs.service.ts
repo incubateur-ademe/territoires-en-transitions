@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { IndicateurValeursReadAccessService } from '@tet/backend/indicateurs/valeurs/indicateur-valeurs-read-access.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { Result, success } from '@tet/backend/utils/result.type';
-import { maskDernierResultat } from '@tet/domain/indicateurs';
 import {
   compareIndicateursObjectifs,
   IndicateurObjectif,
@@ -86,19 +85,13 @@ export class GetIndicateursObjectifsService {
       definitionsResult.data
         .map(({ confidentiel, ...definition }) => {
           const valeurs = valeursParIndicateur[definition.id] ?? [];
-          const valeursVisibles =
-            confidentiel && !canReadConfidentiel
-              ? [
-                  ...maskDernierResultat(
-                    valeurs.filter((v) => v.metadonneeId === null)
-                  ),
-                  ...valeurs.filter((v) => v.metadonneeId !== null),
-                ]
-              : valeurs;
           return {
             ...definition,
-            resultats: pickResultats(valeursVisibles, definition.periodicite),
-            objectifs: listObjectifs(valeursVisibles),
+            resultats: pickResultats(valeurs, definition.periodicite, {
+              maskDernierResultatCollectivite:
+                confidentiel && !canReadConfidentiel,
+            }),
+            objectifs: listObjectifs(valeurs),
           };
         })
         .sort(compareIndicateursObjectifs)

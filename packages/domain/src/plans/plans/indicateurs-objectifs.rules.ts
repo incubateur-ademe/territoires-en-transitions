@@ -2,6 +2,7 @@ import { isNil } from 'es-toolkit';
 import { IndicateurPeriodicite } from '../../indicateurs/indicateur/indicateur-periodicite.schema';
 import { normalizeIndicateurReferenceObjectifs } from '../../indicateurs/valeurs/indicateur-reference-objectif.rules';
 import { IndicateurPeriodes } from '../../indicateurs/valeurs/indicateur-periodes';
+import { maskDernierResultat } from '../../indicateurs/valeurs/mask-dernier-resultat.rules';
 
 /** Valeur d'un indicateur pour la collectivité du plan, avec sa source éventuelle */
 export type LigneValeurIndicateurObjectif = {
@@ -73,27 +74,59 @@ const compareOrdreSource = (
  * la collectivité s'il y en a, sinon ceux de la source open data à
  * l'`ordreAffichage` minimal. Une date publiée par plusieurs versions de la
  * source garde la plus récente.
+ *
+ * `maskDernierResultatCollectivite` retire le dernier résultat de la
+ * collectivité (indicateur confidentiel, lecteur sans droit). La source reste
+ * celle de la collectivité même si plus rien n'en est visible : basculer sur
+ * l'open data ferait croire qu'elle n'a rien saisi.
  */
 export function pickResultats(
   lignes: LigneValeurIndicateurObjectif[],
-  periodicite: IndicateurPeriodicite
+  periodicite: IndicateurPeriodicite,
+  { maskDernierResultatCollectivite = false } = {}
 ): IndicateurResultats | null {
   const resultats = lignes.filter(
     (l) => l.periodicite === periodicite && isFiniteNumber(l.resultat)
   );
-  const collectivite = resultats.filter((l) => l.metadonneeId === null);
+  const saisies = resultats.filter((l) => l.metadonneeId === null);
   const openData = resultats.filter((l) => l.metadonneeId !== null);
   const [sourcePrioritaire] = openData.toSorted(compareOrdreSource);
 
-  const retenues = collectivite.length
-    ? collectivite
-    : openData.filter((l) => l.sourceId === sourcePrioritaire?.sourceId);
+  if (saisies.length) {
+    const collectivite = maskDernierResultatCollectivite
+      ? maskDernierResultat(saisies).filter((l) => isFiniteNumber(l.resultat))
+      : saisies;
+    if (!collectivite.length) {
+      return null;
+    }
+    return {
+      source: { type: 'collectivite' },
+      points: toPoints(collectivite),
+    };
+  }
+
+  const retenues = openData.filter(
+    (l) => l.sourceId === sourcePrioritaire?.sourceId
+  );
   if (!retenues.length) {
     return null;
   }
+  return {
+    source: {
+      type: 'open-data',
+      libelle:
+        sourcePrioritaire?.sourceLibelle ?? sourcePrioritaire?.sourceId ?? '',
+    },
+    points: toPoints(retenues),
+  };
+}
 
+// Une date publiée par plusieurs versions d'une source garde la plus récente.
+const toPoints = (
+  lignes: LigneValeurIndicateurObjectif[]
+): IndicateurResultat[] => {
   const parDate = new Map<string, LigneValeurIndicateurObjectif>();
-  retenues
+  lignes
     .toSorted(
       (a, b) =>
         compareRecentFirst(a.dateVersion, b.dateVersion) ||
@@ -104,22 +137,10 @@ export function pickResultats(
         parDate.set(l.dateValeur, l);
       }
     });
-
-  return {
-    source: collectivite.length
-      ? { type: 'collectivite' }
-      : {
-          type: 'open-data',
-          libelle:
-            sourcePrioritaire?.sourceLibelle ??
-            sourcePrioritaire?.sourceId ??
-            '',
-        },
-    points: [...parDate.values()]
-      .map((l) => ({ dateValeur: l.dateValeur, valeur: l.resultat as number }))
-      .toSorted((a, b) => a.dateValeur.localeCompare(b.dateValeur)),
-  };
-}
+  return [...parDate.values()]
+    .map((l) => ({ dateValeur: l.dateValeur, valeur: l.resultat as number }))
+    .toSorted((a, b) => a.dateValeur.localeCompare(b.dateValeur));
+};
 
 /**
  * Les objectifs saisis par la collectivité, un par année. Les trajectoires
