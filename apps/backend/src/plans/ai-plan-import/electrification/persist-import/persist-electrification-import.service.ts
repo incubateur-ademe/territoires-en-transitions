@@ -7,10 +7,7 @@ import { ResolveEntityService } from '@tet/backend/plans/plans/import-plan-aggre
 import { PersistPlanIndicateursService } from '@tet/backend/plans/plans/persist-plan-indicateurs/persist-plan-indicateurs.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import {
-  isFailedResult,
-  TransactionManager,
-} from '@tet/backend/utils/transaction/transaction-manager.service';
+import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { ImportReport } from '../../models/import-report';
 import { PrepareElectrificationImportService } from '../extract-plan/prepare-electrification-import.service';
 import { ElectrificationIssue } from '../electrification-issue';
@@ -150,11 +147,6 @@ export class PersistElectrificationImportService {
           },
         });
       } catch (error) {
-        if (
-          isFailedResult<ElectrificationIssue[]>(error) &&
-          Array.isArray(error.error)
-        )
-          return error;
         this.logger.error('Impossible de créer le plan Électrification', error);
         return failure([Errors.issue('ELECTRIFICATION_PERSISTENCE_FAILED')]);
       }

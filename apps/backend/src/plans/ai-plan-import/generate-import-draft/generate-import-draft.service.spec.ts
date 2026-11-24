@@ -601,13 +601,12 @@ describe('GenerateImportDraftService', () => {
 
   it("journalise l'erreur Postgres d'une création en échec, sans la montrer à l'utilisateur", async () => {
     const mocks = buildMocks();
-    // Forme relancée par le TransactionManager quand `tx` est partagé.
-    mocks.save.mockImplementation(() => {
-      throw failure(
+    mocks.save.mockResolvedValue(
+      failure(
         new PlanCreationError('DATABASE_ERROR'),
         new Error('valeur trop longue pour le titre')
-      );
-    });
+      )
+    );
     const logged = vi.spyOn(Logger.prototype, 'error');
     onTestFinished(() => logged.mockRestore());
     const service = buildService(mocks);

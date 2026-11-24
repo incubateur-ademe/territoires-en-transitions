@@ -7,7 +7,6 @@ import { PermissionService } from '@tet/backend/users/authorizations/permission.
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import {
-  isFailedResult,
   TransactionManager,
   TransactionOperation,
 } from '@tet/backend/utils/transaction/transaction-manager.service';
@@ -217,7 +216,6 @@ export class ManagePlanIndicateurSourceService {
       try {
         return await operation(tx);
       } catch (error) {
-        if (isFailedResult<PlanIndicateurSourceError>(error)) return error;
         this.logger.error('Impossible de gérer la source du plan', error);
         return failure(
           'DATABASE_ERROR',

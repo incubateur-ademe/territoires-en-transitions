@@ -1,10 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import PersonnalisationsExpressionService from '@tet/backend/collectivites/personnalisations/services/personnalisations-expression.service';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import {
-  isFailedResult,
-  TransactionManager,
-} from '@tet/backend/utils/transaction/transaction-manager.service';
+import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { omit } from 'es-toolkit';
 import { IndicateurLockRepository } from '../indicateur/indicateur-lock.repository';
 import { ReconcileIndicateurValeursService } from '../valeurs/reconcile-indicateur-valeurs/reconcile-indicateur-valeurs.service';
@@ -273,7 +270,6 @@ export class UpsertIndicateurDefinitionsService {
         ? failure('DATABASE_ERROR', result.error)
         : failure(result.error, result.cause);
     } catch (error) {
-      if (isFailedResult<ImportIndicateurDefinitionError>(error)) return error;
       return failure(
         'DATABASE_ERROR',
         error instanceof Error ? error : new Error(String(error))

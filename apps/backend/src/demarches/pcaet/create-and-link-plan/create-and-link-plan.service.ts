@@ -5,10 +5,7 @@ import { UpsertPlanService } from '@tet/backend/plans/plans/upsert-plan/upsert-p
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import {
-  isFailedResult,
-  TransactionManager,
-} from '@tet/backend/utils/transaction/transaction-manager.service';
+import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import {
   isDemarchePcaetContenuModifiable,
   PCAET_PLAN_TYPE_KEY,
@@ -18,7 +15,6 @@ import { and, eq } from 'drizzle-orm';
 import { DemarchePlanActionsRepository } from '@tet/backend/demarches/shared/demarche-plan-actions.repository';
 import { GetDemarchePcaetService } from '../get-demarche-pcaet/get-demarche-pcaet.service';
 import { DemarchePcaetRefRepository } from '../shared/demarche-pcaet-ref.repository';
-import type { UpdateDemarchePcaetError } from '../update-demarche-pcaet/update-demarche-pcaet.errors';
 import { UpdateDemarchePcaetService } from '../update-demarche-pcaet/update-demarche-pcaet.service';
 import {
   CreateAndLinkPlanError,
@@ -30,23 +26,6 @@ import {
   DemarchePcaetEventEnum,
 } from '../shared/tracking/demarche-pcaet-tracking.constants';
 import { DemarchePcaetTrackingService } from '../shared/tracking/demarche-pcaet-tracking.service';
-
-/**
- * `TransactionManager` relance un échec en exception (au lieu de le
- * retourner) dès qu'on lui partage une transaction — c'est ainsi qu'il
- * déclenche le rollback Drizzle. `updateDemarchePcaetService` l'utilise en
- * interne : appelé ici avec la transaction partagée, un de ses échecs y
- * remonte comme une exception plutôt que comme un `Result`, et traverserait
- * silencieusement le mapping ci-dessous s'il n'était pas récupéré ici.
- */
-function recoverThrownFailure<E extends string>(
-  error: unknown
-): Result<never, E> {
-  if (isFailedResult<E>(error)) {
-    return error;
-  }
-  throw error;
-}
 
 /**
  * Crée un plan d'action du programme et, si la démarche n'en tient encore aucun,
@@ -181,20 +160,15 @@ export class CreateAndLinkPlanService {
 
       // Le rattachement revalide permission DEMARCHES.PCAET.MUTATE, statut
       // éditable et exclusivité dans la même transaction.
-      let updateResult: Result<DemarchePcaet, UpdateDemarchePcaetError>;
-      try {
-        updateResult =
-          await this.updateDemarchePcaetService.updateDemarchePcaet(
-            {
-              collectiviteId: input.collectiviteId,
-              demarcheId: input.demarcheId,
-              planActionIds: [...planActionIds, planResult.data.id],
-            },
-            { user, tx: transaction }
-          );
-      } catch (error) {
-        updateResult = recoverThrownFailure<UpdateDemarchePcaetError>(error);
-      }
+      const updateResult =
+        await this.updateDemarchePcaetService.updateDemarchePcaet(
+          {
+            collectiviteId: input.collectiviteId,
+            demarcheId: input.demarcheId,
+            planActionIds: [...planActionIds, planResult.data.id],
+          },
+          { user, tx: transaction }
+        );
       if (!updateResult.success) {
         switch (updateResult.error) {
           case 'DEMARCHE_PCAET_NOT_FOUND':
