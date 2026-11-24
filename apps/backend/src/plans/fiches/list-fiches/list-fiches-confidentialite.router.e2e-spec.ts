@@ -1,5 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectivite } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
+import { ficheActionAxeTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-axe.table';
 import { ficheActionSharingTable } from '@tet/backend/plans/fiches/share-fiches/fiche-action-sharing.table';
 import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
 import {
@@ -313,5 +315,81 @@ describe('listFiches et la confidentialité', () => {
         description: 'Description confidentielle',
       });
     });
+  });
+
+  it('masque au visiteur vérifié la fiche restreinte filtrée par plan, et l’écarte s’il filtre aussi sur un champ masqué', async () => {
+    const { collectivite: autreCollectivite } = await addTestCollectivite(db);
+    const { user: membre } = await addTestUser(db, {
+      collectiviteId: autreCollectivite.id,
+      role: CollectiviteRole.LECTURE,
+    });
+    const [planR] = await db.db
+      .insert(axeTable)
+      .values({ nom: 'Plan R', collectiviteId: autreCollectivite.id })
+      .returning();
+    // la troisième fiche, restreinte et hors plan, ne doit jamais sortir
+    const [ficheRestreinte, ficheOuverte] = await db.db
+      .insert(ficheActionTable)
+      .values([
+        {
+          titre: 'Fiche restreinte du plan R',
+          description: 'Description confidentielle',
+          restreint: true,
+          collectiviteId: autreCollectivite.id,
+        },
+        {
+          titre: 'Fiche ouverte du plan R',
+          description: 'Description publique',
+          restreint: false,
+          collectiviteId: autreCollectivite.id,
+        },
+        {
+          titre: 'Fiche restreinte hors plan',
+          restreint: true,
+          collectiviteId: autreCollectivite.id,
+        },
+      ])
+      .returning();
+    await db.db.insert(ficheActionAxeTable).values(
+      [ficheRestreinte, ficheOuverte].map((fiche) => ({
+        ficheId: fiche.id,
+        axeId: planR.id,
+        createdBy: membre.id,
+      }))
+    );
+
+    const listFor = async (
+      user: AuthenticatedUser,
+      filters: ListFichesRequestFilters
+    ) => {
+      const { data } = await router
+        .createCaller({ user })
+        .plans.fiches.listFiches({
+          collectiviteId: autreCollectivite.id,
+          filters,
+        });
+      return data
+        .map(({ id, description }) => ({ id, description }))
+        .sort((a, b) => a.id - b.id);
+    };
+
+    const planFilter = { planActionIds: [planR.id] };
+
+    expect(await listFor(visiteurVerifie, planFilter)).toEqual([
+      { id: ficheRestreinte.id, description: null },
+      { id: ficheOuverte.id, description: 'Description publique' },
+    ]);
+    expect(
+      await listFor(visiteurVerifie, {
+        ...planFilter,
+        hasIndicateurLies: false,
+      })
+    ).toEqual([{ id: ficheOuverte.id, description: 'Description publique' }]);
+    expect(
+      await listFor(getAuthUserFromUserCredentials(membre), planFilter)
+    ).toEqual([
+      { id: ficheRestreinte.id, description: 'Description confidentielle' },
+      { id: ficheOuverte.id, description: 'Description publique' },
+    ]);
   });
 });
