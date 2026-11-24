@@ -168,7 +168,7 @@ export const IndicateurObjectifCard = ({
           resultats={points}
           objectifs={objectifsAHorizon}
           cible={cible}
-          depart={avancement?.depart}
+          depart={avancement || evolutionObjectif !== null ? depart : null}
           isOpenData={isOpenData}
           formatValeur={formatNombre}
         />
