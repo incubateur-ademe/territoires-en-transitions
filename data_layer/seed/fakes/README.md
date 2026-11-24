@@ -105,6 +105,7 @@ valeur: 21
 5. Plan PCAET en cours, pour l'onglet « Suivi » du plan
 Plan « PCAET 2026-2031 » de la collectivité 1, rattaché à la démarche PCAET en élaboration (`25-insert_fake_demarche_pcaet.sql`), avec des fiches aux statuts et jauges variés.
 Ses indicateurs couvrent les cas du bloc « Indicateurs et objectifs » : favoris, progression à la baisse et à la hausse, stagnation, régression, objectif dépassé, open data seul, résultats sans objectif, objectif sans résultat, aucune valeur, indicateur confidentiel, indicateur porté par une fiche restreinte, indicateur lié à un axe, indicateur personnalisé.
+Le dépôt PCAET y ajoute ses indicateurs réglementaires : les totaux GES, consommation et ENR (année de référence 2018, objectifs du dépôt) et les 6 polluants du seed 25.
 Le détail est en tête de `31-insert_fake_plan_pcaet_suivi.sql`. Pour l'ajouter à une base déjà seedée :
 ```sh
 docker exec -i tet-db-1 psql -U postgres -v ON_ERROR_STOP=1 < data_layer/seed/fakes/31-insert_fake_plan_pcaet_suivi.sql
