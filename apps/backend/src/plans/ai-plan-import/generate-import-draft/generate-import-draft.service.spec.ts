@@ -182,7 +182,7 @@ const buildMocks = (overrides: MockOverrides = {}) => {
       : defaultLlm,
   } as unknown as LlmService;
 
-  const save = vi.fn(
+  const save = vi.fn<ImportPlanService['save']>(
     overrides.save ??
       (async () =>
         success({ planId: 7, fichesCount: 1, createdFicheIds: [10] }))
