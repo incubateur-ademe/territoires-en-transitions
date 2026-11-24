@@ -58,7 +58,7 @@ export class IndicateurValeurLockRepository {
    * transaction : sur des milliers de collectivités, ils saturent la table des
    * verrous de PostgreSQL (« out of shared memory »). Un verrou de table les
    * remplace : les lectures continuent, les écritures attendent la fin de la
-   * transaction, et `lock` devient sans effet pour cette transaction.
+   * transaction, et `lock` ne reprend plus que ce verrou de table.
    *
    * À appeler avant toute écriture de valeur dans la transaction : un verrou
    * consultatif déjà pris, combiné au verrou de table, exposerait à un
