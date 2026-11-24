@@ -1,4 +1,3 @@
-import { VERSION_SNBC } from '@tet/domain/indicateurs';
 import { plural } from '@tet/ui/labels/plural';
 
 export const referentielsLabels = {
@@ -211,7 +210,7 @@ export const referentielsLabels = {
     `Cible : ${valeur} (${annee})`,
   scoreIndicatifCibleSelonResultat: 'Cible : selon le résultat sélectionné',
   scoreIndicatifAnneeSnbc: (annee: number): string =>
-    `SNBC${VERSION_SNBC} ${annee}`,
+    `SNBC3 ${annee}`,
   scoreIndicatifReductionCible: (reduction: string, annee: number): string =>
     `Objectif de réduction : -${reduction} % en ${annee}`,
   scoreIndicatifResultatsAnterieursNonPrisEnCompte: (annee: number): string =>

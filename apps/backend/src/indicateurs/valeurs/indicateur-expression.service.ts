@@ -16,7 +16,7 @@ import { CstNode } from 'chevrotain';
 import { isEqual, isNil } from 'es-toolkit';
 import { IndicateurExpressionError } from './indicateur-expression.errors';
 import { computeProgression, computeValeurAttendue } from './progression.rules';
-import { ANNEE_REFERENCE_SNBC_V2 } from '@tet/domain/indicateurs';
+import { ANNEE_REFERENCE_SNBC_V3 } from '@tet/domain/indicateurs';
 import {
   ProgressionParams,
   ReferencedIndicateur,
@@ -290,10 +290,13 @@ class IndicateurExpressionVisitor extends getExpressionVisitor(
     const identifiant = (this.visit(ctx.identifier) as string).toLowerCase();
     const anneeDepart = ctx.primary
       ? (this.visit(ctx.primary) as number)
-      : ANNEE_REFERENCE_SNBC_V2;
+      : ANNEE_REFERENCE_SNBC_V3;
     const { valeurUtilisee, anneeUtilisee } =
       this.getValeurEtAnneeUtilisees(identifiant);
-    if (anneeUtilisee === null) {
+    // une valeur antérieure à l'année de départ ne mesure aucune progression
+    // (cf. `filterLignesFromAnneeReference` côté app) ; elle peut rester
+    // sélectionnée depuis un changement de l'année de départ
+    if (anneeUtilisee === null || anneeUtilisee < anneeDepart) {
       return null;
     }
     const valeursParAnnee = this.valeursProgression?.[identifiant];
@@ -457,7 +460,7 @@ class IndicateurReferenceExtractionVisitor extends getExpressionVisitor(
     const identifiant = this.visit(ctx.identifier) as string;
     const anneeDepart = ctx.primary
       ? (this.visit(ctx.primary) as number)
-      : ANNEE_REFERENCE_SNBC_V2;
+      : ANNEE_REFERENCE_SNBC_V3;
     this.addReference({
       identifiant,
       token: 'progression_snbc',

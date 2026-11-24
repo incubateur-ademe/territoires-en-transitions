@@ -1,10 +1,10 @@
 import { Test } from '@nestjs/testing';
+import { InvalidExpressionError } from '@tet/backend/utils/expression-parser';
+import { getDataOrThrow } from '@tet/backend/utils/result.type';
 import {
   CollectiviteSousTypeEnum,
   CollectiviteTypeEnum,
 } from '@tet/domain/collectivites';
-import { InvalidExpressionError } from '@tet/backend/utils/expression-parser';
-import { getDataOrThrow } from '@tet/backend/utils/result.type';
 import IndicateurExpressionService from './indicateur-expression.service';
 
 // décommenter (et lancer les tests) pour màj la doc
@@ -174,19 +174,19 @@ describe('IndicateurExpressionService', () => {
       ]);
     });
 
-    test('progression_snbc(id) équivaut à progression_snbc(id, 2015)', () => {
+    test('progression_snbc(id) équivaut à progression_snbc(id, 2021)', () => {
       const attendu = [
         {
           identifiant: 'cae_1.a',
           optional: false,
           tokens: ['progression_snbc'],
-          progressions: [{ token: 'progression_snbc', anneeDepart: 2015 }],
+          progressions: [{ token: 'progression_snbc', anneeDepart: 2021 }],
         },
       ];
       expect(extractNeededSources('progression_snbc(cae_1.a)')).toEqual(
         attendu
       );
-      expect(extractNeededSources('progression_snbc(cae_1.a, 2015)')).toEqual(
+      expect(extractNeededSources('progression_snbc(cae_1.a, 2021)')).toEqual(
         attendu
       );
     });
@@ -226,11 +226,11 @@ describe('IndicateurExpressionService', () => {
 
     test('dédoublonne les progressions identiques et fusionne les autres', () => {
       const [ref] = extractNeededSources(
-        'progression_snbc(cae_1.a) + progression_snbc(cae_1.a, 2015) + progression_snbc(cae_1.a, 2019) + val(cae_1.a)'
+        'progression_snbc(cae_1.a) + progression_snbc(cae_1.a, 2021) + progression_snbc(cae_1.a, 2019) + val(cae_1.a)'
       );
       expect(ref.tokens).toEqual(['progression_snbc', 'val']);
       expect(ref.progressions).toEqual([
-        { token: 'progression_snbc', anneeDepart: 2015 },
+        { token: 'progression_snbc', anneeDepart: 2021 },
         { token: 'progression_snbc', anneeDepart: 2019 },
       ]);
     });
@@ -768,7 +768,7 @@ describe('IndicateurExpressionService', () => {
       anneesUtilisees: { cae_1: 2025 },
       valeursProgression: {
         cae_1: {
-          2015: { objectifSnbc: 100 },
+          2021: { objectifSnbc: 100 },
           2025: { objectifSnbc: 80 },
         },
       },
@@ -778,8 +778,8 @@ describe('IndicateurExpressionService', () => {
       expect(evaluate('progression_snbc(cae_1)', 90, snbc)).toBe(0.5);
     });
 
-    it('progression_snbc(id) équivaut à progression_snbc(id, 2015)', () => {
-      expect(evaluate('progression_snbc(cae_1, 2015)', 90, snbc)).toBe(0.5);
+    it('progression_snbc(id) équivaut à progression_snbc(id, 2021)', () => {
+      expect(evaluate('progression_snbc(cae_1, 2021)', 90, snbc)).toBe(0.5);
     });
 
     it('progression_snbc avec une autre année de départ', () => {
@@ -801,12 +801,26 @@ describe('IndicateurExpressionService', () => {
       ).toBeNull();
     });
 
+    it("progression_snbc renvoie null si la valeur utilisée précède l'année de départ", () => {
+      expect(
+        evaluate('progression_snbc(cae_1)', 90, {
+          anneesUtilisees: { cae_1: 2020 },
+          valeursProgression: {
+            cae_1: {
+              2020: { objectifSnbc: 120 },
+              2021: { objectifSnbc: 100 },
+            },
+          },
+        })
+      ).toBeNull();
+    });
+
     it('progression_snbc renvoie null si valeur ou objectif manque', () => {
       expect(evaluate('progression_snbc(cae_1)', null, snbc)).toBeNull();
       expect(
         evaluate('progression_snbc(cae_1)', 90, {
           ...snbc,
-          valeursProgression: { cae_1: { 2015: { objectifSnbc: 100 } } },
+          valeursProgression: { cae_1: { 2021: { objectifSnbc: 100 } } },
         })
       ).toBeNull();
     });
@@ -815,7 +829,7 @@ describe('IndicateurExpressionService', () => {
       const context = {
         ...snbc,
         valeursProgression: {
-          cae_1: { 2015: { objectifSnbc: 80 }, 2025: { objectifSnbc: 80 } },
+          cae_1: { 2021: { objectifSnbc: 80 }, 2025: { objectifSnbc: 80 } },
         },
       };
       expect(evaluate('progression_snbc(cae_1)', 90, context)).toBeNull();

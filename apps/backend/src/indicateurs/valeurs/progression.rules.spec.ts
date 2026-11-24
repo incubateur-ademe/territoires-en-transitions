@@ -87,13 +87,13 @@ describe('pickObjectifSnbc', () => {
     const lignes = [
       ligne({
         metadonneeId: 1,
-        sourceId: 'snbc',
+        sourceId: 'snbc3',
         dateVersion: '2023-01-01',
         objectif: 10,
       }),
       ligne({
         metadonneeId: 2,
-        sourceId: 'snbc',
+        sourceId: 'snbc3',
         dateVersion: '2024-01-01',
         objectif: 20,
       }),
@@ -104,10 +104,12 @@ describe('pickObjectifSnbc', () => {
   it('ignore les autres sources, les autres années et les objectifs nuls', () => {
     const lignes = [
       ligne({ metadonneeId: 1, sourceId: 'rare', objectif: 5 }),
-      ligne({ metadonneeId: 2, sourceId: 'snbc', objectif: null }),
+      // trajectoire SNBC 2 : plus utilisée par le score indicatif
+      ligne({ metadonneeId: 3, sourceId: 'snbc', objectif: 6 }),
+      ligne({ metadonneeId: 2, sourceId: 'snbc3', objectif: null }),
       ligne({
         metadonneeId: 2,
-        sourceId: 'snbc',
+        sourceId: 'snbc3',
         dateValeur: '2016-01-01',
         objectif: 7,
       }),
@@ -120,14 +122,14 @@ describe('pickObjectifSnbc', () => {
     const lignes = [
       ligne({
         metadonneeId: 1,
-        sourceId: 'snbc',
+        sourceId: 'snbc3',
         dateVersion: '2024-01-01',
         dateValeur: '2015-03-01',
         objectif: 1,
       }),
       ligne({
         metadonneeId: 1,
-        sourceId: 'snbc',
+        sourceId: 'snbc3',
         dateVersion: '2024-01-01',
         dateValeur: '2015-06-01',
         objectif: 2,
@@ -200,11 +202,11 @@ describe('pickValeurDepart', () => {
     ).toBeNull();
   });
 
-  it('ne retient jamais une ligne snbc sans resultat', () => {
+  it('ne retient jamais une ligne snbc3 sans resultat', () => {
     const lignes = [
       ligne({
         metadonneeId: 1,
-        sourceId: 'snbc',
+        sourceId: 'snbc3',
         ordreAffichage: 0,
         objectif: 9,
       }),

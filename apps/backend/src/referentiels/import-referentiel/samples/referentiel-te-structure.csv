@@ -665,7 +665,7 @@ Suivi des autres stratégies de transition écologique
  - Partager le tableau de bord et le document de synthèse avec l’équipe projet et la gouvernance pour validation (a minima à l’occasion de la réunion annuelle)",,,,,,,,
 ,1.1.6.3,Suivre et évaluer l’avancement du territoire au regard des objectifs et des trajectoires de la stratégie de transition écologique,"6,3",,,Effets,"te_cae,te_eci",,"si identite(type, commune) alors VRAI
  sinon FAUX",,,,,exposition_faible,,,Le calcul du score de la sous-mesure dépend de plusieurs indicateurs : merci de renseigner les points ci-dessous.,,,,,,,,,
-,1.1.6.3.a,Consommation énergétique finale du territoire,"2,10",,,,"te_cae,te_eci",,,,"progression_snbc(cae_2.a, 2015)",,,,,,"Définition 
+,1.1.6.3.a,Consommation énergétique finale du territoire,"2,10",,,,"te_cae,te_eci",,,,"progression_snbc(cae_2.a)",,,,,,"Définition 
 Cet indicateur estime la consommation énergétique finale annuelle du territoire, exprimé en GWh.
 
 Objectif / contexte
@@ -684,7 +684,7 @@ Le résultat est borné entre 0 et 100 % :
 - un score compris entre 0 et 100 % signifie qu’une partie de l’effort attendu à la date d’observation a été réalisée ;
 - 100 % signifie que la trajectoire attendue à la date d’observation est respectée ou dépassée.
 ",,,,,,,,
-,1.1.6.3.b,Émissions de gaz à effet de serre (GES) du territoire,"2,10",,,,"te_cae,te_eci",,,,"progression_snbc(cae_1.a, 2015)",,,,,,"Définition 
+,1.1.6.3.b,Émissions de gaz à effet de serre (GES) du territoire,"2,10",,,,"te_cae,te_eci",,,,"progression_snbc(cae_1.a)",,,,,,"Définition 
 Cet indicateur mesure la quantité totale annuelle de gaz à effet de serre émise sur le territoire, exprimée en kilotonnes équivalent CO₂.
 
 Objectif / contexte
@@ -708,7 +708,7 @@ Le résultat est borné entre 0 et 100 % :
 - un score compris entre 0 et 100 % signifie qu’une partie de l’effort attendu à la date d’observation a été réalisée ;
 - 100 % signifie que la trajectoire attendue à la date d’observation est respectée ou dépassée.
 ",,,,,,,,
-,1.1.6.3.c,Séquestration nette de CO₂ dans les sols et biomasse (forêt),"2,10",,,,"te_cae,te_eci",,,,"progression_snbc(cae_63.a, 2015)",,,,,,"Définition 
+,1.1.6.3.c,Séquestration nette de CO₂ dans les sols et biomasse (forêt),"2,10",,,,"te_cae,te_eci",,,,"progression_snbc(cae_63.a)",,,,,,"Définition 
 Cet indicateur mesure la séquestration nette de CO₂ dans les sols et la biomasse forestière du territoire. Elle correspond au solde des stockages et déstockages de carbone liés aux changements d’affectation des sols (ex : artificialisation des sols, mise en culture de prairies permanente, défrichements et boisements), aux modes de gestion des milieux (ex : pratiques agricoles), à la gestion forestière (accroissement biologique des végétaux, mortalité, prélèvements) et aux produits bois.
 
 Objectif / contexte
@@ -4097,7 +4097,7 @@ Les enjeux d’adaptation au changement climatique du territoire sont pris en co
  
  Cette comparaison permet de mesurer la position réelle du territoire par rapport aux réductions attendues des émissions et consommations d’énergie à horizon 2050.
  L’analyse des résultats permet d’interroger la stratégie et l’ambition du plan d’actions en matière de transport et de mobilité.",,,,,,,,,
-,4.1.1.6,Evolution des émissions de GES du transport par rapport à la trajectoire sectorielle de la SNBC territorialisée,"1,6",,,Effets,te_cae,,,,"progression_snbc(cae_1.k, 2015)",,,exposition_faible,,,"Définition 
+,4.1.1.6,Evolution des émissions de GES du transport par rapport à la trajectoire sectorielle de la SNBC territorialisée,"1,6",,,Effets,te_cae,,,,"progression_snbc(cae_1.k)",,,exposition_faible,,,"Définition 
 Cet indicateur mesure les émissions annuelles de gaz à effet de serre du secteur des transports sur le territoire. Elles correspondent à la somme des émissions du transport routier (cae_1.e) et des autres transports (cae_1.f).
 
 Objectif / contexte

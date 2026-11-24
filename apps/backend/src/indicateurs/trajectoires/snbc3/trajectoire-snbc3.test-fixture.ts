@@ -33,7 +33,7 @@ export function mockTrajectoireSnbc3Flag(
 }
 
 /** L'unique métadonnée `snbc3`, créée si aucun import n'a encore eu lieu. */
-async function getOrCreateSnbc3MetadonneeId(database: DatabaseService) {
+export async function getOrCreateSnbc3MetadonneeId(database: DatabaseService) {
   await database.db
     .insert(indicateurSourceTable)
     .values({ id: IndicateurSourceEnum.SNBC3, libelle: 'SNBC3' })

@@ -57,14 +57,18 @@ Prérequis :
 
 ## Score indicatif sur `snbc3`
 
-Il est resté sur `snbc` pendant l'ouverture progressive (raison dans l'ADR §4).
+Il est resté sur `snbc` pendant l'ouverture progressive (raison dans l'ADR §4). **Avancé à l'ouverture**, avant le retrait du flag : le flag et l'ancien chemin restent en place, pour pouvoir revenir en arrière.
 
-- `valeurs/progression.rules.ts` : `SOURCE_SNBC` devient `'snbc3'`.
-- `referentiels/score-indicatif/*` : même bascule.
-- `valeurs/indicateur-expression.service.ts` : l'année de référence par défaut de `progression_snbc` passe de `ANNEE_REFERENCE_SNBC_V2` (2015) à `ANNEE_REFERENCE_SNBC_V3` (2021).
-- **À vérifier** : le référentiel TE passe l'année en dur (`progression_snbc(cae_1.a, 2015)`, et de même pour `cae_2.a` et `cae_63.a`, dans `referentiel-te-structure.csv`). Selon le sens de ce paramètre (année de départ de la collectivité ou de la trajectoire), les expressions du référentiel sont à mettre à jour et à réimporter.
-- Recalculer les scores courants des collectivités concernées. Les snapshots figés ne changent pas.
-- Avant la livraison, les experts peuvent comparer les scores indicatifs SNBC 2 et SNBC 3 grâce à une requête ou un script de simulation, en local sur une base de prod restaurée.
+- Fait : `valeurs/progression.rules.ts`, `SOURCE_SNBC` vaut `IndicateurSourceEnum.SNBC3`. Le reste de `referentiels/score-indicatif/*` n'avait pas de source en dur.
+- Fait : `valeurs/indicateur-expression.service.ts`, l'année de référence par défaut de `progression_snbc` passe de `ANNEE_REFERENCE_SNBC_V2` (2015) à `ANNEE_REFERENCE_SNBC_V3` (2021).
+- Fait : le libellé `scoreIndicatifAnneeSnbc` affiche « SNBC3 » (`VERSION_SNBC` est retiré).
+- Fait : une valeur sélectionnée antérieure à l'année de départ ne donne plus de score (`null`, comme `reduction`). Une sélection 2020 faite avec la référence 2015 ne compte plus, jusqu’à sa suppression par le rattrapage ci-dessous.
+- Le paramètre de `progression_snbc` est l'année de départ de la trajectoire. Les expressions du référentiel TE (`cae_1.a`, `cae_2.a`, `cae_63.a`, `cae_1.k`) **perdent leur année** (`progression_snbc(cae_1.a)`) : l'année vient de la valeur par défaut du backend. Fait dans `referentiel-te-structure.csv` (seed local) ; à reporter dans le référentiel publié.
+- Ordre de mise en prod, pour éviter une fenêtre où le score lit `snbc3` en 2015 (absent : la trajectoire commence en 2020) :
+  1. publier le référentiel sans année. L'ancien backend applique son défaut (2015, source `snbc`) : rien ne change ;
+  2. déployer le backend : la source et l'année basculent ensemble ;
+  3. rafraîchir les statuts dérivés et recalculer les scores courants des collectivités concernées (voir ci-dessous). Les snapshots figés ne changent pas.
+- Retour arrière : revert du commit de bascule, sans republier le référentiel, puis le même rafraîchissement.
 
 ## Tests
 

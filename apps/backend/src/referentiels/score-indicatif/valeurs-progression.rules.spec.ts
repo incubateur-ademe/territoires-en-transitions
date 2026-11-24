@@ -94,7 +94,7 @@ describe('buildValeursProgression', () => {
         {
           indicateurId: 1,
           metadonneeId: 5,
-          sourceId: 'snbc',
+          sourceId: 'snbc3',
           ordreAffichage: null,
           dateVersion: '2024-01-01',
           dateValeur: '2025-01-01',

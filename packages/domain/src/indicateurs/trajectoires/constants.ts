@@ -3,7 +3,6 @@ export const ANNEE_JALON2 = 2050;
 export const DATE_FIN_SNBC_V2 = `${ANNEE_JALON2}-01-01`;
 export const DATE_DEBUT_SNBC_V2_REFERENCE = `${ANNEE_REFERENCE_SNBC_V2}-01-01`;
 export const DATE_FIN_SNBC_V2_REFERENCE = `${ANNEE_REFERENCE_SNBC_V2}-12-31`;
-export const VERSION_SNBC = 2;
 
 /** Année de référence de la trajectoire SNBC 3 (recalage sur l'observé). */
 export const ANNEE_REFERENCE_SNBC_V3 = 2021;

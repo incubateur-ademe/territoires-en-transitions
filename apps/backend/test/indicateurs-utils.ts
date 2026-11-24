@@ -1,11 +1,10 @@
 import { indicateurActionTable } from '@tet/backend/indicateurs/indicateur/indicateur-action.table';
 import { indicateurDefinitionTable } from '@tet/backend/indicateurs/indicateur/indicateur-definition.table';
-import { indicateurSourceMetadonneeTable } from '@tet/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
 import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
 import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
 import { actionScoreIndicateurValeurTable } from '@tet/backend/referentiels/models/action-score-indicateur-valeur.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import { and, desc, eq, inArray } from 'drizzle-orm';
+import { and, eq, inArray } from 'drizzle-orm';
 
 export const getIndicateurIdByIdentifiant = async (
   databaseService: DatabaseService,
@@ -405,22 +404,6 @@ export async function insertFixtureIndicateurPourValeursReference(
     },
   };
 }
-
-/** Id de la métadonnée la plus récente de la source `snbc` */
-export const getSnbcMetadonneeId = async (
-  databaseService: DatabaseService
-): Promise<number> => {
-  const [metadonnee] = await databaseService.db
-    .select({ id: indicateurSourceMetadonneeTable.id })
-    .from(indicateurSourceMetadonneeTable)
-    .where(eq(indicateurSourceMetadonneeTable.sourceId, 'snbc'))
-    .orderBy(desc(indicateurSourceMetadonneeTable.dateVersion))
-    .limit(1);
-  if (!metadonnee) {
-    throw new Error('Métadonnée de la source snbc introuvable');
-  }
-  return metadonnee.id;
-};
 
 /**
  * Insère des valeurs d'indicateur (objectif et/ou résultat) pour un indicateur
