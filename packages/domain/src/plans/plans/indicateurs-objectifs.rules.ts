@@ -1,4 +1,5 @@
 import { isNil } from 'es-toolkit';
+import { deriveReferenceYearFromIndicateurValeurYears } from '../../demarches/pcaet/diagnostic/demarche-pcaet-diagnostic.rules';
 import { IndicateurPeriodicite } from '../../indicateurs/indicateur/indicateur-periodicite.schema';
 import { normalizeIndicateurReferenceObjectifs } from '../../indicateurs/valeurs/indicateur-reference-objectif.rules';
 import { IndicateurPeriodes } from '../../indicateurs/valeurs/indicateur-periodes';
@@ -33,6 +34,12 @@ export type IndicateurResultats = {
   points: IndicateurResultat[];
 };
 
+/**
+ * Pourquoi un indicateur est dans la liste : réglementaire du dépôt PCAET du
+ * plan, lié à une fiche ou à un axe du plan, ou les deux.
+ */
+export type IndicateurObjectifSource = 'reglementaire' | 'plan';
+
 export type IndicateurObjectif = {
   id: number;
   identifiantReferentiel: string | null;
@@ -43,6 +50,9 @@ export type IndicateurObjectif = {
   favori: boolean;
   resultats: IndicateurResultats | null;
   objectifs: IndicateurObjectifHorizon[];
+  sources: IndicateurObjectifSource[];
+  /** Le résultat de l'année de référence du dépôt PCAET, pour un réglementaire */
+  departDepot: IndicateurValeurAnnee | null;
 };
 
 /** Les horizons proposés au choix, ceux des objectifs du dépôt PCAET. */
@@ -143,16 +153,12 @@ const toPoints = (
     .toSorted((a, b) => a.dateValeur.localeCompare(b.dateValeur));
 };
 
-/**
- * Les objectifs saisis par la collectivité, un par année. Les trajectoires
- * open data (SNBC…) ne sont jamais retenues.
- */
-export function listObjectifs(
-  lignes: LigneValeurIndicateurObjectif[]
-): IndicateurObjectifHorizon[] {
-  return normalizeIndicateurReferenceObjectifs(
+const toObjectifs = (
+  lignes: Pick<LigneValeurIndicateurObjectif, 'dateValeur' | 'objectif'>[]
+): IndicateurObjectifHorizon[] =>
+  normalizeIndicateurReferenceObjectifs(
     lignes.flatMap((l) =>
-      l.metadonneeId === null && isFiniteNumber(l.objectif)
+      isFiniteNumber(l.objectif)
         ? [{ dateValeur: l.dateValeur, valeur: l.objectif }]
         : []
     )
@@ -162,6 +168,51 @@ export function listObjectifs(
       valeur,
     }))
     .toSorted((a, b) => a.annee - b.annee);
+
+/**
+ * Les objectifs saisis par la collectivité, un par année. Les trajectoires
+ * open data (SNBC…) ne sont jamais retenues.
+ */
+export function listObjectifs(
+  lignes: LigneValeurIndicateurObjectif[]
+): IndicateurObjectifHorizon[] {
+  return toObjectifs(lignes.filter((l) => l.metadonneeId === null));
+}
+
+/** Une valeur annuelle d'un indicateur saisie dans le dépôt PCAET. */
+export type LigneValeurDepot = {
+  dateValeur: string;
+  resultat: number | null;
+  objectif: number | null;
+};
+
+/**
+ * Ce que le dépôt PCAET apporte à un indicateur réglementaire : ses objectifs,
+ * et le résultat de l'année de référence du diagnostic comme départ. L'année
+ * de référence n'est pas stockée : c'est la dernière année de résultat révolue
+ * qui n'est pas un horizon d'objectif, comme dans le dépôt.
+ */
+export function buildDepot(
+  lignes: LigneValeurDepot[],
+  anneeCourante: number
+): {
+  departDepot: IndicateurValeurAnnee | null;
+  objectifs: IndicateurObjectifHorizon[];
+} {
+  const resultats = lignes.flatMap((l) =>
+    isFiniteNumber(l.resultat)
+      ? [{ annee: Number(l.dateValeur.slice(0, 4)), valeur: l.resultat }]
+      : []
+  );
+  const anneeReference = deriveReferenceYearFromIndicateurValeurYears({
+    resultYears: resultats.map(({ annee }) => annee),
+    currentYear: anneeCourante,
+  });
+  return {
+    departDepot:
+      resultats.find(({ annee }) => annee === anneeReference) ?? null,
+    objectifs: toObjectifs(lignes),
+  };
 }
 
 /** L'objectif retenu pour un horizon : le dernier fixé jusqu'à cet horizon. */
@@ -182,11 +233,19 @@ export function getHorizonParDefaut(
   );
 }
 
-/** Les favoris de la collectivité d'abord, puis l'ordre alphabétique. */
+/**
+ * Les réglementaires du dépôt PCAET d'abord, puis les favoris de la
+ * collectivité, puis l'ordre alphabétique.
+ */
 export function compareIndicateursObjectifs(
-  a: Pick<IndicateurObjectif, 'favori' | 'titre'>,
-  b: Pick<IndicateurObjectif, 'favori' | 'titre'>
+  a: Pick<IndicateurObjectif, 'favori' | 'titre' | 'sources'>,
+  b: Pick<IndicateurObjectif, 'favori' | 'titre' | 'sources'>
 ): number {
+  const reglementaireA = a.sources.includes('reglementaire');
+  const reglementaireB = b.sources.includes('reglementaire');
+  if (reglementaireA !== reglementaireB) {
+    return reglementaireA ? -1 : 1;
+  }
   if (a.favori !== b.favori) {
     return a.favori ? -1 : 1;
   }

@@ -3,6 +3,7 @@ import {
   listPcaetDiagnosticIndicateurRequiredLeaves,
   PCAET_DIAGNOSTIC_INDICATEURS,
   PCAET_DIAGNOSTIC_VULNERABILITE,
+  PCAET_INDICATEURS_REGLEMENTAIRES_SUIVI,
 } from './demarche-pcaet-diagnostic.config';
 
 describe('DEMARCHE_PCAET_DIAGNOSTIC_INDICATEURS', () => {
@@ -69,5 +70,22 @@ describe('DEMARCHE_PCAET_DIAGNOSTIC_VULNERABILITE', () => {
       icon: 'map-2-line',
       horizons: [2050, 2100],
     });
+  });
+});
+
+describe('PCAET_INDICATEURS_REGLEMENTAIRES_SUIVI', () => {
+  it('reprend le total de chaque volet, et les 6 polluants à la place de leur total', () => {
+    expect(PCAET_INDICATEURS_REGLEMENTAIRES_SUIVI).toEqual([
+      'cae_1.a',
+      'cae_4.a',
+      'cae_4.b',
+      'cae_4.c',
+      'cae_4.d',
+      'cae_4.e',
+      'cae_4.f',
+      'cae_63.a',
+      'cae_2.a',
+      'cae_3.a',
+    ]);
   });
 });
