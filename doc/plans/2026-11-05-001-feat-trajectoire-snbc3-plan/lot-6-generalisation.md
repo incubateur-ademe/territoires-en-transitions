@@ -69,6 +69,22 @@ Il est resté sur `snbc` pendant l'ouverture progressive (raison dans l'ADR §4)
   2. déployer le backend : la source et l'année basculent ensemble ;
   3. rafraîchir les statuts dérivés et recalculer les scores courants des collectivités concernées (voir ci-dessous). Les snapshots figés ne changent pas.
 - Retour arrière : revert du commit de bascule, sans republier le référentiel, puis le même rafraîchissement.
+- Les statuts TE posés à partir du score indicatif sont persistés dans `action_statut` : le score courant (`forceRecompute`) les relit sans les recalculer. Rattrapage ponctuel, la mutation service role `referentiels.actions.refreshStatutsProgressionSnbc({ collectiviteIds?, modifiedBy })`, sans `collectiviteIds` pour toute la base :
+  1. supprime les valeurs sélectionnées antérieures à l'année de départ des actions TE en `progression_snbc` ;
+  2. recalcule le statut dérivé de ces actions (`SetScoreFromIndicateurService.refreshActionsAvancementAndSnapshots`, règles de la saisie : sans sélection → « non renseigné »), puis le score courant TE, pour chaque collectivité qui avait une sélection.
+
+  `modifiedBy` est un compte existant (clé étrangère vers `auth.users`), inscrit dans `action_statut.modified_by` ; l'historique reste sans auteur et s'affiche « Équipe territoires en transitions ». À retirer une fois exécutée.
+- La suppression est définitive et ces sélections redeviendraient valides après un retour arrière (départ 2015). Avant de lancer, les exporter (et mesurer l'impact) :
+
+  ```sql
+  select s.*, v.date_valeur
+  from action_score_indicateur_valeur s
+  join action_definition a on a.action_id = s.action_id
+  join indicateur_valeur v on v.id = s.indicateur_valeur_id
+  where a.referentiel_id = 'te'
+    and a.expr_score ilike '%progression_snbc%'
+    and extract(year from v.date_valeur) < 2021;
+  ```
 
 ## Tests
 

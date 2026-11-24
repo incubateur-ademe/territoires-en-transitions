@@ -5,7 +5,10 @@ import ManageIndicateurValeursService, {
 } from '@tet/backend/indicateurs/valeurs/manage-indicateur-valeurs/manage-indicateur-valeurs.service';
 import { UpdateIndicateurService } from '@tet/backend/indicateurs/indicateurs/mutate-indicateur/update-indicateur.service';
 import { ScoreIndicatifService } from '@tet/backend/referentiels/score-indicatif/score-indicatif.service';
-import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import {
+  AuthenticatedOrServiceRoleUser,
+  AuthenticatedUser,
+} from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
@@ -101,10 +104,14 @@ export class SetScoreFromIndicateurService {
   /**
    * Recalcule et écrit le statut d'avancement dérivé de chaque action
    * fournie, puis recalcule le snapshot de chaque référentiel impacté.
+   *
+   * Appelée aussi par un rattrapage en service role : `modifiedBy` est alors
+   * le compte inscrit dans `action_statut.modified_by`.
    */
-  private async refreshActionsAvancementAndSnapshots(
+  async refreshActionsAvancementAndSnapshots(
     actions: { collectiviteId: number; actionId: string }[],
-    user: AuthenticatedUser
+    user: AuthenticatedOrServiceRoleUser,
+    { modifiedBy }: { modifiedBy?: string } = {}
   ): Promise<void> {
     // collectiviteId + referentielId impactés, dédupliqués : une même valeur
     // d'indicateur peut être utilisée par plusieurs actions d'un référentiel.
@@ -128,7 +135,7 @@ export class SetScoreFromIndicateurService {
       const refreshResult = await this.refreshAvancementForAction(
         collectiviteId,
         actionId,
-        { user }
+        { user, modifiedBy }
       );
       if (!refreshResult.success) {
         this.logger.error(
@@ -186,9 +193,11 @@ export class SetScoreFromIndicateurService {
     {
       user,
       tx,
+      modifiedBy,
     }: {
-      user: AuthenticatedUser;
+      user: AuthenticatedOrServiceRoleUser;
       tx?: Transaction;
+      modifiedBy?: string;
     }
   ): Promise<Result<void, SetScoreFromIndicateurError>> {
     const scoreResult = await this.scoreIndicatifService.getScoreIndicatif(
@@ -223,7 +232,7 @@ export class SetScoreFromIndicateurService {
               statutDetailleAuPourcentage: null,
             },
           ],
-          { user, tx }
+          { user, tx, modifiedBy }
         );
       if (!resetResult.success) {
         return failure(resetResult.error, resetResult.cause);
@@ -249,7 +258,7 @@ export class SetScoreFromIndicateurService {
             statutDetailleAuPourcentage: avancement,
           },
         ],
-        { user, tx }
+        { user, tx, modifiedBy }
       );
     if (!statutResult.success) {
       return failure(statutResult.error, statutResult.cause);
