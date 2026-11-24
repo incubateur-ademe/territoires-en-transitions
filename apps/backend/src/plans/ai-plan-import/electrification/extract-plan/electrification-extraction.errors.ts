@@ -1,6 +1,7 @@
 import { StatutEnum } from '@tet/domain/plans';
 import { electrificationEngagementsDocument } from '@tet/backend/plans/plans/electrification/config/electrification-engagements-document.config';
 import type { ElectrificationDocumentSource } from './electrification-extraction.schema';
+import type { ElectrificationValueRejection } from './electrification-value-interpretation.schema';
 import { electrificationFichesErrors } from '../resolve-fiches/electrification-fiches.errors';
 import {
   createIssueFactory,
@@ -13,6 +14,21 @@ export const electrificationExtractionErrors = {
     kind: 'document-error',
     message:
       'La valeur est approximative. Saisissez un nombre précis, par exemple "12 (2026)".',
+  },
+  CONTRADICTORY_ELECTRIFICATION_VALUE: {
+    kind: 'document-error',
+    message:
+      'La cellule contient des informations contradictoires. Corrigez-les pour indiquer une valeur certaine.',
+  },
+  CONDITIONAL_ELECTRIFICATION_VALUE: {
+    kind: 'document-error',
+    message:
+      "La valeur dépend d'une condition. Renseignez une valeur retenue sans condition et reportez les réserves dans la description de l'action.",
+  },
+  INSTRUCTIONS_IN_ELECTRIFICATION_VALUE: {
+    kind: 'document-error',
+    message:
+      'La cellule contient une consigne à interpréter. Remplacez-la par la valeur à importer.',
   },
   UNRESOLVED_ELECTRIFICATION_VALUE: {
     kind: 'document-error',
@@ -185,6 +201,23 @@ export const electrificationExtractionErrors = {
 
 export class ElectrificationExtractionErrors {
   static issue = createIssueFactory(electrificationExtractionErrors);
+
+  static rejectedValue(
+    reason: ElectrificationValueRejection['reason'],
+    source: ElectrificationDocumentSource
+  ): ElectrificationIssue {
+    const codes = {
+      approximation: 'APPROXIMATE_ELECTRIFICATION_VALUE',
+      ambiguity: 'UNRESOLVED_ELECTRIFICATION_VALUE',
+      contradiction: 'CONTRADICTORY_ELECTRIFICATION_VALUE',
+      condition: 'CONDITIONAL_ELECTRIFICATION_VALUE',
+      instruction: 'INSTRUCTIONS_IN_ELECTRIFICATION_VALUE',
+    } as const satisfies Record<
+      ElectrificationValueRejection['reason'],
+      keyof typeof electrificationExtractionErrors
+    >;
+    return this.valueIssue(codes[reason], source);
+  }
 
   static valueIssue(
     code: keyof typeof electrificationExtractionErrors,

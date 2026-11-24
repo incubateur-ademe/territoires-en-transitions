@@ -103,6 +103,20 @@ référencée par code lorsque son sous-axe facultatif est vide.
   reçoit un message distinct ; une action partagée autorisée reste réutilisable.
   Le diagnostic n'expose pas l'existence d'une action inaccessible.
 
+**Précision après revue du 24 novembre.** La détection locale de quelques
+expressions d'approximation est retirée. Le lecteur déterministe accepte les
+syntaxes complètes reconnues ; un mot après un nombre n'est une unité que
+s'il correspond à une unité déclarée. Les autres formulations éligibles à
+l'assistance passent par l'appel IA existant. En cas de refus, celui-ci indique
+un motif structuré (approximation, ambiguïté, contradiction, condition ou
+instruction) et recopie la cellule complète. Le code vérifie cette citation,
+refuse les réponses contradictoires et affiche un message prévu pour ce motif.
+Il ne maintient aucune liste d'expressions françaises et ne déclenche aucun
+second appel pour expliquer le refus. Une réponse acceptée conserve les
+contrôles existants de nombres, unités, dates et preuves ; le format du
+checkpoint reste inchangé. Les tests avec faux LLM vérifient ce contrat,
+pas la justesse sémantique du modèle réel, qui reste à qualifier en recette.
+
 **Source des engagements.** La décision de Clément du 24 novembre remplace
 la demande d'alignement du 20 novembre : Grist fait référence, le Word doit
 être corrigé par l'équipe métier. Le lecteur accepte les phrases publiées
@@ -132,6 +146,13 @@ modèle vierge V1, les cibles nommées issues d'un catalogue différent, les
 erreurs simultanées d'engagements et le sous-axe facultatif. Les contrôles
 TypeScript backend et specs, ainsi que le lint ciblé, passent. Aucun import
 IA réel ni recette de la version déployée n'a été lancé pour ces corrections.
+
+Après remplacement de la détection des approximations, les deux suites de
+fiches et de parcours complet passent : 231 tests en 23 s avec faux LLM.
+Elles couvrent les motifs de refus, leur citation, une approximation niée,
+le parcours déterministe et la reprise depuis un checkpoint. L'attente d'appel
+IA devenue obsolète pour E07 dans le parcours complet est corrigée. Typage
+backend/specs, ESLint ciblé et Prettier vérifiés.
 
 ## Révision de la lecture documentaire - 20 novembre 2026
 

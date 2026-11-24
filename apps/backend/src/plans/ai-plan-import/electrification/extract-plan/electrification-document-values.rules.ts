@@ -55,12 +55,6 @@ export class ElectrificationDocumentValues {
     return Number.isFinite(number) ? number : null;
   }
 
-  static isApproximate(text: string): boolean {
-    return /\b(?:environ|approximativement|a peu pres)\b/u.test(
-      this.normalize(text)
-    );
-  }
-
   static date(text: string): string | null {
     const months = [
       'janvier',

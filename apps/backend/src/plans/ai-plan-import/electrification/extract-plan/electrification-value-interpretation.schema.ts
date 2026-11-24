@@ -14,14 +14,32 @@ const interpretedValueSchema = z.strictObject({
 });
 
 /** Le modèle affecte les occurrences du document à leurs rôles, sans produire de nombre. */
-export const electrificationValueResponseSchema = z.strictObject({
+const interpretedValuesSchema = z.strictObject({
   status: z.enum(['extracted', 'unresolved']),
   values: z.array(interpretedValueSchema).max(100),
 });
-export type ElectrificationValueResponse = z.infer<
-  typeof electrificationValueResponseSchema
+const valueRejectionSchema = z.strictObject({
+  reason: z.enum([
+    'approximation',
+    'ambiguity',
+    'contradiction',
+    'condition',
+    'instruction',
+  ]),
+  quote: z.string().min(1),
+});
+export type ElectrificationValueRejection = z.infer<
+  typeof valueRejectionSchema
 >;
 
+/** Le refus sert au diagnostic ; seules les valeurs justifiées sont conservées en checkpoint. */
+export const electrificationValueResponseSchema = interpretedValuesSchema
+  .extend({ rejection: valueRejectionSchema.nullable() })
+  .refine(({ status, values, rejection }) =>
+    status === 'extracted'
+      ? rejection === null
+      : rejection !== null && values.length === 0
+  );
 export type ElectrificationInterpretedValue = {
   key: string;
   value: number;
@@ -30,7 +48,7 @@ export type ElectrificationInterpretedValue = {
 };
 
 export const electrificationValueInterpretationSchema =
-  electrificationValueResponseSchema.extend({ sourceId: z.string().min(1) });
+  interpretedValuesSchema.extend({ sourceId: z.string().min(1) });
 export type ElectrificationValueInterpretation = z.infer<
   typeof electrificationValueInterpretationSchema
 >;

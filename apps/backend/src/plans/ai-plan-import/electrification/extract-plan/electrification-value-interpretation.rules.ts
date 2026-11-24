@@ -3,9 +3,11 @@ import { ElectrificationDocumentValues as Values } from './electrification-docum
 import {
   ElectrificationInterpretedValue,
   ElectrificationValueContext,
+  ElectrificationValueInterpretation,
   ElectrificationValueRequest,
-  ElectrificationValueResponse,
 } from './electrification-value-interpretation.schema';
+
+type InterpretedValues = Omit<ElectrificationValueInterpretation, 'sourceId'>;
 
 const numberLiteralPattern = new RegExp(
   `(?<![\\p{L}\\p{N}])${Values.NUMBER_LITERAL}(?:[eE][+-]?\\d+)?(?!\\p{N})`,
@@ -49,12 +51,13 @@ export class ElectrificationValueInterpretationRules {
         unit: literal[2] ?? literal[3] ?? null,
         year: literal[4] ? Number(literal[4]) : null,
       };
-      // Sans unité déclarée, un mot après le nombre peut aussi être une réserve.
-      if (
-        request.kind !== 'observation' ||
-        request.unit !== null ||
-        result.unit === null
-      )
+      // Un mot après le nombre peut être une réserve. Seule une unité déclarée
+      // permet de rester déterministe ; le texte libre passe par l'assistance.
+      const units =
+        request.kind === 'target'
+          ? request.targets.flatMap(({ unit, units }) => [unit, ...units])
+          : [request.unit];
+      if (result.unit === null || units.includes(result.unit))
         return this.accepts(request, result) ? [result] : null;
     }
     if (request.kind === 'target') {
@@ -139,10 +142,7 @@ export class ElectrificationValueInterpretationRules {
   }
 
   /** Chaque quantité a son occurrence ; une échéance commune peut être partagée. */
-  static hasEvidence(
-    text: string,
-    response: ElectrificationValueResponse
-  ): boolean {
+  static hasEvidence(text: string, response: InterpretedValues): boolean {
     if (response.status !== 'extracted' || !response.values.length)
       return false;
     const numbers = this.numbers(text);
@@ -187,7 +187,7 @@ export class ElectrificationValueInterpretationRules {
 
   static resolve(
     request: ElectrificationValueRequest,
-    response: ElectrificationValueResponse
+    response: InterpretedValues
   ): ElectrificationInterpretedValue[] | null {
     if (!this.hasEvidence(request.source.text, response)) return null;
     const numbers = this.numbers(request.source.text);
