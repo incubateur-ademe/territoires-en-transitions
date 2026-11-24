@@ -9,6 +9,10 @@
 # l'instance de l'incubateur, dans notre Team (Security > API Tokens, scope
 # root), puis stocké dans Scaleway Secret Manager. On ne le met jamais en clair
 # dans le repo ni dans le state (R4).
+#
+# Exporte aussi TF_VAR_coolify_data_token, token de la Team « TeT - Data », pour
+# le stack infra/data. Code de retour : échec si aucun des deux tokens n'est
+# chargé ; succès avec avertissement si seul celui de notre Team manque.
 
 _tfvars="$(git rev-parse --show-toplevel 2>/dev/null)/infra/coolify/terraform.tfvars"
 _tfvar() {
@@ -32,6 +36,24 @@ if [ -z "${COOLIFY_TOKEN_SECRET_PROJECT_ID:-}" ]; then
 fi
 _project_arg=()
 [ -n "${COOLIFY_TOKEN_SECRET_PROJECT_ID:-}" ] && _project_arg=(project-id="$COOLIFY_TOKEN_SECRET_PROJECT_ID")
+
+# Token de la Team « TeT - Data » (infra/data/coolify.tf). Requis par le stack
+# data seulement, d'où un simple avertissement s'il manque. Lu avant le token
+# de notre Team : le stack data ne doit pas dépendre de celui-ci.
+_data_secret_name="${COOLIFY_DATA_TOKEN_SECRET_NAME:-tet-platform-coolify-data-api-token}"
+if [ -z "${TF_VAR_coolify_data_token:-}" ] && command -v scw >/dev/null 2>&1; then
+  TF_VAR_coolify_data_token="$(scw secret version access-by-path \
+    secret-name="$_data_secret_name" secret-path=/ revision=latest "${_project_arg[@]}" \
+    --output=json 2>/dev/null | jq -r '.data // empty' 2>/dev/null | base64 --decode 2>/dev/null || true)"
+fi
+if [ -n "${TF_VAR_coolify_data_token:-}" ]; then
+  export TF_VAR_coolify_data_token
+  echo "coolify-env.sh : token de la Team « TeT - Data » chargé"
+else
+  unset TF_VAR_coolify_data_token
+  echo "coolify-env.sh : secret $_data_secret_name introuvable, le stack data ne se planifiera pas" >&2
+fi
+unset _data_secret_name
 
 if [ -z "${COOLIFY_TOKEN:-}" ] && command -v scw >/dev/null 2>&1; then
   # Secret Manager renvoie la valeur encodée en base64 dans .data → on décode.
@@ -59,6 +81,11 @@ if [ -z "${COOLIFY_TOKEN:-}" ]; then
   echo "       _id=\"\$(scw secret secret create name=$_secret_name -o json | jq -r .id)\"" >&2
   echo "       scw secret version create \"\$_id\" data='<id>|<token>'" >&2
   echo "  ou l'exporter manuellement : export COOLIFY_TOKEN='<id>|<token>'" >&2
+  # Le stack data n'a besoin que du token de sa Team : pas d'échec pour lui.
+  if [ -n "${TF_VAR_coolify_data_token:-}" ]; then
+    echo "  Le stack data reste utilisable (token de la Team « TeT - Data » chargé)." >&2
+    return 0 2>/dev/null || exit 0
+  fi
   return 1 2>/dev/null || exit 1
 fi
 
@@ -66,4 +93,5 @@ export COOLIFY_TOKEN
 # Le provider Terraform `coolify` exige `token` : on le fournit via TF_VAR_*.
 export TF_VAR_coolify_token="$COOLIFY_TOKEN"
 echo "coolify-env.sh : COOLIFY_TOKEN chargé, endpoint=$COOLIFY_ENDPOINT"
+
 unset _scw_out _tfvars _project_arg; unset -f _tfvar

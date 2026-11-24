@@ -11,13 +11,14 @@
 # infra vide, la liste est vide ; un second apply de platform, après les
 # stacks de tier, ajoute leurs IP aux routes du tunnel.
 #
-# L'ordre (nonprod, preview, prod) fixe celui des routes dans le cloud-init de
+# L'ordre (nonprod, preview, prod, data) fixe celui des routes dans le cloud-init de
 # la passerelle : le changer la remplace.
 data "scaleway_instance_servers" "app" {
   for_each = {
     nonprod = var.main_project_id
     preview = var.main_project_id
     prod    = var.prod_project_id
+    data    = var.main_project_id
   }
 
   name       = "tet-${each.key}-apps"
@@ -40,7 +41,7 @@ check "app_servers_routed" {
 
 locals {
   app_server_public_ips = flatten([
-    for tier in ["nonprod", "preview", "prod"] : [
+    for tier in ["nonprod", "preview", "prod", "data"] : [
       for s in data.scaleway_instance_servers.app[tier].servers : [
         for ip in s.public_ips : ip.address if ip.family == "inet"
       ] if s.name == "tet-${tier}-apps"

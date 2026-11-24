@@ -2,8 +2,8 @@ variable "tier" {
   description = "Tier d'hébergement du serveur. Distinct de « environnement » : le tier nonprod porte à la fois preprod et staging."
   type        = string
   validation {
-    condition     = contains(["prod", "nonprod", "preview"], var.tier)
-    error_message = "tier doit être l'une des valeurs : prod, nonprod, preview."
+    condition     = contains(["prod", "nonprod", "preview", "data"], var.tier)
+    error_message = "tier doit être l'une des valeurs : prod, nonprod, preview, data."
   }
 }
 
