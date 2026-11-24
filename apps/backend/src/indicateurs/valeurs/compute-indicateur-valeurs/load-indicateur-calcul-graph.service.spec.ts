@@ -15,6 +15,7 @@ const makeService = ({
   listIndicateursPredefinis = vi.fn(),
   listIndicateursPredefinisHavingComputedValue = vi.fn(),
   lockIndicateurs = vi.fn(),
+  extractNeededSourceIndicateursFromFormula = vi.fn(() => success([])),
 }) =>
   new LoadIndicateurCalculGraphService(
     {
@@ -22,7 +23,7 @@ const makeService = ({
       listIndicateursPredefinisHavingComputedValue,
     } as never,
     { lockForValueWrite: vi.fn(), lockIndicateurs } as never,
-    { extractNeededSourceIndicateursFromFormula: vi.fn(() => []) } as never
+    { extractNeededSourceIndicateursFromFormula } as never
   );
 
 describe('LoadIndicateurCalculGraphService', () => {
@@ -83,6 +84,27 @@ describe('LoadIndicateurCalculGraphService', () => {
 
     await expect(service.loadForRecompute([1], context)).resolves.toEqual(
       graphFailure
+    );
+  });
+
+  it('requalifie une formule invalide avec l’erreur de syntaxe en cause', async () => {
+    const syntaxError = new Error('Attendu « alors »');
+    const withFormula = toIndicateurRow({
+      id: 1,
+      identifiantReferentiel: 'cae_1.a',
+      valeurCalcule: 'si val(cae_1.b)',
+    });
+    const service = makeService({
+      listIndicateursPredefinis: vi
+        .fn()
+        .mockResolvedValue(success([withFormula])),
+      extractNeededSourceIndicateursFromFormula: vi.fn(() =>
+        failure('INVALID_EXPRESSION', syntaxError)
+      ),
+    });
+
+    await expect(service.loadForRecompute([1], context)).resolves.toEqual(
+      failure('LOAD_CALCUL_GRAPH_FAILED', syntaxError)
     );
   });
 
