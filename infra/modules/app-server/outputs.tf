@@ -37,3 +37,9 @@ output "sshd_host_public_key" {
   description = "Clé d'hôte publique du serveur SSH (ssh-ed25519 …), imposée par Terraform. À épingler dans known_hosts avant toute connexion."
   value       = trimspace(tls_private_key.sshd_host.public_key_openssh)
 }
+
+output "ssh_private_key" {
+  description = "Clé privée SSH root, celle du secret ssh_key_secret_name. Pour un stack de tier qui enregistre lui-même son serveur dans Coolify (infra/data)."
+  value       = tls_private_key.server.private_key_openssh
+  sensitive   = true
+}

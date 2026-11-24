@@ -23,7 +23,7 @@ output "network_plan" {
 # --- Passerelle VPN ---
 
 output "vpn_public_ip" {
-  description = "IP publique de la passerelle VPN. Les stacks nonprod, preview et prod la lisent d'office (platform.tf)."
+  description = "IP publique de la passerelle VPN. Les stacks nonprod, preview, prod et data la lisent d'office (platform.tf)."
   value       = module.vpn.public_ip
 }
 

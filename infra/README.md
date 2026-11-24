@@ -4,7 +4,8 @@ Terraform qui décrit l'infrastructure TET sur Scaleway : la cible de la migrati
 Supabase Cloud + Koyeb (cf. [brainstorm de référence](../doc/plans/2026-05-15-001-migration-infra-supabase-koyeb-vers-scaleway-coolify.md)).
 
 **En bref** : l'instance **Coolify de l'incubateur**, où nous avons notre propre Team,
-déploie les applications sur trois serveurs applicatifs (prod, nonprod, preview).
+déploie les applications sur trois serveurs applicatifs (prod, nonprod, preview). Un
+quatrième, `tet-data-apps` (stack d'analyse), vit dans une Team Coolify à part, « TeT - Data ».
 Terraform crée les serveurs, réseaux et bases, puis configure notre Team Coolify
 (« Coolify-as-code »). Les opérateurs passent par un **VPN WireGuard**. Les secrets fournis
 par un humain vivent dans **Secret Manager**. Ceux que Terraform génère ou lit pour les
@@ -30,8 +31,12 @@ flowchart TB
         nonprod["tet-nonprod-apps<br/>preprod + staging"]
         nrdb[(RDB + Redis<br/>preprod)]
       end
-      subgraph vpn["tet-preview-pn 10.0.4.0/24"]
+      subgraph pvpn["tet-preview-pn 10.0.4.0/24"]
         preview["tet-preview-apps<br/>une preview par PR"]
+      end
+      subgraph dpn["tet-data-pn 10.0.2.0/24"]
+        data["tet-data-apps<br/>Streamlit, Metabase, MCP"]
+        drdb[(RDB stats)]
       end
     end
     sm[[Secret Manager]]
@@ -50,12 +55,14 @@ flowchart TB
   end
 
   coolify -- "SSH IP publique<br/>filtrée (ssh_allowed_ips)" --> nonprod & preview & prod
-  vpn -- "SSH, Postgres, Redis<br/>(IP privées)" --> nonprod & preview
+  coolify -- "Team TeT - Data" --> data
+  vpn -- "SSH, Postgres, Redis<br/>(IP privées)" --> nonprod & preview & data
   vpn -- "SSH IP publique" --> prod
   sm -- "env vars (à l'apply)" --> coolify
   gha["GitHub Actions"] -- "dump quotidien BDD prod" --> dbbucket
   nonprod --- nrdb
   prod --- prdb
+  data --- drdb
   nonprod -. "Alloy : métriques + logs" .-> cockpit
 ```
 
@@ -68,6 +75,7 @@ serveurs tirent leurs images de `ghcr.io`.
 | `tet-prod-apps`    | **`tet-prod`** | Applications de production.                              |
 | `tet-nonprod-apps` | `tet`          | Mutualisé : preprod **et** staging.                      |
 | `tet-preview-apps` | `tet`          | Previews éphémères, une par pull request.                |
+| `tet-data-apps`    | `tet`          | Stack d'analyse (Team Coolify « TeT - Data »). arm64.    |
 
 | Environnement | Postgres / Redis              |
 | ------------- | ----------------------------- |
@@ -75,6 +83,7 @@ serveurs tirent leurs images de `ghcr.io`.
 | preprod       | managés Scaleway (RDB, Redis) |
 | staging       | conteneurs Coolify            |
 | preview       | conteneurs Coolify, éphémères |
+| data          | RDB managé Scaleway (stats), sans Redis |
 
 Preprod est sur du managé pour rester **iso-prod** : l'admin RDB Scaleway n'est pas
 superuser, d'où `scaleway_rdb_user.supabase_auth_admin`, le rôle `postgres` NOLOGIN factice
@@ -90,17 +99,18 @@ l'agent Alloy. Pour l'instant, seule la preprod est ouverte (`application_enviro
 
 Deux VPC **sans aucun lien** : `tet` (projet principal, un Private Network par tier hors
 prod) et `tet-prod` (un seul Private Network avec serveur, Postgres et Redis de prod).
-`10.0.2.0/24` est libre : staging vit sur le serveur nonprod.
+Staging vit sur le serveur nonprod, sans Private Network propre. `10.0.2.0/24` est le
+Private Network du tier data (VM data, RDB stats), sans route vers nonprod.
 
 - **Coolify** (instance de l'incubateur, hors de nos VPC) joint chaque serveur en SSH sur
   son **IP publique**. Le port 22 n'y est ouvert qu'aux `ssh_allowed_ips` du stack du tier :
   l'IP de sortie de l'instance de l'incubateur et celle de la passerelle VPN. Si l'une
-  change, réappliquer les trois stacks de tier.
+  change, réappliquer les quatre stacks de tier.
 - **Opérateurs** : par le VPN (cf. [Accès aux serveurs](#accès-aux-serveurs-vpn)). Dans le
-  VPC `tet`, les ACL (IPv4 **et** IPv6) n'autorisent que la passerelle VPN vers nonprod et
-  preview, en TCP 22, 5432 et 6379.
+  VPC `tet`, les ACL (IPv4 **et** IPv6) n'autorisent que la passerelle VPN vers nonprod,
+  preview et data, en TCP 22, 5432 et 6379.
 - La prod n'a **aucune route** depuis ce VPC : le VPN la joint sur son IP publique, comme
-  Coolify. Une erreur d'ACL côté nonprod ou preview ne peut donc pas ouvrir la prod.
+  Coolify. Une erreur d'ACL côté nonprod, preview ou data ne peut donc pas ouvrir la prod.
 - Le trafic intra-PN (app → Postgres/Redis) n'est pas filtré : il reste en L2.
 
 > Les Security Groups Scaleway ne filtrent que l'**interface publique** ; les ACL du VPC
@@ -109,7 +119,7 @@ prod) et `tet-prod` (un seul Private Network avec serveur, Postgres et Redis de 
 > tout. Sans elle, l'IPv6 serait routé librement et la prod redeviendrait joignable.
 
 Le plan d'adressage est dans `platform/variables.tf` (`network_plan`) et
-`prod/variables.tf`. Nonprod et preview redéclarent l'IP de leur serveur dans
+`prod/variables.tf`. Nonprod, preview et data redéclarent l'IP de leur serveur dans
 `server_private_ipv4_address` : **les deux doivent rester alignés**.
 
 ## Stacks Terraform
@@ -118,15 +128,16 @@ Le plan d'adressage est dans `platform/variables.tf` (`network_plan`) et
 flowchart LR
   admin([Admin org Scaleway<br/>projets + IAM, à la main]) --> platform
   platform["platform<br/>VPC tet, ACL, passerelle VPN,<br/>buckets de backups"]
-  platform --> nonprod & preview & prod
+  platform --> nonprod & preview & prod & data
   nonprod["nonprod<br/>VM + RDB/Redis preprod,<br/>bucket Storage, Cockpit"]
   preview["preview<br/>VM"]
   prod["prod<br/>VPC tet-prod, VM,<br/>RDB/Redis prod"]
+  data["data<br/>VM arm64, RDB stats"]
   nonprod & preview & prod --> coolifys
   coolifys["coolify<br/>clés, serveurs, environnements,<br/>applications, env vars, S3"]
 ```
 
-Ordre d'application : `platform → nonprod / prod / preview → coolify`.
+Ordre d'application : `platform → nonprod / prod / preview → coolify`, et `platform → data`.
 
 - **Un state par stack**, dans le bucket `tet-tfstate`, avec locking natif
   (`use_lockfile`, cf. [Bootstrap](#bootstrap-une-fois)).
@@ -155,6 +166,8 @@ infra/
 │                        cockpit-dashboards
 ├── platform/            socle transverse
 ├── nonprod/ prod/ preview/   un stack par tier (nonprod porte aussi supabase-api/ et Cockpit)
+├── data/                serveur data (arm64) + RDB stats, rôles MCP (lecture seule) et Metabase ;
+│                        s'enregistre lui-même dans la Team Coolify « TeT - Data » (coolify.tf)
 ├── coolify/             Coolify-as-code
 ├── observability/       config Alloy + règles d'alerte
 └── scripts/             helpers à sourcer (tf-env.sh, coolify-env.sh) et scripts d'API Coolify
@@ -254,7 +267,8 @@ Après le premier apply d'un stack applicatif, récupérer les mots de passe gé
 
 Pour le stack `coolify`, sourcer en plus `scripts/coolify-env.sh` (`COOLIFY_ENDPOINT`,
 `COOLIFY_TOKEN`), après avoir [créé le token](#instance-coolify-de-lincubateur) et
-[déposé ses secrets](#secrets-à-déposer-à-la-main), et se connecter au VPN.
+[déposé ses secrets](#secrets-à-déposer-à-la-main), et se connecter au VPN. Le stack `data`
+le source aussi, pour le token de la Team « TeT - Data » (`TF_VAR_coolify_data_token`).
 
 ### Hygiène
 
@@ -330,7 +344,7 @@ première venue. Commandes à lancer depuis la racine du dépôt :
 
 ```sh
 {
-  for t in nonprod preview prod; do
+  for t in nonprod preview prod data; do
     echo "$(terraform -chdir=infra/$t output -raw server_public_ip) $(terraform -chdir=infra/$t output -raw server_sshd_host_public_key)"
   done
   echo "$(terraform -chdir=infra/platform output -raw vpn_gateway_tunnel_ip) $(terraform -chdir=infra/platform output -raw vpn_sshd_host_public_key)"
@@ -379,10 +393,11 @@ de son propre serveur et la sauvegarde. Nous avons une **Team** dédiée, dont n
 admins, et tout ce que décrit le stack `coolify` vit dans cette Team.
 
 1. Dans notre Team, **Security → API Tokens** → créer un token **scope `root`** (limité à
-   la Team) et le ranger dans Secret Manager (cf. ci-dessous).
+   la Team) et le ranger dans Secret Manager (cf. ci-dessous). Idem dans la Team
+   « TeT - Data » (cf. [Tier data](#tier-data-team--tet---data-)).
 2. `coolify_endpoint` dans `coolify/terraform.tfvars` : `https://<instance>/api/v1`.
 3. L'IP de sortie de l'instance, fournie par son admin, va dans `ssh_allowed_ips` des
-   stacks `nonprod`, `preview` et `prod`. Elle doit rester fixe.
+   stacks `nonprod`, `preview`, `prod` et `data`. Elle doit rester fixe.
 
 Les admins de l'instance peuvent lire ce que contient notre Team, clés SSH root et
 variables d'environnement comprises. C'est le prix de la mutualisation, à garder en tête
@@ -402,6 +417,7 @@ serveurs : à réserver aux opérateurs Terraform.
 | Secret                                | Format                       | Contenu                                                                                           |
 | ------------------------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------- |
 | `tet-platform-coolify-api-token`      | `<id>\|<token>`              | Token API `root` de notre Team Coolify (créé dans l'UI)                                           |
+| `tet-platform-coolify-data-api-token` | `<id>\|<token>`              | Token API `root` de la Team Coolify « TeT - Data » (créé dans l'UI)                               |
 | `tet-platform-vpn-private-key`        | sortie de `wg genkey`        | Clé privée WireGuard de la passerelle (cf. [VPN](#mise-en-place-une-fois))                        |
 | `tet-platform-ghcr-pull`              | `<github-username>\|<pat>`   | PAT GitHub **classic**, scope `read:packages` seul, idéalement sur un machine user                |
 
@@ -499,6 +515,64 @@ Mise en service d'une entrée :
    Alloy du serveur (`<env>/alloy`, bouton **Redeploy** dans Coolify) : il ne relit
    `PROBE_TARGETS`, qui gagne la sonde HTTPS de l'application, qu'au démarrage. Mettre le
    service Koyeb en pause une fois le trafic basculé.
+
+### Tier data (Team « TeT - Data »)
+
+`tet-data-apps` vit dans une Team Coolify à part, « TeT - Data », où le data analyst
+déploie lui-même Streamlit, Metabase, le serveur MCP et les scripts de calcul. Notre Team
+porte la prod, et Coolify donne ses droits par Team : l'y inviter lui ouvrirait tout. Le
+stack `data` y enregistre lui-même la clé et le serveur
+([`data/coolify.tf`](data/coolify.tf)), avec le token de cette Team : le stack `coolify`,
+qui porte la prod, ne dépend ni de ce token ni de la VM data. Pas de login GHCR, que le
+terminal root de la Team exposerait. Contrepartie : le `plan` de `data` suppose Coolify
+joignable et ce token valide.
+
+Mise en place, une fois :
+
+1. Dans la Team « TeT - Data », **Security → API Tokens** : token **scope `root`**, rangé
+   dans `tet-platform-coolify-data-api-token` (cf.
+   [Secrets à déposer à la main](#secrets-à-déposer-à-la-main)).
+2. `source infra/scripts/coolify-env.sh`, puis `terraform -chdir=infra/data apply`.
+3. Inviter le data analyst : **Teams → Members**, par e-mail ou lien d'invitation. Le
+   provider n'a pas de ressource pour les membres.
+4. Les URIs des rôles (`stats_writer_private_connection_uri`,
+   `mcp_reader_private_connection_uri`, `metabase_private_connection_uri`) se collent dans
+   les variables des ressources Coolify concernées.
+
+Reprise de la base de stats depuis Koyeb : la RDB n'a pas d'endpoint public, le dump passe
+par le serveur data, qui sort sur internet et joint la RDB en privé.
+
+```sh
+# Sur tet-data-apps (cf. Se connecter). Source : l'URI Koyeb ; cible : output
+# pg_private_connection_uri (admin).
+docker run --rm -e SRC -e DST postgres:17 sh -c \
+  'pg_dump -Fc --no-owner --no-privileges "$SRC" | pg_restore --no-owner --no-privileges -d "$DST"'
+```
+
+La base `stats` cible doit être vide. Si le transfert échoue en route, les tables déjà
+restaurées restent remplies et une relance telle quelle dupliquerait leurs lignes :
+rejouer avec `pg_restore --clean --if-exists`, qui supprime chaque objet avant de le
+recréer.
+
+Les droits des rôles (`scaleway_rdb_privilege`) ne couvrent que les tables qui existaient
+quand Terraform les a posés : les tables restaurées, possédées par l'admin, et celles que
+les scripts créeront ensuite leur échappent. Après la restauration :
+
+```sql
+-- En admin (pg_private_connection_uri) : tables restaurées. À adapter si la base
+-- Koyeb a d'autres schémas que public.
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO mcp_reader;
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO stats_writer;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO stats_writer;
+
+-- En stats_writer (stats_writer_private_connection_uri) : les tables qu'il créera
+-- seront lisibles par le MCP.
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO mcp_reader;
+```
+
+Le rôle `metabase` n'a accès qu'à la base `metabase` : comme source de données, Metabase
+lit `stats` en `mcp_reader`. Vérifier avec `\dp`. Si les scripts doivent créer des tables et que `stats_writer` ne le
+peut pas, le dire avant de lui donner plus : c'est un choix de droits, pas un oubli.
 
 ### Buckets de `tet-prod` : une bucket policy par bucket
 
