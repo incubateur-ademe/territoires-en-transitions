@@ -113,6 +113,7 @@ const statusViewProjection = {
   report: sql<unknown>`${aiPlanImportJobTable.draft} -> 'report'`,
   resumable: sql<boolean>`coalesce(${isResumable}, false)`,
   withSecteurs: sql<boolean>`coalesce((${aiPlanImportJobTable.options} ->> 'withSecteurs')::boolean, false)`,
+  withSousActions: sql<boolean>`coalesce((${aiPlanImportJobTable.options} ->> 'withSousActions')::boolean, true)`,
   question: sql<unknown>`${aiPlanImportJobTable.question}`,
   content: sql<unknown>`${aiPlanImportJobTable.stats} -> 'content'`,
 };
@@ -642,19 +643,20 @@ export class AiPlanImportJobRepository {
    * imports restés sans réponse au-delà de la rétention : ils libèrent leur
    * collectivité, et leur point de reprise, qui contient le document, part.
    */
-  async expireAwaitingAnswers(): Promise<
+  async expireAwaitingAnswers(tx?: Transaction): Promise<
     Result<
       {
         id: string;
         collectiviteId: number;
         createdBy: string;
         createdPlanId: number | null;
+        sourcePath: string;
       }[],
       AiPlanImportError
     >
   > {
     try {
-      const rows = await this.db
+      const rows = await (tx ?? this.db)
         .update(aiPlanImportJobTable)
         .set({
           status: AiPlanImportJobStatusEnum.FAILED,
@@ -669,6 +671,7 @@ export class AiPlanImportJobRepository {
           collectiviteId: aiPlanImportJobTable.collectiviteId,
           createdBy: aiPlanImportJobTable.createdBy,
           createdPlanId: aiPlanImportJobTable.createdPlanId,
+          sourcePath: aiPlanImportJobTable.sourcePath,
         });
       return success(rows);
     } catch (error) {

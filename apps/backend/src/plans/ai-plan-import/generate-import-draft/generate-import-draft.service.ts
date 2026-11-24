@@ -232,6 +232,9 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
         });
       }
       if ('awaitingAnswer' in imported.data) {
+        // Un point de reprise périmé d'ici la réponse (nouveau modèle, nouveau
+        // format) fera relire la source ; elle part à l'expiration.
+        preserveSource = true;
         this.trackingService.capture({
           distinctId: job.createdBy,
           event: EVENT_AI_PLAN_IMPORT_QUESTION_ASKED,

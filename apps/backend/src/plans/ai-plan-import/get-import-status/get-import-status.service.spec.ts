@@ -29,6 +29,7 @@ const toView = (
   qualitativeReview: null,
   resumable: false,
   withSecteurs: false,
+  withSousActions: true,
   question: null,
   content: null,
   ...overrides,

@@ -115,11 +115,12 @@ export const cutUnits = (
         return;
       }
       // Le rappel de l'axe ou de la fiche en bandeau n'ouvre rien, pas plus
-      // qu'un intertitre en majuscules dans une fiche (« LES OUTILS »).
+      // qu'un intertitre en majuscules dans une fiche (« LES OUTILS »), y
+      // compris dans le chapeau d'une fiche lue à l'étape.
       if (
         heading &&
         (isRecall(heading) ||
-          (open.kind === 'fiche' &&
+          ((open.kind === 'fiche' || open.keepsKind) &&
             heading.kind === 'majuscules' &&
             heading.level >= 2))
       ) {

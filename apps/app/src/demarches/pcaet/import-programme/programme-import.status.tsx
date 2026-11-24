@@ -56,7 +56,7 @@ const ImportQuestionCard = ({ demarcheId }: { demarcheId: number }) => {
   const answer = useAnswerAiImportQuestion();
   const tracker = useEventTracker();
   const question = ongoingStatus?.question;
-  if (!ongoingJobId || !question) return null;
+  if (!ongoingJobId || !ongoingStatus || !question) return null;
 
   return (
     <div
@@ -66,6 +66,7 @@ const ImportQuestionCard = ({ demarcheId }: { demarcheId: number }) => {
       <AiImportQuestion
         key={ongoingJobId}
         question={question}
+        withSousActions={ongoingStatus.withSousActions}
         isAnswering={answer.isPending}
         onAnswer={(actionLevel) => {
           tracker(Event.plans.importIa.repondreQuestion, {

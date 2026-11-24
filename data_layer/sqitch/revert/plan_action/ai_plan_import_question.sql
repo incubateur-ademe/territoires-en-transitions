@@ -2,6 +2,9 @@
 
 BEGIN;
 
+-- Aucun worker ne peut plus mettre un import en attente pendant le revert.
+LOCK TABLE public.ai_plan_import_job IN ACCESS EXCLUSIVE MODE;
+
 -- Les imports qui attendent une réponse n'ont pas d'équivalent : ils échouent.
 UPDATE public.ai_plan_import_job
 SET status = 'failed',

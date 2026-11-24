@@ -117,6 +117,7 @@ const toOutput = (view: AiPlanImportJobStatusView): GetImportStatusOutput => ({
   createdPlanId: view.createdPlanId,
   resumable: view.resumable,
   withSecteurs: view.withSecteurs,
+  withSousActions: view.withSousActions,
   question: view.question && {
     kind: view.question.kind,
     axes: view.question.axes,

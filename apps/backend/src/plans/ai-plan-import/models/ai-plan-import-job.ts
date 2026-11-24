@@ -150,6 +150,8 @@ export type AiPlanImportJobStatusView = {
   resumable: boolean;
   /** Plan PCAET : l'étape des secteurs propose aussi les secteurs réglementaires. */
   withSecteurs: boolean;
+  /** Sans sous-actions, les étapes d'une fiche ne sont pas créées. */
+  withSousActions: boolean;
   retryDefaults?: z.output<typeof importRetryDefaultsSchema> | null;
   question: ImportQuestion | null;
   /** Le plan créé, compté à la fin : absent des imports antérieurs et d'Électrification. */

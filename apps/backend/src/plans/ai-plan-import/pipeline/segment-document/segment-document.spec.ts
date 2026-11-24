@@ -793,5 +793,117 @@ describe('niveau de l’action : fiche ou étape', () => {
         ['1 Limiter les déchets verts', '1.3 Poursuivre le tri à la source'],
       ],
     ]);
+    const pilote = 'Pilote : Direction Prévention';
+    expect(
+      units.filter(
+        ({ kind, text }) => kind === 'section' && text.includes(pilote)
+      )
+    ).toHaveLength(3);
+    expect(fiches.some(({ text }) => text.includes(pilote))).toBe(false);
+  });
+
+  const etapesOf = (
+    numero: string,
+    titre: string,
+    chapeau: { text: string; fontSize: number }[]
+  ) => [
+    { text: `Fiche Action n°${numero}`, fontSize: 14 },
+    { text: titre, fontSize: 14 },
+    ...chapeau,
+    { text: 'Action 1 - Diagnostiquer et orienter', fontSize: 10 },
+    ...body(2),
+    { text: 'Action 2 – Accompagner et former les habitants', fontSize: 10 },
+    ...body(2),
+  ];
+  const lireALEtape = (
+    chapeau: { text: string; fontSize: number }[],
+    numeros = ['1.1', '1.2', '1.3']
+  ) =>
+    segmentDocument(
+      buildDocument(
+        'pdf',
+        numeros.map((numero, index) =>
+          buildPage(index, [
+            ...(index === 0
+              ? [{ text: 'Axe 1 : Limiter les déchets verts', fontSize: 16 }]
+              : []),
+            ...etapesOf(numero, `Réduire les déchets ${numero}`, chapeau),
+          ])
+        )
+      ),
+      { minTokens: 0, maxTokens: 1000, overlapTokens: 0, actionLevel: 'etape' }
+    );
+
+  it('lu à l’étape, un chapeau riche en champs reste le chapeau de sa fiche', () => {
+    const units = lireALEtape([
+      { text: 'Pilote :', fontSize: 10 },
+      { text: 'Direction Prévention', fontSize: 10 },
+      { text: 'Partenaires :', fontSize: 10 },
+      { text: 'Associations du territoire', fontSize: 10 },
+      { text: 'Calendrier :', fontSize: 10 },
+      { text: '2025-2027', fontSize: 10 },
+    ]);
+    const fiches = units.filter(({ kind }) => kind === 'fiche');
+
+    expect(fiches).toHaveLength(6);
+    expect(
+      units.filter(
+        ({ kind, text }) =>
+          kind === 'section' && text.includes('Direction Prévention')
+      )
+    ).toHaveLength(3);
+    expect(
+      fiches.some(({ text }) => text.includes('Direction Prévention'))
+    ).toBe(false);
+  });
+
+  it('lu à l’étape, un intertitre en majuscules du chapeau ne détache pas les étapes de leur fiche', () => {
+    const units = lireALEtape([
+      ...body(1),
+      { text: 'LES OUTILS', fontSize: 10 },
+      ...body(1),
+    ]);
+
+    expect(
+      units
+        .filter(({ kind }) => kind === 'fiche')
+        .map(({ headingPath }) => headingPath.at(-1))
+    ).toEqual([
+      '1.1 Réduire les déchets 1.1',
+      '1.1 Réduire les déchets 1.1',
+      '1.2 Réduire les déchets 1.2',
+      '1.2 Réduire les déchets 1.2',
+      '1.3 Réduire les déchets 1.3',
+      '1.3 Réduire les déchets 1.3',
+    ]);
+  });
+
+  it('voit les étapes « Action 1, 2 » des fiches numérotées 1, 2, 3', () => {
+    const pages = ['1', '2', '3'].map((numero, index) =>
+      buildPage(
+        index,
+        etapesOf(numero, `Réduire les déchets ${numero}`, body(1))
+      )
+    );
+
+    expect(detectActionLevelDoubt(pages)).toMatchObject({
+      fiches: { count: 3 },
+      fichesWithEtapes: 3,
+      etapes: { count: 6 },
+    });
+  });
+
+  it('montre l’axe de la fiche en exemple, même titré seulement par son numéro', () => {
+    const pages = [
+      buildPage(0, [
+        { text: 'Axe 1 : Limiter les déchets verts', fontSize: 16 },
+        { text: 'Axe 2', fontSize: 16 },
+        ...etapesOf('2.1', 'Accompagner les habitants', body(1)),
+      ]),
+      buildPage(1, etapesOf('2.2', 'Réduire les imprimés', body(1))),
+      buildPage(2, etapesOf('2.3', 'Poursuivre le tri', body(1))),
+    ];
+
+    expect(detectActionLevelDoubt(pages)?.axes?.exampleTitle).toBe('Axe 2');
   });
 });

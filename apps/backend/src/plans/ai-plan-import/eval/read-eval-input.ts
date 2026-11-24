@@ -27,10 +27,10 @@ const USAGE = `Usage : run-ai-import-eval --file <pdf|docx|xlsx|csv> [--out <jso
   [--instructions "<consignes>"] [--no-verifications] [--no-sous-actions]
   [--profile generic|pcaet|annexe-3-electrification] [--catalogue <json>]
   [--type-plan "<libellé>"]   (hors PCAET : type du plan donné au modèle, ex. "Plan Mobilité")
-  [--action-level fiche|etape]   (réponse à la question du niveau de l'action, si le document la pose)
+  [--action-level fiche|etape]   (réponse à la question du niveau de l'action ; segmente à ce niveau même sans question)
        --profile annexe-3-electrification --catalogue <json> : DOCX V4, aide IA ciblée si nécessaire, références non résolues
        (appels réels possibles : lancement humain uniquement)
-       (incompatible avec --ref, --instructions, --no-verifications, --no-sous-actions et --lecture-seule)
+       (incompatible avec --ref, --instructions, --no-verifications, --no-sous-actions, --action-level et --lecture-seule)
        run-ai-import-eval --file <xlsx|csv> --lecture-seule   (aucun appel au modèle)`;
 
 type EvalFile = {
@@ -107,7 +107,8 @@ export const readEvalInput = async (): Promise<EvalInput | EvalExit> => {
       values['type-plan'] !== undefined ||
       values['no-verifications'] ||
       values['no-sous-actions'] ||
-      values['lecture-seule'])
+      values['lecture-seule'] ||
+      values['action-level'] !== undefined)
   ) {
     return {
       mode: 'exit',

@@ -45,10 +45,13 @@ const Becomes = ({ level }: { level: PlanLevel }) => (
  */
 export const AiImportQuestion = ({
   question,
+  withSousActions,
   onAnswer,
   isAnswering = false,
 }: {
   question: ImportQuestion;
+  /** Sans sous-actions, les étapes d'une fiche ne sont pas créées. */
+  withSousActions: boolean;
   onAnswer: (actionLevel: ActionLevel) => void;
   isAnswering?: boolean;
 }) => {
@@ -63,7 +66,7 @@ export const AiImportQuestion = ({
           axes: question.axes?.count ?? 0,
           sousAxes: 0,
           actions: question.fiches.count,
-          sousActions: question.etapes.count,
+          sousActions: withSousActions ? question.etapes.count : 0,
         }
       : {
           axes: question.axes?.count ?? 0,

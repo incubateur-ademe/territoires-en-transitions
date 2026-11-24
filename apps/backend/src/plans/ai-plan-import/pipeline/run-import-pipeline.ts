@@ -833,45 +833,49 @@ const readSource = (
         : workbook ?? []
     );
   if (llm.capabilities.strategy === 'segmented') {
-    const question = detectDocumentActionLevelDoubt(modelDocument);
-    // Les deux lectures, faute de quoi la réponse ferait relire le document,
-    // supprimé dès la pause.
-    const unitsByLevel = question && {
-      fiche: segmentDocument(modelDocument, {
+    const unitsAt = (level: ActionLevel) =>
+      segmentDocument(modelDocument, {
         ...DEFAULT_SEGMENT_OPTIONS,
-        actionLevel: 'fiche',
-      }),
-      etape: segmentDocument(modelDocument, {
-        ...DEFAULT_SEGMENT_OPTIONS,
-        actionLevel: 'etape',
-      }),
-    };
-    const units = unitsByLevel
-      ? unitsByLevel[actionLevel ?? 'fiche']
-      : segmentDocument(modelDocument);
-    const total =
-      Math.max(
-        units.length,
-        unitsByLevel?.fiche.length ?? 0,
-        unitsByLevel?.etape.length ?? 0
-      ) + (analysis?.actions.length ?? 0);
-    if (total > MAX_DOCUMENT_UNITS) {
-      return failure({
-        kind: 'document_too_long',
-        chunks: total,
-        maxChunks: MAX_DOCUMENT_UNITS,
+        actionLevel: level,
       });
+    const totalOf = (units: DocumentUnit[]) =>
+      units.length + (analysis?.actions.length ?? 0);
+    const read = (
+      units: DocumentUnit[],
+      pendingQuestion: PendingQuestion | null = null
+    ): Result<ReadSource, ReadingError> =>
+      totalOf(units) > MAX_DOCUMENT_UNITS
+        ? failure({
+            kind: 'document_too_long',
+            chunks: totalOf(units),
+            maxChunks: MAX_DOCUMENT_UNITS,
+          })
+        : success({
+            chunks: [],
+            units,
+            pendingQuestion,
+            analysis,
+            tabularRowGroups,
+          });
+
+    // Le niveau déjà choisi se lit tel quel, que le document pose ou non la question.
+    if (actionLevel) {
+      return read(unitsAt(actionLevel));
     }
-    return success({
-      chunks: [],
-      units,
-      pendingQuestion:
-        question && unitsByLevel && !actionLevel
-          ? { question, unitsByLevel }
-          : null,
-      analysis,
-      tabularRowGroups,
-    });
+    const question = detectDocumentActionLevelDoubt(modelDocument);
+    if (!question) {
+      return read(unitsAt('fiche'));
+    }
+    // Les deux lectures, faute de quoi la réponse ferait relire le document.
+    // Une lecture au-delà de la limite échouerait à la reprise : seule celle
+    // qui tient reste, sans question.
+    const unitsByLevel = { fiche: unitsAt('fiche'), etape: unitsAt('etape') };
+    const fits = (level: ActionLevel) =>
+      totalOf(unitsByLevel[level]) <= MAX_DOCUMENT_UNITS;
+    if (fits('fiche') && fits('etape')) {
+      return read(unitsByLevel.fiche, { question, unitsByLevel });
+    }
+    return read(fits('etape') ? unitsByLevel.etape : unitsByLevel.fiche);
   }
   const text = joinPages(modelDocument);
   const chunks =

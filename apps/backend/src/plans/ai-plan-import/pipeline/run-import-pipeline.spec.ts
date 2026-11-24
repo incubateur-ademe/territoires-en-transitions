@@ -1833,6 +1833,49 @@ describe('runImportPipeline : la question du niveau de l’action', () => {
     ).toBe(false);
   });
 
+  it('lit par fiche, sans question, quand la lecture à l’étape dépasserait la limite', async () => {
+    const etapes = Array.from({ length: 3 }, (_, index) => [
+      { text: `Action ${index + 1} - Étape ${index + 1}`, fontSize: 10 },
+      { text: 'Un paragraphe de corps de texte normal.', fontSize: 10 },
+    ]).flat();
+    const fiches = 100;
+    const long = buildDocument(
+      'pdf',
+      Array.from({ length: fiches }, (_, index) =>
+        buildPage(index, [
+          ...(index === 0
+            ? [{ text: 'Axe 1 : Limiter les déchets verts', fontSize: 16 }]
+            : []),
+          { text: `Fiche Action n°1.${index + 1}`, fontSize: 14 },
+          { text: `Fiche numéro ${index + 1}`, fontSize: 14 },
+          ...etapes,
+        ])
+      )
+    );
+    const checkpoints: PipelineCheckpoint[] = [];
+
+    const outcome = await runImportPipeline(
+      segmentedLlm(),
+      input({
+        document: long,
+        pauseOnQuestion: true,
+        onCheckpoint: async (checkpoint) => {
+          checkpoints.push(roundTripCheckpoint(checkpoint));
+        },
+      })
+    );
+
+    expect(outcome).not.toMatchObject({ failedStep: 'reading' });
+    expect(outcome.status).not.toBe('awaiting_answer');
+    const reading = checkpoints.find(
+      ({ completedStep }) => completedStep === 'reading'
+    );
+    expect(reading?.pendingQuestion).toBeNull();
+    expect(reading?.units?.filter(({ kind }) => kind === 'fiche')).toHaveLength(
+      fiches
+    );
+  });
+
   it('ne pose pas la question à un document qui ne laisse pas le choix', async () => {
     const llm = segmentedLlm();
 

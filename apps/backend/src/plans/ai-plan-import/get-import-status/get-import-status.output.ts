@@ -38,6 +38,8 @@ export const getImportStatusOutputSchema = z.object({
   resumable: z.boolean(),
   /** Plan PCAET : l'étape des secteurs propose aussi les secteurs réglementaires. */
   withSecteurs: z.boolean(),
+  /** Sans sous-actions, les étapes d'une fiche ne sont pas créées. */
+  withSousActions: z.boolean(),
   report: importReportSchema,
   /** Disponible sur le détail uniquement, pas dans la liste des imports. */
   retryDefaults: importRetryDefaultsSchema.nullable().optional(),
