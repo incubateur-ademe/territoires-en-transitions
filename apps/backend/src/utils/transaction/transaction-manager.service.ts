@@ -44,9 +44,8 @@ export class TransactionManager {
       };
 
       if (tx) {
-        const { undoWritesOnFailure = true } = options;
         return success(
-          undoWritesOnFailure
+          options.undoWritesOnFailure
             ? await this.runInSavepoint(tx, runOperations)
             : await runOperations(tx)
         );
