@@ -73,6 +73,9 @@ export const EtapeDocumentsSection = ({
         onAddFichierAdditional={noop}
         onRemoveAdditional={noop}
         onDownload={downloadDemarcheDocument}
+        onDownloadAdditional={({ id }) =>
+          downloadDossierDocument({ ...dossierRef, documentAdditionalId: id })
+        }
       />
     </DemarcheSection>
   );
