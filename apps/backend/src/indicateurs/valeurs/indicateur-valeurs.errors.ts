@@ -3,6 +3,7 @@ import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { isFailedResult } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { CommonError } from '@tet/backend/utils/trpc/common-errors';
 import { TrpcErrorHandlerConfig } from '@tet/backend/utils/trpc/trpc-error-handler';
+import type { IndicateurPeriodicite } from '@tet/domain/indicateurs';
 import { match } from 'ts-pattern';
 import { UserIndicateurValeurNotAllowedException } from './write-indicateur-valeurs/user-indicateur-valeur.errors';
 
@@ -65,6 +66,22 @@ export const toCommonFailure = ({
   cause,
 }: IndicateurValeursFailure): Result<never, CommonError> =>
   failure(toCommonError(error), cause);
+
+export const toNonCanonicalDateValeurFailure = ({
+  dateValeur,
+  indicateurId,
+  periodicite,
+}: {
+  dateValeur: string;
+  indicateurId: number;
+  periodicite: IndicateurPeriodicite;
+}): Result<never, 'INVALID_VALUE'> =>
+  failure(
+    'INVALID_VALUE',
+    new Error(
+      `Date de valeur ${dateValeur} non canonique pour l'indicateur ${indicateurId} (${periodicite})`
+    )
+  );
 
 export function toIndicateurValeursFailure(
   error: unknown

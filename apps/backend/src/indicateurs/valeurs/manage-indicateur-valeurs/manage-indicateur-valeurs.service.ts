@@ -50,7 +50,8 @@ import { ListIndicateurValeursInput } from '../list-indicateur-valeurs/list-indi
 import { ListIndicateurValeursService } from '../list-indicateur-valeurs/list-indicateur-valeurs.service';
 import { ReconcileIndicateurValeursService } from '../reconcile-indicateur-valeurs/reconcile-indicateur-valeurs.service';
 import { UpsertValeurIndicateur } from '../write-indicateur-valeurs/upsert-valeur-indicateur.request';
-import { checkUserIndicateurValeursAllowed } from '../write-indicateur-valeurs/user-indicateur-valeur.rules';
+import { toUserValeurNotAllowedFailure } from '../write-indicateur-valeurs/user-indicateur-valeur.errors';
+import { getIndicateurIdsWithoutUserValeur } from '../write-indicateur-valeurs/user-indicateur-valeur.rules';
 import { DEFAULT_ROUNDING_PRECISION } from '../valeurs.constants';
 import { WriteIndicateurValeursService } from '../write-indicateur-valeurs/write-indicateur-valeurs.service';
 
@@ -412,8 +413,11 @@ export default class ManageIndicateurValeursService {
         )
       );
     }
-    const userValeursAllowed = checkUserIndicateurValeursAllowed(indicateurs);
-    if (!userValeursAllowed.success) return userValeursAllowed;
+    const protectedIndicateurIds =
+      getIndicateurIdsWithoutUserValeur(indicateurs);
+    if (protectedIndicateurIds.length > 0) {
+      return toUserValeurNotAllowedFailure(protectedIndicateurIds);
+    }
 
     const userPermissionsResult =
       await this.getUserPermissionsService.getUserRolesAndPermissions({

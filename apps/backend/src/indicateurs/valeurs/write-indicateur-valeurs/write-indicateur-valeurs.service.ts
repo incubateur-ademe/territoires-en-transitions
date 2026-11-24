@@ -28,9 +28,11 @@ import {
   captureIndicateurValeursResultOf,
   getIndicateurValeursDataOrThrow,
   IndicateurValeursError,
+  toNonCanonicalDateValeurFailure,
 } from '../indicateur-valeurs.errors';
 import { UpsertValeurIndicateur } from './upsert-valeur-indicateur.request';
-import { checkUserIndicateurValeursAllowed } from './user-indicateur-valeur.rules';
+import { toUserValeurNotAllowedFailure } from './user-indicateur-valeur.errors';
+import { getIndicateurIdsWithoutUserValeur } from './user-indicateur-valeur.rules';
 import {
   PreparedIndicateurValeurs,
   ValidateIndicateurValeursWriteService,
@@ -112,15 +114,51 @@ export class WriteIndicateurValeursService {
     const valeurs = getIndicateurValeursDataOrThrow(
       combineResults(
         input.valeurs.map((valeur) =>
-          IndicateurValeursRules.normalize(
-            valeur,
-            indicateurs[valeur.indicateurId]
-          )
+          this.normalizeValeur(valeur, indicateurs[valeur.indicateurId])
         )
       )
     );
     await this.lockRepository.lock(valeurs, context.tx);
     return { valeurs, indicateurs };
+  }
+
+  private normalizeValeur(
+    valeur: IndicateurValeurCreate,
+    indicateur: Indicateur
+  ): Result<IndicateurValeurCreate, 'INVALID_VALUE'> {
+    const normalized = IndicateurValeursRules.normalize(valeur, indicateur);
+    if (normalized === null) {
+      return toNonCanonicalDateValeurFailure({
+        dateValeur: valeur.dateValeur,
+        indicateurId: indicateur.id,
+        periodicite: valeur.periodicite ?? IndicateurPeriodiciteEnum.ANNUELLE,
+      });
+    }
+    return success(normalized);
+  }
+
+  private resolveDateValeur({
+    dateValeur,
+    indicateurId,
+    periodicite,
+  }: {
+    dateValeur: string | undefined;
+    indicateurId: number;
+    periodicite: IndicateurPeriodicite;
+  }): Result<string | undefined, 'INVALID_VALUE'> {
+    if (dateValeur === undefined) return success(undefined);
+    const canonicalDateValeur = IndicateurValeursRules.getCanonicalDateValeur(
+      dateValeur,
+      { id: indicateurId, periodicite }
+    );
+    if (canonicalDateValeur === null) {
+      return toNonCanonicalDateValeurFailure({
+        dateValeur,
+        indicateurId,
+        periodicite,
+      });
+    }
+    return success(canonicalDateValeur);
   }
 
   private async persist(
@@ -192,22 +230,21 @@ export class WriteIndicateurValeursService {
             'INDICATEUR_NOT_AVAILABLE',
             new Error(`Indicateur definition not found for id ${indicateurId}`)
           );
-        const userValeursAllowed = checkUserIndicateurValeursAllowed([
+        const protectedIndicateurIds = getIndicateurIdsWithoutUserValeur([
           lockedIndicateur,
         ]);
-        if (!userValeursAllowed.success) return userValeursAllowed;
+        if (protectedIndicateurIds.length > 0) {
+          return toUserValeurNotAllowedFailure(protectedIndicateurIds);
+        }
         const periodicite =
           data.periodicite ?? IndicateurPeriodiciteEnum.ANNUELLE;
-        const canonicalDateValeurResult =
-          data.dateValeur === undefined
-            ? success(undefined)
-            : IndicateurValeursRules.getCanonicalDateValeur(data.dateValeur, {
-                id: indicateurId,
-                periodicite,
-              });
-        if (!canonicalDateValeurResult.success)
-          return canonicalDateValeurResult;
-        const dateValeur = canonicalDateValeurResult.data;
+        const dateValeurResult = this.resolveDateValeur({
+          dateValeur: data.dateValeur,
+          indicateurId,
+          periodicite,
+        });
+        if (!dateValeurResult.success) return dateValeurResult;
+        const dateValeur = dateValeurResult.data;
         const now = new Date().toISOString();
         const fields = {
           resultat: !isNil(data.resultat)
