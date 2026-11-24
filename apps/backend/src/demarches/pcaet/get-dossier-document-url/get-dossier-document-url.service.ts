@@ -64,9 +64,19 @@ export class GetDossierDocumentUrlService {
       tx
     );
 
-    const document = snapshot.documents.find(
-      (depose) => depose.documentId === input.documentId
-    );
+    // Même périmètre que l'écran d'instruction et son archive : les pièces
+    // amont du dossier autorisé, y compris celles ajoutées hors catalogue.
+    const document =
+      input.documentAdditionalId !== undefined
+        ? snapshot.documentsAdditional.find(
+            (depose) =>
+              depose.id === input.documentAdditionalId &&
+              depose.etape === 'amont'
+          )
+        : snapshot.documents.find(
+            (depose) =>
+              depose.documentId === input.documentId && depose.etape === 'amont'
+          );
     const fichier = document?.fichier;
     if (!fichier?.bucketId) {
       return failure(GetDossierDocumentUrlErrorEnum.DOCUMENT_NOT_FOUND);
@@ -90,6 +100,7 @@ export class GetDossierDocumentUrlService {
         properties: {
           type: 'document_unitaire',
           documentId: input.documentId,
+          documentAdditionalId: input.documentAdditionalId,
           etape: document?.etape,
         },
       }
