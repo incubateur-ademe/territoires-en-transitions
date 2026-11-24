@@ -1827,7 +1827,9 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
         ),
       };
       const computeValeursService = {
-        updateCalculatedIndicateurValeurs: vi.fn().mockResolvedValue([]),
+        updateCalculatedIndicateurValeurs: vi
+          .fn()
+          .mockResolvedValue(success([])),
       };
       const lockRepository = { lock: vi.fn().mockResolvedValue(undefined) };
       const indicateurLockRepository = {
@@ -2288,25 +2290,35 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
         calculAuto: true,
       };
       const computeValeursService = {
-        getAllSourceIdentifiants: vi.fn().mockResolvedValue(['source_a']),
-        updateCalculatedIndicateurValeurs: vi.fn().mockResolvedValue([]),
+        getAllSourceIdentifiants: vi
+          .fn()
+          .mockResolvedValue(success(['source_a'])),
+        updateCalculatedIndicateurValeurs: vi
+          .fn()
+          .mockResolvedValue(success([])),
         recomputeCollectivitesCalculatedIndicateurValeurs: vi
           .fn()
-          .mockResolvedValue({
-            valeursToUpsert: [computedValeur],
-            valeurIdsToDelete: [99],
-            indicateurIdentifiants: ['target'],
-          }),
+          .mockResolvedValue(
+            success({
+              valeursToUpsert: [computedValeur],
+              valeurIdsToDelete: [99],
+              indicateurIdentifiants: ['target'],
+            })
+          ),
         reconcileDeletedIndicateurValeurs: vi
           .fn()
-          .mockResolvedValueOnce({
-            valeursToUpsert: [],
-            valeurIdsToDelete: [100],
-          })
-          .mockResolvedValueOnce({
-            valeursToUpsert: [],
-            valeurIdsToDelete: [],
-          }),
+          .mockResolvedValueOnce(
+            success({
+              valeursToUpsert: [],
+              valeurIdsToDelete: [100],
+            })
+          )
+          .mockResolvedValueOnce(
+            success({
+              valeursToUpsert: [],
+              valeurIdsToDelete: [],
+            })
+          ),
       };
       const service = createManageIndicateurValeursService(
         repository as never,
@@ -2381,10 +2393,12 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
       } as IndicateurPredefini;
       const recomputeError = new Error('recalcul impossible');
       const computeValeursService = {
-        getAllSourceIdentifiants: vi.fn().mockResolvedValue(['source_a']),
+        getAllSourceIdentifiants: vi
+          .fn()
+          .mockResolvedValue(success(['source_a'])),
         recomputeCollectivitesCalculatedIndicateurValeurs: vi
           .fn()
-          .mockRejectedValue(recomputeError),
+          .mockResolvedValue(failure('DATABASE_ERROR', recomputeError)),
       };
       const service = createManageIndicateurValeursService(
         {} as never,
@@ -2444,10 +2458,10 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
       const computeValeursService = {
         reconcileDeletedIndicateurValeurs: vi.fn(async () => {
           events.push('recalculate');
-          return {
+          return success({
             valeursToUpsert: [],
             valeurIdsToDelete: [],
-          };
+          });
         }),
       };
       const lockRepository = {

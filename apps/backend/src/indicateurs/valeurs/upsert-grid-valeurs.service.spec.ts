@@ -45,7 +45,7 @@ const toServiceWithMocks = ({
     {
       updateCalculatedIndicateurValeurs: vi
         .fn()
-        .mockResolvedValue([calculatedValeur]),
+        .mockResolvedValue(success([calculatedValeur])),
     } as never,
     { lock: vi.fn() } as never,
     { validate: vi.fn().mockResolvedValue(validation) } as never,

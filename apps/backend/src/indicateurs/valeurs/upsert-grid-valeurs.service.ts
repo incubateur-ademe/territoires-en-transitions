@@ -10,6 +10,7 @@ import {
   AuthenticatedUser,
   AuthRole,
 } from '@tet/backend/users/models/auth.models';
+import { toDatabaseFailure } from '@tet/backend/utils/database/catch-database-failure';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import {
@@ -169,11 +170,14 @@ export class UpsertGridValeursService {
               saved,
               tx
             );
+          if (!calculated.success) {
+            return toDatabaseFailure(calculated);
+          }
           changed.push(...saved);
-          if (calculated.length > 0) {
+          if (calculated.data.length > 0) {
             const upsertedCalculated =
               await this.manageIndicateurValeursService.upsertIndicateurValeurs(
-                calculated,
+                calculated.data,
                 {
                   user,
                   isUserTrusted: true,

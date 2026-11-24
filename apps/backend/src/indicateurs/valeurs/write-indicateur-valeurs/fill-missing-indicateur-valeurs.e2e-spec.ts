@@ -30,6 +30,7 @@ import { indicateurDefinitionTable } from '../../indicateur/indicateur-definitio
 import { indicateurSourceMetadonneeTable } from '../../shared/models/indicateur-source-metadonnee.table';
 import { indicateurSourceTable } from '../../shared/models/indicateur-source.table';
 import { indicateurValeurTable } from '../indicateur-valeur.table';
+import { failure } from '@tet/backend/utils/result.type';
 import ComputeValeursService from '../compute-indicateur-valeurs/compute-valeurs.service';
 import { ReconcileIndicateurValeursService } from '../reconcile-indicateur-valeurs/reconcile-indicateur-valeurs.service';
 
@@ -447,7 +448,7 @@ describe('Complétion des valeurs sans écrasement', () => {
                 )
               );
             persistedObjective = persisted?.objectif;
-            throw error;
+            return failure('DATABASE_ERROR', error);
           }
           return originalCompute(valeurs, tx);
         });

@@ -2,6 +2,10 @@ import { Injectable, Logger } from '@nestjs/common';
 import { chunk } from 'es-toolkit';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import {
+  catchDatabaseFailure,
+  toDatabaseFailure,
+} from '@tet/backend/utils/database/catch-database-failure';
 import { Result, success } from '@tet/backend/utils/result.type';
 import {
   TransactionExecutionOptions,
@@ -21,15 +25,10 @@ import {
   IndicateurValeursContext,
   IndicateurValeursWriteContext,
 } from '../indicateur-valeurs-context.types';
-import {
-  captureIndicateurValeursResult,
-  getIndicateurValeursDataOrThrow,
-  IndicateurValeursError,
-} from '../indicateur-valeurs.errors';
+import { IndicateurValeursError } from '../indicateur-valeurs.errors';
 import { ValidateIndicateurValeursWriteService } from '../write-indicateur-valeurs/validate-indicateur-valeurs-write.service';
 import { IndicateurValeurConflict } from '../write-indicateur-valeurs/fill-missing-indicateur-valeurs.rules';
 import { WriteIndicateurValeursService } from '../write-indicateur-valeurs/write-indicateur-valeurs.service';
-import { getIndicateurDataOrThrow } from '../../indicateur/indicateur-nature.utils';
 
 /** Taille d'un lot de recalcul : réglée sur le nombre d'allers-retours, pas sur la mémoire. */
 export const RECOMPUTE_COLLECTIVITES_BATCH_SIZE = 50;
@@ -38,6 +37,11 @@ export type RecomputedCollectiviteIndicateurValeurs = {
   collectiviteId: number;
   valeursCount: number;
   identifiants: string[];
+};
+
+type PropagatedDeletion = {
+  deletedValeurs: IndicateurValeur[];
+  upsertedValeurs: IndicateurValeurWithIdentifiant[];
 };
 
 /** Applies source changes and derived values together, including deletion propagation. */
@@ -82,9 +86,9 @@ export class ReconcileIndicateurValeursService {
     if (valeurs.length === 0) return success([]);
     const prepared = await this.validationService.prepare(valeurs, context);
     if (!prepared.success) return prepared;
-    return captureIndicateurValeursResult(async () => {
-      const result = await this.transactionManager.executeSingle(
-        async (tx) => {
+    return this.transactionManager.executeSingle(
+      (tx) =>
+        catchDatabaseFailure(async () => {
           const written = await this.writer.saveBatch(prepared.data, {
             ...context,
             tx,
@@ -95,12 +99,10 @@ export class ReconcileIndicateurValeursService {
             : success([]);
           if (!dependent.success) return dependent;
           return success([...written.data, ...dependent.data]);
-        },
-        context.tx,
-        options
-      );
-      return getIndicateurValeursDataOrThrow(result);
-    });
+        }),
+      context.tx,
+      options
+    );
   }
 
   /**
@@ -124,220 +126,236 @@ export class ReconcileIndicateurValeursService {
     >
   > {
     if (valeurs.length === 0) return success({ valeurs: [], conflits: [] });
-    return captureIndicateurValeursResult(async () => {
-      const result = await this.transactionManager.executeSingle(async (tx) => {
-        const writeContext = {
-          user: context.user,
-          metadataAuthorization: context.metadataAuthorization,
-          tx,
-        };
-        const prepared = await this.validationService.prepare(
-          valeurs,
-          writeContext
-        );
-        if (!prepared.success) return prepared;
-        const written = await this.writer.fillMissing(
-          prepared.data,
-          writeContext
-        );
-        if (!written.success) return written;
-        const dependent = written.data.valeurs.length
-          ? await this.propagateUpdated(written.data.valeurs, writeContext)
-          : success([]);
-        if (!dependent.success) return dependent;
-        return success({
-          valeurs: [...written.data.valeurs, ...dependent.data],
-          conflits: written.data.conflits,
-        });
-      }, context.tx);
-      return getIndicateurValeursDataOrThrow(result);
-    });
+    return this.transactionManager.executeSingle(
+      (tx) =>
+        catchDatabaseFailure(async () => {
+          const writeContext = {
+            user: context.user,
+            metadataAuthorization: context.metadataAuthorization,
+            tx,
+          };
+          const prepared = await this.validationService.prepare(
+            valeurs,
+            writeContext
+          );
+          if (!prepared.success) return prepared;
+          const written = await this.writer.fillMissing(
+            prepared.data,
+            writeContext
+          );
+          if (!written.success) return written;
+          const dependent = written.data.valeurs.length
+            ? await this.propagateUpdated(written.data.valeurs, writeContext)
+            : success([]);
+          if (!dependent.success) return dependent;
+          return success({
+            valeurs: [...written.data.valeurs, ...dependent.data],
+            conflits: written.data.conflits,
+          });
+        }),
+      context.tx
+    );
   }
 
-  propagateUpdated(
+  async propagateUpdated(
     valeurs: IndicateurValeur[],
     context: IndicateurValeursWriteContext
-  ) {
-    return captureIndicateurValeursResult(async () => {
-      const calculated =
-        await this.computeValeursService.updateCalculatedIndicateurValeurs(
-          valeurs,
-          context.tx
-        );
-      return getIndicateurValeursDataOrThrow(
-        await this.upsertWithinPropagation(calculated, {
-          isUserTrusted: true,
-          tx: context.tx,
-        })
+  ): Promise<
+    Result<IndicateurValeurWithIdentifiant[], IndicateurValeursError>
+  > {
+    const calculated =
+      await this.computeValeursService.updateCalculatedIndicateurValeurs(
+        valeurs,
+        context.tx
       );
+    if (!calculated.success) return toDatabaseFailure(calculated);
+    return this.upsertWithinPropagation(calculated.data, {
+      isUserTrusted: true,
+      tx: context.tx,
     });
   }
 
   propagateDeleted(
     valeurs: IndicateurValeur[],
     context: IndicateurValeursWriteContext
-  ) {
-    return captureIndicateurValeursResult(() =>
-      this.propagateDeletedInTransaction(valeurs, context.tx)
-    );
+  ): Promise<Result<PropagatedDeletion, IndicateurValeursError>> {
+    return this.propagateDeletedInTransaction(valeurs, context.tx);
   }
-  private async propagateDeletedInTransaction(
+
+  private propagateDeletedInTransaction(
     initialDeletedValeurs: IndicateurValeur[],
     tx: Transaction
-  ): Promise<{
-    deletedValeurs: IndicateurValeur[];
-    upsertedValeurs: IndicateurValeurWithIdentifiant[];
-  }> {
-    let deletedValeursToPropagate = initialDeletedValeurs;
-    const allDeletedValeurs: IndicateurValeur[] = [];
-    const allUpsertedValeurs: IndicateurValeurWithIdentifiant[] = [];
+  ): Promise<Result<PropagatedDeletion, IndicateurValeursError>> {
+    return catchDatabaseFailure(async () => {
+      let deletedValeursToPropagate = initialDeletedValeurs;
+      const allDeletedValeurs: IndicateurValeur[] = [];
+      const allUpsertedValeurs: IndicateurValeurWithIdentifiant[] = [];
 
-    while (deletedValeursToPropagate.length > 0) {
-      const reconciliation =
-        await this.computeValeursService.reconcileDeletedIndicateurValeurs(
-          deletedValeursToPropagate,
-          tx
-        );
-      const deletedDependentValeurs = reconciliation.valeurIdsToDelete.length
-        ? await this.repository.deleteAutomaticValeurs(
-            reconciliation.valeurIdsToDelete,
-            {},
+      while (deletedValeursToPropagate.length > 0) {
+        const reconciliation =
+          await this.computeValeursService.reconcileDeletedIndicateurValeurs(
+            deletedValeursToPropagate,
             tx
-          )
-        : [];
-      const upsertedDependentValeurs = reconciliation.valeursToUpsert.length
-        ? getIndicateurValeursDataOrThrow(
-            await this.upsertWithinPropagation(reconciliation.valeursToUpsert, {
+          );
+        if (!reconciliation.success) return toDatabaseFailure(reconciliation);
+        const { valeurIdsToDelete, valeursToUpsert } = reconciliation.data;
+        const deletedDependentValeurs = valeurIdsToDelete.length
+          ? await this.repository.deleteAutomaticValeurs(
+              valeurIdsToDelete,
+              {},
+              tx
+            )
+          : [];
+        const upsertedDependentValeurs = valeursToUpsert.length
+          ? await this.upsertWithinPropagation(valeursToUpsert, {
               isUserTrusted: true,
               tx,
             })
-          )
-        : [];
+          : success([]);
+        if (!upsertedDependentValeurs.success) return upsertedDependentValeurs;
 
-      allDeletedValeurs.push(...deletedDependentValeurs);
-      allUpsertedValeurs.push(...upsertedDependentValeurs);
-      deletedValeursToPropagate = deletedDependentValeurs;
-    }
+        allDeletedValeurs.push(...deletedDependentValeurs);
+        allUpsertedValeurs.push(...upsertedDependentValeurs.data);
+        deletedValeursToPropagate = deletedDependentValeurs;
+      }
 
-    return {
-      deletedValeurs: allDeletedValeurs,
-      upsertedValeurs: allUpsertedValeurs,
-    };
+      return success({
+        deletedValeurs: allDeletedValeurs,
+        upsertedValeurs: allUpsertedValeurs,
+      });
+    });
   }
 
-  reconcileCollectivite(
+  async reconcileCollectivite(
     input: { collectiviteId: number; indicateurs: IndicateurPredefini[] },
     context: IndicateurValeursWriteContext
-  ) {
-    return captureIndicateurValeursResult(async () => {
-      const [result] = await this.reconcileInTransaction(
-        [input.collectiviteId],
-        input.indicateurs,
-        context.tx
-      );
-      return result;
-    });
+  ): Promise<
+    Result<RecomputedCollectiviteIndicateurValeurs, IndicateurValeursError>
+  > {
+    const results = await this.reconcileInTransaction(
+      [input.collectiviteId],
+      input.indicateurs,
+      context.tx
+    );
+    if (!results.success) return results;
+    return success(results.data[0]);
   }
 
   /** Recalcule un lot de collectivités : une entrée par collectivité, même sans écriture. */
   reconcileCollectivites(
     input: { collectiviteIds: number[]; indicateurs: IndicateurPredefini[] },
     context: IndicateurValeursWriteContext
-  ) {
-    return captureIndicateurValeursResult(() =>
-      this.reconcileInTransaction(
-        input.collectiviteIds,
-        input.indicateurs,
-        context.tx
-      )
+  ): Promise<
+    Result<RecomputedCollectiviteIndicateurValeurs[], IndicateurValeursError>
+  > {
+    return this.reconcileInTransaction(
+      input.collectiviteIds,
+      input.indicateurs,
+      context.tx
     );
   }
 
-  private async reconcileInTransaction(
+  private reconcileInTransaction(
     collectiviteIds: number[],
     indicateursPredefinis: IndicateurPredefini[],
     tx: Transaction
-  ): Promise<RecomputedCollectiviteIndicateurValeurs[]> {
-    const recomputed =
-      await this.computeValeursService.recomputeCollectivitesCalculatedIndicateurValeurs(
-        collectiviteIds,
-        indicateursPredefinis.map(({ id }) => id),
-        tx
-      );
-
-    const deletedValeurs = recomputed.valeurIdsToDelete.length
-      ? await this.repository.deleteAutomaticValeurs(
-          recomputed.valeurIdsToDelete,
-          { collectiviteIds },
+  ): Promise<
+    Result<RecomputedCollectiviteIndicateurValeurs[], IndicateurValeursError>
+  > {
+    return catchDatabaseFailure(async () => {
+      const recomputedResult =
+        await this.computeValeursService.recomputeCollectivitesCalculatedIndicateurValeurs(
+          collectiviteIds,
+          indicateursPredefinis.map(({ id }) => id),
           tx
-        )
-      : [];
+        );
+      if (!recomputedResult.success) return toDatabaseFailure(recomputedResult);
+      const recomputed = recomputedResult.data;
 
-    // Peut recalculer récursivement les indicateurs qui dépendent des
-    // résultats produits. Le même tx conserve le snapshot et les verrous
-    // jusqu'au dernier upsert de la chaîne.
-    const insertedValeurs = recomputed.valeursToUpsert.length
-      ? getIndicateurValeursDataOrThrow(
-          await this.upsertWithinPropagation(recomputed.valeursToUpsert, {
+      const deletedValeurs = recomputed.valeurIdsToDelete.length
+        ? await this.repository.deleteAutomaticValeurs(
+            recomputed.valeurIdsToDelete,
+            { collectiviteIds },
+            tx
+          )
+        : [];
+
+      // Peut recalculer récursivement les indicateurs qui dépendent des
+      // résultats produits. Le même tx conserve le snapshot et les verrous
+      // jusqu'au dernier upsert de la chaîne.
+      const insertedResult = recomputed.valeursToUpsert.length
+        ? await this.upsertWithinPropagation(recomputed.valeursToUpsert, {
             isUserTrusted: true,
             tx,
           })
-        )
-      : [];
+        : success([]);
+      if (!insertedResult.success) return insertedResult;
+      const insertedValeurs = insertedResult.data;
 
-    // Une ligne automatique retirée devient une suppression explicite
-    // pour les formules en aval. `null` reste ainsi réservé aux
-    // observations réellement présentes.
-    const propagated = deletedValeurs.length
-      ? await this.propagateDeletedInTransaction(deletedValeurs, tx)
-      : { deletedValeurs: [], upsertedValeurs: [] };
-    const allDeletedValeurs = [...deletedValeurs, ...propagated.deletedValeurs];
-    const allInsertedValeurs = [
-      ...insertedValeurs,
-      ...propagated.upsertedValeurs,
-    ];
-    const results = collectiviteIds.map((collectiviteId) => {
-      const inserted = allInsertedValeurs.filter(
-        (valeur) => valeur.collectiviteId === collectiviteId
-      );
-      const deletedCount = allDeletedValeurs.filter(
-        (valeur) => valeur.collectiviteId === collectiviteId
-      ).length;
-      const identifiants = [
-        ...new Set(
-          [
-            ...recomputed.indicateurIdentifiants,
-            ...inserted.map((v) => v.indicateurIdentifiant),
-          ].filter((v): v is string => Boolean(v))
-        ),
+      // Une ligne automatique retirée devient une suppression explicite
+      // pour les formules en aval. `null` reste ainsi réservé aux
+      // observations réellement présentes.
+      const propagatedResult = deletedValeurs.length
+        ? await this.propagateDeletedInTransaction(deletedValeurs, tx)
+        : success({ deletedValeurs: [], upsertedValeurs: [] });
+      if (!propagatedResult.success) return propagatedResult;
+      const propagated = propagatedResult.data;
+      const allDeletedValeurs = [
+        ...deletedValeurs,
+        ...propagated.deletedValeurs,
       ];
-      return {
-        valeursCount: inserted.length + deletedCount,
-        identifiants,
-        collectiviteId,
-      };
+      const allInsertedValeurs = [
+        ...insertedValeurs,
+        ...propagated.upsertedValeurs,
+      ];
+      const results = collectiviteIds.map((collectiviteId) => {
+        const inserted = allInsertedValeurs.filter(
+          (valeur) => valeur.collectiviteId === collectiviteId
+        );
+        const deletedCount = allDeletedValeurs.filter(
+          (valeur) => valeur.collectiviteId === collectiviteId
+        ).length;
+        const identifiants = [
+          ...new Set(
+            [
+              ...recomputed.indicateurIdentifiants,
+              ...inserted.map((v) => v.indicateurIdentifiant),
+            ].filter((v): v is string => Boolean(v))
+          ),
+        ];
+        return {
+          valeursCount: inserted.length + deletedCount,
+          identifiants,
+          collectiviteId,
+        };
+      });
+      this.logger.log(
+        `Recalculated ${allInsertedValeurs.length} inserted and ${allDeletedValeurs.length} deleted indicateur valeurs for ${collectiviteIds.length} collectivites`
+      );
+      return success(results);
     });
-    this.logger.log(
-      `Recalculated ${allInsertedValeurs.length} inserted and ${allDeletedValeurs.length} deleted indicateur valeurs for ${collectiviteIds.length} collectivites`
-    );
-    return results;
   }
 
   recomputeAll(
     input: { collectiviteId?: number; indicateurs?: IndicateurPredefini[] },
     context: IndicateurValeursContext
-  ) {
-    return captureIndicateurValeursResult(async () => {
-      const indicateurs =
-        input.indicateurs ??
-        getIndicateurDataOrThrow(
-          await this.listIndicateursPredefinisRepository.listIndicateursPredefinisHavingComputedValue(
+  ): Promise<
+    Result<RecomputedCollectiviteIndicateurValeurs[], IndicateurValeursError>
+  > {
+    return catchDatabaseFailure(async () => {
+      const listed = input.indicateurs
+        ? success(input.indicateurs)
+        : await this.listIndicateursPredefinisRepository.listIndicateursPredefinisHavingComputedValue(
             {},
             context.tx
-          )
-        );
-      const sourceIdentifiants =
+          );
+      if (!listed.success) return toDatabaseFailure(listed);
+      const indicateurs = listed.data;
+      const sourceIdentifiantsResult =
         await this.computeValeursService.getAllSourceIdentifiants(indicateurs);
+      if (!sourceIdentifiantsResult.success)
+        return toDatabaseFailure(sourceIdentifiantsResult);
+      const sourceIdentifiants = sourceIdentifiantsResult.data;
       const collectiviteIds = input.collectiviteId
         ? [input.collectiviteId]
         : await this.repository.listRecomputeCandidateCollectiviteIds(
@@ -369,14 +387,15 @@ export class ReconcileIndicateurValeursService {
             ),
           context.tx
         );
-        results.push(...getIndicateurValeursDataOrThrow(result));
+        if (!result.success) return result;
+        results.push(...result.data);
         this.logger.log(
           `Recalcul des indicateurs : lot ${index + 1}/${batches.length} (${
             batch.length
           } collectivités)`
         );
       }
-      return results;
+      return success(results);
     });
   }
 }
