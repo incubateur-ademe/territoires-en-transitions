@@ -8,6 +8,8 @@ import {
   setScoreFromIndicateurInputSchema,
 } from './set-score-from-indicateur.input';
 import { SetScoreFromIndicateurService } from './set-score-from-indicateur.service';
+import { RefreshStatutsProgressionSnbcService } from './refresh-statuts-progression-snbc/refresh-statuts-progression-snbc.service';
+import { z } from 'zod';
 
 @Injectable()
 export class SetScoreFromIndicateurRouter {
@@ -17,7 +19,8 @@ export class SetScoreFromIndicateurRouter {
 
   constructor(
     private readonly trpc: TrpcService,
-    private readonly service: SetScoreFromIndicateurService
+    private readonly service: SetScoreFromIndicateurService,
+    private readonly refreshStatutsProgressionSnbcService: RefreshStatutsProgressionSnbcService
   ) {}
 
   router = this.trpc.router({
@@ -41,6 +44,25 @@ export class SetScoreFromIndicateurRouter {
         return toSnapshotWithoutPayloads(
           this.getResultDataOrThrowError(result)
         );
+      }),
+
+    // Rattrapage ponctuel de la bascule du score indicatif sur la SNBC 3 : à
+    // retirer une fois exécuté en production. Sans `collectiviteIds`, traite
+    // toutes les collectivités concernées. `modifiedBy` : compte inscrit dans
+    // `action_statut.modified_by` (l'historique reste sans auteur).
+    refreshStatutsProgressionSnbc: this.trpc.serviceRoleProcedure
+      .input(
+        z.object({
+          collectiviteIds: z.array(z.number().int()).optional(),
+          modifiedBy: z.uuid(),
+        })
+      )
+      .mutation(async ({ ctx, input }) => {
+        const result = await this.refreshStatutsProgressionSnbcService.refresh(
+          input,
+          { user: ctx.user }
+        );
+        return this.getResultDataOrThrowError(result);
       }),
   });
 }

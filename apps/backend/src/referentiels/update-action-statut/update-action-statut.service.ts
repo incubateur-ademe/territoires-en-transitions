@@ -1,8 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import {
+  AuthenticatedOrServiceRoleUser,
+  AuthenticatedUser,
+} from '@tet/backend/users/models/auth.models';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { SQL_CURRENT_TIMESTAMP } from '@tet/backend/utils/column.utils';
-import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { Result, failure, success } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import {
@@ -92,10 +95,24 @@ export class UpdateActionStatutService {
    * d'autres. Dans ce cas, conformément au `TransactionManager`, un échec est
    * relancé plutôt que renvoyé, afin que la transaction de l'appelant soit
    * annulée.
+   *
+   * Le service role est accepté pour les rattrapages ponctuels, avec un
+   * `modifiedBy` : `action_statut.modified_by` doit désigner un compte
+   * existant, et le service role n'a pas d'identifiant. L'historique reste
+   * alors sans auteur (affiché « Équipe territoires en transitions »).
    */
   async upsertActionStatutsWithoutSnapshot(
     actionStatuts: ActionStatutCreate[],
-    { user, tx }: ServiceSecondArg
+    {
+      user,
+      tx,
+      modifiedBy,
+    }: {
+      user: AuthenticatedOrServiceRoleUser;
+      tx?: Transaction;
+      /** compte inscrit dans `action_statut.modified_by`, à la place de `user.id` */
+      modifiedBy?: string;
+    }
   ): Promise<Result<void, UpdateActionStatutError>> {
     if (actionStatuts.length === 0) {
       return failure(UpdateActionStatutErrorEnum.NO_ACTION_STATUTS);
@@ -195,7 +212,7 @@ export class UpdateActionStatutService {
     ).map((actionStatut) => ({
       collectiviteId: actionStatut.collectiviteId,
       actionId: actionStatut.actionId,
-      modifiedBy: user.id,
+      modifiedBy: modifiedBy ?? user.id,
       modifiedAt: SQL_CURRENT_TIMESTAMP,
 
       ...actionStatutCreateToActionStatutInDatabase(actionStatut),
