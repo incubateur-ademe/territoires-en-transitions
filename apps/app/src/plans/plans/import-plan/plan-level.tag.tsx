@@ -11,18 +11,10 @@ const levelClassNames: Record<PlanLevel, string> = {
   sousAction: 'border-primary-8 bg-white text-primary-9',
 };
 
-/** Indentation de chaque niveau, du plus large au plus précis. */
-export const planLevelIndent: Record<PlanLevel, string> = {
-  axe: '',
-  sousAxe: 'pl-5',
-  action: 'pl-10',
-  sousAction: 'pl-[3.75rem]',
-};
-
 export const planLevelLabel = (level: PlanLevel): string =>
   capitalize(appLabels[level]());
 
-/** L'étiquette d'un niveau du plan, la même dans le repère et dans la question. */
+/** L'étiquette d'un niveau du plan, dans la question. */
 export const PlanLevelTag = ({ level }: { level: PlanLevel }) => (
   <span
     className={cn(

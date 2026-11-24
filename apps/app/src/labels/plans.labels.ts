@@ -515,29 +515,6 @@ export const plansLabels = {
   importPlanIaQuestionAttenteDescription:
     "L'import de ce plan attend une précision de votre part avant de créer les actions.",
   importPlanIaQuestionRepondre: 'Répondre',
-  importPlanIaNiveauxTitre: 'Comment un plan est rangé',
-  importPlanIaNiveauxSousTitre:
-    'Quatre niveaux, emboîtés du plus large au plus précis.',
-  importPlanIaNiveaux: {
-    axe: {
-      definition: 'Un grand thème du plan.',
-      exemple: '« Axe 1 · Déchets verts et biodéchets »',
-    },
-    sousAxe: {
-      definition:
-        "Une partie d'un axe. Facultatif : beaucoup de plans n'en ont pas.",
-      exemple: '« 1.A · Jardiner sans déchets »',
-    },
-    action: {
-      definition:
-        'Ce que vous pilotez et suivez : un pilote, un calendrier, un budget, un statut.',
-      exemple: '« Accompagner les habitants vers le jardinage au naturel »',
-    },
-    sousAction: {
-      definition: "Une étape de l'action.",
-      exemple: '« Organiser des ateliers de compostage »',
-    },
-  },
   planImporteSupportQuestion:
     'Le plan proposé ne vous convient pas ? Vous avez besoin d’aide ? Contactez-nous via le',
   planImporteSupportLien: 'support en ligne',
