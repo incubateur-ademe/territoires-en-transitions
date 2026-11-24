@@ -18,6 +18,7 @@ import { indicateurCollectiviteTable } from '../indicateur/indicateur-collectivi
 import { inferProcedureInput } from '@trpc/server';
 import { AppRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { indicateurValeurTable } from './indicateur-valeur.table';
+import { failure } from '@tet/backend/utils/result.type';
 import ComputeValeursService from './compute-indicateur-valeurs/compute-valeurs.service';
 import ManageIndicateurValeursService from './manage-indicateur-valeurs/manage-indicateur-valeurs.service';
 
@@ -215,7 +216,9 @@ describe('Écriture atomique de lots de valeurs annuelles', () => {
         app.get(ComputeValeursService),
         'updateCalculatedIndicateurValeurs'
       )
-      .mockRejectedValueOnce(new Error('Recalcul indisponible'));
+      .mockResolvedValueOnce(
+        failure('DATABASE_ERROR', new Error('Recalcul indisponible'))
+      );
     const publishEvents = vi.spyOn(
       app.get(ManageIndicateurValeursService),
       'publishValeurUpsertedEvents'

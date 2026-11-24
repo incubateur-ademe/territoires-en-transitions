@@ -10,19 +10,23 @@ import type {
 } from './calcul-indicateur.types';
 import { DEFAULT_ROUNDING_PRECISION } from '../valeurs.constants';
 
-type EvaluateExpression = (
-  expression: string,
-  values: Record<string, number | null>
-) => number | null;
+export type CalculEvaluation = {
+  expression: string;
+  values: Record<string, number | null>;
+  precision: number;
+};
 
-const evaluateField = (
+export type PlannedCalculValeur = {
+  valeur: Omit<IndicateurValeurCreate, 'resultat' | 'objectif'>;
+  resultat: CalculEvaluation | null;
+  objectif: CalculEvaluation | null;
+};
+
+const planField = (
   field: 'resultat' | 'objectif',
   { definition: indicateur, references }: IndicateurFormula,
-  group: CalculSourceGroup,
-  evaluate: EvaluateExpression
-): number | null => {
-  // Some sources allow external observations to complete a field only when
-  // that field already has a direct observation.
+  group: CalculSourceGroup
+): CalculEvaluation | null => {
   if (
     group.requiresDirectValueForField &&
     !group.valeurs.some(
@@ -35,7 +39,6 @@ const evaluateField = (
     if (valeur.sourceId === group.sourceId)
       values[valeur.indicateurIdentifiant] = valeur[field];
   }
-  // Prefer the direct source, then complete missing fields from allowed extras.
   for (const valeur of group.valeurs) {
     if (isNil(values[valeur.indicateurIdentifiant]) && !isNil(valeur[field])) {
       values[valeur.indicateurIdentifiant] = valeur[field];
@@ -47,18 +50,23 @@ const evaluateField = (
     .every(({ identifiant }) => !isNil(values[identifiant]));
   if (!hasValue || !hasMandatoryValues || !indicateur.valeurCalcule)
     return null;
-  const result = evaluate(indicateur.valeurCalcule.toLowerCase(), values);
-  return result === null
-    ? null
-    : round(result, indicateur.precision ?? DEFAULT_ROUNDING_PRECISION);
+  return {
+    expression: indicateur.valeurCalcule.toLowerCase(),
+    values,
+    precision: indicateur.precision ?? DEFAULT_ROUNDING_PRECISION,
+  };
 };
 
+export const roundCalculResult = (
+  result: number | null,
+  precision: number
+): number | null => (result === null ? null : round(result, precision));
+
 /** Missing observations and present null observations have different meanings. */
-export const evaluateCalculIndicateur = (
+export const planCalculIndicateur = (
   formula: IndicateurFormula,
-  groups: CalculSourceGroups,
-  evaluate: EvaluateExpression
-): IndicateurValeurCreate[] => {
+  groups: CalculSourceGroups
+): PlannedCalculValeur[] => {
   if (!formula.definition.valeurCalcule) return [];
   return Object.values(groups).flatMap((group) => {
     if (group.periode.periodicite !== formula.definition.periodicite) return [];
@@ -70,22 +78,23 @@ export const evaluateCalculIndicateur = (
       ({ identifiant }) => !present.has(identifiant)
     );
     if (missing.some(({ optional }) => !optional)) return [];
-    // Extra sources may complete an observation, never create one on their own.
     if (!group.valeurs.some((valeur) => valeur.sourceId === group.sourceId))
       return [];
     return [
       {
-        collectiviteId: group.collectiviteId,
-        indicateurId: formula.definition.id,
-        dateValeur: IndicateurPeriodes.toDateValeur(group.periode),
-        periodicite: group.periode.periodicite,
-        resultat: evaluateField('resultat', formula, group, evaluate),
-        objectif: evaluateField('objectif', formula, group, evaluate),
-        metadonneeId: group.metadonneeId,
-        calculAuto: true,
-        calculAutoIdentifiantsManquants: missing.map(
-          ({ identifiant }) => identifiant
-        ),
+        valeur: {
+          collectiviteId: group.collectiviteId,
+          indicateurId: formula.definition.id,
+          dateValeur: IndicateurPeriodes.toDateValeur(group.periode),
+          periodicite: group.periode.periodicite,
+          metadonneeId: group.metadonneeId,
+          calculAuto: true,
+          calculAutoIdentifiantsManquants: missing.map(
+            ({ identifiant }) => identifiant
+          ),
+        },
+        resultat: planField('resultat', formula, group),
+        objectif: planField('objectif', formula, group),
       },
     ];
   });

@@ -29,6 +29,22 @@ import IndicateurExpressionService from './indicateur-expression.service';
 import { IndicateurValeurLockRepository } from './indicateur-valeur-lock.repository';
 import { indicateurValeurTable } from './indicateur-valeur.table';
 import { LoadIndicateurCalculGraphService } from './compute-indicateur-valeurs/load-indicateur-calcul-graph.service';
+import { getDataOrThrow } from '@tet/backend/utils/result.type';
+
+const recomputeData = async (
+  compute: ComputeValeursService,
+  ...args: Parameters<
+    ComputeValeursService['recomputeCollectivitesCalculatedIndicateurValeurs']
+  >
+) =>
+  getDataOrThrow(
+    await compute.recomputeCollectivitesCalculatedIndicateurValeurs(...args)
+  );
+
+const updateData = async (
+  compute: ComputeValeursService,
+  ...args: Parameters<ComputeValeursService['updateCalculatedIndicateurValeurs']>
+) => getDataOrThrow(await compute.updateCalculatedIndicateurValeurs(...args));
 
 // Only PostgreSQL is needed: no application workers, imports or external services.
 describe('Protection des observations manuelles avec métadonnée (PostgreSQL)', () => {
@@ -316,12 +332,12 @@ describe('Protection des observations manuelles avec métadonnée (PostgreSQL)',
     const before = await snapshot(manual.id);
 
     await database.db.transaction(async (tx) => {
-      const calculated =
-        await compute.recomputeCollectivitesCalculatedIndicateurValeurs(
-          [valeur.collectiviteId],
-          indicateurs.slice(1).map(({ id }) => id),
-          tx
-        );
+      const calculated = await recomputeData(
+        compute,
+        [valeur.collectiviteId],
+        indicateurs.slice(1).map(({ id }) => id),
+        tx
+      );
       expect(calculated.valeurIdsToDelete).toEqual([]);
       expect(calculated.valeursToUpsert).toEqual(
         expect.arrayContaining([
@@ -349,16 +365,13 @@ describe('Protection des observations manuelles avec métadonnée (PostgreSQL)',
       });
       // The normal propagation must not propagate a rejected automatic candidate.
       expect(
-        await compute.updateCalculatedIndicateurValeurs(written, tx)
+        await updateData(compute, written, tx)
       ).toEqual([]);
       const refreshed = await repository.upsertValeursWithMetadata(
         [{ ...source, resultat: 50 }],
         tx
       );
-      const candidates = await compute.updateCalculatedIndicateurValeurs(
-        refreshed,
-        tx
-      );
+      const candidates = await updateData(compute, refreshed, tx);
       expect(candidates).toEqual([
         expect.objectContaining({
           indicateurId: manual.indicateurId,
@@ -453,22 +466,15 @@ describe('Protection des observations manuelles avec métadonnée (PostgreSQL)',
       );
 
     await database.db.transaction(async (tx) => {
-      const batch = await compute.recomputeCollectivitesCalculatedIndicateurValeurs(
+      const batch = await recomputeData(
+        compute,
         [valeur.collectiviteId, other.id],
         targets,
         tx
       );
       const isolated = [
-        await compute.recomputeCollectivitesCalculatedIndicateurValeurs(
-          [valeur.collectiviteId],
-          targets,
-          tx
-        ),
-        await compute.recomputeCollectivitesCalculatedIndicateurValeurs(
-          [other.id],
-          targets,
-          tx
-        ),
+        await recomputeData(compute, [valeur.collectiviteId], targets, tx),
+        await recomputeData(compute, [other.id], targets, tx),
       ];
       expect(byIdentity(batch.valeursToUpsert)).toEqual(
         byIdentity(isolated.flatMap(({ valeursToUpsert }) => valeursToUpsert))
