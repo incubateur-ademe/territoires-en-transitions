@@ -124,11 +124,11 @@ Lorsqu'un service utilise une **transaction**, on utilise le `TransactionManager
 **Deux modes d'utilisation :**
 
 1. **Transaction créée par le manager** : `executeSingle(operation)` ou `executeTransaction(operations)` — le manager crée et gère la transaction. Le rollback est automatique en cas de `throw` (échec d'une opération).
-2. **Transaction partagée** : `executeSingle(operation, tx)` ou `executeTransaction(operations, tx)` — le service appelant fournit la transaction via le paramètre `tx`. Le manager intercepte le `throw` et appelle `tx.rollback()` explicitement avant de renvoyer `failure(error)`, afin que le rollback soit déclenché dans tous les cas. **Note** : `tx.rollback()` lance une exception `TransactionRollbackError`. Dans ce cas, une exception est propagée à l'appelant à la place d'un `Result` en `failure`.
+2. **Transaction partagée** : `executeSingle(operation, tx)` ou `executeTransaction(operations, tx)` — le service appelant fournit la transaction via le paramètre `tx`. Le manager exécute les opérations dans un **savepoint** (`tx.transaction(...)`). Si l'une retourne un `failure`, le savepoint est annulé : les écritures de l'appelant faites avant l'appel sont conservées, celles des opérations du manager sont retirées, et le manager renvoie `failure(error, cause)` sans lancer d'exception.
 
-Drizzle effectue un rollback implicite dès qu'une exception atteint la frontière de la transaction (le callback passé à `db.transaction()`). Le manager intercepte le `throw` lorsqu'un `tx` externe est fourni, ce qui empêche cette propagation — d'où l'appel explicite à `tx.rollback()` pour garantir l'annulation.
+Dans les deux modes, le manager renvoie donc un `Result` en `failure`, jamais une exception, pour un échec prévu. Le service appelant doit propager ce `failure` jusqu'à l'opération qui a ouvert la transaction englobante : c'est ce `failure` remonté qui annule l'ensemble. En mode partagé, une exception inattendue (bug) reste propagée telle quelle.
 
-**L'opération** passée au manager retourne des `Result<T, E>`. En cas de `failure`, le manager interrompt l'exécution par un `throw`, déclenche le rollback (selon le mode utilisé), puis renvoie `failure(error)` à l'appelant. L'opération gère elle-même les erreurs inattendues via un `try/catch` qui retourne `failure(defaultError)` (ex. `DATABASE_ERROR`).
+**L'opération** passée au manager retourne des `Result<T, E>`. En cas de `failure`, le manager interrompt l'exécution, annule la transaction (ou le savepoint en mode partagé), puis renvoie `failure(error, cause)` à l'appelant. L'opération gère elle-même les erreurs inattendues via un `try/catch` qui retourne `failure(defaultError)` (ex. `DATABASE_ERROR`).
 
 ```typescript
 // Exemple : service avec transaction
