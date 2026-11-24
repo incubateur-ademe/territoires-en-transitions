@@ -94,7 +94,10 @@ export const detectHeadings = (
     keepNumberSequence(
       dropIntertitleSections(
         demoteCapitalsBelowExplicitAxes(
-          dropSummaryRows(demoteBannersAboveFiches(kept), pages)
+          dropSummaryRows(
+            demoteBannersAboveFiches(addThemesAboveFiches(kept, pages)),
+            pages
+          )
         ),
         pages
       )
@@ -518,6 +521,95 @@ const demoteBannersAboveFiches = (
         }
       : heading;
   });
+
+/**
+ * « BIODECHETS (restes alimentaires et végétaux) » posé juste au-dessus de
+ * « Action 1. … », dans la police du titre : le thème qui regroupe les
+ * fiches, même en casse mixte ou en police à peine plus grande que le corps.
+ * Il ne vaut que répété au-dessus de plusieurs fiches.
+ */
+const addThemesAboveFiches = (
+  headings: DetectedHeading[],
+  pages: DocumentPage[]
+): DetectedHeading[] => {
+  const pageByIndex = new Map(pages.map((page) => [page.index, page]));
+  const headingAt = new Map(
+    headings.map((heading) => [
+      `${heading.pageIndex}:${heading.lineIndex}`,
+      heading,
+    ])
+  );
+  const headingEndsAt = new Set(
+    headings.map(
+      ({ pageIndex, lastLineIndex }) => `${pageIndex}:${lastLineIndex}`
+    )
+  );
+  const themes = new Map<DetectedHeading, DetectedHeading>();
+  // Un thème déjà lu comme ligne en capitales prend le même niveau que ses
+  // voisins en casse mixte : sinon l'un rangerait les autres sous lui.
+  const replaced = new Set<DetectedHeading>();
+  for (const fiche of headings) {
+    const lines = pageByIndex.get(fiche.pageIndex)?.lines;
+    const index = fiche.lineIndex - 1;
+    const line = lines?.[index];
+    const above = headingAt.get(`${fiche.pageIndex}:${index}`);
+    if (
+      !isExplicit(fiche.match, 'fiche') ||
+      !lines ||
+      !line ||
+      (above !== undefined && above.match.kind !== 'majuscules') ||
+      // « PREVENTION » sous « 2 SENSIBILISATION … DES EFFORTS DE » : la fin
+      // du titre d'axe, coupé par la mise en page.
+      headingEndsAt.has(`${fiche.pageIndex}:${index - 1}`)
+    ) {
+      continue;
+    }
+    const text = line.text.trim().replace(MARKDOWN_MARK, '');
+    const ficheFont = lines[fiche.lineIndex].fontSize;
+    if (
+      THEME_START.test(text) &&
+      text.length <= MAX_THEME_LENGTH &&
+      !/[.:;]$/u.test(text) &&
+      !BULLET.test(text) &&
+      !isFicheLabel(text.split(/[:：]/u)[0]) &&
+      (ficheFont === undefined ||
+        line.fontSize === undefined ||
+        line.fontSize >= ficheFont - SAME_FONT_TOLERANCE)
+    ) {
+      themes.set(fiche, {
+        pageIndex: fiche.pageIndex,
+        lineIndex: index,
+        lastLineIndex: index,
+        isLarge: fiche.isLarge,
+        match: {
+          kind: 'orientation',
+          level: SOUS_AXE_LEVEL,
+          number: null,
+          title: text,
+          confidence: 1,
+        },
+      });
+      if (above) {
+        replaced.add(above);
+      }
+    }
+  }
+  if (themes.size < MIN_THEMED_FICHES) {
+    return headings;
+  }
+  return headings.flatMap((heading) => {
+    if (replaced.has(heading)) {
+      return [];
+    }
+    const theme = themes.get(heading);
+    return theme ? [theme, heading] : [heading];
+  });
+};
+
+// Un thème commence par un mot en capitales : « BIODECHETS (végétaux) ».
+const THEME_START = /^\p{Lu}{3,}(?:[\s'’-]|$)/u;
+const MAX_THEME_LENGTH = 100;
+const MIN_THEMED_FICHES = 2;
 
 /** Les lignes numérotées d'un tableau récapitulatif ne sont pas des titres. */
 const dropSummaryRows = (

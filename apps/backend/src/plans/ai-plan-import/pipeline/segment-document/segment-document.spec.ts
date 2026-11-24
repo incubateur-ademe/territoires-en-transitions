@@ -233,6 +233,67 @@ describe('detectHeadings sur un PCAET à fiches tabulaires', () => {
     ]);
   });
 
+  it('prend pour sous-axe le thème posé au-dessus de chaque fiche, même en casse mixte ou dans la police du titre', () => {
+    const fichePage = (index: number, banner: string, fiche: string) =>
+      buildPage(index, [
+        { text: banner, fontSize: 9.5 },
+        { text: fiche, fontSize: 9.5 },
+        {
+          text: 'Gisement impacté Déchets ménagers et assimilés.',
+          fontSize: 8.2,
+        },
+        ...body(5).map((line) => ({ ...line, fontSize: 8.2 })),
+      ]);
+
+    expect(
+      titles([
+        fichePage(
+          0,
+          'BIODECHETS (restes alimentaires et végétaux)',
+          'Action 1. Organiser un service de compostage individuel'
+        ),
+        fichePage(
+          1,
+          'ORDURES MENAGERES ET ASSIMILES - OMR et Collecte sélective',
+          'Action 6. Lancer une réflexion sur la tarification incitative'
+        ),
+        fichePage(
+          2,
+          'ACTIONS TRANSVERSALES - TOUS FLUX',
+          'Action 11. Structurer une commande publique responsable'
+        ),
+      ])
+    ).toEqual([
+      ['orientation', 2, 'BIODECHETS (restes alimentaires et végétaux)'],
+      ['fiche', 3, 'Organiser un service de compostage individuel'],
+      [
+        'orientation',
+        2,
+        'ORDURES MENAGERES ET ASSIMILES - OMR et Collecte sélective',
+      ],
+      ['fiche', 3, 'Lancer une réflexion sur la tarification incitative'],
+      ['orientation', 2, 'ACTIONS TRANSVERSALES - TOUS FLUX'],
+      ['fiche', 3, 'Structurer une commande publique responsable'],
+    ]);
+  });
+
+  it('ne prend pas pour thème une phrase ou un champ au-dessus d’une fiche isolée', () => {
+    expect(
+      titles([
+        buildPage(0, [
+          { text: 'Pilote : Direction des déchets', fontSize: 12 },
+          { text: 'Action 1. Organiser le compostage', fontSize: 12 },
+          ...body(5),
+        ]),
+        buildPage(1, [
+          { text: 'La collectivité a décidé de poursuivre.', fontSize: 12 },
+          { text: 'Action 2. Lutter contre le gaspillage', fontSize: 12 },
+          ...body(5),
+        ]),
+      ]).filter(([kind]) => kind !== 'fiche')
+    ).toEqual([]);
+  });
+
   it("recolle la suite d'un titre de fiche dans une autre grande police, sans avaler le titre suivant", () => {
     expect(
       titles([

@@ -132,8 +132,8 @@ annule l'autre : la reprise referait de toute façon ses appels.
 
 Avant la création du plan, le brouillon est normalisé
 (`adapters/extracted-action-to-import-action.ts`) : le numéro qui précède un
-titre d'action (« 2.1.3 », « Action 3 - ») est retiré, car il ne sert qu'au
-rattachement pendant l'import, sauf s'il est seul à distinguer deux fiches ;
+titre d'action est gardé sous une seule forme (« Action 3 - » devient « 3 »,
+« 2.1.3. » devient « 2.1.3 ») ;
 un même axe ou sous-axe libellé de deux façons (mêmes mots aux accents et à
 la casse près) prend une seule graphie, en casse normale de préférence, et un
 numéro nu (« Axe 6 ») rejoint le seul libellé complet de ce numéro, et les
@@ -603,7 +603,13 @@ Le moteur sert à tout type de plan. Ce qui dépend du type :
   regroupement d'actions (squelette) ;
 - le titre d'une action garde le numéro que lui donne le document, sous une
   seule forme (« Fiche n°12 : … » devient « 12 … ») : il fait le lien avec le
-  document source et garde l'ordre des fiches (`normalize-plan-labels.ts`) ;
+  document source et garde l'ordre des fiches (`normalize-plan-labels.ts`).
+  Le modèle le garde ou le retire au hasard : quand il l'omet, le code remet
+  celui de la fiche lue dont il reprend le titre (`structure-units.ts`) ;
+- le thème posé juste au-dessus de plusieurs fiches (« BIODECHETS (restes
+  alimentaires) » sur « Action 1. … », PLPDMA) est leur sous-axe, même en
+  casse mixte ou dans la police du titre, et tous ces thèmes prennent le même
+  niveau ; la fin d'un titre d'axe coupé sur deux lignes n'en est pas un ;
 - le vocabulaire reconnu par le code couvre les autres plans : « Fiche projet
   n° », « Feuille de route », « Fiches projets », « Programme opérationnel »
   (`heading-patterns.ts`, `scout-units.ts`) ;
