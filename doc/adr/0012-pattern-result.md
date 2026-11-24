@@ -124,9 +124,14 @@ Lorsqu'un service utilise une **transaction**, on utilise le `TransactionManager
 **Deux modes d'utilisation :**
 
 1. **Transaction créée par le manager** : `executeSingle(operation)` ou `executeTransaction(operations)` — le manager crée et gère la transaction. Le rollback est automatique en cas de `throw` (échec d'une opération).
-2. **Transaction partagée** : `executeSingle(operation, tx)` ou `executeTransaction(operations, tx)` — le service appelant fournit la transaction via le paramètre `tx`. Le manager exécute les opérations dans un **savepoint** (`tx.transaction(...)`). Si l'une retourne un `failure`, le savepoint est annulé : les écritures de l'appelant faites avant l'appel sont conservées, celles des opérations du manager sont retirées, et le manager renvoie `failure(error, cause)` sans lancer d'exception.
+2. **Transaction partagée** : `executeSingle(operation, tx)` ou `executeTransaction(operations, tx)` — le service appelant fournit la transaction via le paramètre `tx`. Le manager exécute les opérations dans un **savepoint SQL posé sur le `tx` de l'appelant lui-même**. Si l'une retourne un `failure`, le savepoint est annulé : les écritures de l'appelant faites avant l'appel sont conservées, celles des opérations du manager sont retirées, et le manager renvoie `failure(error, cause)` sans lancer d'exception.
 
-Dans les deux modes, le manager renvoie donc un `Result` en `failure`, jamais une exception, pour un échec prévu. Le service appelant doit propager ce `failure` jusqu'à l'opération qui a ouvert la transaction englobante : c'est ce `failure` remonté qui annule l'ensemble. En mode partagé, une exception inattendue (bug) reste propagée telle quelle.
+Dans les deux modes, le manager renvoie donc un `Result` en `failure`, jamais une exception, pour un échec prévu. Le service appelant doit propager ce `failure` jusqu'à l'opération qui a ouvert la transaction englobante : c'est ce `failure` remonté qui annule l'ensemble. En mode partagé, une exception inattendue (bug) reste propagée telle quelle, après l'annulation du savepoint.
+
+Deux choix à connaître :
+
+- **Même objet `tx`, pas `tx.transaction(...)` de Drizzle.** Ce dernier remet à l'opération un objet de transaction distinct. Un code qui mémorise les transactions par identité d'objet (par exemple `IndicateurValeurLockRepository`) ne reconnaîtrait plus la transaction de l'appelant.
+- **Option `{ undoWritesOnFailure: false }`.** Chaque savepoint qui écrit consomme un identifiant de sous-transaction que `release` ne libère pas avant le commit. Au-delà de 64 dans une même transaction, PostgreSQL déborde son cache et ralentit les snapshots des autres sessions. Une boucle de masse dans une transaction partagée (recalcul du catalogue d'indicateurs) passe cette option : l'échec est toujours retourné, mais les écritures de l'opération restent dans la transaction de l'appelant, qui doit propager le `failure` pour tout annuler.
 
 **L'opération** passée au manager retourne des `Result<T, E>`. En cas de `failure`, le manager interrompt l'exécution, annule la transaction (ou le savepoint en mode partagé), puis renvoie `failure(error, cause)` à l'appelant. L'opération gère elle-même les erreurs inattendues via un `try/catch` qui retourne `failure(defaultError)` (ex. `DATABASE_ERROR`).
 
