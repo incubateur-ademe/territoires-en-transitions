@@ -580,6 +580,57 @@ Le rôle `metabase` n'a accès qu'à la base `metabase` : comme source de donné
 lit `stats` en `mcp_reader`. Vérifier avec `\dp`. Si les scripts doivent créer des tables et que `stats_writer` ne le
 peut pas, le dire avant de lui donner plus : c'est un choix de droits, pas un oubli.
 
+### Previews (test en cours)
+
+Une stack complète par pull request, par les _preview deployments_ natifs de Coolify :
+[`preview/docker-compose.yml`](preview/docker-compose.yml) (app, backend, site, GoTrue,
+Storage, Redis, Postgres ; `app.…/api` routé au backend comme en prod), déclaré comme application compose `stack` (environnement `preview`) dans
+[`coolify/preview-application.tf`](coolify/preview-application.tf). La base part de l'image
+`supabase_db_tet` de la CI (`_prepare-test-db.yml`), déjà migrée et seedée : copiée dans le
+volume de la preview au premier démarrage, supprimée avec elle.
+
+Mise en service :
+
+1. `terraform apply -var preview_github_app_uuid=<uuid> -var preview_git_branch=<branche>`
+   (UUID : Coolify → Sources → la GitHub App de la Team). La branche doit contenir le
+   compose.
+2. Dans l'application, onglet **Environment Variables**, poser les variables listées en tête
+   du compose, dans le jeu de l'application et dans celui des _Preview Deployments_. Le
+   compte de service Google est propre aux previews (lecteur des classeurs, sans Vertex
+   AI), avec son dossier Drive de résultats. Secret et clés propres aux previews :
+
+   ```sh
+   SECRET=$(openssl rand -hex 32); echo "SUPABASE_JWT_SECRET=$SECRET"
+   for role in anon service_role; do node -e '
+     const b = (o) => Buffer.from(JSON.stringify(o)).toString("base64url");
+     const [secret, role] = process.argv.slice(1), now = Math.floor(Date.now() / 1000);
+     const body = b({ alg: "HS256", typ: "JWT" }) + "." + b({ role, iss: "supabase", iat: now, exp: now + 315360000 });
+     console.log(role + "=" + body + "." + require("crypto").createHmac("sha256", secret).update(body).digest("base64url"));
+   ' "$SECRET" "$role"; done
+   ```
+
+3. **Deploy** une première fois : ce déploiement charge le compose. Puis réappliquer avec
+   les mêmes `-var` qu'à l'étape 1 (sans eux, Terraform détruit l'application) et
+   `-var preview_compose_loaded=true`, qui pose les domaines, sans port. Ajouter ensuite le
+   port d'écoute dans l'UI, une fois : `:3000` sur web, backend et site, `:8000` sur
+   supabase. Coolify le range à part et le garde aux applies suivants.
+4. Onglet **Preview Deployments** : régler _Preview URL Template_ sur `{{pr_id}}-{{domain}}`
+   (le défaut `{{pr_id}}.{{domain}}` sort du wildcard DNS `*.preview`), activer les previews
+   le temps du test, **Load Pull Requests** puis **Deploy** sur la PR voulue.
+
+À la fermeture d'une PR, Coolify supprime sa preview, mais un `docker rm` en échec n'est que
+journalisé. Sur le serveur preview, rien ne doit rester au nom de la PR :
+
+```sh
+# Numéro ancré en fin de nom : -pr-12 ne doit pas attraper -pr-123.
+PR=<n>
+docker ps -a --format '{{.Names}}' | grep -E -- "-pr-$PR\$"
+docker volume ls -q | grep -E -- "-pr-$PR\$"
+# Noms vérifiés, s'il en reste :
+docker ps -a --format '{{.Names}}' | grep -E -- "-pr-$PR\$" | xargs -r docker rm -f
+docker volume ls -q | grep -E -- "-pr-$PR\$" | xargs -r docker volume rm
+```
+
 ### Buckets de `tet-prod` : une bucket policy par bucket
 
 Les permissions IAM Object Storage valent pour un projet entier. `tet-prod` héberge le bucket

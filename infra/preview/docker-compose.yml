@@ -1,0 +1,324 @@
+# Stack d'une preview : tout ce qu'il faut pour une pull request, base comprise.
+#
+# Déployée par Coolify comme application « Docker Compose » branchée sur ce
+# dépôt (previews natives : un projet compose, un réseau et des volumes par
+# PR, supprimés à la fermeture). Rien n'est publié par ce fichier : les
+# domaines sont ceux que Coolify attribue aux services web, backend, site et
+# supabase (port interne compris, cf. preview-application.tf), et qu'il rend
+# sans port dans les variables SERVICE_URL_<SERVICE>.
+#
+# Variables à poser dans Coolify, onglet « Environment Variables » de
+# l'application, dans ses deux jeux : celui de l'application (premier Deploy,
+# cf. README) et « Preview Deployments » (celui que lisent les PR) :
+#   IMAGE_TAG                   tag des images tet-app et tet-backend
+#                               (short SHA d'un commit déjà construit)
+#   SITE_IMAGE_TAG              tag de tet-site : le site est construit à part,
+#                               rarement sur le même commit
+#   DB_SEED_TAG                 tag de l'image supabase_db_tet : la base de
+#                               test de la CI (_prepare-test-db.yml), migrée
+#                               et seedée
+#   SUPABASE_JWT_SECRET         propre aux previews, jamais celui d'un autre
+#   SUPABASE_ANON_KEY           environnement ; les deux clés sont des JWT
+#   SUPABASE_SERVICE_ROLE_KEY   signés avec ce secret
+#   GCLOUD_SERVICE_ACCOUNT_KEY  compte de service propre aux previews, jamais
+#                               celui de la preprod : une preview est publique
+#                               et ouverte à l'inscription. Lecteur des
+#                               classeurs ci-dessous, sans rôle Vertex AI.
+#                               JSON sur une ligne (jq -c .)
+#   TRAJECTOIRE_SNBC_RESULT_FOLDER_ID
+#                               dossier Drive propre aux previews, en écriture
+#                               pour ce compte
+#
+# ponytail: IMAGE_TAG, SITE_IMAGE_TAG et DB_SEED_TAG sont communs à toutes
+# les previews tant qu'ils sont posés à la main. À faire porter par la CD (un
+# tag par PR) quand le test est concluant.
+
+services:
+  # Copie la base seedée dans le volume de la preview, une seule fois : les
+  # redéploiements gardent les données de la PR.
+  db-seed:
+    image: ghcr.io/incubateur-ademe/supabase_db_tet:${DB_SEED_TAG:?DB_SEED_TAG requis}
+    restart: "no"
+    exclude_from_hc: true
+    # Marqueur posé après une copie complète : une copie interrompue est
+    # recommencée de zéro.
+    command: ["ash", "-c", "[ -e /volume/.seeded ] || { find /volume -mindepth 1 -delete && cp -a /save/. /volume && touch /volume/.seeded; }"]
+    volumes:
+      - db-data:/volume
+
+  # Même image que la CLI Supabase de la CI (3.1.0), qui a produit la
+  # sauvegarde physique : à faire suivre si la CLI change de version.
+  db:
+    image: supabase/postgres:15.19.0.018
+    restart: unless-stopped
+    depends_on:
+      db-seed:
+        condition: service_completed_successfully
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  redis:
+    image: redis:8-alpine
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Reçoit tous les emails de GoTrue : rien ne sort d'une preview. Interface
+  # web sur le port 8025, sans domaine par défaut.
+  mailpit:
+    image: axllent/mailpit:v1.30.2
+    restart: unless-stopped
+    environment:
+      MP_SMTP_AUTH_ACCEPT_ANY: "1"
+      MP_SMTP_AUTH_ALLOW_INSECURE: "1"
+
+  # Versions de GoTrue et de Storage : celles de la CLI de la CI. Plus
+  # anciennes que la base seedée, elles s'arrêteraient sur des migrations
+  # inconnues.
+  gotrue:
+    image: supabase/gotrue:v2.197.0
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9999/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+    environment:
+      GOTRUE_API_HOST: 0.0.0.0
+      GOTRUE_API_PORT: "9999"
+      API_EXTERNAL_URL: ${SERVICE_URL_SUPABASE}
+      GOTRUE_DB_DRIVER: postgres
+      # Mots de passe de la base seedée par la CLI, joignable du seul réseau
+      # de la preview.
+      GOTRUE_DB_DATABASE_URL: postgres://supabase_auth_admin:postgres@db:5432/postgres
+      GOTRUE_JWT_SECRET: ${SUPABASE_JWT_SECRET:?SUPABASE_JWT_SECRET requis}
+      GOTRUE_JWT_AUD: authenticated
+      GOTRUE_JWT_DEFAULT_GROUP_NAME: authenticated
+      GOTRUE_JWT_EXP: "3600"
+      GOTRUE_JWT_ADMIN_ROLES: service_role
+      GOTRUE_SITE_URL: ${SERVICE_URL_WEB}
+      GOTRUE_URI_ALLOW_LIST: ${SERVICE_URL_WEB},${SERVICE_URL_BACKEND},${SERVICE_URL_SITE}
+      GOTRUE_DISABLE_SIGNUP: "false"
+      GOTRUE_EXTERNAL_EMAIL_ENABLED: "true"
+      # Pas de boîte mail à consulter pour créer un compte de test.
+      GOTRUE_MAILER_AUTOCONFIRM: "true"
+      GOTRUE_MAILER_SECURE_EMAIL_CHANGE_ENABLED: "false"
+      # Liens des emails, résolus contre API_EXTERNAL_URL : sans préfixe, ils
+      # tombent hors de /auth/v1 et finissent en 404 sur le Caddy supabase.
+      GOTRUE_MAILER_URLPATHS_INVITE: /auth/v1/verify
+      GOTRUE_MAILER_URLPATHS_CONFIRMATION: /auth/v1/verify
+      GOTRUE_MAILER_URLPATHS_RECOVERY: /auth/v1/verify
+      GOTRUE_MAILER_URLPATHS_EMAIL_CHANGE: /auth/v1/verify
+      GOTRUE_SMTP_HOST: mailpit
+      GOTRUE_SMTP_PORT: "1025"
+      GOTRUE_SMTP_ADMIN_EMAIL: admin@territoiresentransitions.fr
+      GOTRUE_SMTP_SENDER_NAME: Territoires en Transitions (preview)
+      GOTRUE_RATE_LIMIT_EMAIL_SENT: "50"
+      GOTRUE_RATE_LIMIT_TOKEN_REFRESH: "50"
+      GOTRUE_RATE_LIMIT_VERIFY: "50"
+
+  storage:
+    image: supabase/storage-api:v1.90.1
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      # 127.0.0.1, pas localhost : résolu en ::1, où Storage n'écoute pas.
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:5000/status"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+    environment:
+      ANON_KEY: ${SUPABASE_ANON_KEY:?SUPABASE_ANON_KEY requis}
+      SERVICE_KEY: ${SUPABASE_SERVICE_ROLE_KEY:?SUPABASE_SERVICE_ROLE_KEY requis}
+      AUTH_JWT_SECRET: ${SUPABASE_JWT_SECRET}
+      # Mot de passe de test connu de la base seedée (cf. gotrue).
+      DATABASE_URL: postgres://supabase_storage_admin:postgres@db:5432/postgres
+      FILE_SIZE_LIMIT: "2147483648"
+      # Fichiers dans un volume de la preview : pas de bucket à nettoyer.
+      STORAGE_BACKEND: file
+      FILE_STORAGE_BACKEND_PATH: /var/lib/storage
+      TENANT_ID: stub
+      REGION: stub
+      GLOBAL_S3_BUCKET: stub
+      ENABLE_IMAGE_TRANSFORMATION: "false"
+      # URL de reprise TUS préfixées de /storage/v1 (X-Forwarded-Prefix du
+      # Caddy supabase) : sans lui, le PATCH suivant tombe en 404.
+      REQUEST_ALLOW_X_FORWARDED_PATH: "true"
+    volumes:
+      - storage-data:/var/lib/storage
+
+  # SUPABASE_URL de la preview : /auth/v1 et /storage/v1 sur un seul domaine,
+  # avec le CORS (GoTrue refuse le header apikey en preflight, Storage ne gère
+  # pas CORS). Même rôle que les labels Traefik de
+  # infra/nonprod/supabase-api, sans nom d'hôte à connaître. Caddyfile en
+  # ligne : pas de fichier du dépôt à monter sur le serveur.
+  supabase:
+    image: caddy:2.10-alpine
+    restart: unless-stopped
+    depends_on:
+      gotrue:
+        condition: service_healthy
+      storage:
+        condition: service_healthy
+    environment:
+      CADDYFILE: |
+        {
+        	auto_https off
+        	admin off
+        	servers {
+        		trusted_proxies static private_ranges
+        	}
+        }
+        :8000 {
+        	header {
+        		Access-Control-Allow-Origin *
+        		Access-Control-Allow-Methods "GET,HEAD,POST,PUT,PATCH,DELETE,OPTIONS"
+        		# * ne couvre pas Authorization (spec Fetch) : à nommer.
+        		Access-Control-Allow-Headers "Authorization, *"
+        		# Location et Upload-* : lus par le client TUS (envois reprenables).
+        		Access-Control-Expose-Headers "X-Total-Count,Link,X-Supabase-Api-Version,Location,Upload-Offset,Upload-Length,Tus-Resumable"
+        		Access-Control-Max-Age 3600
+        		defer
+        	}
+        	@preflight method OPTIONS
+        	handle @preflight {
+        		respond 204
+        	}
+        	handle /auth/v1/* {
+        		uri strip_prefix /auth/v1
+        		reverse_proxy gotrue:9999
+        	}
+        	handle /storage/v1/* {
+        		uri strip_prefix /storage/v1
+        		# Préfixe retiré, rendu à Storage pour les URL de reprise TUS
+        		# (cf. REQUEST_ALLOW_X_FORWARDED_PATH).
+        		reverse_proxy storage:5000 {
+        			header_up X-Forwarded-Prefix /storage/v1
+        		}
+        	}
+        	handle {
+        		respond 404
+        	}
+        }
+    command: ["sh", "-c", "printf '%s' \"$$CADDYFILE\" > /etc/caddy/Caddyfile && exec caddy run --config /etc/caddy/Caddyfile"]
+
+  backend:
+    image: ghcr.io/incubateur-ademe/tet-backend:${IMAGE_TAG:?IMAGE_TAG requis}
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      supabase:
+        condition: service_started
+    environment:
+      ENV_NAME: preview
+      # Le volume d'une preview survit aux redéploiements : les migrations
+      # d'un nouveau commit s'y appliquent ici (rien à faire sur un seed neuf).
+      RUN_MIGRATIONS: "true"
+      APP_URL: ${SERVICE_URL_WEB}
+      SUPABASE_URL: ${SERVICE_URL_SUPABASE}
+      # __Host- : cookie limité à l'hôte de la preview (ni Domain, ni
+      # sous-domaine qui le lise) ; chaque preview garde ainsi sa session.
+      SUPABASE_AUTH_COOKIE_NAME: &auth-cookie-name __Host-sb-tet-preview-auth-token
+      # Mot de passe de test connu de la base seedée (cf. gotrue).
+      SUPABASE_DATABASE_URL: postgres://postgres:postgres@db:5432/postgres
+      SUPABASE_JWT_SECRET: ${SUPABASE_JWT_SECRET}
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY}
+      SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
+      QUEUE_REDIS_HOST: redis
+      GCLOUD_SERVICE_ACCOUNT_KEY: ${GCLOUD_SERVICE_ACCOUNT_KEY:?GCLOUD_SERVICE_ACCOUNT_KEY requis}
+      # Requise par le schéma de configuration ; sans vraie clé, aucun email
+      # transactionnel ne part.
+      BREVO_API_KEY: ${BREVO_API_KEY:-preview-sans-brevo}
+      # Mêmes classeurs que la preprod (infra/coolify/env-manifest.tf), lus par
+      # le compte des previews ; résultats dans un dossier à part.
+      TRAJECTOIRE_SNBC_SHEET_ID: 1JsZyIVCa0qn2wGzilUeVUZ3hHm1GiIWA0DRwbtwguGQ
+      TRAJECTOIRE_SNBC_XLSX_ID: 1EYPH3_rsJQFn0pZ1ONCQWlUeMUCyp6S3
+      TRAJECTOIRE_SNBC_RESULT_FOLDER_ID: ${TRAJECTOIRE_SNBC_RESULT_FOLDER_ID:?TRAJECTOIRE_SNBC_RESULT_FOLDER_ID requis}
+      REFERENTIEL_TE_SHEET_ID: 13HGNkJez8wiLpjQEoKS_C1ibYIrHPEYCS5I6lP9F_gs
+      REFERENTIEL_CAE_SHEET_ID: 1c8cPHSSulW8SAraqmVq1zH3hOQDYQB6yRa9w8Q1zdzE
+      REFERENTIEL_ECI_SHEET_ID: 1obiQ6ijwvjmJoHuMeE0O1pKaz2eqbt43iFr7xYbc4oA
+      INDICATEUR_DEFINITIONS_SHEET_ID: 1im08NvNBGsVb-xB2Lmh-3sgKO7Tje7jUAYQOCNixnuM
+      PERSONNALISATION_QUESTIONS_SHEET_ID: 14zHHgti8nkDI7URZ6VTaJ4ARLr9SJAtOHnQtjs41AYA
+
+  # Domaine public de l'app, comme app.…/api en prod : /api/* va au backend,
+  # chemin conservé, le reste à l'app. Le navigateur n'appelle ainsi que
+  # l'origine de l'app (BACKEND_BROWSER_URL), cookies compris. Caddy plutôt
+  # qu'un second domaine à chemin sur le backend : le gabarit d'URL des
+  # previews de Coolify ne dit rien du sort d'un chemin.
+  web:
+    image: caddy:2.10-alpine
+    restart: unless-stopped
+    depends_on:
+      app:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    environment:
+      CADDYFILE: |
+        {
+        	auto_https off
+        	admin off
+        	servers {
+        		trusted_proxies static private_ranges
+        	}
+        }
+        :3000 {
+        	handle /api/* {
+        		reverse_proxy backend:3000
+        	}
+        	handle {
+        		reverse_proxy app:3000
+        	}
+        }
+    command: ["sh", "-c", "printf '%s' \"$$CADDYFILE\" > /etc/caddy/Caddyfile && exec caddy run --config /etc/caddy/Caddyfile"]
+
+  app:
+    image: ghcr.io/incubateur-ademe/tet-app:${IMAGE_TAG:?IMAGE_TAG requis}
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    environment:
+      ENV_NAME: preview
+      APP_URL: ${SERVICE_URL_WEB}
+      BACKEND_URL: ${SERVICE_URL_BACKEND}
+      SITE_URL: ${SERVICE_URL_SITE}
+      SUPABASE_URL: ${SERVICE_URL_SUPABASE}
+      SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
+      BACKEND_BROWSER_URL: ${SERVICE_URL_WEB}
+      SUPABASE_AUTH_COOKIE_NAME: *auth-cookie-name
+
+  site:
+    image: ghcr.io/incubateur-ademe/tet-site:${SITE_IMAGE_TAG:?SITE_IMAGE_TAG requis}
+    restart: unless-stopped
+    environment:
+      ENV_NAME: preview
+      APP_URL: ${SERVICE_URL_WEB}
+      BACKEND_URL: ${SERVICE_URL_BACKEND}
+      SITE_URL: ${SERVICE_URL_SITE}
+      STRAPI_URL: https://phenomenal-trust-ee3da2c906.strapiapp.com
+      # Sans clé, les pages alimentées par Strapi restent vides.
+      STRAPI_KEY: ${STRAPI_KEY:-}
+      PCAET_LAUNCHED: "true"
+      # Requis au rendu ; même identifiant que la preprod (env-manifest.tf).
+      AXEPTIO_ID: 65ef34473dcae5d0c7a47699
+
+volumes:
+  db-data:
+  storage-data:

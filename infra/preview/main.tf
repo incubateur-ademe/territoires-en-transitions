@@ -5,8 +5,8 @@
 # instance RDB par PR serait lent (plusieurs minutes) et coûteux à l'unité.
 #
 # Ce stack ne fait que fournir le socle : le serveur et le ramasse-miettes
-# disque. La création et la destruction d'une stack par PR via l'API Coolify
-# restent à câbler côté CI.
+# disque. La stack d'une PR est décrite par docker-compose.yml, que Coolify
+# déploie en preview (infra/coolify/preview-application.tf).
 
 module "app_server" {
   source = "../modules/app-server"

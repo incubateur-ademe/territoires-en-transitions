@@ -61,7 +61,7 @@ variable "application_environments" {
   default     = ["preprod"]
   validation {
     condition     = alltrue([for e in var.application_environments : contains(["preprod", "prod"], e)])
-    error_message = "application_environments n'accepte que preprod et prod. Les previews sont créées par la CD, pas par Terraform."
+    error_message = "application_environments n'accepte que preprod et prod. Les previews ont leur propre application (preview-application.tf)."
   }
 }
 
