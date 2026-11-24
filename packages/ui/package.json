@@ -33,6 +33,13 @@
           "cwd": "packages/ui"
         }
       },
+      "design-handoff": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "node scripts/design-handoff/cli.mts",
+          "cwd": "packages/ui"
+        }
+      },
       "chromatic": {
         "executor": "nx:run-commands",
         "options": {
