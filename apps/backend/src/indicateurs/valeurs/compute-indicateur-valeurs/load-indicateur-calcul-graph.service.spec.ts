@@ -1,6 +1,7 @@
 import type { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { failure, success } from '@tet/backend/utils/result.type';
+import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { toIndicateurRow } from '../../indicateur/indicateur-row.test-fixture';
+import type { IndicateurExpressionError } from '../indicateur-expression.errors';
 import { LoadIndicateurCalculGraphService } from './load-indicateur-calcul-graph.service';
 
 const cause = new Error(
@@ -15,7 +16,9 @@ const makeService = ({
   listIndicateursPredefinis = vi.fn(),
   listIndicateursPredefinisHavingComputedValue = vi.fn(),
   lockIndicateurs = vi.fn(),
-  extractNeededSourceIndicateursFromFormula = vi.fn(() => success([])),
+  extractNeededSourceIndicateursFromFormula = vi.fn(
+    (): Result<never[], IndicateurExpressionError> => success([])
+  ),
 }) =>
   new LoadIndicateurCalculGraphService(
     {
