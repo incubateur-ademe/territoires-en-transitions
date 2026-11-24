@@ -1,5 +1,13 @@
 import { INestApplication } from '@nestjs/common';
 import {
+  attachTestPlanToDemarchePcaet,
+  createDemarche,
+  ensureTestPcaetMetadonneeId,
+} from '@tet/backend/demarches/pcaet/demarches-pcaet.test-fixture';
+import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
+import { demarchePlanActionTable } from '@tet/backend/demarches/shared/models/demarche-plan-action.table';
+import { indicateurDefinitionTable } from '@tet/backend/indicateurs/indicateur/indicateur-definition.table';
+import {
   addTestCollectivite,
   addTestCollectiviteAndUser,
 } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
@@ -18,9 +26,14 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import {
+  DemarchePcaetStatus,
+  DemarchePcaetStatusEnum,
+  DemarcheTypeEnum,
+} from '@tet/domain/demarches';
 import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
 import { CollectiviteRole } from '@tet/domain/users';
-import { eq } from 'drizzle-orm';
+import { eq, inArray } from 'drizzle-orm';
 import { beforeAll, describe, expect, it, onTestFinished } from 'vitest';
 
 describe('Suivi du plan : indicateurs et objectifs', () => {
@@ -139,6 +152,8 @@ describe('Suivi du plan : indicateurs et objectifs', () => {
       unite: 'tCO2e',
       precision: expect.any(Number),
       periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+      sources: ['plan'],
+      departDepot: null,
     };
     expect(indicateurs).toEqual([
       {
@@ -282,5 +297,247 @@ describe('Suivi du plan : indicateurs et objectifs', () => {
         planRestreint.id
       )
     ).rejects.toThrow("Vous n'avez pas les permissions nécessaires");
+  });
+
+  describe('avec un dépôt PCAET rattaché au plan', () => {
+    const getIndicateurIds = async (identifiants: string[]) => {
+      const rows = await db.db
+        .select({
+          id: indicateurDefinitionTable.id,
+          identifiant: indicateurDefinitionTable.identifiantReferentiel,
+        })
+        .from(indicateurDefinitionTable)
+        .where(
+          inArray(
+            indicateurDefinitionTable.identifiantReferentiel,
+            identifiants
+          )
+        );
+      return Object.fromEntries(rows.map((r) => [r.identifiant, r.id]));
+    };
+
+    // Les totaux sont calculés à l'écriture par l'application : le test les
+    // insère directement sous la métadonnée du dépôt.
+    const insertValeursDepot = async ({
+      collectiviteId,
+      metadonneeId,
+      valeurs,
+    }: {
+      collectiviteId: number;
+      metadonneeId: number;
+      valeurs: {
+        indicateurId: number;
+        dateValeur: string;
+        resultat?: number;
+        objectif?: number;
+      }[];
+    }) =>
+      db.db.insert(indicateurValeurTable).values(
+        valeurs.map((v) => ({
+          ...v,
+          collectiviteId,
+          metadonneeId,
+          periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+        }))
+      );
+
+    const createPlanAvecDepot = async () => {
+      const { collectiviteId, caller, demarche } = await createDemarche(
+        db,
+        router
+      );
+      const plan = await attachTestPlanToDemarchePcaet(db, {
+        collectiviteId,
+        demarcheId: demarche.id,
+      });
+      const metadonneeId = await ensureTestPcaetMetadonneeId(db, {
+        collectiviteId,
+        demarcheId: demarche.id,
+      });
+      const ids = await getIndicateurIds(['cae_1.a', 'cae_4.a', 'cae_2.a']);
+      await insertValeursDepot({
+        collectiviteId,
+        metadonneeId,
+        valeurs: [
+          {
+            indicateurId: ids['cae_1.a'],
+            dateValeur: '2015-01-01',
+            resultat: 160,
+          },
+          {
+            indicateurId: ids['cae_1.a'],
+            dateValeur: '2018-01-01',
+            resultat: 152,
+          },
+          {
+            indicateurId: ids['cae_1.a'],
+            dateValeur: '2030-01-01',
+            objectif: 90,
+          },
+          {
+            indicateurId: ids['cae_4.a'],
+            dateValeur: '2018-01-01',
+            resultat: 10,
+          },
+          {
+            indicateurId: ids['cae_4.a'],
+            dateValeur: '2030-01-01',
+            objectif: 6,
+          },
+          // un total sans objectif reste hors de la liste
+          {
+            indicateurId: ids['cae_2.a'],
+            dateValeur: '2018-01-01',
+            resultat: 500,
+          },
+        ],
+      });
+      const { user: lecteur } = await addTestUser(db, {
+        collectiviteId,
+        role: CollectiviteRole.LECTURE,
+      });
+      return {
+        collectiviteId,
+        caller,
+        demarcheId: demarche.id,
+        planId: plan.id,
+        ids,
+        lecteur: getAuthUserFromUserCredentials(lecteur),
+      };
+    };
+
+    const summarize = (
+      indicateurs: Awaited<ReturnType<typeof getIndicateursObjectifs>>
+    ) =>
+      indicateurs.map(({ id, sources, departDepot, objectifs }) => ({
+        id,
+        sources,
+        departDepot,
+        objectifs,
+      }));
+
+    it('ouvre la liste sur les réglementaires qui ont un objectif, lisibles sans droit sur le dépôt', async () => {
+      const { planId, ids, lecteur } = await createPlanAvecDepot();
+
+      expect(summarize(await getIndicateursObjectifs(lecteur, planId))).toEqual(
+        expect.arrayContaining([
+          {
+            id: ids['cae_1.a'],
+            sources: ['reglementaire'],
+            departDepot: { annee: 2018, valeur: 152 },
+            objectifs: [{ annee: 2030, valeur: 90 }],
+          },
+          {
+            id: ids['cae_4.a'],
+            sources: ['reglementaire'],
+            departDepot: { annee: 2018, valeur: 10 },
+            objectifs: [{ annee: 2030, valeur: 6 }],
+          },
+        ])
+      );
+      expect(
+        (await getIndicateursObjectifs(lecteur, planId)).map(({ id }) => id)
+      ).not.toContain(ids['cae_2.a']);
+    });
+
+    it('fusionne un réglementaire lié au plan en une seule carte, objectifs du dépôt en priorité', async () => {
+      const { collectiviteId, caller, planId, ids, lecteur } =
+        await createPlanAvecDepot();
+      const { id: ficheId } = await caller.plans.fiches.create({
+        fiche: { titre: 'Action GES', collectiviteId },
+        ficheFields: { axes: [{ id: planId }] },
+      });
+      await caller.plans.fiches.update({
+        ficheId,
+        ficheFields: { indicateurs: [{ id: ids['cae_1.a'] }] },
+      });
+      await db.db.insert(indicateurValeurTable).values({
+        indicateurId: ids['cae_1.a'],
+        collectiviteId,
+        dateValeur: '2030-01-01',
+        objectif: 100,
+        periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+      });
+
+      const indicateurs = await getIndicateursObjectifs(lecteur, planId);
+      expect(indicateurs.filter(({ id }) => id === ids['cae_1.a'])).toEqual([
+        expect.objectContaining({
+          sources: ['reglementaire', 'plan'],
+          objectifs: [{ annee: 2030, valeur: 90 }],
+        }),
+      ]);
+    });
+
+    it('ne montre le dépôt à un visiteur qu’une fois publié', async () => {
+      const { demarcheId, planId, ids } = await createPlanAvecDepot();
+
+      expect(await getIndicateursObjectifs(visiteur, planId)).toEqual([]);
+
+      await db.db
+        .update(demarcheTable)
+        .set({
+          status: DemarchePcaetStatusEnum.PUBLIE,
+          publishedAt: new Date().toISOString(),
+        })
+        .where(eq(demarcheTable.id, demarcheId));
+
+      expect(
+        (await getIndicateursObjectifs(visiteur, planId)).map(({ id }) => id)
+      ).toEqual(expect.arrayContaining([ids['cae_1.a'], ids['cae_4.a']]));
+    });
+
+    it('lit la démarche en cours plutôt qu’un dépôt précédent publié', async () => {
+      const { collectiviteId, demarcheId, planId, ids, lecteur } =
+        await createPlanAvecDepot();
+      // Le plan était rattaché au dépôt précédent avant l'ouverture du
+      // nouveau : la démarche en cours est mise de côté le temps de recréer
+      // ce rattachement, que le trigger d'exclusivité refuserait sinon.
+      const setStatus = (status: DemarchePcaetStatus) =>
+        db.db
+          .update(demarcheTable)
+          .set({ status })
+          .where(eq(demarcheTable.id, demarcheId));
+      await setStatus(DemarchePcaetStatusEnum.PUBLIE);
+      const [precedent] = await db.db
+        .insert(demarcheTable)
+        .values({
+          collectiviteId,
+          type: DemarcheTypeEnum.PCAET,
+          titre: 'PCAET précédent',
+          status: DemarchePcaetStatusEnum.PUBLIE,
+          publishedAt: '2020-06-01T00:00:00Z',
+        })
+        .returning({ id: demarcheTable.id });
+      await db.db
+        .insert(demarchePlanActionTable)
+        .values({ demarcheId: precedent.id, planActionId: planId });
+      await setStatus(DemarchePcaetStatusEnum.EN_ELABORATION);
+      const metadonneePrecedent = await ensureTestPcaetMetadonneeId(db, {
+        collectiviteId,
+        demarcheId: precedent.id,
+      });
+      await insertValeursDepot({
+        collectiviteId,
+        metadonneeId: metadonneePrecedent,
+        valeurs: [
+          {
+            indicateurId: ids['cae_1.a'],
+            dateValeur: '2012-01-01',
+            resultat: 170,
+          },
+          {
+            indicateurId: ids['cae_1.a'],
+            dateValeur: '2030-01-01',
+            objectif: 120,
+          },
+        ],
+      });
+
+      const ges = (await getIndicateursObjectifs(lecteur, planId)).find(
+        ({ id }) => id === ids['cae_1.a']
+      );
+      expect(ges?.objectifs).toEqual([{ annee: 2030, valeur: 90 }]);
+      expect(ges?.departDepot).toEqual({ annee: 2018, valeur: 152 });
+    });
   });
 });
