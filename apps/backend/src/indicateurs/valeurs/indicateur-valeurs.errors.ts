@@ -6,6 +6,7 @@ import { TrpcErrorHandlerConfig } from '@tet/backend/utils/trpc/trpc-error-handl
 import type { IndicateurPeriodicite } from '@tet/domain/indicateurs';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { match } from 'ts-pattern';
+import type { ListIndicateursError } from '../indicateurs/list-indicateurs/list-indicateurs.errors';
 import { UserIndicateurValeurNotAllowedException } from './write-indicateur-valeurs/user-indicateur-valeur.errors';
 
 const indicateurValeursErrors = [
@@ -103,6 +104,24 @@ export const toMutatePermissionDeniedFailure = ({
         : `Droits insuffisants, l'utilisateur ${userId} n'a pas l'autorisation ${mutateOperation} sur la ressource ${ResourceType.COLLECTIVITE} ${collectiviteId}`
     )
   );
+
+const indicateurValeursErrorByListError: Record<
+  ListIndicateursError,
+  IndicateurValeursError
+> = {
+  UNAUTHORIZED: 'UNAUTHORIZED',
+  INDICATEUR_NOT_FOUND: 'INVALID_VALUE',
+  DATABASE_ERROR: 'DATABASE_ERROR',
+};
+
+export const fromListIndicateursFailure = ({
+  error,
+  cause,
+}: {
+  error: ListIndicateursError;
+  cause?: Error;
+}): Result<never, IndicateurValeursError> =>
+  failure(indicateurValeursErrorByListError[error], cause);
 
 export function toIndicateurValeursFailure(
   error: unknown

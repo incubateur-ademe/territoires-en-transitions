@@ -10,6 +10,7 @@ import {
   IndicateurDetaille,
 } from '@tet/domain/indicateurs';
 import { EChartsOption } from 'echarts/types/dist/echarts';
+import { getListIndicateursDataOrThrow } from '../indicateurs/list-indicateurs/list-indicateurs.errors';
 import { ListIndicateursService } from '../indicateurs/list-indicateurs/list-indicateurs.service';
 import ManageIndicateurValeursService from '../valeurs/manage-indicateur-valeurs/manage-indicateur-valeurs.service';
 import ValeursMoyenneService from '../valeurs/get-moyenne-indicateur-valeurs/valeurs-moyenne.service';
@@ -54,8 +55,8 @@ export class IndicateurChartService {
     if (!indicateursEnfantIds.length) {
       return null;
     }
-    const indicateursEnfant = await this.listIndicateursService.listIndicateurs(
-      {
+    const indicateursEnfant = getListIndicateursDataOrThrow(
+      await this.listIndicateursService.listIndicateurs({
         collectiviteId,
         filters: {
           indicateurIds: indicateursEnfantIds,
@@ -64,7 +65,7 @@ export class IndicateurChartService {
           page: 1,
           limit: indicateursEnfantIds.length,
         },
-      }
+      })
     );
 
     const { orderedAvailableSegmentations, indicateursBySegmentation } =
@@ -158,17 +159,19 @@ export class IndicateurChartService {
       );
     }
 
-    const indicateur = indicateurId
-      ? await this.listIndicateursService.getIndicateur({
-          indicateurId,
-          collectiviteId,
-        })
-      : await this.listIndicateursService.getIndicateurByIdentifiantReferentiel(
-          {
-            identifiantReferentiel: identifiantReferentiel ?? '',
+    const indicateur = getListIndicateursDataOrThrow(
+      indicateurId
+        ? await this.listIndicateursService.getIndicateur({
+            indicateurId,
             collectiviteId,
-          }
-        );
+          })
+        : await this.listIndicateursService.getIndicateurByIdentifiantReferentiel(
+            {
+              identifiantReferentiel: identifiantReferentiel ?? '',
+              collectiviteId,
+            }
+          )
+    );
 
     // Parallelize all independent queries
     const [

@@ -97,37 +97,35 @@ export class ResolveElectrificationEngagementsService {
     });
     if (!expected.length) return structure;
 
-    let definitions: IndicateurDetaille[];
-    try {
-      const identifiantsReferentiel = [
-        ...new Set(
-          expected.flatMap(({ cible }) =>
-            cible.identifiantReferentiel === null
-              ? []
-              : [cible.identifiantReferentiel]
-          )
-        ),
-      ];
-      const result = identifiantsReferentiel.length
-        ? await this.indicateurs.listIndicateurs(
-            {
-              collectiviteId: draft.collectiviteId,
-              filters: { identifiantsReferentiel },
-              queryOptions: { page: 1, limit: identifiantsReferentiel.length },
-            },
-            user
-          )
-        : null;
-      definitions = result?.data ?? [];
-    } catch (error) {
+    const identifiantsReferentiel = [
+      ...new Set(
+        expected.flatMap(({ cible }) =>
+          cible.identifiantReferentiel === null
+            ? []
+            : [cible.identifiantReferentiel]
+        )
+      ),
+    ];
+    const listResult = identifiantsReferentiel.length
+      ? await this.indicateurs.listIndicateurs(
+          {
+            collectiviteId: draft.collectiviteId,
+            filters: { identifiantsReferentiel },
+            queryOptions: { page: 1, limit: identifiantsReferentiel.length },
+          },
+          user
+        )
+      : null;
+    if (listResult && !listResult.success) {
       this.logger.error(
         'Impossible de résoudre les indicateurs des engagements Électrification',
-        error
+        listResult.cause
       );
       return failure([
         electrificationEngagementsIssue('INDICATEUR_RESOLUTION_FAILED'),
       ]);
     }
+    const definitions: IndicateurDetaille[] = listResult?.data.data ?? [];
 
     const issues = draft.engagements.flatMap((engagement) => {
       const definition = config.engagements.find(

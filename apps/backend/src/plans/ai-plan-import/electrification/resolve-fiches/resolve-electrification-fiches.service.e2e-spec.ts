@@ -6,7 +6,7 @@ import {
 import { ElectrificationDataService } from '@tet/backend/plans/plans/electrification/publish-electrification-data/electrification-data.service';
 import { ElectrificationGristAdapter } from '@tet/backend/plans/plans/electrification/publish-electrification-data/sources/electrification-grist.adapter';
 import gristAxes from '@tet/backend/plans/plans/electrification/publish-electrification-data/sources/__fixtures__/electrification-grist-axes.json';
-import { ForbiddenException, INestApplication } from '@nestjs/common';
+import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { indicateurDefinitionTable } from '@tet/backend/indicateurs/indicateur/indicateur-definition.table';
 import { ListIndicateursService } from '@tet/backend/indicateurs/indicateurs/list-indicateurs/list-indicateurs.service';
@@ -1023,14 +1023,20 @@ describe('Résolution des fiches actions Électrification', () => {
   });
 
   test.each([
-    [new ForbiddenException(), 'IMPORT_REFERENCE_UNAUTHORIZED'],
-    [new Error('Database unavailable'), 'FICHE_RESOLUTION_FAILED'],
-  ])('localise une erreur de recherche TeT (%s)', async (error, code) => {
+    [
+      failure('UNAUTHORIZED' as const, new Error('Droits insuffisants')),
+      'IMPORT_REFERENCE_UNAUTHORIZED',
+    ],
+    [
+      failure('DATABASE_ERROR' as const, new Error('Database unavailable')),
+      'FICHE_RESOLUTION_FAILED',
+    ],
+  ])('localise un échec de recherche TeT (%#)', async (listing, code) => {
     fiche().indicateurs = [quantitatif('test-I')];
     vi.spyOn(
       app.get(ListIndicateursService),
       'listIndicateurs'
-    ).mockRejectedValueOnce(error);
+    ).mockResolvedValueOnce(listing);
 
     const result = await resolve();
 

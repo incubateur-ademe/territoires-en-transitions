@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ListIndicateursService } from '@tet/backend/indicateurs/indicateurs/list-indicateurs/list-indicateurs.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
@@ -232,36 +232,18 @@ export class ResolveElectrificationIndicateursService {
         mapping.periodicite === null
       )
         return failure([issue('FICHES_CONFIG_UNAVAILABLE')]);
-      try {
-        const { data } = await this.indicateurs.listIndicateurs(
-          {
-            collectiviteId,
-            filters: {
-              identifiantsReferentiel: [mapping.identifiantReferentiel],
-            },
-            queryOptions: { page: 1, limit: 2 },
+      const listResult = await this.indicateurs.listIndicateurs(
+        {
+          collectiviteId,
+          filters: {
+            identifiantsReferentiel: [mapping.identifiantReferentiel],
           },
-          context.user
-        );
-        const definition = data[0];
-        if (
-          data.length !== 1 ||
-          definition.unite !== mapping.unite ||
-          definition.periodicite !== mapping.periodicite
-        )
-          return failure([issue('MISSING_FICHE_INDICATEUR')]);
-        indicateurId = definition.id;
-        titre = definition.titre;
-        unite = mapping.unite;
-        periodicite = mapping.periodicite;
-        if (linkedIds.has(indicateurId)) {
-          return success({
-            indicateur: { mode: 'link', indicateurId, source: input.source },
-            issues: [issue('EXISTING_INDICATEUR_PRESERVED')],
-          });
-        }
-      } catch (error) {
-        if (error instanceof ForbiddenException) {
+          queryOptions: { page: 1, limit: 2 },
+        },
+        context.user
+      );
+      if (!listResult.success) {
+        if (listResult.error === 'UNAUTHORIZED') {
           return failure([
             {
               code: 'IMPORT_REFERENCE_UNAUTHORIZED',
@@ -272,9 +254,27 @@ export class ResolveElectrificationIndicateursService {
         }
         this.logger.error(
           'Impossible de résoudre un indicateur du catalogue',
-          error
+          listResult.cause
         );
         return failure([issue('FICHE_RESOLUTION_FAILED')]);
+      }
+      const { data } = listResult.data;
+      const definition = data[0];
+      if (
+        data.length !== 1 ||
+        definition.unite !== mapping.unite ||
+        definition.periodicite !== mapping.periodicite
+      )
+        return failure([issue('MISSING_FICHE_INDICATEUR')]);
+      indicateurId = definition.id;
+      titre = definition.titre;
+      unite = mapping.unite;
+      periodicite = mapping.periodicite;
+      if (linkedIds.has(indicateurId)) {
+        return success({
+          indicateur: { mode: 'link', indicateurId, source: input.source },
+          issues: [issue('EXISTING_INDICATEUR_PRESERVED')],
+        });
       }
     }
     if (titre === null) return failure([issue('MISSING_FICHE_TITLE')]);

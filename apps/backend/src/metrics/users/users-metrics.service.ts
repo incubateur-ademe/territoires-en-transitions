@@ -5,6 +5,7 @@ import { ListActionsService } from '@tet/backend/referentiels/list-actions/list-
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { ResourceType } from '@tet/domain/users';
+import { getListIndicateursDataOrThrow } from '../../indicateurs/indicateurs/list-indicateurs/list-indicateurs.errors';
 import { ListIndicateursService } from '../../indicateurs/indicateurs/list-indicateurs/list-indicateurs.service';
 
 @Injectable()
@@ -80,7 +81,8 @@ export class UsersMetricsService {
       this.listIndicateursService
         .getMesIndicateursCount({ collectiviteId }, user)
         .then((piloteCount) => {
-          response.indicateurs.piloteCount = piloteCount;
+          response.indicateurs.piloteCount =
+            getListIndicateursDataOrThrow(piloteCount);
           return;
         })
     );

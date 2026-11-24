@@ -2,7 +2,7 @@ import { failure, success } from '@tet/backend/utils/result.type';
 import { describe, expect, it, vi } from 'vitest';
 import ExportIndicateursService from './export-indicateurs.service';
 
-const EMPTY_LIST = { count: 0, data: [] };
+const EMPTY_LIST = success({ count: 0, data: [] });
 
 const toService = ({
   canReadConfidentiel,
@@ -53,10 +53,12 @@ describe('ExportIndicateursService : indicateurs confidentiels', () => {
   it('applique la même exclusion aux sous-indicateurs ajoutés à l’export sans droit sur les confidentiels', async () => {
     const listIndicateurs = vi
       .fn()
-      .mockResolvedValueOnce({
-        count: 1,
-        data: [{ id: 1, enfants: [{ id: 2 }] }],
-      })
+      .mockResolvedValueOnce(
+        success({
+          count: 1,
+          data: [{ id: 1, enfants: [{ id: 2 }] }],
+        })
+      )
       .mockResolvedValueOnce(EMPTY_LIST);
     const service = toService({ canReadConfidentiel: false, listIndicateurs });
 

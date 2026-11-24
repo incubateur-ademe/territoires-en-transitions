@@ -1,6 +1,6 @@
 import { TrajectoireSnbc3FeatureFlagService } from '@tet/backend/indicateurs/trajectoires/trajectoire-snbc3-feature-flag.service';
 import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
-import { BadRequestException, ForbiddenException } from '@nestjs/common';
+import { ForbiddenException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import ComputeValeursService from '@tet/backend/indicateurs/valeurs/compute-indicateur-valeurs/compute-valeurs.service';
 import { GetUserRolesAndPermissionsService } from '@tet/backend/users/authorizations/get-user-roles-and-permissions/get-user-roles-and-permissions.service';
@@ -1566,12 +1566,14 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
       const repository = {};
       const transactionManager = createTransactionManager(tx);
       const listIndicateursService = {
-        getIndicateur: vi.fn().mockResolvedValue({
-          id: 10,
-          periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
-          precision: 2,
-          sansValeurUtilisateur: false,
-        }),
+        getIndicateur: vi.fn().mockResolvedValue(
+          success({
+            id: 10,
+            periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
+            precision: 2,
+            sansValeurUtilisateur: false,
+          })
+        ),
       };
       const indicateurLockRepository = {
         lockIndicateurs: vi.fn().mockResolvedValue(
@@ -1656,7 +1658,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
     ])('$nom : échecs retournés au lieu d’être levés', (cas) => {
       const { appeler, verrouPremierAppele } = cas;
       const toServiceWithMocks = ({
-        getIndicateur = vi.fn().mockResolvedValue({ id: 10 }),
+        getIndicateur = vi.fn().mockResolvedValue(success({ id: 10 })),
         canMutateValeur,
         verrouEnEchec,
         transactionManager = createTransactionManager({}),
@@ -1697,8 +1699,11 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
         const service = toServiceWithMocks({
           getIndicateur: vi
             .fn()
-            .mockRejectedValue(
-              new BadRequestException('Indicateur not found for id 10')
+            .mockResolvedValue(
+              failure(
+                'INDICATEUR_NOT_FOUND',
+                new Error('Indicateur not found for id 10')
+              )
             ),
         });
 

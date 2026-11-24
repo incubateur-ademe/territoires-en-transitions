@@ -10,6 +10,7 @@ import { AuthenticatedUser } from '../../../users/models/auth.models';
 import IndicateurSourcesService from '../../sources/indicateur-sources.service';
 import { TrajectoireSnbc3FeatureFlagService } from '../../trajectoires/trajectoire-snbc3-feature-flag.service';
 import ManageIndicateurValeursService from '../../valeurs/manage-indicateur-valeurs/manage-indicateur-valeurs.service';
+import { getListIndicateursDataOrThrow } from '../list-indicateurs/list-indicateurs.errors';
 import { ListIndicateursService } from '../list-indicateurs/list-indicateurs.service';
 import { buildConsolidatedSheet } from './export-indicateurs.builder';
 import { ExportIndicateursRequestType } from './export-indicateurs.request';
@@ -69,13 +70,15 @@ export default class ExportIndicateursService {
     // unique du filtrage et du tri, qui vérifie aussi les droits de lecture de
     // l'utilisateur et borne la résolution à sa collectivité (protection IDOR).
     const sort = options.mode === 'all' ? options.sort : undefined;
-    const listResult = await this.listIndicateursService.listIndicateurs(
-      {
-        collectiviteId: options.collectiviteId,
-        filters,
-        queryOptions: { page: 1, limit: this.MAX_EXPORT_COUNT, sort },
-      },
-      tokenInfo
+    const listResult = getListIndicateursDataOrThrow(
+      await this.listIndicateursService.listIndicateurs(
+        {
+          collectiviteId: options.collectiviteId,
+          filters,
+          queryOptions: { page: 1, limit: this.MAX_EXPORT_COUNT, sort },
+        },
+        tokenInfo
+      )
     );
 
     // Garde-fou technique invisible : au-delà du plafond, on renvoie une erreur
@@ -130,13 +133,15 @@ export default class ExportIndicateursService {
         enfantsFilters.estConfidentiel = false;
         enfantsFilters.sansAncetreConfidentiel = true;
       }
-      const enfantsResult = await this.listIndicateursService.listIndicateurs(
-        {
-          collectiviteId: options.collectiviteId,
-          filters: enfantsFilters,
-          queryOptions: { page: 1, limit: this.MAX_EXPORT_COUNT },
-        },
-        tokenInfo
+      const enfantsResult = getListIndicateursDataOrThrow(
+        await this.listIndicateursService.listIndicateurs(
+          {
+            collectiviteId: options.collectiviteId,
+            filters: enfantsFilters,
+            queryOptions: { page: 1, limit: this.MAX_EXPORT_COUNT },
+          },
+          tokenInfo
+        )
       );
       const allowedEnfantIds = new Set(enfantsResult.data.map((d) => d.id));
       for (const parent of parents) {

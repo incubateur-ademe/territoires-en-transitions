@@ -81,15 +81,23 @@ export class UpsertGridValeursService {
 
     try {
       const indicateurIds = [...new Set(valeurs.map((v) => v.indicateurId))];
-      const { data: indicateurs } =
-        await this.listIndicateursService.listIndicateurs(
-          {
-            collectiviteId,
-            filters: { indicateurIds },
-            queryOptions: { page: 1, limit: indicateurIds.length },
-          },
-          user
+      const listResult = await this.listIndicateursService.listIndicateurs(
+        {
+          collectiviteId,
+          filters: { indicateurIds },
+          queryOptions: { page: 1, limit: indicateurIds.length },
+        },
+        user
+      );
+      if (!listResult.success) {
+        return failure(
+          listResult.error === 'INDICATEUR_NOT_FOUND'
+            ? 'NOT_FOUND'
+            : listResult.error,
+          listResult.cause
         );
+      }
+      const { data: indicateurs } = listResult.data;
       const indicateursById = keyBy(indicateurs, (item) => item.id);
 
       if (indicateurs.length !== indicateurIds.length) {
