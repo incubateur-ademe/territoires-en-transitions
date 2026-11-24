@@ -248,6 +248,7 @@ export function SgpeMondrianChart(props: Props) {
                     >
                       <div
                         className="font-semibold"
+                        data-test="indicateurs.trajectoires.leviers.tile-label"
                         style={{
                           fontSize: tile.fit.labelSize,
                           lineHeight: `${tile.fit.labelLineHeight}px`,
@@ -261,6 +262,7 @@ export function SgpeMondrianChart(props: Props) {
                       </div>
                       <div
                         className="whitespace-nowrap font-normal"
+                        data-test="indicateurs.trajectoires.leviers.tile-value"
                         style={{
                           marginTop: MONDRIAN_LABEL_GAP,
                           fontSize: tile.fit.valueSize,

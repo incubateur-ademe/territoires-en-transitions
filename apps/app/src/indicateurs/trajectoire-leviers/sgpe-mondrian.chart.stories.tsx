@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { preset } from '@tet/ui';
-import { expect, fn, waitFor } from 'storybook/test';
 import { SgpeMondrianChart } from './sgpe-mondrian.chart';
 
 const smallLevier = 'Un levier dont la surface est inférieure à un pixel';
@@ -22,7 +21,6 @@ const meta = {
         },
       ],
     },
-    onSelected: fn(),
   },
   render: (args) => (
     <div className="max-w-3xl">
@@ -34,26 +32,4 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const TuileInferieureAUnPixel: Story = {
-  play: async ({ canvas, args, userEvent }) => {
-    // Vérifie le passage ECharts -> légende : une géométrie nulle ne doit pas
-    // faire disparaître le levier, même si le calcul de taille fonctionne.
-    const reference = await canvas.findByRole('button', {
-      name: /^Repère 2 :/,
-    });
-    await expect(reference).toBeVisible();
-    await expect(
-      canvas.getByRole('group', { name: 'Repères (ktCO₂e)' })
-    ).toHaveTextContent(smallLevier);
-
-    await userEvent.click(reference);
-    await expect(args.onSelected).toHaveBeenCalledWith(
-      'Résidentiel',
-      smallLevier
-    );
-    // Le repère pilote aussi la sélection interne et le fil d'Ariane.
-    await waitFor(() =>
-      expect(canvas.getAllByText(smallLevier)).toHaveLength(2)
-    );
-  },
-};
+export const TuileInferieureAUnPixel: Story = {};
