@@ -1,6 +1,16 @@
 import { plural } from '@tet/ui/labels/plural';
 
 export const indicateursLabels = {
+  trajectoireLeviersMondrianTitre:
+    'Objectifs du territoire à horizon 2030, répartis par leviers',
+  trajectoireLeviersMondrianReperes: 'Repères (ktCO₂e)',
+  trajectoireLeviersMondrianValeur: (value: string) => `${value} ktCO₂e`,
+  trajectoireLeviersMondrianRepere: (
+    reference: number,
+    levier: string,
+    value: string
+  ) =>
+    `Repère ${reference} : ${levier}, ${value} ktCO₂e`,
   indicateurPeriodiciteScoreTooltip:
     'Cet indicateur doit être suivi à la maille annuelle : il participe au score du programme TETE. Sa périodicité ne peut pas être modifiée.',
   indicateurPeriodiciteTooltip: (periodicite: string) =>

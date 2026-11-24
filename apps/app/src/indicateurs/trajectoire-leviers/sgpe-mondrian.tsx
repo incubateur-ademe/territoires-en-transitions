@@ -1,16 +1,13 @@
 import { useTrajectoireLeviers } from '@/app/indicateurs/trajectoire-leviers/use-trajectoire-leviers';
-import { TOOLBOX_BASE } from '@/app/ui/charts/echarts';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ErrorCard } from '@/app/utils/error/error.card';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { getErrorMessage } from '@tet/domain/utils';
-import { Card, Event, preset, useEventTracker } from '@tet/ui';
-import { MondrianTreemap } from 'mondrian-treemap';
+import { Card, Event, useEventTracker } from '@tet/ui';
 import React from 'react';
 import { appLabels } from '@/app/labels/catalog';
 import { getSecteursNonRepresentes } from './secteurs-non-representes.utils';
-
-const { colors } = preset.theme.extend;
+import { SgpeMondrianChart } from './sgpe-mondrian.chart';
 
 type SgpeMondrianProps = {
   selectedSecteurIdentifiant?: string;
@@ -67,30 +64,7 @@ export const SgpeMondrian: React.FC<SgpeMondrianProps> = (
 
   return (
     <Card>
-      <MondrianTreemap
-        toolboxOptions={{
-          ...TOOLBOX_BASE,
-          top: 1,
-          right: 3,
-          feature: {
-            saveAsImage: {
-              ...TOOLBOX_BASE.feature.saveAsImage,
-              name: `trajectoire-leviers-mondrian`,
-            },
-          },
-        }}
-        titleOptions={{
-          left: '1%',
-          text: 'Objectifs du territoire à horizon 2030, répartis par leviers',
-          textStyle: {
-            color: colors.primary['9'],
-          },
-        }}
-        treemapOptions={{
-          left: 0,
-          right: 0,
-          bottom: 20,
-        }}
+      <SgpeMondrianChart
         inputData={trajectoireLeviers}
         selectedSecteur={selectedSecteur}
         selectedLevier={selectedLevier}
@@ -110,12 +84,6 @@ export const SgpeMondrian: React.FC<SgpeMondrianProps> = (
             levier: selectedLevier,
           });
         }}
-        displayErrorModal={(error) => {
-          return (
-            <ErrorCard title={'Données non disponibles'} subTitle={error} />
-          );
-        }}
-        style={{ height: '700px' }}
       />
       {secteursNonRepresentes.length > 0 && (
         <p
