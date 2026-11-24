@@ -477,6 +477,60 @@ describe('scoutUnits', () => {
     }
   );
 
+  it('donne au squelette le sommaire placé avant la partie actions, même coupé en deux colonnes', async () => {
+    const summaryPart = (lines: string[]) =>
+      buildUnit(
+        lines.map((text) => ({ text, pageIndex: 0 })),
+        [],
+        'section',
+        { section: 'L’ESSENTIEL' }
+      );
+    const fiche = (title: string) =>
+      buildUnit(
+        [
+          { text: `Action ${title}`, pageIndex: 2 },
+          { text: 'Pilote : Service déchets', pageIndex: 2 },
+        ],
+        [],
+        'fiche',
+        { section: 'LES FICHES ACTIONS', title }
+      );
+    const { llm, calls } = llmRouting(() => []);
+
+    await scoutUnits(llm, {
+      units: numberUnits([
+        summaryPart([
+          '14 ACTIONS PRIORITAIRES',
+          'BIODÉCHETS : RESTES ALIMENTAIRES ET VÉGÉTAUX',
+          '1. Organiser le compostage individuel',
+        ]),
+        summaryPart([
+          '2. Lutter contre le gaspillage alimentaire',
+          'DÉCHETS EN MER',
+          '3. Soutenir la lutte contre les déchets en mer',
+        ]),
+        unit(
+          'La prévention des déchets réduit leur nocivité.',
+          'section',
+          [],
+          'LE CONTEXTE'
+        ),
+        fiche('1 Organiser le compostage individuel'),
+        fiche('2 Lutter contre le gaspillage alimentaire'),
+        fiche('3 Soutenir la lutte contre les déchets en mer'),
+      ]),
+    });
+
+    const skeletonPrompt = calls.find(
+      (call) => !call.prompt.includes('agent de tri documentaire')
+    )?.prompt;
+    expect(skeletonPrompt).toContain(
+      'BIODÉCHETS : RESTES ALIMENTAIRES ET VÉGÉTAUX'
+    );
+    expect(skeletonPrompt).toContain('DÉCHETS EN MER');
+    expect(skeletonPrompt).not.toContain('réduit leur nocivité');
+  });
+
   it('lit tout plutôt que rien quand le tri écarte toutes les unités', async () => {
     const only = [unit('Diagnostic', 'unknown'), unit('Contexte', 'unknown')];
     const { llm } = llmRouting(() => [
