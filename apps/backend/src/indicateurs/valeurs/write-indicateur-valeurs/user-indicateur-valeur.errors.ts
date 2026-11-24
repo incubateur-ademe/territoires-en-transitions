@@ -1,11 +1,5 @@
 import { BadRequestException } from '@nestjs/common';
-
-export const getUserIndicateurValeurNotAllowedMessage = (
-  indicateurIds: number[]
-): string =>
-  `Les indicateurs ${indicateurIds.join(
-    ', '
-  )} n'acceptent pas de valeur utilisateur`;
+import { getUserIndicateurValeurNotAllowedMessage } from './user-indicateur-valeur.rules';
 
 /**
  * Compatibility error for legacy value-write entry points that still expose

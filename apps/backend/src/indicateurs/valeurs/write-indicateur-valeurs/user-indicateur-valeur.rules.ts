@@ -1,6 +1,12 @@
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import type { Indicateur } from '@tet/domain/indicateurs';
-import { getUserIndicateurValeurNotAllowedMessage } from './user-indicateur-valeur.errors';
+
+export const getUserIndicateurValeurNotAllowedMessage = (
+  indicateurIds: number[]
+): string =>
+  `Les indicateurs ${indicateurIds.join(
+    ', '
+  )} n'acceptent pas de valeur utilisateur`;
 
 /** Politique unique protégeant les indicateurs alimentés exclusivement par calcul/source. */
 export const checkUserIndicateurValeursAllowed = (
