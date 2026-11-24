@@ -1,4 +1,3 @@
-import { failure, Result, success } from '@tet/backend/utils/result.type';
 import {
   Indicateur,
   IndicateurPeriodiciteEnum,
@@ -27,31 +26,31 @@ export class IndicateurValeursRules {
   static normalize(
     valeur: IndicateurValeurCreate,
     indicateur: Pick<Indicateur, 'id' | 'precision'>
-  ): Result<IndicateurValeurCreate, 'INVALID_VALUE'> {
+  ): IndicateurValeurCreate | null {
     const periodicite =
       valeur.periodicite ?? IndicateurPeriodiciteEnum.ANNUELLE;
-    const canonicalDateValeurResult = this.getCanonicalDateValeur(
-      valeur.dateValeur,
-      { id: indicateur.id, periodicite }
-    );
-    if (!canonicalDateValeurResult.success) return canonicalDateValeurResult;
-    return success({
+    const canonicalDateValeur = this.getCanonicalDateValeur(valeur.dateValeur, {
+      id: indicateur.id,
+      periodicite,
+    });
+    if (canonicalDateValeur === null) return null;
+    return {
       ...valeur,
       periodicite,
-      dateValeur: canonicalDateValeurResult.data,
+      dateValeur: canonicalDateValeur,
       resultat: !isNil(valeur.resultat)
         ? round(valeur.resultat, indicateur.precision)
         : null,
       objectif: !isNil(valeur.objectif)
         ? round(valeur.objectif, indicateur.precision)
         : null,
-    });
+    };
   }
 
   static getCanonicalDateValeur(
     dateValeur: string,
     indicateur: Pick<Indicateur, 'id' | 'periodicite'>
-  ): Result<string, 'INVALID_VALUE'> {
+  ): string | null {
     try {
       // L'API annuelle accepte une date dans l'année ; le stockage utilise son premier jour.
       const periode =
@@ -61,14 +60,9 @@ export class IndicateurValeursRules {
               indicateur.periodicite,
               dateValeur
             );
-      return success(IndicateurPeriodes.toDateValeur(periode));
+      return IndicateurPeriodes.toDateValeur(periode);
     } catch {
-      return failure(
-        'INVALID_VALUE',
-        new Error(
-          `Date de valeur ${dateValeur} non canonique pour l'indicateur ${indicateur.id} (${indicateur.periodicite})`
-        )
-      );
+      return null;
     }
   }
 }
