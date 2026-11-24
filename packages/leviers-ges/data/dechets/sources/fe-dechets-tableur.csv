@@ -1,0 +1,44 @@
+code_irep,libelle_irep,libelle_be,id_be_stockage,fe_stockage_kgco2e_t,id_be_incineration,fe_incineration_kgco2e_t,statut_be,notes
+20 01 01,Papier et carton,Emballages - Carton,34484,950,34482,120,✓ Correspondance directe,Collecte sélective papier-carton ménager
+20 01 02,Verre,Emballages - Verre,34476,41,34474,130,✓ Correspondance directe,Collecte sélective verre ménager
+20 01 08,Déchets de cuisine et de cantine biodégradables,Déchets putrescibles,34648,692,34646,45,✓ Correspondance directe,Biodéchets alimentaires ménagers collectés séparément
+20 01 10,Vêtements,Textiles,9adaf403-4eda-4d9c-80c3-f231754644ca,1890,86ebb09f-806d-416d-9062-aa0faf25d8af,400,✓ Correspondance directe,"Mise en décharge de textiles, FR (attention valeur en kgCO2/kg) = stockage Incinération de déchets - Déchets textiles, FR (attention valeur en kgCO2/kg) = incineration"
+20 01 11,Textiles,Textiles,9adaf403-4eda-4d9c-80c3-f231754644ca,1890,86ebb09f-806d-416d-9062-aa0faf25d8af,400,✓ Correspondance directe,"Mise en décharge de textiles, FR (attention valeur en kgCO2/kg) = stockage Incinération de déchets - Déchets textiles, FR (attention valeur en kgCO2/kg) = incineration"
+20 01 13*,Solvants,DIS,34714,128,34712,844,✓ Correspondance directe,Déchet dangereux — FE DIS utilisé par défaut
+20 01 14*,Acides,DIS,34714,128,34712,844,✓ Correspondance directe,Déchet dangereux — FE DIS utilisé par défaut
+20 01 15*,Déchets basiques,DIS,34714,128,34712,844,✓ Correspondance directe,Déchet dangereux — FE DIS utilisé par défaut
+20 01 17*,Produits chimiques de la photographie,DIS,34714,128,34712,844,✓ Correspondance directe,Déchet dangereux — FE DIS utilisé par défaut
+20 01 19*,Pesticides,DIS,34714,128,34712,844,✓ Correspondance directe,Déchet dangereux — FE DIS utilisé par défaut
+20 01 21*,Tubes fluorescents et autres déchets contenant du mercure,DIS,34714,128,34712,844,✓ Correspondance directe,Déchet dangereux (mercure) — FE DIS utilisé par défaut
+20 01 23*,Équipements mis au rebut contenant des chlorofluorocarbones,DIS,34714,128,34712,844,✓ Correspondance directe,Déchet dangereux (CFC/HCFC) — FE DIS; gros électroménager froid
+20 01 25,Huiles et matières grasses alimentaires,Déchets putrescibles,34648,692,34646,45,✓ Correspondance directe,Huiles alimentaires usagées (HAU) — FE déchets putrescibles par proxy
+20 01 26*,Huiles et matières grasses autres que celles visées à la rubrique 20 01 25,DIS,34714,128,34712,844,✓ Correspondance directe,Déchet dangereux — FE DIS utilisé par défaut
+20 01 27*,"Peintures, encres, colles et résines contenant des substances dangereuses",DIS,34714,128,34712,844,✓ Correspondance directe,Déchet dangereux — FE DIS utilisé par défaut
+20 01 28,"Peintures, encres, colles et résines autres que celles visées à la rubrique 20 01 27",DIS,34714,128,34712,844,✓ Correspondance directe,utiliser FE DIS par défaut 
+20 01 29*,Détergents contenant des substances dangereuses,DIS,34714,128,34712,844,✓ Correspondance directe,Déchet dangereux — FE DIS utilisé par défaut
+20 01 30,Détergents autres que ceux visés à la rubrique 20 01 29,DIS,34714,128,34712,844,✓ Correspondance directe,utiliser FE DIS par défaut 
+20 01 31*,Médicaments cytotoxiques et cytostatiques,DAS,—,—,34713,943,~ Correspondance partielle,Déchet dangereux — incinération haute température; FE DAS
+20 01 32,Médicaments autres que ceux visés à la rubrique 20 01 31,DIS,34714,128,34712,844,✓ Correspondance directe,utiliser FE DIS par défaut 
+20 01 33*,"Piles et accumulateurs visés aux rubriques 16 06 01, 16 06 02 ou 16 06 03 et piles non triées contenant ces piles",—,—,—,—,—,— Pas de FE disponible,—
+20 01 34,Piles et accumulateurs autres que ceux visés à la rubrique 20 01 33,—,—,—,—,—,— Pas de FE disponible,—
+20 01 35*,Équipements électriques et électroniques mis au rebut contenant des composants dangereux (autres que 20 01 21 et 20 01 23),—,—,—,—,—,— Pas de FE disponible,—
+20 01 36,"Équipements électriques et électroniques mis au rebut autres que ceux visés aux rubriques 20 01 21, 20 01 23 et 20 01 35",—,—,—,—,—,— Pas de FE disponible,—
+20 01 37*,Bois contenant des substances dangereuses,DIS,34714,128,34712,844,✓ Correspondance directe,"Bois traité dangereux (créosoté, etc.) — FE DIS utilisé par défaut"
+20 01 38,Bois autres que ceux visés à la rubrique 20 01 37,Emballages - Bois,34594,714,34592,69,✓ Correspondance directe,Bois non traité ou faiblement traité
+20 01 39,Matières plastiques,Emballages - Plastique pétrosourcé PE,34532,41,34528,2769,✓ Correspondance directe,FE plastique PE pétrosourcé utilisé par défaut (proxy)
+20 01 40,Métaux,Emballages - Acier,34466,41,34462,135,✓ Correspondance directe,FE emballage acier utilisé par défaut (proxy métaux en mélange)
+20 01 41,Déchets provenant du ramonage de cheminée,DIS,34714,128,34712,844,✓ Correspondance directe,utiliser FE DIS par défaut 
+20 01 42,"déchets de batteries visés aux points 16 06 01 à 16 06 04, 16 06 08 à 16 06 11 ou 16 06 14 et déchets de batteries en mélange contenant ces déchets de batteries, y compris la rubrique 16 06 07",,—,—,—,—,— Pas de FE disponible,—
+20 01 43,	déchets de batteries au lithium visés à la rubrique 16 06 07,,—,—,—,—,— Pas de FE disponible,—
+20 01 44,	déchets de batteries autres que ceux visés aux rubriques 20 01 42 et 20 01 43,,—,—,—,—,— Pas de FE disponible,—
+20 01 99,Autres fractions non spécifiées ailleurs,Ordures ménagères résiduelles,34652,412,34650,374,✓ Correspondance directe,Fraction résiduelle non classifiée — FE OMR utilisé par proxy
+20 02 01,Déchets biodégradables (jardins et parcs),Déchets putrescibles,34648,692,34646,45,✓ Correspondance directe,Déchets verts ménagers et assimilés
+20 02 02,Terres et pierres (jardins et parcs),—,—,—,—,—,— Pas de FE disponible,Inertes — pas de FE spécifique BE
+20 02 03,Autres déchets non biodégradables (jardins et parcs),Ordures ménagères résiduelles,34652,412,34650,374,✓ Correspondance directe,"Plastiques de jardin, pots, etc. — FE OMR utilisé par proxy"
+20 03 01,Déchets municipaux en mélange,Ordures ménagères résiduelles,34652,412,34650,374,✓ Correspondance directe,Ordures ménagères résiduelles (OMR) — fraction tout-venant résiduelle
+20 03 02,Déchets de marchés,Déchets putrescibles,34648,692,34646,45,✓ Correspondance directe,Déchets organiques de marchés alimentaires — FE déchets putrescibles
+20 03 03,Déchets de nettoyage des rues,—,34652,412,34650,374,✓ Correspondance directe,Mélange inertes/organiques/plastiques — FE OMR utilisé par proxy
+20 03 04,Boues de fosses septiques,—,34652,412,34650,374,✓ Correspondance directe,Assimilables aux boues d'épuration — FE OMR utilisé par proxy
+20 03 06,Déchets provenant du nettoyage des égouts,DIS,34714,128,34712,844,✓ Correspondance directe,utiliser FE DIS par défaut 
+20 03 07,Déchets encombrants,—,34652,412,34650,374,✓ Correspondance directe,"Mobilier, literie, électroménager — FE OMR utilisé par proxy"
+20 03 99,Déchets municipaux non spécifiés ailleurs,Ordures ménagères résiduelles,34652,412,34650,374,✓ Correspondance directe,Fraction non classifiée — FE OMR utilisé par proxy

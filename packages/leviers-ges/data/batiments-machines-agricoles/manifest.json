@@ -1,0 +1,197 @@
+{
+  "datasets": [
+    {
+      "file": "regions.csv",
+      "source": "SDES, Données régionales de production et de consommation finale de l'énergie, secteur agriculture/sylviculture/pêche, année 2024, 13 régions de France métropolitaine. Produits pétroliers (CA2, pêche comprise), gaz naturel (CA4 = CA3 × 0,9, PCI), électricité (CA5), chaleur commercialisée (CA8). La somme des 13 régions retrouve le classeur France métropolitaine à 10⁻⁹ GWh près. Anomalie de la source, non corrigée : en Corse CA3 vaut 1,1111 GWh PCS et CA4 vaut 0. Les séries régionale, IRIS et EPCI ne se réconcilient pas (gaz local supérieur au gaz régional PCS) : ne pas les additionner ni les comparer. Construit par pnpm build:data:batiments-machines-agricoles",
+      "link": "https://www.statistiques.developpement-durable.gouv.fr/donnees-regionales-de-production-et-de-consommation-finale-de-lenergie",
+      "vintage": "année 2024, classeurs mis à jour le 2026-07-07",
+      "retrievedOn": "2026-10-07",
+      "checksum": "3be11bc79d3f0867df12e6b8b2f24a190867a5d1879c9040e7baa00c8c2c21fc",
+      "level": "region",
+      "keyColumn": "code_region",
+      "columns": [
+        { "name": "code_region", "unit": "code INSEE de la région" },
+        { "name": "electricity_gwh", "unit": "GWh par an (CA5)" },
+        { "name": "natural_gas_gwh", "unit": "GWh PCI par an (CA4)" },
+        { "name": "petroleum_products_gwh", "unit": "GWh par an (CA2, pêche comprise)" },
+        { "name": "heat_gwh", "unit": "GWh par an (CA8, chaleur commercialisée)" }
+      ],
+      "controlTotals": {
+        "electricity_gwh": "7188.293083701597",
+        "natural_gas_gwh": "1689.538439075771",
+        "petroleum_products_gwh": "43923.614939048585",
+        "heat_gwh": "343.544481222961"
+      },
+      "sources": [
+        {
+          "file": "sources/sdes-energie-region-84.xlsx",
+          "source": "SDES, Données régionales de production et de consommation finale de l'énergie, Auvergne-Rhône-Alpes",
+          "link": "https://www.statistiques.developpement-durable.gouv.fr/donnees-regionales-de-production-et-de-consommation-finale-de-lenergie",
+          "retrievedOn": "2026-10-07",
+          "checksum": "a5e1e79b441c46761901b9534e23fbbef9def63f42055cafb4cf842bf2567400"
+        },
+        {
+          "file": "sources/sdes-energie-region-27.xlsx",
+          "source": "SDES, Données régionales de production et de consommation finale de l'énergie, Bourgogne-Franche-Comté",
+          "link": "https://www.statistiques.developpement-durable.gouv.fr/donnees-regionales-de-production-et-de-consommation-finale-de-lenergie",
+          "retrievedOn": "2026-10-07",
+          "checksum": "91ac9c339967cbc0c2ae57ff34558b07a96de4208d1dbfb882c8334b4c780364"
+        },
+        {
+          "file": "sources/sdes-energie-region-53.xlsx",
+          "source": "SDES, Données régionales de production et de consommation finale de l'énergie, Bretagne",
+          "link": "https://www.statistiques.developpement-durable.gouv.fr/donnees-regionales-de-production-et-de-consommation-finale-de-lenergie",
+          "retrievedOn": "2026-10-07",
+          "checksum": "389cea9a7b330e016ed742e1cabdefabfea1ea3a9a8da91f48bd5cfd5bafa588"
+        },
+        {
+          "file": "sources/sdes-energie-region-24.xlsx",
+          "source": "SDES, Données régionales de production et de consommation finale de l'énergie, Centre-Val de Loire",
+          "link": "https://www.statistiques.developpement-durable.gouv.fr/donnees-regionales-de-production-et-de-consommation-finale-de-lenergie",
+          "retrievedOn": "2026-10-07",
+          "checksum": "64f8e63f90f4319b056fbd897206cc72c7a967381457750df4328b79b4391e63"
+        },
+        {
+          "file": "sources/sdes-energie-region-94.xlsx",
+          "source": "SDES, Données régionales de production et de consommation finale de l'énergie, Corse",
+          "link": "https://www.statistiques.developpement-durable.gouv.fr/donnees-regionales-de-production-et-de-consommation-finale-de-lenergie",
+          "retrievedOn": "2026-10-07",
+          "checksum": "a2f687115c94528cbbbaf25120368da3d30e940937464a86efce4fdb8a0ba0a5"
+        },
+        {
+          "file": "sources/sdes-energie-region-44.xlsx",
+          "source": "SDES, Données régionales de production et de consommation finale de l'énergie, Grand Est",
+          "link": "https://www.statistiques.developpement-durable.gouv.fr/donnees-regionales-de-production-et-de-consommation-finale-de-lenergie",
+          "retrievedOn": "2026-10-07",
+          "checksum": "4eef2c7677b98a41e894333dcaf4554cab1f115c53b984edf7ca86d6a50bf239"
+        },
+        {
+          "file": "sources/sdes-energie-region-32.xlsx",
+          "source": "SDES, Données régionales de production et de consommation finale de l'énergie, Hauts-de-France",
+          "link": "https://www.statistiques.developpement-durable.gouv.fr/donnees-regionales-de-production-et-de-consommation-finale-de-lenergie",
+          "retrievedOn": "2026-10-07",
+          "checksum": "74e17776a6c3638c2271e08c05515706158da720204def6ed24e775f2356239a"
+        },
+        {
+          "file": "sources/sdes-energie-region-11.xlsx",
+          "source": "SDES, Données régionales de production et de consommation finale de l'énergie, Île-de-France",
+          "link": "https://www.statistiques.developpement-durable.gouv.fr/donnees-regionales-de-production-et-de-consommation-finale-de-lenergie",
+          "retrievedOn": "2026-10-07",
+          "checksum": "0a935d47bb6d7e2e9191687cbeec39d6201e89f20b6169bc25409f97bd89d601"
+        },
+        {
+          "file": "sources/sdes-energie-region-28.xlsx",
+          "source": "SDES, Données régionales de production et de consommation finale de l'énergie, Normandie",
+          "link": "https://www.statistiques.developpement-durable.gouv.fr/donnees-regionales-de-production-et-de-consommation-finale-de-lenergie",
+          "retrievedOn": "2026-10-07",
+          "checksum": "4e83881f43acdf1bac5f14e7295b866830e27e9ba863d6ba4cc810530e5ecd91"
+        },
+        {
+          "file": "sources/sdes-energie-region-75.xlsx",
+          "source": "SDES, Données régionales de production et de consommation finale de l'énergie, Nouvelle-Aquitaine",
+          "link": "https://www.statistiques.developpement-durable.gouv.fr/donnees-regionales-de-production-et-de-consommation-finale-de-lenergie",
+          "retrievedOn": "2026-10-07",
+          "checksum": "d401307a789802d623b9be78bfaca8a6463c5a91f9719f8a573d51fc91295bc3"
+        },
+        {
+          "file": "sources/sdes-energie-region-76.xlsx",
+          "source": "SDES, Données régionales de production et de consommation finale de l'énergie, Occitanie",
+          "link": "https://www.statistiques.developpement-durable.gouv.fr/donnees-regionales-de-production-et-de-consommation-finale-de-lenergie",
+          "retrievedOn": "2026-10-07",
+          "checksum": "c72add27eb0dd178a233f40f5dba0c2c9f31c3b94f4c4f55bc2c616f2d156cc8"
+        },
+        {
+          "file": "sources/sdes-energie-region-52.xlsx",
+          "source": "SDES, Données régionales de production et de consommation finale de l'énergie, Pays de la Loire",
+          "link": "https://www.statistiques.developpement-durable.gouv.fr/donnees-regionales-de-production-et-de-consommation-finale-de-lenergie",
+          "retrievedOn": "2026-10-07",
+          "checksum": "5e47a01d454b46b9e1c125366a779a0b41a8c171eca70299d871dd0db7e49830"
+        },
+        {
+          "file": "sources/sdes-energie-region-93.xlsx",
+          "source": "SDES, Données régionales de production et de consommation finale de l'énergie, Provence-Alpes-Côte d'Azur",
+          "link": "https://www.statistiques.developpement-durable.gouv.fr/donnees-regionales-de-production-et-de-consommation-finale-de-lenergie",
+          "retrievedOn": "2026-10-07",
+          "checksum": "7c8e3b44769f706a9369b3a4314368aa422a3a6f72283faaf12726e512bee55e"
+        },
+        {
+          "file": "sources/sdes-energie-france-metropolitaine.xlsx",
+          "source": "SDES, Données régionales de production et de consommation finale de l'énergie, France métropolitaine (total de contrôle des 13 régions)",
+          "link": "https://www.statistiques.developpement-durable.gouv.fr/donnees-regionales-de-production-et-de-consommation-finale-de-lenergie",
+          "retrievedOn": "2026-10-07",
+          "checksum": "87f290c3c83850e7cf73c98605654225496cb1884dee4392ad3d6fdafd610e47"
+        }
+      ]
+    },
+    {
+      "file": "departements.csv",
+      "source": "SDES, Données locales de consommation d'électricité et de gaz naturel, IRIS (à partir de 2018), année 2024, grand secteur A (agriculture). Somme des lignes IRIS par département, déduit des deux ou trois premiers caractères du code IRIS ; les lignes sous secret statistique comptent pour 0 ; un département sans ligne vaut 0. France métropolitaine. Construit par pnpm build:data:batiments-machines-agricoles",
+      "link": "https://www.statistiques.developpement-durable.gouv.fr/donnees-locales-de-consommation-denergie?rubrique=&dossier=189",
+      "vintage": "année 2024",
+      "retrievedOn": "2026-10-07",
+      "checksum": "df51e0fffc749f3deb7189ce88527413cce4a40cafe608430379a090ad5a1bc1",
+      "level": "departement",
+      "keyColumn": "code_departement",
+      "columns": [
+        { "name": "code_departement", "unit": "code INSEE du département" },
+        { "name": "electricity_mwh", "unit": "MWh par an" },
+        { "name": "natural_gas_mwh", "unit": "MWh par an (PCS ou PCI non précisé par la source)" }
+      ],
+      "controlTotals": {
+        "electricity_mwh": "6807853.066",
+        "natural_gas_mwh": "2002997.1945"
+      },
+      "sources": [
+        {
+          "file": "sources/sdes-electricite-iris-2024-agriculture.csv",
+          "source": "SDES, Données locales de consommation d'électricité, IRIS, 2024, grand secteur A : extrait du jeu complet (non versionné)",
+          "link": "https://www.statistiques.developpement-durable.gouv.fr/donnees-locales-de-consommation-denergie?rubrique=&dossier=189",
+          "retrievedOn": "2026-10-07",
+          "checksum": "bf343c19bffa5d1b108570995e1af41866372f8cb022a9dc99d92dd51233826c"
+        },
+        {
+          "file": "sources/sdes-gaz-iris-2024-agriculture.csv",
+          "source": "SDES, Données locales de consommation de gaz naturel, IRIS, 2024, grand secteur A : extrait du jeu complet (non versionné)",
+          "link": "https://www.statistiques.developpement-durable.gouv.fr/donnees-locales-de-consommation-denergie?rubrique=&dossier=189",
+          "retrievedOn": "2026-10-07",
+          "checksum": "42443a1ccf93d38eda6d64cf4409f3b7e4b53ba70fe223ce47209da255a70331"
+        }
+      ]
+    },
+    {
+      "file": "epcis.csv",
+      "source": "SDES, Données locales de consommation d'électricité et de gaz naturel, EPCI (à partir de 2018), année 2024, grand secteur A (agriculture). Somme des lignes par EPCI ; les lignes sous secret statistique comptent pour 0 ; un EPCI sans ligne vaut 0. France métropolitaine. Construit par pnpm build:data:batiments-machines-agricoles",
+      "link": "https://www.statistiques.developpement-durable.gouv.fr/donnees-locales-de-consommation-denergie?rubrique=&dossier=189",
+      "vintage": "année 2024",
+      "retrievedOn": "2026-10-07",
+      "checksum": "3ce95a1d1f8d96faeecc295151e37714dea05f745900f71eeb2061923f0729e6",
+      "level": "epci",
+      "keyColumn": "code_epci",
+      "columns": [
+        { "name": "code_epci", "unit": "code SIREN de l'EPCI" },
+        { "name": "electricity_mwh", "unit": "MWh par an" },
+        { "name": "natural_gas_mwh", "unit": "MWh par an (PCS ou PCI non précisé par la source)" }
+      ],
+      "controlTotals": {
+        "electricity_mwh": "7121830.495",
+        "natural_gas_mwh": "2046428.89783"
+      },
+      "sources": [
+        {
+          "file": "sources/sdes-electricite-epci-2024-agriculture.csv",
+          "source": "SDES, Données locales de consommation d'électricité, EPCI, 2024, grand secteur A : extrait du jeu complet (non versionné)",
+          "link": "https://www.statistiques.developpement-durable.gouv.fr/donnees-locales-de-consommation-denergie?rubrique=&dossier=189",
+          "retrievedOn": "2026-10-07",
+          "checksum": "c907b5256363ae74617ea47ea7fba1cc181e4e7480ad65c51691ed9f083d91bc"
+        },
+        {
+          "file": "sources/sdes-gaz-epci-2024-agriculture.csv",
+          "source": "SDES, Données locales de consommation de gaz naturel, EPCI, 2024, grand secteur A : extrait du jeu complet (non versionné)",
+          "link": "https://www.statistiques.developpement-durable.gouv.fr/donnees-locales-de-consommation-denergie?rubrique=&dossier=189",
+          "retrievedOn": "2026-10-07",
+          "checksum": "dfc59832a4101ca801cc837ca491cbf9cd08a40db5dc9230f4dfad632ff0e598"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1325 @@
+id_fcu,identifiant_reseau,nom_reseau,gestionnaire,taux_enrr,contenu_co2_kgco2_kwh,contenu_co2_acv_kgco2_kwh
+573,9413C,Réseau de Thiais,GEOTHILYS (ENGIE SOLUTIONS),90.8,0.023,0.04
+238,0803C,Zup de Sedan,SEDAN ENERGIE (DALKIA),82.2,0.047,0.072
+306,7715C,Réseau de Montereau - ZUP de Surville,ERIVA (CORIANCE),96.2,0.01,0.022
+1154,5614C,Kerdroual - Ploemeur,SPL Bois Energie Renouvelable,97.5,0.007,0.031
+848,3809C,Réseau de Monestier-de-Clermont,VEOLIA (ECHM),94.8,0.023,0.051
+851,5108C,St Rémi,DALKIA SAINT-ANDRE-LEZ-LILLE,62.2,0.098,0.112
+938,,Réseau du SMIREC,PCE (ENGIE SOLUTIONS),,,
+1191,,Réseau de Toul,ENGIE SOLUTIONS,,,
+949,0706C,Réseau de la chaufferie bois de Chalencon,COMMUNE DE CHALENCON,100,0,0.019
+597,6725C,Réseau de Chaleur ECO2WACKEN,ECO2WACKEN,84.1,0.04,0.057
+1150,3114C,ZAC GUILLAUMET,Engie Energie Services Toulouse (ENGIE SOLUTIONS),9.4,0.216,0.246
+342,4609C,Réseau de St Germain du Bel air,SYDED du Lot,95,0.022,0.051
+486,5109C,DSP SAINTE MENEHOULD,ENGIE SOLUTIONS Reims,90.5,0.028,0.054
+504,5920C,Réseau ARSYEL,ENGIE SOLUTIONS VILLENEUVE D'ASCQ,85.8,0.05,0.063
+120,5905C,Domaine Universitaire et Scientifique,DALKIA,0,0.242,0.272
+1112,2216C,Trestel,Lannion-Trégor Communauté,93.7,0.015,0.035
+722,2907C,Réseau de chaleur Landerneau,Communauté d’Agglomération du pays de Landerneau Daoulas,100,0,0.021
+125,5917C,Quartier Tournebride Lomme-Capinghem,DALKIA,57.4,0.107,0.133
+718,2709C,Réseau de Bernay Bourg Le Comte,ENGIE SOLUTIONS quevilly,72,0.069,0.092
+309,5414C,Réseau de chaleur BRIEY,DALKIA SAINT-ANDRE-LEZ-LILLE,79.8,0.049,0.072
+118,1207C,Réseau de Saint Affrique,DALKIA SUD OUEST,93.7,0.017,0.039
+14,5808C,Réseau de chaleur de Lormes,SIEEEN,95.7,0.017,0.041
+78,4231C,Saint Haon le Châtel,SIEL,80.9,0.066,0.095
+1251,4007C,Réseau serres Pontenx,PAPREC ENERGIES ATLANTIQUE,100,0,0.004
+543,5202C,DSP ST DIZIER,CUB - CHALEUR URBAINE BRAGARDE (ENGIE SOLUTIONS),71.1,0.074,0.098
+221,3315C,Réseau de Terres Neuves,DALKIA,74,0.068,0.094
+870,8821C,Chaufferie Bois de Saulxures sur Moselotte,Régie Municipale de Chauffage,88.5,0.054,0.09
+70,,Réseau de chaleur de Saint-Appolinard (École - Mairie),,,,
+1297,,"Bretoncelles, Résidence des Grands Prés",Combo,,,
+686,2207C,Réseau de chaleur du Gouray,LE MENE,97.7,0.014,0.048
+674,0804C,Réseau de chaleur bois de Machault,Commune de Machault,96.2,0.019,0.051
+778,6005C,Réseau du Quartier Saint Jean,BCSJ,93.8,0.017,0.04
+1299,,Réseau de Illkirch-Graffenstaden,ÉS Services Energétiques,,,
+108,9511C,Zup de l'Epine Guyon,IDEX ENERGIES Boulogne Billancourt,0,0.218,0.255
+63,4222C,La Terrasse sur Dorlay,SIEL,100,0,0.023
+1000,0801C,Chaufferie communale,commune Ecordal,100,0,0.018
+890,9108C,CEA DIF,CEA,66.9,0.069,0.06
+1061,1505C,Réseau de Vebret,COMMUNE DE VEBRET,100,0,0.022
+71,4238C,Saint Maurice en Gourgois,SIEL,85.3,0.056,0.091
+607,,Réseau de chaleur Schiltigheim (Lattre de Tassigny),RCUA,,,
+998,0810C,Réseau de chaleur bois de Poix Terron,SIVU Robert Gobez,100,0,0.025
+1207,,Remiremont Energie,DALKIA,,,
+614,8902C,Réseau d'Auxerre - Zup de Sainte Geneviève,AUXEV (CORIANCE),78.7,0.045,0.072
+530,8701C,Zup Val de l'Aurence,SDCL (DALKIA),73.8,0.034,0.089
+373,3701C,Réseau de Joué-lès-Tours,DALKIA TOURS,67.3,0.087,0.11
+1001,0805C,Réseau de chaleur bois associatif à Clavy Warby,ACACIA,100,0,0.024
+601,6727C,Réseau de Chaleur Quartier des Hirondelles,RCUA,0,0.234,0.245
+187,9503C,Réseau de Cergy - Pontoise,CENERGY (CORIANCE),69.4,0.086,0.103
+917,,Réseau de chaleur de Vierzon - quartier La Noue,,,,
+1132,5925C,LYS LEZ LANNOY (59) - Réseau Longchamp,DALKIA SAINT-ANDRE-LEZ-LILLE,0,0.2,0.252
+1057,1501C,Centre hospitalier Henri Mondor - Aurillac,Christine WILHELM,98.3,0.004,0.027
+907,,Réseau de chaleur Selles-sur-Cher (Stade),,,,
+1160,5008C,Réseau de Hambye,Sdem50,92.4,0.02,0.043
+1005,6924C,Les Combes,COMMUNE YZERON,99.3,0.002,0.021
+46,3805C,Réseau de Saint Marcellin,Régie Saint-Marcellin Energie Bois,93.4,0.023,0.051
+602,6741C,Réseau de chaleur ZAC des Vergers,RCUA,36,0.198,0.23
+849,3810C,Réseau de Mens,ECHM,100,0,0.019
+1074,4309C,Réseau de Mazet St Voy,ERE43,100,0,0.023
+1224,,La Motte Chaleur Bois,La Motte d'Aveillans,,,
+540,4303C,Réseau du Puy en Velay VERT VEINE,ENGIE SOLUTIONS - Agence Loire Porte du Sud,95.2,0.011,0.031
+1259,6303C,HLM Saint Jacques,DALKIA Centre Est,0,0.266,0.248
+902,,Réseau de chaleur Chambray-lès-Tours (site industriel),,,,
+1253,4253C,Conseil départemental – Maison d'enfants,SIEL,100,0,0.024
+359,4915C,Réseau de chaleur de Monplaisir,ALTER SERVICES,75.8,0.067,0.093
+1293,,Réseau de chaleur de Varzy (centre),Régie SIEEEN Chaleur,,,
+316,6923C,Réseau de chaleur de La Tour-de-Salvagny,Métropole de Lyon,75.7,0.071,0.098
+537,1511C,Réseau de chaleur d'Aurillac,AURILLAC CHALEUR BOIS (ENGIE SOLUTIONS),90.5,0.026,0.048
+400,2402C,L'Arche au Bois,L'ARCHE AU BOIS (IDEX),81.2,0.058,0.086
+1266,2606C,Saint Jean en Royans,Commune de Saint Jean en Royans,0,0.343,0.383
+107,4910C,Réseau de Chaleur Angers Rive Droite,ALTER SERVICES,54.3,0.142,0.173
+1220,,"Réseau de la Guerche de Bretagne
+",Vitré communauté,,,
+1101,2219C,Tréguier / Minihy-Tréguier,Lannion-Trégor Communauté,,,
+153,7716C,Réseau de Marne la Vallée,GEOVAL (DALKIA),85.4,0.039,0.056
+669,0608C,BET CAP AZUR chaud,DALKIA,66.9,0.152,0.071
+696,1904C,Réseau de Servières le Château,E.P.D.A. de la Corrèze,100,0,0.022
+281,2701C,THERMEVRA,THERMEVRA (DALKIA),74.1,0.062,0.072
+744,4004C,écoquartier Mousse (arrêt en 2024),Service public de l'eau du grand Dax,,,
+293,0307C,Réseau de Commentry,DALKIA Centre Est,89,0.029,0.053
+346,9425C,Réseau chaud ADP Orly,Aeroports de Paris,81.3,0.053,0.068
+911,,Réseau de chaleur Châteauroux (Lycée Blaise Pascal),,,,
+39,4240C,Colombier,SIEL,94.5,0.021,0.046
+668,0605C,réseau chaleur et froid chaine de vie 06,LES LAURIERS ROSES,81.7,0.058,0.087
+874,8405C,NOVALIE,SUEZ RV ENERGIE,100,0,0.004
+789,6812C,Réseau de Bernwiller,Mairie Bernwiller,100,0,0.004
+435,9123C,BET Paris Saclay,EPA Paris Saclay,55.4,0.145,0.133
+916,,Réseau de chaleur Tours (quartier école Guy de Maupassant),,,,
+322,3317C,Saige-Formanoir,ENGIE SOLUTIONS AGENCE GARONNE,59.1,0.077,0.069
+728,3320C,Réseau de la Clinique Lesparre,ENGIE SOLUTIONS AGENCE GARONNE,70.9,0.103,0.139
+1114,,Réseau bois et citoyen de Varces,Forestener,,,
+1033,9237C,BET NANTERRE chaud,Dalkia,54.8,0.116,0.136
+528,7320C,Réseau de chaleur de Barby,ENGIE SOLUTIONS DR Savoie Dauphiné,94.3,0.014,0.035
+946,4310C,Réseau de St Bonnet le Froid,ERE43,100,0,0.02
+1174,,Réseau hôtel de ville,Commune de Morteau,,,
+1298,,Cuisine de Proximité Moutiers en Cinglais,Combo,,,
+1162,8822C,Réseau de Chauffage Urbain de Saint-Nabord,Commune de Saint-Nabord,96.6,0.009,0.03
+185,3904C,Réseau de chaleur de Moirans en Montagne,DALKIA Paris la Defense,73.2,0.1,0.137
+947,4251C,Réseau de Gumières,SIEL,96.6,0.01,0.036
+688,1512C,Réseau de chaleur de Besserette,SAINT FLOUR COMMUNAUTE,99.2,0.003,0.025
+1279,3519C,Réseau REVERTEC - LACTALIS - KERVALIS,PAPREC ENERGIES ATLANTIQUE,100,0,0.004
+421,5415C,Réseau des jardinets,Commune d'Amenoncourt,100,0,0.139
+1143,8007C,EPSM,ENGIE SOLUTIONS VILLENEUVE D'ASCQ,80,0.058,0.088
+65,4221C,St Bonnet le Courreau,SIEL,100,0,0.03
+986,5504C,Réseau de Baâlon,Commune de Baâlon,100,0,0.029
+237,1704C,Port Neuf Mireuil Energie,PNME (DALKIA),96.3,0.014,0.02
+92,6207C,Réseau de Calais,CALOREV (CORIANCE),71.5,0.081,0.107
+1092,,Eau Tempérée Ressourcia,DALKIA,,,
+620,4904C,Réseau de chaleur d'Andrezé,Ville de BEAUPREAU-EN-MAUGES,93.8,0.018,0.042
+379,9501C,IDEX CROIX ROUGE GEOTHERMIE,IDEX ENERGIES Boulogne Billancourt,0,0.236,0.266
+1030,4916C,LES PLAINES - TRELAZE,DALKIA TOURS,0,0.22,0.255
+1111,,La Talaudière, Saint-Etienne Métropole,,,
+1180,,"Mémèche
+",ERE43,,,
+939,3827C,Réseau Grenoble Alpes Chaleur Meylan,Métropole Meylan Energie Verte (CORIANCE),0,0.295,0.33
+442,5110C,Réseau CLOE - Chalons-en-Champagne,CLOE (ENGIE SOLUTIONS),73.8,0.065,0.076
+436,7723C,Réseau de Val d'Europe,EVVE (CORIANCE),33.7,0.168,0.194
+1009,0404C,Réseau communal d'Allos,Commune d'allos,90.7,0.028,0.052
+993,7106C,Réseau d'Anost,,,,
+111,1405C,Réseau de Bois I,DALKIA,83.9,0.044,0.074
+759,4908C,Réseau de chaleur d'Ecouflant,ALTER SERVICES,86.5,0.046,0.074
+1067,1609C,Réseau de chaleur de Segonzac,SEGONZAC,32.6,0.232,0.273
+304,3813C,Réseau de chaleur de Voreppe,Dalkia,53.5,0.153,0.185
+79,,Réseau de chaleur de Wisches (Alsace Habitat),Alsace Habitat,,,
+1088,,Réseau de chaleur Échiré,Ville d'Echiré,,,
+570,9401C,Réseau de Limeil-Brévannes,SCLB (ENGIE SOLUTIONS),61.8,0.102,0.125
+972,6822C,Réseau de chaleur de la Hardt,VALORIM,89.1,0.03,0.038
+343,4611C,Réseau de Sousceyrac,SYDED du Lot,94.6,0.024,0.053
+1072,2206C,Réseau de chaleur de Pessala,LE MENE,83.9,0.064,0.103
+64,4241C,Farnay,SIEL,93.1,0.025,0.05
+330,9235C,Réseau de Clichy,CEVE (Coriance - IDEX),39.3,0.19,0.221
+467,2406C,Réseau de Coulounieix chamiers,ENGIE SOLUTIONS Agence Atlantique Limousin,89.9,0.029,0.051
+270,7423C,Réseau de Reignier,DALKIA Centre Est,82.2,0.048,0.072
+1003,0814C,Réseau de chaleur de Thin le Moutier,THIN LE MOUTIER,100,0,0.031
+162,9002C,ZUP DES GLACIS,DALKIA,51.9,0.124,0.151
+724,3108C,En Turet,COMMUNAUTE D'AGGLOMERATION DU SICOVAL,33.6,0.203,0.236
+1076,7504C,Rue Legendre,DALKIA Paris la Defense,50.3,0.15,0.176
+869,8112C,Réseau de chaleur de Lacaune,Syndicat Mixte TRIFYL,96.4,0.012,0.034
+909,,Réseau de chaleur de Nogent-sur-Vernisson,,,,
+67,4218C,Roisey,SIEL,99.1,0.004,0.039
+175,9502C,Grand Ensemble Sarcelles-Locheres,DALKIA Paris la Defense,67.6,0.077,0.092
+1130,0510C,Réseau de chaleur d'Orcières,Commune d'Orcières,100,0,0.025
+1059,7725C,Réseau Eurodisney,Disneyland Paris,,,
+925,,Réseau de chaleur Fleury-les-Aubrais (Hôpital Daumézon),,,,
+445,,Réseau de Châteauneuf-la-Forêt (ZAC),ENGIE Solutions,,,
+112,5916C,Réseau de chaleur d'Hazebrouck,Energie Flandres (DALKIA),64.4,0.091,0.123
+835,0309C,SDC Moulins Ville,SDC Moulins (ENGIE SOLUTIONS),73.5,0.05,0.091
+26,7721C,Réseau de Bailly Romainvilliers,DALKIA SAINT-ANDRE-LEZ-LILLE,78.4,0.078,0.091
+461,1801C,Chancellerie Gibjoncs - Zup de Bourges,BBES (ENGIE SOLUTIONS),95.2,0.013,0.036
+953,3801C,Chaufferie bois bâtiments communaux,Commune de NoyareyA,88.9,0.029,0.051
+447,,Réseau de chaleur Firminy,ENGIE Solutions,,,
+285,0604C,Réseau communal de Puget Théniers,Commune de Puget-Théniers,75.7,0.072,0.101
+1250,,Réseau de Saint-Jean-Bonnefonds	,Saint-Etienne-Métropole,,,
+135,9317C,Garonor,DALKIA Paris la Defense,0,0.482,0.521
+1229,,Coulomb - EREA,,,,
+89,5407C,ESTIA - Plateau de Haye,ESTIA - Réseaux de Chaleur (DALKIA),54,0.107,0.144
+83,3802C,Réseau principal de Grenoble-Alpes Métropole,Compagnie de chauffage (CCIAG),80.9,0.049,0.093
+1249,4319C,Monastier-sur-Gazeille,ERE43,100,0,0.018
+41,4223C,Saint Régis du Coin,SIEL,100,0,0.032
+176,1703C,Réseau de Aytre,DALKIA La rochelle,83.5,0.041,0.064
+225,9424C,Réseau de Villeneuve Saint Georges - SCVG,SCVG (DALKIA),56,0.105,0.125
+1216,,"Réseau d'Epinay-sur-Seine, Pierrefitte-sur-Seine, Villetaneuse",SMIREC,,,
+1283,,Réseau bois et citoyen de La Mure - Bastions,Forestener,,,
+957,3824C,Réseau de Moirans,DALKIA Centre Est,95.9,0.012,0.036
+685,1506C,Réseau de l'OP HLM Du Cantal,Cantal Habitat,100,0,0.019
+698,2105C,Réseau des Gresilles,Coriance,71.4,0.082,0.112
+529,4402C,Réseau de Châteaubriant,ENGIE ENERGIE SERVICES Le Petit Quevilly (ENGIE SOLUTIONS),67.6,0.077,0.109
+54,4233C,St Cyr de Favières,SIEL,100,0,0.022
+1161,0709C,Réseau de chaleur de Beauvene,Mairie de Beauvene,100,0,0.017
+1100,1208C,Réseau d'Espalion,ENGIE Solutions DR OCCITANIE BATIMENT,50,0.143,0.173
+952,0308C,Réseau de chaleur d'Ebreuil,Syndicat départemental d'Energie de l'Allier,90.2,0.029,0.054
+1175,,Réseau groupe scolaire Pergaud,Commune de Morteau,,,
+1036,4105C,Hubert CHEVALLIER,mairie de villeny,100,0,0.021
+558,9101C,Réseau de Massy - Antony,ENORIS (ENGIE SOLUTIONS),80.6,0.068,0.085
+1296,,Commune d'Echauffour,Combo,,,
+962,4250C,CDC VAL D'AIX ET ISABLE,SIEL,97,0.016,0.04
+1228,,Sillac - Grande Garenne,,,,
+233,7710C,Réseau de Vaux le Penil,DALKIA Paris la Defense,75.8,0.083,0.11
+1129,7907C,La Normande,DALKIA Poitiers,100,0,0.017
+1232,,Réseau de chaleur de Roufffach Centre Hospitalier,GIE Sundheim,,,
+980,5205C,Réseau de chaleur bois de Marac,Commune de Marac,100,0,0.019
+774,5918C,Réseau de chaleur de Baisieux,MISSENARD CLIMATIQUE,0,0.342,0.385
+151,7202C,Percée Centrale,Dalkia,4.1,0.261,0.297
+1151,3330C,BARIE,Mairie de BARIE,100,0,0.021
+741,3823C,Osiris,Osiris privé,85.3,0.028,0.037
+482,4503C,Quartier Centre Ville et Nord,SODC (ENGIE SOLUTIONS),81.8,0.006,0.083
+1079,5829C,Cossaye,SIEEEN,81.6,0.047,0.074
+903,,Réseau de chaleur Fondettes (Châteu de Taillé),,,,
+394,8304C,Berthe,Zéphire (IDEX),97.5,0.007,0.012
+130,7707C,Centrale de la Butte Monceau,DALKIA,0,0.228,0.256
+1086,,Réseau de chaleur Fougères,OPH Fougères Habitat,,,
+438,5924C,Réseau de Wormhout,Engie Solutions VILLENEUVE D'ASCQ,89.2,0.03,0.055
+1210,,Réseau de chaleur de Chamboulive bourg,SEM ENRèze,,,
+896,,"Réseau de chaleur de Sancoins
+",,,,
+61,4224C,La Côté-Saint-Didier,SIEL,99.1,0.003,0.025
+738,3604C,Réseau communal Neuvy Saint Sepulchre,COMMUNE DE NEUVY SAINT SEPULCHRE,96.4,0.014,0.038
+133,9233C,Réseau de la Zac de la Marine,BOISMARINE (DALKIA),48.8,0.121,0.146
+879,0111C,CORMARANCHE,HAUT BUGEY ENERGIE,54.3,0.177,0.221
+700,2202C,Réseau de chaleur Chaufferie 1,commune de plouaret,66.7,0.114,0.147
+795,6908C,Quartier La Perralière,DALKIA Centre Est,,,
+1149,2808C,UVEA,SUEZ,50,0.171,0.195
+1258,3714C,Ilots Ouest,DALKIA TOURS,21.3,0.158,0.196
+137,5914C,Energie Grand Littoral - Dunkerque,ENERGIE GRAND LITTORAL (DALKIA),59.9,0.109,0.129
+608,2511C,Réseau de chaleur,PREVAL,90.5,0.027,0.034
+129,2705C,Zup Les Valmeux,DALKIA SAINT-ANDRE-LEZ-LILLE,0,0.22,0.247
+429,1401C,Réseau de Chaleur Urbain Nord Caen la mer,Energie Verte de Caen la Mer (CORIANCE),88,0.034,0.042
+286,,"Réseau de chaleur de Séranon
+",,,,
+975,7005C,Réseau de Plancher-bas,,,,
+1290,,Réseau de Mayenne,Mayenne biomasse (ENGIE SOLUTIONS),,,
+1117,3822C,Forestener Notre Dame de l’Osier,Forestener,99.9,0.013,0.041
+999,0811C,Réseau de chaleur bois de Villers le Tourneur,Commune de Villers le Tourneur,100,0,0.028
+533,0301C,SDC Moulins CHAMPINS,SDC MOULINS (ENGIE SOLUTIONS),73.5,0.045,0.077
+943,9328C,Reseau de Noisy Le Grand,IDEX TERRITOIRES,73.4,0.072,0.086
+503,5915C,Réseau de chaleur de Douchy,ENGIE SOLUTIONS VILLENEUVE D'ASCQ,75.9,0.057,0.073
+75,4216C,LOIRE FOREZ AGGLOMERATION Espace Déchelette,SIEL,88.8,0.081,0.121
+1168,4318C,Centre du Cros,ERE43,100,0,0.027
+464,2301C,Réseau de Bourganeuf,ENGIE SOLUTIONS DR Atlantique Limousin,94.8,0.019,0.045
+360,7718C,La renardière,CRAM SAS,69.5,0.081,0.105
+642,4237C,Roanne - Quartier Arsenal,SIEL,92.8,0.018,0.049
+687,1507C,Réseau Chaleur Bois de Murat,Hautes Terres Communauté,99.4,0.002,0.026
+401,0817C,Réseau de Chaleur de Revin,IDEX ENERGIES Cormontreuil,85.1,0.043,0.07
+358,4911C,Réseau de Belle Beille,ALTER SERVICES,,,
+1181,4317C,"Maison de Louise
+",ERE43,100,0,0.022
+1119,,Réseau bois et citoyen de Châtillon-sur-Cluses,Forestener,,,
+276,1303C,Réseau de Salon de Provence,SEV (Salon-de-Provence Energie Verte) (CORIANCE),0,0.279,0.316
+183,5502C,Zup Anthouard,DALKIA SAINT-ANDRE-LEZ-LILLE,0,0.246,0.276
+799,7206C,Réseau de chaleur du Grand-Lucé,Lucea (publique),94.1,0.017,0.042
+1285,,Réseau bois et citoyen de La Murette,Forestener,,,
+1231,,Trie-sur-Baïse,SDE65,,,
+91,3814C,Réseau de Coublevie,Dalkia,51.2,0.15,0.179
+1007,6926C,Réseau de chaleur communal,,,,
+717,2707C,Réseau - Canappeville,Association des Amis des Campagnes de France,66.7,0.114,0.143
+673,0707C,Réseau de la chaufferie bois,MAIRIE DE MONTPEZAT SOUS BAUZON,66.7,0.114,0.147
+232,,Réseau de chaleur de Banon (centre du village),,,,
+49,4217C,Jonzieux,SIEL,82.8,0.067,0.105
+677,1003C,Biomasse de Piney,DALKIA SAINT-ANDRE-LEZ-LILLE,74.5,0.084,0.118
+920,,Réseau de chaleur de Dry,,,,
+161,3806C,Réseau d'Allevard,DCUA (DALKIA),94.1,0.019,0.05
+94,7802C,Le Val Fourré,SOMEC (DALKIA),53.1,0.104,0.137
+1073,2217C,Réseau de chaleur de Saint-Jacut,Commune Le Mené,94.5,0.056,0.128
+817,7305C,Les Arcs,ECHM,92.9,0.026,0.051
+228,9411C,Réseau de Champigny-sur-Marne,CORIANCE,72.6,0.064,0.087
+1257,2113C,Réseau de chaleur de Fontaine-Française,REGIE COTE D'OR CHALEUR,91.9,0.028,0.062
+794,6902C,HLM Les Sources,DALKIA Centre Est,,,
+469,2605C,Réseau de chaleur du quartier de la Monnaie,ENGIE SOLUTIONS DR Savoie Dauphiné,0,0.165,0.214
+658,0403C,complexe sportif forcalquier,Communauté de communes Pays de Forcalquier-Montagne de Lure,100,0,0.026
+403,0808C,Réseau de chaleur de Rocroi,IDEX TERRITOIRES,77.4,0.071,0.101
+113,3001C,Quartier Ouest,NIMERGIE (DALKIA),65.8,0.085,0.106
+157,4902C,RESEAU DES DEUX CROIX (NOZAY-UPJM),DALKIA TOURS,54.8,0.139,0.168
+1185,,Réseau de chaleur géothermique sur sondes,Régie Energies Vertes Saint Ouen de Thouberville,,,
+969,5721C,Réseau de chaleur de Rombas,SEM OMEGA ENERGIES ET SERVICES,80.1,0.047,0.07
+727,3313C,Réseau de La Réole,Régie Municipale Multiservice de La Réole,97.6,0.007,0.034
+532,0110C,Réseau de chaleur ASSURC à Bourg-en-Bresse,REYSSOUZE ENERGIE SERVICES (ENGIE SOLUTIONS),77.1,0.061,0.086
+934,,Réseau de chaleur Aiguillon,,,,
+517,7901C,Le Clou Bouchet,DALKIA Poitiers,0,0.277,0.309
+655,8608C,Réseau de BEL AIR,EKIDOM,0,0.246,0.259
+460,1701C,Villeneuve les Salines,SALINES ENERGIES SERVICES (ENGIE SOLUTIONS),73.5,0.049,0.084
+1264,0612C,BET Marenda,DALKIA TOURS,84.3,0.07,0.035
+854,5213C,Réseau de Fayl-Billot,CONSEIL DEPARTEMENTAL HAUTE MARNE,91.3,0.024,0.047
+899,,Réseau de chaleur Le Poinçonnet,,,,
+740,3811C,Réseau de Chaleur Bois Pontcharra RCBP,Commune de Pontcharra,86.7,0.038,0.064
+546,6702C,Hautepierre,EVOS (ENGIE SOLUTIONS),0,0.238,0.268
+815,7205C,Réseau de la commune de Tuffe,MAIRIE DE TUFFE VAL DE LA CHERONNE,83.3,0.047,0.07
+994,7313C,Ilots,Mairie de Chanaz,66.7,0.114,0.143
+244,7711C,Réseau de Coulommiers,DALKIA Paris la Defense,94,0.015,0.031
+1096,,Réseau de chaleur du Technopole Brest Iroise ,ENGIE SOLUTIONS,,,
+1215,,Réseau de chaleur de Doullens,Territoire d'Energie Somme,,,
+1035,8202C,Réseau de Caylus,MAIRIE DE CAYLUS,100,0,0.02
+823,7314C,La Bauche,Mairie de La Bauche,100,0,0.041
+1241,,Réseau de chaleur de Réalville,Commune de de Réalville,,,
+1153,5010C,Réseau de Tessy-Bocage,Sdem50,79.8,0.047,0.069
+1263,2911C,Centre-Bourg - Arzano,BOIS ENERGIE RENOUVELABLE,96.2,0.01,0.032
+252,1403C,Zac de Falaise,FALAISE ENERGIE (DALKIA),51.9,0.12,0.147
+206,6103C,Quartier Nord - Route de la Falaise,DALKIA,59.6,0.099,0.125
+290,5707C,Réseau de Sarreguemines,PERIN FRERES St André (DALKIA),72.1,0.081,0.113
+1193,,Réseau de chaleur de la commune de Hauts de Bienne,Hauts de Bienne,,,
+9,5809C,Réseau de chaleur de Montigny en morvan,SIEEEN,95.8,0.014,0.04
+615,1709C,Réseau des Fourriers,Commune de Rochefort,96.6,0.011,0.038
+519,8002C,Réseau de la ville d'Amiens,Amiens Energies (ENGIE SOLUTIONS),53.4,0.101,0.124
+737,3602C,Réseau de chaleur de la cité de Beaulieu,OPAC36,83.6,0.037,0.058
+473,3305C,Laseris,ENGIE SOLUTIONS AGENCE GARONNE,38.6,0.135,0.087
+762,5006C,Chauffage Urbain Biomasse d’Avranches,ACEV,95.2,0.012,0.032
+5,5828C,Réseau d'Urzy,SIEEEN,98.5,0.005,0.029
+387,1323C,Réseau de chaleur urbain « Terre de Garance »,IDEX,81.7,0.104,0.152
+1284,,Réseau bois et citoyen de Vif,Forestener,,,
+35,7620C,VESUVE,Métropole Rouen Normandie,100,0,0.004
+177,7408C,Quartier Les Ewues,Cluses énergies (DALKIA),88,0.035,0.043
+682,1411C,RCU de Val-ès-Dunes,VIRIA,68.6,0.075,0.099
+352,1705C,Réseau de Chaleur urbain de Pons,DALKIA La rochelle,84.3,0.048,0.076
+1202,,Etablissement ORT Strasbourg,ES Services Energétiques,,,
+1144,5609C,Centre-ville - Plouay,SPL Bois Energie Renouvelable,100,0,0.02
+984,8818C,Réseau de saint-Jean d'Ormont,Commune de Saint-Jean d'Ormont,100,0,0.018
+476,3410C,Eco-Quartier Le Mas de Rochet,ENGIE SOLUTIONS Languedoc Roussillon,62.4,0.094,0.121
+195,9515C,Réseau de Pontoise,DALKIA Paris la Defense,0,0.204,0.245
+683,1412C,Réseau de chaleur - chaufferie bois,VIRIA,65,0.101,0.129
+1058,6213C,Chaufferie bois d'Anvin,Mairie d'Anvin,33.3,0.228,0.264
+877,8503C,Réseau de chaleur Saint-pierre-du-chemin,Mairie de Saint Pierre du chemin,100,0,0.022
+1145,6313C,Réseau de St Clément de Régnat,Mairie de St Clément de Régnat,66.7,0.159,0.193
+1137,4506C,Réseau d'eau chaude Malteries Pithiviers,PAPREC ENERGIES OPERATIONS,,,
+261,7411C,Quartier du Crozets,DALKIA Centre Est,87.5,0.041,0.054
+610,6810C,Réseau de chaleur Biomasse de l'Aérodrome,VALORIM,83.8,0.047,0.073
+109,2902C,Réseau de Plougastel Daoulas,ECO CHALEUR DE BREST (DALKIA),85.2,0.042,0.067
+1109,,Réseau de Villard sur Doron,Commune de Villard sur Doron,,,
+475,3409C,ZAC des Constellations,ENGIE SOLUTIONS Languedoc Roussillon,75.5,0.067,0.093
+731,3401C,RMCF,SERM,71.5,0.065,0.089
+862,6802C,L'Illberg,Mulhouse Alsace Agglomération,57.8,0.084,0.112
+409,5207C,Réseau de Wassy,IDEX,100,0,0.017
+621,5613C,Bodélio - Lorient,BOIS ENERGIE RENOUVELABLE,98.1,0.006,0.029
+258,6703C,Strasbourg Centre Energies,Strasbourg Centre Energies,72,0.076,0.096
+1265,2112C,Réseau de chaleur - Plaine des Sports de Saulieu,REGIE COTE D'OR CHALEUR,94.7,0.02,0.056
+345,9118C,Réseau SEER Grigny-Viry,SEER (ENGIE SOLUTIONS),61,0.086,0.109
+254,3324C,Réseau de chaleur des Hauts de Garonne,HAUTS DE GARONNE ENERGIES (IDEX),92.6,0.019,0.026
+548,7403C,Bois Energies Annemasse,BOIS ENERGIES ANNEMASSE (ENGIE SOLUTIONS),86.3,0.035,0.058
+502,5913C,Géothermie des rives créatives,Valenciennes Métropole,23.2,0.18,0.083
+246,5410C,S.E.E.V - Plateau de Brabois,S.E.E.V (DALKIA),62.6,0.059,0.108
+250,2703C,Quartier de l'Europe,,0,0.342,0.385
+954,6934C,Longes,SYDER,97.4,0.01,0.033
+963,7413C,Réseau de Clarafond La Presle,MAIRIE DE CLARAFOND-ARCINE,30.3,0.295,0.364
+777,6004C,Les Martinets,Creil Energie (DALKIA),88,0.029,0.038
+369,8103C,Réseau de Chauffage Urbain Castres Lameilhé,Castres Energie Services (CORIANCE),96.1,0.011,0.035
+808,7321C,CROUZE,ECHM,92.3,0.027,0.052
+189,6109C,Alençon énergie bois,ALENCON ENERGIE BOIS (DALKIA),64.6,0.083,0.108
+1268,7821C,DOMNIS ACHÈRES Plantes d'Hennemont,DOMNIS (ENGIE SOLUTIONS),52.6,0.117,0.142
+590,9423C,Réseau d'Ivry centre-ville,Régie Ivryenne de Réseau de chaleur,78.7,0.065,0.089
+802,6931C,Réseau Sytraival,DALKIA Centre Est,,,
+191,7615C,Réseau de Maromme,MBES (ENGIE SOLUTIONS),90.5,0.027,0.05
+1172,5830C,Réseau d'Entrains-sur-Nohain,SIEEEN,100,0,0.036
+1041,5602C,Réseau de chaleur zac centre,Ville d'Hennebont,100,0,0.023
+59,4215C,Usson en Forez,SIEL,88.8,0.041,0.071
+1239,,Réseau de chaleur de Verlhac-Tescou,Commune de Verlhac-Tescou,,,
+38,2603C,Réseau de Pierrelatte - DES,DROME ENERGIE SERVICES (CORIANCE),66.8,0,0.129
+279,9315C,Réseau du Blanc Mesnil,Blanc Mesnil Energie Services (CORIANCE),52.2,0.088,0.112
+1156,5611C,Manehouarn - Plouay,SPL Bois Energie Renouvelable,98.9,0.003,0.025
+385,6101C,Perseigne,IDEX PERSEIGNE ENERGIE,83.2,0.042,0.065
+859,6715C,Niederbronn,ENGIE SOLUTIONS,84.8,0.031,0.057
+1071,4304C,Chaufferie de la Mairie,MAIRIE DE DUNIERES,100,0,0.018
+641,4234C,Roanne - Quartier de Mâtel,SIEL,46.2,0.161,0.191
+208,,"Réseau de chaleur de Volonne
+",,,,
+268,5706C,Réseau de Freyming Merlebach,SODEVAR (DALKIA),59.3,0.102,0.136
+651,6736C,Schweighouse - CENPA,EVNA (SUEZ),100,0,0.004
+977,6716C,Réseau de chaleur d'Allenwiller,Commune de Sommerau,100,0,0.029
+1205,,Réseau Vallée 199,Université Paris-Saclay,,,
+325,4246C,Réseau d'Unieux,Saint-Etienne Métropole,84.8,0.047,0.075
+454,0305C,Réseau du Mayet-de-Montagne,ENGIE SOLUTIONS Agence Auvergne,98.1,0.025,0.054
+484,4912C,Réseau de chaleur de la Herse,Maine et Loire Habitat,65.4,0.12,0.149
+138,7805C,Réseau de Saint Germain en Laye,ENERLAY (Dalkia),60.2,0.092,0.122
+752,4301C,Réseau de Tence,Commune de Tence - Réseau de chaleur,100,0,0.024
+85,4247C,Réseau de Saint Héand,Saint-Etienne Métropole,98.7,0.003,0.027
+964,3907C,Réseau de Chissey sur Loue,Mairie chissey sur Loue,66.7,0.114,0.143
+408,7477C,Annecy - ZAC des Trésums,ALIEnergie (IDEX),72.5,0.072,0.039
+832,7903C,Réseau de Romans,Mairie de Romans,66.7,0.114,0.142
+1134,8611C,Réseau de Chaleur Parc du FUTUROSCOPE,DIKEOS,20.6,0.16,0.135
+42,4232C,Saint Joseph,SIEL,90.5,0.073,0.126
+249,9420C,Réseau d'Orly,AGESVAM,85.1,0.037,0.054
+721,2905C,GOUENNOU FRERES,GOUENNOU FRERES,100,0,0.021
+798,6921C,Quartier de la Roue,DALKIA Centre Est,0,0.342,0.385
+933,0303C,Réseau de Cerilly,MAIRIE DE CERILLY,100,0,0.019
+354,3304C,Parc de Mérignac Ville Stemer,DALKIA,0,0.242,0.277
+386,,"Réseau de chaleur de Arzacq-Arraziguet (école collège)
+",IDEX,,,
+856,6312C,Réseau de chaleur de Ardes-sur-Couze,WEYA,100,0,0.03
+1213,,Réseau de chaleur UniGéo,UNIGEO,,,
+1244,,Réseau de chaleur de Montbartier,Commune de Montbartier,,,
+811,7009C,Chaufferie de GY,SIED 70,98.3,0.013,0.036
+836,0310C,Réseau de chaleur de Cusset,Syndicat départemental d'Energie de l'Allier,93.9,0.015,0.037
+506,6202C,Réseau de Arques,ENGIE SOLUTIONS VILLENEUVE D'ASCQ,78.6,0.066,0.094
+389,5001C,Provinces Energies,Provinces Energies (IDEX),89.6,0.037,0.065
+1182,5417C,L'ENERGIE LUNEVILLE,Ville de Lunéville (DALKIA),85.9,0.041,0.067
+1052,5607C,Réseau de Serent,Marie de Serent,87.7,0.039,0.065
+416,4005C,Réseau de chaleur Peyrouat,Régie Chauffage Urbain et Géothermie,41,0.251,0.229
+981,5409C,Réseau chaufferie bois - Barbonville,COMMUNE BARBONVILLE,100,0,0.022
+723,3107C,Ensemble Universitaire Toulouse Rangueil,SGE - UFTMIP,81,0.045,0.066
+935,1103C,Réseau public bois de Limoux,SYADEN (Syndicat Audois d'Energies et du Numérique),100,0,0.019
+1217,,Réseau de chaleur de Bitche,Régie énergie de Bitche ,,,
+239,4907C,Réseau d'Orgemont,DALKIA TOURS,64,0.068,0.103
+364,9109C,Vigneux - Concorde,CONCORDIA ENERGIE (IDEX),84.3,0.039,0.057
+703,2209C,CIDER'BOIS ENERGIE,LOUDEAC COMMUNE BRETAGNE CENTRE,100,0,0.02
+511,6722C,Colmar Vosges,COFELY Services AGENCE ALSACE (ENGIE SOLUTIONS),73.1,0.109,0.145
+223,6211C,Réseau de chaleur de Boulogne sur Mer,ECOLIANE (DALKIA),41.2,0.145,0.169
+864,7621C,Réseau vapeur SEVEDE,OREADE SAS (SUEZ),100,0,0.004
+1192,8206C,Réseau de chaleur de Lafrancaise,Régie de chauffage bois de Lafrançaise,100,0,0.019
+1158,5007C,Réseau de Buais-Les-Monts,Sdem50,100,0,0.021
+417,6403C,Réseau de Pau Béarn Pyrénées Energies Services,Pau Béarn Pyrénées Energies Services (ENGIE SOLUTIONS),80.8,0.051,0.063
+588,5413C,ESTIA - LAXOU-VILLERS,ESTIA - Réseaux de Chaleur (DALKIA),56.3,0.094,0.121
+440,,Réseau de chaleur de Bulgnéville (Fromagerie de l'Ermitage),ENGIE Solutions,,,
+419,0401C,Réseau de Manosque Zac Chanteprunier,CALO REM (CORIANCE),82.6,0.045,0.07
+522,8820C,Réseau de Rambervillers,FENIIX (SUEZ),95.2,0.015,0.02
+1199,,Réseau Terra Confort ,Coriance,,,
+84,2501C,Besançon - Planoise,CELSIUS (ENGIE SOLUTIONS),77.7,0.056,0.07
+212,6212C,Réseau de chaleur Le Portel-Outreau,DALKIA,40.5,0.176,0.208
+605,6726C,Réseau de Chaleur Quartier du Lac,RCUA,0,0.247,0.278
+457,1302C,Réseau Castellane Bricarde,ENGIE SOLUTIONS DR PACA,0,0.181,0.222
+918,,Réseau de chaleur de Neuillay-les-Bois,,,,
+997,0812C,Réseau de chaleur bois de St Loup Terrier,commune st loup terrier,100,0,0.017
+327,4613C,Réseau de Livernon,SYDED du Lot,92.1,0.037,0.07
+222,7203C,SYNER'GIE (ALLONNES- BDH),SYNER'GIE (DALKIA),87.7,0.034,0.041
+72,7307C,Réseau de Saint Etienne de Cuines,MAIRIE DE St ETIENNE DE CUISNES,79.6,0.058,0.087
+139,1317C,Aix-en-Provence,Aix en Provence Energie Environnement (ENGIE SOLUTIONS),42.3,0.142,0.168
+97,0402C,Réseau de la chaufferie La Tomie,Communauté de communes Pays de Forcalquier-Montagne de Lure,61.7,0.125,0.155
+638,3606C,Centre Départemental Gériatrique de l'Indre (CDGI),DALKIA TOURS,82.9,0.046,0.071
+32,7807C,Zac de la Noe,DALKIA Paris la Defense,0,0.427,0.419
+921,,Réseau de chaleur de Lailly-en-Val,,,,
+350,2601C,Réseau de Valence,EVVA (CORIANCE),58.7,0.109,0.134
+657,0304C,Réseau de Meaulne,Commune de Meaulne,100,0,0.06
+1219,,Réseau de Mondelange,Régie d'exploitation de Mondelange,,,
+968,2518C,RCU de Novillars,SPL TERRITOIRE 25,98.3,0.004,0.009
+702,2208C,Réseau de chaleur de Brézillet,Saint-Brieuc Armor agglomération,83,0.044,0.068
+1169,4316C,Saint-Romain-Lachalm,ERE43,100,0,0.032
+1094,8013C,Réseau de chaleur de Roye,Territoire d’Energie Somme,65.3,0.094,0.121
+591,6901C,Vénissieux énergies,Vénissieux énergies (DALKIA),52.6,0.118,0.138
+639,4208C,Quartier Parc des Sports,DALKIA Centre Est,,,
+1064,7801C,Les Nouveaux Horizons,DALKIA Paris la Defense,0,0.195,0.22
+1222,,Arboretum,,,,
+1120,,Réseau bois et citoyen de Saint-Bonnet-de-Chavagne,Forestener,,,
+1070,7310C,Ecole,Mairie de Chanaz,100,0,0.042
+860,6717C,Réseau de chaleur du Rebberg,MAIRIE,100,0,0.021
+310,6307C,Réseau de Royat,STR (DALKIA),0,0.24,0.269
+24,9510C,Réseaux chaud ADP Roissy,Aéroports de Paris,24,0.177,0.203
+1026,1203C,Réseau Sarrus,Conseil général de l'Aveyron,83.8,0.04,0.062
+372,3702C,Zup des Bords de Cher et Sanitas,SCBC (DALKIA),81.1,0.044,0.064
+182,4206C,Réseau de Firminy,SDC FIRMINY (ENGIE SOLUTIONS),58,0.111,0.135
+915,,Réseau de chaleur Orléans (avenue de Trévise),,,,
+913,,Réseau de chaleur Châteauroux (Lycée Agricole Naturapolis),,,,
+1177,,Réseau de Martres-de-Veyre,Beta Energie,,,
+215,6711C,Réseau de la Communauté de Communes Sauer-Pechelbr,ES Services Energétiques,61.9,0.104,0.133
+119,7614C,Chaufferie bois Grammont,ROUEN GRAMMONT ENERGIE (DALKIA),93.7,0.015,0.036
+1221,,AVIGNON ENERGIES,DALKIA,,,
+148,6501C,Réseau de Vic-en-Bigorre,Vic-Montaner Energie Bois (DALKIA),89.1,0.032,0.059
+1084,,Réseau de chaleur de l'hôpital d'Eygurande,ENGIE SOLUTIONS,,,
+1167,,Réseau de chaleur Courbevoie - Place Des Saisons,Dalkia,,,
+613,1410C,RCU de Vire,VIRIA,77.8,0.069,0.095
+732,3414C,BET EUREKA chaud,Energies du Sud,68.4,0.061,0.031
+1225,,Réseau de Briec,ENGIE Solutions,,,
+275,7410C,Quartier La Cudray,DALKIA Centre Est,91.4,0.023,0.049
+1034,7820C,Veligeo,ENGIE SOLUTIONS Ile de France,84.3,0.029,0.017
+402,4406C,AFUL Rezé-Château,IDEX ENERGIES Agence De Nantes,65.2,0.099,0.126
+971,6817C,réseau communal de Friesen,COMMUNE DE FRIESEN,100,0,0.022
+311,5101C,Zup de Laon Neufchatel,DALKIA SAINT-ANDRE-LEZ-LILLE,71.4,0.069,0.092
+262,9404C,Réseau de Fontenay sous Bois,EPIC Regie du chauffage urbain,25.7,0.167,0.203
+1235,,Réseau de Odos,SDE65,,,
+199,4102C,Zac des Paradis,DALKIA TOURS,67.8,0.177,0.226
+599,6804C,Réseau de la ville de Saint Louis,RCUE,90.1,0,0.057
+468,2407C,réseau de chaleur des Deux Rives Périgueux,ENGIE SOLUTIONS Agence Atlantique Limousin,71.1,0.077,0.103
+266,3803C,Berjalia,Berjalia (DALKIA),82.1,0.048,0.058
+127,3002C,DALAE,DALAE (DALKIA),75.8,0.051,0.078
+960,6314C,Réseau de chaleur du Brugeron,Communauté de commune Ambert Livradois Forez,66.7,0.114,0.146
+833,7906C,Réseau de chaleur CC Mellois en Poitou,Communauté de Communes Mellois en Poitou,93.1,0.048,0.093
+81,6735C,ALSACEHABITAT-STRASBOURG-MEINAU,Alsace Habitat,100,0,0.018
+381,9303C,Zup de Bobigny - Genyo,IDEX ENERGIES Boulogne Billancourt,48,0.122,0.126
+575,9505C,Van Gogh,CORIANCE,,,
+1002,0809C,Réseau de chaleur bois de Lalobbe,Commune de Lallobe,100,0,0.024
+1190,,Réseau de Hyères,IDEX,,,
+425,0509C,Réseau de chaleur de Guillestre,Mairie de Guillestre,96.8,0.011,0.034
+764,5304C,VAPEUR COSYNERGIE 53,SUEZ,100,0,0.004
+966,2509C,Mairie Myon,MAIRIE MYON,100,0,0.02
+919,,Réseau de chaleur de Montrieux-en-Sologne,,,,
+334,1206C,RESEAU DE CAPDENAC-GARE,SYDED du Lot,91.5,0.024,0.048
+466,2305C,Réseau de Guéret,GUERET ENERGIE SERVICES (ENGIE SOLUTIONS),87.8,0.033,0.057
+380,9211C,Réseau de chaleur de Levallois,KALITA (IDEX),50.3,0.169,0.198
+1184,, Centre Hospitalier Lorquin ,  Centre Hospitalier de Lorquin,,,
+159,4212C,Réseau de Montrond-les-Bains,Montrond Energie Bois Services - MEBOIS SAS (CORIANCE),98.2,0.006,0.031
+876,8610C,Réseau chaleur université de Poitiers,Université de Poitiers,88,0.03,0.052
+705,2213C,Chauf bois et réseau de chaleur Plestin les Grèves,SPIC Chaufferies,66.5,0.114,0.145
+566,9302C,Réseau de Bagnolet,SDCB SAS (ENGIE SOLUTIONS),62.5,0.095,0.12
+241,9119C,Parc d'activités,DALKIA Paris la Defense,100,0,0.004
+1166,6721C,Réseau de Villé-Bassemberg,Communauté de communes de la vallée de Villé,90.5,0.022,0.044
+272,7318C,Réseau d'Ugine,DALKIA Centre Est,76.1,0.069,0.093
+858,6712C,Chaufferie,Commune de Saâles,100,0,0.02
+541,4307C,Réseaux de Chaleur YES,ENGIE SOLUTIONS DR RESEAUX SUD EST,92,0.023,0.046
+50,3817C,Réseau de chaleur de Villard-de-Lans,WEYA,96,0.016,0.041
+51,0611F,BET Grand Arenas,DALKIA TOURS,,0.021,0.038
+30,3112F,Toulouse energie durable (TED) froid,TED (DALKIA),,0.027,0.047
+100,3505C,Campus Scientifique de Beaulieu,DALKIA TOURS,0,0.204,0.237
+875,8501C,ZAD Nord-Est,OPH VENDEE HABITAT,0,0.205,0.231
+1062,9327C,OPH de Drancy,ENGIE SOLUTIONS,54.9,0.1,0.123
+82,3514C,Reseau Chartres de Bretagne (ZAC portes de Seiche),Régie des réseaux de chaleur de Rennes Métropole,74,0.069,0.093
+296,9402C,Réseaux de Créteil - Scuc,SCUC (DALKIA),68.3,0.076,0.087
+892,9406C,Réseau de Ivry-Port,GEOTELLUENCE (ENGIE SOLUTIONS),79.1,0.064,0.084
+207,4204C,HLM Beaulieu Montchovet IV,DALKIA Centre Est,0,0.24,0.27
+174,3506C,Rennes Sud,ENERSUD (ENGIE SOLUTIONS),59.4,0.086,0.115
+499,5823C,La Charité sur Loire,ENGIE SOLUTIONS,100,0,0.021
+563,9209C,Réseau de Chaville,ENGIE HOME SERVICES (ENGIE SOLUTIONS),0,0.198,0.249
+49,9240F,Réseau SEINERGIE Froid,SEINERGIE (DALKIA),,0.009,0.023
+164,5908C,Réseau de chaleur de Sin Le Noble,DALKIA,65.6,0.1,0.118
+58,9127F,Réseau froid de l'école polytechnique,École Polytechnique,,0.011,0.021
+3,9219F,Réseau froid Seguin Rives de Seine,IDEX Seguin Rives de Seine Energies,,0.012,0.024
+44,3424F,BEAUSOLEIL,SERM,,0.015,0.059
+23,8307F,BET Réseau thalassothermie la SEYNE ,DALKIA SAINT-ANDRE-LEZ-LILLE,,0.015,0.028
+1146,3607C,Groupe scolaire de Mézières en Brenne,Communauté de Communes Cœur de Brenne,37.7,0.198,0.206
+539,4213C,Réseau de Chaleur VIACONFORT,VIA CONFORT (ENGIE SOLUTIONS),67.8,0.082,0.107
+26,5714F,Réseau  Zac Amphithéâtre,UEM,,0.008,0.017
+301,7703C,Almont - Montaigu,DALKIA Paris la Defense,78.1,0.05,0.064
+405,7608C,Château Blanc,MADRILLET ENERGIE (IDEX),95.6,0.011,0.034
+14,4213F,Réseaux de Froid VIACONFORT,VIA CONFORT (ENGIE SOLUTIONS),,0.02,0.036
+23,9415C,Réseau de Chevilly-Larue L'Haÿ-les-Roses Villejuif,SPL SEMHACH,80,0.045,0.055
+5,3302F,BASSINS A FLOT - Froid,ENERGIE DES BASSINS (IDEX),,0.01,0.02
+326,3325C,Réseau Plaine de Garonne Energies,Plaine de Garonne Energies (ENGIE SOLUTIONS),61.6,0.088,0.075
+829,7617C,RCU de Neufchatel-en-Bray,VIRIA,71.1,0.087,0.115
+46,3427F,NOUVEAU SAINT ROCH,SERM,,0.011,0.021
+821,7312C,Yenne,Commune de Yenne,66.7,0.168,0.206
+20,7503F,Fraîcheur de Paris,Fraîcheur de Paris (ENGIE SOLUTIONS),,0.007,0.015
+217,2604C,Réseau de Pracomptal,DALKIA Centre Est,0,0.244,0.27
+780,6106C,Réseau de Perrou,,,,
+471,3102C,Éco-quartier Balma Vidailhan,ENGIE SOLUTIONS DR OCCITANIE BATIMENT,53.1,0.129,0.158
+761,5004C,Centre Hospitalier de L'estran,Centre hospitalier de l'Estran,0,0.246,0.276
+269,7609C,SODINEUF,DALKIA Paris la Defense,0,0.223,0.25
+40,,Réseau de chaleur de Montbrison,,,,
+1280,,Réseau de Guipel,Commune de Guipel,,,
+554,7809C,Réseau de Vélizy,VELIDIS (ENGIE SOLUTIONS),52.4,0.101,0.11
+905,,Réseau de chaleur Le Controis-en-Sologne,,,,
+242,7812C,Réseau de Plaisir - Resop,RESOP (DALKIA),85.5,0.037,0.046
+1081,,Réseau de chaleur Propières (école - mairie),,,,
+1189,,Réseau de Gradignan ,IDEX,,,
+255,,Réseau de chaleur de Murs,,,,
+930,,Réseau de chaleur Saint-Amand-Montrond,,,,
+767,5608C,Réseau de chaleur de Locmiquelic,Commune de Locmiquélic,99.4,0.002,0.022
+1131,5928C,VILLENEUVE D'ASCQ (59) - Réseau la Résidence,DALKIA SAINT-ANDRE-LEZ-LILLE,0.8,0.19,0.243
+251,4106C,ECO CHALEUR DE BLOIS,ECO CHALEUR DE BLOIS (DALKIA),93,0.018,0.024
+214,7605C,Réseau de Mont-Saint-Aignan,Mont-Saint-Aignan Energie Verte (CORIANCE),74.8,0.066,0.088
+280,6002C,La Cavée et les hironvalles,Creil Energie (DALKIA),56.7,0.105,0.131
+708,2503C,Champvalon,DALKIA Paris la Defense,62.9,0.089,0.117
+168,6201C,Zup du Quartier République - Avion,IDEX,0,0.204,0.258
+267,6003C,Quartier des Obiers,NSO Energie (DALKIA),73.3,0.074,0.086
+779,6007C,VSPU Villers Saint Paul Utilités,VSPU (ENGIE SOLUTIONS),87.4,0.051,0.06
+545,6308C,Croix-de-Neyrat / Champratel / Les Vergnes,ECLA (ENGIE SOLUTIONS),83.8,0.041,0.063
+462,1803C,Clos du Roy / Tunnel Chateau,ENGIE SOLUTIONS,0,0.462,0.521
+1063,9307C,Pariferic,DALKIA Paris la Defense,0,0.245,0.276
+1049,5005C,Réseau communal La Lucerne d'Outremer,Commune de La Lucerne d'Outremer,100,0,0.021
+4,0606F,MSE Réseau Froid,Meridia Smart Energie (IDEX),,0.01,0.02
+880,2212C,Monge Branly,Lannion-Trégor Communauté,96.8,0.008,0.028
+455,0602C,Réseau Nice Est,Dalkia,0,0.206,0.232
+480,4401C,Réseau de Nantes,ERENA (ENGIE SOLUTIONS),79.1,0.042,0.062
+756,4608C,Réseau de Caillac,SYDED du Lot,86.4,0.068,0.107
+210,2502C,Réseau de Montbéliard,Montbéliard Energies (DALKIA),54.7,0.113,0.129
+1126,4315C,Réseau de chaleur de Saugues,Régie énergie de Saugues,100,0,0.028
+538,3316C,Réseau de l'éco-quartier Ginko,ENGIE SOLUTIONS AGENCE GARONNE,62.5,0.09,0.113
+831,7902C,Réseau de Bressuire,Communauté d'agglomération du bocage Bressuirais,,,
+1040,2908C,Plaine des sports,Douarnenez Communauté,91.6,0.023,0.046
+1104,,Ozon Nord,SEM Habitat Pays Chatelleraudais (SEM HPC),,,
+114,4802C,Mende,TENDEM (DALKIA),99.9,0.001,0.022
+884,8605C,Réseau Lusignan,Grand Poitiers,97.8,0.008,0.031
+6,3802F,Réseau froid CCIAG Grenoble,COMPAGNIE DE CHAUFFAGE (CCIAG),,0.017,0.061
+264,9314C,Réseau de Tremblay en France,Tremblay Géothermie (IDEX),87.2,0.034,0.052
+143,4211C,Réseau d'Andrézieux-Bouthéon,Andrézieux-Bouthéon Energie Services (CORIANCE),90,0.026,0.048
+477,3819C,Réseau YOPLAIT Vienne,ENGIE SOLUTIONS LYON,84,0.036,0.044
+25,9520C,Réseau de Vemars,DALKIA Paris la Defense,0,0.287,0.321
+1122,1513C,Réseau chaleur bois de Vic sur Cère,Communauté de communes Cère et Goul en Carladès,100,0,0.021
+872,8306C,Réseau communal de Puget Ville (bois et chaleur),Mairie de Puget-Ville,0,0.342,0.385
+411,,Réseau de chaleur de Val-d'Isère,IDEX,,,
+773,5912C,Maubeuge Energie Renouvelable,MAUBEUGE ENERGIE RENOUVELABLE (DALKIA),79.9,0.051,0.061
+341,4601C,Réseau de Nuzéjouls,SYDED du Lot,62.3,0.221,0.286
+12,3305F,,ENGIE Solutions,,,
+388,5719C,Réseau de Cattenom,IDEX TERRITOIRES,96.3,0.017,0.046
+692,1604C,Réseau de Champagne-Mouton,Commune de Champagne Mouton,100,0,0.024
+347,9313C,Réseau de La Courneuve,SYNDICAT MIXTE DES RESEAUX D'ENERGIE CALORIFIQUE (SMIREC),64.4,0.078,0.079
+317,3901C,Réseau de Dole,SOCCRAM (ENGIE SOLUTIONS),96.1,0.011,0.033
+99,1101C,Zac Saint Jean et & Saint Pierre,SNDC (DALKIA),71.7,0.083,0.112
+397,8806C,Réseau de Monthureux-sur-Saône,Communauté de communes de Vosges Côté Sud-Ouest (CCVCSO),88.2,0.037,0.063
+434,9121C,Réseau de chaleur de l'écoquartier Camille Claudel,DALKIA Paris la Defense,74.2,0.064,0.088
+178,5909C,Réseau de Mons-en-Baroeul,Mons énergie (DALKIA),64.9,0.071,0.103
+1262,0512C,Réseau de Molines-en-Queyras,Communauté de communes du Guillestrois et du Queyras,96.1,0.014,0.038
+245,6206C,Réseau de chaleur de Liévin,DALKIA,67.3,0.086,0.099
+1116,7434C,Réseau de chaleur bois et citoyen de Habere Poche,Forestener,100,0,0.024
+377,4006C,Géothermie Mont-de-Marsan (GMM2),Régie Chauffage Urbain et Géothermie de Mont de Marsan ,100,0,0.014
+818,7306C,Réseau de Notre Dame des Millières,,32.8,0.23,0.267
+52,4219C,Planfoy 2 - ZAC des Lucioles,SIEL,91.6,0.03,0.059
+788,6809C,Réseau d'Heimersdorf,Commune de HEIMERSDORF,100,0,0.025
+671,0705C,Réseau de chaleur communal de Burzet,Mairie de Burzet,99.8,0.001,0.033
+28,9234C,Réseau du Fort d'Issy,DALKIA TOURS,41.1,0.169,0.148
+314,7101C,Réseau de Chalon,CHALON'ENERGIE (ENGIE SOLUTIONS),70.4,0.069,0.094
+535,1201C,Réseau de Decazeville,ENGIE SOLUTIONS DR OCCITANIE BATIMENT,70,0.082,0.109
+1147,5011C,Réseau de Saint germain sur ay,Sdem50,91.3,0.022,0.045
+571,9403C,Réseau de Choisy-Vitry,CVD (ENGIE SOLUTIONS),65,0.127,0.15
+863,7475C,Réseau d'Annemasse Le Livron,DALKIA Centre Est,0,0.2,0.233
+824,7316C,Réseau de St Jean d'Arvey,Saint jean d'arvey,59.3,0.151,0.192
+776,5922C,Réseau de Denain,DALKIA SAINT-ANDRE-LEZ-LILLE,76.2,0.059,0.069
+1196,1901C,Unité de Valorisation Énergétique – Blédina,Corrèze Energies Valorisation,100,0,0.004
+889,9003C,Réseau de chaleur de Delle,DALKIA,84.6,0.036,0.056
+1247,,Réseau de chaleur de Campsas,Commune de Campsas,,,
+711,2506C,Domaine Universitaire de la Bouloie,DALKIA,85.9,0.04,0.066
+1136,3707C,Réseau de chaleur pour le CHU St Benoit la Forêt,Paprec Energies Opérations,100,0,0.004
+1015,0704C,Réseau de chaleur de Banne,MAIRIE DE BANNE,100,0,0.022
+725,3111C,CAMUS,COMMUNAUTE D'AGGLOMERATION DU SICOVAL,24.5,0.215,0.247
+865,8004C,Rodolphe BRAL,Régie Communale de MONTDIDIER,66.7,0.114,0.144
+16,5816C,Réseau de chaleur de Billy sur Oisy,SIEEEN,100,0,0.024
+116,0806C,Ronde couture,DALKIA Reims,59.5,0.111,0.138
+1148,5009C,Réseau de Lessay,Sdem50,85.5,0.037,0.061
+59,9245F,RFU du quartier Issy Cœur de Ville,ENGIE ENERGIE SERVICES Courbevoie,,0.033,0.057
+652,6738C,Réseau de Chaleur du Port Autonome de Strasbourg,R-PAS,96.9,0.006,0.009
+1004,4244C,Loire Forez Agglomération Rezo,SIEL,100,0,0.022
+945,0508C,Réseau de chaleur bois énergie,Mairie du Dévoluy,100,0,0.019
+845,3310C,Réseau de chaleur de Gironde sur Dropt,Chaufferie Bois Gironde sur Dropt,99.2,0.003,0.034
+495,5703C,Réseau de Chaleur de Farébersviller,COFELY SERVICES Agence Lorraine (ENGIE SOLUTIONS),61.5,0.133,0.174
+644,5709C,Carrière,ENERGIS Régie Municipale,73.1,0.085,0.111
+19,9234F,Cristalia,CRISTALIA (ENGIE SOLUTIONS),,0.013,0.025
+633,2205C,Réseau de chaleur de Collinée,LE MENE,94.5,0.017,0.043
+816,7304C,La Plagne,ECHM,82.7,0.058,0.087
+260,3512C,Réseau de Vezin le Coquet,SOGEX,78.9,0.058,0.086
+1083,,Réseau de chaleur de Saint-Laurent-d'Agny,SYDER,,,
+712,2507C,Réseau de chaleur de Mouthe,ENGIE SOLUTIONS DIJON,98.2,0.006,0.027
+653,6815C,Réseau d'Ammerzwiller,Commune de Bernwiller,100,0,0.004
+931,3713C,Ilots Est,DALKIA SAINT-ANDRE-LEZ-LILLE,27.3,0.179,0.21
+398,4410C,Réseau de Nantes Nord Chézine,NOVAE (IDEX),71.8,0.069,0.081
+604,6713C,Réseau des Tanneries - Bohrie - Wihrel,RCUA,57.7,0.109,0.134
+391,1902C,Egletons Bois Energie,EBENE (IDEX),90.1,0.03,0.044
+564,9240C,RUEIL ENERGIE,RUEIL ENERGIE (ENGIE SOLUTIONS),43.9,0.134,0.14
+839,1611C,15 boulevard Jean Moulin,Département de la Charente,16.7,0.313,0.355
+422,0511C,Réseau de chaleur de Ristolas,Communauté de communes du Guillestrois et du Queyras,100,0,0.022
+586,5403C,S.E.E.V - Ville de Vandoeuvre,S.E.E.V (DALKIA),77.2,0.053,0.066
+1165,,Chaufferie Bois de Poisson,Régie municipale,,,
+234,9107C,Réseau de Dourdan,IDEX TERRITOIRES,0,0.261,0.299
+932,,Réseau de chaleur Tours - Bergeonnerie,,,,
+338,4617C,Réseau de GOURDON,SYDED du Lot,97.8,0.008,0.032
+273,,Réseau de chaleur Saint-Jean-Saint-Nicolas,Territoire d'Energie Hautes Alpes - SYME05,,,
+1197,,Réseau Marne et Gondoire Energie,DALKIA,,,
+24,9235F,Réseau de froid de Suresnes - ICEIS,ICEIS (DALKIA),,0.017,0.032
+840,1612C,Domaine de La Combe,Département de la Charente,63.1,0.112,0.141
+493,5603C,Réseau de chaleur du GUMENEN,ENGIE ENERGIE SERVICES DIRECTION REGIONALE BRETAGNE (ENGIE SOLUTIONS),76.9,0.072,0.099
+978,2513C,Villars sous Ecot,Communauté de Communes d’Agglomération du Pays de Montbéliard,100,0,0.023
+690,1602C,Commune de Baignes-Sainte-Radegonde,Commune de Baignes-Sainte-Radegonde,100,0,0.026
+592,6905C,Réseau de Lyon,ELM (DALKIA),62.6,0.094,0.112
+751,4252C,Saint-Romain-la-Motte,SIEL,98.1,0.061,0.115
+13,5807C,Réseau de chaleur de Corbigny,SIEEEN,100,0,0.019
+299,1402C,Zup de Hauteville,LISIEUX ENERGIE (DALKIA),65.8,0.087,0.112
+747,4103C,Réseau de Mondoubleau,Communauté de communes des collines du Perche,84.5,0.051,0.078
+284,0802C,La Citadelle,Charleville énergies (DALKIA),41.6,0.144,0.165
+1183,,Lycée agricole de RETHEL,Lycée agricole LEGTPA,,,
+667,0603C,Ranguin,DALKIA LYON,76.3,0.056,0.079
+321,3319C,Bordeaux Begles Energies,Bordeaux Bègles Energies (Mixéner),97.6,0.006,0.011
+950,4306C,Chaufferie de la Piscine,MAIRIE DE DUNIERES,100,0,0.022
+648,6708C,Cité de l'Ill,IDEX Strasbourg,75.1,0.057,0.079
+152,4405C,Zup de Bellevue Saint Herblain,CLEA (DALKIA),64.1,0.095,0.12
+766,5604C,Réseau de chaleur Liger,SEM LIGER,100,0,0.048
+27,1302F,Réseau du pôle Yvon Morandat,ENERGIE SOLIDAIRE,,,
+496,5708C,Réseau de Holweg-Forbach-Behren,COFELY SERVICES Agence Lorraine (ENGIE SOLUTIONS),85.1,0,0.063
+150,5803C,Réseau de decize,DALKIA Centre Est,79.2,0.068,0.098
+12,5817C,Réseau de chaleur de Brassy,SIEEEN,79,0.077,0.116
+746,3711C,CFA Joué Les Tours,DALKIA TOURS,51.6,0.12,0.144
+204,9114C,Réseau d'Épinay-sous-Sénart,SEMGEP,74.3,0.061,0.08
+117,7706C,Réseau de Dammarie les Lys,GEODALYS (ENGIE SOLUTIONS),93.9,0.011,0.027
+904,,"Réseau de chaleur Saint-Avertin (Les sables)
+",,,,
+514,6928C,Réseau chauffage Centre Hospitalier Villefranche,ENGIE SOLUTIONS LYON,80.2,0.053,0.076
+1098,5923C,RCU Fourmies,ENGIE SOLUTIONS VILLENEUVE D'ASCQ,100,0,0.017
+4,5811C,Réseau de chaleur de Planchez,SIEEEN,99.5,0.002,0.029
+1255,2111C,Réseau de chaleur de Bligny-sur-Ouche,REGIE COTE D'OR CHALEUR,94.1,0.025,0.063
+525,8702C,Zac de Beaubreuil,SDCLB (DALKIA),90.8,0.027,0.035
+974,8811C,Réseau de Fremifontaine,COMMUNE DE FREMIFONTAINE,100,0,0.017
+754,4409C,Saint Julien de Concelles - Chaufferie Bois,Mairie de Saint Julien de Concelles,40.4,0.116,0.141
+50,9242F,Réseau ENEBIO Froid,ENEBIO (DALKIA),,0.009,0.023
+47,6310C,CORAL,Régie communale d'Ambert,66.7,0.114,0.144
+806,7001C,Zup des Capucins,DALKIA,59.8,0.109,0.137
+612,8105C,Reseau de chaleur de Graulhet,Syndicat Mixte TRIFYL,89.7,0.026,0.048
+1054,3516C,SAVE,Agromousquetaires,100,0,0.004
+1023,3603C,Réseau de chaleur Argenton sur Creuse,OPAC36,96.3,0.009,0.03
+7,5815C,Réseau de chaleur de Saint Saulge,SIEEEN,92.2,0.039,0.066
+60,4305C,Réseau d'allegre,MAIRIE D'ALLEGRE,100,0,0.028
+803,8819C,Réseau de Denipaire,Mairie de Denipaire,100,0,0.032
+180,0105C,Réseau de saint-denis-les-bourg,DALKIA Centre Est,90.7,0.029,0.057
+432,8601C,GPCU - Poitiers Saint Benoit-Buxerolles ,Grand Poitiers Chauffage Urbain - Poitiers Saint B (DALKIA),73.2,0.07,0.092
+505,6105C,RECBIA,RECBIA (ENGIE SOLUTIONS),93.2,0.019,0.042
+17,7619F,BET ZAC Luciline froid,ENGIE COFELY Agence Normandie (ENGIE SOLUTIONS),,0.223,0.36
+287,7319C,Réseau d'Albertville,DALKIA LYON,95.6,0.012,0.036
+1085,3335C,Mérignac Centre Energies,MERIGNAC CENTRE ENERGIES (IDEX),72.3,0.082,0.106
+1188,,Réseau de Cusset,IDEX,,,
+757,4612C,Réseau de Figeac,SYDED du Lot,98.9,0.005,0.032
+295,1413C,Réseau de chaleur Caen Sud,SAS RESEAU DE CHALEUR URBAIN CAEN SUD (DALKIA),75.7,0.064,0.09
+924,,Réseau de chaleur de Fresnay-l'Évêque,,,,
+292,3704C,Quartier Chateaubriand,DALKIA TOURS,0,0.209,0.266
+48,9237F,BET NANTERRE froid,Dalkia,,0.012,0.023
+29,3301F,LASERIS,ENGIE SOLUTIONS AGENCE GARONNE,,0.017,0.031
+1051,5605C,Réseau de la commune de Guer,Ville de Guer / Dalkia,100,0,0.022
+617,,AVIGNON ENERGIES,DALKIA,,,
+224,1311C,Zac Canto Perdrix,CPE (DALKIA),68.8,0.075,0.103
+510,6714C,Réseau MARS,SUEZ,100,0,0.004
+600,6732C,Réseau de chaleur Cogénération Sarre-Union,RCUE,0,0.184,0.225
+768,5711C,Huchet,ENERGIS Régie Municipale,84.5,0.036,0.058
+1209,,COSEC,ENERGIS Régie Municipale,,,
+958,4220C,Le Bessat 1 - Ecole,SIEL,100,0,0.022
+95,4913C,Réseau les Mauges,DALKIA,59.4,0.109,0.135
+579,9105C,Réseau de Grigny,SOCCRAM (ENGIE SOLUTIONS),19.5,0.202,0.226
+929,,Réseau de chaleur Sancerre - collège Francine Leca,,,,
+451,0109C,Réseau chauffage DORTAN,Société ESSAM,78,0.093,0.133
+73,3826C,Réseau de chaleur des Bannettes,ECHM - VEOLIA,26.6,0.245,0.281
+1157,5013C,Coutances,Sdem50,89.7,0.023,0.044
+17,5806C,Réseau de chaleur de Bazolles,SIEEEN,100,0,0.021
+1045,1707C,Réseau de la chaufferie bois,Gémozac,83.4,0.067,0.097
+1097,,Réseau de chaleur Lille - Le Buisson,ENGIE SOLUTIONS,,,
+393,6102C,Quartier Saint Sauveur,ST SAUVEUR ENERGIE (IDEX),75.5,0.063,0.088
+743,3906C,Réseau de Morez - le Puit,Hauts de Bienne,64.8,0.119,0.148
+1204,,Réseau de l'hôpital de Niort,,,,
+404,2401C,Réseau de chaleur de Saint-Astier,SOLENA (IDEX),79.1,0.063,0.09
+857,6601C,Réseau communal de Bolquere,COMMUNE DE BOLQUERE,33.3,0.228,0.264
+106,7613C,La Côte Brulée,DALKIA,13.5,0.236,0.265
+1237,,Réseau de Ibos,SDE65,,,
+624,,Kersabiec- Lorient,VILLE DE LORIENT,,,
+1240,,Réseau de chaleur de Varennes,Commune de Varennes,,,
+8,5827C,Réseau de Montsauche-Les-Settons,SIEEEN,90.6,0.03,0.054
+1194,,Réseau de chaleur Villes Geffs - Groupe Rocher,Groupe ROCHER - ENGIE Solutions,,,
+1139,4411C,Résidence La Beaujoire,DALKIA,0,0.214,0.242
+57,8601F,Réseau de froid FUTUROSCOPE 2,Dikeos,,0.028,0.049
+10,1301F,Réseau de froid Thassalia Marseille,THASSALIA,,0.011,0.054
+1102,2215C,Loguivy-Plougras,Lannion-Trégor Communauté,100,0,0.022
+942,,Réseau de chaleur de l'hôpital Marius Lacroix,DALKIA,,,
+951,0306C,Réseau - Bellenaves,Etab. Public Territorial Paris Terres d’Envol,100,0,0.019
+357,9125C,Ris-Orangis Dock et Gare,DALKIA Paris la Defense,56.7,0.119,0.122
+1163,6317C,Réseau de chaleur Saint-Jacques (Clauvaé),CLAUVAE (IDEX),79.9,0.056,0.066
+955,6938C,Saint Martin en Haut,SYDER,81.4,0.051,0.075
+654,7476C,Réseau d'Annemasse Perrier,DALKIA Centre Est,0,0.186,0.233
+278,7803C,Réseau de Versailles,VERSEO (ENGIE SOLUTIONS),0,0.255,0.31
+124,4504C,Zup du Grand Clos,Montargis Energies (DALKIA),84.9,0.039,0.052
+634,3106C,"Réseau ""Saint Exupéry""",DALKIA TOULOUSE,78.1,0.084,0.102
+478,4101C,Quartier Bégon et Chevalier,SBDC (ENGIE SOLUTIONS),91.9,0.02,0.03
+640,4226C,Pélussin -  Quartier Notre Dame,SIEL,97.6,0.011,0.047
+172,4903C,CHU Angers,DALKIA TOURS,89.7,0.023,0.043
+900,,Réseau de chaleur Saint-Plantaire,,,,
+1121,,Réseau bois et citoyen d'Estrablin,Forestener,,,
+1254,8708C,SSLF RESEAU DE CHALEUR ET PRODUCTION D'EAU CHAUDE,Commune de St Sulpice les Feuilles,100,0,0.022
+991,7109C,Réseau de chaleur des bâtiments communaux,MAIRIE de SAINT GENGOUX DE SCISSE,100,0,0.024
+497,5714C,Réseau de Sarrebourg,Sarrebourg Energie (ENGIE SOLUTIONS),63.2,0.094,0.119
+1141,3116C,Réseau chaleur Bois Arbas,Mairie d'Arbas,100,0,0.035
+704,2210C,Hopital Rive Gauche,Lannion-Trégor Communauté,81.1,0.057,0.083
+1248,,Réseau de chaleur de Laguépie,Commune de Laguépie,,,
+694,1706C,Réseau de chaleur Tonnay-Boutonne,"régie ""chaudière bois""",64.5,0.12,0.148
+1068,6215C,Réseau CVE Flamoval,CGW,66.7,0.114,0.131
+320,3334C,Newton,ENGIE SOLUTIONS AGENCE GARONNE,26.9,0.116,0.086
+367,7301C,Réseau de Chaleur de la Cluse de Chambéry (R3C),R3C (DALKIA),69.3,0.088,0.107
+335,4607C,Réseau de CATUS,SYDED du Lot,98.9,0.005,0.033
+209,6210C,Réseau de chaleur d'Arras,DALKIA,62.1,0.093,0.118
+1031,2806C,Réseau de chaleur de Voves,Communauté de communes Cœur de Beauce,41.5,0.147,0.174
+313,3902C,La Marjorie,SOCCRAM (ENGIE SOLUTIONS),87.4,0.036,0.049
+515,7107C,Mâcon Energies Services,MACON ENERGIES SERVICES (ENGIE SOLUTIONS),61.9,0.079,0.119
+141,7402C,"Réseau de chaleur de Seynod, Fier et Thiou",DALKIA Centre Est,90.4,0.025,0.031
+709,2504C,Chaufferie Bois du Russey,Communauté de communes du Plateau du Russey,89,0.043,0.074
+136,4505C,Réseau de Fleury les Aubrais,SOFLEC (DALKIA),63.8,0.093,0.119
+38,3401F,Polygone Antigone,SERM,,0.08,0.098
+719,2807C,Chartres Métropole Energies,Chartres Metropole Energies,88.9,0,0.054
+559,9106C,OROBIA - Réseau de Brétigny-sur-Orge,OROBIA (ENGIE SOLUTIONS),77.5,0.057,0.081
+782,6309C,Réseau de chaleur bois de Pontaumur,CHAVANON COMBRAILLES ET VOLCANS,92.5,0.033,0.064
+236,2702C,LOUVIERS ENERGIE,Louviers Energie SAS (DALKIA),80.6,0.048,0.072
+807,7003C,Réseau de Breurey les Faverney,MAIRIE DE BREUREY,100,0,0.027
+873,8307C,reseau thalasso thermie la SEYNE,DALKIA SAINT-ANDRE-LEZ-LILLE,55.5,0.074,0.048
+1140,5616C,Réseau CH Centre Bretagne – Polyclinique KERIO,Dalkia,59.9,0.095,0.119
+898,,Réseau de chaleur Le Blanc,,,,
+1164,6943C,Réseau de Montrottier,SYDER,92.2,0.038,0.075
+344,4615C,Réseau de THEGRA,SYDED du Lot,94.6,0.028,0.063
+1013,8305C,Chaudière bois,COMMUNE DE COGOLIN,100,0,0.017
+979,2510C,Chaufferie du lycée E Faure,Lycée Polyvalent E Faure,0,0.266,0.299
+675,0813C,Réseau de chaleur de Montcornet,ALBATROS 08,100,0,0.022
+22,3412F,BET BOIRARGUES froid,DALKIA,,0.008,0.017
+470,2803C,DUNES,ENGIE COFELY Agence Normandie (ENGIE SOLUTIONS),72.6,0.081,0.107
+611,8113C,Réseau de chaleur de Saint-Pierre-de-Trivisy,Syndicat Mixte TRIFYL,95.1,0.022,0.051
+805,6933C,Réseau de chaleur bois Cours-la-Ville,Communauté d'agglomération de l'Ouest Rhodanien,84.1,0.04,0.062
+1275,6404C,Réseau CHEM'PÔLE 64,PAPREC ENERGIES ATLANTIQUE,100,0,0.004
+1176,,Réseau IME-Les Chapus,Beta Energie,,,
+542,5106C,Croix Rouge,SOCCRAM (ENGIE SOLUTIONS),80.1,0.052,0.069
+1048,2211C,Ploumilliau,Lannion-Trégor Communauté,100,0,0.023
+684,1502C,Réseau de chaleur bois du Crozatier,SAINT FLOUR COMMUNAUTE,97,0.016,0.05
+149,9103C,Réseau d'Evry,Grand Paris Sud Energie Positive (Dalkia),75.5,0.062,0.072
+557,8704C,Limoges Centre,LIMOGES CENTRES ENERGIES SERVICES (ENGIE SOLUTIONS),0,0.363,0.406
+423,,Réseau de chaleur de Molines-en-Queyras,Communauté de Communes du Guillestrois et du Queyras,,,
+770,5720C,Réseau de chaleur d’Amnéville,OMEGA ENERGIES ET SERVICES (Régie),89,0.025,0.049
+167,6104C,Réseau de la Ferté Mace,DALKIA,88.2,0.032,0.056
+1028,5826C,VAUX D'AMOGNES,SIEEEN,100,0,0.019
+1208,,Réseau de Chaleur Nord-Alco (RCNA),SA3M,,,
+410,8814C,Vittel,IDEX TERRITOIRES,64.6,0.094,0.128
+1282,,Réseau bois et citoyen de Mont-Saint-Vincent,Forestener,,,
+415,,Réseau de chaleur de Ispoure et Saint-Jean-Pied-de-Port,IDEX,,,
+1234,,Réseau de Luz-Saint-Sauveur,SDE65,,,
+1043,7904C,Réseau de l'Absie,Mairie de l'Absie,100,0,0.018
+1021,1606C,Chaufferie bois,Mairie de Montemboeuf,100,0,0.025
+996,6936C,Monsols,SYDER,88,0.045,0.076
+1046,3327C,BURCK,ENGIE SOLUTIONS AGENCE GARONNE,0,0.226,0.254
+1105,,Réseau de chaleur,CRAM SAS,,,
+825,7409C,ECHM Flaine,ECHM,0,0.238,0.275
+101,1318C,La Bayanne,IDEX,69.9,0.072,0.095
+197,9102C,Réseau des Ulis,ENERLIS (Dalkia),63.8,0.048,0.064
+458,1504C,Réseau de Riom-Es-Montagnes,ENGIE SOLUTIONS Agence Auvergne,98.5,0.006,0.031
+1008,6935C,Larajasse,SYDER,100,0,0.023
+87,8401C,AVIGNON ENERGIES,DALKIA LYON,0,0.206,0.238
+312,3504C,Sarah Bernhardt,Dalkia,53.4,0.109,0.143
+524,9429C,Maison Alfort,SOCCRAM (ENGIE SOLUTIONS),0,0.215,0.242
+230,9509C,Réseau d'Argenteuil - ARGEVAL,ARGEVAL (DALKIA),80.8,0.045,0.055
+871,8204C,Villebrumier,MAirie de Villebrumier,100,0,0.023
+492,5505C,Réseau Meuse-Energie,MEUSE ENERGIE (ENGIE SOLUTIONS),,,
+30,7816C,Carrière sous Poissy,DALKIA Paris la Defense,19.7,0.187,0.214
+1236,,Réseau de Loures-Barousse,SDE65,,,
+637,3425C,Prado Concorde,ENGIE Solutions Languedoc Roussillon,40.6,0.146,0.103
+584,7426C,Réseau bois énergie et citoyen de Lucinges,Forestener,98,0.007,0.031
+336,0609C,E2N,ENERGIE NOUVELLE DE NICE (DALKIA),99.1,0.003,0.007
+1267,5617C,Réseau LACTALIS - AKIOLIS,PAPREC ENERGIES ATLANTIQUE,100,0,0.004
+853,5208C,Réseau de Bourmont,CONSEIL DEPARTEMENTAL HAUTE MARNE,100,0,0.022
+140,6006C,Réseau de Breteuil-sur-Noye,BRETEUIL ENERGIE (DALKIA),92.2,0.023,0.049
+395,,Réseau de chaleur Les Belleville / Les Ménuires,IDEX,,,
+733,3510C,REVERTEC,DALKIA,80.2,0.049,0.059
+585,8815C,Réseau de la ville de VAGNEY,Commune de VAGNEY,87.4,0.035,0.062
+291,3112C,Toulouse Energie Durable (TED) chaud,TED (Dalkia),78.1,0.071,0.083
+959,4314C,LA MION 2,ERE43,100,0,0.021
+785,6724C,Sélestat,ES Services Energétiques,80.8,0.048,0.07
+1091,,Réseau de chaleur de Aubiat,,,,
+374,3708C,Réseau de chauffage urbain de la Riche - Quartier,DALKIA TOURS,0,0.238,0.268
+69,4235C,Roche en Forez,SIEL,90.4,0.033,0.059
+636,3411C,MUSE,MUSE (ENGIE SOLUTIONS),100,0,0.004
+196,8005C,Abbeville Energie,DALKIA,61.6,0.1,0.128
+827,7418C,Réseau UVE du STOC,IDEX,100,0,0.004
+632,2203C,Réseau de chaleur Chaufferie 2,commune de plouaret,100,0,0.022
+846,3508C,Réseau de chaleur Bretagne romantique  à Combourg,Régie de distrib. d'enr biomasse Bretagne romantique,96.9,0.009,0.034
+501,5911C,Réseau de Lambersart,ENGIE SOLUTIONS VILLENEUVE D'ASCQ,62,0.132,0.164
+420,5302C,Réseau de Laval - Zup Saint Nicolas,LAVAL ENERGIE NOUVELLE (LEN) (CORIANCE),86.2,0.038,0.046
+965,3908C,Chaufferie Bois Les Orchidées,Commune d'Avignon-les-Saint-Claude,100,0,0.023
+156,0205C,Réseau de Château Thierry,Société Valmy Défense 66 (DALKIA),96.4,0.011,0.033
+1032,9202C,Les Fosses Jean Nord,Colombes Habitat Public,0,0.241,0.27
+1238,,Réseau de Saint-Nicolas-de-la-Grave,Commune de Saint-Nicolas-de-la-Grave,,,
+792,6818C,Réseau de Lapoutroie,Régie Municipale de Chauffage Lapoutroie,100,0,0.023
+351,1907C,Réseau de Brive-la-Gaillarde,Green Energie Brive (CORIANCE),95.2,0.014,0.027
+27,9217C,Réseau du Plessis-Robinson (HLM) - Tecni,TECNI (DALKIA),27.3,0.165,0.178
+1230,,Castelnau-Magnoac ,SDE65,,,
+555,7811C,Réseau de Carrières - Chatou,CRISTAL ECO CHALEUR (ENGIE SOLUTIONS),94.6,0.013,0.019
+576,9507C,Zup de Sannois - Ermont - Franconville,SEFIR (ENGIE SOLUTIONS),72.1,0.099,0.125
+90,9419C,Réseau de Fresnes,SOFREGE (CORIANCE),65.4,0.079,0.096
+781,6209C,Réseau de chaleur d'Achicourt,DALKIA,62.7,0.088,0.105
+1127,3828C,Réseau de Voiron,DALKIA Centre Est,83.5,0.045,0.07
+74,4230C,Marlhes - Interconnexion,SIEL,82.2,0.059,0.091
+1226,,Bel Air Grand Font,,,,
+976,7002C,Réseau de Saulnot,MAIRIE DE SAULNOT,78.5,0.087,0.124
+775,5919C,Réseau du Parc St Maur,ENGIE SOLUTIONS Ile de France,0,0.241,0.239
+908,,Réseau de chaleur de Courtenay,,,,
+520,,Réseau de chaleur de Graulhet (site industriel),ENGIE Solutions,,,
+765,5305C,Réseau d'Evron,Reselia,82.6,0.048,0.072
+550,7619C,BET ZAC Luciline chaud,ENGIE COFELY Agence Normandie (ENGIE SOLUTIONS),51.6,0.111,0.102
+1295,,Chaufferie de MOIMAY,SIED 70,,,
+407,8201C,Réseaux Sud Ouest Energies Services,RESEAUX SUD OUEST ENERGIES SERVICES (ENGIE SOLUTIONS),81.5,0.054,0.064
+446,,Réseau de chaleur Saillat-sur-Vienne (industriel),ENGIE Solutions,,,
+1017,8603C,Réseau de chaleur de Couhé,,,,
+628,,Réseau de chaleur La Grigonnais,Commune de La Grigonnais,,,
+1214,,Réseau de chaleur Genyo,SIPPEREC,,,
+340,4610C,Réseau des 4 routes du Lot,SYDED du Lot,94.3,0.03,0.063
+1012,3003C,Réseau bois Lamelouze,MAIRIE Lamelouze,100,0,0.022
+745,3710C,Résidence Febvotte 1 et 2,DALKIA TOURS,0,0.228,0.256
+370,3712C,Réseau de Chaleur TM-ED,Tours Métropole-Energies Durables (TM-ED) (ENGIE SOLUTIONS),78.9,0.047,0.071
+324,9219C,Réseau chaud Seguin Rives de Seine,IDEX Seguin Rives de Seine Energies,56.6,0.122,0.13
+526,5712C,Stiring Wendel,COFELY SERVICES Agence Lorraine (ENGIE SOLUTIONS),100,0,0.004
+431,8106C,Réseau de chaleur d'ALBAN,Syndicat Mixte TRIFYL,96.3,0.014,0.038
+512,6806C,Réseau de Cernay,COFELY Services AGENCE ALSACE (ENGIE SOLUTIONS),81.3,0.064,0.091
+383,7729C,Coupvray - Zac Trois Ormes,Agronergy Solutions,100,0,0.019
+235,9310C,Réseau chaud ADP le Bourget,Aéroports de Paris Le Bourget,3.5,0.272,0.304
+1159,5012C,Réseau de juvigny les vallees,Sdem50,86.1,0.038,0.063
+560,9122C,Réseau du quartier du Grand Parc de Bondoufle,Grand Paris Sud,79,0.053,0.076
+1186,6742C,Réseau de Bischwiller,Serec Bischwiller (IDEX),96,0.011,0.034
+361,7724C,BUSSYCOMORE,BUSSYCOMORE ENERGIE (IDEX),74,0.07,0.091
+739,3605C,Réseau de chaleur d'Issoudun,DALKIA TOURS,75.1,0.056,0.08
+793,6820C,Réseau chaufferies bois Freland,Commune de Freland,100,0,0.022
+888,0107C,Secteur Verger du Moulin,Commune de VAL-REVERMONT,77.5,0.079,0.111
+147,9230C,Réseau Enebio,ENEBIO (DALKIA),0,0.216,0.244
+414,4408C,Réseau ZAC de la Minais,IDEX BOIS ENERGIE DE LA MINAIS,57.9,0.104,0.138
+583,5701C,Réseau de Metz,UEM,72.7,0.04,0.098
+516,7727C,Champs sur Marne,Géomarne (ENGIE SOLUTIONS),85,0.035,0.046
+375,7905C,Quartier Les Brizeaux,ENGIE Solutions Agence Atlantique Limousin,83.8,0.053,0.081
+171,9224C,Réseau SEINERGIE,SEINERGIE (DALKIA),18.9,0.189,0.201
+645,5710C,Côte de la Justice,ENERGIS Régie Municipale,92.8,0.026,0.049
+450,,Réseau de chaleur et de froid Agde,ENGIE Solutions,,,
+332,4614C,Réseau de CAHORS,SYDED du Lot,92.8,0.021,0.045
+1173,8205C,Réseau de chaleur de Nègrepelisse,CHAUFFERIE ET RESEAU CHALEUR BOIS,97.8,0.009,0.034
+1211,,Réseau de chaleur Uzerche Lapeyre ,SEM ENRèze,,,
+29,9128C,Liaison chauffage Orme,CEA PARIS SACLAY,0,0.198,0.223
+594,6906C,Réseau de Vaulx en Velin,V3E (DALKIA),70.7,0.072,0.095
+868,8104C,Gaillac - ZAC de Pouille,Syndicat Mixte TRIFYL,77.5,0.057,0.08
+894,,Réseau de chaleur Hôpital Mortagne au Perche,,,,
+763,5303C,Réseau de Château-Gontier (piscine et salles omnisports),Communauté de communes du Pays de Château-Gontier,74.6,0.068,0.093
+914,,Réseau de chaleur Fleury-les-Aubrais (Police Nationale - crèche Les Petits Choux Fleuryssois),,,,
+670,8705C,Réseau de Chamboret,Mairie de Chamborêt,100,0,0.017
+616,2107C,Mairie de Belleneuve,MAIRIE de Belleneuve,99.9,0.03,0.058
+901,,Réseau de chaleur Ségry (Château),,,,
+452,0201C,Zup du Quartier Europe,ENGIE COFELY Agence Picardie (ENGIE SOLUTIONS),63.2,0.069,0.106
+1135,5926C,SECLIN (59) - Réseau la Mouchonnière,DALKIA SAINT-ANDRE-LEZ-LILLE,53.1,0.119,0.146
+303,9414C,BONNEUIL-RESEAU CHALEUR,BONNEUIL-RESEAU CHALEUR ,95.7,0.011,0.027
+122,8802C,Quartier Kellerman,DALKIA,52.8,0.101,0.14
+606,,Réseau de chaleur Oberhausbergen - quartier Prévert,RCUA,,,
+329,3507C,Réseau de RENNES NORD & EST,EN'RNOV (ENGIE SOLUTIONS),19.3,0.192,0.219
+1288,,"Réseau Tours Energie Verte de Tours Métropole (EVTM)
+",CORIANCE,,,
+748,4203C,Quartier de La Métare,DALKIA Centre Est,0,0.222,0.25
+736,8805C,Réseau de Fresse sur Moselle,COMMUNE DE FRESSE S/ MOSELLE,96.5,0.015,0.048
+1075,6940C,Chénas,SYDER,100,0,0.023
+378,6401C,Réseau de chaleur du Hameau,SPIC Communauté d'Agglomération Pau-Béarn-Pyrénées,89.6,0.026,0.049
+507,6205C,Le Portel-Outreau,ENGIE SOLUTIONS VILLENEUVE D'ASCQ,0,0.172,0.194
+1212,,Réseau de chaleur de l'Alzou ,SCIC BOIS ENERGIE LOT,,,
+453,0203C,Réseau de Laon,ENGIE SOLUTIONS,,,
+587,5411C,ESTIA - Blandan Medreville,ESTIA - Réseaux de Chaleur (DALKIA),70.9,0.071,0.09
+956,4245C,Réseau de La Valla en Gier,Saint-Etienne Métropole,100,0,0.018
+66,6301C,Réseau de Riom RCBE,RCBE (ENGIE SOLUTIONS),92.1,0.022,0.046
+577,9519C,"""Placo""",ENGIE SOLUTIONS,100,0,0.004
+742,3905C,Réseau Arinthod CC TEC,TERRE d'EMERAUDE Communauté,100,0,0.022
+277,,Réseau de chaleur de Saint-Martin-de-Castillon (Les Basses Courennes),,,,
+366,9316C,Reseau de Bondy,Société Thermique de Bondy (CORIANCE),47,0.124,0.155
+944,5825C,Ouroux-en-Morvan 2,SIEEEN,100,0,0.023
+730,3413C,BET ODE chaud,Energies du Sud,63.6,0.065,0.043
+910,,"Réseau de chaleur Châteauroux (Hôpital)
+",,,,
+1039,6008C,Régie Municipale,Mairie Grandvilliers,100,0,0.004
+1242,,Réseau de chaleur de Pompignan,Commune de Pompignan,,,
+729,3404C,Réseau de Fraïsse - Agout,COMMUNE DE FRAÎSSE-AGOUT,100,0,0.021
+714,2515C,Réseau de Goux les Usiers,COMMUNE DE VAL D'USIERS,100,0,0.02
+508,6305C,Réseau de Rochefort-Montagne,ENGIE SOLUTIONS DR RESEAUX SUD EST,97,0.015,0.048
+784,6723C,ECOGI,ECOGI,100,0,0.015
+449,,"Réseau de chaleur de Périgueux
+",ENGIE Solutions,,,
+985,8817C,Réseau de Hurbache,Mairie Hurbache,100,0,0.018
+53,4229C,Saint Symphorien de Lay,SIEL,97.5,0.01,0.039
+970,7007C,Chaufferie de SCEY/SAONE,SIED 70,37.1,0.274,0.341
+365,7726C,RCU Lizy-sur-Ourcq,Lizynergie Renouvelable SAS,76.3,0.05,0.072
+562,9205C,Réseau Gennevilliers,GENNEVILLIERS ENERGIES (ENGIE SOLUTIONS),62.3,0.092,0.12
+1123,6318C,Réseau de chaleur d'Arlanc,CC AMBERT LIVRADOIS FOREZ,100,0,0.026
+110,8607C,Réseau de Civaux,ECOLIANE (DALKIA),12.8,0.228,0.234
+647,6705C,Réseau de Hochfelden,Génie climatique de l'Est,14.9,0.159,0.166
+179,6402C,EGURRETIK,DALKIA Bayonne,83.1,0.045,0.069
+3,5812C,Réseau de chaleur de Saint Amand en Puisaye,SIEEEN,96.5,0.013,0.042
+927,,"Réseau de chaleur de Olivet - école du Poutyl
+",,,,
+989,5814C,Réseau de chaleur de Corancy,SIEEEN,100,0,0.02
+886,8807C,Chauffage urbain Fraize,ENGIE SOLUTIONS LA DEFENSE,73.3,0.088,0.12
+88,5601C,Réseau de Lanester,DALKIA TOURS,71.1,0.092,0.121
+787,6731C,Quartier des Ecrivains,ES Services Energétiques,24.9,0.156,0.167
+940,9329C,Réseau de Dugny - Le Bourget,Energie Verte de Dugny-le-Bourget (CORIANCE),0,0.249,0.28
+58,4225C,Neulise,SIEL,91,0.044,0.077
+96,7421C,Annecy Bio chaleur,Annecy BIO-CHALEUR (IDEX),77.8,0.05,0.073
+923,,Réseau de chaleur de Jouet-sur-l'Aubois,,,,
+656,8809C,Réseau de La Bresse 2,Régie Municipale d'Electricité (RME),78.9,0.077,0.111
+190,0702C,réseau du cheylard,DALKIA Centre Est,94.3,0.026,0.051
+283,5401C,ESTIA - Saint Julien Kennedy,ESTIA (Dalkia),60.9,0.105,0.131
+726,3312C,Réseau de chaleur de Saint Pierre d'Aurillac,Mairie de Saint Pierre d'Aurillac,94.5,0.021,0.049
+145,4905C,Chemin Vert,Ville de Saumur,74.1,0.07,0.095
+967,2514C,Réseau de chaleur de Frasne,Commune de Frasne,97.2,0.012,0.039
+256,6203C,Réseau de chaleur de Lens,DALKIA,91.6,0.021,0.045
+906,,Réseau de chaleur Romorantin-Lanthenay (centre hospitalier),,,,
+631,1608C,Réseau de chaleur de Basseau,LOGELIA (DALKIA),31.9,0.164,0.192
+363,9305C,Zup des Fauvettes,SGRM (IDEX),73.4,0.059,0.067
+443,4412C,Réseau de Donges,ENGIE ENERGIE SERVICES Le Petit Quevilly (ENGIE SOLUTIONS),58.7,0.119,0.149
+1103,,Boucle d'eau à énergie géothermique,Atrium Invest,,,
+448,,"Réseau de chaleur Aussonne / Cornebarrieu (aérodrome)
+",ENGIE Solutions,,,
+574,9422C,Arcueil-Gentilly,ARGEO (ENGIE SOLUTIONS),79.2,0.048,0.053
+1,5819C,Réseau de chaleur de Cosne-Cours-sur-Loire,C3L,84.5,0.042,0.066
+928,,Réseau de chaleur Pernay,,,,
+192,5906C,Réseaux de Wattignies,ILENERGIE (DALKIA) ,38.9,0.158,0.186
+715,2516C,Réseau de Amancey LOUE LISON,IDEX,60.9,0.143,0.187
+556,8404C,Réseaux vapeur verte  GB Foods,ENGIE Solutions DR INDUSTRIES,100,0,0.004
+45,,Saint-Sauveur-en-Rue,Commune de Saint-Sauveur-en-Rue,,,
+812,7011C,Réseau d'Héricourt - Quartier Maunoury,COFELY SERVICES hericourt (ENGIE SOLUTIONS),86,0.048,0.078
+481,4403C,Nantes Chantrerie,ENGIE ENERGIE SERVICES Le Petit Quevilly (ENGIE SOLUTIONS),63.1,0.095,0.12
+1113,,Réseau bois et citoyen de Quaix-en-Chartreuse,Forestener,,,
+518,8001C,Etouvie,ENGIE COFELY Agence Picardie (ENGIE SOLUTIONS),74.6,0.051,0.073
+1155,5615C,Centre-bourg - Bubry,SPL Bois Energie Renouvelable,100,0,0.021
+689,1601C,Réseau de Saint-Bonnet,MAIRIE DE SAINT-BONNET,100,0,0.053
+282,1315C,Centre urbain - Zac des Pins,DALKIA,,,
+1038,7813C,Réseau de la Boissière,Ferme de la Tremblaye,100,0,0.022
+1053,2218C,Réseau de chaleur de Saint-Gouéno,Commune Le Mené,84.1,0.068,0.112
+973,5722C,Polestar,ENERGIS Régie Municipale,0,0.205,0.225
+1124,5927C,RONCHIN (59) - Réseau CDS Comtesse de Ségur,DALKIA SAINT-ANDRE-LEZ-LILLE,0,0.229,0.254
+887,8812C,Réseau de Ventron,COMMUNE DE VENTRON,100,0,0.02
+513,6819C,Réseau Val d'Argent,COFELY Services AGENCE ALSACE (ENGIE SOLUTIONS),70.6,0.114,0.148
+790,6813C,Réseau de chaleur de Feldbach,Mairie de Feldbach,32.8,0.213,0.259
+465,2302C,Réseau de Felletin,ENGIE SOLUTIONS Agence Atlantique Limousin,93.3,0.018,0.043
+1020,4701C,SOGAD,SOGAD (SUEZ) - IDEX,100,0,0.004
+426,3821C,Réseau de chaleur de Fontaine ZAC Bastille,GRENOBLE-ALPES METROPOLE,81.4,0.043,0.068
+226,6604C,Réseau de Perpignan,DALKIA,65.3,0.118,0.135
+229,7606C,CANTELEU ENERGIE,CANTELEU ENERGIE (DALKIA),86.8,0.034,0.057
+142,5104C,Epernay - Quartier Bernon,IDEX,0,0.191,0.287
+487,5204C,Réseau de chaleur du sud de la ville de Chaumont,ENGIE SOLUTIONS Reims,84.2,0.043,0.055
+568,9306C,Réseau de Villepinte,GEOPICTA (ENGIE SOLUTIONS),69.9,0.079,0.1
+2,5813C,Réseau de chaleur de Varzy,SIEEEN,100,0,0.02
+243,0106C,Belena,DALKIA Centre Est,94,0.016,0.041
+891,9326C,Réseau de chaleur de la ZAC des docks Saint-Ouen,CPCU (ENGIE SOLUTIONS),80.3,0.064,0.077
+32,9510F,Réseau froid ADP Roissy,Aéroports de Paris,,0.009,0.019
+1037,4104C,Réseau Neung sur Beuvron,Cc Sologne des Etangs,100,0,0.022
+1014,3412C,BET BOIRARGUES chaud,Dalkia,75.4,0.044,0.023
+247,4207C,Roanne énergies,DALKIA Centre Est,75.8,0.057,0.08
+697,1908C,Serres de Rosiers d'Egletons,CORREZE ENERGIES (Suez),100,0,0.004
+194,2106C,Dijon énergies,Dijon Energie (DALKIA),80.7,0.042,0.06
+437,5810C,Réseau de chaleur d'Ouroux en Morvan,SIEEEN,100,0,0.023
+427,3820C,Réseau de chaleur de Gières Centre,GRENOBLE-ALPES METROPOLE,85.3,0.034,0.06
+710,2505C,Champs Montants,DALKIA,0,0.247,0.282
+572,9409C,Réseau de Sucy en Brie,SOGESUB (ENGIE SOLUTIONS),97.4,0.006,0.022
+672,0501C,Réseau de chaleur bois d'Embrun,REGIE BOIS ENERGIE D'EMBRUN,94.7,0.019,0.044
+259,2901C,ECO CHALEUR DE BREST,ECO CHALEUR DE BREST (DALKIA),89.2,0.025,0.035
+418,0506C,Réseau de Briançon,BBE (CORIANCE),94.6,0.017,0.041
+13,3316F,,ENGIE Solutions,,,
+649,6730C,ILOT ZD5 de la ZAC ETOILE,ES Services Energétiques,51.3,0.1,0.085
+158,7601C,Réseau Petite Bouverie,Chaleur Métropole Rouen Normandie Reseau Petite Bouverie (DALKIA),60,0.087,0.117
+1274,7433C,Les Hauts d'Evian,SYAN CHALEUR,76.8,0.06,0.086
+531,0108C,Bourg-en-Bresse - La Vinaigrerie,ENGIE SOLUTIONS LYON,80.4,0.057,0.083
+523,8901C,Zup des Grahuches,Sens Bio Energie Services (ENGIE SOLUTIONS),88.1,0.032,0.045
+1065,9321C,Aulnay 3000 - Rose des Vents,DALKIA Paris la Defense,0,0.201,0.241
+926,,"Réseau de chaleur de Chezal-Benoît
+",,,,
+1138,1202C,Réseau de Cransac,MAIRIE DE CRANSAC,89.7,0.087,0.12
+680,1320C,RCB Coudoux,ENGIE SOLUTIONS DR RESEAUX SUD EST,53.1,0.132,0.16
+1270,0611C,BET Grand Arenas,DALKIA TOURS,0,0.323,0.241
+22,7412C,Réseau d'Avoriaz,DALKIA Paris la Defense,59.7,0.097,0.068
+315,6912C,Réseau de Givors,EGMI (IDEX),75.1,0.061,0.082
+707,2403C,Chaufferie bois de Cadouin,Commune du buisson de cadouin,91.2,0.042,0.08
+1066,9244C,Flowergy Asnières – RCU Parc d’Affaires,Eiffage Energie Systèmes Clévia IDF,36.4,0.131,0.131
+693,1605C,"Réseau ""Champ de manœuvre""",LOGELIA,0,0.196,0.225
+144,7612C,Reseau rouen martainville,Métropole Rouen Normandie,60,0.094,0.13
+1171,1414C,Serres ABC14,SIRAC_SUEZ,100,0,0.004
+753,4302C,Mairie de Langeac,MAIRIE DE LANGEAC,33.3,0.228,0.264
+390,7204C,Bellevue,IDEX TERRITOIRES,0,0.26,0.288
+248,9518C,Réseau de Goussainville,DALKIA Paris la Defense,90,0.023,0.03
+134,2102C,Réseau du Grand Dijon Ouest,SODIEN (CORIANCE),60.2,0.084,0.111
+55,3426F,Prado Concorde,ENGIE Solutions Languedoc Roussillon,,0.014,0.058
+679,1306C,LUMINY,ENGIE SOLUTIONS DR RESEAUX SUD EST,51.7,0.121,0.147
+56,3102F,Réseau de Toulouse Mirail,ENERIANCE (CORIANCE),,0,0.025
+474,3321C,Réseau Portes du PYLA,ENGIE SOLUTIONS AGENCE GARONNE,56.2,0.102,0.117
+801,6929C,Réseau du Breuil,DALKIA Centre Est,0,0.237,0.266
+734,3511C,SILVA  -- Réseau de JANZE,SILVA,86.8,0.035,0.059
+701,2204C,SMITRED OUEST d'ARMOR,SMITRED OUEST d'ARMOR,100,0,0.004
+205,5907C,Réseau de  Wattrelos,W énergies (DALKIA),57,0.109,0.136
+300,9412C,Réseau de maisons-alfort,SEMGEMA,57.6,0.101,0.122
+867,8101C,Reseau de Carmaux,ENE'O ENERGIES SERVICES OCCITANS,0,0.184,0.252
+1269,9522C,Réseau de Garges-les-Gonesse,ENERGIE VERTE DE GARGES (Coriance),0,0.272,0.305
+643,5705C,Wenheck,ENERGIS Régie Municipale,0,0.241,0.359
+1152,2910C,Réseau CMBO,DALKIA TOURS,0,0,0.178
+1025,9242C,RCU Clamart Plaine Sud,Agronergy,55,0.098,0.121
+21,1322F,BET MASSILEO froid,DALKIA,,0.014,0.026
+699,2108C,Réseau de la commune de Nuits Saint Georges,SPIC,100,0,0.028
+34,7607C,ZAC Nobel Bozel,Métropole Rouen Normandie,70.3,0.065,0.086
+847,3807C,Les Laiches,VEOLIA (ECHM),85.5,0.062,0.097
+1289,,Le Rheu,Régie des réseaux de chaleur de Rennes Métropole,,,
+271,0514C,Réseau de chaleur d’Arvieux ,Communauté de communes du Guillestrois et du Queyras,100,0,0.036
+472,3104C,Canceropôle,C.E.S (ENGIE SOLUTIONS),76.5,0.06,0.069
+837,1409C,RCU d'Aunay-sur-Odon,VIRIA,92.2,0.029,0.06
+716,2706C,Réseau de chaleur de Conches-en-Ouche,CRAM SAS,95.3,0.014,0.039
+941,,Réseau de chaleur de Larnay Sagesse ,Hervé Thermique,,,
+52,,,,,,
+826,7417C,Réseau de chaleur de Vallorcine,Commune de Vallorcine,92.1,0.025,0.049
+1016,3311C,Réseau de chaleur de Pellegrue,Commune de Pellegrue,97.3,0.016,0.053
+9,,,ENGIE Solutions,,,
+240,7603C,ResOcéane,Resocéane (DALKIA),14,0.212,0.234
+355,2001C,Réseau de Corte,Corse Bois Energie (CBE),99.9,0,0.025
+154,9516C,Zac de Montedour,DALKIA Paris la Defense,0,0.212,0.238
+822,6803C,Porte de Bâle,WEIBLEN IMMEUBLES,0,0.207,0.234
+424,0513C,Réseau de chaleur de Ville-Vieille,Communauté de communes du Guillestrois et du Queyras,100,0,0.028
+263,9421C,Réseau d'Alfortville,Centrale de Géothermie Alfortvillaise,91,0.021,0.037
+289,5901C,Réseau de Roubaix,R ENERGIES (DALKIA),77.2,0.049,0.07
+1260,9523C,Agrivalseine Energie,AGRIVALSEINE ENERGIE (DALKIA),80.8,0.057,0.074
+1,9231F,Réseau Suc - Société Urbaine de Climatisation,SUC (DALKIA),,0.009,0.019
+720,2903C,Réseau de chaleur UVED,SIDEPAQ,100,0,0.004
+479,4308C,Pradelles,Ville de PRADELLES (ENGIE SOLUTIONS),98,0.006,0.026
+15,5821C,Réseau de Challuy,SIEEEN,90.8,0.02,0.043
+551,7704C,Réseau CDC HABITAT anciennement OSICA,ENGIE SOLUTIONS Ile de France,29.7,0.134,0.156
+7,7477F,Annecy - ZAC des Trésums,ALIEnergie (IDEX),,0.053,0.088
+750,4249C,Chaufferie Belmont-de-la-Loire,SIEL,87.2,0.034,0.06
+666,0505C,Réseau de Veynes,Commune de Veynes,26.1,0.242,0.286
+31,9101F,BET Paris Saclay,EPA Paris Saclay,,0.031,0.054
+1261,7623C,Réseau de la chaleur de la commune des Grandes Ventes,Régie communale de la chaleur,67.7,0.116,0.154
+16,7403F,,ENGIE Solutions,,,
+982,3903C,Réseau de Champvans,MAIRIE DE CHAMPVANS,100,0,0.044
+33,9310F,Réseau froid ADP Le Bourget,Aéroports de Paris Le Bourget,,0.021,0.038
+47,8001F,Réseau de la ville d'AMIENS - Froid,Amiens energie,,0.052,0.098
+371,3705C,Réseau de la ville de Saint Pierre des Corps,CORPOENERGIES (ENGIE SOLUTIONS),67,0.081,0.106
+428,3829C,Réseau de chaleur de Pont-de-Claix Caboisse,GRENOBLE-ALPES METROPOLE,87.2,0.032,0.056
+912,3601C,SDCC,Société de Distribution de Chaleur de Châteauroux (ENGIE SOLUTIONS),66.3,0.044,0.023
+15,7101F,,ENGIE Solutions,,,
+713,2512C,Réseau de chaleur de la commune de Nancray,Commune de Nancray,100,0,0.02
+43,7416C,Réseau de Viry,IDEX ENERGIES,98.1,0.009,0.035
+1233,,Réseau de chaleur de Samoëns,Syane,,,
+37,7429C,Réseau de chaleur d’Ambilly Ville-la-Grand,SYAN CHALEUR,74.8,0.06,0.084
+184,9514C,Réseau de Villiers le Bel - Gonesse,Société Thermique de Villiers le Bel Gonesse (CORIANCE),56.7,0.092,0.12
+521,8707C,Réseau de chaleur Saint Yrieix la Perche,ENGIE SOLUTIONS Agence Atlantique Limousin,88.4,0.034,0.058
+830,7618C,Réseau de Semedi-Sedibex,SEDIBEX,100,0,0.004
+622,,Bois du Château - Lorient,DALKIA,,,
+1128,2607C,Réseau du CH de Valence,ENGIE SOLUTIONS DR Savoie Dauphiné,30.5,0.132,0.182
+813,7105C,Réseau de chaleur de Tramayes,Mairie de Tramayes,93.8,0.025,0.052
+1170,9127C,Réseau chaud de l'école polytechnique,Ecole Polytechnique,0,0.21,0.236
+1287,,Réseau Nord de Saint-Marcellin,Saint-Marcellin Energie Bois,,,
+201,6710C,Réseau de Haguenau,IDEX,82.7,0.036,0.057
+444,,Réseau de chaleur de Bordes (Safran),ENGIE Solutions,,,
+494,5702C,Réseau de la Ville de Yutz,COFELY SERVICES Agence Lorraine (ENGIE SOLUTIONS),82.3,0.044,0.068
+1055,3709C,Réseau DBT,DALKIA TOURS,100,0,0.018
+1256,3518C,Réseau de chaleur de Liffré,Liffré Cormier Communauté,88,0.029,0.052
+662,0405C,Réseau communal de Castellane,Commune de Castellane,100,0,0.019
+10,5820C,Château Chinon EIAT,SIEEEN,76.3,0.088,0.122
+219,0302C,Quartier Fontbouillant et Bien-Assis,MEVIA (DALKIA),56.4,0.089,0.127
+51,2602C,Réseau de chaleur de Vassieux en Vercors,Syndicat Départemental d'Energies de la Drôme,90.7,0.041,0.077
+796,6914C,Plateau de Montmein,DALKIA Centre Est,0,0.311,0.324
+216,9410C,Réseau de Cachan,DALKIA Paris la Defense,71.6,0.065,0.084
+544,6001C,Réseau de Compiègne,ENGIE SOLUTIONS Ile de France,68.5,0.091,0.118
+498,5717C,Réseau Cité Pasteur,ENGIE SOLUTIONS Ile de France,0,0.277,0.311
+128,1406C,Réseau bois Vallée des près  (Bayeux 2),BAYEUX ENERGIE (DALKIA),85.2,0.039,0.063
+1087,,Réseau de chaleur Autrans-Méaudre en Vercors,,,,
+1218,,Réseau de Champigny-sur-Marne 2,Etablissement Public Campinois de Géothermie - Coriance,,,
+922,,Réseau de chaleur de Corbeilles-en-Gâtinais,,,,
+609,6821C,Papeteries du Rhin,Valorim (Suez),100,0,0.004
+193,5503C,Ligny en Barrois,Dalkia,80.7,0.057,0.083
+1056,1903C,Réseau de Sornac,DALKIA TOURS,83.2,0.065,0.098
+392,7422C,Thorens Glières,IDEX TERRITOIRES,80.7,0.067,0.106
+1118,,Réseau bois et citoyen de Gières - Clos d'Espiès,Forestener,,,
+603,6739C,Réseau de Chaleur Les Prairies du Canal,RCUA,0,0.231,0.259
+580,9104C,Domaine du Bois des Roches,ENGIE SOLUTIONS,0,0.204,0.224
+1206,,Réseau Plateau 599,Université Paris-Saclay,,,
+1042,3329C,Réseau de Pinsan,ENGIE SOLUTIONS AGENCE GARONNE,89.3,0.027,0.052
+665,0504C,Réseau de l'Association La Chrysalide,SOGETHA (DALKIA),81.4,0.043,0.065
+1286,,Réseau bois et citoyen de Chimilin,Forestener,,,
+1291,,Réseau de chaleur de Sougy-sur-Loire,Régie SIEEEN Chaleur,,,
+220,4507C,Réseau de Amilly,DALKIA TOURS,90.1,0.02,0.026
+1246,,Réseau de chaleur d'Escazeaux,Commune d'Escazeaux,,,
+307,4501C,Socos source,ECOME (DALKIA),79,0.015,0.08
+567,9304C,Zac de Sevran,SEVEO GIE (ENGIE SOLUTIONS),65.5,0.093,0.114
+814,7108C,Réseau de Matour,Mairie de Matour,85.4,0.068,0.105
+488,5209C,Réseau de Langres,COFELY Reims (ENGIE SOLUTIONS),57.3,0.099,0.123
+578,9115C,Réseau de Ris-Orangis,ENERGIE NOUVELLE DE RIS (CORIANCE),73.9,0.05,0.073
+20,0202C,Zup de Presles,IDEX ENERGIES Boulogne Billancourt,62.3,0.087,0.11
+676,1002C,Les Chartreux,Communauté agglomération Troyes Champagne Métropole,71.2,0.067,0.079
+1133,1708C,Réseau de chaleur UVE Echillais,SOVAL NORD,100,0,0.004
+988,8904C,Réseau de Quarré-les-Tombes,MAIRIE DE QUARRE LES TOMBES,66.7,0.114,0.142
+356,9430C,Réseau ENERUNGIS,Enerungis (DALKIA),97.6,0.007,0.016
+103,5904C,Quartier Pont de Bois,VILLAE (DALKIA),61.2,0.105,0.128
+19,5802C,Réseau de chaleur du Banlay,ENEA (Dalkia),68.4,0.07,0.097
+104,6816C,Réseau de chaleur de Thann,Communauté de Communes Thann Cernay,92,0.02,0.04
+1203,,Réseau du CRS Saint Luc Abreschviller,ENGIE SOLUTIONS,,,
+961,4248C,ST MARTIN D'ESTREAUX,SIEL,99.1,0.007,0.037
+102,7701C,Réseaux de Meaux,Énergie Verte de Meaux (CORIANCE),68.5,0.081,0.098
+430,6801C,Réseau de Colmar,Société Colmarienne de Chauffage Urbain (SCCU),87.4,0.035,0.045
+627,,Le Moustoir - Lorient,SPL Bois Energie Renouvelable,,,
+257,0606C,MSE (Meridia Smart Energie) Réseau chaud,Meridia Smart Energie (IDEX),66.8,0.067,0.033
+1281,,Réseau bois et citoyen du Bourget-du-Lac,Chaleur Partagée du Bourget-du-Lac,,,
+838,1607C,Réseau de chaleur de Châteaubernard,Mairie de Chateaubernard,66.6,0.08,0.104
+1198,,Réseau de chaleur de Le Malzieu ville,Le Malzieu Ville,,,
+1082,6942C,Colombier Saugnieu,SYDER,82,0.057,0.086
+44,4228C,Saint Martin la Sauveté,SIEL,86.8,0.07,0.111
+1019,2404C,Chaufferie bois Douville,Mairie de Douville,100,0,0.019
+368,7424C,Cran Gevrier - Les Passerelles,DALKIA Centre Est,55.5,0.117,0.146
+855,5214C,Réseau de Saint-Blin,Conseil départemental,93.1,0.032,0.06
+625,,Kervenanec Nord - Lorient,DALKIA,,,
+1093,,Réseau de Chaleur de La Bourboule,S.A.S. CHAUFFERIE BIOMASSE LA BOURBOULE,,,
+582,9236C,Réseau de Bagneux-Chatillon,BAGEOPS (DALKIA),59,0.096,0.106
+664,8808C,Réseau de La Bresse 1,Commune de LA BRESSE,70.2,0.127,0.171
+485,5107C,La renaissance Immobilière Chalonnaise,COFELY Reims (ENGIE SOLUTIONS),59.1,0.088,0.117
+1201,,Réseau de chaleur quartier de la Manufacture,Morlaix Communauté,,,
+353,8102C,Chauffage urbain de Mazamet,SCUM (DALKIA),84.5,0.045,0.069
+399,0103C,Oyonnax BioChaleur,OYONNAX BIOCHALEUR (IDEX),85.7,0.039,0.062
+595,6904C,Quartier La Duchère et Lyon 9e,ECLYDE (DALKIA),71.2,0.073,0.097
+691,1603C,Réseau de Brossac,Mairie de Brossac,66.7,0.114,0.149
+1200,,Réseau de chaleur d'Oloron Saint Marie,DALKIA,,,
+646,6704C,Eco-quartier Brasserie cronenbourg,ES Services Energétiques,69.1,0.06,0.031
+115,2704C,Tours du Levant Clos Galots,Dalkia,,,
+561,9204C,ZAC Sainte Geneviève,ENGIE COFELY (SOCCRAM) (ENGIE SOLUTIONS),33.1,0.162,0.161
+706,2304C,Réseau de Gentioux,Mairie de Gentioux Pigerolles,100,0,0.032
+274,6204C,Réseau de chaleur de Béthune,DALKIA,67.7,0.075,0.107
+552,7722C,Réseau de Village Nature,SGVE (ENGIE SOLUTIONS),99.9,0,0.016
+791,6814C,Réseau de chaleur de Kaysersberg,Commune de Kayserberg Vignoble,75.1,0.074,0.101
+121,4202C,Quartier la Cotonne,DALKIA Centre Est,0,0.238,0.268
+213,3303C,Mériadeck,ENGIE SOLUTIONS AGENCE GARONNE,100,0,0.015
+1292,,Réseau de chaleur de Saint-Pierre-le-Moûtier,Régie SIEEEN Chaleur,,,
+1115,2520C,Réseau bois et citoyen de Chapelle des Bois,Forestener,100,0,0.027
+169,7717C,Réseau de Chelles,CHELLES CHALEUR (CORIANCE),55.3,0.102,0.129
+650,6733C,Réseau de Chaleur SPL - QPR - RCUA,RCUA,95.5,0.01,0.018
+382,8801C,Plateau de la Justice,COFELY SERVICES Agence Lorraine (ENGIE SOLUTIONS),87.8,0,0.062
+1080,9521C,Les chenes,Nexity (ENGIE SOLUTIONS),0,0.232,0.261
+1195,,Réseau de chaleur technique de Langueux,Mairie de Langueux,,,
+509,6709C,Le Ried,COFELY Services AGENCE ALSACE (ENGIE SOLUTIONS),0,0.228,0.292
+990,6941C,Rontalon,SYDER,100,0,0.021
+227,9201C,Réseau de Meudon,ENGIE SOLUTIONS Ile de France,0,0.25,0.284
+983,8816C,Réseau Ban de Sapt,Mairie Bandesapt,66.7,0.114,0.146
+459,1610C,Réseau des Vauzelles,ENGIE SOLUTIONS Agence Atlantique Limousin,95.9,0.01,0.03
+623,5612C,Lanveur - Kerjulaude -  Lorient,SPL Bois Energie Renouvelable,94.6,0.014,0.035
+412,8301C,La Beaucaire,Zephire (Idex),100,0,0.004
+553,7804C,Parly II,ENGIE SOLUTIONS Ile de France,0,0.235,0.259
+11,5818C,Réseau de chaleur de Château Chinon Ville,SIEEEN,100,0,0.022
+843,3113C,Réseau écoquartier Maragon Floralies,Association Chaufferie Maragon-Floralies,80.2,0.046,0.068
+885,8703C,Réseau de Bellac,ODHAC87,0,0.284,0.318
+992,6937C,Ronno,SYDER,87.1,0.039,0.068
+1024,1909C,Réseau d'Objat,DALKIA SAINT-ANDRE-LEZ-LILLE,84.3,0.043,0.066
+57,4239C,Pélussin - Siège CCPR,SIEL,91.2,0.037,0.072
+165,7705C,Zup du Mont Saint Martin,NEO-NEMOURS ENERGIE ORGANISATION (Dalkia),62.1,0.103,0.13
+635,3405C,Réseau des universités,SERM,,,
+866,8006C,Réseau de chaleur de Corbie,Territoire d'Energie Somme,94.2,0.014,0.037
+1050,2214C,La Roche-Jaudy,Lannion-Trégor Communauté,100,0,0.022
+893,9428C,Champs sur Marne,,,,
+527,5716C,Réseau Cité Belle-Roche,ENGIE SOLUTIONS Ile de France,0,0.282,0.316
+297,9120C,Réseau de Viry Chatillon,DALKIA Paris la Defense,0,0.21,0.248
+769,5713C,Réseau de chauffage urbain de Creutzwald,Régie municipale d’électricité (ENES),11.7,0.206,0.26
+163,8502C,Réseau les Herbiers,DALKIA TOURS,76.2,0.078,0.111
+1078,5832C,Coulanges-lès-Nevers - GS Malraux,SIEEEN,92.4,0.018,0.043
+1044,3328C,Chaufferie bois Saint Médard,ENGIE SOLUTIONS AGENCE GARONNE,63.4,0.103,0.13
+1027,8706C,Réseau de Pageas,,,,
+348,3318C,Bassins à Flot,ENERGIE DES BASSINS (Mixéner),68,0.079,0.092
+749,4236C,Pélussin 2 - Quartier des Croix,SIEL,94.5,0.017,0.043
+589,4603C,Réseau de Gramat,COMMUNAUTE DE COMMUNES CAUSSES ET VALLEE DE LA DOR,100,0,0.019
+68,,Réseau de chaleur de Chaspuzac (quartier Fontannes),,,,
+231,0406C,Réseau communal de Barcelonnette,DALKIA,69.3,0.116,0.159
+810,7008C,Chaufferie de Marnay,SIED 70,76.8,0.103,0.145
+1227,,Ma Campagne,,,,
+1142,4508C,Saint Gondon,Mairie de Saint-Gondon,100,0,0.023
+160,7407C,Quartier de la Rénovation,DALKIA Centre Est,0,0.231,0.26
+661,4914C,Réseau POINCLOUX,EARL EXPAVIT,100,0,0.021
+173,9226C,Résidence Villeneuve,GVEN (ENGIE SOLUTIONS),0,0.292,0.327
+333,4604C,Réseau de Biars sur Cere,SYDED du Lot,97.8,0.01,0.039
+298,9408C,Marché International de Rungis,SEMMARIS (ENGIE Solutions),97.8,0.005,0.01
+1245,,Réseau de chaleur de Génébrières	,Commune de Génébrières,,,
+6,5822C,Moux en Morvan,SIEEEN,97.5,0.015,0.04
+820,7311C,Gilly-sur-Isère,Commune de Gilly sur Isère,68.5,0.103,0.134
+1278,3430C,Caylus,DALKIA TOURS,52.2,0.145,0.175
+850,4243C,La Tuilière,SIEL,99.3,0.005,0.027
+463,1906C,ENGIE Solutions Agence Atlantique Limousin,ENGIE SOLUTIONS Agence Atlantique Limousin,0,0.253,0.284
+755,4605C,Réseau de Cajarc,SYDED du Lot,97,0.013,0.04
+93,9312C,Réseau d'Aulnay-sous-bois - Le Gros Saule,AULNAY ENERGIE SERVICES (CORIANCE),0,0.187,0.236
+735,3515C,"Réseau de chaleur de Retiers, Martigne-Ferchaud, Coesmes",Nemora (publique),96.5,0.016,0.044
+186,9225C,Réseau de La Défense,IDEX La Défense,40.2,0.144,0.187
+948,3808C,Réseau de Lans-en-Vercors,VEOLIA (ECHM),94.5,0.022,0.05
+1010,0703C,Chaufferie bois,mairie valgorge,100,0,0.022
+619,4917C,RCU Beaupreau - Chaufferie bois Beaupreau,Commune de Beaupreau en Mauges,100,0,0.02
+1077,5831C,Coulanges-lès-Nevers - Espace des Saules,SIEEEN,90.2,0.021,0.04
+198,9222C,Réseau de Suresnes,SOCLIS (Dalkia),12.4,0.2,0.221
+771,5804C,Réseau de chaleur de la Maison du Parc du Morvan,Syndicat mixte du Parc naturel régional du Morvan,66.7,0.114,0.143
+490,5412C,Réseau de Pont à Mousson,COFELY SERVICES Agence Lorraine (ENGIE SOLUTIONS),89.4,0.03,0.077
+878,0102C,Réseau de chaleur d'Hauteville Lompnes,HAUT BUGEY ENERGIE,51.1,0.175,0.211
+1271,4509C,Réseau ESSITY,PAPREC ENERGIE - 45,100,0,0.004
+1276,6316C,Réseau de chaleur du Luguet,Régie communale,100,0,0.025
+305,9311C,Le Chêne Pointu,DALKIA Paris la Defense,0,0.212,0.239
+132,4214C,Scevia quartier de fonsala,SCEVIA (DALKIA),58,0.103,0.134
+547,7102C,Réseau de Montceau les mines,MONCIA (ENGIE SOLUTIONS),61.6,0.082,0.117
+131,,Réseau de chaleur de Éourres (Mairie - École),,,,
+31,7806C,DOMNIS ACHERES Champs Villars,DOMNIS (ENGIE SOLUTIONS),52,0.092,0.113
+331,4901C,Réseau d'Angers La Roseraie,ALTER SERVICES,88,0.031,0.039
+489,5408C,Réseau d'Ecrouves,COFELY SERVICES Agence Lorraine (ENGIE SOLUTIONS),53.9,0.115,0.142
+396,,"Réseau de chaleur de Longuyon
+",IDEX,,,
+1106,,Réseau de chaleur,Seine Eure Agglo,,,
+188,5103C,VY'ENERGIE,DALKIA Pulnoy,94.9,0.012,0.032
+56,3804C,Réseau de chaleur de Vinay,REGIE CHALEUR BOIS,84.3,0.069,0.105
+882,8609C,Réseau Saint Cyprien - Clos Gaultier,EKIDOM,,,
+323,,"Réseau de chaleur Mérignac aéroport
+",ENGIE Solutions,,,
+760,5003C,Régie de chauffage du Teilleul,REGIE DE CHAUFFAGE AU BOIS,81.9,0.067,0.099
+809,7006C,Réseau de la chaufferie de Champey,Commune de Champey,100,0,0.02
+384,7315C,AIX ENERGIES NOUVELLES,AIX ENERGIES NOUVELLES (IDEX),82.5,0.053,0.077
+630,1503C,Réseau de chaleur bois du Volzac,SAINT FLOUR COMMUNAUTE,98.2,0.006,0.029
+1273,0515C,Réseau de chaleur de Saint Jean Saint Nicolas,Territoire d’énergie Hautes Alpes – Syme05,100,0,0.023
+1243,,Réseau de chaleur de Labastide-Saint-Pierre,Commune de Labastide-Saint-Pierre,,,
+155,1702C,Réseau de Jonzac,Dalkia,59.1,0.154,0.194
+126,7808C,Réseau des Mureaux,MUREAUX BOIS ENERGIE (CORIANCE),64.6,0.096,0.124
+626,,Kervenanec Sud - Lorient,DALKIA,,,
+861,6737C,Schweighouse - Schaeffler,EVNA (SUEZ),100,0,0.004
+491,5501C,Côte Sainte Catherine,BAR LE DUC ENERGIES ENVIRONNEMENT (ENGIE SOLUTIONS),60.7,0.1,0.125
+433,6306C,La Gauthière,CLERVIA (DALKIA),70.7,0.07,0.098
+987,7004C,Réseau de Dampierre sur Linotte,Dampierre-sur-Linotte,53.7,0.188,0.237
+1110,,Réseau de Queige,Commune de Queige,,,
+218,1322C,BET MASSILEO chaud,DALKIA,84.2,0.056,0.047
+1272,1514C,Reseau Chaleur Polminhac (RCP),Mairie de Polminhac,100,0,0.018
+1294,,Réseau de chaleur de Mouchard,SPL Jura Chaleur Renouvelable,,,
+681,1321C,BET Réseau du pôle Yvon Morandat,ENERGIE SOLIDAIRE,65.7,0.04,0.025
+1018,6315C,Réseau de chaleur d'Anzat,Régie communale,100,0,0.027
+659,2802C,Les Gauchetières,DALKIA TOURS,0,0.297,0.333
+819,7308C,Réseau de Beaufort,Commune de Beaufort,92.6,0.027,0.053
+339,4616C,Réseau de Lacapelle Marival,SYDED du Lot,95.4,0.02,0.048
+549,7602C,ZAC du Mont Gaillard,SDCMG (ENGIE SOLUTIONS),40.9,0.133,0.172
+1022,1613C,Chaufferie bois le lindois,Commune de le Lindois,100,0,0.03
+1187,,Réseau de Briouze,IDEX,,,
+593,7616C,SRGB,SRBG,89.8,0.034,0.062
+1090,,Réseau de chaleur Nueil-les-Aubiers,Ville de Nueil-les-Aubiers,,,
+413,7419C,Réseau Serres Municipales du STOC,IDEX Environnement,100,0,0.004
+598,6930C,Plateau Nord,PLATEAU NORD ENERGIE (ENGIE SOLUTIONS),89.8,0.027,0.037
+797,6915C,ZH Champvert,DALKIA Centre Est,0,0.207,0.233
+456,1001C,Zup de la Chapelle Saint-Luc,Communauté agglomération Troyes Champagne Métropole,74.1,0.05,0.064
+376,4003C,Géothermie Mont-de-Marsan (GMM1),Régie Chauffage Urbain et Géothermie de Mont de Marsan ,87.3,0.029,0.025
+483,4803C,SCABE Saint Chely d'Apcher Bois Energie,SCABE (ENGIE SOLUTIONS),98.7,0.005,0.024
+36,7428C,Réseau Saint-Jeoire en Faucigny,SYAN CHALEUR,83.3,0.059,0.089
+349,3326C,Réseau d'AUBIERS,ENGIE AGENCE GARONNE,76.3,0.06,0.082
+678,1204C,Réseau de Cantagrelh,Mairie d'Onet-le-Château,61.4,0.1,0.126
+1089,6319C,Réseau d'Issoire - Energ'Iss,Energ'Iss (Dalkia),86.1,0.036,0.053
+783,6311C,Réseau de chaleur de St-Germain-l'Herm,REGIE COMMUNALE DE DISTRIBUTION DE CHALEUR DE ST-GERMAIN L'HERM,93,0.029,0.059
+569,9324C,Réseau de Rosny-sous-Bois /Noisy-le-Sec / Montreuil,YGEO (ENGIE SOLUTIONS),79.6,0.045,0.043
+211,1310C,Martigues Energie Verte,Martigues Energie Verte (ENGIE Solutions),0,0.275,0.308
+995,6939C,Longessaigne,SYDER,95.6,0.026,0.062
+200,0204C,Réseau d'Urcel,ENGIE Solutions,28.1,0.247,0.286
+33,9232C,Réseau Quartier Hoche,ENERBIOSA (IDEX),61.2,0.095,0.119
+18,5805C,Réseau de chaleur d'Arleuf,SIEEEN,98.4,0.007,0.032
+1223,,Réseau de chaleur de Thonon,DALKIA,,,
+1107,,Réseau de Ste Hélène sur Isère,Commune de Ste Hélène sur Isère,,,
+302,4210C,Quartier Montreynaud,STELVIA (DALKIA),72.7,0.07,0.094
+534,0701C,Réseau d'Aubenas,REVIA SAS (ENGIE SOLUTIONS),95.7,0.012,0.036
+536,1319C,Réseau de chaleur Thassalia Marseille,THASSALIA (ENGIE SOLUTIONS),80.8,0.043,0.023
+1029,1102C,CEF - MCO,Centre Hospitalier de Carcassone,41.2,0.136,0.16
+42,3411F,MUSE,MUSE (ENGIE SOLUTIONS),,0.014,0.027
+40,3403F,Port Marianne/Odysseum,SERM,,0.012,0.056
+2,6905F,Réseau de Lyon,ELM (DALKIA),,0.008,0.016
+500,5902C,Les Canonniers,ENGIE SOLUTIONS VILLENEUVE D'ASCQ,0,0.251,0.282
+60,0612F,BET Marenda,DALKIA TOURS,,0.016,0.029
+881,8606C,Réseau de Chaleur Ozon Sud,SPL CHATELLERAULT ENERGIES,0,0.329,0.369
+43,3414F,BET EUREKA froid,Energies du Sud,,0.014,0.026
+308,5910C,Ilénergie - Réseau de Lille,ILENERGIE (DALKIA) ,65.8,0.086,0.1
+203,3302C,Grand Parc Energies,Grand parc Energies (ENGIE SOLUTIONS),0,0.248,0.271
+123,9309C,SEBIO,SEBIO (DALKIA),65.5,0.136,0.17
+1006,7427C,Réseau de chaleur du Centre Bourg de Cusy,Commune de Cusy,30.8,0.241,0.281
+804,6932C,Réseau chaleur bois de Thizy-les-Bourgs,Communauté d'agglomération de l'Ouest Rhodanien,95.3,0.013,0.036
+61,1321F,BET Réseau du pôle Yvon Morandat,ENERGIE SOLIDAIRE,,0.009,0.018
+11,3101F,CANCEROPOLE,C.E.S (ENGIE SOLUTIONS),,0.013,0.024
+362,7708C,Réseau du Mee sur Seine,CGCU (IDEX),70.1,0.077,0.097
+21,7501C,Paris et communes limitrophes,CPCU (ENGIE SOLUTIONS),50.3,0.149,0.171
+86,4227C,Saint Christo en Jarez,Saint-Etienne Métropole,100,0,0.018
+166,3101C,Réseau de Toulouse Mirail,ENERIANCE (CORIANCE),97.1,0.009,0.014
+772,5824C,Réseau de Luzy,Commune de Luzy,97.3,0.007,0.028
+54,9225F,Réseau de La Défense,IDEX LA DEFENSE,,0.015,0.028
+288,7610C,SECGO,SECGO,94.2,0.019,0.043
+844,3115C,ECONOTRE,SUEZ,100,0,0.004
+406,4407C,Réseau de Saint-Jean-de-Boiseau,NOVAE (IDEX),23.3,0.442,0.503
+565,9301C,Réseau de Saint Denis,PCE (ENGIE SOLUTIONS),65.1,0.094,0.12
+318,3103C,Zac du Ritouret,BLAGNAC ENERGIES VERTES,73.1,0.063,0.054
+18,9322F,Stade Energies SAS,SESAS (ENGIE SOLUTIONS),,0.008,0.016
+39,3402F,Ernest Granier,SERM,,0.013,0.057
+8,,,,,,
+800,6925C,Le Bourg,COMMUNE YZERON,80.2,0.06,0.088
+842,2906C,Vapeur SIRCOB-NUTRIBABIG,SUEZ RV ENERGIE,100,0,0.004
+202,7104C,Réseau d'Autun,SECUA (DALKIA),49.7,0.112,0.152
+936,9245C,RCU du quartier Issy Cœur de Ville,ENGIE ENERGIE SERVICES Courbevoie,57.9,0.121,0.083
+80,6728C,Réseau de Chaleur Quartier Solaire Schiltigheim,RCUA,39.6,0.141,0.133
+25,,,ENGIE Solutions,,,
+34,9425F,Réseau froid ADP Orly,Aeroports de Paris,,0.009,0.018
+41,3406F,Réseau arche Jacques Coeur,SERM,,0.014,0.058
+28,0608F,BET CAP AZUR froid,Dalkia,,0.013,0.025

@@ -57,6 +57,7 @@
     "@tet/backend": "workspace:*",
     "@tet/design-tokens": "workspace:*",
     "@tet/domain": "workspace:*",
+    "@tet/leviers-ges": "workspace:*",
     "@tet/pdf-components": "workspace:*",
     "@tet/ui": "workspace:*",
     "@trpc/client": "11.8.1",

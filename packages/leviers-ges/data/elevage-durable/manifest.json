@@ -1,0 +1,173 @@
+{
+  "datasets": [
+    {
+      "file": "regions.csv",
+      "source": "Agreste, recensement agricole 2020, cheptels par région (indicateur 040.01, toutes tailles d'exploitation) et cartostat pour les vaches laitières, 13 régions de France métropolitaine. Effectifs localisés au siège de l'exploitation. Catégories d'animaux de l'OMINEA déduites des catégories d'Agreste par sommes et différences ; une catégorie sous secret statistique compte pour zéro ; une différence négative est ramenée à zéro. Construit par pnpm build:data:elevage-durable Limites : une catégorie sous secret compte pour zéro, y compris quand son parent est lisible (poulets, poules, truies, équidés), ce qui retire jusqu'à 1,3 % des volailles des départements (53 départements) et 0,2 % de celles des régions.",
+      "link": "https://agreste.agriculture.gouv.fr/agreste-web/disaron/RA2020_2141_EPCI/detail/",
+      "vintage": "recensement agricole 2020",
+      "retrievedOn": "2026-10-07",
+      "checksum": "afd7a2f30316300878c08c06f80cbe2837f726099968915ec3fd23521e5b807c",
+      "level": "region",
+      "keyColumn": "code_region",
+      "columns": [
+        {
+          "name": "code_region",
+          "unit": "code INSEE de la région"
+        },
+        {
+          "name": "dairy_cows",
+          "unit": "têtes, vaches laitières (cartostat)"
+        },
+        {
+          "name": "other_cattle",
+          "unit": "têtes, total des bovins moins les vaches laitières"
+        },
+        {
+          "name": "sows",
+          "unit": "têtes, truies reproductrices (5.11)"
+        },
+        {
+          "name": "other_pigs",
+          "unit": "têtes, total des porcins moins les truies"
+        },
+        {
+          "name": "goats",
+          "unit": "têtes, total des caprins (3)"
+        },
+        {
+          "name": "sheep",
+          "unit": "têtes, total des ovins (4)"
+        },
+        {
+          "name": "horses",
+          "unit": "têtes, total des équidés moins les ânes, mulets et bardots"
+        },
+        {
+          "name": "mules_and_donkeys",
+          "unit": "têtes, ânes, mulets et bardots (2.15)"
+        },
+        {
+          "name": "laying_hens",
+          "unit": "têtes, poules pondeuses de consommation et d'œufs à couver et poulettes (7.11.1 à 7.11.3)"
+        },
+        {
+          "name": "broilers",
+          "unit": "têtes, poulets de chair et coqs (7.11.4)"
+        },
+        {
+          "name": "other_poultry",
+          "unit": "têtes, total des volailles moins les poules, poulettes et poulets de chair (7.11, ou la somme de 7.11.1 à 7.11.4 quand 7.11 est sous secret)"
+        }
+      ],
+      "controlTotals": {
+        "dairy_cows": "3482723",
+        "other_cattle": "13945212",
+        "sows": "955795",
+        "other_pigs": "12375877",
+        "goats": "1382490",
+        "sheep": "6994000",
+        "horses": "289431",
+        "mules_and_donkeys": "21029",
+        "laying_hens": "82787748",
+        "broilers": "150993386",
+        "other_poultry": "60066039"
+      },
+      "sources": [
+        {
+          "file": "sources/agreste-ra2020-cheptels-departement-region.csv",
+          "source": "Agreste, recensement agricole 2020, cheptels par département et région, 10 769 lignes ; la valeur « s » marque le secret statistique",
+          "link": "https://agreste.agriculture.gouv.fr/agreste-web/disaron/RA2020_2141_EPCI/detail/",
+          "retrievedOn": "2026-10-07",
+          "checksum": "0aaee59c3fab255e461b5e7dae46e0871f8d81a1cda1876963d5a0880a4b9a10"
+        },
+        {
+          "file": "sources/cartostat-vaches-laitieres-2020-departements-regions.csv",
+          "source": "Cartostat, nombre de vaches laitières 2020 par région et département (extrait des lignes région et département ; les 34 968 lignes communales ne sont pas versionnées) ; « secret » marque le secret statistique",
+          "link": "https://stats.agriculture.gouv.fr/cartostat/#c=indicator",
+          "retrievedOn": "2026-10-07",
+          "checksum": "6ba7e31195080c7dfc58aa0865fe117131d059191a2693c1e434f371754bfa40"
+        },
+        {
+          "file": "sources/base-carbone-documentation-agriculture-cheptels.htm",
+          "source": "Base Carbone de l'ADEME, documentation « Agriculture - cheptels » (OMINEA 2013 du CITEPA) : catégories d'animaux, fermentation entérique, répartition des déjections, Bo, SV, FCM, Fex, FD ; utilisée par le levier, pas par ce constructeur",
+          "link": "https://base-empreinte.ademe.fr/documentation/base-carbone?docLink=Agriculture_-_sols_agricoles",
+          "retrievedOn": "2026-10-07",
+          "checksum": "e3b28c1b5ee1f2d821be92e13acc8bc22b794642051f998ce6d20438deeba026"
+        }
+      ]
+    },
+    {
+      "file": "departements.csv",
+      "source": "Agreste, recensement agricole 2020, cheptels par département (indicateur 040.01, toutes tailles d'exploitation) et cartostat pour les vaches laitières, 95 départements de France métropolitaine (Paris, absent du fichier Agreste, n'a pas de ligne), mêmes déductions que les régions. Effectifs localisés au siège de l'exploitation. Construit par pnpm build:data:elevage-durable Limites : une catégorie sous secret compte pour zéro, y compris quand son parent est lisible (poulets, poules, truies, équidés), ce qui retire jusqu'à 1,3 % des volailles des départements (53 départements) et 0,2 % de celles des régions.",
+      "link": "https://agreste.agriculture.gouv.fr/agreste-web/disaron/RA2020_2141_EPCI/detail/",
+      "vintage": "recensement agricole 2020",
+      "retrievedOn": "2026-10-07",
+      "checksum": "5b40029c5b946ae3ae73c6edeb8987f01536d2d6312319b4f453ed003eb7e555",
+      "level": "departement",
+      "keyColumn": "code_departement",
+      "columns": [
+        {
+          "name": "code_departement",
+          "unit": "code INSEE du département"
+        },
+        {
+          "name": "dairy_cows",
+          "unit": "têtes, vaches laitières (cartostat)"
+        },
+        {
+          "name": "other_cattle",
+          "unit": "têtes, total des bovins moins les vaches laitières"
+        },
+        {
+          "name": "sows",
+          "unit": "têtes, truies reproductrices (5.11)"
+        },
+        {
+          "name": "other_pigs",
+          "unit": "têtes, total des porcins moins les truies"
+        },
+        {
+          "name": "goats",
+          "unit": "têtes, total des caprins (3)"
+        },
+        {
+          "name": "sheep",
+          "unit": "têtes, total des ovins (4)"
+        },
+        {
+          "name": "horses",
+          "unit": "têtes, total des équidés moins les ânes, mulets et bardots"
+        },
+        {
+          "name": "mules_and_donkeys",
+          "unit": "têtes, ânes, mulets et bardots (2.15)"
+        },
+        {
+          "name": "laying_hens",
+          "unit": "têtes, poules pondeuses de consommation et d'œufs à couver et poulettes (7.11.1 à 7.11.3)"
+        },
+        {
+          "name": "broilers",
+          "unit": "têtes, poulets de chair et coqs (7.11.4)"
+        },
+        {
+          "name": "other_poultry",
+          "unit": "têtes, total des volailles moins les poules, poulettes et poulets de chair (7.11, ou la somme de 7.11.1 à 7.11.4 quand 7.11 est sous secret)"
+        }
+      ],
+      "controlTotals": {
+        "dairy_cows": "3482393",
+        "other_cattle": "13945537",
+        "sows": "955732",
+        "other_pigs": "12372913",
+        "goats": "1380219",
+        "sheep": "6993931",
+        "horses": "287526",
+        "mules_and_donkeys": "21000",
+        "laying_hens": "79346332",
+        "broilers": "151037762",
+        "other_poultry": "60216901"
+      }
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "datasets": [
+    {
+      "file": "communes.csv",
+      "source": "Agreste, Recensement agricole 2020, surface agricole utile (SAU) par commune, via cartostat. Cinq codes de commune du recensement sont ramenés au code actuel (12076, 14011, 49069 et 69159 ont changé de code ; 49321 Saint-Sigismond est devenue commune déléguée d'Ingrandes-le-Fresne-sur-Loire 49160 et s'ajoute à sa SAU). La somme des communes retrouve les fichiers régional et départemental du recensement à 10⁻⁶ ha près. 1 384 communes de la géographie n'ont aucune ligne (dont 94 communes des collectivités d'outre-mer, hors périmètre du recensement) ; leur absence est cohérente avec les totaux régionaux et départementaux, et un consommateur la lit comme une SAU nulle, au même titre que les 73 communes écrites à 0. La cause pour la métropole (secret statistique ou absence d'exploitation) n'est pas indiquée par la source. Le lien est la page d'accueil de cartostat ; le lien direct de chaque fichier n'est pas conservé. Construit par pnpm build:data:surface-agricole-utile",
+      "link": "https://stats.agriculture.gouv.fr/cartostat/#c=indicator",
+      "vintage": "recensement agricole 2020",
+      "retrievedOn": "2026-10-07",
+      "checksum": "cbbfc08dc18fdb8c6f1367f3a5db8a97beccfa2be2794d9e5e51a43e74b38281",
+      "keyColumn": "code_commune",
+      "columns": [
+        { "name": "code_commune", "unit": "code INSEE de la commune, géographie du 2026-10-07" },
+        { "name": "agricultural_area_ha", "unit": "hectares de SAU, recensement agricole 2020" }
+      ],
+      "controlTotals": { "agricultural_area_ha": "26865430.030000000001" },
+      "sources": [
+        {
+          "file": "sources/sau-commune.csv",
+          "source": "Agreste, Recensement agricole, SAU par commune, 2010 et 2020",
+          "link": "https://stats.agriculture.gouv.fr/cartostat/#c=indicator",
+          "retrievedOn": "2026-10-07",
+          "checksum": "5f817dd983070c9b93b3fbeecbddeae27df13d7d4e12b655748383c2f3bdb19d"
+        },
+        {
+          "file": "sources/sau-region.csv",
+          "source": "Agreste, Recensement agricole, SAU par région, 2010 et 2020 (total de contrôle)",
+          "link": "https://stats.agriculture.gouv.fr/cartostat/#c=indicator",
+          "retrievedOn": "2026-10-07",
+          "checksum": "2696bbb43158caf58ac24a39453f96c2d1314b710adee9b4d95cc34f92f4aeb5"
+        },
+        {
+          "file": "sources/sau-departement.csv",
+          "source": "Agreste, Recensement agricole, SAU par département, 2010 et 2020 (total de contrôle)",
+          "link": "https://stats.agriculture.gouv.fr/cartostat/#c=indicator",
+          "retrievedOn": "2026-10-07",
+          "checksum": "cf53b38716302d68130187dbba41b2cfa3e052f5afcbfeb61b6f0aebbdd7efd7"
+        }
+      ]
+    }
+  ]
+}

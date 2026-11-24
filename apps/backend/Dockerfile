@@ -90,7 +90,7 @@ RUN --mount=type=secret,id=bryntum_token,env=BRYNTUM_ACCESS_TOKEN \
     env "pnpm_config_//npm.bryntum.com/:_authToken=$BRYNTUM_ACCESS_TOKEN" pnpm install -r --offline --frozen-lockfile
 COPY --exclude=data_layer . .
 # `nx build backend` (aliased by this script) also builds the workspace
-# packages it depends on: domain, design-tokens, pdf-components.
+# packages it depends on: domain, design-tokens, pdf-components, leviers-ges.
 RUN pnpm run build:backend
 
 # ---- runtime ----
@@ -131,6 +131,9 @@ COPY --from=builder --chown=node:node /workspace/packages/design-tokens/dist ./p
 COPY --from=builder --chown=node:node /workspace/packages/pdf-components/package.json ./packages/pdf-components/package.json
 COPY --from=builder --chown=node:node /workspace/packages/pdf-components/dist ./packages/pdf-components/dist
 COPY --from=builder --chown=node:node /workspace/packages/pdf-components/assets ./packages/pdf-components/assets
+COPY --from=builder --chown=node:node /workspace/packages/leviers-ges/package.json ./packages/leviers-ges/package.json
+COPY --from=builder --chown=node:node /workspace/packages/leviers-ges/dist ./packages/leviers-ges/dist
+COPY --from=builder --chown=node:node /workspace/packages/leviers-ges/data ./packages/leviers-ges/data
 
 # Migrations Sqitch, à la même arborescence que dans le dépôt : sqitch.conf
 # pointe sur data_layer/sqitch, et `\ir` remonte vers data_layer/seed/imports.

@@ -1,0 +1,605 @@
+{
+  "datasets": [
+    {
+      "file": "logements-epci-departement.csv",
+      "source": "Surface habitable estimée (m²) des résidences principales par couple EPCI-département, somme des communes du recensement 2022 par type de logement, combustible principal et période de construction. Un EPCI à cheval sur plusieurs départements a une ligne par département. Le bois n'a pas de modalité (CMBL) : il est dans « autre » (choix de conception, non validé). Superficie : milieu de chaque classe, 130 m² pour 120 m² ou plus (documentation fonctionnelle PlanET, p. 51). Les colonnes se lisent type de logement (maison, appartement privé, appartement HLM), combustible, période de construction. Construit par pnpm build:data:residentiel-logements",
+      "link": "https://www.insee.fr/fr/statistiques/8647099",
+      "vintage": "recensement 2022",
+      "retrievedOn": "2026-11-23",
+      "checksum": "31750ddc8a8e6fca134d2f60d9795d94caffe5eeebee3291ecc47d6c89e26f26",
+      "keyColumn": "epci_departement",
+      "columns": [
+        {
+          "name": "epci_departement",
+          "unit": "code de l'EPCI et code du département séparés par un tiret"
+        },
+        {
+          "name": "code_epci",
+          "unit": "code SIREN de l'EPCI"
+        },
+        {
+          "name": "code_departement",
+          "unit": "code INSEE du département"
+        },
+        {
+          "name": "housing_m2_house_heat_network_before_1971",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_house_heat_network_1971_to_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_house_heat_network_after_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_house_natural_gas_before_1971",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_house_natural_gas_1971_to_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_house_natural_gas_after_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_house_fuel_oil_before_1971",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_house_fuel_oil_1971_to_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_house_fuel_oil_after_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_house_electricity_before_1971",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_house_electricity_1971_to_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_house_electricity_after_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_house_lpg_before_1971",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_house_lpg_1971_to_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_house_lpg_after_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_house_other_before_1971",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_house_other_1971_to_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_house_other_after_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_private_apartment_heat_network_before_1971",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_private_apartment_heat_network_1971_to_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_private_apartment_heat_network_after_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_private_apartment_natural_gas_before_1971",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_private_apartment_natural_gas_1971_to_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_private_apartment_natural_gas_after_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_private_apartment_fuel_oil_before_1971",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_private_apartment_fuel_oil_1971_to_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_private_apartment_fuel_oil_after_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_private_apartment_electricity_before_1971",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_private_apartment_electricity_1971_to_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_private_apartment_electricity_after_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_private_apartment_lpg_before_1971",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_private_apartment_lpg_1971_to_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_private_apartment_lpg_after_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_private_apartment_other_before_1971",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_private_apartment_other_1971_to_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_private_apartment_other_after_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_social_apartment_heat_network_before_1971",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_social_apartment_heat_network_1971_to_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_social_apartment_heat_network_after_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_social_apartment_natural_gas_before_1971",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_social_apartment_natural_gas_1971_to_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_social_apartment_natural_gas_after_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_social_apartment_fuel_oil_before_1971",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_social_apartment_fuel_oil_1971_to_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_social_apartment_fuel_oil_after_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_social_apartment_electricity_before_1971",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_social_apartment_electricity_1971_to_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_social_apartment_electricity_after_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_social_apartment_lpg_before_1971",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_social_apartment_lpg_1971_to_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_social_apartment_lpg_after_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_social_apartment_other_before_1971",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_social_apartment_other_1971_to_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_social_apartment_other_after_2005",
+          "unit": "m² habitables estimés"
+        }
+      ],
+      "controlTotals": {
+        "housing_m2_house_heat_network_before_1971": "454799.427043127367",
+        "housing_m2_house_heat_network_1971_to_2005": "455579.958166945625",
+        "housing_m2_house_heat_network_after_2005": "257797.895036963291",
+        "housing_m2_house_natural_gas_before_1971": "226643357.382165226477",
+        "housing_m2_house_natural_gas_1971_to_2005": "208700246.897418431746",
+        "housing_m2_house_natural_gas_after_2005": "49243113.963746343017",
+        "housing_m2_house_fuel_oil_before_1971": "125054854.06773056744",
+        "housing_m2_house_fuel_oil_1971_to_2005": "95084548.438232654935",
+        "housing_m2_house_fuel_oil_after_2005": "4575409.542292890047",
+        "housing_m2_house_electricity_before_1971": "138446678.547667887488",
+        "housing_m2_house_electricity_1971_to_2005": "279539441.779321720025",
+        "housing_m2_house_electricity_after_2005": "135568942.989321062382",
+        "housing_m2_house_lpg_before_1971": "14738249.307860172767",
+        "housing_m2_house_lpg_1971_to_2005": "18327169.691686296005",
+        "housing_m2_house_lpg_after_2005": "2926248.396023325936",
+        "housing_m2_house_other_before_1971": "151058926.649765779388",
+        "housing_m2_house_other_1971_to_2005": "151127396.443322416343",
+        "housing_m2_house_other_after_2005": "79927965.401567256288",
+        "housing_m2_private_apartment_heat_network_before_1971": "16475623.788497753189",
+        "housing_m2_private_apartment_heat_network_1971_to_2005": "20177516.363558206745",
+        "housing_m2_private_apartment_heat_network_after_2005": "6954378.002924287436",
+        "housing_m2_private_apartment_natural_gas_before_1971": "118263582.755699160449",
+        "housing_m2_private_apartment_natural_gas_1971_to_2005": "83695451.087217325095",
+        "housing_m2_private_apartment_natural_gas_after_2005": "36063857.847464226949",
+        "housing_m2_private_apartment_fuel_oil_before_1971": "15038699.162509592848",
+        "housing_m2_private_apartment_fuel_oil_1971_to_2005": "7321027.284544947466",
+        "housing_m2_private_apartment_fuel_oil_after_2005": "440967.627665353159",
+        "housing_m2_private_apartment_electricity_before_1971": "81999292.333259992743",
+        "housing_m2_private_apartment_electricity_1971_to_2005": "102145059.986557409071",
+        "housing_m2_private_apartment_electricity_after_2005": "44842568.184977874062",
+        "housing_m2_private_apartment_lpg_before_1971": "1755538.102826380905",
+        "housing_m2_private_apartment_lpg_1971_to_2005": "1371645.32805747743",
+        "housing_m2_private_apartment_lpg_after_2005": "605022.880474250917",
+        "housing_m2_private_apartment_other_before_1971": "5717488.446355017194",
+        "housing_m2_private_apartment_other_1971_to_2005": "3970197.992925924057",
+        "housing_m2_private_apartment_other_after_2005": "3306035.471478057779",
+        "housing_m2_social_apartment_heat_network_before_1971": "24576161.312309788584",
+        "housing_m2_social_apartment_heat_network_1971_to_2005": "25275494.999439757382",
+        "housing_m2_social_apartment_heat_network_after_2005": "5835713.547238990063",
+        "housing_m2_social_apartment_natural_gas_before_1971": "46426128.04406329569",
+        "housing_m2_social_apartment_natural_gas_1971_to_2005": "57943327.582986186286",
+        "housing_m2_social_apartment_natural_gas_after_2005": "21309484.611437709716",
+        "housing_m2_social_apartment_fuel_oil_before_1971": "2234116.262009675722",
+        "housing_m2_social_apartment_fuel_oil_1971_to_2005": "1844933.342240653391",
+        "housing_m2_social_apartment_fuel_oil_after_2005": "167603.769827299184",
+        "housing_m2_social_apartment_electricity_before_1971": "8958634.527576353141",
+        "housing_m2_social_apartment_electricity_1971_to_2005": "24038072.767811597806",
+        "housing_m2_social_apartment_electricity_after_2005": "11534517.714819767819",
+        "housing_m2_social_apartment_lpg_before_1971": "639234.48468376635",
+        "housing_m2_social_apartment_lpg_1971_to_2005": "865612.288148567188",
+        "housing_m2_social_apartment_lpg_after_2005": "347672.063249749937",
+        "housing_m2_social_apartment_other_before_1971": "3076999.974107710915",
+        "housing_m2_social_apartment_other_1971_to_2005": "2697273.590173202306",
+        "housing_m2_social_apartment_other_after_2005": "1448758.398231933403"
+      },
+      "sources": [
+        {
+          "file": "sources/insee-rp2022-logements-communes.csv",
+          "source": "INSEE, recensement de la population 2022, fichier détail Logements ordinaires (FD_LOGEMT_2022.csv, 4,9 Go, non versionné) : surface estimée des résidences principales par commune, type de logement (maison, appartement privé, appartement HLM), combustible principal (CMBL) et période d'achèvement (avant 1971, 1971 à 2005, après 2005), somme de IPONDL × milieu de la classe de superficie (documentation fonctionnelle PlanET, p. 51). Les 68 communes absentes du code officiel géographique actuel (fusions) sont écartées : 31 372 logements sur 29 815 901. Construit par pnpm build:data:residentiel-logements extract",
+          "link": "https://www.insee.fr/fr/statistiques/8647099",
+          "retrievedOn": "2026-11-23",
+          "checksum": "5cd6fa27b5ce3a26511f4c654f45d146f1e99974ef3456658424968ee64a0bf1"
+        }
+      ]
+    },
+    {
+      "file": "logements-departement.csv",
+      "source": "Surface habitable estimée (m²) des résidences principales par département, somme des communes du recensement 2022 par type de logement, combustible principal et période de construction. Construit par pnpm build:data:residentiel-logements",
+      "link": "https://www.insee.fr/fr/statistiques/8647099",
+      "vintage": "recensement 2022",
+      "retrievedOn": "2026-11-23",
+      "checksum": "1304dd3476274b90c34c54972e8a082a990227829b49dba0edef7f8a78834def",
+      "level": "departement",
+      "keyColumn": "code_departement",
+      "columns": [
+        {
+          "name": "code_departement",
+          "unit": "code INSEE du département"
+        },
+        {
+          "name": "housing_m2_house_heat_network_before_1971",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_house_heat_network_1971_to_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_house_heat_network_after_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_house_natural_gas_before_1971",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_house_natural_gas_1971_to_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_house_natural_gas_after_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_house_fuel_oil_before_1971",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_house_fuel_oil_1971_to_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_house_fuel_oil_after_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_house_electricity_before_1971",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_house_electricity_1971_to_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_house_electricity_after_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_house_lpg_before_1971",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_house_lpg_1971_to_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_house_lpg_after_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_house_other_before_1971",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_house_other_1971_to_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_house_other_after_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_private_apartment_heat_network_before_1971",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_private_apartment_heat_network_1971_to_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_private_apartment_heat_network_after_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_private_apartment_natural_gas_before_1971",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_private_apartment_natural_gas_1971_to_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_private_apartment_natural_gas_after_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_private_apartment_fuel_oil_before_1971",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_private_apartment_fuel_oil_1971_to_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_private_apartment_fuel_oil_after_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_private_apartment_electricity_before_1971",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_private_apartment_electricity_1971_to_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_private_apartment_electricity_after_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_private_apartment_lpg_before_1971",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_private_apartment_lpg_1971_to_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_private_apartment_lpg_after_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_private_apartment_other_before_1971",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_private_apartment_other_1971_to_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_private_apartment_other_after_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_social_apartment_heat_network_before_1971",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_social_apartment_heat_network_1971_to_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_social_apartment_heat_network_after_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_social_apartment_natural_gas_before_1971",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_social_apartment_natural_gas_1971_to_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_social_apartment_natural_gas_after_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_social_apartment_fuel_oil_before_1971",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_social_apartment_fuel_oil_1971_to_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_social_apartment_fuel_oil_after_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_social_apartment_electricity_before_1971",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_social_apartment_electricity_1971_to_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_social_apartment_electricity_after_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_social_apartment_lpg_before_1971",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_social_apartment_lpg_1971_to_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_social_apartment_lpg_after_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_social_apartment_other_before_1971",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_social_apartment_other_1971_to_2005",
+          "unit": "m² habitables estimés"
+        },
+        {
+          "name": "housing_m2_social_apartment_other_after_2005",
+          "unit": "m² habitables estimés"
+        }
+      ],
+      "controlTotals": {
+        "housing_m2_house_heat_network_before_1971": "454799.427043127367",
+        "housing_m2_house_heat_network_1971_to_2005": "455579.958166945625",
+        "housing_m2_house_heat_network_after_2005": "257797.895036963291",
+        "housing_m2_house_natural_gas_before_1971": "226643357.382165226477",
+        "housing_m2_house_natural_gas_1971_to_2005": "208700246.897418431746",
+        "housing_m2_house_natural_gas_after_2005": "49243113.963746343017",
+        "housing_m2_house_fuel_oil_before_1971": "125074521.056482098522",
+        "housing_m2_house_fuel_oil_1971_to_2005": "95101408.368289337856",
+        "housing_m2_house_fuel_oil_after_2005": "4575657.161772604735",
+        "housing_m2_house_electricity_before_1971": "138512709.106132386707",
+        "housing_m2_house_electricity_1971_to_2005": "279631027.393936340543",
+        "housing_m2_house_electricity_after_2005": "135597589.487685219195",
+        "housing_m2_house_lpg_before_1971": "14738402.197214686756",
+        "housing_m2_house_lpg_1971_to_2005": "18327256.68516169391",
+        "housing_m2_house_lpg_after_2005": "2926300.724658744159",
+        "housing_m2_house_other_before_1971": "151072443.842817021878",
+        "housing_m2_house_other_1971_to_2005": "151158747.376808429373",
+        "housing_m2_house_other_after_2005": "79941490.26313765605",
+        "housing_m2_private_apartment_heat_network_before_1971": "16475623.788497753189",
+        "housing_m2_private_apartment_heat_network_1971_to_2005": "20177516.363558206745",
+        "housing_m2_private_apartment_heat_network_after_2005": "6954378.002924287436",
+        "housing_m2_private_apartment_natural_gas_before_1971": "118263582.755699160449",
+        "housing_m2_private_apartment_natural_gas_1971_to_2005": "83695451.087217325095",
+        "housing_m2_private_apartment_natural_gas_after_2005": "36063857.847464226949",
+        "housing_m2_private_apartment_fuel_oil_before_1971": "15038978.083512134712",
+        "housing_m2_private_apartment_fuel_oil_1971_to_2005": "7321098.628804375326",
+        "housing_m2_private_apartment_fuel_oil_after_2005": "440967.627665353159",
+        "housing_m2_private_apartment_electricity_before_1971": "82003048.26661515121",
+        "housing_m2_private_apartment_electricity_1971_to_2005": "102147368.751502321302",
+        "housing_m2_private_apartment_electricity_after_2005": "44843390.700318626273",
+        "housing_m2_private_apartment_lpg_before_1971": "1755538.102826380905",
+        "housing_m2_private_apartment_lpg_1971_to_2005": "1371718.588147062942",
+        "housing_m2_private_apartment_lpg_after_2005": "605022.880474250917",
+        "housing_m2_private_apartment_other_before_1971": "5717595.07639980995",
+        "housing_m2_private_apartment_other_1971_to_2005": "3970375.910286346015",
+        "housing_m2_private_apartment_other_after_2005": "3306268.210097933219",
+        "housing_m2_social_apartment_heat_network_before_1971": "24576161.312309788584",
+        "housing_m2_social_apartment_heat_network_1971_to_2005": "25275494.999439757382",
+        "housing_m2_social_apartment_heat_network_after_2005": "5835713.547238990063",
+        "housing_m2_social_apartment_natural_gas_before_1971": "46426128.04406329569",
+        "housing_m2_social_apartment_natural_gas_1971_to_2005": "57943327.582986186286",
+        "housing_m2_social_apartment_natural_gas_after_2005": "21309484.611437709716",
+        "housing_m2_social_apartment_fuel_oil_before_1971": "2234116.262009675722",
+        "housing_m2_social_apartment_fuel_oil_1971_to_2005": "1844933.342240653391",
+        "housing_m2_social_apartment_fuel_oil_after_2005": "167603.769827299184",
+        "housing_m2_social_apartment_electricity_before_1971": "8959048.189873233888",
+        "housing_m2_social_apartment_electricity_1971_to_2005": "24038623.309755857626",
+        "housing_m2_social_apartment_electricity_after_2005": "11534624.03066701865",
+        "housing_m2_social_apartment_lpg_before_1971": "639234.48468376635",
+        "housing_m2_social_apartment_lpg_1971_to_2005": "865612.288148567188",
+        "housing_m2_social_apartment_lpg_after_2005": "347672.063249749937",
+        "housing_m2_social_apartment_other_before_1971": "3076999.974107710915",
+        "housing_m2_social_apartment_other_1971_to_2005": "2697273.590173202306",
+        "housing_m2_social_apartment_other_after_2005": "1448877.743991244697"
+      },
+      "sources": [
+        {
+          "file": "sources/insee-rp2022-logements-communes.csv",
+          "source": "INSEE, recensement de la population 2022, fichier détail Logements ordinaires (FD_LOGEMT_2022.csv, 4,9 Go, non versionné) : surface estimée des résidences principales par commune, type de logement (maison, appartement privé, appartement HLM), combustible principal (CMBL) et période d'achèvement (avant 1971, 1971 à 2005, après 2005), somme de IPONDL × milieu de la classe de superficie (documentation fonctionnelle PlanET, p. 51). Les 68 communes absentes du code officiel géographique actuel (fusions) sont écartées : 31 372 logements sur 29 815 901. Construit par pnpm build:data:residentiel-logements extract",
+          "link": "https://www.insee.fr/fr/statistiques/8647099",
+          "retrievedOn": "2026-11-23",
+          "checksum": "5cd6fa27b5ce3a26511f4c654f45d146f1e99974ef3456658424968ee64a0bf1"
+        }
+      ]
+    }
+  ]
+}

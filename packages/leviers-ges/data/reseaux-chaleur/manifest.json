@@ -1,0 +1,36 @@
+{
+  "datasets": [
+    {
+      "file": "networks.csv",
+      "source": "SDES, Données locales de consommation de chaleur et de froid, commune, année 2024 (DiDo, jeu 6102491997d9292269ce2d70) : livraisons CONSOTOT, commune d'implantation, contenu CO2 SDES en repli ; France Chaleur Urbaine, contenu CO2 non ACV des réseaux. Réseaux sous secret exclus (140 sur 992). Arrondissements de Paris, Lyon et Marseille rapportés à leur commune. Valeurs arrondies à 12 décimales. Construit par pnpm build:data:reseaux-chaleur",
+      "link": "https://france-chaleur-urbaine.beta.gouv.fr/api/v1/networks",
+      "vintage": "livraisons 2024 ; contenu CO2 France Chaleur Urbaine relevé le 2026-10-07",
+      "retrievedOn": "2026-10-07",
+      "checksum": "8633212008bdef0726c05c799ec92a67a15fa7f802184d58da54725923590541",
+      "keyColumn": "network_id",
+      "columns": [
+        { "name": "network_id", "unit": "identifiant SDES du réseau" },
+        { "name": "commune_code", "unit": "code INSEE de la commune d'implantation" },
+        { "name": "delivered_mwh", "unit": "MWh par an" },
+        { "name": "emission_factor_kg_per_kwh", "unit": "kgCO2e par kWh, hors ACV" },
+        { "name": "emission_factor_source", "unit": "fcu ou sdes" }
+      ],
+      "controlTotals": { "delivered_mwh": "27733931.728493" },
+      "sources": [
+        {
+          "file": "sources/sdes-chaleur-commune-2024.csv",
+          "source": "SDES, Données locales de consommation de chaleur et de froid, commune, année 2024 (DiDo, jeu 6102491997d9292269ce2d70) ; lien de téléchargement non conservé",
+          "retrievedOn": "2026-10-07",
+          "checksum": "703410d795466cda9a8b21373c2586b0d467b0bf385503110b7f88b1cfb77e10"
+        },
+        {
+          "file": "sources/fcu-reseaux-chaleur.csv",
+          "source": "France Chaleur Urbaine, réseaux de chaleur, contenu CO2 non ACV",
+          "link": "https://france-chaleur-urbaine.beta.gouv.fr/api/v1/networks",
+          "retrievedOn": "2026-10-07",
+          "checksum": "d080e2d38c002b5fb8fcdc7f149c55acf32eb5845318d1588dbe061732513f45"
+        }
+      ]
+    }
+  ]
+}

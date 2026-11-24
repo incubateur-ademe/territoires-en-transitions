@@ -1,0 +1,83 @@
+{
+  "name": "@tet/leviers-ges",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "build:limits": "node src/dataset-builders/lever-limits/cli.ts",
+    "build:data:batiments-machines-agricoles": "node src/dataset-builders/batiments-machines-agricoles/cli.ts",
+    "build:data:dechets": "node src/dataset-builders/dechets/cli.ts",
+    "build:data:elevage-durable": "node src/dataset-builders/elevage-durable/cli.ts",
+    "build:data:fertilisation-azotee": "node src/dataset-builders/fertilisation-azotee/cli.ts",
+    "build:data:transport-marchandises": "node src/dataset-builders/transport-marchandises/cli.ts",
+    "build:data:occupation-des-sols": "node src/dataset-builders/occupation-des-sols/cli.ts",
+    "build:data:produits-bois": "node src/dataset-builders/produits-bois/cli.ts",
+    "build:data:reseaux-chaleur": "node src/dataset-builders/reseaux-chaleur/cli.ts",
+    "build:data:residentiel-logements": "node src/dataset-builders/residentiel-logements/cli.ts",
+    "build:data:residentiel-sobriete": "node src/dataset-builders/residentiel-sobriete/cli.ts",
+    "build:data:surface-agricole-utile": "node src/dataset-builders/surface-agricole-utile/cli.ts",
+    "build:data:transport-personnes": "node src/dataset-builders/transport-personnes/cli.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "bignumber.js": "^11.1.5",
+    "csv-parse": "7.0.3",
+    "es-toolkit": "1.39.8",
+    "neverthrow": "^8.2.0",
+    "ts-pattern": "5.9.0",
+    "zod": "4.6.6"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "4.1.11",
+    "fast-check": "^4.10.2",
+    "read-excel-file": "^9.3.12"
+  },
+  "description": "Méthodes de calcul des leviers GES (tableur ADEME PlanET V1)",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "data"
+  ],
+  "nx": {
+    "name": "leviers-ges",
+    "tags": [
+      "backend"
+    ],
+    "sourceRoot": "packages/leviers-ges/src",
+    "targets": {
+      "build": {
+        "command": "tsc -p tsconfig.build.json",
+        "options": {
+          "cwd": "packages/leviers-ges"
+        },
+        "outputs": [
+          "{projectRoot}/dist"
+        ]
+      },
+      "typecheck": {
+        "command": "tsc -p tsconfig.json --noEmit",
+        "options": {
+          "cwd": "packages/leviers-ges"
+        }
+      },
+      "test": {
+        "command": "vitest run",
+        "options": {
+          "cwd": "packages/leviers-ges"
+        }
+      }
+    }
+  }
+}

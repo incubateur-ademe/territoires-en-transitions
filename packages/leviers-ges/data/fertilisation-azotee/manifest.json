@@ -1,0 +1,106 @@
+{
+  "datasets": [
+    {
+      "file": "regions.csv",
+      "source": "UNIFA, livraisons d'engrais minéraux et organo-minéraux en tonnes d'azote (N) par région, campagne 2023-2024 et campagne 2022-2023 révisée (déduite de l'évolution publiée : N 2023-2024 ÷ (1 + évolution)), 13 régions de France métropolitaine. Livré n'est pas épandu : les livraisons sont comptées au département du distributeur. Construit par pnpm build:data:fertilisation-azotee",
+      "link": "https://www.unifa.fr/livraisons-par-departement",
+      "vintage": "campagnes 2022-2023 (révisée) et 2023-2024",
+      "retrievedOn": "2026-11-23",
+      "checksum": "b9627d20cc531c1357d48fcf6dab0eaef402bf1de6cedae5bbc16b6923f2bfec",
+      "level": "region",
+      "keyColumn": "code_region",
+      "columns": [
+        { "name": "code_region", "unit": "code INSEE de la région" },
+        { "name": "nitrogen_delivered_tonnes_2022_2023", "unit": "tonnes d'azote livrées sur la campagne 2022-2023, révisée par l'évolution publiée en 2023-2024" },
+        { "name": "nitrogen_delivered_tonnes_2023_2024", "unit": "tonnes d'azote livrées sur la campagne 2023-2024" }
+      ],
+      "controlTotals": {
+        "nitrogen_delivered_tonnes_2022_2023": "1793164.84270293567",
+        "nitrogen_delivered_tonnes_2023_2024": "1821401"
+      },
+      "sources": [
+        {
+          "file": "sources/unifa-azote-2023-2024.csv",
+          "source": "Tableau extrait à la main des pages région et département du rapport UNIFA 2023-2024, colonne N (azote) de la ligne Total et évolution de l'azote par rapport à 2022-2023 en pour cent, 13 régions et 96 départements (dont les codes 20 et 99)",
+          "retrievedOn": "2026-11-23",
+          "checksum": "5a2c1bd34f03f497874bc929ecf692b6e364c48dc0b243ccaca6d9424d0317c8"
+        },
+        {
+          "file": "sources/unifa-livraisons-2023-2024-departements-regions.pdf",
+          "source": "UNIFA, livraisons d'engrais en France métropolitaine, campagne 2023-2024, par région et par département",
+          "link": "https://www.unifa.fr/livraisons-par-departement",
+          "retrievedOn": "2026-11-23",
+          "checksum": "c6d56a4352c843a439280d6946227a7b5af2eba13163a481ee1568550f1abf17"
+        }
+      ]
+    },
+    {
+      "file": "departements.csv",
+      "source": "UNIFA, livraisons d'engrais minéraux et organo-minéraux en tonnes d'azote (N) par département, campagne 2023-2024 et campagne 2022-2023 révisée (déduite de l'évolution publiée), 94 départements de France métropolitaine. La Corse, publiée sous le code 20 sans distinguer 2A et 2B, et la page « Région parisienne » (99) sont écartées : 2A et 2B n'ont pas de livraison. Livré n'est pas épandu. Construit par pnpm build:data:fertilisation-azotee",
+      "link": "https://www.unifa.fr/livraisons-par-departement",
+      "vintage": "campagnes 2022-2023 (révisée) et 2023-2024",
+      "retrievedOn": "2026-11-23",
+      "checksum": "4ab6caaf28fd23b65dd74eb62b1db87d1431a6c515478115c16825a1221ca15e",
+      "level": "departement",
+      "keyColumn": "code_departement",
+      "columns": [
+        { "name": "code_departement", "unit": "code INSEE du département" },
+        { "name": "nitrogen_delivered_tonnes_2022_2023", "unit": "tonnes d'azote livrées sur la campagne 2022-2023, révisée par l'évolution publiée en 2023-2024" },
+        { "name": "nitrogen_delivered_tonnes_2023_2024", "unit": "tonnes d'azote livrées sur la campagne 2023-2024" }
+      ],
+      "controlTotals": {
+        "nitrogen_delivered_tonnes_2022_2023": "1792944.329776067402",
+        "nitrogen_delivered_tonnes_2023_2024": "1821200"
+      }
+    },
+    {
+      "file": "organic-epci-departements.csv",
+      "source": "Surface en agriculture biologique et en conversion (ha), 2024, par couple EPCI-département de métropole : une ligne par EPCI et par département, les EPCI à cheval en ont plusieurs. Les 50 couples sous secret statistique (1 ou 2 exploitations, « NC ») et les lignes sans EPCI (NA, ZZZZZZZZZ, 992367730) sont absentes. Construit par pnpm build:data:fertilisation-azotee",
+      "link": "https://www.data.gouv.fr/datasets/historique-detaille-des-surfaces-cheptels-et-nombre-doperateurs-par-epci",
+      "vintage": "année 2024",
+      "retrievedOn": "2026-11-19",
+      "checksum": "a0d0ae626d757da135e1f2dd7d2d5abc4dd9e14d68ecd077e49385409e540cc7",
+      "keyColumn": "epci_departement",
+      "columns": [
+        { "name": "epci_departement", "unit": "code de l'EPCI et code du département séparés par un tiret" },
+        { "name": "code_epci", "unit": "code SIREN de l'EPCI" },
+        { "name": "code_departement", "unit": "code INSEE du département" },
+        { "name": "organic_hectares", "unit": "hectares en agriculture biologique et en conversion, 2024" }
+      ],
+      "controlTotals": { "organic_hectares": "2710987.79718421088" },
+      "sources": [
+        {
+          "file": "sources/agence-bio-surfaces-epci-2024.csv",
+          "source": "Agence Bio, surfaces certifiées bio et en conversion par EPCI, millésime 2024 (lignes de l'année 2024 de l'export 2008-2025)",
+          "link": "https://www.data.gouv.fr/datasets/historique-detaille-des-surfaces-cheptels-et-nombre-doperateurs-par-epci",
+          "retrievedOn": "2026-11-19",
+          "checksum": "7299757fafbaf1bfb03421962109d142ca91aeef78d365cae1cd7579200e51aa"
+        }
+      ]
+    },
+    {
+      "file": "organic-departements.csv",
+      "source": "Surface en agriculture biologique et en conversion (ha), 2024, par département de métropole (96 départements, Corse comprise). Construit par pnpm build:data:fertilisation-azotee",
+      "link": "https://www.data.gouv.fr/datasets/historique-detaille-des-surfaces-cheptels-et-nombre-doperateurs-par-departement",
+      "vintage": "année 2024",
+      "retrievedOn": "2026-11-19",
+      "checksum": "631c5116ef9f393325a410866913c857d31f31699d8dd61ff467deb6161615c6",
+      "level": "departement",
+      "keyColumn": "code_departement",
+      "columns": [
+        { "name": "code_departement", "unit": "code INSEE du département" },
+        { "name": "organic_hectares", "unit": "hectares en agriculture biologique et en conversion, 2024" }
+      ],
+      "controlTotals": { "organic_hectares": "2713507.613387205955" },
+      "sources": [
+        {
+          "file": "sources/agence-bio-surfaces-departements-2024.csv",
+          "source": "Agence Bio, surfaces certifiées bio et en conversion par département, millésime 2024 (lignes de l'année 2024 de l'export 2008-2025)",
+          "link": "https://www.data.gouv.fr/datasets/historique-detaille-des-surfaces-cheptels-et-nombre-doperateurs-par-departement",
+          "retrievedOn": "2026-11-19",
+          "checksum": "a1bcfa8046e535adfc24de97256d8c012b6d23d5cb9069e57cbbc774d4bf436d"
+        }
+      ]
+    }
+  ]
+}

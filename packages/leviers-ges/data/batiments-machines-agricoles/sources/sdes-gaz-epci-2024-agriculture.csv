@@ -1,0 +1,1250 @@
+OPERATEUR;ANNEE;FILIERE;CODE_EPCI_CODE;CODE_EPCI_LIBELLE;CODE_CATEGORIE_CONSOMMATION;CODE_SECTEUR_NAF2_CODE;CODE_SECTEUR_NAF2_LIBELLE;CODE_GRAND_SECTEUR;CONSO;PDL;INDQUAL;THERMOR;PART;NB_IRIS_MASQUES;CODE_EIC
+GRDF;2024;G;200071587;Communauté de communes Loches Sud Touraine;PRO;;;A;467.37978;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;200071587;Communauté de communes Loches Sud Touraine;ENT;01;Culture et production animale, chasse et services annexes;A;12846.61979;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;200017341;Communauté de communes Lodévois et Larzac;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;245801063;Communauté de communes Loire et Allier;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;244301131;Communauté de communes Loire et Semène;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200071553;Communauté de communes Loire Layon Aubance;PRO;;;A;74.31765;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;200070373;Communauté de communes Loir-Lucé-Bercé;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;200070373;Communauté de communes Loir-Lucé-Bercé;ENT;01;Culture et production animale, chasse et services annexes;A;1889.566;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;247700644;Communauté de communes l'Orée de la Brie;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200067460;Communauté de communes Loudéac Communauté - Bretagne Centre;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200067460;Communauté de communes Loudéac Communauté - Bretagne Centre;ENT;01;Culture et production animale, chasse et services annexes;A;3880.82747;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;243800935;Communauté de communes Lyon Saint Exupéry en Dauphiné;PRO;;;A;600.62766;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200070142;Communauté de communes Lyons Andelle;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;200069698;Communauté de communes Mâconnais - Tournugeois;PRO;;;A;300.84735;17;0;;0;0;17X100A100A00028
+GRDF;2024;G;200069698;Communauté de communes Mâconnais - Tournugeois;ENT;01;Culture et production animale, chasse et services annexes;A;606.41929;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200068963;Communauté de communes Maine Cœur de Sarthe;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200072676;Communauté de communes Maine Saosnois;PRO;;;A;662.92582;1;0;;0;1;17X100A100A00028
+GRDF;2024;G;200035137;Communauté de communes Marche Occitane - Val d'Anglin;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;244000865;Communauté de communes Maremne Adour Côte Sud;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;200055887;Communauté de communes Mayenne Communauté;PRO;;;A;122.77564;1;0;;0;2;17X100A100A00028
+GRDF;2024;G;200027100;Communauté de communes Méditerranée Porte des Maures;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;200069755;Communauté de communes Mellois en Poitou;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;200069755;Communauté de communes Mellois en Poitou;ENT;01;Culture et production animale, chasse et services annexes;A;1487.35824;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200067643;Communauté de communes Meurthe Mortagne Moselle;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200067643;Communauté de communes Meurthe Mortagne Moselle;ENT;01;Culture et production animale, chasse et services annexes;A;282.78704;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200073401;Communauté de communes Mézenc-Loire-Meygal;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200072825;Communauté de communes Mirebellois et Fontenois;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200069177;Communauté de communes Mond'Arverne Communauté;PRO;;;A;95.56857;5;0;;0;0;17X100A100A00028
+GRDF;2024;G;200069177;Communauté de communes Mond'Arverne Communauté;ENT;01;Culture et production animale, chasse et services annexes;A;237.99269;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;243500550;Communauté de communes Montfort Communauté;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;247700032;Communauté de communes Moret Seine et Loing;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;245400171;Communauté de communes Moselle et Madon;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;200071223;Communauté de communes Nièvre et Somme;PRO;;;A;82.71939;5;0;;0;0;17X100A100A00028
+GRDF;2024;G;200069540;Communauté de communes Norge et Tille;PRO;;;A;secret;secret;;;;3;17X100A100A00028
+GRDF;2024;G;200065563;Communauté de communes Normandie-Cabourg-Pays d'Auge;PRO;;;A;145.72517;6;0;;0;1;17X100A100A00028
+GRDF;2024;G;248500258;Communauté de communes Océan Marais de Monts;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;247200447;Communauté de communes Orée de Bercé - Belinois;PRO;;;A;121.92044;1;0;;0;1;17X100A100A00028
+GRDF;2024;G;200070845;Communauté de communes Orne Lorraine Confluences;PRO;;;A;secret;secret;;;;3;17X100A100A00028
+GRDF;2024;G;200044048;Communauté de communes Osartis Marquion;PRO;;;A;956.66398;42;0;;0;0;17X100A100A00028
+GRDF;2024;G;200069383;Communauté de communes Ouest Aveyron Communauté;PRO;;;A;55.98747;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;200040624;Communauté de communes Pays d'Apt-Luberon;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;248500340;Communauté de communes Pays de Chantonnay;ENT;01;Culture et production animale, chasse et services annexes;A;188.97069;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;248500340;Communauté de communes Pays de Chantonnay;ENT;;;A;1227.216;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;243500659;Communauté de communes Pays de Châteaugiron Communauté;PRO;;;A;246.58231;2;0;;0;1;17X100A100A00028
+GRDF;2024;G;243500659;Communauté de communes Pays de Châteaugiron Communauté;ENT;;;A;3356.221;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;247700107;Communauté de communes Pays de Montereau;PRO;;;A;227.95553;6;0;;0;0;17X100A100A00028
+GRDF;2024;G;246401756;Communauté de communes Pays de Nay;PRO;;;A;444.60543;21;0;;0;0;17X100A100A00028
+GRDF;2024;G;246401756;Communauté de communes Pays de Nay;ENT;01;Culture et production animale, chasse et services annexes;A;589.33084;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200070506;Communauté de communes Pays de Nexon Monts de Chalus;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200071967;Communauté de communes Pays d'Évian Vallée d'Abondance;PRO;;;A;520.0873;6;0;;0;2;17X100A100A00028
+GRDF;2024;G;200072478;Communauté de communes Pays d'Opale;PRO;;;A;174.3929;1;0;;0;1;17X100A100A00028
+GRDF;2024;G;248400236;Communauté de communes Pays d'Orange en Provence;PRO;;;A;154.54846;8;0;;0;0;17X100A100A00028
+GRDF;2024;G;248400236;Communauté de communes Pays d'Orange en Provence;ENT;01;Culture et production animale, chasse et services annexes;A;715.14406;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200069417;Communauté de communes Pays d'Orthe et Arrigans;PRO;;;A;160.19551;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;200034379;Communauté de communes Pays d'Uzès;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;240400440;Communauté de communes Pays Forcalquier et Montagne de Lure;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200068831;Communauté de communes Pays Ségali Communauté;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;200041960;Communauté de communes Pévèle-Carembault;PRO;;;A;1920.96652;68;0;;0;0;17X100A100A00028
+GRDF;2024;G;200041960;Communauté de communes Pévèle-Carembault;ENT;01;Culture et production animale, chasse et services annexes;A;3340.38732;8;0;;0;0;17X100A100A00028
+GRDF;2024;G;200035707;Communauté de communes Piège Lauragais Malepère;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200035707;Communauté de communes Piège Lauragais Malepère;ENT;01;Culture et production animale, chasse et services annexes;A;96.81077;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200071199;Communauté de communes Plaine Limagne;PRO;;;A;256.97477;4;0;;0;2;17X100A100A00028
+GRDF;2024;G;200071199;Communauté de communes Plaine Limagne;ENT;01;Culture et production animale, chasse et services annexes;A;1073.77581;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;200033090;Communauté de communes Plaines et Monts de France;PRO;;;A;87.24901;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;200033090;Communauté de communes Plaines et Monts de France;ENT;01;Culture et production animale, chasse et services annexes;A;11.14885;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200033090;Communauté de communes Plaines et Monts de France;ENT;;;A;503.02517;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200067247;Communauté de communes Pleyben-Châteaulin-Porzay;ENT;01;Culture et production animale, chasse et services annexes;A;830.77514;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200070936;Communauté de communes Ponthieu-Marquenterre;PRO;;;A;124.01506;8;0;;0;0;17X100A100A00028
+GRDF;2024;G;245614433;Communauté de communes Pontivy Communauté;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;200040491;Communauté de communes Porte de DrômArdèche;PRO;;;A;56.67448;6;0;;0;0;17X100A100A00028
+GRDF;2024;G;200040491;Communauté de communes Porte de DrômArdèche;ENT;01;Culture et production animale, chasse et services annexes;A;2025.61851;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;247300676;Communauté de communes Porte de Maurienne;PRO;;;A;72.06209;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200072056;Communauté de communes Porte du Jura;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200059400;Communauté de communes Porte Océane du Limousin;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;200059400;Communauté de communes Porte Océane du Limousin;ENT;01;Culture et production animale, chasse et services annexes;A;43.90111;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200040202;Communauté de communes Provence Verdon;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200043776;Communauté de communes Pyrénées Audoises;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;200072635;Communauté de communes Pyrénées Haut Garonnaises;PRO;;;A;94.04896;4;0;;0;1;17X100A100A00028
+GRDF;2024;G;200070811;Communauté de communes Pyrénées Vallées des Gaves;PRO;;;A;secret;secret;;;;3;17X100A100A00028
+GRDF;2024;G;245614383;Communauté de communes Questembert Communauté;ENT;01;Culture et production animale, chasse et services annexes;A;97.50281;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200071991;Communauté de communes Retz-en-Valois;PRO;;;A;secret;secret;;;;3;17X100A100A00028
+GRDF;2024;G;200041366;Communauté de communes Rhône Crussol;PRO;;;A;52.78945;5;0;;0;0;17X100A100A00028
+GRDF;2024;G;200041366;Communauté de communes Rhône Crussol;ENT;01;Culture et production animale, chasse et services annexes;A;131.96212;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200000628;Communauté de communes Rhône Lez Provence;PRO;;;A;76.23731;5;0;;0;0;17X100A100A00028
+GRDF;2024;G;243000569;Communauté de communes Rhony,Vistre,Vidourle;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200029999;Communauté de communes Rives de l'Ain - Pays du Cerdon;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200039949;Communauté de communes Rives de Moselle;PRO;;;A;72.09558;2;0;;0;2;17X100A100A00028
+GRDF;2024;G;242101509;Communauté de communes Rives de Saône;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;243500634;Communauté de communes Roche aux Fées Communauté;PRO;;;A;253.78683;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;243500634;Communauté de communes Roche aux Fées Communauté;ENT;01;Culture et production animale, chasse et services annexes;A;4979.7338;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200066405;Communauté de communes Roumois Seine;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;200069599;Communauté de communes rurales de l'Entre-Deux-Mers;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200069599;Communauté de communes rurales de l'Entre-Deux-Mers;ENT;01;Culture et production animale, chasse et services annexes;A;234.21394;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200067155;Communauté de communes Saint Affricain,Roquefort,Sept Vallons;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;200071389;Communauté de communes Saint-Pourçain Sioule Limagne;PRO;;;A;423.04171;3;0;;0;2;17X100A100A00028
+GRDF;2024;G;200071389;Communauté de communes Saint-Pourçain Sioule Limagne;ENT;01;Culture et production animale, chasse et services annexes;A;5987.48703;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;200040038;Communauté de communes Saône Doubs Bresse;PRO;;;A;399.66211;15;0;;0;0;17X100A100A00028
+GRDF;2024;G;200040038;Communauté de communes Saône Doubs Bresse;ENT;01;Culture et production animale, chasse et services annexes;A;5070.811;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200067817;Communauté de communes Saône-Beaujolais;PRO;;;A;403.33969;14;0;;0;0;17X100A100A00028
+GRDF;2024;G;200067817;Communauté de communes Saône-Beaujolais;ENT;01;Culture et production animale, chasse et services annexes;A;614.096;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200027217;Communauté de communes Sarlat-Périgord Noir;PRO;;;A;secret;secret;;;;3;17X100A100A00028
+GRDF;2024;G;200068146;Communauté de communes Sarrebourg Moselle Sud;ENT;01;Culture et production animale, chasse et services annexes;A;270.87734;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200000933;Communauté de communes Sauldre et Sologne;PRO;;;A;557.249;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;249500430;Communauté de communes Sausseron Impressionnistes;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;249500430;Communauté de communes Sausseron Impressionnistes;ENT;01;Culture et production animale, chasse et services annexes;A;125.91349;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200070126;Communauté de communes Seine et Aube;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200066975;Communauté de communes Senlis Sud Oise;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200067304;Communauté de communes Serein et Armance;PRO;;;A;secret;secret;;;;3;17X100A100A00028
+GRDF;2024;G;200067304;Communauté de communes Serein et Armance;ENT;01;Culture et production animale, chasse et services annexes;A;1247.79813;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;200069516;Communauté de communes Seulles Terre et Mer;ENT;01;Culture et production animale, chasse et services annexes;A;3674.49097;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200067866;Communauté de communes Sèvre et Loire;PRO;;;A;390.26392;13;0;;0;0;17X100A100A00028
+GRDF;2024;G;200067866;Communauté de communes Sèvre et Loire;ENT;01;Culture et production animale, chasse et services annexes;A;57843.196;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;200071181;Communauté de communes Somme Sud-Ouest;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200066033;Communauté de communes Sud Alsace Largue;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;247104094;Communauté de communes Sud Côte Chalonnaise;PRO;;;A;68.26924;3;0;;0;2;17X100A100A00028
+GRDF;2024;G;200067700;Communauté de communes Sud Nivernais;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200073112;Communauté de communes Sud Sarthe;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;200073112;Communauté de communes Sud Sarthe;ENT;01;Culture et production animale, chasse et services annexes;A;562.1459;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200073260;Communauté de communes Sud Vendée Littoral;PRO;;;A;595.11445;7;0;;0;0;17X100A100A00028
+GRDF;2024;G;200073260;Communauté de communes Sud Vendée Littoral;ENT;01;Culture et production animale, chasse et services annexes;A;3091.62788;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;200042653;Communauté de communes Sud-Hérault;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;246600282;Communauté de communes Sud-Roussillon;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;246600282;Communauté de communes Sud-Roussillon;ENT;01;Culture et production animale, chasse et services annexes;A;5773.31296;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;241501055;Communauté de communes Sumène - Artense;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200066041;Communauté de communes Sundgau;PRO;;;A;68.80257;7;0;;0;0;17X100A100A00028
+GRDF;2024;G;200066041;Communauté de communes Sundgau;ENT;01;Culture et production animale, chasse et services annexes;A;2584.69743;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200034023;Communauté de communes Tarn-Agout;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200041150;Communauté de communes Terrassonnais Haut Périgord Noir;PRO;;;A;83.65077;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;243000650;Communauté de communes Terre de Camargue;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200070928;Communauté de communes Terre de Picardie;PRO;;;A;secret;secret;;;;3;17X100A100A00028
+GRDF;2024;G;200068682;Communauté de communes Terre d'Eau;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200068682;Communauté de communes Terre d'Eau;ENT;01;Culture et production animale, chasse et services annexes;A;34.98219;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200043693;Communauté de communes Terre Lorraine du Longuyonnais;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200068450;Communauté de communes Terres d'Argentan Interco;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200071538;Communauté de communes Terres de Bresse;PRO;;;A;172.51489;4;0;;0;2;17X100A100A00028
+GRDF;2024;G;200071538;Communauté de communes Terres de Bresse;ENT;01;Culture et production animale, chasse et services annexes;A;772.66908;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;200070167;Communauté de communes Terres de Perche;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200066322;Communauté de communes Terres des Confluences;PRO;;;A;54.1358;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;200066322;Communauté de communes Terres des Confluences;ENT;01;Culture et production animale, chasse et services annexes;A;683.536;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200066330;Communauté de communes Terres du Haut Berry;PRO;;;A;370.97201;7;0;;0;0;17X100A100A00028
+GRDF;2024;G;200066330;Communauté de communes Terres du Haut Berry;ENT;01;Culture et production animale, chasse et services annexes;A;161.19655;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200070563;Communauté de communes Terres Touloises;PRO;;;A;51.16027;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200067973;Communauté de communes Thelloise;PRO;;;A;160.22874;9;0;;0;0;17X100A100A00028
+GRDF;2024;G;200067973;Communauté de communes Thelloise;ENT;01;Culture et production animale, chasse et services annexes;A;171.34579;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200071983;Communauté de communes Thiérache Sambre et Oise;PRO;;;A;261.08336;6;0;;0;0;17X100A100A00028
+GRDF;2024;G;200070712;Communauté de communes Thiers Dore et Montagne;PRO;;;A;90.65685;1;0;;0;3;17X100A100A00028
+GRDF;2024;G;248100745;Communauté de communes Thoré Montagne Noire;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200070910;Communauté de communes Tille et Venelle;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200072981;Communauté de communes Touraine Ouest Val de Loire;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200072981;Communauté de communes Touraine Ouest Val de Loire;ENT;01;Culture et production animale, chasse et services annexes;A;8339.41384;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;200072668;Communauté de communes Touraine Val de Vienne;ENT;;;A;2686.48072;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200072650;Communauté de communes Touraine Vallée de l'Indre;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200073161;Communauté de communes Touraine-Est Vallées;PRO;;;A;311.38776;8;0;;0;2;17X100A100A00028
+GRDF;2024;G;200073161;Communauté de communes Touraine-Est Vallées;ENT;01;Culture et production animale, chasse et services annexes;A;899.144;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;248400335;Communauté de communes Vaison Ventoux;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200072874;Communauté de communes Val Briard;PRO;;;A;121.54545;7;0;;0;0;17X100A100A00028
+GRDF;2024;G;200072874;Communauté de communes Val Briard;ENT;01;Culture et production animale, chasse et services annexes;A;136.60989;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200036549;Communauté de communes Val de Gray;PRO;;;A;69.39565;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;243600301;Communauté de communes Val de l'Indre - Brenne;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200066165;Communauté de communes Val de Meuse - Voie Sacrée;PRO;;;A;130.36913;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200070118;Communauté de communes Val de Saône Centre;PRO;;;A;153.81066;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;243500667;Communauté de communes Val d'Ille-Aubigné;PRO;;;A;167.57964;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;243500667;Communauté de communes Val d'Ille-Aubigné;ENT;01;Culture et production animale, chasse et services annexes;A;4139.66616;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;247300528;Communauté de communes Val Guiers;PRO;;;A;152.74203;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200072064;Communauté de communes Val-de-Cher-Controis;PRO;;;A;587.32054;22;0;;0;0;17X100A100A00028
+GRDF;2024;G;200072064;Communauté de communes Val-de-Cher-Controis;ENT;01;Culture et production animale, chasse et services annexes;A;1176.13943;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;241300375;Communauté de communes Vallée des Baux-Alpilles (CC VBA);PRO;;;A;130.98346;4;0;;0;2;17X100A100A00028
+GRDF;2024;G;241300375;Communauté de communes Vallée des Baux-Alpilles (CC VBA);ENT;01;Culture et production animale, chasse et services annexes;A;4737.85722;5;0;;0;0;17X100A100A00028
+GRDF;2024;G;200066728;Communauté de communes Vallées de l'Orne et de l'Odon;PRO;;;A;77.15601;3;0;;0;2;17X100A100A00028
+GRDF;2024;G;200066728;Communauté de communes Vallées de l'Orne et de l'Odon;ENT;01;Culture et production animale, chasse et services annexes;A;942.8706;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200067759;Communauté de communes Vallées et Plateau d'Ardenne;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;200041689;Communauté de communes Vals de Saintonge Communauté;PRO;;;A;614.39913;6;0;;0;2;17X100A100A00028
+GRDF;2024;G;200035970;Communauté de communes Vexin Centre;PRO;;;A;67.21219;5;0;;0;0;17X100A100A00028
+GRDF;2024;G;200070043;Communauté de communes Vienne et Gartempe;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;200090561;Communauté de communes Vierzon-Sologne-Berry;PRO;;;A;170.5441;9;0;;0;0;17X100A100A00028
+GRDF;2024;G;200090561;Communauté de communes Vierzon-Sologne-Berry;ENT;01;Culture et production animale, chasse et services annexes;A;1141.71959;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;248900896;Communauté de communes Yonne Nord;PRO;;;A;94.85571;6;0;;0;0;17X100A100A00028
+GRDF;2024;G;247600620;Communauté de communes Yvetot Normandie;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;244900015;Communauté urbaine Angers Loire Métropole;PRO;;;A;1720.45305;25;0;;0;0;17X100A100A00028
+GRDF;2024;G;244900015;Communauté urbaine Angers Loire Métropole;ENT;01;Culture et production animale, chasse et services annexes;A;17250.19502;24;0;;0;0;17X100A100A00028
+GRDF;2024;G;200065597;Communauté urbaine Caen la Mer;PRO;;;A;139.70035;7;0;;0;0;17X100A100A00028
+GRDF;2024;G;200065597;Communauté urbaine Caen la Mer;ENT;01;Culture et production animale, chasse et services annexes;A;399.23798;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;246100663;Communauté urbaine d'Alençon;PRO;;;A;149.36879;6;0;;0;0;17X100A100A00028
+GRDF;2024;G;246100663;Communauté urbaine d'Alençon;ENT;01;Culture et production animale, chasse et services annexes;A;18493.016;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200033579;Communauté urbaine d'Arras;PRO;;;A;657.191;34;0;;0;0;17X100A100A00028
+GRDF;2024;G;200033579;Communauté urbaine d'Arras;ENT;01;Culture et production animale, chasse et services annexes;A;728.93745;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;245900428;Communauté urbaine de Dunkerque;PRO;;;A;762.01836;30;0;;0;0;17X100A100A00028
+GRDF;2024;G;245900428;Communauté urbaine de Dunkerque;ENT;01;Culture et production animale, chasse et services annexes;A;2459.82041;8;0;;0;0;17X100A100A00028
+GRDF;2024;G;245900428;Communauté urbaine de Dunkerque;ENT;03;Pêche et aquaculture;A;131.272;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200069854;Communauté urbaine du Grand Poitiers;PRO;;;A;68.54634;7;0;;0;0;17X100A100A00028
+GRDF;2024;G;200067213;Communauté urbaine du Grand Reims;PRO;;;A;4641.1177;182;0;;0;0;17X100A100A00028
+GRDF;2024;G;200067213;Communauté urbaine du Grand Reims;ENT;01;Culture et production animale, chasse et services annexes;A;30.29718;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;242500361;Communauté urbaine Grand Besançon Métropole;PRO;;;A;743.71246;17;0;;0;0;17X100A100A00028
+GRDF;2024;G;242500361;Communauté urbaine Grand Besançon Métropole;ENT;01;Culture et production animale, chasse et services annexes;A;400.2459;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200059889;Communauté urbaine Grand Paris Seine et Oise;PRO;;;A;464.94148;16;0;;0;0;17X100A100A00028
+GRDF;2024;G;247100290;Communauté urbaine Le Creusot Montceau-les-Mines;PRO;;;A;777.35218;11;0;;0;0;17X100A100A00028
+GRDF;2024;G;200084952;Communauté urbaine Le Havre Seine Métropole;PRO;;;A;674.65542;99;0;;0;0;17X100A100A00028
+GRDF;2024;G;247200132;Communauté urbaine Le Mans Métropole;PRO;;;A;473.4907;12;0;;0;0;17X100A100A00028
+GRDF;2024;G;247200132;Communauté urbaine Le Mans Métropole;ENT;01;Culture et production animale, chasse et services annexes;A;4038.37783;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;248719312;Communauté urbaine Limoges Métropole;PRO;;;A;811.83393;21;0;;0;0;17X100A100A00028
+GRDF;2024;G;248719312;Communauté urbaine Limoges Métropole;ENT;01;Culture et production animale, chasse et services annexes;A;1003.63891;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;200027183;Communauté urbaine Perpignan Méditerranée Métropole;PRO;;;A;93.01805;11;0;;0;0;17X100A100A00028
+GRDF;2024;G;200027183;Communauté urbaine Perpignan Méditerranée Métropole;ENT;01;Culture et production animale, chasse et services annexes;A;3528.78917;9;0;;0;0;17X100A100A00028
+GRDF;2024;G;242100410;Dijon Métropole;PRO;;;A;724.7177;23;0;;0;0;17X100A100A00028
+GRDF;2024;G;242100410;Dijon Métropole;ENT;01;Culture et production animale, chasse et services annexes;A;1254.90129;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;245400262;Grand Longwy Agglomération;PRO;;;A;102.66214;2;0;;0;2;17X100A100A00028
+GRDF;2024;G;200040715;Grenoble-Alpes-Métropole;PRO;;;A;299.51613;12;0;;0;0;17X100A100A00028
+GRDF;2024;G;200040715;Grenoble-Alpes-Métropole;ENT;02;Sylviculture et exploitation forestière;A;11.98892;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200040475;LBN Communauté;PRO;;;A;252.23213;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200040475;LBN Communauté;ENT;01;Culture et production animale, chasse et services annexes;A;903.29981;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200054807;Métropole d'Aix-Marseille-Provence;PRO;;;A;1171.41999;55;0;;0;0;17X100A100A00028
+GRDF;2024;G;200054807;Métropole d'Aix-Marseille-Provence;ENT;01;Culture et production animale, chasse et services annexes;A;81766.21622;30;0;;0;0;17X100A100A00028
+GRDF;2024;G;200054807;Métropole d'Aix-Marseille-Provence;ENT;;;A;5187.303;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200046977;Métropole de Lyon;PRO;;;A;1355.12719;48;0;;0;0;17X100A100A00028
+GRDF;2024;G;200046977;Métropole de Lyon;ENT;01;Culture et production animale, chasse et services annexes;A;1020.93736;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;200046977;Métropole de Lyon;ENT;;;A;466.61209;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;245400676;Métropole du Grand Nancy;PRO;;;A;736.17616;24;0;;0;0;17X100A100A00028
+GRDF;2024;G;200054781;Métropole du Grand Paris;PRO;;;A;8201.19489;346;0;;0;0;17X100A100A00028
+GRDF;2024;G;200054781;Métropole du Grand Paris;ENT;01;Culture et production animale, chasse et services annexes;A;5218.8129;9;0;;0;0;17X100A100A00028
+GRDF;2024;G;200093201;Métropole Européenne de Lille;PRO;;;A;3393.21101;129;0;;0;0;17X100A100A00028
+GRDF;2024;G;200093201;Métropole Européenne de Lille;ENT;01;Culture et production animale, chasse et services annexes;A;9102.46699;7;0;;0;0;17X100A100A00028
+GRDF;2024;G;200093201;Métropole Européenne de Lille;ENT;;;A;252.10146;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200030195;Métropole Nice Côte d'Azur;PRO;;;A;707.18323;19;0;;0;0;17X100A100A00028
+GRDF;2024;G;200030195;Métropole Nice Côte d'Azur;ENT;01;Culture et production animale, chasse et services annexes;A;398.47471;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;200023414;Métropole Rouen Normandie;PRO;;;A;812.95631;33;0;;0;0;17X100A100A00028
+GRDF;2024;G;200023414;Métropole Rouen Normandie;ENT;01;Culture et production animale, chasse et services annexes;A;132.5816;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;248300543;Métropole Toulon-Provence-Méditerranée;PRO;;;A;1267.22295;35;0;;0;0;17X100A100A00028
+GRDF;2024;G;248300543;Métropole Toulon-Provence-Méditerranée;ENT;01;Culture et production animale, chasse et services annexes;A;11430.77326;17;0;;0;0;17X100A100A00028
+GRDF;2024;G;200039865;Metz Métropole;PRO;;;A;420.45377;17;0;;0;0;17X100A100A00028
+GRDF;2024;G;200039865;Metz Métropole;ENT;01;Culture et production animale, chasse et services annexes;A;9782.50979;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;244000808;Mont de Marsan Agglomération;PRO;;;A;82.70671;5;0;;0;0;17X100A100A00028
+GRDF;2024;G;243400017;Montpellier Méditerranée Métropole;PRO;;;A;431.60313;14;0;;0;0;17X100A100A00028
+GRDF;2024;G;243400017;Montpellier Méditerranée Métropole;ENT;01;Culture et production animale, chasse et services annexes;A;186.01496;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;244400404;Nantes Métropole;PRO;;;A;335.79255;18;0;;0;0;17X100A100A00028
+GRDF;2024;G;244400404;Nantes Métropole;ENT;01;Culture et production animale, chasse et services annexes;A;34145.72692;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;244500468;Orléans Métropole;PRO;;;A;817.884;26;0;;0;0;17X100A100A00028
+GRDF;2024;G;244500468;Orléans Métropole;ENT;01;Culture et production animale, chasse et services annexes;A;67852.38726;19;0;;0;0;17X100A100A00028
+GRDF;2024;G;200066777;Ploërmel Communauté;ENT;;;A;464.531;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;243500139;Rennes Métropole;PRO;;;A;421.66229;17;0;;0;0;17X100A100A00028
+GRDF;2024;G;243500139;Rennes Métropole;ENT;01;Culture et production animale, chasse et services annexes;A;28385.63245;9;0;;0;0;17X100A100A00028
+GRDF;2024;G;243500139;Rennes Métropole;ENT;;;A;38089.56079;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;244200770;Saint-Etienne Métropole;PRO;;;A;790.95686;36;0;;0;0;17X100A100A00028
+GRDF;2024;G;244200770;Saint-Etienne Métropole;ENT;01;Culture et production animale, chasse et services annexes;A;1768.35051;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;243100518;Toulouse Métropole;PRO;;;A;425.97882;35;0;;0;0;17X100A100A00028
+GRDF;2024;G;243100518;Toulouse Métropole;ENT;01;Culture et production animale, chasse et services annexes;A;1171.9992;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;243700754;Tours Métropole Val de Loire;PRO;;;A;416.54214;20;0;;0;0;17X100A100A00028
+GRDF;2024;G;243700754;Tours Métropole Val de Loire;ENT;01;Culture et production animale, chasse et services annexes;A;194.50429;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200041630;Ardenne Métropole;PRO;;;A;436.80274;18;0;;0;0;17X100A100A00028
+GRDF;2024;G;200041630;Ardenne Métropole;ENT;01;Culture et production animale, chasse et services annexes;A;274.20121;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;245600440;Blavet Bellevue Océan Communauté;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;243300316;Bordeaux Métropole;PRO;;;A;secret;secret;;;;3;17X100A100A00028
+GRDF;2024;G;242900314;Brest Métropole;PRO;;;A;secret;secret;;;;5;17X100A100A00028
+GRDF;2024;G;242900314;Brest Métropole;ENT;01;Culture et production animale, chasse et services annexes;A;123662.46582;31;0;;0;0;17X100A100A00028
+GRDF;2024;G;246300701;Clermont Auvergne Métropole;PRO;;;A;356.95549;17;0;;0;0;17X100A100A00028
+GRDF;2024;G;246300701;Clermont Auvergne Métropole;ENT;01;Culture et production animale, chasse et services annexes;A;215.15721;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200040277;Communauté d'agglomération Agglo du Pays de Dreux;PRO;;;A;185.2025;8;0;;0;0;17X100A100A00028
+GRDF;2024;G;200040277;Communauté d'agglomération Agglo du Pays de Dreux;ENT;01;Culture et production animale, chasse et services annexes;A;2.33569;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200070407;Communauté d'agglomération Agglo Pays d'Issoire;PRO;;;A;84.43762;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;200070407;Communauté d'agglomération Agglo Pays d'Issoire;ENT;01;Culture et production animale, chasse et services annexes;A;244.39488;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200096956;Communauté d'agglomération Agglomération d'Agen;PRO;;;A;246.78087;9;0;;0;0;17X100A100A00028
+GRDF;2024;G;200096956;Communauté d'agglomération Agglomération d'Agen;ENT;01;Culture et production animale, chasse et services annexes;A;2938.83524;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200066918;Communauté d'agglomération Alès Agglomération;PRO;;;A;94.17503;1;0;;0;3;17X100A100A00028
+GRDF;2024;G;200066918;Communauté d'agglomération Alès Agglomération;ENT;01;Culture et production animale, chasse et services annexes;A;109.78;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;248000531;Communauté d'agglomération Amiens Métropole;PRO;;;A;699.97069;41;0;;0;0;17X100A100A00028
+GRDF;2024;G;248000531;Communauté d'agglomération Amiens Métropole;ENT;01;Culture et production animale, chasse et services annexes;A;37.02914;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200011773;Communauté d'agglomération Annemasse-Les Voirons-Agglomération;PRO;;;A;1027.4971;14;0;;0;0;17X100A100A00028
+GRDF;2024;G;200011773;Communauté d'agglomération Annemasse-Les Voirons-Agglomération;ENT;01;Culture et production animale, chasse et services annexes;A;7720.82761;6;0;;0;0;17X100A100A00028
+GRDF;2024;G;200072015;Communauté d'agglomération Annonay Rhône Agglo;PRO;;;A;94.39668;6;0;;0;3;17X100A100A00028
+GRDF;2024;G;200072015;Communauté d'agglomération Annonay Rhône Agglo;ENT;01;Culture et production animale, chasse et services annexes;A;155.68248;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200073096;Communauté d'agglomération Arche Agglo;PRO;;;A;190.52482;10;0;;0;2;17X100A100A00028
+GRDF;2024;G;200068997;Communauté d'agglomération Arlysère;PRO;;;A;418.49871;6;0;;0;0;17X100A100A00028
+GRDF;2024;G;200068997;Communauté d'agglomération Arlysère;ENT;01;Culture et production animale, chasse et services annexes;A;503.03731;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;243300563;Communauté d'agglomération Bassin d'Arcachon Sud (COBAS);PRO;;;A;192.90612;15;0;;0;0;17X100A100A00028
+GRDF;2024;G;200006682;Communauté d'agglomération Beaune,Côte et Sud - Communauté Beaune-Chagny-Nolay;PRO;;;A;12029.3814;354;0;;0;0;17X100A100A00028
+GRDF;2024;G;200006682;Communauté d'agglomération Beaune,Côte et Sud - Communauté Beaune-Chagny-Nolay;ENT;01;Culture et production animale, chasse et services annexes;A;1002.46685;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;200070647;Communauté d'agglomération Bergeracoise;PRO;;;A;378.54969;15;0;;0;0;17X100A100A00028
+GRDF;2024;G;200070647;Communauté d'agglomération Bergeracoise;ENT;01;Culture et production animale, chasse et services annexes;A;670.0481;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;241800507;Communauté d'agglomération Bourges Plus;PRO;;;A;secret;secret;;;;4;17X100A100A00028
+GRDF;2024;G;241800507;Communauté d'agglomération Bourges Plus;ENT;01;Culture et production animale, chasse et services annexes;A;682.047;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200039915;Communauté d'agglomération Cannes Pays de Lérins;PRO;;;A;145.2781;14;0;;0;0;17X100A100A00028
+GRDF;2024;G;200039915;Communauté d'agglomération Cannes Pays de Lérins;ENT;01;Culture et production animale, chasse et services annexes;A;45.16889;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200035715;Communauté d'agglomération Carcassonne Agglo;PRO;;;A;153.5436;9;0;;0;0;17X100A100A00028
+GRDF;2024;G;200035715;Communauté d'agglomération Carcassonne Agglo;ENT;01;Culture et production animale, chasse et services annexes;A;5251.52122;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200010700;Communauté d'agglomération Caux Seine Agglo;PRO;;;A;66.48761;1;0;;0;1;17X100A100A00028
+GRDF;2024;G;200010700;Communauté d'agglomération Caux Seine Agglo;ENT;01;Culture et production animale, chasse et services annexes;A;160.73512;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200033181;Communauté d'agglomération Chartres Métropole;PRO;;;A;282.35995;10;0;;0;0;17X100A100A00028
+GRDF;2024;G;243600327;Communauté d'agglomération Châteauroux Métropole;PRO;;;A;103.0765;10;0;;0;0;17X100A100A00028
+GRDF;2024;G;200071785;Communauté d'agglomération Chauny-Tergnier-La Fère;PRO;;;A;114.62882;7;0;;0;0;17X100A100A00028
+GRDF;2024;G;200071678;Communauté d'agglomération Cholet Agglomération;PRO;;;A;250.53503;7;0;;0;0;17X100A100A00028
+GRDF;2024;G;200071678;Communauté d'agglomération Cholet Agglomération;ENT;01;Culture et production animale, chasse et services annexes;A;11676.39735;6;0;;0;0;17X100A100A00028
+GRDF;2024;G;200067635;Communauté d'agglomération Clisson Sèvre et Maine Agglo;PRO;;;A;67.84445;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;200067635;Communauté d'agglomération Clisson Sèvre et Maine Agglo;ENT;01;Culture et production animale, chasse et services annexes;A;9549.64146;7;0;;0;0;17X100A100A00028
+GRDF;2024;G;246800726;Communauté d'agglomération Colmar Agglomération;PRO;;;A;374.24892;6;0;;0;2;17X100A100A00028
+GRDF;2024;G;200056232;Communauté d'agglomération Communauté Paris-Saclay;PRO;;;A;857.95585;31;0;;0;0;17X100A100A00028
+GRDF;2024;G;200090504;Communauté d'agglomération Coulommiers Pays de Brie;PRO;;;A;315.04658;15;0;;0;0;17X100A100A00028
+GRDF;2024;G;200090504;Communauté d'agglomération Coulommiers Pays de Brie;ENT;01;Culture et production animale, chasse et services annexes;A;14333.93668;6;0;;0;0;17X100A100A00028
+GRDF;2024;G;200068047;Communauté d'agglomération Creil Sud Oise;PRO;;;A;62.98223;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200040947;Communauté d'agglomération Cœur de Flandre;PRO;;;A;305.57293;15;0;;0;0;17X100A100A00028
+GRDF;2024;G;200040947;Communauté d'agglomération Cœur de Flandre;ENT;01;Culture et production animale, chasse et services annexes;A;301.34303;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200057859;Communauté d'agglomération Cœur d'Essonne Agglomération;PRO;;;A;289.31357;11;0;;0;0;17X100A100A00028
+GRDF;2024;G;200057859;Communauté d'agglomération Cœur d'Essonne Agglomération;ENT;01;Culture et production animale, chasse et services annexes;A;335.30882;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;241300417;Communauté d'agglomération d'Arles-Crau-Camargue-Montagnette;PRO;;;A;56.29291;1;0;;0;2;17X100A100A00028
+GRDF;2024;G;241300417;Communauté d'agglomération d'Arles-Crau-Camargue-Montagnette;ENT;01;Culture et production animale, chasse et services annexes;A;29637.34265;8;0;;0;0;17X100A100A00028
+GRDF;2024;G;241300417;Communauté d'agglomération d'Arles-Crau-Camargue-Montagnette;ENT;;;A;8778.897;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200033025;Communauté d'agglomération de Bar-le-Duc - Sud Meuse;PRO;;;A;88.5645;2;0;;0;4;17X100A100A00028
+GRDF;2024;G;200072460;Communauté d'agglomération de Béthune-Bruay,Artois-Lys Romane;PRO;;;A;1139.35313;52;0;;0;0;17X100A100A00028
+GRDF;2024;G;200072460;Communauté d'agglomération de Béthune-Bruay,Artois-Lys Romane;ENT;01;Culture et production animale, chasse et services annexes;A;237.18508;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;243400769;Communauté d'agglomération de Béziers-Méditerranée;PRO;;;A;249.09149;6;0;;0;0;17X100A100A00028
+GRDF;2024;G;200030385;"Communauté d'agglomération de Blois ""Agglopolys""";PRO;;;A;69.97329;7;0;;0;0;17X100A100A00028
+GRDF;2024;G;200030385;"Communauté d'agglomération de Blois ""Agglopolys""";ENT;01;Culture et production animale, chasse et services annexes;A;284.82;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200068500;Communauté d'agglomération de Cambrai;PRO;;;A;877.72621;50;0;;0;0;17X100A100A00028
+GRDF;2024;G;200068500;Communauté d'agglomération de Cambrai;ENT;01;Culture et production animale, chasse et services annexes;A;39.3188;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;248100430;Communauté d'agglomération de Castres Mazamet;PRO;;;A;98.95577;2;0;;0;4;17X100A100A00028
+GRDF;2024;G;248100430;Communauté d'agglomération de Castres Mazamet;ENT;01;Culture et production animale, chasse et services annexes;A;1850.49286;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;249500109;Communauté d'agglomération de Cergy-Pontoise;PRO;;;A;secret;secret;;;;3;17X100A100A00028
+GRDF;2024;G;249500109;Communauté d'agglomération de Cergy-Pontoise;ENT;01;Culture et production animale, chasse et services annexes;A;241.86105;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200066876;Communauté d'agglomération de Châlons-en-Champagne;PRO;;;A;480.39255;18;0;;0;0;17X100A100A00028
+GRDF;2024;G;200068658;Communauté d'agglomération de Chaumont;PRO;;;A;114.03936;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;245700372;Communauté d'agglomération de Forbach Porte de France;PRO;;;A;192.82841;5;0;;0;0;17X100A100A00028
+GRDF;2024;G;245700372;Communauté d'agglomération de Forbach Porte de France;ENT;01;Culture et production animale, chasse et services annexes;A;52.28707;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200067874;Communauté d'agglomération de Haguenau;PRO;;;A;431.97352;13;0;;0;0;17X100A100A00028
+GRDF;2024;G;200070993;Communauté d'agglomération de la Baie de Somme;PRO;;;A;122.92555;10;0;;0;0;17X100A100A00028
+GRDF;2024;G;200042190;Communauté d'agglomération de la Porte du Hainaut;PRO;;;A;506.93821;34;0;;0;0;17X100A100A00028
+GRDF;2024;G;244400610;Communauté d'agglomération de la Presqu'île de Guérande Atlantique (Cap Atlantique);PRO;;;A;secret;secret;;;;4;17X100A100A00028
+GRDF;2024;G;244400610;Communauté d'agglomération de la Presqu'île de Guérande Atlantique (Cap Atlantique);ENT;01;Culture et production animale, chasse et services annexes;A;1750.35831;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200068104;Communauté d'agglomération de la Provence Verte;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200068104;Communauté d'agglomération de la Provence Verte;ENT;01;Culture et production animale, chasse et services annexes;A;195.59777;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200072031;Communauté d'agglomération de la Région de Château-Thierry;PRO;;;A;408.47005;18;0;;0;0;17X100A100A00028
+GRDF;2024;G;200072031;Communauté d'agglomération de la Région de Château-Thierry;ENT;01;Culture et production animale, chasse et services annexes;A;818.96042;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200067965;Communauté d'agglomération de la Région de Compiègne et de la Basse Automne;PRO;;;A;222.38127;6;0;;0;4;17X100A100A00028
+GRDF;2024;G;247600786;Communauté d'agglomération de la Région Dieppoise;PRO;;;A;93.45169;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;244400644;Communauté d'agglomération de la Région Nazairienne et de l'Estuaire (CARENE);PRO;;;A;53.82733;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;240600551;Communauté d'agglomération de la Riviera Française;PRO;;;A;129.80846;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;241700434;Communauté d'agglomération de La Rochelle;PRO;;;A;79.52162;11;0;;0;0;17X100A100A00028
+GRDF;2024;G;241700434;Communauté d'agglomération de La Rochelle;ENT;01;Culture et production animale, chasse et services annexes;A;521.40154;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;241700434;Communauté d'agglomération de La Rochelle;ENT;03;Pêche et aquaculture;A;824.21535;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;248100737;Communauté d'agglomération de l'Albigeois (C2A);PRO;;;A;57.09767;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;248100737;Communauté d'agglomération de l'Albigeois (C2A);ENT;01;Culture et production animale, chasse et services annexes;A;226.07999;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200067114;Communauté d'agglomération de l'Auxerrois;PRO;;;A;498.52293;18;0;;0;0;17X100A100A00028
+GRDF;2024;G;246200364;Communauté d'agglomération de Lens - Liévin;PRO;;;A;314.67803;24;0;;0;0;17X100A100A00028
+GRDF;2024;G;200040566;Communauté d'agglomération de l'Ouest Rhodanien;PRO;;;A;96.17901;2;0;;0;6;17X100A100A00028
+GRDF;2024;G;245804406;Communauté d'agglomération de Nevers;PRO;;;A;126.13101;9;0;;0;0;17X100A100A00028
+GRDF;2024;G;245804406;Communauté d'agglomération de Nevers;ENT;01;Culture et production animale, chasse et services annexes;A;186.7791;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;243000643;Communauté d'agglomération de Nîmes Métropole;PRO;;;A;246.14631;19;0;;0;0;17X100A100A00028
+GRDF;2024;G;243000643;Communauté d'agglomération de Nîmes Métropole;ENT;01;Culture et production animale, chasse et services annexes;A;4345.22869;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;200071066;Communauté d'agglomération de Saint-Dié-des-Vosges;PRO;;;A;116.36793;3;0;;0;2;17X100A100A00028
+GRDF;2024;G;200071066;Communauté d'agglomération de Saint-Dié-des-Vosges;ENT;01;Culture et production animale, chasse et services annexes;A;569.65201;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200071066;Communauté d'agglomération de Saint-Dié-des-Vosges;ENT;02;Sylviculture et exploitation forestière;A;286.87295;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200068666;Communauté d'agglomération de Saint-Dizier Der et Blaise;PRO;;;A;115.62157;5;0;;0;0;17X100A100A00028
+GRDF;2024;G;200068666;Communauté d'agglomération de Saint-Dizier Der et Blaise;ENT;01;Culture et production animale, chasse et services annexes;A;29.18748;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200036473;Communauté d'agglomération de Saintes - Grandes Rives - L'Agglo;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200036473;Communauté d'agglomération de Saintes - Grandes Rives - L'Agglo;ENT;01;Culture et production animale, chasse et services annexes;A;742.46136;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200058782;Communauté d'agglomération de Saint-Quentin-en-Yvelines;PRO;;;A;secret;secret;;;;3;17X100A100A00028
+GRDF;2024;G;240600585;Communauté d'agglomération de Sophia Antipolis;PRO;;;A;366.21237;15;0;;0;0;17X100A100A00028
+GRDF;2024;G;247000011;Communauté d'agglomération de Vesoul;PRO;;;A;74.89247;1;0;;0;2;17X100A100A00028
+GRDF;2024;G;200068757;Communauté d'agglomération d'Épinal;PRO;;;A;251.29455;12;0;;0;0;17X100A100A00028
+GRDF;2024;G;200068757;Communauté d'agglomération d'Épinal;ENT;02;Sylviculture et exploitation forestière;A;307.48843;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200069029;Communauté d'agglomération des Deux Baies en Montreuillois;PRO;;;A;106.75558;10;0;;0;0;17X100A100A00028
+GRDF;2024;G;200069029;Communauté d'agglomération des Deux Baies en Montreuillois;ENT;01;Culture et production animale, chasse et services annexes;A;34.63779;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;248400293;Communauté d'agglomération des Sorgues du Comtat;PRO;;;A;76.80133;5;0;;0;0;17X100A100A00028
+GRDF;2024;G;248400293;Communauté d'agglomération des Sorgues du Comtat;ENT;01;Culture et production animale, chasse et services annexes;A;11721.96018;8;0;;0;0;17X100A100A00028
+GRDF;2024;G;246200299;Communauté d'agglomération d'Hénin-Carvin;PRO;;;A;191.02438;13;0;;0;0;17X100A100A00028
+GRDF;2024;G;200068989;Communauté d'agglomération Dinan Agglomération;ENT;01;Culture et production animale, chasse et services annexes;A;5.742;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200044618;Communauté d'agglomération Douaisis Agglo;PRO;;;A;1351.2971;48;0;;0;0;17X100A100A00028
+GRDF;2024;G;243301504;Communauté d'agglomération du Bassin d'Arcachon Nord;PRO;;;A;53.35232;5;0;;0;0;17X100A100A00028
+GRDF;2024;G;241500230;Communauté d'agglomération du Bassin d'Aurillac;PRO;;;A;secret;secret;;;;5;17X100A100A00028
+GRDF;2024;G;200071751;Communauté d'agglomération du Bassin de Bourg-en-Bresse;PRO;;;A;221.3059;12;0;;0;0;17X100A100A00028
+GRDF;2024;G;200071751;Communauté d'agglomération du Bassin de Bourg-en-Bresse;ENT;01;Culture et production animale, chasse et services annexes;A;1836.81825;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;200043172;Communauté d'agglomération du Bassin de Brive;PRO;;;A;399.91419;14;0;;0;0;17X100A100A00028
+GRDF;2024;G;200043172;Communauté d'agglomération du Bassin de Brive;ENT;01;Culture et production animale, chasse et services annexes;A;69.85547;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200067999;Communauté d'agglomération du Beauvaisis;PRO;;;A;116.34113;6;0;;0;0;17X100A100A00028
+GRDF;2024;G;200067999;Communauté d'agglomération du Beauvaisis;ENT;01;Culture et production animale, chasse et services annexes;A;456.11259;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200040244;Communauté d'agglomération du Bocage Bressuirais;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;200040244;Communauté d'agglomération du Bocage Bressuirais;ENT;01;Culture et production animale, chasse et services annexes;A;313.4264;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200040244;Communauté d'agglomération du Bocage Bressuirais;ENT;;;A;1639.59983;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;246200729;Communauté d'agglomération du Boulonnais;PRO;;;A;93.92134;7;0;;0;0;17X100A100A00028
+GRDF;2024;G;200030633;Communauté d'agglomération du Caudrésis et du Catésis;PRO;;;A;776.1201;47;0;;0;0;17X100A100A00028
+GRDF;2024;G;200067205;Communauté d'agglomération du Cotentin;PRO;;;A;168.22574;10;0;;0;0;17X100A100A00028
+GRDF;2024;G;200067205;Communauté d'agglomération du Cotentin;ENT;01;Culture et production animale, chasse et services annexes;A;741.37369;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200034692;Communauté d'agglomération du Gard Rhodanien;PRO;;;A;102.70484;1;0;;0;3;17X100A100A00028
+GRDF;2024;G;200071827;Communauté d'agglomération du Grand Angoulême;PRO;;;A;759.92002;21;0;;0;0;17X100A100A00028
+GRDF;2024;G;200071827;Communauté d'agglomération du Grand Angoulême;ENT;01;Culture et production animale, chasse et services annexes;A;1149.1844;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200066793;Communauté d'agglomération du Grand Annecy;PRO;;;A;164.3854;10;0;;0;0;17X100A100A00028
+GRDF;2024;G;248400251;Communauté d'agglomération du Grand Avignon (COGA);PRO;;;A;120.03832;6;0;;0;0;17X100A100A00028
+GRDF;2024;G;248400251;Communauté d'agglomération du Grand Avignon (COGA);ENT;01;Culture et production animale, chasse et services annexes;A;9763.75;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;248400251;Communauté d'agglomération du Grand Avignon (COGA);ENT;;;A;251.45435;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200023737;Communauté d'agglomération du Grand Cahors;PRO;;;A;179.77806;7;0;;0;0;17X100A100A00028
+GRDF;2024;G;200069110;Communauté d'agglomération du Grand Chambéry;PRO;;;A;410.92661;12;0;;0;0;17X100A100A00028
+GRDF;2024;G;200069110;Communauté d'agglomération du Grand Chambéry;ENT;01;Culture et production animale, chasse et services annexes;A;341.10726;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200070514;Communauté d'agglomération du Grand Cognac;PRO;;;A;16011.61701;110;0;;0;0;17X100A100A00028
+GRDF;2024;G;200070514;Communauté d'agglomération du Grand Cognac;ENT;01;Culture et production animale, chasse et services annexes;A;21167.97586;31;0;;0;0;17X100A100A00028
+GRDF;2024;G;200070514;Communauté d'agglomération du Grand Cognac;ENT;;;A;705.36975;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;244000675;Communauté d'agglomération du Grand Dax;PRO;;;A;secret;secret;;;;6;17X100A100A00028
+GRDF;2024;G;200010650;Communauté d'agglomération du Grand Dole;PRO;;;A;398.12266;14;0;;0;0;17X100A100A00028
+GRDF;2024;G;200010650;Communauté d'agglomération du Grand Dole;ENT;01;Culture et production animale, chasse et services annexes;A;230.2192;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200034825;Communauté d'agglomération du Grand Guéret;PRO;;;A;86.28786;7;0;;0;0;17X100A100A00028
+GRDF;2024;G;248900334;Communauté d'agglomération du Grand Sénonais;PRO;;;A;402.26361;14;0;;0;0;17X100A100A00028
+GRDF;2024;G;248900334;Communauté d'agglomération du Grand Sénonais;ENT;01;Culture et production animale, chasse et services annexes;A;1386.83297;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200049187;Communauté d'agglomération du Grand Verdun;PRO;;;A;176.73348;5;0;;0;0;17X100A100A00028
+GRDF;2024;G;200023307;Communauté d'agglomération du Grand Villeneuvois;PRO;;;A;57.82597;9;0;;0;0;17X100A100A00028
+GRDF;2024;G;200023307;Communauté d'agglomération du Grand Villeneuvois;ENT;01;Culture et production animale, chasse et services annexes;A;18668.09993;16;0;;0;0;17X100A100A00028
+GRDF;2024;G;200070092;Communauté d'agglomération du Libournais;PRO;;;A;1876.20826;68;0;;0;0;17X100A100A00028
+GRDF;2024;G;200041317;Communauté d'agglomération du Niortais;PRO;;;A;secret;secret;;;;3;17X100A100A00028
+GRDF;2024;G;200067106;Communauté d'agglomération du Pays Basque;PRO;;;A;1452.59428;64;0;;0;0;17X100A100A00028
+GRDF;2024;G;200067106;Communauté d'agglomération du Pays Basque;ENT;01;Culture et production animale, chasse et services annexes;A;1493.71181;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200067106;Communauté d'agglomération du Pays Basque;ENT;03;Pêche et aquaculture;A;1201.04133;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200072346;Communauté d'agglomération du Pays de Fontainebleau;PRO;;;A;211.63267;9;0;;0;0;17X100A100A00028
+GRDF;2024;G;200072346;Communauté d'agglomération du Pays de Fontainebleau;ENT;01;Culture et production animale, chasse et services annexes;A;99.92529;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200072346;Communauté d'agglomération du Pays de Fontainebleau;ENT;02;Sylviculture et exploitation forestière;A;302.19474;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;240100750;Communauté d'agglomération du Pays de Gex;PRO;;;A;55.77817;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;200039857;Communauté d'agglomération du Pays de Grasse;PRO;;;A;269.20763;4;0;;0;2;17X100A100A00028
+GRDF;2024;G;242900801;Communauté d'agglomération du Pays de Landerneau-Daoulas;PRO;;;A;50.10471;1;0;;0;1;17X100A100A00028
+GRDF;2024;G;242900801;Communauté d'agglomération du Pays de Landerneau-Daoulas;ENT;01;Culture et production animale, chasse et services annexes;A;13519.16388;6;0;;0;0;17X100A100A00028
+GRDF;2024;G;242900801;Communauté d'agglomération du Pays de Landerneau-Daoulas;ENT;;;A;17275.954;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200043495;Communauté d'agglomération du Pays de Laon;PRO;;;A;76.34906;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;243400470;Communauté d'agglomération du Pays de l'Or;PRO;;;A;179.67324;2;0;;0;2;17X100A100A00028
+GRDF;2024;G;243400470;Communauté d'agglomération du Pays de l'Or;ENT;01;Culture et production animale, chasse et services annexes;A;513.04057;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200072130;Communauté d'agglomération du Pays de Meaux;PRO;;;A;153.4575;8;0;;0;0;17X100A100A00028
+GRDF;2024;G;200072130;Communauté d'agglomération du Pays de Meaux;ENT;01;Culture et production animale, chasse et services annexes;A;275.54952;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;243500782;Communauté d'agglomération du Pays de Saint Malo Agglomération;PRO;;;A;77.95387;6;0;;0;0;17X100A100A00028
+GRDF;2024;G;243500782;Communauté d'agglomération du Pays de Saint Malo Agglomération;ENT;01;Culture et production animale, chasse et services annexes;A;6563.724;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200023778;Communauté d'agglomération du Pays de Saint-Gilles-Croix-de-Vie;PRO;;;A;secret;secret;;;;3;17X100A100A00028
+GRDF;2024;G;200023778;Communauté d'agglomération du Pays de Saint-Gilles-Croix-de-Vie;ENT;01;Culture et production animale, chasse et services annexes;A;4904.42475;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200069037;Communauté d'agglomération du Pays de Saint-Omer;PRO;;;A;363.43656;18;0;;0;0;17X100A100A00028
+GRDF;2024;G;200069037;Communauté d'agglomération du Pays de Saint-Omer;ENT;01;Culture et production animale, chasse et services annexes;A;406.30223;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;243800984;Communauté d'agglomération du Pays Voironnais;PRO;;;A;94.40964;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;243800984;Communauté d'agglomération du Pays Voironnais;ENT;01;Culture et production animale, chasse et services annexes;A;79.94101;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200073419;Communauté d'agglomération du Puy-en-Velay;PRO;;;A;244.96665;7;0;;0;0;17X100A100A00028
+GRDF;2024;G;200071892;Communauté d'agglomération du Saint-Quentinois;PRO;;;A;319.4975;5;0;;0;3;17X100A100A00028
+GRDF;2024;G;243100633;Communauté d'agglomération du Sicoval;PRO;;;A;161.26483;1;0;;0;4;17X100A100A00028
+GRDF;2024;G;243100633;Communauté d'agglomération du Sicoval;ENT;01;Culture et production animale, chasse et services annexes;A;765.358;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;245701222;Communauté d'agglomération du Val de Fensch;PRO;;;A;92.91506;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;200034700;Communauté d'agglomération Durance-Lubéron-Verdon Agglomération;PRO;;;A;63.83577;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200071116;Communauté d'agglomération ECLA  (Espace Communautaire Lons Agglomération);PRO;;;A;224.73546;7;0;;0;0;17X100A100A00028
+GRDF;2024;G;200067684;Communauté d'agglomération Épernay,Coteaux et Plaine de Champagne;PRO;;;A;8406.84804;289;0;;0;0;17X100A100A00028
+GRDF;2024;G;200035319;Communauté d'agglomération Estérel Côte d'Azur Agglomération;PRO;;;A;secret;secret;;;;3;17X100A100A00028
+GRDF;2024;G;200035319;Communauté d'agglomération Estérel Côte d'Azur Agglomération;ENT;01;Culture et production animale, chasse et services annexes;A;6423.07083;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;200017846;Communauté d'agglomération Étampois Sud Essonne;PRO;;;A;72.88938;1;0;;0;2;17X100A100A00028
+GRDF;2024;G;200071454;Communauté d'agglomération Evreux Portes de Normandie;PRO;;;A;166.62655;8;0;;0;0;17X100A100A00028
+GRDF;2024;G;200071454;Communauté d'agglomération Evreux Portes de Normandie;ENT;01;Culture et production animale, chasse et services annexes;A;33.44125;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200069821;Communauté d'agglomération Fécamp Caux Littoral Agglomération;PRO;;;A;64.33478;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;200035814;Communauté d'agglomération Flers Agglo;PRO;;;A;97.35061;6;0;;0;0;17X100A100A00028
+GRDF;2024;G;200072452;Communauté d'agglomération Fougères Agglomération;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200072452;Communauté d'agglomération Fougères Agglomération;ENT;01;Culture et production animale, chasse et services annexes;A;309.14846;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200066124;Communauté d'agglomération Gaillac-Graulhet;PRO;;;A;65.27409;2;0;;0;1;17X100A100A00028
+GRDF;2024;G;200066124;Communauté d'agglomération Gaillac-Graulhet;ENT;01;Culture et production animale, chasse et services annexes;A;1946.61773;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;200067825;Communauté d'agglomération Gap-Tallard-Durance;PRO;;;A;212.27136;2;0;;0;1;17X100A100A00028
+GRDF;2024;G;200067932;Communauté d'agglomération Golfe du Morbihan - Vannes Agglomération;PRO;;;A;87.65523;6;0;;0;0;17X100A100A00028
+GRDF;2024;G;200066926;Communauté d'agglomération Grand Auch Cœur de Gascogne;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200069052;Communauté d'agglomération Grand Belfort;PRO;;;A;187.00139;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;200069052;Communauté d'agglomération Grand Belfort;ENT;01;Culture et production animale, chasse et services annexes;A;817.73323;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200090751;Communauté d'agglomération Grand Calais Terres et Mers;PRO;;;A;150.79802;10;0;;0;0;17X100A100A00028
+GRDF;2024;G;248600413;Communauté d'agglomération Grand Châtellerault;PRO;;;A;secret;secret;;;;3;17X100A100A00028
+GRDF;2024;G;248600413;Communauté d'agglomération Grand Châtellerault;ENT;01;Culture et production animale, chasse et services annexes;A;604.1957;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200068674;Communauté d'agglomération Grand Lac;PRO;;;A;310.49499;11;0;;0;0;17X100A100A00028
+GRDF;2024;G;200068674;Communauté d'agglomération Grand Lac;ENT;01;Culture et production animale, chasse et services annexes;A;326.03411;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200068674;Communauté d'agglomération Grand Lac;ENT;;;A;168.0735;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;248200099;Communauté d'agglomération Grand Montauban;PRO;;;A;356.67936;7;0;;0;0;17X100A100A00028
+GRDF;2024;G;200059228;Communauté d'agglomération Grand Paris Sud Seine Essonne Sénart;PRO;;;A;115.48595;5;0;;0;0;17X100A100A00028
+GRDF;2024;G;240200477;Communauté d'agglomération GrandSoissons Agglomération;PRO;;;A;104.50318;3;0;;0;1;17X100A100A00028
+GRDF;2024;G;200067981;Communauté d'agglomération Guingamp-Paimpol Agglomération de l'Armor à l'Argoat;PRO;;;A;194.91391;6;0;;0;0;17X100A100A00028
+GRDF;2024;G;200067981;Communauté d'agglomération Guingamp-Paimpol Agglomération de l'Armor à l'Argoat;ENT;01;Culture et production animale, chasse et services annexes;A;69036.92165;12;0;;0;0;17X100A100A00028
+GRDF;2024;G;200042935;Communauté d'agglomération Haut - Bugey Agglomération;PRO;;;A;114.14885;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;243400819;Communauté d'agglomération Hérault-Méditerranée;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;243400819;Communauté d'agglomération Hérault-Méditerranée;ENT;01;Culture et production animale, chasse et services annexes;A;443.97025;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;248500589;Communauté d'agglomération La Roche-sur-Yon Agglomération;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;200067791;Communauté d'agglomération L'agglo Foix-Varilhes;PRO;;;A;62.63855;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;200069391;Communauté d'agglomération Lamballe Terre et Mer;PRO;;;A;56.20072;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;200065928;Communauté d'agglomération Lannion-Trégor Communauté;PRO;;;A;376.46932;6;0;;0;0;17X100A100A00028
+GRDF;2024;G;200065928;Communauté d'agglomération Lannion-Trégor Communauté;ENT;01;Culture et production animale, chasse et services annexes;A;75931.67457;15;0;;0;0;17X100A100A00028
+GRDF;2024;G;200083392;Communauté d'agglomération Laval Agglomération;PRO;;;A;190.03621;1;0;;0;3;17X100A100A00028
+GRDF;2024;G;247100589;Communauté d'agglomération Le Grand Chalon;PRO;;;A;1990.5775;57;0;;0;0;17X100A100A00028
+GRDF;2024;G;247100589;Communauté d'agglomération Le Grand Chalon;ENT;01;Culture et production animale, chasse et services annexes;A;956.83436;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;241100593;Communauté d'agglomération Le Grand Narbonne;PRO;;;A;131.82025;5;0;;0;0;17X100A100A00028
+GRDF;2024;G;241100593;Communauté d'agglomération Le Grand Narbonne;ENT;01;Culture et production animale, chasse et services annexes;A;448.73186;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200040392;Communauté d'agglomération Le Grand Périgueux;PRO;;;A;166.44075;5;0;;0;0;17X100A100A00028
+GRDF;2024;G;200068641;Communauté d'agglomération Le Muretain Agglo;PRO;;;A;73.60691;7;0;;0;0;17X100A100A00028
+GRDF;2024;G;200068641;Communauté d'agglomération Le Muretain Agglo;ENT;01;Culture et production animale, chasse et services annexes;A;797.54836;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200071165;Communauté d'agglomération Les Sables d'Olonne Agglomération;PRO;;;A;59.31906;2;0;;0;5;17X100A100A00028
+GRDF;2024;G;200069532;Communauté d'agglomération Lisieux Normandie;PRO;;;A;93.52515;5;0;;0;0;17X100A100A00028
+GRDF;2024;G;200065886;Communauté d'agglomération Loire Forez Agglomération;PRO;;;A;58.05007;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;200065886;Communauté d'agglomération Loire Forez Agglomération;ENT;;;A;165.49601;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200042174;Communauté d'agglomération Lorient Agglomération;PRO;;;A;62.76516;6;0;;0;0;17X100A100A00028
+GRDF;2024;G;200042174;Communauté d'agglomération Lorient Agglomération;ENT;01;Culture et production animale, chasse et services annexes;A;5421.955;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200040442;Communauté d'agglomération Luberon Monts de Vaucluse;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;200040442;Communauté d'agglomération Luberon Monts de Vaucluse;ENT;01;Culture et production animale, chasse et services annexes;A;7.47854;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;243400520;Communauté d'agglomération Lunel Agglo;PRO;;;A;79.32026;2;0;;0;3;17X100A100A00028
+GRDF;2024;G;200070308;Communauté d'agglomération Mâconnais Beaujolais Agglomération;PRO;;;A;1293.95285;51;0;;0;0;17X100A100A00028
+GRDF;2024;G;200070308;Communauté d'agglomération Mâconnais Beaujolais Agglomération;ENT;01;Culture et production animale, chasse et services annexes;A;155.49388;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;247700594;Communauté d'agglomération Marne et Gondoire;PRO;;;A;95.43513;5;0;;0;0;17X100A100A00028
+GRDF;2024;G;200043396;Communauté d'agglomération Maubeuge Val de Sambre;PRO;;;A;445.74753;23;0;;0;0;17X100A100A00028
+GRDF;2024;G;200060010;Communauté d'agglomération Mauges Communauté;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;200060010;Communauté d'agglomération Mauges Communauté;ENT;01;Culture et production animale, chasse et services annexes;A;638.28421;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;247700057;Communauté d'agglomération Melun Val de Seine;PRO;;;A;61.89003;5;0;;0;0;17X100A100A00028
+GRDF;2024;G;247700057;Communauté d'agglomération Melun Val de Seine;ENT;01;Culture et production animale, chasse et services annexes;A;40.31976;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;244500203;Communauté d'agglomération Montargoise et Rives du Loing (AME);PRO;;;A;317.28624;8;0;;0;0;17X100A100A00028
+GRDF;2024;G;244500203;Communauté d'agglomération Montargoise et Rives du Loing (AME);ENT;01;Culture et production animale, chasse et services annexes;A;201.19883;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200040459;Communauté d'agglomération Montélimar Agglomération;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200071082;Communauté d'agglomération Montluçon Communauté;PRO;;;A;114.58968;8;0;;0;0;17X100A100A00028
+GRDF;2024;G;200069425;Communauté d'agglomération Mont-Saint-Michel-Normandie;PRO;;;A;220.00785;11;0;;0;0;17X100A100A00028
+GRDF;2024;G;200069425;Communauté d'agglomération Mont-Saint-Michel-Normandie;ENT;;;A;72351.228;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;242900835;Communauté d'agglomération Morlaix Communauté;PRO;;;A;57.46186;2;0;;0;2;17X100A100A00028
+GRDF;2024;G;242900835;Communauté d'agglomération Morlaix Communauté;ENT;01;Culture et production animale, chasse et services annexes;A;16149.101;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;242900835;Communauté d'agglomération Morlaix Communauté;ENT;;;A;59280.87367;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;200071140;Communauté d'agglomération Moulins Communauté;PRO;;;A;431.9497;8;0;;0;0;17X100A100A00028
+GRDF;2024;G;200071140;Communauté d'agglomération Moulins Communauté;ENT;01;Culture et production animale, chasse et services annexes;A;1468.542;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;200066009;Communauté d'agglomération Mulhouse Alsace Agglomération;PRO;;;A;1463.18038;33;0;;0;0;17X100A100A00028
+GRDF;2024;G;200066009;Communauté d'agglomération Mulhouse Alsace Agglomération;ENT;01;Culture et production animale, chasse et services annexes;A;4049.40393;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;200057958;Communauté d'agglomération Paris - Vallée de la Marne;PRO;;;A;54.91803;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;200067254;Communauté d'agglomération Pau Béarn Pyrénées;PRO;;;A;582.28215;30;0;;0;0;17X100A100A00028
+GRDF;2024;G;200067254;Communauté d'agglomération Pau Béarn Pyrénées;ENT;01;Culture et production animale, chasse et services annexes;A;142.4278;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200065647;Communauté d'agglomération Pays de Montbéliard Agglomération;PRO;;;A;390.13172;3;0;;0;3;17X100A100A00028
+GRDF;2024;G;200065647;Communauté d'agglomération Pays de Montbéliard Agglomération;ENT;01;Culture et production animale, chasse et services annexes;A;907.01533;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200056380;Communauté d'agglomération Plaine Vallée;PRO;;;A;177.05146;10;0;;0;0;17X100A100A00028
+GRDF;2024;G;200067346;Communauté d'agglomération Pornic Agglo Pays de Retz;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;243800604;Communauté d'agglomération Porte de l'Isère (CAPI);PRO;;;A;secret;secret;;;;3;17X100A100A00028
+GRDF;2024;G;245701362;Communauté d'agglomération Portes de France-Thionville;PRO;;;A;354.90048;13;0;;0;0;17X100A100A00028
+GRDF;2024;G;200071413;Communauté d'agglomération Privas Centre Ardèche;PRO;;;A;276.80927;3;0;;0;2;17X100A100A00028
+GRDF;2024;G;200067437;Communauté d'agglomération Provence-Alpes-Agglomération;PRO;;;A;65.73738;1;0;;0;1;17X100A100A00028
+GRDF;2024;G;200068120;Communauté d'agglomération Quimper Bretagne Occidentale;PRO;;;A;477.47011;9;0;;0;0;17X100A100A00028
+GRDF;2024;G;242900694;Communauté d'agglomération Quimperlé Communauté;PRO;;;A;53.35173;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;200073344;Communauté d'agglomération Rambouillet Territoires;PRO;;;A;120.19149;5;0;;0;0;17X100A100A00028
+GRDF;2024;G;243500741;Communauté d'agglomération Redon Agglomération;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;200070753;Communauté d'agglomération Riom Limagne et Volcans;PRO;;;A;968.6155;18;0;;0;0;17X100A100A00028
+GRDF;2024;G;200035731;Communauté d'agglomération Roannais Agglomération;PRO;;;A;155.5458;12;0;;0;0;17X100A100A00028
+GRDF;2024;G;200041762;Communauté d'agglomération Rochefort Océan;PRO;;;A;secret;secret;;;;3;17X100A100A00028
+GRDF;2024;G;200041762;Communauté d'agglomération Rochefort Océan;ENT;01;Culture et production animale, chasse et services annexes;A;547.7173;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;241200187;Communauté d'agglomération Rodez Agglomération;PRO;;;A;94.19722;9;0;;0;0;17X100A100A00028
+GRDF;2024;G;241200187;Communauté d'agglomération Rodez Agglomération;ENT;01;Culture et production animale, chasse et services annexes;A;2.7053;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200055655;Communauté d'agglomération Roissy Pays de France;PRO;;;A;711.12298;15;0;;0;0;17X100A100A00028
+GRDF;2024;G;241700640;Communauté d'agglomération Royan Atlantique;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;241700640;Communauté d'agglomération Royan Atlantique;ENT;01;Culture et production animale, chasse et services annexes;A;7988.228;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200058519;Communauté d'agglomération Saint Germain Boucles de Seine;PRO;;;A;723.40215;17;0;;0;0;17X100A100A00028
+GRDF;2024;G;200058519;Communauté d'agglomération Saint Germain Boucles de Seine;ENT;01;Culture et production animale, chasse et services annexes;A;140.35551;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200067502;Communauté d'agglomération Saint-Avold Synergie;PRO;;;A;62.06532;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;200069409;Communauté d'agglomération Saint-Brieuc Armor Agglomération;PRO;;;A;333.57589;12;0;;0;0;17X100A100A00028
+GRDF;2024;G;200069409;Communauté d'agglomération Saint-Brieuc Armor Agglomération;ENT;01;Culture et production animale, chasse et services annexes;A;430.03796;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200066389;Communauté d'agglomération Saint-Lô Agglo;PRO;;;A;63.59652;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;200066058;Communauté d'agglomération Saint-Louis Agglomération;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200070746;Communauté d'agglomération Sarreguemines Confluences;PRO;;;A;388.65149;12;0;;0;0;17X100A100A00028
+GRDF;2024;G;200071876;Communauté d'agglomération Saumur Val de Loire;PRO;;;A;511.16549;19;0;;0;0;17X100A100A00028
+GRDF;2024;G;200071876;Communauté d'agglomération Saumur Val de Loire;ENT;01;Culture et production animale, chasse et services annexes;A;1856.95764;5;0;;0;0;17X100A100A00028
+GRDF;2024;G;200071876;Communauté d'agglomération Saumur Val de Loire;ENT;;;A;5707.572;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200072312;Communauté d'agglomération Seine Normandie Agglomération;PRO;;;A;153.00319;8;0;;0;0;17X100A100A00028
+GRDF;2024;G;200089456;Communauté d'agglomération Seine-Eure;PRO;;;A;192.18813;14;0;;0;0;17X100A100A00028
+GRDF;2024;G;200089456;Communauté d'agglomération Seine-Eure;ENT;01;Culture et production animale, chasse et services annexes;A;1412.90847;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;200066355;Communauté d'agglomération Sète Agglopôle Méditerranée;PRO;;;A;77.24184;7;0;;0;0;17X100A100A00028
+GRDF;2024;G;200066355;Communauté d'agglomération Sète Agglopôle Méditerranée;ENT;03;Pêche et aquaculture;A;130.9991;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;248300394;Communauté d'agglomération Sud Sainte Baume;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;200069300;Communauté d'agglomération Tarbes-Lourdes-Pyrénées;PRO;;;A;581.40453;42;0;;0;0;17X100A100A00028
+GRDF;2024;G;200069300;Communauté d'agglomération Tarbes-Lourdes-Pyrénées;ENT;01;Culture et production animale, chasse et services annexes;A;1966.93415;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;200035087;Communauté d'agglomération Terre de Provence;PRO;;;A;301.33568;9;0;;0;0;17X100A100A00028
+GRDF;2024;G;200035087;Communauté d'agglomération Terre de Provence;ENT;01;Culture et production animale, chasse et services annexes;A;19695.96056;25;0;;0;0;17X100A100A00028
+GRDF;2024;G;200035087;Communauté d'agglomération Terre de Provence;ENT;;;A;371.18231;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;200070233;Communauté d'agglomération Terres de Montaigu;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200070233;Communauté d'agglomération Terres de Montaigu;ENT;01;Culture et production animale, chasse et services annexes;A;306.74696;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200072072;Communauté d'agglomération Territoires Vendômois;PRO;;;A;76.78131;5;0;;0;0;17X100A100A00028
+GRDF;2024;G;200072072;Communauté d'agglomération Territoires Vendômois;ENT;01;Culture et production animale, chasse et services annexes;A;3315.37288;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;200067551;Communauté d'agglomération Thonon Agglomération;PRO;;;A;262.06938;14;0;;0;0;17X100A100A00028
+GRDF;2024;G;200069250;Communauté d'agglomération Troyes Champagne Métropole;PRO;;;A;408.40758;16;0;;0;0;17X100A100A00028
+GRDF;2024;G;241927201;Communauté d'agglomération Tulle Agglo;PRO;;;A;110.78384;3;0;;0;4;17X100A100A00028
+GRDF;2024;G;241927201;Communauté d'agglomération Tulle Agglo;ENT;01;Culture et production animale, chasse et services annexes;A;214.69894;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200030674;Communauté d'agglomération Val de Garonne Agglomération;PRO;;;A;722.82072;19;0;;0;0;17X100A100A00028
+GRDF;2024;G;200030674;Communauté d'agglomération Val de Garonne Agglomération;ENT;01;Culture et production animale, chasse et services annexes;A;32839.83127;14;0;;0;0;17X100A100A00028
+GRDF;2024;G;247700339;Communauté d'agglomération Val d'Europe Agglomération;PRO;;;A;100.21036;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;200058477;Communauté d'agglomération Val d'Yerres Val de Seine;PRO;;;A;163.1631;1;0;;0;1;17X100A100A00028
+GRDF;2024;G;200058485;Communauté d'agglomération Val Parisis;PRO;;;A;73.00885;2;0;;0;4;17X100A100A00028
+GRDF;2024;G;200058485;Communauté d'agglomération Val Parisis;ENT;01;Culture et production animale, chasse et services annexes;A;1259.0878;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200068781;Communauté d'agglomération Valence Romans Agglo;PRO;;;A;513.15415;21;0;;0;0;17X100A100A00028
+GRDF;2024;G;200068781;Communauté d'agglomération Valence Romans Agglo;ENT;01;Culture et production animale, chasse et services annexes;A;5778.31571;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;245901160;Communauté d'agglomération Valenciennes Métropole;PRO;;;A;731.07191;33;0;;0;0;17X100A100A00028
+GRDF;2024;G;245901160;Communauté d'agglomération Valenciennes Métropole;ENT;01;Culture et production animale, chasse et services annexes;A;517.20983;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;248400053;Communauté d'agglomération Ventoux-Comtat-Venaissin (COVE);PRO;;;A;secret;secret;;;;3;17X100A100A00028
+GRDF;2024;G;248400053;Communauté d'agglomération Ventoux-Comtat-Venaissin (COVE);ENT;01;Culture et production animale, chasse et services annexes;A;2416.69837;6;0;;0;0;17X100A100A00028
+GRDF;2024;G;248400053;Communauté d'agglomération Ventoux-Comtat-Venaissin (COVE);ENT;;;A;3857.1433;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;247800584;Communauté d'agglomération Versailles Grand Parc (CAVGP);PRO;;;A;352.42963;12;0;;0;0;17X100A100A00028
+GRDF;2024;G;247800584;Communauté d'agglomération Versailles Grand Parc (CAVGP);ENT;01;Culture et production animale, chasse et services annexes;A;341.60473;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200071363;Communauté d'agglomération Vichy Communauté;PRO;;;A;479.74732;11;0;;0;0;17X100A100A00028
+GRDF;2024;G;200071363;Communauté d'agglomération Vichy Communauté;ENT;01;Culture et production animale, chasse et services annexes;A;105.51395;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200077014;Communauté d'agglomération Vienne Condrieu;PRO;;;A;97.82841;8;0;;0;0;17X100A100A00028
+GRDF;2024;G;200077014;Communauté d'agglomération Vienne Condrieu;ENT;01;Culture et production animale, chasse et services annexes;A;23.37741;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200040590;Communauté d'agglomération Villefranche Beaujolais Saône;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;200040590;Communauté d'agglomération Villefranche Beaujolais Saône;ENT;01;Culture et production animale, chasse et services annexes;A;384.20008;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200039022;Communauté d'agglomération Vitré Communauté;PRO;;;A;460.20093;1;0;;0;2;17X100A100A00028
+GRDF;2024;G;200039022;Communauté d'agglomération Vitré Communauté;ENT;01;Culture et production animale, chasse et services annexes;A;5760.24846;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;200072106;Communauté de communes Adour Madiran;PRO;;;A;337.11638;2;0;;0;3;17X100A100A00028
+GRDF;2024;G;200072106;Communauté de communes Adour Madiran;ENT;01;Culture et production animale, chasse et services annexes;A;3255.91543;6;0;;0;0;17X100A100A00028
+GRDF;2024;G;200068948;Communauté de communes Albret Communauté;PRO;;;A;secret;secret;;;;3;17X100A100A00028
+GRDF;2024;G;200068948;Communauté de communes Albret Communauté;ENT;01;Culture et production animale, chasse et services annexes;A;3005.76371;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;200068948;Communauté de communes Albret Communauté;ENT;;;A;1738.55615;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200066025;Communauté de communes Alsace Rhin Brisach;PRO;;;A;396.24381;3;0;;0;3;17X100A100A00028
+GRDF;2024;G;200066025;Communauté de communes Alsace Rhin Brisach;ENT;01;Culture et production animale, chasse et services annexes;A;6946.405;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200070761;Communauté de communes Ambert Livradois Forez;PRO;;;A;83.67421;3;0;;0;3;17X100A100A00028
+GRDF;2024;G;200070761;Communauté de communes Ambert Livradois Forez;ENT;01;Culture et production animale, chasse et services annexes;A;17.82297;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200068443;Communauté de communes Andaine - Passais;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200068955;Communauté de communes Anjou Loir et Sarthe;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;200068955;Communauté de communes Anjou Loir et Sarthe;ENT;01;Culture et production animale, chasse et services annexes;A;1172.12432;6;0;;0;0;17X100A100A00028
+GRDF;2024;G;200068955;Communauté de communes Anjou Loir et Sarthe;ENT;;;A;662.71153;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200071595;Communauté de communes Arbois,Poligny,Salins,Cœur du Jura;PRO;;;A;97.66714;5;0;;0;0;17X100A100A00028
+GRDF;2024;G;200071595;Communauté de communes Arbois,Poligny,Salins,Cœur du Jura;ENT;01;Culture et production animale, chasse et services annexes;A;706.84272;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200027027;Communauté de communes Arc Sud Bretagne;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200071405;Communauté de communes Ardèche Rhône Coiron;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;240800821;Communauté de communes Ardenne,Rives de Meuse;PRO;;;A;111.15152;6;0;;0;0;17X100A100A00028
+GRDF;2024;G;200041622;Communauté de communes Ardennes Thiérache;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200066223;Communauté de communes Arize Lèze;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;247400583;Communauté de communes Arve et Salève;PRO;;;A;65.13499;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;247400583;Communauté de communes Arve et Salève;ENT;01;Culture et production animale, chasse et services annexes;A;434.57805;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200041499;Communauté de communes Aunis Atlantique;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200041614;Communauté de communes Aunis Sud;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200043123;Communauté de communes Auray Quiberon Terre Atlantique;PRO;;;A;199.6526;15;0;;0;0;17X100A100A00028
+GRDF;2024;G;243700820;Communauté de communes Autour de Chenonceaux Bléré-Val de Cher;PRO;;;A;86.16228;6;0;;0;0;17X100A100A00028
+GRDF;2024;G;243700820;Communauté de communes Autour de Chenonceaux Bléré-Val de Cher;ENT;01;Culture et production animale, chasse et services annexes;A;4486.48569;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200070902;Communauté de communes Auxonne Pontailler Val de Saône;PRO;;;A;93.7132;1;0;;0;2;17X100A100A00028
+GRDF;2024;G;200070902;Communauté de communes Auxonne Pontailler Val de Saône;ENT;01;Culture et production animale, chasse et services annexes;A;415.16333;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200070969;Communauté de communes Avre Luce Noye;PRO;;;A;52.24351;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200040251;Communauté de communes Bassée-Montois;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200040251;Communauté de communes Bassée-Montois;ENT;01;Culture et production animale, chasse et services annexes;A;368.60716;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200034726;Communauté de communes Bastides de Lomagne;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200096675;Communauté de communes Baud Communauté;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;244900882;Communauté de communes Baugeois Vallée;PRO;;;A;55.08134;2;0;;0;3;17X100A100A00028
+GRDF;2024;G;244900882;Communauté de communes Baugeois Vallée;ENT;01;Culture et production animale, chasse et services annexes;A;15102.67397;12;0;;0;0;17X100A100A00028
+GRDF;2024;G;243000585;Communauté de communes Beaucaire Terre d'Argence;PRO;;;A;secret;secret;;;;3;17X100A100A00028
+GRDF;2024;G;200040574;Communauté de communes Beaujolais Pierres Dorées;PRO;;;A;298.6988;16;0;;0;0;17X100A100A00028
+GRDF;2024;G;200040574;Communauté de communes Beaujolais Pierres Dorées;ENT;01;Culture et production animale, chasse et services annexes;A;2160.92159;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200040574;Communauté de communes Beaujolais Pierres Dorées;ENT;03;Pêche et aquaculture;A;327.79028;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200068278;Communauté de communes Berry Loire Puisaye;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;200068278;Communauté de communes Berry Loire Puisaye;ENT;01;Culture et production animale, chasse et services annexes;A;11868.34;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200059392;Communauté de communes Bièvre Isère;PRO;;;A;100.24318;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;200059392;Communauté de communes Bièvre Isère;ENT;01;Culture et production animale, chasse et services annexes;A;1056.34462;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200067627;Communauté de communes Billom Communauté;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;200067486;Communauté de communes Bouzonvillois-Trois Frontières;PRO;;;A;52.98624;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;243600319;Communauté de communes Brenne - Val de Creuse;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200071371;Communauté de communes Bresse et Saône;PRO;;;A;305.14058;9;0;;0;2;17X100A100A00028
+GRDF;2024;G;200069615;Communauté de communes Bresse Haute Seille;PRO;;;A;387.34647;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200071579;Communauté de communes Bresse Louhannaise Intercom';PRO;;;A;229.63426;7;0;;0;0;17X100A100A00028
+GRDF;2024;G;200071579;Communauté de communes Bresse Louhannaise Intercom';ENT;01;Culture et production animale, chasse et services annexes;A;52.31295;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;247100647;Communauté de communes Bresse Nord Intercom';PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200042414;Communauté de communes Bresse Revermont 71;PRO;;;A;85.60581;2;0;;0;1;17X100A100A00028
+GRDF;2024;G;200070662;Communauté de communes Bretagne porte de Loire Communauté;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;200070779;Communauté de communes Brie des Rivières et Châteaux;PRO;;;A;125.60295;5;0;;0;0;17X100A100A00028
+GRDF;2024;G;200070779;Communauté de communes Brie des Rivières et Châteaux;ENT;01;Culture et production animale, chasse et services annexes;A;241.87339;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;247700701;Communauté de communes Brie Nangissienne;PRO;;;A;79.30682;1;0;;0;1;17X100A100A00028
+GRDF;2024;G;247700701;Communauté de communes Brie Nangissienne;ENT;01;Culture et production animale, chasse et services annexes;A;1086.6349;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200070548;Communauté de communes Brionnais Sud Bourgogne;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;243500618;Communauté de communes Brocéliande Communauté;ENT;01;Culture et production animale, chasse et services annexes;A;184.85306;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200042000;Communauté de communes Bruyères-Vallons des Vosges;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;200040350;Communauté de communes Bugey Sud;PRO;;;A;211.76011;2;0;;0;1;17X100A100A00028
+GRDF;2024;G;247600505;Communauté de communes Campagne-de-Caux;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;200067676;Communauté de communes Canaux et Forêts en Gâtinais;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200067676;Communauté de communes Canaux et Forêts en Gâtinais;ENT;01;Culture et production animale, chasse et services annexes;A;564.48777;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200073013;Communauté de communes Carnelle Pays-de-France;PRO;;;A;111.89292;6;0;;0;0;17X100A100A00028
+GRDF;2024;G;200073013;Communauté de communes Carnelle Pays-de-France;ENT;01;Culture et production animale, chasse et services annexes;A;85.45677;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200035855;Communauté de communes Castelnaudary Lauragais Audois;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200035855;Communauté de communes Castelnaudary Lauragais Audois;ENT;01;Culture et production animale, chasse et services annexes;A;17253.67642;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;243301454;Communauté de communes Castillon/Pujols;PRO;;;A;239.18874;12;0;;0;0;17X100A100A00028
+GRDF;2024;G;200096683;Communauté de communes Centre Morbihan Communauté;PRO;;;A;141.26487;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200067080;Communauté de communes Chablis Villages et Terroirs;PRO;;;A;408.54059;14;0;;0;2;17X100A100A00028
+GRDF;2024;G;243600202;Communauté de communes Chabris - Pays de Bazelle;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200069649;Communauté de communes Chalosse Tursan;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200069623;Communauté de communes Champagnole Nozeroy Jura;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200035202;Communauté de communes Charlieu-Belmont;PRO;;;A;118.42402;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;200035202;Communauté de communes Charlieu-Belmont;ENT;01;Culture et production animale, chasse et services annexes;A;644.31774;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200072726;Communauté de communes Châteaubriant-Derval;PRO;;;A;60.33794;1;0;;0;1;17X100A100A00028
+GRDF;2024;G;200071215;Communauté de communes Chavanon Combrailles et Volcans;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;200043081;Communauté de communes Chinon,Vienne et Loire;PRO;;;A;250.32397;1;0;;0;1;17X100A100A00028
+GRDF;2024;G;200043081;Communauté de communes Chinon,Vienne et Loire;ENT;01;Culture et production animale, chasse et services annexes;A;135620.32213;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;200033116;Communauté de communes Cluses-Arve et Montagnes;PRO;;;A;78.91127;1;0;;0;1;17X100A100A00028
+GRDF;2024;G;200033116;Communauté de communes Cluses-Arve et Montagnes;ENT;01;Culture et production animale, chasse et services annexes;A;138.80367;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200070290;Communauté de communes Coeur du Pays Haut;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;200072098;Communauté de communes Combrailles Sioule et Morge;PRO;;;A;79.77936;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;200072098;Communauté de communes Combrailles Sioule et Morge;ENT;01;Culture et production animale, chasse et services annexes;A;54.57802;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200071512;Communauté de communes Commentry Montmarault Néris Communauté;PRO;;;A;62.63819;5;0;;0;0;17X100A100A00028
+GRDF;2024;G;200071512;Communauté de communes Commentry Montmarault Néris Communauté;ENT;01;Culture et production animale, chasse et services annexes;A;456.2153;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;200070068;Communauté de communes Communauté Bray-Eawy;PRO;;;A;301.79125;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;242900793;Communauté de communes Communauté Lesneven Côte des Légendes;ENT;01;Culture et production animale, chasse et services annexes;A;580.721;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;242900793;Communauté de communes Communauté Lesneven Côte des Légendes;ENT;;;A;8718.425;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;241200641;Communauté de communes Conques-Marcillac;PRO;;;A;64.60069;1;0;;0;1;17X100A100A00028
+GRDF;2024;G;200069581;Communauté de communes Convergence Garonne;PRO;;;A;1085.24886;35;0;;0;0;17X100A100A00028
+GRDF;2024;G;200069581;Communauté de communes Convergence Garonne;ENT;01;Culture et production animale, chasse et services annexes;A;92.92006;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;243500725;Communauté de communes Côte d'Émeraude;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;244000857;Communauté de communes Côte Landes Nature;PRO;;;A;144.99679;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200067031;Communauté de communes Côte Ouest Centre Manche;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200067379;Communauté de communes Côtes de Champagne et Val de Saulx;PRO;;;A;59.26068;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;200067940;Communauté de communes Couserans-Pyrénées;PRO;;;A;secret;secret;;;;3;17X100A100A00028
+GRDF;2024;G;200067023;Communauté de communes Coutances Mer et Bocage;PRO;;;A;125.28406;8;0;;0;0;17X100A100A00028
+GRDF;2024;G;200044014;Communauté de communes Creuse Grand Sud;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;241400415;Communauté de communes Cœur Côte Fleurie;PRO;;;A;710.31281;13;0;;0;0;17X100A100A00028
+GRDF;2024;G;243200425;Communauté de communes Cœur d'Astarac en Gascogne;PRO;;;A;77.53128;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;200070571;Communauté de communes Cœur de Berry;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200036135;Communauté de communes Cœur de France;PRO;;;A;85.22714;1;0;;0;1;17X100A100A00028
+GRDF;2024;G;200068815;Communauté de communes Cœur de Garonne;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200043263;Communauté de communes Cœur de l'Avesnois;PRO;;;A;348.74183;14;0;;0;0;17X100A100A00028
+GRDF;2024;G;200067916;Communauté de communes Cœur de Loire;PRO;;;A;664.78085;15;0;;0;0;17X100A100A00028
+GRDF;2024;G;200067916;Communauté de communes Cœur de Loire;ENT;01;Culture et production animale, chasse et services annexes;A;1013.76644;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;200070464;Communauté de communes Cœur de Maurienne Arvan;PRO;;;A;149.03101;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;241400860;Communauté de communes Cœur de Nacre;PRO;;;A;108.92336;6;0;;0;0;17X100A100A00028
+GRDF;2024;G;200041010;Communauté de communes Cœur de Savoie;PRO;;;A;253.74442;4;0;;0;1;17X100A100A00028
+GRDF;2024;G;200000800;Communauté de communes Cœur de Sologne;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;245901152;Communauté de communes Cœur d'Ostrevent;PRO;;;A;264.65291;19;0;;0;0;17X100A100A00028
+GRDF;2024;G;245901152;Communauté de communes Cœur d'Ostrevent;ENT;01;Culture et production animale, chasse et services annexes;A;999.98905;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;247800618;Communauté de communes Cœur d'Yvelines;PRO;;;A;152.87362;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;247800618;Communauté de communes Cœur d'Yvelines;ENT;01;Culture et production animale, chasse et services annexes;A;45.32838;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200072643;Communauté de communes Cœur et Coteaux du Comminges;PRO;;;A;secret;secret;;;;3;17X100A100A00028
+GRDF;2024;G;200072643;Communauté de communes Cœur et Coteaux du Comminges;ENT;01;Culture et production animale, chasse et services annexes;A;214.60285;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200071777;Communauté de communes d'Arcis,Mailly,Ramerupt;PRO;;;A;89.51197;5;0;;0;0;17X100A100A00028
+GRDF;2024;G;200071777;Communauté de communes d'Arcis,Mailly,Ramerupt;ENT;;;A;171.877;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;241400555;Communauté de communes de Bayeux Intercom;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;243801073;Communauté de communes de Bièvre Est;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200023794;Communauté de communes de Blaye;PRO;;;A;236.63619;9;0;;0;0;17X100A100A00028
+GRDF;2024;G;245700695;Communauté de communes de Cattenom et Environs;PRO;;;A;241.05989;3;0;;0;3;17X100A100A00028
+GRDF;2024;G;200072049;Communauté de communes de Charente Limousine;PRO;;;A;97.27456;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;200066157;Communauté de communes de Commercy - Void - Vaucouleurs;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200066173;Communauté de communes de Damvillers Spincourt;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200018083;Communauté de communes de Desvres-Samer;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;200065894;Communauté de communes de Forez-Est;PRO;;;A;58.20711;2;0;;0;4;17X100A100A00028
+GRDF;2024;G;245700398;Communauté de communes de Freyming-Merlebach;PRO;;;A;74.29448;1;0;;0;2;17X100A100A00028
+GRDF;2024;G;200070894;Communauté de communes de Gevrey-Chambertin et de Nuits-Saint-Georges;PRO;;;A;4900.8699;173;0;;0;1;17X100A100A00028
+GRDF;2024;G;200042604;Communauté de communes de Granville,Terre et Mer;PRO;;;A;245.25567;9;0;;0;0;17X100A100A00028
+GRDF;2024;G;200067783;Communauté de communes de Hanau-La Petite Pierre;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200042729;Communauté de communes de la Baie du Cotentin;PRO;;;A;87.3761;1;0;;0;1;17X100A100A00028
+GRDF;2024;G;200035764;Communauté de communes de la Beauce Loirétaine;PRO;;;A;225.05692;7;0;;0;0;17X100A100A00028
+GRDF;2024;G;245100888;Communauté de communes de la Brie Champenoise;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200072718;Communauté de communes de la Champagne Conlinoise et du Pays de Sillé;PRO;;;A;282.49417;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;243600350;Communauté de communes de la Châtre et Sainte-Sévère;PRO;;;A;164.25991;1;0;;0;1;17X100A100A00028
+GRDF;2024;G;200067668;Communauté de communes de la Cléry,du Betz et de l'Ouanne;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200069839;Communauté de communes de la Côte d'Albâtre;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;240100610;Communauté de communes de la Côtière à Montluel;PRO;;;A;111.55133;4;0;;0;2;17X100A100A00028
+GRDF;2024;G;200069193;Communauté de communes de la Dombes;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;244500484;Communauté de communes de la Forêt;PRO;;;A;secret;secret;;;;3;17X100A100A00028
+GRDF;2024;G;200023620;Communauté de communes de la Gascogne Toulousaine;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;200023620;Communauté de communes de la Gascogne Toulousaine;ENT;01;Culture et production animale, chasse et services annexes;A;569.19535;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;245100615;Communauté de communes de la Grande Vallée de la Marne;PRO;;;A;2754.65945;94;0;;0;0;17X100A100A00028
+GRDF;2024;G;200041721;Communauté de communes de la Haute Comté;PRO;;;A;61.38071;1;0;;0;3;17X100A100A00028
+GRDF;2024;G;200041721;Communauté de communes de la Haute Comté;ENT;01;Culture et production animale, chasse et services annexes;A;531.439;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200041523;Communauté de communes de la Haute Saintonge;PRO;;;A;1388.76437;6;0;;0;1;17X100A100A00028
+GRDF;2024;G;200041523;Communauté de communes de la Haute Saintonge;ENT;01;Culture et production animale, chasse et services annexes;A;7342.23851;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200033173;Communauté de communes de la Haute Vallée de Chevreuse;PRO;;;A;93.25572;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;246500482;Communauté de communes de la Haute-Bigorre;PRO;;;A;secret;secret;;;;4;17X100A100A00028
+GRDF;2024;G;243200391;Communauté de communes de la Lomagne Gersoise;ENT;01;Culture et production animale, chasse et services annexes;A;178.177;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;246000848;Communauté de communes de la Picardie Verte;ENT;01;Culture et production animale, chasse et services annexes;A;427.83093;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;240100883;Communauté de communes de la Plaine de l'Ain;PRO;;;A;360.81599;6;0;;0;0;17X100A100A00028
+GRDF;2024;G;240100883;Communauté de communes de la Plaine de l'Ain;ENT;01;Culture et production animale, chasse et services annexes;A;652.919;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;240100883;Communauté de communes de la Plaine de l'Ain;ENT;;;A;108.953;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;246000897;Communauté de communes de la Plaine d'Estrées;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;200000925;Communauté de communes de la Plaine Dijonnaise;PRO;;;A;173.37576;7;0;;0;0;17X100A100A00028
+GRDF;2024;G;244500542;Communauté de communes de la Plaine du Nord Loiret;PRO;;;A;724.89341;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;200041283;Communauté de communes de la Plaine du Rhin;PRO;;;A;341.46701;5;0;;0;0;17X100A100A00028
+GRDF;2024;G;243901089;Communauté de communes de la Plaine Jurassienne;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;243901089;Communauté de communes de la Plaine Jurassienne;ENT;01;Culture et production animale, chasse et services annexes;A;180.80922;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200068377;Communauté de communes de la Porte des Vosges Méridionales;PRO;;;A;169.8229;1;0;;0;3;17X100A100A00028
+GRDF;2024;G;246200844;Communauté de communes de la Région d'Audruicq;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;241000405;Communauté de communes de la Région de Bar-sur-Aube;PRO;;;A;167.89463;16;0;;0;0;17X100A100A00028
+GRDF;2024;G;200005957;Communauté de communes de la Région de Rambervillers;PRO;;;A;133.37805;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;244100806;Communauté de communes de la Sologne des Rivières;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;243200417;Communauté de communes de la Tenarèze;PRO;;;A;secret;secret;;;;3;17X100A100A00028
+GRDF;2024;G;246200380;Communauté de communes de la Terre des Deux Caps;PRO;;;A;157.98041;2;0;;0;3;17X100A100A00028
+GRDF;2024;G;240200444;Communauté de communes de la Thiérache du Centre;PRO;;;A;112.46529;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;200023372;Communauté de communes de la Vallée de Chamonix-Mont-Blanc;PRO;;;A;383.64916;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;246800551;Communauté de communes de la Vallée de Kaysersberg;PRO;;;A;1100.16511;44;0;;0;1;17X100A100A00028
+GRDF;2024;G;246800676;Communauté de communes de la Vallée de la Doller et du Soultzbach;PRO;;;A;203.46199;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;246800676;Communauté de communes de la Vallée de la Doller et du Soultzbach;ENT;01;Culture et production animale, chasse et services annexes;A;535.794;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200041168;Communauté de communes de la Vallée de l'Homme;PRO;;;A;171.30264;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200041168;Communauté de communes de la Vallée de l'Homme;ENT;01;Culture et production animale, chasse et services annexes;A;157.33604;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;249500455;Communauté de communes de la Vallée de l'Oise et des Trois Forêts;PRO;;;A;64.77016;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;246800585;Communauté de communes de la Vallée de Munster;PRO;;;A;157.91777;3;0;;0;1;17X100A100A00028
+GRDF;2024;G;246800205;Communauté de communes de la Vallée de Saint-Amarin;PRO;;;A;67.5397;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;246700777;Communauté de communes de la Vallée de Villé;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;246400337;Communauté de communes de la Vallée d'Ossau;PRO;;;A;51.90292;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;248300410;Communauté de communes de la Vallée du Gapeau;PRO;;;A;86.26883;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;248300410;Communauté de communes de la Vallée du Gapeau;ENT;01;Culture et production animale, chasse et services annexes;A;20.92116;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;246900757;Communauté de communes de la Vallée du Garon (CCVG);PRO;;;A;63.85222;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;246900757;Communauté de communes de la Vallée du Garon (CCVG);ENT;01;Culture et production animale, chasse et services annexes;A;327.80483;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200070555;Communauté de communes de la Veyle;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200039204;Communauté de communes de Lacq-Orthez;PRO;;;A;391.97945;22;0;;0;0;17X100A100A00028
+GRDF;2024;G;200039204;Communauté de communes de Lacq-Orthez;ENT;01;Culture et production animale, chasse et services annexes;A;4271.75088;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;248900383;Communauté de communes de l'Agglomération Migennoise;PRO;;;A;160.77853;2;0;;0;2;17X100A100A00028
+GRDF;2024;G;248900524;Communauté de communes de l'Aillantais en Bourgogne;PRO;;;A;73.34492;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;246000764;Communauté de communes de l'Aire Cantilienne;PRO;;;A;207.60277;5;0;;0;1;17X100A100A00028
+GRDF;2024;G;200067841;Communauté de communes de l'Alsace Bossue;PRO;;;A;80.53936;1;0;;0;1;17X100A100A00028
+GRDF;2024;G;245701354;Communauté de communes de l'Arc Mosellan;PRO;;;A;63.57197;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200070985;Communauté de communes de l'Est de la Somme;PRO;;;A;82.20987;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;200070985;Communauté de communes de l'Est de la Somme;ENT;01;Culture et production animale, chasse et services annexes;A;47.21164;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;246900575;Communauté de communes de l'Est Lyonnais (CCEL);PRO;;;A;82.79448;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;246900575;Communauté de communes de l'Est Lyonnais (CCEL);ENT;01;Culture et production animale, chasse et services annexes;A;209.28995;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;243300811;Communauté de communes de l'Estuaire;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;241000488;Communauté de communes de l'Orvin et de l'Ardusson;PRO;;;A;170.47791;4;0;;0;1;17X100A100A00028
+GRDF;2024;G;200068559;Communauté de communes de l'Ouest Vosgien;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;200040178;Communauté de communes de l'Outre-Forêt;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;247100639;Communauté de communes de Marcigny;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;247100639;Communauté de communes de Marcigny;ENT;01;Culture et production animale, chasse et services annexes;A;861.10673;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;241200567;Communauté de communes de Millau Grands Causses;ENT;01;Culture et production animale, chasse et services annexes;A;45.62351;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200068369;Communauté de communes de Mirecourt Dompaire;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200068369;Communauté de communes de Mirecourt Dompaire;ENT;01;Culture et production animale, chasse et services annexes;A;891.71475;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;240100800;Communauté de communes de Miribel et du Plateau;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;200034197;Communauté de communes de Montaigne Montravel et Gurson;PRO;;;A;80.80917;5;0;;0;0;17X100A100A00028
+GRDF;2024;G;200034197;Communauté de communes de Montaigne Montravel et Gurson;ENT;01;Culture et production animale, chasse et services annexes;A;8617.441;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;243301264;Communauté de communes de Montesquieu;PRO;;;A;1707.81679;44;0;;0;2;17X100A100A00028
+GRDF;2024;G;243301264;Communauté de communes de Montesquieu;ENT;01;Culture et production animale, chasse et services annexes;A;571.12086;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;248719361;Communauté de communes de Noblat;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;244400537;Communauté de communes de Nozay;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;244400537;Communauté de communes de Nozay;ENT;02;Sylviculture et exploitation forestière;A;1.22971;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200041333;Communauté de communes de Parthenay-Gâtine;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;243000593;Communauté de communes de Petite Camargue;PRO;;;A;63.5769;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;243000593;Communauté de communes de Petite Camargue;ENT;01;Culture et production animale, chasse et services annexes;A;1676.125;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200065787;Communauté de communes de Pont-Audemer / Val de Risle;PRO;;;A;91.08735;2;0;;0;1;17X100A100A00028
+GRDF;2024;G;200065787;Communauté de communes de Pont-Audemer / Val de Risle;ENT;01;Culture et production animale, chasse et services annexes;A;459.37623;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200067130;Communauté de communes de Puisaye-Forterre;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200038990;Communauté de communes de Saint-Méen Montauban;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;200038990;Communauté de communes de Saint-Méen Montauban;ENT;01;Culture et production animale, chasse et services annexes;A;4675.487;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200070589;Communauté de communes de Seille et Grand Couronné;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;200070589;Communauté de communes de Seille et Grand Couronné;ENT;01;Culture et production animale, chasse et services annexes;A;1421.50572;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;246700967;Communauté de communes de Sélestat;PRO;;;A;535.78252;20;0;;0;0;17X100A100A00028
+GRDF;2024;G;246700967;Communauté de communes de Sélestat;ENT;01;Culture et production animale, chasse et services annexes;A;908.44186;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200066835;Communauté de communes de Sézanne-Sud Ouest Marnais;PRO;;;A;58.89516;4;0;;0;1;17X100A100A00028
+GRDF;2024;G;200036465;Communauté de communes de Thann-Cernay;PRO;;;A;63.36377;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;200066892;Communauté de communes de Vendeuvre-Soulaines;PRO;;;A;secret;secret;;;;3;17X100A100A00028
+GRDF;2024;G;200069433;Communauté de communes de Vezouze en Piémont;PRO;;;A;124.70473;4;0;;0;1;17X100A100A00028
+GRDF;2024;G;200072882;Communauté de communes de Vie et Boulogne;PRO;;;A;165.1143;1;0;;0;2;17X100A100A00028
+GRDF;2024;G;200043354;Communauté de communes de Villedieu Intercom;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200034718;Communauté de communes de Vitry,Champagne et Der;PRO;;;A;89.93008;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200067064;Communauté de communes Decazeville Communauté;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200043602;Communauté de communes des Albères,de la Côte Vermeille et de l'Illibéris;PRO;;;A;secret;secret;;;;4;17X100A100A00028
+GRDF;2024;G;200043602;Communauté de communes des Albères,de la Côte Vermeille et de l'Illibéris;ENT;01;Culture et production animale, chasse et services annexes;A;14057.17829;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;246600449;Communauté de communes des Aspres;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;246600449;Communauté de communes des Aspres;ENT;01;Culture et production animale, chasse et services annexes;A;5007.04909;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200033868;Communauté de communes des Ballons des Hautes-Vosges;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200068229;Communauté de communes des Baronnies en Drôme Provençale;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200034833;Communauté de communes des Bastides Dordogne-Périgord;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200069482;Communauté de communes des Campagnes de l'Artois;PRO;;;A;74.98968;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;200068484;Communauté de communes des Causses à l'Aubrac;PRO;;;A;126.7345;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200033298;Communauté de communes des Coëvrons;PRO;;;A;146.23554;1;0;;0;2;17X100A100A00028
+GRDF;2024;G;200071504;Communauté de communes des Collines du Perche Normand;PRO;;;A;57.36012;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200071504;Communauté de communes des Collines du Perche Normand;ENT;01;Culture et production animale, chasse et services annexes;A;236.6889;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200042372;Communauté de communes des Coteaux Arrats Gimone;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;243100815;Communauté de communes des Coteaux Bellevue;PRO;;;A;200.286;2;0;;0;1;17X100A100A00028
+GRDF;2024;G;200070803;Communauté de communes des Coteaux du Val d'Arros;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200070803;Communauté de communes des Coteaux du Val d'Arros;ENT;01;Culture et production animale, chasse et services annexes;A;968.656;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;244701355;Communauté de communes des Coteaux et Landes de Gascogne;PRO;;;A;105.69433;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;240800862;Communauté de communes des Crêtes Préardennaises;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200072544;Communauté de communes des Deux Morin;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;248200016;Communauté de communes des Deux Rives;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;248200016;Communauté de communes des Deux Rives;ENT;01;Culture et production animale, chasse et services annexes;A;777.727;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;249100157;Communauté de communes des Deux Vallées;PRO;;;A;138.38285;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;249100157;Communauté de communes des Deux Vallées;ENT;01;Culture et production animale, chasse et services annexes;A;1018.20874;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;249100157;Communauté de communes des Deux Vallées;ENT;;;A;570.77647;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;244000873;Communauté de communes des Grands Lacs;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;244000873;Communauté de communes des Grands Lacs;ENT;;;A;0.902;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200040954;Communauté de communes des Hauts de Flandre;PRO;;;A;246.81668;8;0;;0;0;17X100A100A00028
+GRDF;2024;G;200071314;Communauté de communes des Hauts-Tolosans;PRO;;;A;66.45047;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200040137;Communauté de communes des Lacs de Champagne;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200035541;Communauté de communes des Landes d'Armagnac;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200035541;Communauté de communes des Landes d'Armagnac;ENT;01;Culture et production animale, chasse et services annexes;A;241.06654;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;244500427;Communauté de communes des Loges;PRO;;;A;109.71614;1;0;;0;3;17X100A100A00028
+GRDF;2024;G;244500427;Communauté de communes des Loges;ENT;01;Culture et production animale, chasse et services annexes;A;2441.60065;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200067239;Communauté de communes des Luys en Béarn;PRO;;;A;395.14096;7;0;;0;1;17X100A100A00028
+GRDF;2024;G;200066587;Communauté de communes des Monts du Lyonnais;PRO;;;A;87.87859;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;244200622;Communauté de communes des Monts du Pilat;PRO;;;A;57.89599;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200068468;Communauté de communes des Pays de L'Aigle;PRO;;;A;70.06833;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200068468;Communauté de communes des Pays de L'Aigle;ENT;;;A;1424.2046;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;245400189;Communauté de communes des Pays du Sel et du Vermois;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;245400189;Communauté de communes des Pays du Sel et du Vermois;ENT;01;Culture et production animale, chasse et services annexes;A;30.03847;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200066850;Communauté de communes des Paysages de la Champagne;PRO;;;A;478.51937;25;0;;0;0;17X100A100A00028
+GRDF;2024;G;200066231;Communauté de communes des Portes d'Ariège Pyrénées;PRO;;;A;secret;secret;;;;4;17X100A100A00028
+GRDF;2024;G;200066231;Communauté de communes des Portes d'Ariège Pyrénées;ENT;01;Culture et production animale, chasse et services annexes;A;266.269;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;243301439;Communauté de communes des Portes de l'Entre-Deux-Mers;PRO;;;A;339.9982;11;0;;0;0;17X100A100A00028
+GRDF;2024;G;200000545;Communauté de communes des Portes de Romilly-sur-Seine;PRO;;;A;200.41262;5;0;;0;0;17X100A100A00028
+GRDF;2024;G;200005932;Communauté de communes des Portes de Sologne;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;240800847;Communauté de communes des Portes du Luxembourg;PRO;;;A;secret;secret;;;;4;17X100A100A00028
+GRDF;2024;G;200069953;Communauté de communes des Portes Euréliennes d'Île-de-France;PRO;;;A;51.49592;2;0;;0;5;17X100A100A00028
+GRDF;2024;G;200069953;Communauté de communes des Portes Euréliennes d'Île-de-France;ENT;01;Culture et production animale, chasse et services annexes;A;218.83552;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;244500419;Communauté de communes des Quatre Vallées;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200073393;Communauté de communes des Rives du Haut Allier;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;246000582;Communauté de communes des Sablons;PRO;;;A;416.42742;6;0;;0;1;17X100A100A00028
+GRDF;2024;G;200070332;Communauté de communes des Savoir-Faire;PRO;;;A;secret;secret;;;;3;17X100A100A00028
+GRDF;2024;G;200035111;Communauté de communes des Sources de l'Orne;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;244301016;Communauté de communes des Sucs;PRO;;;A;153.06853;2;0;;0;2;17X100A100A00028
+GRDF;2024;G;200071017;Communauté de communes des Terres d'Auxois;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200070183;Communauté de communes des Terres du Val de Loire;PRO;;;A;246.55648;8;0;;0;0;17X100A100A00028
+GRDF;2024;G;200070183;Communauté de communes des Terres du Val de Loire;ENT;01;Culture et production animale, chasse et services annexes;A;719.51155;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;240200600;Communauté de communes des Trois Rivières;PRO;;;A;80.8272;5;0;;0;0;17X100A100A00028
+GRDF;2024;G;200069458;Communauté de communes des Vallées d'Auge et du Merlerault;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200071868;Communauté de communes des Vallées du Haut-Anjou;ENT;01;Culture et production animale, chasse et services annexes;A;142.75241;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;246900724;Communauté de communes des Vallons du Lyonnais (CCVL);PRO;;;A;secret;secret;;;;3;17X100A100A00028
+GRDF;2024;G;247600588;Communauté de communes des Villes Sœurs;PRO;;;A;153.2493;8;0;;0;0;17X100A100A00028
+GRDF;2024;G;247600588;Communauté de communes des Villes Sœurs;ENT;01;Culture et production animale, chasse et services annexes;A;860.02721;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200069060;Communauté de communes des Vosges du Sud;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200069730;Communauté de communes des 4 rivières;PRO;;;A;90.52701;2;0;;0;2;17X100A100A00028
+GRDF;2024;G;200029734;Communauté de communes des 4B Sud Charente;PRO;;;A;143.75315;1;0;;0;2;17X100A100A00028
+GRDF;2024;G;200029734;Communauté de communes des 4B Sud Charente;ENT;01;Culture et production animale, chasse et services annexes;A;218.69621;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200044030;Communauté de communes des 7 Vallées;PRO;;;A;173.90478;11;0;;0;0;17X100A100A00028
+GRDF;2024;G;200042497;Communauté de communes Dombes Saône Vallée;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;200042497;Communauté de communes Dombes Saône Vallée;ENT;01;Culture et production animale, chasse et services annexes;A;410.61968;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;242900645;Communauté de communes Douarnenez Communauté;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200042901;Communauté de communes Drôme Sud Provence;PRO;;;A;secret;secret;;;;3;17X100A100A00028
+GRDF;2024;G;200042901;Communauté de communes Drôme Sud Provence;ENT;01;Culture et production animale, chasse et services annexes;A;3659.275;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200069003;Communauté de communes du Barséquanais en Champagne;PRO;;;A;650.04762;26;0;;0;0;17X100A100A00028
+GRDF;2024;G;243200409;Communauté de communes du Bas Armagnac;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200068807;Communauté de communes du Bassin Auterivain Haut-Garonnais;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200068807;Communauté de communes du Bassin Auterivain Haut-Garonnais;ENT;01;Culture et production animale, chasse et services annexes;A;2747.539;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200073245;Communauté de communes du Bassin d'Aubenas;PRO;;;A;64.32332;1;0;;0;2;17X100A100A00028
+GRDF;2024;G;200073245;Communauté de communes du Bassin d'Aubenas;ENT;01;Culture et production animale, chasse et services annexes;A;86.62037;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200044253;Communauté de communes du Bassin de Joinville en Champagne;PRO;;;A;57.92662;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;241700699;Communauté de communes du Bassin de Marennes;PRO;;;A;78.17841;1;0;;0;2;17X100A100A00028
+GRDF;2024;G;245400601;Communauté de communes du Bassin de Pompey;PRO;;;A;59.17031;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;200041515;Communauté de communes du Bassin de Pont-à-Mousson;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200067288;Communauté de communes du Béarn des Gaves;PRO;;;A;638.68109;7;0;;0;4;17X100A100A00028
+GRDF;2024;G;200071496;Communauté de communes du Bocage Bourbonnais;PRO;;;A;secret;secret;;;;3;17X100A100A00028
+GRDF;2024;G;200071496;Communauté de communes du Bocage Bourbonnais;ENT;01;Culture et production animale, chasse et services annexes;A;151.145;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;242852465;Communauté de communes du Bonnevalais;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;240200584;Communauté de communes du Canton de Charly-sur-Marne;PRO;;;A;399.17293;18;0;;0;0;17X100A100A00028
+GRDF;2024;G;247300361;Communauté de communes du Canton de La Chambre;PRO;;;A;131.96964;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200067924;Communauté de communes du Canton d'Erstein;PRO;;;A;99.69663;6;0;;0;0;17X100A100A00028
+GRDF;2024;G;200067924;Communauté de communes du Canton d'Erstein;ENT;01;Culture et production animale, chasse et services annexes;A;36.2127;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;246800445;Communauté de communes du Centre du Haut-Rhin;PRO;;;A;50.64502;1;0;;0;1;17X100A100A00028
+GRDF;2024;G;246800445;Communauté de communes du Centre du Haut-Rhin;ENT;01;Culture et production animale, chasse et services annexes;A;2363.599;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;243400355;Communauté de communes du Clermontais;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;246000376;Communauté de communes du Clermontois;PRO;;;A;96.3786;6;0;;0;0;17X100A100A00028
+GRDF;2024;G;200040293;Communauté de communes du Clunisois;PRO;;;A;51.55102;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200068922;Communauté de communes du Confluent et des Coteaux de Prayssas;PRO;;;A;169.51946;2;0;;0;2;17X100A100A00028
+GRDF;2024;G;200068922;Communauté de communes du Confluent et des Coteaux de Prayssas;ENT;01;Culture et production animale, chasse et services annexes;A;3557.70076;5;0;;0;0;17X100A100A00028
+GRDF;2024;G;243301215;Communauté de communes du Créonnais;PRO;;;A;181.72588;1;0;;0;2;17X100A100A00028
+GRDF;2024;G;200040509;Communauté de communes du Crestois et de Pays de Saillans Cœur de Drôme;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;245700133;Communauté de communes du District Urbain de Faulquemont;PRO;;;A;325.046;1;0;;0;1;17X100A100A00028
+GRDF;2024;G;242504447;Communauté de communes du Doubs Baumois;ENT;02;Sylviculture et exploitation forestière;A;1137.1731;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;243301397;Communauté de communes du Fronsadais;PRO;;;A;1098.22278;16;0;;0;2;17X100A100A00028
+GRDF;2024;G;248900748;Communauté de communes du Gâtinais en Bourgogne;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;247400690;Communauté de communes du Genevois;PRO;;;A;194.8099;2;0;;0;3;17X100A100A00028
+GRDF;2024;G;247400690;Communauté de communes du Genevois;ENT;01;Culture et production animale, chasse et services annexes;A;336.32245;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200070530;Communauté de communes du Grand Autunois Morvan;PRO;;;A;274.5147;12;0;;0;0;17X100A100A00028
+GRDF;2024;G;244100798;Communauté de communes du Grand Chambord;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200069961;Communauté de communes du Grand Châteaudun;PRO;;;A;141.81619;7;0;;0;0;17X100A100A00028
+GRDF;2024;G;200069961;Communauté de communes du Grand Châteaudun;ENT;01;Culture et production animale, chasse et services annexes;A;381.097;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;243301223;Communauté de communes du Grand Cubzaguais;PRO;;;A;129.21703;6;0;;0;0;17X100A100A00028
+GRDF;2024;G;200072999;Communauté de communes du Grand Langres;PRO;;;A;176.12371;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;200072999;Communauté de communes du Grand Langres;ENT;01;Culture et production animale, chasse et services annexes;A;1774.534;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;242500338;Communauté de communes du Grand Pontarlier;PRO;;;A;57.54433;1;0;;0;1;17X100A100A00028
+GRDF;2024;G;200070977;Communauté de communes du Grand Roye;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200035533;Communauté de communes du Grand Saint-Émilionnais;PRO;;;A;2983.71089;87;0;;0;0;17X100A100A00028
+GRDF;2024;G;200035533;Communauté de communes du Grand Saint-Émilionnais;ENT;01;Culture et production animale, chasse et services annexes;A;988.86507;5;0;;0;0;17X100A100A00028
+GRDF;2024;G;200067262;Communauté de communes du Haut Béarn;PRO;;;A;212.71977;9;0;;0;0;17X100A100A00028
+GRDF;2024;G;249500489;Communauté de communes du Haut Val d'Oise;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;200069763;Communauté de communes du Haut-Poitou;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;248900938;Communauté de communes du Jovinien;PRO;;;A;555.83376;6;0;;0;0;17X100A100A00028
+GRDF;2024;G;242200715;Communauté de communes du Kreiz-Breizh (CCKB);PRO;;;A;50.63168;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;246000129;Communauté de communes du Liancourtois;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200071926;Communauté de communes du Limouxin;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200006716;Communauté de communes du Nogentais;PRO;;;A;secret;secret;;;;3;17X100A100A00028
+GRDF;2024;G;200067296;Communauté de communes du Nord Est Béarn;PRO;;;A;637.10848;13;0;;0;0;17X100A100A00028
+GRDF;2024;G;200067296;Communauté de communes du Nord Est Béarn;ENT;01;Culture et production animale, chasse et services annexes;A;632.81314;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;242900702;Communauté de communes du Pays Bigouden Sud;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;242101434;Communauté de communes du Pays Châtillonnais;PRO;;;A;116.79075;2;0;;0;1;17X100A100A00028
+GRDF;2024;G;242101434;Communauté de communes du Pays Châtillonnais;ENT;01;Culture et production animale, chasse et services annexes;A;286.16871;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;244400552;Communauté de communes du Pays d'Ancenis;PRO;;;A;211.10772;1;0;;0;2;17X100A100A00028
+GRDF;2024;G;244400552;Communauté de communes du Pays d'Ancenis;ENT;01;Culture et production animale, chasse et services annexes;A;740.94736;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200034270;Communauté de communes du Pays de Barr;PRO;;;A;160.72229;6;0;;0;1;17X100A100A00028
+GRDF;2024;G;200069441;Communauté de communes du Pays de Bitche;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;245300447;Communauté de communes du Pays de Château-Gontier;PRO;;;A;137.2069;1;0;;0;1;17X100A100A00028
+GRDF;2024;G;245300447;Communauté de communes du Pays de Château-Gontier;ENT;01;Culture et production animale, chasse et services annexes;A;508.99875;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;245400510;Communauté de communes du Pays de Colombey et du Sud Toulois;PRO;;;A;secret;secret;;;;3;17X100A100A00028
+GRDF;2024;G;242700276;Communauté de communes du Pays de Conches;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;200048551;Communauté de communes du Pays de Craon;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200048551;Communauté de communes du Pays de Craon;ENT;01;Culture et production animale, chasse et services annexes;A;296.02955;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;247400112;Communauté de communes du Pays de Cruseilles;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200004802;Communauté de communes du Pays de Fayence;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200040830;Communauté de communes du Pays de Fénelon;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200066827;Communauté de communes du Pays de Honfleur-Beuzeville;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;248500415;Communauté de communes du Pays de la Châtaigneraie;PRO;;;A;123.67504;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;240200469;Communauté de communes du Pays de la Serre;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;240200469;Communauté de communes du Pays de la Serre;ENT;;;A;2176.74685;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;246700959;Communauté de communes du Pays de la Zorn;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;246700959;Communauté de communes du Pays de la Zorn;ENT;01;Culture et production animale, chasse et services annexes;A;710.592;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;242900751;Communauté de communes du Pays de Landivisiau;PRO;;;A;63.43181;1;0;;0;1;17X100A100A00028
+GRDF;2024;G;246900625;Communauté de communes du Pays de l'Arbresle (CCPA);PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;247200686;Communauté de communes du Pays de l'Huisne Sarthoise;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;249100074;Communauté de communes du Pays de Limours (CCPL);PRO;;;A;53.9768;1;0;;0;1;17X100A100A00028
+GRDF;2024;G;249100074;Communauté de communes du Pays de Limours (CCPL);ENT;01;Culture et production animale, chasse et services annexes;A;144.46388;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;247700065;Communauté de communes du Pays de l'Ourcq;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;247700065;Communauté de communes du Pays de l'Ourcq;ENT;01;Culture et production animale, chasse et services annexes;A;306.058;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;247700065;Communauté de communes du Pays de l'Ourcq;ENT;;;A;72.87468;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;246900765;Communauté de communes du Pays de l'Ozon;PRO;;;A;65.1385;5;0;;0;0;17X100A100A00028
+GRDF;2024;G;246900765;Communauté de communes du Pays de l'Ozon;ENT;01;Culture et production animale, chasse et services annexes;A;36.75534;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;246201016;Communauté de communes du Pays de Lumbres;PRO;;;A;54.78995;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;247000664;Communauté de communes du Pays de Lure;PRO;;;A;64.2416;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;247000755;Communauté de communes du Pays de Luxeuil;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;245300223;Communauté de communes du Pays de Meslay-Grez;PRO;;;A;119.63566;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;245501259;Communauté de communes du Pays de Montmédy;ENT;01;Culture et production animale, chasse et services annexes;A;431.26458;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200043321;Communauté de communes du Pays de Mormal;PRO;;;A;885.94171;39;0;;0;0;17X100A100A00028
+GRDF;2024;G;200043321;Communauté de communes du Pays de Mormal;ENT;01;Culture et production animale, chasse et services annexes;A;362.13256;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;248500662;Communauté de communes du Pays de Mortagne;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;246701098;Communauté de communes du Pays de Niederbronn-les-Bains;PRO;;;A;82.53747;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;246701098;Communauté de communes du Pays de Niederbronn-les-Bains;ENT;01;Culture et production animale, chasse et services annexes;A;211.711;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200000438;Communauté de communes du Pays de Pontchâteau Saint-Gildas-des-Bois;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200000438;Communauté de communes du Pays de Pontchâteau Saint-Gildas-des-Bois;ENT;01;Culture et production animale, chasse et services annexes;A;3560.91006;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;248500464;Communauté de communes du Pays de Pouzauges;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;248500464;Communauté de communes du Pays de Pouzauges;ENT;01;Culture et production animale, chasse et services annexes;A;35.08125;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;245501184;Communauté de communes du Pays de Revigny-sur-Ornain;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;245501184;Communauté de communes du Pays de Revigny-sur-Ornain;ENT;01;Culture et production animale, chasse et services annexes;A;375.26377;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;246800577;Communauté de communes du Pays de Ribeauvillé;PRO;;;A;1737.84929;64;0;;0;0;17X100A100A00028
+GRDF;2024;G;246800577;Communauté de communes du Pays de Ribeauvillé;ENT;01;Culture et production animale, chasse et services annexes;A;599.952;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;246800494;Communauté de communes du Pays de Rouffach,Vignobles et Châteaux;PRO;;;A;535.22992;19;0;;0;0;17X100A100A00028
+GRDF;2024;G;200071918;Communauté de communes du Pays de Saint-Fulgent - Les Essarts;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200071918;Communauté de communes du Pays de Saint-Fulgent - Les Essarts;ENT;01;Culture et production animale, chasse et services annexes;A;1987.98209;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;248700189;Communauté de communes du Pays de Saint-Yrieix;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;241200658;Communauté de communes du Pays de Salars;PRO;;;A;78.65445;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200068112;Communauté de communes du Pays de Saverne;PRO;;;A;127.24646;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;243000296;Communauté de communes du Pays de Sommières;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200066132;Communauté de communes du Pays de Stenay et du Val Dunois;PRO;;;A;59.23575;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;246000871;Communauté de communes du Pays de Valois;PRO;;;A;297.7043;5;0;;0;0;17X100A100A00028
+GRDF;2024;G;246000871;Communauté de communes du Pays de Valois;ENT;01;Culture et production animale, chasse et services annexes;A;36.68459;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;246700926;Communauté de communes du Pays de Wissembourg;PRO;;;A;75.7292;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;242900553;Communauté de communes du Pays des Abers;ENT;01;Culture et production animale, chasse et services annexes;A;3635.15117;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;248500530;Communauté de communes du Pays des Achards;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;240600593;Communauté de communes du Pays des Paillons;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;248400319;Communauté de communes du Pays des Sorgues et des Monts de Vaucluse;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;248400319;Communauté de communes du Pays des Sorgues et des Monts de Vaucluse;ENT;01;Culture et production animale, chasse et services annexes;A;7893.885;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;246000855;Communauté de communes du Pays des Sources;PRO;;;A;secret;secret;;;;3;17X100A100A00028
+GRDF;2024;G;246000855;Communauté de communes du Pays des Sources;ENT;01;Culture et production animale, chasse et services annexes;A;200.93158;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;245501242;Communauté de communes du Pays d'Étain;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;247000722;Communauté de communes du Pays d'Héricourt;PRO;;;A;54.32808;1;0;;0;2;17X100A100A00028
+GRDF;2024;G;242900074;Communauté de communes du Pays d'Iroise;ENT;01;Culture et production animale, chasse et services annexes;A;33.076;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;243600236;Communauté de communes du Pays d'Issoudun;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;240900464;Communauté de communes du Pays d'Olmes;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;241000447;Communauté de communes du Pays d'Othe;PRO;;;A;341.28265;7;0;;0;0;17X100A100A00028
+GRDF;2024;G;248000747;Communauté de communes du Pays du Coquelicot;PRO;;;A;144.48648;7;0;;0;1;17X100A100A00028
+GRDF;2024;G;242700607;Communauté de communes du Pays du Neubourg;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;242700607;Communauté de communes du Pays du Neubourg;ENT;01;Culture et production animale, chasse et services annexes;A;198.46207;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;245400759;Communauté de communes du Pays du Sanon;PRO;;;A;72.37588;3;0;;0;1;17X100A100A00028
+GRDF;2024;G;240200493;Communauté de communes du Pays du Vermandois;PRO;;;A;349.17378;11;0;;0;0;17X100A100A00028
+GRDF;2024;G;244200630;Communauté de communes du Pays entre Loire et Rhône;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;247200348;Communauté de communes du Pays Fléchois;PRO;;;A;81.16934;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;247200348;Communauté de communes du Pays Fléchois;ENT;01;Culture et production animale, chasse et services annexes;A;1386.58668;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;242900660;Communauté de communes du Pays Fouesnantais;ENT;01;Culture et production animale, chasse et services annexes;A;391.23961;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;243301371;Communauté de communes du Pays Foyen;PRO;;;A;52.59284;2;0;;0;3;17X100A100A00028
+GRDF;2024;G;243301371;Communauté de communes du Pays Foyen;ENT;01;Culture et production animale, chasse et services annexes;A;1060.61585;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;244000824;Communauté de communes du Pays Grenadois;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;245701404;Communauté de communes du Pays Haut Val d'Alzette;PRO;;;A;83.23941;1;0;;0;3;17X100A100A00028
+GRDF;2024;G;247800550;Communauté de communes du Pays Houdanais (CCPH);PRO;;;A;secret;secret;;;;3;17X100A100A00028
+GRDF;2024;G;247800550;Communauté de communes du Pays Houdanais (CCPH);ENT;01;Culture et production animale, chasse et services annexes;A;375.26036;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;244000691;Communauté de communes du Pays Morcenais;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;246900740;Communauté de communes du Pays Mornantais (COPAMO);PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;246000756;Communauté de communes du Pays Noyonnais;PRO;;;A;secret;secret;;;;4;17X100A100A00028
+GRDF;2024;G;246000756;Communauté de communes du Pays Noyonnais;ENT;02;Sylviculture et exploitation forestière;A;588.02555;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;245701271;Communauté de communes du Pays Orne Moselle;PRO;;;A;241.55077;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;200043156;Communauté de communes du Pays Rethélois;PRO;;;A;55.38546;3;0;;0;3;17X100A100A00028
+GRDF;2024;G;200041325;Communauté de communes du Pays Rhénan;PRO;;;A;258.57851;1;0;;0;3;17X100A100A00028
+GRDF;2024;G;200041325;Communauté de communes du Pays Rhénan;ENT;01;Culture et production animale, chasse et services annexes;A;380.349;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;241200625;Communauté de communes du Pays Rignacois;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;247400724;Communauté de communes du Pays Rochois;PRO;;;A;372.6778;7;0;;0;0;17X100A100A00028
+GRDF;2024;G;247200090;Communauté de communes du Pays Sabolien;PRO;;;A;498.67943;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;247200090;Communauté de communes du Pays Sabolien;ENT;01;Culture et production animale, chasse et services annexes;A;963.08288;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;245901038;Communauté de communes du Pays Solesmois;PRO;;;A;155.38427;8;0;;0;0;17X100A100A00028
+GRDF;2024;G;242300135;Communauté de communes du Pays Sostranien;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;244000766;Communauté de communes du Pays Tarusate;PRO;;;A;114.06268;1;0;;0;1;17X100A100A00028
+GRDF;2024;G;243000270;Communauté de communes du Pays Viganais;PRO;;;A;55.01248;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200006971;Communauté de communes du Perche;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200040772;Communauté de communes du Perche et Haut Vendômois;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200071819;Communauté de communes du Périgord Nontronnais;PRO;;;A;83.89163;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;200071819;Communauté de communes du Périgord Nontronnais;ENT;01;Culture et production animale, chasse et services annexes;A;2248.9845;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200040400;Communauté de communes du Périgord Ribéracois;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200034411;Communauté de communes du Piémont Cévenol;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200070787;Communauté de communes du Plateau de Lannemezan;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;246000566;Communauté de communes du Plateau Picard;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;243000684;Communauté de communes du Pont du Gard;ENT;01;Culture et production animale, chasse et services annexes;A;5842.61338;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200037133;Communauté de communes du Provinois;PRO;;;A;133.76276;7;0;;0;0;17X100A100A00028
+GRDF;2024;G;200037133;Communauté de communes du Provinois;ENT;01;Culture et production animale, chasse et services annexes;A;340.78821;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200044394;Communauté de communes du Réolais en Sud Gironde;PRO;;;A;72.47044;1;0;;0;1;17X100A100A00028
+GRDF;2024;G;200030526;Communauté de communes du Ried de Marckolsheim;PRO;;;A;250.63696;10;0;;0;0;17X100A100A00028
+GRDF;2024;G;200030526;Communauté de communes du Ried de Marckolsheim;ENT;01;Culture et production animale, chasse et services annexes;A;830.59898;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200018406;Communauté de communes du Romorantinais et du Monestois;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;241600303;Communauté de communes du Rouillacais;PRO;;;A;1081.54002;11;0;;0;0;17X100A100A00028
+GRDF;2024;G;241600303;Communauté de communes du Rouillacais;ENT;01;Culture et production animale, chasse et services annexes;A;1659.45839;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;245500327;Communauté de communes du Sammiellois;PRO;;;A;144.354;1;0;;0;1;17X100A100A00028
+GRDF;2024;G;245500327;Communauté de communes du Sammiellois;ENT;01;Culture et production animale, chasse et services annexes;A;19457.581;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;245701206;Communauté de communes du Saulnois;PRO;;;A;62.16213;5;0;;0;0;17X100A100A00028
+GRDF;2024;G;245701206;Communauté de communes du Saulnois;ENT;01;Culture et production animale, chasse et services annexes;A;1189.91831;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;244000659;Communauté de communes du Seignanx;PRO;;;A;328.42497;4;0;;0;2;17X100A100A00028
+GRDF;2024;G;200068765;Communauté de communes du Sisteronais-Buëch;PRO;;;A;131.04434;3;0;;0;1;17X100A100A00028
+GRDF;2024;G;248100158;Communauté de communes du Sor et de l'Agout;ENT;01;Culture et production animale, chasse et services annexes;A;7045.27807;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200043404;Communauté de communes du Sud Avesnois;PRO;;;A;52.11874;2;0;;0;3;17X100A100A00028
+GRDF;2024;G;244400586;Communauté de communes du Sud Estuaire;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200043974;Communauté de communes du Sud Gironde;PRO;;;A;233.05056;11;0;;0;0;17X100A100A00028
+GRDF;2024;G;245100979;Communauté de communes du Sud Marnais;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;249000241;Communauté de communes du Sud Territoire;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;200035442;Communauté de communes du Sud-Artois;PRO;;;A;477.56533;19;0;;0;0;17X100A100A00028
+GRDF;2024;G;200035442;Communauté de communes du Sud-Artois;ENT;01;Culture et production animale, chasse et services annexes;A;1148.51135;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200069672;Communauté de communes du Ternois;PRO;;;A;80.30928;5;0;;0;0;17X100A100A00028
+GRDF;2024;G;200070324;Communauté de communes du Territoire de Lunéville à Baccarat;PRO;;;A;397.54572;10;0;;0;0;17X100A100A00028
+GRDF;2024;G;200070324;Communauté de communes du Territoire de Lunéville à Baccarat;ENT;01;Culture et production animale, chasse et services annexes;A;182.79785;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200070951;Communauté de communes du Territoire Nord Picardie;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;200043065;Communauté de communes du Val d'Amboise;PRO;;;A;51.43061;2;0;;0;4;17X100A100A00028
+GRDF;2024;G;200043065;Communauté de communes du Val d'Amboise;ENT;01;Culture et production animale, chasse et services annexes;A;1300.5693;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;246800395;Communauté de communes du Val d'Argent;PRO;;;A;143.91612;2;0;;0;1;17X100A100A00028
+GRDF;2024;G;242600252;Communauté de communes du Val de Drôme en Biovallée;PRO;;;A;106.0257;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;242600252;Communauté de communes du Val de Drôme en Biovallée;ENT;01;Culture et production animale, chasse et services annexes;A;175.77353;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;240200501;Communauté de communes du Val de l'Aisne;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;243301405;Communauté de communes du Val de l'Eyre;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200040426;Communauté de communes du Val de l'Oise;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;242504116;Communauté de communes du Val de Morteau;PRO;;;A;345.14204;5;0;;0;1;17X100A100A00028
+GRDF;2024;G;247200629;Communauté de communes du Val de Sarthe;PRO;;;A;188.36642;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;248000499;Communauté de communes du Val de Somme;PRO;;;A;71.01402;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;200070100;Communauté de communes du Val de Sully;PRO;;;A;secret;secret;;;;3;17X100A100A00028
+GRDF;2024;G;200070100;Communauté de communes du Val de Sully;ENT;01;Culture et production animale, chasse et services annexes;A;6562.23998;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;200070100;Communauté de communes du Val de Sully;ENT;;;A;2.42;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;248719288;Communauté de communes du Val de Vienne;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;249100546;Communauté de communes du Val d'Essonne (CCVE);PRO;;;A;85.64422;6;0;;0;0;17X100A100A00028
+GRDF;2024;G;249100546;Communauté de communes du Val d'Essonne (CCVE);ENT;01;Culture et production animale, chasse et services annexes;A;78.77061;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200071843;Communauté de communes du Vexin Normand;PRO;;;A;98.17711;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;246000707;Communauté de communes du Vexin-Thelle;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;249500513;Communauté de communes du Vexin-Val de Seine;ENT;01;Culture et production animale, chasse et services annexes;A;282.19877;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200070944;Communauté de communes du Vimeu;PRO;;;A;117.797;1;0;;0;2;17X100A100A00028
+GRDF;2024;G;200070944;Communauté de communes du Vimeu;ENT;02;Sylviculture et exploitation forestière;A;470.651;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200066819;Communauté de communes du Volvestre;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;245701164;Communauté de communes du Warndt;ENT;01;Culture et production animale, chasse et services annexes;A;1.588;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200068872;Communauté de communes Éguzon - Argenton - Vallée de la Creuse;PRO;;;A;72.53031;2;0;;0;2;17X100A100A00028
+GRDF;2024;G;200040681;Communauté de communes Enclave des Papes-Pays de Grignan;PRO;;;A;77.25699;2;0;;0;2;17X100A100A00028
+GRDF;2024;G;200071470;Communauté de communes Entr'Allier Besbre et Loire;ENT;01;Culture et production animale, chasse et services annexes;A;5409.40163;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;200070316;Communauté de communes Entre Arroux,Loire et Somme;PRO;;;A;110.18267;9;0;;0;0;17X100A100A00028
+GRDF;2024;G;200058360;Communauté de communes entre Beauce et Perche;PRO;;;A;138.14098;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200085751;Communauté de communes Entre Bièvre et Rhône;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200085751;Communauté de communes Entre Bièvre et Rhône;ENT;01;Culture et production animale, chasse et services annexes;A;34.36872;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;249100553;Communauté de communes Entre Juine et Renarde (CCEJR);PRO;;;A;89.16671;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;247103765;Communauté de communes Entre Saône et Grosne;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200072734;Communauté de communes Estuaire et Sillon;PRO;;;A;58.83019;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200000172;Communauté de communes Faucigny-Glières;PRO;;;A;342.94196;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;241800457;Communauté de communes FerCher;PRO;;;A;336.81084;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;245900758;Communauté de communes Flandre Lys;PRO;;;A;108.15782;6;0;;0;0;17X100A100A00028
+GRDF;2024;G;200039063;Communauté de communes Forêts,Seine et Suzon;PRO;;;A;52.64731;1;0;;0;1;17X100A100A00028
+GRDF;2024;G;200068930;Communauté de communes Fumel Vallée du Lot;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200034130;Communauté de communes Gally Mauldre;PRO;;;A;159.46906;2;0;;0;1;17X100A100A00028
+GRDF;2024;G;200034130;Communauté de communes Gally Mauldre;ENT;01;Culture et production animale, chasse et services annexes;A;3093.44429;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200023919;Communauté de communes Gâtinais Val de Loing;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200096642;Communauté de communes Gérardmer Hautes Vosges;PRO;;;A;118.46478;2;0;;0;1;17X100A100A00028
+GRDF;2024;G;244500211;Communauté de communes Giennoises;PRO;;;A;51.32893;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;244500211;Communauté de communes Giennoises;ENT;01;Culture et production animale, chasse et services annexes;A;194.25885;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;244400438;Communauté de communes Grand Lieu Communauté;PRO;;;A;341.35417;4;0;;0;1;17X100A100A00028
+GRDF;2024;G;244400438;Communauté de communes Grand Lieu Communauté;ENT;01;Culture et production animale, chasse et services annexes;A;3517.54239;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200042646;Communauté de communes Grand Orb communauté de communes en Languedoc;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200066652;Communauté de communes Grand Sud Tarn et Garonne;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200067361;Communauté de communes Grand-Figeac;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200067957;Communauté de communes Haut Chemin-Pays de Pange;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;200071942;Communauté de communes Haut Limousin en Marche;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200067429;Communauté de communes Haut Nivernais-Val d'Yonne;PRO;;;A;65.57046;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;200072700;Communauté de communes Haute Sarthe Alpes Mancelles;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200066744;Communauté de communes Haute-Corrèze Communauté;PRO;;;A;81.2888;1;0;;0;2;17X100A100A00028
+GRDF;2024;G;243900479;Communauté de communes Haut-Jura Arcade Communauté;PRO;;;A;53.03309;1;0;;0;1;17X100A100A00028
+GRDF;2024;G;200026573;Communauté de communes Haut-Jura Saint-Claude;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;200067072;Communauté de communes Haut-Léon Communauté;PRO;;;A;304.46469;9;0;;0;0;17X100A100A00028
+GRDF;2024;G;200067072;Communauté de communes Haut-Léon Communauté;ENT;01;Culture et production animale, chasse et services annexes;A;37459.53041;10;0;;0;0;17X100A100A00028
+GRDF;2024;G;200067072;Communauté de communes Haut-Léon Communauté;ENT;;;A;38160.67106;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;200067650;Communauté de communes Houve-Pays Boulageois;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200070449;Communauté de communes Inter-Caux-Vexin;PRO;;;A;55.68357;3;0;;0;0;17X100A100A00028
+GRDF;2024;G;200066462;Communauté de communes Interco Normandie Sud Eure;PRO;;;A;343.22032;6;0;;0;1;17X100A100A00028
+GRDF;2024;G;200066462;Communauté de communes Interco Normandie Sud Eure;ENT;01;Culture et production animale, chasse et services annexes;A;569.09285;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200066413;Communauté de communes Intercom Bernay Terres de Normandie;PRO;;;A;74.00865;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;200066413;Communauté de communes Intercom Bernay Terres de Normandie;ENT;01;Culture et production animale, chasse et services annexes;A;762.06769;4;0;;0;0;17X100A100A00028
+GRDF;2024;G;200068799;Communauté de communes Intercom de la Vire au Noireau;PRO;;;A;104.35652;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200069722;Communauté de communes interrégionale Aumale - Blangy-sur-Bresle;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200069722;Communauté de communes interrégionale Aumale - Blangy-sur-Bresle;ENT;01;Culture et production animale, chasse et services annexes;A;162.85233;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200066801;Communauté de communes Isigny-Omaha Intercom;PRO;;;A;72.24149;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200040384;Communauté de communes Isle Double Landais;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200069094;Communauté de communes Isle et Crempse en Périgord;PRO;;;A;100.89349;2;0;;0;2;17X100A100A00028
+GRDF;2024;G;200069094;Communauté de communes Isle et Crempse en Périgord;ENT;01;Culture et production animale, chasse et services annexes;A;615.366;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200040095;Communauté de communes Isle Vern Salembre en Périgord;PRO;;;A;70.22342;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;243301165;Communauté de communes Jalle-Eau-Bourde;PRO;;;A;294.69723;1;0;;0;2;17X100A100A00028
+GRDF;2024;G;243301165;Communauté de communes Jalle-Eau-Bourde;ENT;01;Culture et production animale, chasse et services annexes;A;0.158;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;243400488;Communauté de communes La Domitienne;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;243900610;Communauté de communes La Grandvallière;PRO;;;A;71.78998;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200068914;Communauté de communes La Rochefoucauld porte du Périgord;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;241800374;Communauté de communes La Septaine;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;241800374;Communauté de communes La Septaine;ENT;01;Culture et production animale, chasse et services annexes;A;1348.86732;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;243301181;Communauté de communes Latitude Nord Gironde;PRO;;;A;96.14058;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;249100595;Communauté de communes Le Dourdannais en Hurepoix (CCDH);PRO;;;A;290.70956;6;0;;0;0;17X100A100A00028
+GRDF;2024;G;200072684;Communauté de communes Le Gesnois Bilurien;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200071884;Communauté de communes Le Grand Charolais;PRO;;;A;138.36917;1;0;;0;1;17X100A100A00028
+GRDF;2024;G;243100781;Communauté de communes Le Grand Ouest Toulousain;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;200018166;Communauté de communes Le Grésivaudan;PRO;;;A;335.00813;7;0;;0;0;17X100A100A00028
+GRDF;2024;G;200039642;Communauté de communes Le Tonnerrois en Bourgogne;PRO;;;A;313.59674;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;200069086;Communauté de communes Leff Armor Communauté;ENT;01;Culture et production animale, chasse et services annexes;A;2496.60764;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200068542;Communauté de communes Les Balcons du Dauphiné;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200068088;Communauté de communes Les Bertranges;PRO;;;A;332.678;1;0;;0;2;17X100A100A00028
+GRDF;2024;G;243301355;Communauté de communes Les Coteaux Bordelais;PRO;;;A;127.83222;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200023125;Communauté de communes Les Portes Briardes entre Villes et Forêts;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;200071074;Communauté de communes Les Portes de l'Ile de France;PRO;;;A;secret;secret;;;;2;17X100A100A00028
+GRDF;2024;G;243301249;Communauté de communes Les Rives de la Laurence;PRO;;;A;164.12993;5;0;;0;0;17X100A100A00028
+GRDF;2024;G;243301249;Communauté de communes Les Rives de la Laurence;ENT;01;Culture et production animale, chasse et services annexes;A;35.23917;1;0;;0;0;17X100A100A00028
+GRDF;2024;G;241800432;Communauté de communes Les Trois Provinces;ENT;01;Culture et production animale, chasse et services annexes;A;811.36816;2;0;;0;0;17X100A100A00028
+GRDF;2024;G;200068567;Communauté de communes Les Vals du Dauphiné;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+GRDF;2024;G;243500774;Communauté de communes Liffré-Cormier Communauté;PRO;;;A;secret;secret;;;;1;17X100A100A00028
+Gascogne Energies Services;2024;G;200030435;Communauté de communes d'Aire-sur-l'Adour;PRO;;;A;500.673;13;0.64286;;0;0;17X100B100A2002P
+Gascogne Energies Services;2024;G;244000766;Communauté de communes du Pays Tarusate;PRO;;;A;secret;secret;;;;1;17X100B100A2002P
+Gascogne Energies Services;2024;G;200069417;Communauté de communes Pays d'Orthe et Arrigans;PRO;;;A;3327.271;2;2;;0;0;17X100B100A2002P
+Gaz de Barr;2024;G;200034270;Communauté de communes du Pays de Barr;PRO;;;A;1135.921;28;0.3331;;0;0;17X100B100B2010K
+Gaz de Barr;2024;G;246700744;Communauté de communes des Portes de Rosheim;PRO;;;A;267.754;1;0;;0;0;17X100B100B2010K
+Gaz de Barr;2024;G;246701064;Communauté de communes de la Région de Molsheim-Mutzig;PRO;;;A;501.533;5;0;;0;0;17X100B100B2010K
+Gaz de Barr;2024;G;246701064;Communauté de communes de la Région de Molsheim-Mutzig;PRO;;;A;58.564;3;0.33063;;0;0;17X100B100B2010K
+Gaz de Barr;2024;G;246701080;Communauté de communes du Pays de Sainte-Odile;PRO;;;A;69.237;3;0;;0;0;17X100B100B2010K
+Gaz de Barr;2024;G;200034270;Communauté de communes du Pays de Barr;PRO;;;A;65.553;5;0;;0;0;17X100B100B2010K
+Gaz de Barr;2024;G;246701080;Communauté de communes du Pays de Sainte-Odile;PRO;;;A;231.739;2;0;;0;0;17X100B100B2010K
+Gaz de Barr;2024;G;246700744;Communauté de communes des Portes de Rosheim;PRO;;;A;secret;secret;;;;2;17X100B100B2010K
+Gaz de Barr;2024;G;246700744;Communauté de communes des Portes de Rosheim;ENT;01;Culture et production animale, chasse et services annexes;A;354.106;1;0;;0;0;17X100B100B2010K
+Vialis;2024;G;246800726;Communauté d'agglomération Colmar Agglomération;PRO;;;A;330.338;12;0;;0;0;17X100A100A05473
+Vialis;2024;G;246800726;Communauté d'agglomération Colmar Agglomération;ENT;01;Culture et production animale, chasse et services annexes;A;425.309;1;0;;0;0;17X100A100A05473
+Vialis;2024;G;246800726;Communauté d'agglomération Colmar Agglomération;PRO;;;A;128.23;6;0;;0;0;17X100A100A05473
+Energies Services Occitans;2024;G;200040905;Communauté de communes Carmausin-Ségala;PRO;;;A;secret;secret;;;;2;17X100B100A2026B
+Regaz Bordeaux;2024;G;243301447;Communauté de communes Médoc Estuaire;PRO;;;A;3025;47;10.89;;0;0;
+Regaz Bordeaux;2024;G;243301389;Communauté de communes Médullienne;PRO;;;A;673;13;1.98;;0;0;
+Regaz Bordeaux;2024;G;243300316;Bordeaux Métropole;PRO;;;A;314;15;10.89;;0;0;
+Regaz Bordeaux;2024;G;243300316;Bordeaux Métropole;PRO;;;A;1560;27;10.89;;0;0;
+Regaz Bordeaux;2024;G;243301165;Communauté de communes Jalle-Eau-Bourde;PRO;;;A;secret;secret;;;;1;
+Regaz Bordeaux;2024;G;200069995;Communauté de communes Médoc Cœur de Presqu'île;ENT;01;Culture et production animale, chasse et services annexes;A;13141;11;3.96;;0;0;
+Regaz Bordeaux;2024;G;200069995;Communauté de communes Médoc Cœur de Presqu'île;PRO;;;A;3098;46;2.97;;0;0;
+Regaz Bordeaux;2024;G;243300316;Bordeaux Métropole;ENT;01;Culture et production animale, chasse et services annexes;A;1269;4;2.97;;0;0;
+Regaz Bordeaux;2024;G;243301165;Communauté de communes Jalle-Eau-Bourde;ENT;01;Culture et production animale, chasse et services annexes;A;592;1;0.99;;0;0;
+Regaz Bordeaux;2024;G;243301165;Communauté de communes Jalle-Eau-Bourde;PRO;;;A;101;1;0.99;;0;0;
+Regaz Bordeaux;2024;G;243301249;Communauté de communes Les Rives de la Laurence;PRO;;;A;135;1;0.99;;0;0;
+Regaz Bordeaux;2024;G;243301389;Communauté de communes Médullienne;PRO;;;A;secret;secret;;;;1;
+Regaz Bordeaux;2024;G;200070720;Communauté de communes Médoc Atlantique;ENT;01;Culture et production animale, chasse et services annexes;A;2616;1;0.99;;0;0;
+Regaz Bordeaux;2024;G;243301447;Communauté de communes Médoc Estuaire;ENT;01;Culture et production animale, chasse et services annexes;A;1911;4;2.97;;0;0;
+Gedia;2024;G;200040277;Communauté d'agglomération Agglo du Pays de Dreux;PRO;;;A;secret;secret;;;;1;17X100A100A04388
+Gedia;2024;G;200040277;Communauté d'agglomération Agglo du Pays de Dreux;PRO;;;A;206.394;2;0;;0;0;17X100A100A04388
+Trois Frontières Distribution Gaz;2024;G;200066058;Communauté d'agglomération Saint-Louis Agglomération;PRO;;;A;secret;secret;;;;1;
+Trois Frontières Distribution Gaz;2024;G;200066058;Communauté d'agglomération Saint-Louis Agglomération;PRO;;;A;7824.715;1;1;;0;0;
+Régie municipale multiservices de La Réole;2024;G;200044394;Communauté de communes du Réolais en Sud Gironde;PRO;;;A;662.742;7;1.5;;0;0;17X100B100A2092Z
+Energis;2024;G;200067502;Communauté d'agglomération Saint-Avold Synergie;PRO;;;A;secret;secret;;;;1;17XST-AVOLD2096H
+SICAE de la Somme et du Cambraisis;2024;G;200070969;Communauté de communes Avre Luce Noye;PRO;;;A;secret;secret;;;;1;17X100A100A05546
+SICAE de la Somme et du Cambraisis;2024;G;200037059;Communauté de communes de la Haute Somme (Combles - Péronne - Roisel);PRO;;;A;secret;secret;;;;1;17X100A100A05546
+Réseau GDS;2024;G;246700488;Eurométropole de Strasbourg;PRO;;;A;149;11;1.83;;0;0;
+Réseau GDS;2024;G;200068864;Communauté de communes de la Mossig et du Vignoble;PRO;;;A;secret;secret;;;;2;
+Réseau GDS;2024;G;200034635;Communauté de communes du Kochersberg;PRO;;;A;secret;secret;;;;4;
+Réseau GDS;2024;G;200067874;Communauté d'agglomération de Haguenau;ENT;01;Culture et production animale, chasse et services annexes;A;2617;2;2;;0;0;
+Réseau GDS;2024;G;246701064;Communauté de communes de la Région de Molsheim-Mutzig;ENT;01;Culture et production animale, chasse et services annexes;A;1483;1;1;;0;0;
+Réseau GDS;2024;G;246701064;Communauté de communes de la Région de Molsheim-Mutzig;PRO;;;A;secret;secret;;;;1;
+Réseau GDS;2024;G;200041325;Communauté de communes du Pays Rhénan;PRO;;;A;secret;secret;;;;1;
+Réseau GDS;2024;G;246700488;Eurométropole de Strasbourg;PRO;;;A;71;1;0;;0;0;
+Réseau GDS;2024;G;246700488;Eurométropole de Strasbourg;ENT;01;Culture et production animale, chasse et services annexes;A;2641;2;2;;0;0;
+Réseau GDS;2024;G;246700843;Communauté de communes de la Basse-Zorn;PRO;;;A;320;3;0.33;;0;0;
+Réseau GDS;2024;G;200068864;Communauté de communes de la Mossig et du Vignoble;PRO;;;A;114;3;0;;0;0;
+Réseau GDS;2024;G;200067874;Communauté d'agglomération de Haguenau;PRO;;;A;secret;secret;;;;1;
+Réseau GDS;2024;G;200067924;Communauté de communes du Canton d'Erstein;PRO;;;A;201;1;0;;0;0;
+Réseau GDS;2024;G;200034635;Communauté de communes du Kochersberg;ENT;01;Culture et production animale, chasse et services annexes;A;642;1;1;;0;0;
+Réseau GDS;2024;G;200034635;Communauté de communes du Kochersberg;PRO;;;A;360;4;0;;0;0;
+Réseau GDS;2024;G;246700959;Communauté de communes du Pays de la Zorn;ENT;01;Culture et production animale, chasse et services annexes;A;246;1;1;;0;0;
+Réseau GDS;2024;G;246700306;Communauté de communes de la Vallée de la Bruche;PRO;;;A;96;1;0;;0;0;
+Sorégies;2024;G;248500589;Communauté d'agglomération La Roche-sur-Yon Agglomération;ENT;01;Culture et production animale, chasse et services annexes;A;222;1;0;;0;0;17X100A100R0180U
+Sorégies;2024;G;200069763;Communauté de communes du Haut-Poitou;ENT;01;Culture et production animale, chasse et services annexes;A;380;3;0;;0;0;17X100A100R0180U
+Sorégies;2024;G;200069854;Communauté urbaine du Grand Poitiers;ENT;01;Culture et production animale, chasse et services annexes;A;108;2;0;;0;0;17X100A100R0180U
+Natran;2024;G;241000488;Communauté de communes de l'Orvin et de l'Ardusson;ENT;01;Culture et production animale, chasse et services annexes;A;5467.33;1;0;;0;0;21X-FR-A-A0A0A-S
+Natran;2024;G;242900314;Brest Métropole;ENT;01;Culture et production animale, chasse et services annexes;A;40087.08;1;0;;0;0;21X-FR-A-A0A0A-S
+Natran;2024;G;200041614;Communauté de communes Aunis Sud;ENT;01;Culture et production animale, chasse et services annexes;A;740.72;1;0;;0;0;21X-FR-A-A0A0A-S

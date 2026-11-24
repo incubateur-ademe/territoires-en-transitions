@@ -1,0 +1,268 @@
+code_region,carburant,crit_air,parc_poids_lourds_au_1er_janvier_2024
+01,Diesel,Crit'Air 2,1094
+01,Diesel,Crit'Air 3,354
+01,Diesel,Crit'Air 4,349
+01,Diesel,Crit'Air 5,314
+01,Diesel,Non classé,203
+01,Essence,Non classé,2
+01,Gaz,Crit'Air 1,1
+01,Inconnu,Inconnu,11
+02,Diesel,Crit'Air 2,920
+02,Diesel,Crit'Air 3,261
+02,Diesel,Crit'Air 4,272
+02,Diesel,Crit'Air 5,184
+02,Diesel,Non classé,103
+02,Essence,Crit'Air 1,2
+02,Gaz,Crit'Air 1,1
+02,Inconnu,Inconnu,20
+03,Diesel,Crit'Air 2,631
+03,Diesel,Crit'Air 3,188
+03,Diesel,Crit'Air 4,131
+03,Diesel,Crit'Air 5,66
+03,Diesel,Non classé,32
+03,Inconnu,Inconnu,6
+04,Diesel,Crit'Air 2,2680
+04,Diesel,Crit'Air 3,927
+04,Diesel,Crit'Air 4,875
+04,Diesel,Crit'Air 5,765
+04,Diesel,Non classé,385
+04,Diesel HNR,Crit'Air 2,4
+04,Gaz,Crit'Air 1,1
+04,Inconnu,Crit'Air 2,1
+04,Inconnu,Inconnu,4
+06,Diesel,Crit'Air 2,466
+06,Diesel,Crit'Air 3,81
+06,Diesel,Crit'Air 4,133
+06,Diesel,Crit'Air 5,136
+06,Diesel,Non classé,71
+06,Inconnu,Non classé,1
+11,Biodiesel,Crit'Air 1,352
+11,Biodiesel,Crit'Air 2,3
+11,Diesel,Crit'Air 1,12
+11,Diesel,Crit'Air 2,43559
+11,Diesel,Crit'Air 3,10395
+11,Diesel,Crit'Air 4,4749
+11,Diesel,Crit'Air 5,3928
+11,Diesel,Crit'Air E,1
+11,Diesel,Non classé,2192
+11,Diesel HNR,Crit'Air 2,80
+11,Diesel HNR,Crit'Air 3,3
+11,Diesel HR,Crit'Air 1,4
+11,Electrique,Crit'Air E,340
+11,Essence,Crit'Air 1,45
+11,Essence,Crit'Air 2,9
+11,Essence,Crit'Air 3,6
+11,Essence,Non classé,10
+11,Essence HR,Crit'Air 1,1
+11,Gaz,Crit'Air 1,3790
+11,Hydrogène et autre ZE,Crit'Air E,1
+11,Inconnu,Inconnu,12
+11,Inconnu,Non classé,6
+24,Biodiesel,Crit'Air 1,121
+24,Diesel,Crit'Air 1,1
+24,Diesel,Crit'Air 2,12962
+24,Diesel,Crit'Air 3,3261
+24,Diesel,Crit'Air 4,1924
+24,Diesel,Crit'Air 5,2240
+24,Diesel,Non classé,2344
+24,Diesel HNR,Crit'Air 2,27
+24,Diesel HNR,Crit'Air 3,1
+24,Diesel HR,Crit'Air 1,1
+24,Electrique,Crit'Air E,25
+24,Essence,Non classé,28
+24,Gaz,Crit'Air 1,119
+24,Hydrogène et autre ZE,Crit'Air E,1
+24,Inconnu,Inconnu,2
+24,Inconnu,Non classé,6
+27,Biodiesel,Crit'Air 1,24
+27,Diesel,Crit'Air 1,1
+27,Diesel,Crit'Air 2,16488
+27,Diesel,Crit'Air 3,3905
+27,Diesel,Crit'Air 4,2532
+27,Diesel,Crit'Air 5,2822
+27,Diesel,Non classé,2819
+27,Diesel HNR,Crit'Air 2,2
+27,Electrique,Crit'Air E,3
+27,Essence,Crit'Air 1,4
+27,Essence,Crit'Air 3,2
+27,Essence,Non classé,24
+27,Gaz,Crit'Air 1,214
+27,Hydrogène et autre ZE,Crit'Air E,2
+27,Inconnu,Inconnu,3
+27,Inconnu,Non classé,8
+28,Biodiesel,Crit'Air 1,245
+28,Diesel,Crit'Air 1,19
+28,Diesel,Crit'Air 2,23604
+28,Diesel,Crit'Air 3,4631
+28,Diesel,Crit'Air 4,2430
+28,Diesel,Crit'Air 5,2445
+28,Diesel,Non classé,2176
+28,Diesel HNR,Crit'Air 2,7
+28,Diesel HR,Crit'Air 1,1
+28,Electrique,Crit'Air E,15
+28,Essence,Crit'Air 1,2
+28,Essence,Crit'Air 2,1
+28,Essence,Crit'Air 3,4
+28,Essence,Non classé,11
+28,Gaz,Crit'Air 1,499
+28,Inconnu,Inconnu,1
+28,Inconnu,Non classé,4
+32,Biodiesel,Crit'Air 1,500
+32,Biodiesel,Crit'Air 2,5
+32,Biodiesel,Crit'Air 3,1
+32,Diesel,Crit'Air 1,24
+32,Diesel,Crit'Air 2,45538
+32,Diesel,Crit'Air 3,6586
+32,Diesel,Crit'Air 4,3400
+32,Diesel,Crit'Air 5,3045
+32,Diesel,Crit'Air E,4
+32,Diesel,Non classé,2196
+32,Diesel HNR,Crit'Air 2,7
+32,Diesel HNR,Crit'Air 3,1
+32,Electrique,Crit'Air E,132
+32,Essence,Crit'Air 1,9
+32,Essence,Crit'Air 2,2
+32,Essence,Crit'Air 3,1
+32,Essence,Non classé,15
+32,Gaz,Crit'Air 1,709
+32,Gaz,Crit'Air 2,1
+32,Inconnu,Inconnu,30
+32,Inconnu,Non classé,6
+44,Biodiesel,Crit'Air 1,467
+44,Biodiesel,Crit'Air 2,5
+44,Biodiesel,Crit'Air 3,5
+44,Diesel,Crit'Air 1,2
+44,Diesel,Crit'Air 2,33771
+44,Diesel,Crit'Air 3,6595
+44,Diesel,Crit'Air 4,4038
+44,Diesel,Crit'Air 5,4038
+44,Diesel,Non classé,3681
+44,Diesel HNR,Crit'Air 2,6
+44,Electrique,Crit'Air E,47
+44,Essence,Crit'Air 1,7
+44,Essence,Non classé,19
+44,Gaz,Crit'Air 1,1071
+44,Inconnu,Inconnu,20
+44,Inconnu,Non classé,8
+52,Biodiesel,Crit'Air 1,75
+52,Biodiesel,Crit'Air 2,9
+52,Diesel,Crit'Air 2,29447
+52,Diesel,Crit'Air 3,5342
+52,Diesel,Crit'Air 4,2877
+52,Diesel,Crit'Air 5,3008
+52,Diesel,Non classé,2319
+52,Diesel HNR,Crit'Air 2,7
+52,Diesel HR,Crit'Air 1,4
+52,Electrique,Crit'Air E,71
+52,Essence,Crit'Air 1,2
+52,Essence,Crit'Air 2,3
+52,Essence,Crit'Air 3,3
+52,Essence,Non classé,8
+52,Gaz,Crit'Air 1,618
+52,Hydrogène et autre ZE,Crit'Air E,2
+52,Inconnu,Inconnu,3
+52,Inconnu,Non classé,2
+53,Biodiesel,Crit'Air 1,86
+53,Diesel,Crit'Air 1,2
+53,Diesel,Crit'Air 2,25020
+53,Diesel,Crit'Air 3,4776
+53,Diesel,Crit'Air 4,2756
+53,Diesel,Crit'Air 5,2718
+53,Diesel,Non classé,2191
+53,Diesel HNR,Crit'Air 2,3
+53,Diesel HNR,Crit'Air 3,1
+53,Diesel HR,Crit'Air 1,1
+53,Electrique,Crit'Air E,26
+53,Essence,Crit'Air 1,5
+53,Essence,Crit'Air 2,2
+53,Essence,Crit'Air 3,3
+53,Essence,Non classé,11
+53,Gaz,Crit'Air 1,449
+53,Inconnu,Inconnu,1
+75,Biodiesel,Crit'Air 1,80
+75,Biodiesel,Crit'Air 2,1
+75,Diesel,Crit'Air 2,36727
+75,Diesel,Crit'Air 3,8923
+75,Diesel,Crit'Air 4,5786
+75,Diesel,Crit'Air 5,6739
+75,Diesel,Non classé,7297
+75,Diesel HNR,Crit'Air 2,18
+75,Diesel HNR,Crit'Air 3,1
+75,Electrique,Crit'Air E,22
+75,Essence,Crit'Air 1,29
+75,Essence,Crit'Air 2,1
+75,Essence,Crit'Air 3,2
+75,Essence,Non classé,39
+75,Essence HNR,Crit'Air 1,1
+75,Essence HR,Crit'Air 1,1
+75,Gaz,Crit'Air 1,409
+75,Inconnu,Inconnu,7
+75,Inconnu,Non classé,9
+76,Biodiesel,Crit'Air 1,87
+76,Diesel,Crit'Air 1,9
+76,Diesel,Crit'Air 2,30969
+76,Diesel,Crit'Air 3,7603
+76,Diesel,Crit'Air 4,5568
+76,Diesel,Crit'Air 5,6967
+76,Diesel,Non classé,8249
+76,Diesel HNR,Crit'Air 2,22
+76,Diesel HNR,Crit'Air 3,1
+76,Electrique,Crit'Air E,38
+76,Essence,Crit'Air 1,10
+76,Essence,Crit'Air 2,2
+76,Essence,Crit'Air 3,2
+76,Essence,Non classé,50
+76,Gaz,Crit'Air 1,670
+76,Inconnu,Inconnu,6
+76,Inconnu,Non classé,12
+84,Biodiesel,Crit'Air 1,311
+84,Biodiesel,Crit'Air 3,1
+84,Diesel,Crit'Air 1,5
+84,Diesel,Crit'Air 2,51293
+84,Diesel,Crit'Air 3,10927
+84,Diesel,Crit'Air 4,6719
+84,Diesel,Crit'Air 5,7595
+84,Diesel,Non classé,7453
+84,Diesel HNR,Crit'Air 2,10
+84,Diesel HR,Crit'Air 1,1
+84,Electrique,Crit'Air E,119
+84,Essence,Crit'Air 1,4
+84,Essence,Crit'Air 2,2
+84,Essence,Crit'Air 3,6
+84,Essence,Non classé,46
+84,Essence HR,Crit'Air 1,1
+84,Gaz,Crit'Air 1,1495
+84,Hydrogène et autre ZE,Crit'Air E,1
+84,Inconnu,Inconnu,12
+84,Inconnu,Non classé,24
+93,Biodiesel,Crit'Air 1,107
+93,Diesel,Crit'Air 1,6
+93,Diesel,Crit'Air 2,21574
+93,Diesel,Crit'Air 3,5959
+93,Diesel,Crit'Air 4,4241
+93,Diesel,Crit'Air 5,5101
+93,Diesel,Non classé,4832
+93,Diesel HNR,Crit'Air 2,24
+93,Diesel HNR,Crit'Air 3,2
+93,Electrique,Crit'Air E,53
+93,Essence,Crit'Air 1,9
+93,Essence,Crit'Air 2,5
+93,Essence,Crit'Air 3,7
+93,Essence,Non classé,39
+93,Essence HNR,Crit'Air 1,1
+93,Gaz,Crit'Air 1,418
+93,Hydrogène et autre ZE,Crit'Air E,1
+93,Inconnu,Inconnu,11
+93,Inconnu,Non classé,11
+94,Diesel,Crit'Air 2,1851
+94,Diesel,Crit'Air 3,654
+94,Diesel,Crit'Air 4,465
+94,Diesel,Crit'Air 5,553
+94,Diesel,Non classé,454
+94,Electrique,Crit'Air E,8
+94,Essence,Crit'Air 1,1
+94,Essence,Crit'Air 2,1
+94,Essence,Crit'Air 3,2
+94,Essence,Non classé,2
+94,Inconnu,Inconnu,4
+94,Inconnu,Non classé,1

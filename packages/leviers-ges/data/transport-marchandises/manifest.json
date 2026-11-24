@@ -1,0 +1,72 @@
+{
+  "datasets": [
+    {
+      "file": "regions.csv",
+      "source": "SDES, « Le TRM des pavillons européens en 2024 » (feuille reg_type_flux) : tonnes.kilomètres rapportées à la région, avec l'international (trafic interne plus 50 % du trafic chargé ou déchargé dans la région, y compris vers l'étranger), 13 régions de France métropolitaine ; SDES, Parc de véhicules routiers (RSVERO) au 1er janvier 2024, poids lourds par région, carburant et vignette Crit'Air ; OMINEA 2024 du CITEPA, CO2 des poids lourds diesel, type de trajet par défaut du tableur, domicile-travail et courtes distances : 50 % de « route » (SNAP 070302PL) et 50 % de « ville » (SNAP 070303PL), norme Euro choisie par vignette. Parc immatriculé dans la région, pas circulant ; le biodiesel (2 485 poids lourds au niveau national) est compté dans le parc mais pas dans la moyenne diesel (le tableur ne regroupe que Diesel, Diesel HNR et Diesel HR) ; les 6,7 milliards de t.km à région « non précisé » et celles des DOM ne vont dans aucune des 13 régions. Construit par pnpm build:data:transport-marchandises",
+      "link": "https://www.statistiques.developpement-durable.gouv.fr/",
+      "vintage": "tonnes.kilomètres 2024, parc au 1er janvier 2024, OMINEA 2024",
+      "retrievedOn": "2026-10-20",
+      "checksum": "5ee182e661b948e58416bbc31c2570a517d3080b7b2322309ac7b46f77e3d800",
+      "level": "region",
+      "keyColumn": "code_region",
+      "columns": [
+        {
+          "name": "code_region",
+          "unit": "code INSEE de la région"
+        },
+        {
+          "name": "billion_tonne_kilometres",
+          "unit": "milliards de tonnes.kilomètres par an, avec l'international"
+        },
+        {
+          "name": "heavy_vehicle_fleet",
+          "unit": "poids lourds immatriculés dans la région au 1er janvier 2024, tous carburants (biodiesel compris)"
+        },
+        {
+          "name": "zero_emission_heavy_vehicle_fleet",
+          "unit": "poids lourds électriques, hydrogène et autres zéro émission, au 1er janvier 2024"
+        },
+        {
+          "name": "diesel_emission_factor_g_per_vehicle_km",
+          "unit": "g de CO2 par véhicule.km, poids lourds diesel (Diesel, HNR, HR) des vignettes Crit'Air 1 à 5 pondérés par le parc de la région"
+        },
+        {
+          "name": "diesel_unclassified_share",
+          "unit": "part des poids lourds diesel sans vignette Crit'Air 1 à 5 (Crit'Air E, non classé, inconnu), entre 0 et 1"
+        }
+      ],
+      "controlTotals": {
+        "billion_tonne_kilometres": "239.965514",
+        "heavy_vehicle_fleet": "614131",
+        "zero_emission_heavy_vehicle_fleet": "907"
+      },
+      "sources": [
+        {
+          "file": "sources/sdes-trm-tkm-par-region-et-type-de-flux-2024.csv",
+          "source": "SDES, Le TRM des pavillons européens en 2024, feuille reg_type_flux : flux par région en milliards de tonnes.kilomètres ; tkm_rapportees_avec_international = interne + 50 % × (national entrant + national sortant + international entrant + international sortant), DonneesTerritoires!D17 (hypothèse nommée includeInternationalFlows)",
+          "retrievedOn": "2026-10-07",
+          "checksum": "55682c6d53a82cac6e132c8ea9d48e1b1429008a894dcdc67c2bbc6f0f4eef12"
+        },
+        {
+          "file": "sources/sdes-trm-pavillons-europeens-2024.xlsx",
+          "source": "SDES, Le TRM des pavillons européens en 2024 (classeur d'origine des tonnes.kilomètres)",
+          "retrievedOn": "2026-10-07",
+          "checksum": "08f2c2fda5645cdac22969b5bfdc0a93076642e9e457e14d4d592bd14a4c349f"
+        },
+        {
+          "file": "sources/sdes-parc-poids-lourds-2024-par-region.csv",
+          "source": "SDES, jeu DiDo « Parc de véhicules routiers » (millésime 2026-06, colonne PARC_2024, GROUPE = PL : camions, tracteurs et autres poids lourds), agrégé par région, carburant et vignette Crit'Air hors du dépôt ; arrondissements de Paris, Lyon et Marseille rapportés à leur commune ; communes « Inconnu (département) » rapportées à la région du département ; 40 véhicules d'adresse inconnue écartés ; régions d'outre-mer comprises, non utilisées",
+          "link": "https://data.statistiques.developpement-durable.gouv.fr/dido/api/v1/datafiles/1582861b-e042-4490-9161-6429d8229703/csv?millesime=2026-06",
+          "retrievedOn": "2026-10-20",
+          "checksum": "cf19c72ce03f8e16443be26995781ca5a4900fa15fa1797e5ea0d1a420578874"
+        },
+        {
+          "file": "sources/ominea-co2-poids-lourds-diesel-g-par-vehicule-km-2024.csv",
+          "source": "OMINEA 2024 du CITEPA, CO2 des poids lourds diesel (NAPFUE 205) en g par véhicule.km, SNAP 070301PL (autoroute), 070302PL (route) et 070303PL (ville), par norme Euro",
+          "retrievedOn": "2026-10-07",
+          "checksum": "ceef86d76bd567d6689c3f8780d3b9df6b4101af593c1b9288ca5fa5e7de4f62"
+        }
+      ]
+    }
+  ]
+}

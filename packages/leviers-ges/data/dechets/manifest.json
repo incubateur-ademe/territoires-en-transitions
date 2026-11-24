@@ -1,0 +1,50 @@
+{
+  "datasets": [
+    {
+      "file": "treatment-flows.csv",
+      "source": "Registre national des émissions polluantes et des déchets (BDREP), restitution IREP 2022 de Géorisques : déchets non dangereux du chapitre 20 de la nomenclature (déchets municipaux) traités par les établissements, en tonnes par an. Quatre opérations retenues : D1, D5 et D10 (stockage, ou incinération sans récupération d'énergie) et R1 (incinération avec récupération d'énergie) ; les autres opérations ne sont pas un mode de départ. Lignes à zéro tonne écartées, arrondissements de Paris, Lyon et Marseille rapportés à leur commune, flux d'une même commune, d'un même code de déchet et d'un même mode additionnés. Les tonnes sont celles traitées sur le territoire, pas celles produites par le territoire. Construit par pnpm build:data:dechets",
+      "link": "https://files.georisques.fr/irep/2022.zip",
+      "vintage": "2022",
+      "retrievedOn": "2026-10-07",
+      "checksum": "2e36b6bf12fe12446b08783ab46dc99e19d163526357820977f590337a1f02a3",
+      "keyColumn": "flow_id",
+      "columns": [
+        { "name": "flow_id", "unit": "commune, code de déchet et mode de traitement, séparés par deux-points" },
+        { "name": "commune_code", "unit": "code INSEE de la commune du site de traitement" },
+        { "name": "waste_code", "unit": "code de la nomenclature européenne des déchets (chapitre 20)" },
+        { "name": "treatment_mode", "unit": "storage (stockage et incinération sans récupération d'énergie) ou incineration (incinération avec récupération d'énergie)" },
+        { "name": "tonnes_per_year", "unit": "tonnes par an" }
+      ],
+      "controlTotals": { "tonnes_per_year": "22558701.357" },
+      "sources": [
+        {
+          "file": "sources/irep-2022-dechets-municipaux-traitement.csv",
+          "source": "Géorisques, IREP 2022, fichier Trait_dechets_non_dangereux, extrait du chapitre 20 (10 046 lignes, toutes opérations)",
+          "link": "https://files.georisques.fr/irep/2022.zip",
+          "retrievedOn": "2026-10-07",
+          "checksum": "4ae982705468342ab4c58f5f5b2296ea2b5a7b0fc3f6a087a5ed931b94e72977"
+        },
+        {
+          "file": "sources/fe-dechets-tableur.csv",
+          "source": "Tableur PlanET V1, feuille FE_déchets : facteurs de la Base Empreinte de l'ADEME par code de déchet, copie sans modification",
+          "retrievedOn": "2026-10-07",
+          "checksum": "f6c117f9f043abc5c91f9306133aacf6e46c6c48706db62be34efe44a6d6826e"
+        }
+      ]
+    },
+    {
+      "file": "emission-factors.csv",
+      "source": "Tableur PlanET V1, feuille FE_déchets : facteurs de stockage et d'incinération de la Base Empreinte de l'ADEME, par code de déchet du chapitre 20. Cellule vide quand la Base Empreinte n'a pas de facteur (« — » dans le tableur). Construit par pnpm build:data:dechets",
+      "link": "https://base-empreinte.ademe.fr/",
+      "vintage": "Base Empreinte, versions citées par la feuille FE_déchets",
+      "retrievedOn": "2026-10-07",
+      "checksum": "ad18a307d8c8e8670ba1c4fba62dcf3f0539a3d63edfe07e1231acb345a0b670",
+      "keyColumn": "waste_code",
+      "columns": [
+        { "name": "waste_code", "unit": "code de la nomenclature européenne des déchets (chapitre 20), avec * pour un déchet dangereux" },
+        { "name": "storage_emission_factor_kg_per_tonne", "unit": "kgCO2e par tonne de déchet stocké, vide si absent" },
+        { "name": "incineration_emission_factor_kg_per_tonne", "unit": "kgCO2e par tonne de déchet incinéré, vide si absent" }
+      ]
+    }
+  ]
+}

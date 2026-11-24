@@ -1,0 +1,19 @@
+{
+  "datasets": [
+    {
+      "file": "communes.csv",
+      "source": "geo.api.gouv.fr, communes : codeEpci, codeDepartement, codeRegion (Licence Ouverte)",
+      "link": "https://geo.api.gouv.fr/communes",
+      "vintage": "géographie en vigueur au 2026-10-07, 34 969 communes sans arrondissements municipaux",
+      "retrievedOn": "2026-10-07",
+      "checksum": "a5b2b8e864ed659dc223569b02bf107643af4731d5aae406cead1c6aaa2893dc",
+      "keyColumn": "code_commune",
+      "columns": [
+        { "name": "code_commune", "unit": "code INSEE" },
+        { "name": "code_epci", "unit": "code SIREN, vide si la commune n'a pas d'EPCI" },
+        { "name": "code_departement", "unit": "code INSEE" },
+        { "name": "code_region", "unit": "code INSEE" }
+      ]
+    }
+  ]
+}
