@@ -88,8 +88,12 @@ export const IndicateurObjectifSparkline = ({
           1
         )},${baseline} L${scaleX(serie[0].x).toFixed(1)},${baseline} Z`
       : '';
-  const ligneProjection = projection.length
-    ? toPath([dernier, ...projection].map(toXY))
+  // Les pointillés partent du dernier résultat vers les objectifs à venir : un
+  // objectif d'une année déjà mesurée garde son point, sans ramener la ligne en
+  // arrière.
+  const objectifsAVenir = projection.filter(({ x }) => x > dernier.x);
+  const ligneProjection = objectifsAVenir.length
+    ? toPath([dernier, ...objectifsAVenir].map(toXY))
     : '';
 
   // Les années de l'axe : l'objectif retenu d'abord, puis le premier et le
@@ -136,23 +140,17 @@ export const IndicateurObjectifSparkline = ({
           strokeDasharray="4 4"
         />
       )}
-      {serie.map((point) => {
+      {serie.map((point, index) => {
         const { x, y } = toXY(point);
         return (
-          <circle
-            key={`r-${point.x}`}
-            cx={x}
-            cy={y}
-            r={3}
-            fill="currentColor"
-          />
+          <circle key={`r-${index}`} cx={x} cy={y} r={3} fill="currentColor" />
         );
       })}
-      {projection.map((point) => {
+      {projection.map((point, index) => {
         const { x, y } = toXY(point);
         return (
           <circle
-            key={`o-${point.x}`}
+            key={`o-${index}`}
             cx={x}
             cy={y}
             r={3.5}
