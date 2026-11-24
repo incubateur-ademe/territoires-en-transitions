@@ -48,10 +48,11 @@ variable "routed_cidrs" {
 }
 
 variable "peers" {
-  description = "Opérateurs, par nom : clé publique WireGuard et adresse dans le tunnel (sans masque)."
+  description = "Opérateurs, par nom : clé publique WireGuard, adresse dans le tunnel (sans masque) et, pour un accès restreint, les seules destinations relayées (routed_cidrs). Null : tout routed_cidrs."
   type = map(object({
-    public_key = string
-    address    = string
+    public_key   = string
+    address      = string
+    routed_cidrs = optional(list(string))
   }))
 }
 

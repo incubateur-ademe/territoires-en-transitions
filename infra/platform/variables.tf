@@ -89,15 +89,29 @@ variable "vpn_private_key_secret_name" {
 }
 
 variable "vpn_peers" {
-  description = "Opérateurs autorisés sur le VPN, par nom : clé publique WireGuard et adresse dans vpn_tunnel_cidr (sans masque, à partir de .2)."
+  description = <<-EOT
+    Personnes autorisées sur le VPN, par nom : clé publique WireGuard et adresse
+    dans vpn_tunnel_cidr (sans masque, à partir de .2).
+
+    tiers restreint un pair aux tiers listés (Private Network et IP publique du
+    serveur) : la passerelle jette le reste. Null (défaut) : tout ce que relaie
+    le tunnel, prod comprise. Ex. le data analyst : tiers = ["data"].
+  EOT
   type = map(object({
     public_key = string
     address    = string
+    tiers      = optional(list(string))
   }))
   default = {}
   validation {
     condition     = alltrue([for p in values(var.vpn_peers) : can(cidrhost("${p.address}/32", 0)) && p.address != cidrhost(var.vpn_tunnel_cidr, 1)])
     error_message = "Chaque adresse de pair doit être une IPv4 sans masque, différente de celle de la passerelle (première adresse du tunnel)."
+  }
+  validation {
+    condition = alltrue([
+      for p in values(var.vpn_peers) : p.tiers == null ? true : length(p.tiers) > 0 && alltrue([for t in p.tiers : contains(["nonprod", "preview", "prod", "data"], t)])
+    ])
+    error_message = "tiers : null, ou une liste non vide parmi nonprod, preview, prod, data."
   }
 }
 

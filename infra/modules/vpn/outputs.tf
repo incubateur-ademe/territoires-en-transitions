@@ -14,8 +14,13 @@ output "endpoint" {
 }
 
 output "client_allowed_ips" {
-  description = "AllowedIPs du poste opérateur : ce qui passe par le tunnel, passerelle comprise (10.99.0.1, cible SSH tet-ops)."
-  value       = join(", ", concat(["${local.gateway_tunnel_address}/32"], var.routed_cidrs))
+  description = "AllowedIPs de chaque poste opérateur, par nom de pair : ce que la passerelle lui relaie, passerelle comprise (10.99.0.1, cible SSH tet-ops)."
+  value = {
+    for name, p in var.peers : name => join(", ", concat(
+      ["${local.gateway_tunnel_address}/32"],
+      p.routed_cidrs == null ? var.routed_cidrs : p.routed_cidrs,
+    ))
+  }
 }
 
 output "sshd_host_public_key" {

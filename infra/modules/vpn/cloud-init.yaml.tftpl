@@ -44,7 +44,8 @@ write_files:
   # Le trafic des opérateurs est masqué derrière la passerelle (MASQUERADE,
   # sans interface de sortie nommée : privée pour le VPC, publique pour l'IP
   # publique de la prod). Les serveurs et l'ACL ne voient donc que l'IP de la
-  # passerelle. Seules les destinations listées sont relayées. En TCP, le port
+  # passerelle. Seules les destinations listées sont relayées ; un pair à accès
+  # restreint (routed_cidrs) n'a que les siennes, filtrées avant les autres. En TCP, le port
   # source est forcé dans nat_tcp_ports : l'ACL du VPC, sans état, n'accepte les
   # retours que sur cette plage (un poste macOS sort jusqu'à 65535).
   - path: /etc/wireguard/wg0.conf
@@ -56,6 +57,16 @@ write_files:
       PrivateKey = ${private_key}
       PostUp = iptables -A FORWARD -o %i -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
       PostDown = iptables -D FORWARD -o %i -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+%{ for name, peer in peers ~}
+%{ if peer.routed_cidrs != null ~}
+%{ for cidr in peer.routed_cidrs ~}
+      PostUp = iptables -A FORWARD -i %i -s ${peer.address}/32 -d ${cidr} -j ACCEPT
+      PostDown = iptables -D FORWARD -i %i -s ${peer.address}/32 -d ${cidr} -j ACCEPT
+%{ endfor ~}
+      PostUp = iptables -A FORWARD -i %i -s ${peer.address}/32 -j DROP
+      PostDown = iptables -D FORWARD -i %i -s ${peer.address}/32 -j DROP
+%{ endif ~}
+%{ endfor ~}
 %{ for cidr in routed_cidrs ~}
       PostUp = iptables -A FORWARD -i %i -d ${cidr} -j ACCEPT
       PostDown = iptables -D FORWARD -i %i -d ${cidr} -j ACCEPT

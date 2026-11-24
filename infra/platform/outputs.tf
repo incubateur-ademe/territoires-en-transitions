@@ -38,7 +38,7 @@ output "vpn_endpoint" {
 }
 
 output "vpn_client_allowed_ips" {
-  description = "AllowedIPs de la configuration WireGuard des postes opérateurs."
+  description = "AllowedIPs de la configuration WireGuard de chaque poste, par nom de pair (terraform output -json vpn_client_allowed_ips | jq -r '.\"prenom.nom\"')."
   value       = module.vpn.client_allowed_ips
 }
 

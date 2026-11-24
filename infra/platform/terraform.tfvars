@@ -12,6 +12,8 @@ database_backups_project_id = "6f1fbb1d-dbe8-4de6-bfdc-42b1a0c61404"
 # tunnel (10.99.0.1 est la passerelle).
 vpn_peers = {
   "fred.arnoux" = { public_key = "aX23oguuyiHmi8JXSVwaaRmTBGkrd6qeQtgjh1uNlTg=", address = "10.99.0.2" }
+  # Data analyst : accès restreint au tier data.
+  "baptiste.larrouy" = { public_key = "2TN9K3RrLscZDvtn7qMduAQYOKT/ATUVKLTWwBznKSk=", address = "10.99.0.3", tiers = ["data"] }
 }
 
 # Clés SSH publiques des opérateurs qui administrent la passerelle
