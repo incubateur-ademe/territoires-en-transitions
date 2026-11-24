@@ -18,10 +18,7 @@ import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { failure, success, Result } from '@tet/backend/utils/result.type';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
-import {
-  isFailedResult,
-  TransactionManager,
-} from '@tet/backend/utils/transaction/transaction-manager.service';
+import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { getErrorMessage } from '@tet/domain/utils';
 import {
   AI_PLAN_IMPORT_SOURCE_BUCKET,
@@ -365,11 +362,7 @@ export class GenerateGenericImportService implements ImportGenerator {
         ? success(saved.data)
         : this.planCreationFailed(job.id, saved.error, saved.cause);
     } catch (error) {
-      // Avec `tx` partagé, le TransactionManager relance son échec en
-      // exception : un Result, sans `message`.
-      return isFailedResult<ImportErrors>(error)
-        ? this.planCreationFailed(job.id, error.error, error.cause)
-        : this.planCreationFailed(job.id, null, error);
+      return this.planCreationFailed(job.id, null, error);
     }
   }
 

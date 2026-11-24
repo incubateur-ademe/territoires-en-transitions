@@ -4,10 +4,7 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result } from '@tet/backend/utils/result.type';
-import {
-  isFailedResult,
-  TransactionManager,
-} from '@tet/backend/utils/transaction/transaction-manager.service';
+import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import {
   applyTransition,
   type DemarchePcaet,
@@ -267,21 +264,8 @@ export class DemarchePcaetTransitionService {
       };
     };
 
-    let result: DemarchePcaetTransitionResult<EffectError>;
-    try {
-      result = await this.transactionManager.executeSingle(
-        executeInTransaction,
-        tx
-      );
-    } catch (error) {
-      // Dans une transaction partagée, un échec est relancé pour l'annuler
-      // (cf. `executeTransaction`) : le refus d'un guard reste un fait à
-      // tracer, même si l'appelant ne récupère le `Result` qu'en exception.
-      if (isFailedResult<EffectError>(error)) {
-        this.trackOutcome(transition, user, outcome, error);
-      }
-      throw error;
-    }
+    const result: DemarchePcaetTransitionResult<EffectError> =
+      await this.transactionManager.executeSingle(executeInTransaction, tx);
     this.trackOutcome(transition, user, outcome, result);
     return result;
   }

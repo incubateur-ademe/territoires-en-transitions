@@ -10,7 +10,6 @@ import { PermissionService } from '@tet/backend/users/authorizations/permission.
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import { isFailedResult } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { WebhookService } from '@tet/backend/utils/webhooks/webhook.service';
 import { ApplicationSousScopesEnum } from '@tet/domain/utils';
 import { eq } from 'drizzle-orm';
@@ -40,9 +39,6 @@ interface CreationContext extends CreatePlanAggregateOutput {
 
 /** La cause Postgres suffit aux journaux, sans requête ni paramètres Drizzle. */
 function toFailureCause(error: unknown): Error {
-  if (isFailedResult(error)) {
-    return error.cause ?? toFailureCause(error.error);
-  }
   if (error instanceof Error) {
     return error.cause instanceof Error ? error.cause : error;
   }

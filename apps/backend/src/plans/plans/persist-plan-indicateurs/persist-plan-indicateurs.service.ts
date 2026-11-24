@@ -11,7 +11,6 @@ import CreateIndicateurService from '@tet/backend/indicateurs/indicateurs/mutate
 import { createIndicateurInputSchema } from '@tet/backend/indicateurs/indicateurs/mutate-indicateur/mutate-indicateur.input';
 import { ReconcileIndicateurValeursService } from '@tet/backend/indicateurs/valeurs/reconcile-indicateur-valeurs/reconcile-indicateur-valeurs.service';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import { isFailedResult } from '@tet/backend/utils/transaction/transaction-manager.service';
 import assert from 'node:assert';
 import { CreatePlanAggregateOutput } from '../create-plan-aggregate/create-plan-aggregate.types';
 import { ManagePlanIndicateurSourceService } from '../manage-plan-indicateur-source/manage-plan-indicateur-source.service';
@@ -265,9 +264,6 @@ export class PersistPlanIndicateursService {
     error: unknown,
     sourceKey?: string
   ): Result<never, PersistPlanIndicateursError[]> {
-    if (isFailedResult<PersistPlanIndicateursError['code']>(error)) {
-      return failure([{ code: error.error, sourceKey }], error.cause);
-    }
     const code =
       error instanceof ForbiddenException
         ? 'UNAUTHORIZED'
