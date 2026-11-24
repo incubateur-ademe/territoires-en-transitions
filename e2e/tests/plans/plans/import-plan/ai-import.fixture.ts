@@ -16,6 +16,7 @@ export const importStatus: ImportStatus = {
   createdPlanId: null,
   resumable: false,
   withSecteurs: false,
+  withSousActions: true,
   error: null,
   qualitativeReview: null,
   stepStates: {
