@@ -2,6 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
+import { sql } from 'drizzle-orm';
+import { randomUUID } from 'node:crypto';
 
 export type TransactionOperation<T, E = string> = (
   tx: Transaction
@@ -39,7 +41,7 @@ export class TransactionManager {
       };
 
       if (tx) {
-        return success(await runOperations(tx));
+        return success(await this.runInSavepoint(tx, runOperations));
       }
 
       const results = await this.databaseService.db.transaction(runOperations);
@@ -50,9 +52,6 @@ export class TransactionManager {
       // incident. Seule une exception non maîtrisée mérite le niveau error.
       if (isFailedResult<E>(error)) {
         this.logger.debug(`Transaction rolled back: ${String(error.error)}`);
-        if (tx) {
-          throw error;
-        }
         return failure(error.error, error.cause);
       }
       this.logger.error('Transaction failed:', error);
@@ -62,6 +61,25 @@ export class TransactionManager {
         throw error;
       }
       return failure(error as E);
+    }
+  }
+
+  private async runInSavepoint<T>(
+    tx: Transaction,
+    run: (transaction: Transaction) => Promise<T>
+  ): Promise<T> {
+    const savepoint = sql.identifier(
+      `tet_savepoint_${randomUUID().replaceAll('-', '')}`
+    );
+    await tx.execute(sql`savepoint ${savepoint}`);
+    try {
+      const result = await run(tx);
+      await tx.execute(sql`release savepoint ${savepoint}`);
+      return result;
+    } catch (error) {
+      await tx.execute(sql`rollback to savepoint ${savepoint}`);
+      await tx.execute(sql`release savepoint ${savepoint}`);
+      throw error;
     }
   }
 
