@@ -9,6 +9,7 @@ import {
   IndicateurValeursError,
   indicateurValeursErrorConfig,
   toCommonError,
+  toNonCanonicalDateValeurFailure,
 } from './indicateur-valeurs.errors';
 
 const toThrownValue = (operation: () => unknown): unknown => {
@@ -111,6 +112,24 @@ describe('indicateurValeursErrorConfig', () => {
         message: "Une erreur de base de données s'est produite",
       })
     );
+  });
+});
+
+describe('toNonCanonicalDateValeurFailure', () => {
+  it('nomme la date, l’indicateur et la périodicité dans la cause', () => {
+    const nonCanonicalFailure = toNonCanonicalDateValeurFailure({
+      dateValeur: '2026-06-15',
+      indicateurId: 7,
+      periodicite: 'mensuelle',
+    });
+
+    expect(nonCanonicalFailure).toEqual({
+      success: false,
+      error: 'INVALID_VALUE',
+      cause: new Error(
+        "Date de valeur 2026-06-15 non canonique pour l'indicateur 7 (mensuelle)"
+      ),
+    });
   });
 });
 
