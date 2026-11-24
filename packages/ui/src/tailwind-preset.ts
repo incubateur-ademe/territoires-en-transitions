@@ -16,7 +16,6 @@ export const preset = {
       colors: designTokens.colors,
       fontSize: designTokens.fontSize,
       fontWeight: designTokens.fontWeight,
-      borderRadius: designTokens.borderRadius,
       boxShadow: designTokens.boxShadow,
       screens: designTokens.screens,
       maxWidth: designTokens.maxWidth,

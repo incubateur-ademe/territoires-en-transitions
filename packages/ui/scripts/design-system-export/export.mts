@@ -116,7 +116,7 @@ try {
     paragraphes: globalCss.paragraphes,
     spacingScale: designTokens.spacingScale,
     tailwindSpacing: theme.spacing as Readonly<Record<string, string>>,
-    radius: designTokens.borderRadius,
+    radius: theme.borderRadius as Readonly<Record<string, string>>,
     boxShadow: designTokens.boxShadow,
     maxWidth: designTokens.maxWidth,
     zIndex: designTokens.zIndex,
