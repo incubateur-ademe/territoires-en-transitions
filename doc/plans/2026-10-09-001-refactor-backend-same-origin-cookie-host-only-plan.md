@@ -26,9 +26,46 @@ relit aussi la session depuis ce cookie, et les cookies OIDC `id_token` /
 Objectif : faire passer les appels navigateur → backend par l'origine de l'app
 (pattern BFF), puis restreindre les cookies d'auth à l'hôte de l'app.
 
+## État (2026-11-23)
+
+| Phase                               | Preprod   | Prod (Koyeb)                |
+| ----------------------------------- | --------- | --------------------------- |
+| 0 — nom de cookie par environnement | fait      | sans objet (Supabase cloud) |
+| 1 — proxy same-origin `app.…/api`   | fait      | à la bascule Coolify        |
+| 1 bis — CORS resserré               | code prêt | code prêt, à déployer       |
+| 2 — OIDC sur l'origine de l'app     | à faire   | à la bascule (ou 2 bis)     |
+| 3 — cookie `__Host-`                | à faire   | après 1, 1 bis et 2         |
+
 ## Pourquoi
 
-### Déclencheur : collision de cookie avec GoTrue self-hosté
+### Déclencheur n° 2 : les previews par pull request
+
+Une preview (`<pr>-app.preview.territoiresentransitions.fr`, PR #5981) fait
+tourner le code non relu d'une PR, y compris celui d'une montée de dépendance.
+Tant que le cookie de session est sur le domaine racine, le navigateur le lui
+envoie : jeton d'accès **et** jeton de rafraîchissement, durée de vie ~3 ans
+(`maxAge`). Toute personne de l'équipe qui ouvre une preview lui livre sa
+session de prod (et de preprod). Le site, `aldo.…`, `rencontres.…` et
+`supabase-api.…` le reçoivent aussi, sans en avoir besoin.
+
+**Le cookie `__Host-` ne suffit pas.** Une preview reste _same-site_ avec la
+prod : `SameSite=Lax` ne la bloque pas, elle peut appeler la prod avec
+`credentials: 'include'` et lire la réponse sans jamais voir le cookie. Il
+fallait donc aussi fermer le CORS, que ce plan rangeait en nettoyage (phase 4) :
+
+- backend : `enableCors({ origin: true, credentials: true })` renvoyait
+  n'importe quelle origine ;
+- app : `isAllowedOrigin` autorisait tout `*.territoiresentransitions.fr` avec
+  `Access-Control-Allow-Credentials: true` (hérité de `apps/auth`).
+
+C'est l'objet de la phase 1 bis. `__Host-` apporte en plus qu'un sous-domaine
+ne peut pas écraser le cookie (_cookie tossing_).
+
+Ce qui reste hors de portée de ce plan : les autres cookies du domaine racine
+(session Crisp, PostHog) restent lisibles par une preview. Servir les previews
+sur un autre domaine enregistrable réglerait l'ensemble d'un coup.
+
+### Déclencheur n° 1 : collision de cookie avec GoTrue self-hosté
 
 Le nom du cookie est dérivé du premier label de `SUPABASE_URL`
 (`supabaseUrlToAuthCookieName`, `packages/domain`) : `sb-<label>-auth-token`.
@@ -193,78 +230,132 @@ Points de vigilance :
   backend local et un faux LLM, ou faire valider l'upload par un humain.
 - Requêtes longues (exports) : vérifier les timeouts Traefik.
 
+## Phase 1 bis — CORS resserré (indépendante du proxy)
+
+Sans impact sur les sessions.
+
+1b.1. Backend, CORS (`main.ts`) : toute origine reste acceptée (site,
+intégrations par clé d'API), mais `Access-Control-Allow-Credentials` n'est
+renvoyé qu'à l'origine de `APP_URL`.
+1b.2. Backend, cookie (`supabase-cookie-parser.ts`) : le cookie de session
+n'est honoré que sans en-tête `Origin` (navigation, appel serveur) ou si
+`Origin` est celle de `APP_URL`. Garde côté serveur : le CORS n'empêche
+pas une requête « simple » d'être exécutée.
+1b.3. Client tRPC navigateur : `credentials: 'include'` réservé au provider de
+l'app ; le formulaire de contact du site appelle sans credentials.
+1b.4. App : suppression de `apps/app/cors.config.ts` et de `isAllowedOrigin`
+(plus aucun appelant cross-origin depuis la fin de `apps/auth`).
+
+**Ordre de déploiement : site d'abord, backend ensuite.** Le formulaire de
+contact du site utilisait `credentials: 'include'` ; déployé avant lui, le
+backend lui refuserait la lecture de la réponse.
+
+À vérifier après déploiement : apps de test Koyeb (`BACKEND_TEST_URL`) et
+`trpc-ui`, qui appellent le backend depuis une autre origine que `APP_URL` —
+le cookie n'y est plus accepté.
+
+Écarté : envoyer le jeton en `Authorization: Bearer` depuis le navigateur pour
+se passer du proxy. Le proxy same-origin (phase 1) couvre le même besoin et
+règle en plus l'OIDC.
+
 ## Phase 2 — OIDC sur l'origine de l'app (⚠ action humaine)
 
-2.1. **Humain** : déclarer chez ProConnect, pour chaque environnement, les
-nouvelles URL (même chemin, hôte de l'app) : - `redirect_uri` : `https://app.…/api/v1/proconnect/callback`
-(aujourd'hui `<BACKEND_URL>/api/v1/proconnect/callback`) ; - `post_logout_redirect_uri` équivalente.
-2.2. Basculer `PRO_CONNECT_REDIRECT_URI` et
-`PRO_CONNECT_POST_LOGOUT_REDIRECT_URI` (variables de déploiement backend,
-`apps/backend/.env` en local).
-2.3. Basculer les URL OIDC du navigateur sur `ENV.backend_browser_url` :
-`login-user-with-oidc.urls.ts`, `create-user-with-oidc.urls.ts`,
-`link-oidc-identity.profile-urls.ts` et leurs appelants,
-`signup/page.tsx`, `sign-out-user.server.ts`.
-2.4. Retirer `domain` de `idTokenCookieOptions()` (`oidc.controller.ts`) ;
-supprimer `getRootDomainFromUrl` (`oidc.utils.ts`) s'il ne sert plus.
-Passant par l'origine de l'app, les `Set-Cookie` sans `Domain` deviennent
-host-only sur `app.…`.
-2.5. Mettre à jour `oidc.controller.spec.ts`.
-2.6. Migration : les cookies `id_token`/`provider` déjà posés sur le domaine
-racine (TTL 12 h) expirent seuls.
+**ProConnect est actif en prod.** Deux dépendances au domaine racine :
+
+- la liaison de compte (`mode=link`) lit le cookie de session sur `api.…` lors
+  d'une navigation (`resolveAuthenticatedUserId`) : avec un cookie host-only et
+  sans proxy, elle redeviendrait silencieusement une connexion simple ;
+- les cookies `id_token` / `oidc-provider` sont posés par `api.…` sur le
+  domaine racine pour être lus par l'app (déconnexion).
+
+La phase 3 est donc **bloquée par celle-ci** en prod. Tant que la prod est sur
+Koyeb (deux apps distinctes, pas de routage par chemin), deux options :
+
+- attendre la bascule Coolify (Traefik route `app.…/api`), ou
+- **2 bis** : un route handler Next limité aux chemins OIDC
+  (`app/api/v1/[provider]/[...path]/route.ts`, navigations et petites
+  réponses : ni streaming ni gros corps), supprimé à la bascule.
+
+  2.1. **Humain** : déclarer chez ProConnect, pour chaque environnement, les
+  nouvelles URL (même chemin, hôte de l'app) : - `redirect_uri` : `https://app.…/api/v1/proconnect/callback`
+  (aujourd'hui `<BACKEND_URL>/api/v1/proconnect/callback`) ; - `post_logout_redirect_uri` équivalente.
+  2.2. Basculer `PRO_CONNECT_REDIRECT_URI` et
+  `PRO_CONNECT_POST_LOGOUT_REDIRECT_URI` (variables de déploiement backend,
+  `apps/backend/.env` en local).
+  2.3. Basculer les URL OIDC du navigateur sur `ENV.backend_browser_url` :
+  `login-user-with-oidc.urls.ts`, `create-user-with-oidc.urls.ts`,
+  `link-oidc-identity.profile-urls.ts` et leurs appelants,
+  `signup/page.tsx`, `sign-out-user.server.ts`.
+  2.4. Retirer `domain` de `idTokenCookieOptions()` (`oidc.controller.ts`) ;
+  supprimer `getRootDomainFromUrl` (`oidc.utils.ts`) s'il ne sert plus.
+  Passant par l'origine de l'app, les `Set-Cookie` sans `Domain` deviennent
+  host-only sur `app.…`.
+  2.5. Mettre à jour `oidc.controller.spec.ts`.
+  2.6. Migration : les cookies `id_token`/`provider` déjà posés sur le domaine
+  racine (TTL 12 h) expirent seuls.
 
 ## Phase 3 — Cookie Supabase host-only `__Host-`
 
-**Calée sur la bascule GoTrue de la prod.** À ce moment, `SUPABASE_URL`
-change et donc le nom du cookie aussi : tout le monde est déconnecté une fois
-quoi qu'il arrive. Renommer en `__Host-…` ne coûte alors rien de plus, et
-supprime le besoin d'une migration de cookies (pas de collision entre ancien
-et nouveau nom).
+N'attend plus la bascule GoTrue : avec les previews, c'est un prérequis à leur
+ouverture. Prérequis : phases 1, 1 bis et 2 dans l'environnement visé.
+Preprod d'abord.
 
-Pour preprod/staging, la phase peut être appliquée dès que la phase 1 y est
-en place (une reconnexion de plus).
-
-3.1. `getCookieOptions()` : nom `__Host-sb-tet-<env>-auth-token` (via la
-variable de la phase 0), sans `domain`, `secure: true`, `path: '/'`.
-Retirer le `hostname` passé par `apps/app/app/root-providers.tsx` ;
-supprimer `getRootDomain` de `packages/api/src/utils/pathUtils.ts` s'il
-n'a plus d'autre usage (aujourd'hui aussi dans
-`content-security-policy.config.ts`). Supprimer `COOKIE_DOMAIN` des
-environnements.
-3.2. Dev local : `__Host-` impose `Secure`. Les navigateurs acceptent les
-cookies `Secure` sur `http://localhost`, mais vérifier Playwright et
-garder un nom sans préfixe en local si besoin.
-3.3. E2E : `getCookieDomain` (`e2e/tests/shared/supabase-client.utils.ts`) →
-hôte de l'app.
+3.1. `getCookieOptions()` : piloté par le nom. Si
+`SUPABASE_AUTH_COOKIE_NAME` commence par `__Host-`
+(`__Host-sb-tet-<env>-auth-token`) : pas de `domain`, `secure: true`,
+`path: '/'`. Sans la variable (local, CI), rien ne change — pas de
+question de cookie `Secure` sur `http://localhost`.
+3.2. Backend : même variable (le serveur Next lui relaie le cookie sous ce
+nom, `trpc-server-client.ts`). `supabase-cookie-parser.ts` essaie aussi
+l'ancien nom, pour ne pas dépendre de l'ordre de déploiement.
+3.3. Migration, dans `proxy-client.ts` avant `createServerClient` : si
+l'ancien cookie est présent (morceaux `.0`, `.1`… compris), le recopier
+sous le nouveau nom puis le **supprimer explicitement** avec
+`Domain=.territoiresentransitions.fr`. Personne n'est déconnecté.
+La suppression est obligatoire même sans recopie : l'ancien cookie vit
+~3 ans et son jeton de rafraîchissement reste valide tant que
+l'utilisateur ne revient pas. Garder ce code plusieurs mois.
+3.4. Équipe : repasser une fois sur l'app (prod et preprod) après le
+déploiement et avant d'ouvrir une preview — l'ancien cookie n'est purgé
+qu'à la visite suivante.
+3.5. E2E : `getCookieDomain` (`e2e/tests/shared/supabase-client.utils.ts`) →
+hôte de l'app, `secure: true` hors local.
+3.6. Ensuite : retirer le `hostname` passé par
+`apps/app/app/root-providers.tsx`, `COOKIE_DOMAIN`, et `getRootDomain`
+de `pathUtils.ts` s'il n'a plus d'autre usage (aujourd'hui aussi dans
+`content-security-policy.config.ts`).
 
 ## Phase 4 — Nettoyage
 
-4.1. Backend : retirer `credentials: true` de `enableCors` (`main.ts`) et
-réduire les origines autorisées. Le site n'appelle le backend que pour
-des données publiques : vérifier qu'aucun appel du site n'envoie de
-cookie.
-4.2. Supprimer `apps/app/cors.config.ts` (et son appel dans `proxy.ts`) si
-plus rien ne fait d'appel cross-origin vers l'app.
+4.1. Backend : une fois tous les environnements en same-origin, retirer
+complètement `credentials` de `enableCors` (`main.ts`) — déjà restreint à
+l'origine de l'app en phase 1 bis.
+4.2. ~~Supprimer `apps/app/cors.config.ts`~~ — fait en phase 1 bis.
 4.3. Retirer le montage `/trpc` historique si plus aucun appelant.
-4.4. Supprimer le fallback `supabaseUrlToAuthCookieName` de la phase 0.2.
+4.4. Supprimer le fallback `supabaseUrlToAuthCookieName` de la phase 0.2, le
+repli sur l'ancien nom (3.2) et la migration de cookie (3.3).
+4.5. Supprimer le route handler OIDC de la phase 2 bis s'il a été posé.
 
 ## Ordre de déploiement
 
-1. Phase 0 sur preprod/staging.
-2. Phases 1 et 2 sur preprod/staging, directement avec Traefik.
-3. Phase 3 sur preprod/staging.
-4. Prod : phases 1, 2 et 3 à la bascule Koyeb → Coolify.
-5. Phase 4.
-
-Le route handler Next n'intervient que si la prod doit obtenir le BFF avant sa
-bascule (cf. « Alternative transitoire »).
+1. ~~Phases 0 et 1 sur preprod.~~
+2. Phase 1 bis partout (site, puis backend).
+3. Phases 2 et 3 sur preprod.
+4. Prod : phase 2 (à la bascule Coolify) ou 2 bis (avant), puis phase 3.
+5. **Ouverture des previews : pas avant l'étape 4.**
+6. Phase 4.
 
 ## Vérification
 
 - Connexion par mot de passe, magic link et ProConnect ; déconnexion
   (y compris le logout SSO amont) ; liaison d'une identité OIDC depuis le
   profil.
-- Sessions preprod et staging indépendantes dans un même navigateur.
+- Sessions preprod et prod indépendantes dans un même navigateur.
+- Le `Set-Cookie` de session ne porte plus de `Domain` et commence par
+  `__Host-` ; l'ancien cookie du domaine racine a disparu après une visite.
+- `curl -i -H "Origin: https://1-app.preview.territoiresentransitions.fr"`
+  vers l'app : aucun `Access-Control-Allow-Origin` ; vers l'API : pas de
+  `Access-Control-Allow-Credentials`.
 - Le cookie n'apparaît plus sur `territoiresentransitions.fr` (DevTools →
   Application → Cookies).
 - Upload d'un document et d'un fichier d'import (sans lancer le LLM).

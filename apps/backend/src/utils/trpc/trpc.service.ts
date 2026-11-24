@@ -271,8 +271,6 @@ export class TrpcService {
   async createContext({
     req,
   }: CreateExpressContextOptions): Promise<TrpcContext> {
-    const supabaseUrl = this.config.get('SUPABASE_URL');
-
     // Facultatif : les appels côté serveur (`createCaller`, tests) construisent
     // leur contexte à la main et n'en ont pas. `rateLimit` retombe alors sur un
     // seau commun.
@@ -280,8 +278,11 @@ export class TrpcService {
 
     const supabaseJwtFromCookie = await extractAccessTokenFromSupabaseCookie(
       req,
-      supabaseUrl,
-      this.config.get('SUPABASE_AUTH_COOKIE_NAME')
+      {
+        supabaseUrl: this.config.get('SUPABASE_URL'),
+        appUrl: this.config.get('APP_URL'),
+        cookieName: this.config.get('SUPABASE_AUTH_COOKIE_NAME'),
+      }
     );
 
     const supabaseJwt =

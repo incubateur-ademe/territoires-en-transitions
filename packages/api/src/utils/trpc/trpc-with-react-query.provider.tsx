@@ -51,20 +51,22 @@ export type TRPCUseMutationResult<TVariables, TData> = UseMutationResult<
   unknown
 >;
 
-const CLIENT_HTTP_LINK = httpLink({
-  url: getBrowserTrpcUrl(),
-  headers: (opts) => setCorrelationIdInContextAndGetHeader(opts),
-  fetch: (url, options) => {
-    return fetch(url, {
-      ...options,
-      credentials: 'include',
-    });
-  },
-});
-
-export function getTrpcClient(): TRPCClient<AppRouter> {
+/**
+ * `credentials: 'include'` n'est accepté par le backend (CORS) que depuis
+ * l'origine de l'app : le site appelle donc sans credentials.
+ */
+export function getTrpcClient(
+  credentials: RequestCredentials = 'same-origin'
+): TRPCClient<AppRouter> {
   return createTRPCClient<AppRouter>({
-    links: [getTrpcLoggerLink(), CLIENT_HTTP_LINK],
+    links: [
+      getTrpcLoggerLink(),
+      httpLink({
+        url: getBrowserTrpcUrl(),
+        headers: (opts) => setCorrelationIdInContextAndGetHeader(opts),
+        fetch: (url, options) => fetch(url, { ...options, credentials }),
+      }),
+    ],
   });
 }
 
@@ -73,7 +75,7 @@ export function TrpcWithReactQueryProvider({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [trpcClient] = useState(() => getTrpcClient());
+  const [trpcClient] = useState(() => getTrpcClient('include'));
 
   const queryClient = getQueryClient();
 

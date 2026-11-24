@@ -2,7 +2,6 @@ export * as CollectiviteEngagee from './collectiviteEngagees/types';
 export type { Json } from './json.types';
 export * from './users/user-context/user-provider';
 export * from './utils/get-request-url';
-export * from './utils/isAllowedOrigin';
 export * from './utils/pathUtils';
 export * from './utils/supabase/use-supabase';
 export * from './utils/trpc/trpc-with-react-query.provider';
