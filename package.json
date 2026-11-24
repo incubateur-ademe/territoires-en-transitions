@@ -105,7 +105,7 @@
     "jszip": "3.10.2",
     "leaflet": "1.9.4",
     "leaflet-defaulticon-compatibility": "0.1.2",
-    "leviers-ges": "github:GaelS/leviers-ges#9d569532e87dd9cd7ec9c6c776807adacd806a9f",
+    "leviers-ges": "0.0.0-stage",
     "luxon": "3.7.1",
     "mammoth": "^1.12.3",
     "marked": "15.0.12",
