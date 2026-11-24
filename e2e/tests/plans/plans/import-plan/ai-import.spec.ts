@@ -36,14 +36,14 @@ async function selectElectrification(page: Page) {
   await electrificationOption(page).click();
 }
 
-test('importe un plan de n’importe quel type par le profil générique, sans mode super-admin', async ({
+test('importe un plan de n’importe quel type par le profil générique, en mode super-admin', async ({
   page,
   collectivites,
 }) => {
   const mock = new AiImportFixture();
   await mock.install(page);
   const { collectivite, user } = await collectivites.addCollectiviteAndUser({
-    userArgs: { autoLogin: true },
+    userArgs: supportUser,
   });
   const types = await user.getTrpcClient().plans.plans.listTypes.query();
   const otherType = types.find(
@@ -1039,10 +1039,16 @@ test("affiche les détails dans le menu du plan seulement avec accès à l'impor
   await expect(
     page.getByRole('heading', { name: 'Plans', exact: true })
   ).toBeVisible();
-  // L'import est ouvert sans mode super-admin dès qu'un profil est disponible.
+  // Pour le moment, l'entrée de l'import reste réservée au mode super-admin.
   await expect(
     page.getByRole('link', { name: 'Historique des imports', exact: true })
-  ).toBeVisible();
+  ).toHaveCount(0);
+  await page
+    .getByRole('button', { name: 'Ajouter un plan', exact: true })
+    .click();
+  await expect(page.getByTestId('choix-creation-plan.importer-ia')).toHaveCount(
+    0
+  );
 
   await page.goto(
     `/collectivite/${collectivite.data.id}/plans/${manualPlanId}`
