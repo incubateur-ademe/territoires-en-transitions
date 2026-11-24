@@ -4,6 +4,7 @@ import {
   CollectiviteTypeEnum,
 } from '@tet/domain/collectivites';
 import { InvalidExpressionError } from '@tet/backend/utils/expression-parser';
+import { getDataOrThrow } from '@tet/backend/utils/result.type';
 import IndicateurExpressionService from './indicateur-expression.service';
 
 // décommenter (et lancer les tests) pour màj la doc
@@ -22,21 +23,79 @@ describe('IndicateurExpressionService', () => {
     indicateurExpressionService = moduleRef.get(IndicateurExpressionService);
   });
 
+  const evaluate = (
+    ...args: Parameters<
+      IndicateurExpressionService['parseAndEvaluateExpression']
+    >
+  ) =>
+    getDataOrThrow(
+      indicateurExpressionService.parseAndEvaluateExpression(...args)
+    );
+
+  const extractNeededSources = (formula: string) =>
+    getDataOrThrow(
+      indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
+        formula
+      )
+    );
+
+  const extractPersonnalisationReferences = (formula: string) =>
+    getDataOrThrow(
+      indicateurExpressionService.extractPersonnalisationReferencesFromFormula(
+        formula
+      )
+    );
+
+  const incompleteFormulaCause = new InvalidExpressionError(
+    [
+      '(ligne 1, colonne 14) :',
+      '  si val(cae_1)',
+      '               ^',
+      "Attendu « alors », trouvé la fin de l'expression.",
+    ].join('\n')
+  );
+
   describe('extractNeededSourceIndicateursFromFormula', () => {
-    test('lève InvalidExpressionError sur un caractère non reconnu', () => {
-      expect(() =>
+    test('retourne INVALID_EXPRESSION, avec l’erreur de syntaxe en cause, sur un caractère non reconnu', () => {
+      const extraction =
         indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
           'val(cae_1.e) % 2'
+        );
+
+      expect(extraction).toEqual({
+        success: false,
+        error: 'INVALID_EXPRESSION',
+        cause: expect.any(InvalidExpressionError),
+      });
+    });
+
+    test('transmet le message de syntaxe d’origine dans la cause', () => {
+      expect(
+        indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
+          'si val(cae_1)'
         )
-      ).toThrow(InvalidExpressionError);
+      ).toEqual({
+        success: false,
+        error: 'INVALID_EXPRESSION',
+        cause: incompleteFormulaCause,
+      });
+    });
+
+    test('retourne les références dans un succès', () => {
+      const extraction =
+        indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
+          'val(cae_1.e)'
+        );
+
+      expect(extraction).toEqual({
+        success: true,
+        data: [{ identifiant: 'cae_1.e', optional: false, tokens: ['val'] }],
+      });
     });
 
     test('Test simple formula', async () => {
       const formula = 'val(Cae_1.e ) + val( cae_1.F)';
-      const neededSourceIndicateurs =
-        indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
-          formula
-        );
+      const neededSourceIndicateurs = extractNeededSources(formula);
       expect(neededSourceIndicateurs).toEqual([
         { identifiant: 'cae_1.e', optional: false, tokens: ['val'] },
         { identifiant: 'cae_1.f', optional: false, tokens: ['val'] },
@@ -45,10 +104,7 @@ describe('IndicateurExpressionService', () => {
 
     test('Simple formula with optional value', async () => {
       const formula = 'val(cae_1.e ) + opt_val( cae_1.f)';
-      const neededSourceIndicateurs =
-        indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
-          formula
-        );
+      const neededSourceIndicateurs = extractNeededSources(formula);
       expect(neededSourceIndicateurs).toEqual([
         { identifiant: 'cae_1.e', optional: false, tokens: ['val'] },
         { identifiant: 'cae_1.f', optional: true, tokens: ['opt_val'] },
@@ -58,10 +114,7 @@ describe('IndicateurExpressionService', () => {
     test('Simple formula with target and limit values', async () => {
       const formula =
         'val(cae_1.e ) + opt_val( cae_1.f) + cible(cae_1.g) + limite(cae_1.h)';
-      const neededSourceIndicateurs =
-        indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
-          formula
-        );
+      const neededSourceIndicateurs = extractNeededSources(formula);
       expect(neededSourceIndicateurs).toEqual([
         { identifiant: 'cae_1.e', optional: false, tokens: ['val'] },
         { identifiant: 'cae_1.f', optional: true, tokens: ['opt_val'] },
@@ -72,19 +125,13 @@ describe('IndicateurExpressionService', () => {
 
     test('No indicateurs', async () => {
       const formula = '10 + 30';
-      const neededSourceIndicateurs =
-        indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
-          formula
-        );
+      const neededSourceIndicateurs = extractNeededSources(formula);
       expect(neededSourceIndicateurs).toEqual([]);
     });
 
     test('Same indicateur twice', async () => {
       const formula = '(val(cae_1.e) + val(cae_1.f)) / val(cae_1.e)';
-      const neededSourceIndicateurs =
-        indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
-          formula
-        );
+      const neededSourceIndicateurs = extractNeededSources(formula);
       expect(neededSourceIndicateurs).toEqual([
         { identifiant: 'cae_1.e', optional: false, tokens: ['val'] },
         { identifiant: 'cae_1.f', optional: false, tokens: ['val'] },
@@ -93,10 +140,7 @@ describe('IndicateurExpressionService', () => {
 
     test('Same indicateur twice with optional and required references', async () => {
       const formula = '(val(cae_1.e) + val(cae_1.f)) / opt_val(cae_1.e)';
-      const neededSourceIndicateurs =
-        indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
-          formula
-        );
+      const neededSourceIndicateurs = extractNeededSources(formula);
       expect(neededSourceIndicateurs).toEqual([
         { identifiant: 'cae_1.e', optional: false, tokens: ['val', 'opt_val'] },
         { identifiant: 'cae_1.f', optional: false, tokens: ['val'] },
@@ -105,10 +149,7 @@ describe('IndicateurExpressionService', () => {
 
     test('Simple formula with source', async () => {
       const formula = 'opt_val(cae_1.a, rare) / val(terr_1, insee )';
-      const neededSourceIndicateurs =
-        indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
-          formula
-        );
+      const neededSourceIndicateurs = extractNeededSources(formula);
       expect(neededSourceIndicateurs).toEqual([
         {
           identifiant: 'cae_1.a',
@@ -127,10 +168,7 @@ describe('IndicateurExpressionService', () => {
 
     test('Simple formula with est_suivi', async () => {
       const formula = 'si est_suivi(te_11) alors 1 sinon 0';
-      const neededSourceIndicateurs =
-        indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
-          formula
-        );
+      const neededSourceIndicateurs = extractNeededSources(formula);
       expect(neededSourceIndicateurs).toEqual([
         { identifiant: 'te_11', optional: true, tokens: ['est_suivi'] },
       ]);
@@ -145,23 +183,17 @@ describe('IndicateurExpressionService', () => {
           progressions: [{ token: 'progression_snbc', anneeDepart: 2015 }],
         },
       ];
-      expect(
-        indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
-          'progression_snbc(cae_1.a)'
-        )
-      ).toEqual(attendu);
-      expect(
-        indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
-          'progression_snbc(cae_1.a, 2015)'
-        )
-      ).toEqual(attendu);
+      expect(extractNeededSources('progression_snbc(cae_1.a)')).toEqual(
+        attendu
+      );
+      expect(extractNeededSources('progression_snbc(cae_1.a, 2015)')).toEqual(
+        attendu
+      );
     });
 
     test('progression_snbc avec année de départ', () => {
       expect(
-        indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
-          'min(1, progression_snbc(cae_1.a, 2019))'
-        )
+        extractNeededSources('min(1, progression_snbc(cae_1.a, 2019))')
       ).toEqual([
         {
           identifiant: 'cae_1.a',
@@ -174,9 +206,7 @@ describe('IndicateurExpressionService', () => {
 
     test('reduction à 4 paramètres', () => {
       expect(
-        indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
-          'reduction(cae_1.a, 2015, 2030, 0.4)'
-        )
+        extractNeededSources('reduction(cae_1.a, 2015, 2030, 0.4)')
       ).toEqual([
         {
           identifiant: 'cae_1.a',
@@ -195,10 +225,9 @@ describe('IndicateurExpressionService', () => {
     });
 
     test('dédoublonne les progressions identiques et fusionne les autres', () => {
-      const [ref] =
-        indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
-          'progression_snbc(cae_1.a) + progression_snbc(cae_1.a, 2015) + progression_snbc(cae_1.a, 2019) + val(cae_1.a)'
-        );
+      const [ref] = extractNeededSources(
+        'progression_snbc(cae_1.a) + progression_snbc(cae_1.a, 2015) + progression_snbc(cae_1.a, 2019) + val(cae_1.a)'
+      );
       expect(ref.tokens).toEqual(['progression_snbc', 'val']);
       expect(ref.progressions).toEqual([
         { token: 'progression_snbc', anneeDepart: 2015 },
@@ -208,10 +237,7 @@ describe('IndicateurExpressionService', () => {
 
     test('Simple formula with dash into identifier', async () => {
       const formula = 'opt_val(cae_49.b-hab) + val(cae_49.c-hab)';
-      const neededSourceIndicateurs =
-        indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
-          formula
-        );
+      const neededSourceIndicateurs = extractNeededSources(formula);
       expect(neededSourceIndicateurs).toEqual([
         {
           identifiant: 'cae_49.b-hab',
@@ -229,10 +255,9 @@ describe('IndicateurExpressionService', () => {
 
   describe('extractPersonnalisationReferencesFromFormula', () => {
     test('extrait les appels identite et reponse avec leurs valeurs telles qu’écrites', () => {
-      const references =
-        indicateurExpressionService.extractPersonnalisationReferencesFromFormula(
-          'si identite(population, plus_de_3000) et reponse(dechets_1, oui) alors val(cae_1.a) * reponse(part_1) sinon max(0, cible(cae_1.b))'
-        );
+      const references = extractPersonnalisationReferences(
+        'si identite(population, plus_de_3000) et reponse(dechets_1, oui) alors val(cae_1.a) * reponse(part_1) sinon max(0, cible(cae_1.b))'
+      );
       expect(references).toEqual({
         questions: [
           { questionId: 'dechets_1', valeur: 'oui' },
@@ -245,123 +270,111 @@ describe('IndicateurExpressionService', () => {
     });
 
     test('ne renvoie rien pour une formule sans identite ni reponse', () => {
-      const references =
-        indicateurExpressionService.extractPersonnalisationReferencesFromFormula(
-          'val(cae_1.a) + opt_val(cae_1.b)'
-        );
+      const references = extractPersonnalisationReferences(
+        'val(cae_1.a) + opt_val(cae_1.b)'
+      );
       expect(references.questions).toEqual([]);
       expect(references.identiteFields).toEqual([]);
     });
   });
 
   describe('parseExpression', () => {
-    test('val(cae_1.e) + val(cae_1.f)', async () => {
-      expect(
-        indicateurExpressionService.parseExpression(
-          'val(cae_1.e) + val(cae_1.f)'
-        )
-      ).toBeTruthy();
+    test('retourne l’arbre syntaxique dans un succès', async () => {
+      const parsing = indicateurExpressionService.parseExpression(
+        'val(cae_1.e) + val(cae_1.f)'
+      );
+
+      expect(parsing.success).toBe(true);
     });
 
-    test('Formate les erreurs de parsing', () => {
-      try {
+    test('Formate les erreurs de parsing dans la cause', () => {
+      const parsing =
         indicateurExpressionService.parseExpression(`si val(cae_1)`);
-      } catch (e) {
-        expect(e).toBeDefined();
-        expect((e as Error).message).toEqual(
-          [
-            '(ligne 1, colonne 14) :',
-            '  si val(cae_1)',
-            '               ^',
-            "Attendu « alors », trouvé la fin de l'expression.",
-          ].join('\n')
-        );
-      }
+
+      expect(parsing).toEqual({
+        success: false,
+        error: 'INVALID_EXPRESSION',
+        cause: incompleteFormulaCause,
+      });
+    });
+  });
+
+  describe('parseAndEvaluateExpression sur une formule invalide', () => {
+    test('retourne INVALID_EXPRESSION avec l’erreur de syntaxe d’origine', () => {
+      expect(
+        indicateurExpressionService.parseAndEvaluateExpression(
+          'si val(cae_1)',
+          {
+            cae_1: 1,
+          }
+        )
+      ).toEqual({
+        success: false,
+        error: 'INVALID_EXPRESSION',
+        cause: incompleteFormulaCause,
+      });
     });
   });
 
   describe('parseAndEvaluateExpression', () => {
     test('val(cae_1.e) + val(cae_1.f) with all values', async () => {
       expect(
-        indicateurExpressionService.parseAndEvaluateExpression(
-          'val(cae_1.e) + val(cae_1.f)',
-          {
-            'cae_1.e': 100,
-            'cae_1.f': 20,
-          }
-        )
+        evaluate('val(cae_1.e) + val(cae_1.f)', {
+          'cae_1.e': 100,
+          'cae_1.f': 20,
+        })
       ).toEqual(120);
     });
 
     test('val(cae_1.e) + val(cae_1.f) with missing value', async () => {
       expect(
-        indicateurExpressionService.parseAndEvaluateExpression(
-          'val(cae_1.e) + val(cae_1.f)',
-          {
-            'cae_1.e': 100,
-          }
-        )
+        evaluate('val(cae_1.e) + val(cae_1.f)', {
+          'cae_1.e': 100,
+        })
       ).toEqual(null);
     });
 
     test('val(cae_1.e) + opt_val(cae_1.f) with given optional value', async () => {
       expect(
-        indicateurExpressionService.parseAndEvaluateExpression(
-          'val(cae_1.e) + opt_val(cae_1.f)',
-          {
-            'cae_1.e': 100,
-            'cae_1.f': 20,
-          }
-        )
+        evaluate('val(cae_1.e) + opt_val(cae_1.f)', {
+          'cae_1.e': 100,
+          'cae_1.f': 20,
+        })
       ).toEqual(120);
     });
 
     test('val(cae_1.e) + opt_val(cae_1.f) with missing optional value', async () => {
       expect(
-        indicateurExpressionService.parseAndEvaluateExpression(
-          'val(cae_1.e) + opt_val(cae_1.f)',
-          {
-            'cae_1.e': 100,
-          }
-        )
+        evaluate('val(cae_1.e) + opt_val(cae_1.f)', {
+          'cae_1.e': 100,
+        })
       ).toEqual(100);
     });
 
     test('opt_val(cae_1.e) + opt_val(cae_1.f) with all missing optional value', async () => {
-      expect(
-        indicateurExpressionService.parseAndEvaluateExpression(
-          'opt_val(cae_1.e) + opt_val(cae_1.f)',
-          {}
-        )
-      ).toEqual(null);
+      expect(evaluate('opt_val(cae_1.e) + opt_val(cae_1.f)', {})).toEqual(null);
     });
 
     test('1 + val(cae_1.f) / val(cae_1.e)', async () => {
       expect(
-        indicateurExpressionService.parseAndEvaluateExpression(
-          '1 + val(cae_1.f) / val(cae_1.e)',
-          {
-            'cae_1.e': 100,
-            'cae_1.f': 20,
-          }
-        )
+        evaluate('1 + val(cae_1.f) / val(cae_1.e)', {
+          'cae_1.e': 100,
+          'cae_1.f': 20,
+        })
       ).toEqual(1.2);
     });
 
     test('val(cae_1.f) / opt_val(cae_1.e) for infinity', async () => {
       expect(
-        indicateurExpressionService.parseAndEvaluateExpression(
-          'val(cae_1.f) / opt_val(cae_1.e)',
-          {
-            'cae_1.f': 20,
-          }
-        )
+        evaluate('val(cae_1.f) / opt_val(cae_1.e)', {
+          'cae_1.f': 20,
+        })
       ).toEqual(null);
     });
 
     test('val(cae_1.e) + limite(cae_1.g) + cible(cae_1.h) + val(cae_1.i) with all values', async () => {
       expect(
-        indicateurExpressionService.parseAndEvaluateExpression(
+        evaluate(
           'val(cae_1.e) + limite(cae_1.g) + cible(cae_1.h) + val(cae_1.i)',
           {
             'cae_1.e': 100,
@@ -379,7 +392,7 @@ describe('IndicateurExpressionService', () => {
 
     test('limite(cae_1.e) + cible(cae_1.f) with values equal to zero', async () => {
       expect(
-        indicateurExpressionService.parseAndEvaluateExpression(
+        evaluate(
           'limite(cae_1.e) + cible(cae_1.f)',
           {},
           {
@@ -394,7 +407,7 @@ describe('IndicateurExpressionService', () => {
 
     test('val(cae_17.b) / cible(cae_17.b) with value equal to zero', async () => {
       expect(
-        indicateurExpressionService.parseAndEvaluateExpression(
+        evaluate(
           `val(cae_17.b) / cible(cae_17.b)`,
           { 'cae_17.b': 0 },
           {
@@ -419,7 +432,7 @@ describe('IndicateurExpressionService', () => {
           sinon ((val(cae_6.a) - limite(cae_6.a)) * 0.1) / (limite(cae_6.a) - cible(cae_6.a))`;
 
       expect(
-        indicateurExpressionService.parseAndEvaluateExpression(
+        evaluate(
           formule,
           { 'cae_6.a': 10 },
           {
@@ -432,7 +445,7 @@ describe('IndicateurExpressionService', () => {
       ).toEqual(0);
 
       expect(
-        indicateurExpressionService.parseAndEvaluateExpression(
+        evaluate(
           formule,
           { 'cae_6.a': 10 },
           {
@@ -450,13 +463,7 @@ describe('IndicateurExpressionService', () => {
           cible: { 'cae_6.a': 5 },
         },
       };
-      expect(
-        indicateurExpressionService.parseAndEvaluateExpression(
-          formule,
-          { 'cae_6.a': 3 },
-          input
-        )
-      ).toEqual(
+      expect(evaluate(formule, { 'cae_6.a': 3 }, input)).toEqual(
         ((3 - input.valeursComplementaires.limite['cae_6.a']) * 0.1) /
           (input.valeursComplementaires.limite['cae_6.a'] -
             input.valeursComplementaires.cible['cae_6.a'])
@@ -502,11 +509,10 @@ describe('IndicateurExpressionService', () => {
       };
 
       expect(
-        indicateurExpressionService.parseAndEvaluateExpression(
-          formule,
-          valeurs,
-          { valeursComplementaires, identiteCollectivite }
-        )
+        evaluate(formule, valeurs, {
+          valeursComplementaires,
+          identiteCollectivite,
+        })
       ).toEqual(
         ((valeurs['cae_15.b'] - valeursComplementaires.limite['cae_15.b']) *
           0.1) /
@@ -515,14 +521,10 @@ describe('IndicateurExpressionService', () => {
       );
 
       expect(
-        indicateurExpressionService.parseAndEvaluateExpression(
-          formule,
-          valeurs,
-          {
-            valeursComplementaires,
-            identiteCollectivite: { ...identiteCollectivite, drom: true },
-          }
-        )
+        evaluate(formule, valeurs, {
+          valeursComplementaires,
+          identiteCollectivite: { ...identiteCollectivite, drom: true },
+        })
       ).toEqual(
         ((valeurs['cae_15.b_dom'] -
           valeursComplementaires.limite['cae_15.b_dom']) *
@@ -562,13 +564,7 @@ describe('IndicateurExpressionService', () => {
         cible: { cae_22: 5, cae_23: 10 },
       };
 
-      expect(
-        indicateurExpressionService.parseAndEvaluateExpression(
-          formule,
-          valeurs,
-          { valeursComplementaires }
-        )
-      ).toEqual(
+      expect(evaluate(formule, valeurs, { valeursComplementaires })).toEqual(
         ((valeurs.cae_22 - valeursComplementaires.limite.cae_22) * 0.3) /
           (valeursComplementaires.limite.cae_22 -
             valeursComplementaires.cible.cae_22) +
@@ -600,11 +596,10 @@ describe('IndicateurExpressionService', () => {
       };
 
       expect(
-        indicateurExpressionService.parseAndEvaluateExpression(
-          formule,
-          valeurs,
-          { valeursComplementaires, reponses: { AOM_1: true } }
-        )
+        evaluate(formule, valeurs, {
+          valeursComplementaires,
+          reponses: { AOM_1: true },
+        })
       ).toEqual(
         ((valeurs.cae_5 - valeursComplementaires.limite.cae_5) * 0.2) /
           (valeursComplementaires.limite.cae_5 -
@@ -612,11 +607,10 @@ describe('IndicateurExpressionService', () => {
       );
 
       expect(
-        indicateurExpressionService.parseAndEvaluateExpression(
-          formule,
-          valeurs,
-          { valeursComplementaires, reponses: { AOM_1: false } }
-        )
+        evaluate(formule, valeurs, {
+          valeursComplementaires,
+          reponses: { AOM_1: false },
+        })
       ).toEqual(
         ((valeurs.cae_5 - valeursComplementaires.limite.cae_5) * 0.1) /
           (valeursComplementaires.limite.cae_5 -
@@ -632,7 +626,7 @@ describe('IndicateurExpressionService', () => {
 
     it('identite(soustype, syndicat) retourne 1 pour un syndicat', () => {
       expect(
-        indicateurExpressionService.parseAndEvaluateExpression(
+        evaluate(
           formule,
           { dummy: 1 },
           {
@@ -649,7 +643,7 @@ describe('IndicateurExpressionService', () => {
 
     it('identite(soustype, epci_a_fiscalite_propre) retourne 1 pour un EPCI FP', () => {
       expect(
-        indicateurExpressionService.parseAndEvaluateExpression(
+        evaluate(
           formuleFP,
           { dummy: 1 },
           {
@@ -666,7 +660,7 @@ describe('IndicateurExpressionService', () => {
 
     it('identite(soustype, pole) retourne 1 pour un pole', () => {
       expect(
-        indicateurExpressionService.parseAndEvaluateExpression(
+        evaluate(
           'si identite(soustype, pole) alors 1 sinon 0',
           { dummy: 1 },
           {
@@ -683,7 +677,7 @@ describe('IndicateurExpressionService', () => {
 
     it('identite(soustype, syndicat) retourne 0 pour une commune', () => {
       expect(
-        indicateurExpressionService.parseAndEvaluateExpression(
+        evaluate(
           formule,
           { dummy: 1 },
           {
@@ -700,7 +694,7 @@ describe('IndicateurExpressionService', () => {
 
     it('identite(soustype, SYNDICAT) en majuscules retourne 1 (insensible a la casse)', () => {
       expect(
-        indicateurExpressionService.parseAndEvaluateExpression(
+        evaluate(
           'si identite(soustype, SYNDICAT) alors 1 sinon 0',
           { dummy: 1 },
           {
@@ -721,37 +715,23 @@ describe('IndicateurExpressionService', () => {
 
     it("retourne 1 quand l'indicateur est suivi", () => {
       expect(
-        indicateurExpressionService.parseAndEvaluateExpression(
-          formule,
-          {},
-          { indicateursSuivis: { te_11: true } }
-        )
+        evaluate(formule, {}, { indicateursSuivis: { te_11: true } })
       ).toBe(1);
     });
 
     it("retourne 0 quand l'indicateur n'est pas suivi", () => {
       expect(
-        indicateurExpressionService.parseAndEvaluateExpression(
-          formule,
-          {},
-          { indicateursSuivis: { te_11: false } }
-        )
+        evaluate(formule, {}, { indicateursSuivis: { te_11: false } })
       ).toBe(0);
     });
 
     it("retourne 0 quand l'indicateur est absent du contexte (indicateur inconnu/non applicable)", () => {
-      expect(
-        indicateurExpressionService.parseAndEvaluateExpression(
-          formule,
-          {},
-          { indicateursSuivis: {} }
-        )
-      ).toBe(0);
+      expect(evaluate(formule, {}, { indicateursSuivis: {} })).toBe(0);
     });
 
     it('peut être combiné avec val() dans la même formule', () => {
       expect(
-        indicateurExpressionService.parseAndEvaluateExpression(
+        evaluate(
           'si est_suivi(te_11) alors val(te_11) sinon 0',
           { te_11: 42 },
           { indicateursSuivis: { te_11: true } }
@@ -761,7 +741,7 @@ describe('IndicateurExpressionService', () => {
 
     it('retourne 0 si aucun contexte indicateursSuivis fourni (ne bloque jamais le calcul)', () => {
       expect(
-        indicateurExpressionService.parseAndEvaluateExpression(formule, {
+        evaluate(formule, {
           dummy: 1,
         })
       ).toBe(0);
@@ -776,10 +756,12 @@ describe('IndicateurExpressionService', () => {
         IndicateurExpressionService['parseAndEvaluateExpression']
       >[2]
     ) =>
-      indicateurExpressionService.parseAndEvaluateExpression(
-        formule,
-        { cae_1: valeur } as Record<string, number>,
-        context
+      getDataOrThrow(
+        indicateurExpressionService.parseAndEvaluateExpression(
+          formule,
+          { cae_1: valeur } as Record<string, number>,
+          context
+        )
       );
 
     const snbc = {
@@ -897,24 +879,28 @@ describe('IndicateurExpressionService', () => {
   });
 
   describe("messages d'erreur pour identite()", () => {
-    it('lance une erreur avec les enums type et soustype pour un champ inconnu', () => {
-      expect(() =>
-        indicateurExpressionService.parseAndEvaluateExpression(
-          'si identite(inconnu, EPCI) alors 1 sinon 0',
-          { dummy: 1 },
-          {
-            identiteCollectivite: {
-              type: CollectiviteTypeEnum.EPCI,
-              soustype: CollectiviteSousTypeEnum.EPCI_FP,
-              populationTags: [],
-              drom: false,
-            },
-          }
-        )
-      ).toThrow(
-        'Champ d\'identité "inconnu" non reconnu dans identite(inconnu, EPCI). ' +
-          'Champs autorisés : type, soustype, population, localisation, dans_aire_urbaine, commune_membre, sinoe.'
+    it('retourne un échec avec les enums type et soustype pour un champ inconnu', () => {
+      const evaluation = indicateurExpressionService.parseAndEvaluateExpression(
+        'si identite(inconnu, EPCI) alors 1 sinon 0',
+        { dummy: 1 },
+        {
+          identiteCollectivite: {
+            type: CollectiviteTypeEnum.EPCI,
+            soustype: CollectiviteSousTypeEnum.EPCI_FP,
+            populationTags: [],
+            drom: false,
+          },
+        }
       );
+
+      expect(evaluation).toEqual({
+        success: false,
+        error: 'EXPRESSION_EVALUATION_FAILED',
+        cause: new Error(
+          'Champ d\'identité "inconnu" non reconnu dans identite(inconnu, EPCI). ' +
+            'Champs autorisés : type, soustype, population, localisation, dans_aire_urbaine, commune_membre, sinoe.'
+        ),
+      });
     });
   });
 });

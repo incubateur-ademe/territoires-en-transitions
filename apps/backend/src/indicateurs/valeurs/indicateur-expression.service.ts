@@ -10,9 +10,11 @@ import {
   tokenizeAndParse,
 } from '@tet/backend/utils/expression-parser';
 import { evaluateIdentite } from '@tet/backend/utils/expression-parser/evaluate-identite';
+import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { IdentiteCollectivite } from '@tet/domain/collectivites';
 import { CstNode } from 'chevrotain';
 import { isEqual, isNil } from 'es-toolkit';
+import { IndicateurExpressionError } from './indicateur-expression.errors';
 import { computeProgression, computeValeurAttendue } from './progression.rules';
 import { ANNEE_REFERENCE_SNBC_V2 } from '@tet/domain/indicateurs';
 import {
@@ -537,35 +539,42 @@ export default class IndicateurExpressionService {
 
   extractNeededSourceIndicateursFromFormula(
     formula: string
-  ): ReferencedIndicateur[] {
+  ): Result<ReferencedIndicateur[], IndicateurExpressionError> {
     const cst = this.parseExpression(formula);
+    if (!cst.success) return cst;
     const refVisitor = new IndicateurReferenceExtractionVisitor();
-    refVisitor.visit(cst);
-    return refVisitor.references;
+    refVisitor.visit(cst.data);
+    return success(refVisitor.references);
   }
 
   extractPersonnalisationReferencesFromFormula(
     formula: string
-  ): PersonnalisationExpressionReferences {
+  ): Result<PersonnalisationExpressionReferences, IndicateurExpressionError> {
     const cst = this.parseExpression(formula);
+    if (!cst.success) return cst;
     const visitor = new IndicateurPersonnalisationReferenceExtractionVisitor();
-    visitor.visit(cst);
-    return {
+    visitor.visit(cst.data);
+    return success({
       questions: visitor.questions,
       identiteFields: visitor.identiteFields,
       scores: [],
       demarches: [],
-    };
+    });
   }
 
-  parseExpression(inputText: string): CstNode {
+  parseExpression(
+    inputText: string
+  ): Result<CstNode, IndicateurExpressionError> {
     try {
-      return tokenizeAndParse(parser, inputText);
+      return success(tokenizeAndParse(parser, inputText));
     } catch (error) {
       this.logger.error(
         `Parsing errors detected: ${JSON.stringify((error as Error).cause)}`
       );
-      throw error;
+      return failure(
+        'INVALID_EXPRESSION',
+        error instanceof Error ? error : new Error(String(error))
+      );
     }
   }
 
@@ -573,7 +582,7 @@ export default class IndicateurExpressionService {
     inputText: string,
     sourceIndicateursValeurs: IndicateurValeurParIdentifiant,
     context?: EvaluationContext
-  ): number | null {
+  ): Result<number | null, IndicateurExpressionError> {
     const {
       valeursComplementaires,
       identiteCollectivite,
@@ -589,10 +598,11 @@ export default class IndicateurExpressionService {
         sourceIndicateursValeurs || []
       ).some((v) => !isNil(v));
       if (!atLeastOneValue) {
-        return null;
+        return success(null);
       }
     }
     const cst = this.parseExpression(inputText);
+    if (!cst.success) return cst;
     const visitor = new IndicateurExpressionVisitor();
     visitor.sourceIndicateursValeurs = sourceIndicateursValeurs;
     visitor.indicateurValeursComplementaires = valeursComplementaires;
@@ -601,15 +611,23 @@ export default class IndicateurExpressionService {
     visitor.indicateursSuivis = indicateursSuivis || null;
     visitor.anneesUtilisees = anneesUtilisees || null;
     visitor.valeursProgression = valeursProgression || null;
-    const result = visitor.visit(cst);
+    let result: unknown;
+    try {
+      result = visitor.visit(cst.data);
+    } catch (error) {
+      return failure(
+        'EXPRESSION_EVALUATION_FAILED',
+        error instanceof Error ? error : new Error(String(error))
+      );
+    }
     if (!isFinite(result as number)) {
       this.logger.log(
         `invalid result: ${result} for expression ${inputText} with source values ${JSON.stringify(
           sourceIndicateursValeurs
         )}`
       );
-      return null;
+      return success(null);
     }
-    return result as number;
+    return success(result as number);
   }
 }

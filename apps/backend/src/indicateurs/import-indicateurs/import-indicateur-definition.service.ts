@@ -12,6 +12,7 @@ import PersonnalisationsExpressionService from '@tet/backend/collectivites/perso
 import { verifyPersonnalisationExpressionReferences } from '@tet/backend/collectivites/personnalisations/services/verify-personnalisation-expression-references';
 import type { QuestionWithChoices } from '@tet/domain/collectivites';
 import { DEFAULT_ROUNDING_PRECISION } from '../valeurs/valeurs.constants';
+import { getDataOrThrow } from '@tet/backend/utils/result.type';
 import VersionService from '@tet/backend/utils/version/version.service';
 import BaseSpreadsheetImporterService from '../../shared/services/base-spreadsheet-importer.service';
 import ConfigurationService from '../../utils/config/configuration.service';
@@ -36,6 +37,7 @@ import type {
   UpsertIndicateurDefinitionsResult,
 } from './import-indicateur-definition.types';
 import { mapIndicateurObjectifs } from './map-indicateur-objectifs.rules';
+import { toThrowingIndicateurValidators } from './throwing-indicateur-validators.adapter';
 import {
   validateIndicateurDefinitions,
   validateObjectifIdentifiants,
@@ -252,7 +254,9 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
     definitions: ImportIndicateurDefinitionType[]
   ): Promise<void> {
     const validation = validateIndicateurDefinitions(definitions, {
-      indicateurs: this.indicateurExpressionService,
+      indicateurs: toThrowingIndicateurValidators(
+        this.indicateurExpressionService
+      ),
       personnalisations: this.personnalisationsExpressionService,
     });
     if (!validation.success && validation.error === 'INVALID_EXPRESSION') {
@@ -314,10 +318,11 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
     if (!indicateur.valeurCalcule) {
       return [];
     }
-    const references =
+    const references = getDataOrThrow(
       this.indicateurExpressionService.extractPersonnalisationReferencesFromFormula(
         indicateur.valeurCalcule
-      );
+      )
+    );
     return verifyPersonnalisationExpressionReferences(references, {
       label: `la formule de calcul de l'indicateur ${indicateur.identifiantReferentiel}`,
       questions,

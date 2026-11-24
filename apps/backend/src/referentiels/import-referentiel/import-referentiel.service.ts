@@ -21,7 +21,11 @@ import BaseSpreadsheetImporterService from '@tet/backend/shared/services/base-sp
 import { BackendConfigurationType } from '@tet/backend/utils/config/configuration.model';
 import ConfigurationService from '@tet/backend/utils/config/configuration.service';
 import SheetService from '@tet/backend/utils/google-sheets/sheet.service';
-import { Result, success } from '@tet/backend/utils/result.type';
+import {
+  getDataOrThrow,
+  Result,
+  success,
+} from '@tet/backend/utils/result.type';
 import VersionService from '@tet/backend/utils/version/version.service';
 import {
   PersonnalisationRegleCreate,
@@ -371,10 +375,11 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
         );
 
         if (action.exprScore) {
-          const referencedIndicateurs =
+          const referencedIndicateurs = getDataOrThrow(
             this.indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
               action.exprScore
-            );
+            )
+          );
           if (referencedIndicateurs.length) {
             this.logger.log(
               `Action ${actionId} reference indicateurs: ${referencedIndicateurs
@@ -602,8 +607,10 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
       actions,
       extractIndicateurs: (expr) => {
         try {
-          return this.indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
-            expr
+          return getDataOrThrow(
+            this.indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
+              expr
+            )
           );
         } catch {
           return null;
@@ -631,7 +638,9 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
         ),
       parseScoreExpression: (expression) =>
         this.safeParse(() =>
-          this.indicateurExpressionService.parseExpression(expression)
+          getDataOrThrow(
+            this.indicateurExpressionService.parseExpression(expression)
+          )
         ),
     });
 

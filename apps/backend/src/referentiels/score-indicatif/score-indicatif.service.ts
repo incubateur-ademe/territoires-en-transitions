@@ -14,7 +14,12 @@ import { SetValeursUtiliseesRequest } from '@tet/backend/referentiels/score-indi
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
-import { failure, Result, success } from '@tet/backend/utils/result.type';
+import {
+  failure,
+  getDataOrThrow,
+  Result,
+  success,
+} from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import {
   ActionScoreIndicatif,
@@ -503,19 +508,21 @@ export class ScoreIndicatifService {
     // `evaluationContext` est partagé par toutes les actions : l'année utilisée
     // dépend de l'action et n'est ajoutée qu'à une copie, et seulement au
     // calcul `fait` (les objectifs `programme` n'ont pas d'année utilisée)
-    const score = this.indicateurExpressionService.parseAndEvaluateExpression(
-      exprScore,
-      valeurs,
-      typeScore === scoreIndicatifTypeEnum.FAIT
-        ? {
-            ...evaluationContext,
-            indicateursSuivis,
-            anneesUtilisees: buildAnneesPourExpression(
-              valeursUtilisees,
-              indicateursAssocies
-            ),
-          }
-        : { ...evaluationContext, indicateursSuivis }
+    const score = getDataOrThrow(
+      this.indicateurExpressionService.parseAndEvaluateExpression(
+        exprScore,
+        valeurs,
+        typeScore === scoreIndicatifTypeEnum.FAIT
+          ? {
+              ...evaluationContext,
+              indicateursSuivis,
+              anneesUtilisees: buildAnneesPourExpression(
+                valeursUtilisees,
+                indicateursAssocies
+              ),
+            }
+          : { ...evaluationContext, indicateursSuivis }
+      )
     );
     if (score === null) {
       this.logger.log(

@@ -1,6 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { failure, Result, success } from '@tet/backend/utils/result.type';
+import {
+  combineResults,
+  failure,
+  Result,
+  success,
+} from '@tet/backend/utils/result.type';
 import {
   Indicateur,
   IndicateurPredefini,
@@ -9,6 +14,7 @@ import {
 import { IndicateurLockRepository } from '../../indicateur/indicateur-lock.repository';
 import { ListIndicateursPredefinisRepository } from '../../indicateurs/list-indicateurs-predefinis/list-indicateurs-predefinis.repository';
 import type { IndicateurFormula } from './calcul-indicateur.types';
+import { IndicateurExpressionError } from '../indicateur-expression.errors';
 import IndicateurExpressionService from '../indicateur-expression.service';
 
 type CalculGraph = {
@@ -35,15 +41,18 @@ export class LoadIndicateurCalculGraphService {
     private readonly expressions: IndicateurExpressionService
   ) {}
 
-  getFormula(indicateur: IndicateurPredefini): IndicateurFormula {
-    return {
-      definition: indicateur,
-      references: indicateur.valeurCalcule
-        ? this.expressions.extractNeededSourceIndicateursFromFormula(
-            indicateur.valeurCalcule
-          )
-        : [],
-    };
+  getFormula(
+    indicateur: IndicateurPredefini
+  ): Result<IndicateurFormula, IndicateurExpressionError> {
+    if (!indicateur.valeurCalcule) {
+      return success({ definition: indicateur, references: [] });
+    }
+    const references =
+      this.expressions.extractNeededSourceIndicateursFromFormula(
+        indicateur.valeurCalcule
+      );
+    if (!references.success) return references;
+    return success({ definition: indicateur, references: references.data });
   }
 
   async loadAllComputedIndicateurs(): Promise<
@@ -160,12 +169,14 @@ export class LoadIndicateurCalculGraphService {
     targetIds: number[],
     tx: Transaction
   ): Promise<GraphResult> {
+    const candidateFormulas = combineResults(
+      candidates.map((indicateur) => this.getFormula(indicateur))
+    );
+    if (!candidateFormulas.success) return toGraphFailure(candidateFormulas);
     const sourceIdentifiants = [
       ...new Set(
-        candidates.flatMap((indicateur) =>
-          this.getFormula(indicateur).references.map(
-            ({ identifiant }) => identifiant
-          )
+        candidateFormulas.data.flatMap(({ references }) =>
+          references.map(({ identifiant }) => identifiant)
         )
       ),
     ];
@@ -208,11 +219,15 @@ export class LoadIndicateurCalculGraphService {
     const targetIndicateurs = lockedIndicateurs
       .filter(({ id }) => targetIdSet.has(id))
       .filter(isIndicateurPredefini);
+    const formulas = combineResults(
+      targetIndicateurs
+        .filter((indicateur) => Boolean(indicateur.valeurCalcule))
+        .map((indicateur) => this.getFormula(indicateur))
+    );
+    if (!formulas.success) return toGraphFailure(formulas);
     return success({
       targetIndicateurs,
-      formulas: targetIndicateurs
-        .filter((indicateur) => Boolean(indicateur.valeurCalcule))
-        .map((indicateur) => this.getFormula(indicateur)),
+      formulas: formulas.data,
       sourceIndicateurs: lockedIndicateurs,
     });
   }
