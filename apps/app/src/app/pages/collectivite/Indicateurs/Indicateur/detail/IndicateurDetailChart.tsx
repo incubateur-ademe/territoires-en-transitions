@@ -1,11 +1,10 @@
 import type { IndicateurDetaille } from '@tet/domain/indicateurs';
 import { getIndicateurPeriodPresentation } from '@/app/indicateurs/valeurs/indicateur-period-presentation';
 import { appLabels } from '@/app/labels/catalog';
-import PictoIndicateurVide from '@/app/ui/pictogrammes/PictoIndicateurVide';
-import { EmptyCard } from '@tet/ui';
 import { uiLabels } from '@tet/ui/labels/catalog';
 import classNames from 'classnames';
 import IndicateurChart from '../../chart/IndicateurChart';
+import { IndicateurEmptyChartCard } from '../../chart/indicateur-empty-chart.card';
 import { IndicateurChartInfo } from '../../data/use-indicateur-chart';
 
 type Props = {
@@ -37,10 +36,7 @@ const IndicateurDetailChart = ({
       <IndicateurChart chartInfo={chartInfo} isLoading={isLoading} />
     </div>
   ) : (
-    <EmptyCard
-      size="xs"
-      className="h-64 w-full"
-      picto={(props) => <PictoIndicateurVide {...props} />}
+    <IndicateurEmptyChartCard
       title={
         sourceFilter.avecDonneesCollectivite
           ? appLabels.aucuneValeurCollectivite
