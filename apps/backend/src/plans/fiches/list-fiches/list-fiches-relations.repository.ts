@@ -40,7 +40,7 @@ import {
 } from '@tet/domain/collectivites';
 import { FicheNote, FichePlan, Financeur } from '@tet/domain/plans';
 import { EffetAttendu, SousThematique } from '@tet/domain/shared';
-import { aliasedTable, and, eq, inArray, isNotNull, sql } from 'drizzle-orm';
+import { aliasedTable, and, eq, inArray, sql } from 'drizzle-orm';
 import { ficheActionEtapeTable } from '../fiche-action-etape/fiche-action-etape.table';
 import { ficheActionActionTable } from '../shared/models/fiche-action-action.table';
 import { ficheActionAxeTable } from '../shared/models/fiche-action-axe.table';
@@ -61,11 +61,6 @@ export class ListFichesRelationsRepository {
     const query = (tx || this.databaseService.db)
       .select({
         ficheId: ficheActionSousThematiqueTable.ficheId,
-        sousThematiqueIds: sql<
-          number[]
-        >`array_agg(${ficheActionSousThematiqueTable.thematiqueId})`.as(
-          'sous_thematique_ids'
-        ),
         sousThematiques: sql<
           SousThematique[]
         >`array_agg(json_build_object('id', ${ficheActionSousThematiqueTable.thematiqueId}, 'nom', ${sousThematiqueTable.nom}, 'thematiqueId', ${sousThematiqueTable.thematiqueId} ) ORDER BY ${sousThematiqueTable.nom} ASC)`.as(
@@ -89,11 +84,6 @@ export class ListFichesRelationsRepository {
     const query = (tx || this.databaseService.db)
       .select({
         ficheId: ficheActionThematiqueTable.ficheId,
-        thematiqueIds: sql<
-          number[]
-        >`array_agg(${ficheActionThematiqueTable.thematiqueId})`.as(
-          'thematique_ids'
-        ),
         thematiques: sql<
           Tag[]
         >`array_agg(json_build_object('id', ${ficheActionThematiqueTable.thematiqueId}, 'nom', ${thematiqueTable.nom} ) ORDER BY ${thematiqueTable.nom} ASC)`.as(
@@ -117,17 +107,10 @@ export class ListFichesRelationsRepository {
     const query = (tx || this.databaseService.db)
       .select({
         ficheId: ficheActionIndicateurTable.ficheId,
-        indicateurIds: sql<
-          number[]
-        >`array_agg(${ficheActionIndicateurTable.indicateurId})`.as(
-          'indicateur_ids'
-        ),
         indicateurs: sql<
           {
             id: number;
             nom: string;
-            titre: string;
-            identifiant: string;
             unite: string;
           }[]
         >`array_agg(json_build_object('id', ${ficheActionIndicateurTable.indicateurId}, 'nom', ${indicateurDefinitionTable.titre}, 'unite', ${indicateurDefinitionTable.unite} ))`.as(
@@ -154,16 +137,6 @@ export class ListFichesRelationsRepository {
     const query = (tx || this.databaseService.db)
       .select({
         ficheId: ficheActionReferentTable.ficheId,
-        referentTagIds: sql<
-          number[]
-        >`array_remove(array_agg(${ficheActionReferentTable.tagId}), NULL)`.as(
-          'referent_tag_ids'
-        ),
-        referentUserIds: sql<
-          string[]
-        >`array_remove(array_agg(${ficheActionReferentTable.userId}::text), NULL)`.as(
-          'referent_user_ids'
-        ),
         referents: sql<
           PersonneTagOrUserWithContacts[]
         >`array_agg(json_build_object('tagId', ${ficheActionReferentTable.tagId}, 'userId', ${ficheActionReferentTable.userId}, 'nom', COALESCE(${personneTagTable.nom}, ${dcpTable.prenom} || ' ' || ${dcpTable.nom}), 'email', ${dcpTable.email}, 'telephone', ${dcpTable.telephone}))`.as(
@@ -188,11 +161,6 @@ export class ListFichesRelationsRepository {
     const query = (tx || this.databaseService.db)
       .select({
         ficheId: ficheActionEffetAttenduTable.ficheId,
-        effetAttenduIds: sql<
-          number[]
-        >`array_agg(${ficheActionEffetAttenduTable.effetAttenduId})`.as(
-          'effet_attendu_ids'
-        ),
         effetsAttendus: sql<
           EffetAttendu[]
         >`array_agg(json_build_object('id', ${ficheActionEffetAttenduTable.effetAttenduId}, 'nom', ${effetAttenduTable.nom}, 'notice', ${effetAttenduTable.notice} ) ORDER BY ${effetAttenduTable.nom} ASC)`.as(
@@ -216,11 +184,6 @@ export class ListFichesRelationsRepository {
     const query = (tx || this.databaseService.db)
       .select({
         ficheId: ficheActionFinanceurTagTable.ficheId,
-        financeurTagIds: sql<
-          number[]
-        >`array_agg(${ficheActionFinanceurTagTable.financeurTagId})`.as(
-          'financeur_tag_ids'
-        ),
         financeurTags: sql<Financeur[]>`array_agg(
           json_build_object(
             'financeurTagId', ${ficheActionFinanceurTagTable.financeurTagId},
@@ -251,11 +214,6 @@ export class ListFichesRelationsRepository {
     const query = (tx || this.databaseService.db)
       .select({
         ficheId: ficheActionLibreTagTable.ficheId,
-        libreTagIds: sql<
-          number[]
-        >`array_agg(${ficheActionLibreTagTable.libreTagId})`.as(
-          'libre_tag_ids'
-        ),
         libreTags: sql<
           Tag[]
         >`array_agg(json_build_object('id', ${ficheActionLibreTagTable.libreTagId}, 'nom', ${libreTagTable.nom} ) ORDER BY ${libreTagTable.nom} ASC)`.as(
@@ -279,11 +237,6 @@ export class ListFichesRelationsRepository {
     const query = (tx || this.databaseService.db)
       .select({
         ficheId: ficheActionStructureTagTable.ficheId,
-        structureTagIds: sql<
-          number[]
-        >`array_agg(${ficheActionStructureTagTable.structureTagId})`.as(
-          'structure_tag_ids'
-        ),
         structureTags: sql<
           Tag[]
         >`array_agg(json_build_object('id', ${ficheActionStructureTagTable.structureTagId}, 'nom', ${structureTagTable.nom} ) ORDER BY ${structureTagTable.nom} ASC)`.as(
@@ -341,11 +294,6 @@ export class ListFichesRelationsRepository {
     const query = (tx || this.databaseService.db)
       .select({
         ficheId: ficheActionPartenaireTagTable.ficheId,
-        partenaireTagIds: sql<
-          number[]
-        >`array_agg(${ficheActionPartenaireTagTable.partenaireTagId} ORDER BY ${partenaireTagTable.nom} ASC)`.as(
-          'partenaire_tag_ids'
-        ),
         partenaireTags: sql<Tag[]>`
             array_agg(
               json_build_object(
@@ -403,7 +351,6 @@ export class ListFichesRelationsRepository {
 
   getFicheActionPlansQuery(ficheIds: number[], tx?: Transaction) {
     const planTable = aliasedTable(axeTable, 'plan_table');
-    const parentAxeTable = aliasedTable(axeTable, 'parent_axe_table');
 
     const query = (tx || this.databaseService.db)
       .select({
@@ -415,14 +362,7 @@ export class ListFichesRelationsRepository {
         ),
       })
       .from(ficheActionAxeTable)
-      .leftJoin(axeTable, and(eq(axeTable.id, ficheActionAxeTable.axeId)))
-      .leftJoin(
-        parentAxeTable,
-        and(
-          eq(axeTable.parent, parentAxeTable.id),
-          isNotNull(parentAxeTable.parent)
-        )
-      )
+      .leftJoin(axeTable, eq(axeTable.id, ficheActionAxeTable.axeId))
       .leftJoin(planTable, eq(planTable.id, axeTable.plan))
       .leftJoin(
         planActionTypeTable,
@@ -438,11 +378,6 @@ export class ListFichesRelationsRepository {
     const query = (tx || this.databaseService.db)
       .select({
         ficheId: ficheActionServiceTagTable.ficheId,
-        serviceTagIds: sql<
-          number[]
-        >`array_agg(${ficheActionServiceTagTable.serviceTagId})`.as(
-          'service_tag_ids'
-        ),
         services: sql<
           TagWithCollectiviteId[]
         >`array_agg(json_build_object('id', ${serviceTagTable.id}, 'nom', ${serviceTagTable.nom}, 'collectiviteId', ${serviceTagTable.collectiviteId}) ORDER BY ${serviceTagTable.nom} ASC)`.as(
@@ -466,16 +401,6 @@ export class ListFichesRelationsRepository {
     const query = (tx || this.databaseService.db)
       .select({
         ficheId: ficheActionPiloteTable.ficheId,
-        piloteTagIds: sql<
-          number[]
-        >`array_remove(array_agg(${ficheActionPiloteTable.tagId}), NULL)`.as(
-          'pilote_tag_ids'
-        ),
-        piloteUserIds: sql<
-          string[]
-        >`array_remove(array_agg(${ficheActionPiloteTable.userId}), NULL)`.as(
-          'pilote_user_ids'
-        ),
         pilotes: sql<PersonneTagOrUserWithContacts[]>`array_agg(
             json_build_object(
               'tagId', ${ficheActionPiloteTable.tagId},
@@ -542,11 +467,6 @@ export class ListFichesRelationsRepository {
             ELSE json_build_object('id', ${ficheActionNoteTable.modifiedBy}, 'prenom', ${dcpModifiedBy.prenom}, 'nom', ${dcpModifiedBy.nom})
           END
         ) ORDER BY ${ficheActionNoteTable.dateNote} DESC)`.as('notes'),
-        anneesNotes: sql<
-          string[]
-        >`array_agg(${ficheActionNoteTable.dateNote} ORDER BY ${ficheActionNoteTable.dateNote} DESC)`.as(
-          'annees_notes'
-        ),
       })
       .from(ficheActionNoteTable)
       .leftJoin(
@@ -567,9 +487,6 @@ export class ListFichesRelationsRepository {
     const query = (tx || this.databaseService.db)
       .select({
         ficheId: ficheActionActionTable.ficheId,
-        mesureId: sql<
-          string[]
-        >`array_agg(${ficheActionActionTable.actionId})`.as('mesure_ids'),
         mesures: sql<
           {
             id: string;
@@ -598,11 +515,6 @@ export class ListFichesRelationsRepository {
     const query = (tx || this.databaseService.db)
       .select({
         ficheId: ficheActionSharingTable.ficheId,
-        sharedWithCollectiviteIds: sql<
-          number[]
-        >`array_agg(${ficheActionSharingTable.collectiviteId})`.as(
-          'shared_with_collectivite_ids'
-        ),
         sharedWithCollectivites: sql<
           {
             id: number;

@@ -76,6 +76,9 @@ export function formatFiltersForLogs(
     .join(', ');
 }
 
+const isNotRestreintCondition = () =>
+  or(isNull(ficheActionTable.restreint), eq(ficheActionTable.restreint, false));
+
 /**
  * Traduit les filtres de `listFiches` en conditions SQL sur `fiche_action`.
  */
@@ -152,40 +155,21 @@ export class ListFichesFiltersRepository {
     if (isNil(multiplePlans)) {
       return;
     }
-    if (multiplePlans) {
-      // Check if fiche belongs to multiple plans by counting distinct plans
-      const planCountQuery = this.databaseService.db
-        .select({
-          ficheId: ficheActionAxeTable.ficheId,
-        })
-        .from(ficheActionAxeTable)
-        .leftJoin(axeTable, eq(ficheActionAxeTable.axeId, axeTable.id))
-        .where(eq(ficheActionAxeTable.ficheId, ficheActionTable.id))
-        .groupBy(ficheActionAxeTable.ficheId)
-        .having(
-          gt(sql`count(distinct COALESCE(${axeTable.plan}, ${axeTable.id}))`, 1)
-        );
+    // Compte les plans distincts de la fiche : plus d'un, ou un seul au plus.
+    // Une fiche sans axe n'a aucune ligne à grouper et ne satisfait ni l'un ni
+    // l'autre.
+    const planCount = sql`count(distinct COALESCE(${axeTable.plan}, ${axeTable.id}))`;
+    const planCountQuery = this.databaseService.db
+      .select({
+        ficheId: ficheActionAxeTable.ficheId,
+      })
+      .from(ficheActionAxeTable)
+      .leftJoin(axeTable, eq(ficheActionAxeTable.axeId, axeTable.id))
+      .where(eq(ficheActionAxeTable.ficheId, ficheActionTable.id))
+      .groupBy(ficheActionAxeTable.ficheId)
+      .having(multiplePlans ? gt(planCount, 1) : lte(planCount, 1));
 
-      return exists(planCountQuery);
-    } else {
-      // Check if fiche belongs to only one plan or no plans
-      const planCountQuery = this.databaseService.db
-        .select({
-          ficheId: ficheActionAxeTable.ficheId,
-        })
-        .from(ficheActionAxeTable)
-        .leftJoin(axeTable, eq(ficheActionAxeTable.axeId, axeTable.id))
-        .where(eq(ficheActionAxeTable.ficheId, ficheActionTable.id))
-        .groupBy(ficheActionAxeTable.ficheId)
-        .having(
-          lte(
-            sql`count(distinct COALESCE(${axeTable.plan}, ${axeTable.id}))`,
-            1
-          )
-        );
-
-      return exists(planCountQuery);
-    }
+    return exists(planCountQuery);
   }
 
   private getPlanFilterCondition(
@@ -277,9 +261,6 @@ export class ListFichesFiltersRepository {
       );
     }
 
-    const oneYearAgo = new Date();
-    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-
     const recentNotesQuery = this.databaseService.db
       .select({
         ficheId: ficheActionNoteTable.ficheId,
@@ -288,7 +269,10 @@ export class ListFichesFiltersRepository {
       .where(
         and(
           eq(ficheActionNoteTable.ficheId, ficheActionTable.id),
-          gte(ficheActionNoteTable.modifiedAt, oneYearAgo.toISOString())
+          gte(
+            ficheActionNoteTable.modifiedAt,
+            subYears(new Date(), 1).toISOString()
+          )
         )
       );
 
@@ -322,6 +306,36 @@ export class ListFichesFiltersRepository {
       );
 
     return exists(linkedEntityQuery);
+  }
+
+  /**
+   * « Sans X » OU « lié à l'un des X choisis », pour chaque colonne d'identifiants
+   * de la table de liaison (par exemple tag et utilisateur pour les pilotes).
+   */
+  private getNoneOrAnyOfCondition<T extends TableConfig>(
+    noLinkedEntity: boolean | undefined,
+    linkedTable: Table<T>,
+    ficheIdColumn: T['columns'][keyof T['columns']],
+    identifiedEntities: {
+      entityIdColumn: T['columns'][keyof T['columns']];
+      entityIds: number[] | string[] | undefined;
+    }[]
+  ): SQLWrapper | SQL | undefined {
+    return or(
+      this.getHasNoLinkedEntityCondition(
+        noLinkedEntity,
+        linkedTable,
+        ficheIdColumn
+      ),
+      ...identifiedEntities.map(({ entityIdColumn, entityIds }) =>
+        this.getHasIdentifiedLinkedEntityCondition(
+          linkedTable,
+          ficheIdColumn,
+          entityIdColumn,
+          entityIds
+        )
+      )
+    );
   }
 
   private addTextSearchCondition(
@@ -457,12 +471,7 @@ export class ListFichesFiltersRepository {
       conditions.push(eq(ficheActionTable.restreint, true));
     }
     if (filters.restreint === false) {
-      conditions.push(
-        or(
-          isNull(ficheActionTable.restreint),
-          eq(ficheActionTable.restreint, false)
-        )
-      );
+      conditions.push(isNotRestreintCondition());
     }
 
     if (filters.cibles?.length) {
@@ -641,23 +650,19 @@ export class ListFichesFiltersRepository {
       )
     );
 
-    const servicePiloteConditions: (SQLWrapper | SQL | undefined)[] = [];
-    servicePiloteConditions.push(
-      this.getHasNoLinkedEntityCondition(
+    conditions.push(
+      this.getNoneOrAnyOfCondition(
         filters.noServicePilote,
         ficheActionServiceTagTable,
-        ficheActionServiceTagTable.ficheId
-      )
-    );
-    servicePiloteConditions.push(
-      this.getHasIdentifiedLinkedEntityCondition(
-        ficheActionServiceTagTable,
         ficheActionServiceTagTable.ficheId,
-        ficheActionServiceTagTable.serviceTagId,
-        filters.servicePiloteIds
+        [
+          {
+            entityIdColumn: ficheActionServiceTagTable.serviceTagId,
+            entityIds: filters.servicePiloteIds,
+          },
+        ]
       )
     );
-    conditions.push(or(...servicePiloteConditions));
 
     conditions.push(
       this.getHasIdentifiedLinkedEntityCondition(
@@ -668,34 +673,28 @@ export class ListFichesFiltersRepository {
       )
     );
 
-    const libreTagsConditions: (SQLWrapper | SQL | undefined)[] = [];
-    libreTagsConditions.push(
-      this.getHasNoLinkedEntityCondition(
+    conditions.push(
+      this.getNoneOrAnyOfCondition(
         filters.noTag,
         ficheActionLibreTagTable,
-        ficheActionLibreTagTable.ficheId
-      )
-    );
-    libreTagsConditions.push(
-      this.getHasIdentifiedLinkedEntityCondition(
-        ficheActionLibreTagTable,
         ficheActionLibreTagTable.ficheId,
-        ficheActionLibreTagTable.libreTagId,
-        filters.libreTagsIds
+        [
+          {
+            entityIdColumn: ficheActionLibreTagTable.libreTagId,
+            entityIds: filters.libreTagsIds,
+          },
+        ]
       )
     );
-    conditions.push(or(...libreTagsConditions));
 
-    if (filters.mesureIds?.length) {
-      conditions.push(
-        this.getHasIdentifiedLinkedEntityCondition(
-          ficheActionActionTable,
-          ficheActionActionTable.ficheId,
-          ficheActionActionTable.actionId,
-          filters.mesureIds
-        )
-      );
-    }
+    conditions.push(
+      this.getHasIdentifiedLinkedEntityCondition(
+        ficheActionActionTable,
+        ficheActionActionTable.ficheId,
+        ficheActionActionTable.actionId,
+        filters.mesureIds
+      )
+    );
 
     if (filters.linkedFicheIds?.length) {
       const linkedFicheConditions: (SQLWrapper | SQL | undefined)[] = [];
@@ -718,23 +717,19 @@ export class ListFichesFiltersRepository {
       conditions.push(or(...linkedFicheConditions));
     }
 
-    const thematiqueConditions: (SQLWrapper | SQL | undefined)[] = [];
-    thematiqueConditions.push(
-      this.getHasNoLinkedEntityCondition(
+    conditions.push(
+      this.getNoneOrAnyOfCondition(
         filters.noThematique,
         ficheActionThematiqueTable,
-        ficheActionThematiqueTable.ficheId
-      )
-    );
-    thematiqueConditions.push(
-      this.getHasIdentifiedLinkedEntityCondition(
-        ficheActionThematiqueTable,
         ficheActionThematiqueTable.ficheId,
-        ficheActionThematiqueTable.thematiqueId,
-        filters.thematiqueIds
+        [
+          {
+            entityIdColumn: ficheActionThematiqueTable.thematiqueId,
+            entityIds: filters.thematiqueIds,
+          },
+        ]
       )
     );
-    conditions.push(or(...thematiqueConditions));
 
     conditions.push(
       this.getHasIdentifiedLinkedEntityCondition(
@@ -747,57 +742,41 @@ export class ListFichesFiltersRepository {
 
     conditions.push(this.getPlanFilterCondition(filters, collectiviteId));
 
-    const piloteConditions: (SQLWrapper | SQL | undefined)[] = [];
-    piloteConditions.push(
-      this.getHasNoLinkedEntityCondition(
+    conditions.push(
+      this.getNoneOrAnyOfCondition(
         filters.noPilote,
         ficheActionPiloteTable,
-        ficheActionPiloteTable.ficheId
-      )
-    );
-    piloteConditions.push(
-      this.getHasIdentifiedLinkedEntityCondition(
-        ficheActionPiloteTable,
         ficheActionPiloteTable.ficheId,
-        ficheActionPiloteTable.tagId,
-        filters.personnePiloteIds
+        [
+          {
+            entityIdColumn: ficheActionPiloteTable.tagId,
+            entityIds: filters.personnePiloteIds,
+          },
+          {
+            entityIdColumn: ficheActionPiloteTable.userId,
+            entityIds: filters.utilisateurPiloteIds,
+          },
+        ]
       )
     );
-    piloteConditions.push(
-      this.getHasIdentifiedLinkedEntityCondition(
-        ficheActionPiloteTable,
-        ficheActionPiloteTable.ficheId,
-        ficheActionPiloteTable.userId,
-        filters.utilisateurPiloteIds
-      )
-    );
-    conditions.push(or(...piloteConditions));
 
-    const referentConditions: (SQLWrapper | SQL | undefined)[] = [];
-    referentConditions.push(
-      this.getHasNoLinkedEntityCondition(
+    conditions.push(
+      this.getNoneOrAnyOfCondition(
         filters.noReferent,
         ficheActionReferentTable,
-        ficheActionReferentTable.ficheId
-      )
-    );
-    referentConditions.push(
-      this.getHasIdentifiedLinkedEntityCondition(
-        ficheActionReferentTable,
         ficheActionReferentTable.ficheId,
-        ficheActionReferentTable.userId,
-        filters.utilisateurReferentIds
+        [
+          {
+            entityIdColumn: ficheActionReferentTable.userId,
+            entityIds: filters.utilisateurReferentIds,
+          },
+          {
+            entityIdColumn: ficheActionReferentTable.tagId,
+            entityIds: filters.personneReferenteIds,
+          },
+        ]
       )
     );
-    referentConditions.push(
-      this.getHasIdentifiedLinkedEntityCondition(
-        ficheActionReferentTable,
-        ficheActionReferentTable.ficheId,
-        ficheActionReferentTable.tagId,
-        filters.personneReferenteIds
-      )
-    );
-    conditions.push(or(...referentConditions));
 
     const textSearchConditions: (SQLWrapper | SQL | undefined)[] = [];
     if (filters.texteNomOuDescription) {
@@ -813,12 +792,7 @@ export class ListFichesFiltersRepository {
         filters.texteNomOuDescription
       );
       if (descriptionSearch === 'unrestrictedFichesOnly') {
-        descriptionSearchConditions.push(
-          or(
-            isNull(ficheActionTable.restreint),
-            eq(ficheActionTable.restreint, false)
-          )
-        );
+        descriptionSearchConditions.push(isNotRestreintCondition());
       }
       textSearchConditions.push(and(...descriptionSearchConditions));
       conditions.push(or(...textSearchConditions));
