@@ -97,19 +97,21 @@ export const IndicateurObjectifSparkline = ({
     : '';
 
   // Les années de l'axe : l'objectif retenu d'abord, puis le premier et le
-  // dernier résultat s'il reste de la place.
+  // dernier résultat s'il reste de la place. Un repère se place sur son point
+  // et seul son libellé est arrondi à l'année : un résultat d'octobre placé au
+  // 1er janvier sortirait du dessin.
   const ticks: { x: number; annee: number; isCible: boolean }[] = [];
-  const addTick = (annee: number, isCible: boolean) => {
-    const x = scaleX(annee);
+  const addTick = (position: number, isCible: boolean) => {
+    const x = scaleX(position);
     if (ticks.every((tick) => Math.abs(tick.x - x) >= MIN_TICK_GAP)) {
-      ticks.push({ x, annee, isCible });
+      ticks.push({ x, annee: Math.floor(position), isCible });
     }
   };
   if (cible) {
     addTick(cible.annee, true);
   }
-  addTick(Math.floor(serie[0].x), false);
-  addTick(Math.floor(dernier.x), false);
+  addTick(serie[0].x, false);
+  addTick(dernier.x, false);
 
   const cibleXY = cible ? toXY({ x: cible.annee, valeur: cible.valeur }) : null;
 
@@ -172,7 +174,7 @@ export const IndicateurObjectifSparkline = ({
       )}
       {ticks.map(({ x, annee, isCible }) => (
         <text
-          key={annee}
+          key={x}
           x={x}
           y={HEIGHT - 6}
           textAnchor={x < PADDING.left + EDGE_LABEL_ZONE ? 'start' : 'middle'}
