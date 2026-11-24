@@ -23,6 +23,7 @@ Règles
 - "numero" porte le seul numéro ("6", "6.2") ; "titre" ne répète ni « Axe 6 », ni « Objectif 2 - », ni le numéro.
 - Un libellé écrit tout en capitales est remis en casse de phrase, accents rétablis, sigles conservés, sans remplacer aucun mot. Si le même libellé figure aussi en casse normale dans les sources (sommaire, tableau récapitulatif), reprenez cette graphie.
 - Le sous-axe d'un axe numéroté prend le numéro de l'axe : « OBJECTIF 2 » de l'axe 6 est le sous-axe "6.2".
+- Quand les fiches sont rangées sous des thèmes relevés au-dessus d'elles (« BIODECHETS (végétaux) » sur « Action 3 »), ces thèmes sont les axes. Un extrait de structure sert alors à reprendre leur graphie et à réunir leurs variantes (« BIODECHETS (végétaux) » et « BIODECHETS (restes alimentaires) » sont l'axe « Biodéchets : restes alimentaires et végétaux » du sommaire), jamais à les remplacer par une autre grille, comme les axes d'un guide national.
 - Quand les titres sont rangés par partie du document, les axes sont ceux de la partie qui présente les actions (plan ou programme d'actions), jamais ceux du diagnostic, de l'état des lieux ou de la stratégie.
 - Un sous-axe a un titre complet, jamais un simple numéro.
 - Un sous-axe est un niveau intermédiaire qui regroupe plusieurs actions sous un même axe (orientation, objectif stratégique, enjeu). Un titre qui n'annonce qu'une seule action, ou qui reprend le titre d'une fiche, n'est pas un sous-axe.
