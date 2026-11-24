@@ -1,4 +1,4 @@
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, Logger } from '@nestjs/common';
 import { getTestApp, getTestDatabase } from '@tet/backend/test';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
@@ -228,6 +228,7 @@ describe('TransactionManager', () => {
     it('relance l’erreur d’origine quand le nettoyage du savepoint échoue lui-même', async () => {
       const unexpected = new Error('bug imprévu');
       const cleanupFailure = new Error('connexion perdue');
+      const loggedError = vi.spyOn(Logger.prototype, 'error');
 
       const outerResult = await transactionManager.executeSingle(
         async (outerTx) => {
@@ -243,6 +244,10 @@ describe('TransactionManager', () => {
       );
 
       expect(outerResult).toEqual({ success: false, error: unexpected });
+      expect(loggedError).toHaveBeenCalledWith(
+        'Savepoint cleanup failed:',
+        cleanupFailure
+      );
     });
 
     it('rend la transaction utilisable après une erreur SQL interceptée par l’opération', async () => {
@@ -369,6 +374,41 @@ describe('TransactionManager', () => {
         'appelant',
         'écriture conservée',
       ]);
+    });
+
+    it('laisse la transaction inutilisable après une erreur SQL : seule son annulation est permise', async () => {
+      let nextWriteOutcome: unknown;
+
+      const outerResult = await transactionManager.executeSingle(
+        async (outerTx) => {
+          await transactionManager.executeSingle(
+            async (tx) => {
+              try {
+                await tx.execute(
+                  sql`insert into ${probeTable} (label) values (null)`
+                );
+              } catch {
+                return failure('DATABASE_ERROR');
+              }
+              return success(undefined);
+            },
+            outerTx,
+            { undoWritesOnFailure: false }
+          );
+          nextWriteOutcome = await insertProbe(outerTx, 'après l’erreur').catch(
+            (error: unknown) => error
+          );
+          return failure('DATABASE_ERROR');
+        }
+      );
+
+      expect(nextWriteOutcome).toMatchObject({ cause: { code: '25P02' } });
+      expect(outerResult).toEqual({
+        success: false,
+        error: 'DATABASE_ERROR',
+        cause: undefined,
+      });
+      expect(await listProbeLabels()).toEqual([]);
     });
 
     it('laisse la transaction englobante tout annuler quand l’appelant propage l’échec', async () => {

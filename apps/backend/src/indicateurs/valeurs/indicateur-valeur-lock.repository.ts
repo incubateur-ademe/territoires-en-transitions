@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { getTableName, sql } from 'drizzle-orm';
+import { sql } from 'drizzle-orm';
 import { indicateurValeurTable } from './indicateur-valeur.table';
 
 type IndicateurValeurLock = {
@@ -65,26 +65,9 @@ export class IndicateurValeurLockRepository {
    * interblocage avec un écrivain concurrent.
    */
   async lockAllPeriodes(tx: Transaction): Promise<void> {
-    if (await this.holdsTableLock(tx)) return;
     await tx.execute(
       sql`LOCK TABLE ${indicateurValeurTable} IN SHARE ROW EXCLUSIVE MODE`
     );
     this.transactionsLockingAllPeriodes.add(tx);
-  }
-
-  private async holdsTableLock(tx: Transaction): Promise<boolean> {
-    if (!this.transactionsLockingAllPeriodes.has(tx)) return false;
-    const heldLocks = await tx.execute(sql`
-      select 1
-      from pg_locks
-      where pid = pg_backend_pid()
-        and locktype = 'relation'
-        and relation = ${getTableName(indicateurValeurTable)}::regclass
-        and mode = 'ShareRowExclusiveLock'
-        and granted
-    `);
-    if (heldLocks.rows.length > 0) return true;
-    this.transactionsLockingAllPeriodes.delete(tx);
-    return false;
   }
 }

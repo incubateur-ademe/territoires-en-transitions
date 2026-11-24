@@ -34,7 +34,7 @@ describe('IndicateurValeurLockRepository', () => {
     await app.close();
   });
 
-  it('pose le verrou de table une seule fois par transaction', async () => {
+  it('ne tient qu’un seul verrou de table même quand lockAllPeriodes est appelé deux fois', async () => {
     await databaseService.db.transaction(async (tx) => {
       await lockRepository.lockAllPeriodes(tx);
       await lockRepository.lockAllPeriodes(tx);
