@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -34,6 +34,7 @@ export class EstimateLevierGesController {
   constructor(private readonly estimateLevierGesService: EstimateLevierGesService) {}
 
   @Post('estimations')
+  @HttpCode(HttpStatus.OK)
   @ApiUsage([ApiUsageEnum.EXTERNAL_API])
   @ApiOperation({
     summary:
@@ -43,7 +44,8 @@ export class EstimateLevierGesController {
   })
   @ApiOkResponse({ type: EstimateLevierGesResponseClass })
   @ApiBadRequestResponse({
-    description: 'Levier inconnu ou paramètres invalides (détail dans `issues`)',
+    description:
+      "Corps de requête invalide (format de validation commun à l'API), ou levier inconnu / paramètres du levier invalides (détail dans `issues`)",
   })
   @ApiNotFoundResponse({ description: 'Territoire inconnu' })
   @ApiUnprocessableEntityResponse({
