@@ -11,7 +11,7 @@ import {
   pickDernier,
   pickObjectifAHorizon,
 } from '@tet/domain/plans';
-import { Icon, InfoTooltip } from '@tet/ui';
+import { Badge, Icon, InfoTooltip } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
 import Link from 'next/link';
 import {
@@ -38,14 +38,26 @@ export const IndicateurObjectifCard = ({
   indicateur,
   horizon,
   canMutateValeurs,
+  showSources,
 }: {
   collectiviteId: number;
   indicateur: IndicateurObjectif;
   horizon: number;
   canMutateValeurs: boolean;
+  /** Les badges de source, seulement pour un plan rattaché à un dépôt PCAET */
+  showSources: boolean;
 }) => {
-  const { titre, unite, precision, periodicite, favori, resultats, objectifs } =
-    indicateur;
+  const {
+    titre,
+    unite,
+    precision,
+    periodicite,
+    favori,
+    resultats,
+    objectifs,
+    sources,
+    departDepot,
+  } = indicateur;
   const href = makeCollectiviteIndicateursUrl({
     collectiviteId,
     indicateurView: getIndicateurGroup(indicateur.identifiantReferentiel),
@@ -62,7 +74,7 @@ export const IndicateurObjectifCard = ({
   const isOpenData = resultats?.source.type === 'open-data';
   const objectifsAHorizon = objectifs.filter(({ annee }) => annee <= horizon);
   const cible = pickObjectifAHorizon(objectifs, horizon);
-  const depart = pickDepart(points);
+  const depart = pickDepart(points, departDepot);
   const avancement = computeAvancementObjectif({
     depart,
     dernier: pickDernier(points),
@@ -93,6 +105,31 @@ export const IndicateurObjectifCard = ({
           {titre}
         </Link>
       </div>
+
+      {showSources && (
+        <div className="flex flex-wrap gap-1">
+          {sources.includes('reglementaire') && (
+            <Badge
+              title={appLabels.indicateursObjectifsSourceReglementaire}
+              variant="standard"
+              type="outlined"
+              size="xs"
+              uppercase={false}
+              dataTest="plans.suivi.indicateurs-objectifs.source-reglementaire"
+            />
+          )}
+          {sources.includes('plan') && (
+            <Badge
+              title={appLabels.indicateursObjectifsSourcePlan}
+              variant="info"
+              type="outlined"
+              size="xs"
+              uppercase={false}
+              dataTest="plans.suivi.indicateurs-objectifs.source-plan"
+            />
+          )}
+        </div>
+      )}
 
       {dernier && (
         <div className="flex flex-wrap items-baseline gap-x-1.5">

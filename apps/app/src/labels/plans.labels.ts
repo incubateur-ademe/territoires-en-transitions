@@ -572,6 +572,12 @@ export const plansLabels = {
   indicateursObjectifsRecherche: 'Rechercher un indicateur',
   indicateursObjectifsRechercheGroupe: 'Indicateurs',
   indicateursObjectifsFavori: 'Favori',
+  indicateursObjectifsSourceReglementaire: 'Réglementaire',
+  indicateursObjectifsSourcePlan: "Lié au plan d'action",
+  indicateursObjectifsAfficher: 'Afficher',
+  indicateursObjectifsAfficherTous: 'Tous',
+  indicateursObjectifsAfficherReglementaires: 'Réglementaires',
+  indicateursObjectifsAfficherPlan: "Liés au plan d'action",
   indicateursObjectifsEnPeriode: (periode: string): string => `en ${periode}`,
   indicateursObjectifsOpenData: (source: string): string =>
     `Donnée open data issue de ${source}. Aucun résultat saisi par la collectivité.`,

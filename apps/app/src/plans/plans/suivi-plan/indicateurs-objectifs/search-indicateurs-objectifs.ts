@@ -3,6 +3,7 @@ import {
   combineSearchSources,
   createSearchSource,
 } from '@/app/utils/search/search-source';
+import { IndicateurObjectifSource } from '@tet/domain/plans';
 import { rankSearchMatches } from '@tet/domain/utils';
 
 type IndicateurCherchable = {
@@ -10,6 +11,26 @@ type IndicateurCherchable = {
   titre: string;
   identifiantReferentiel: string | null;
   favori: boolean;
+  sources: IndicateurObjectifSource[];
+};
+
+/** Le filtre « Afficher » d'un plan rattaché à un dépôt PCAET. */
+export const INDICATEURS_OBJECTIFS_FILTRES_SOURCE = [
+  'tous',
+  'reglementaires',
+  'plan',
+] as const;
+
+export type IndicateursObjectifsFiltreSource =
+  (typeof INDICATEURS_OBJECTIFS_FILTRES_SOURCE)[number];
+
+const SOURCE_PAR_FILTRE: Record<
+  IndicateursObjectifsFiltreSource,
+  IndicateurObjectifSource | null
+> = {
+  tous: null,
+  reglementaires: 'reglementaire',
+  plan: 'plan',
 };
 
 export const SEARCH_INDICATEURS_GROUP = 'indicateurs';
@@ -36,17 +57,29 @@ export const buildSearchIndicateursSuggestions = (
   ]);
 
 /**
- * Les indicateurs à afficher : ceux choisis en étiquette s'il y en a, puis ceux
- * qui répondent à la recherche libre, avec la règle partagée du domaine. L'ordre
- * de la liste — favoris d'abord, puis alphabétique — est conservé.
+ * Les indicateurs à afficher : ceux de la source choisie, puis ceux choisis en
+ * étiquette s'il y en a, puis ceux qui répondent à la recherche libre, avec la
+ * règle partagée du domaine. L'ordre de la liste est conservé.
  */
 export const filterIndicateursObjectifs = <T extends IndicateurCherchable>(
   indicateurs: readonly T[],
-  { recherche, selectionIds }: { recherche: string; selectionIds: number[] }
+  {
+    recherche,
+    selectionIds,
+    source = 'tous',
+  }: {
+    recherche: string;
+    selectionIds: number[];
+    source?: IndicateursObjectifsFiltreSource;
+  }
 ): T[] => {
+  const sourceRetenue = SOURCE_PAR_FILTRE[source];
+  const deLaSource = sourceRetenue
+    ? indicateurs.filter(({ sources }) => sources.includes(sourceRetenue))
+    : indicateurs;
   const choisis = selectionIds.length
-    ? indicateurs.filter(({ id }) => selectionIds.includes(id))
-    : [...indicateurs];
+    ? deLaSource.filter(({ id }) => selectionIds.includes(id))
+    : [...deLaSource];
   if (!recherche.trim()) {
     return choisis;
   }
