@@ -4,7 +4,16 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, success } from '@tet/backend/utils/result.type';
 import { sql } from 'drizzle-orm';
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest';
 import { TransactionManager } from './transaction-manager.service';
 
 const probeTable = sql.identifier(
@@ -42,6 +51,10 @@ describe('TransactionManager', () => {
 
   beforeEach(async () => {
     await databaseService.db.execute(sql`delete from ${probeTable}`);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   describe('sans transaction fournie', () => {
@@ -194,17 +207,192 @@ describe('TransactionManager', () => {
     it('annule la transaction de l’appelant sur une exception inattendue de l’opération', async () => {
       const unexpected = new Error('bug imprévu');
 
-      const outerResult = transactionManager.executeSingle(async (outerTx) => {
-        const innerResult = await transactionManager.executeSingle(async () => {
-          throw unexpected;
-        }, outerTx);
-        return success(innerResult);
+      const outerResult = await transactionManager.executeSingle(
+        async (outerTx) => {
+          await insertProbe(outerTx, 'appelant');
+          const innerResult = await transactionManager.executeSingle(
+            async (tx) => {
+              await insertProbe(tx, 'opération');
+              throw unexpected;
+            },
+            outerTx
+          );
+          return success(innerResult);
+        }
+      );
+
+      expect(outerResult).toEqual({ success: false, error: unexpected });
+      expect(await listProbeLabels()).toEqual([]);
+    });
+
+    it('relance l’erreur d’origine quand le nettoyage du savepoint échoue lui-même', async () => {
+      const unexpected = new Error('bug imprévu');
+      const cleanupFailure = new Error('connexion perdue');
+
+      const outerResult = await transactionManager.executeSingle(
+        async (outerTx) => {
+          const innerResult = await transactionManager.executeSingle(
+            async (tx) => {
+              vi.spyOn(tx, 'execute').mockRejectedValueOnce(cleanupFailure);
+              throw unexpected;
+            },
+            outerTx
+          );
+          return success(innerResult);
+        }
+      );
+
+      expect(outerResult).toEqual({ success: false, error: unexpected });
+    });
+
+    it('rend la transaction utilisable après une erreur SQL interceptée par l’opération', async () => {
+      const outerResult = await transactionManager.executeSingle(
+        async (outerTx) => {
+          const innerResult = await transactionManager.executeSingle(
+            async (tx) => {
+              try {
+                await tx.execute(
+                  sql`insert into ${probeTable} (label) values (null)`
+                );
+              } catch {
+                return failure('DATABASE_ERROR');
+              }
+              return success(undefined);
+            },
+            outerTx
+          );
+          await insertProbe(outerTx, 'après l’erreur');
+          return success(innerResult);
+        }
+      );
+
+      expect(outerResult).toEqual({
+        success: true,
+        data: { success: false, error: 'DATABASE_ERROR', cause: undefined },
+      });
+      expect(await listProbeLabels()).toEqual(['après l’erreur']);
+    });
+
+    it('annule les écritures de toutes les opérations quand l’une d’elles échoue', async () => {
+      let operationsResult: unknown;
+
+      await transactionManager.executeSingle(async (outerTx) => {
+        await insertProbe(outerTx, 'appelant');
+        operationsResult = await transactionManager.executeTransaction(
+          [
+            async (tx) => {
+              await insertProbe(tx, 'première');
+              return success(1);
+            },
+            async () => failure('UNAUTHORIZED'),
+          ],
+          outerTx
+        );
+        return success(undefined);
       });
 
-      await expect(outerResult).resolves.toEqual({
+      expect(operationsResult).toEqual({
         success: false,
-        error: unexpected,
+        error: 'UNAUTHORIZED',
+        cause: undefined,
       });
+      expect(await listProbeLabels()).toEqual(['appelant']);
+    });
+
+    it('annule l’opération intermédiaire quand l’opération imbriquée échoue et qu’elle propage l’échec', async () => {
+      await transactionManager.executeSingle(async (outerTx) => {
+        await insertProbe(outerTx, 'appelant');
+        const intermediateResult = await transactionManager.executeSingle(
+          async (intermediateTx) => {
+            await insertProbe(intermediateTx, 'intermédiaire');
+            const nestedResult = await transactionManager.executeSingle(
+              async (tx) => {
+                await insertProbe(tx, 'imbriquée');
+                return failure('UNAUTHORIZED');
+              },
+              intermediateTx
+            );
+            if (!nestedResult.success) return nestedResult;
+            return success(undefined);
+          },
+          outerTx
+        );
+        return success(intermediateResult);
+      });
+
+      expect(await listProbeLabels()).toEqual(['appelant']);
+    });
+
+    it('conserve l’opération intermédiaire quand elle ignore l’échec de l’opération imbriquée', async () => {
+      await transactionManager.executeSingle(async (outerTx) => {
+        await insertProbe(outerTx, 'appelant');
+        const intermediateResult = await transactionManager.executeSingle(
+          async (intermediateTx) => {
+            await insertProbe(intermediateTx, 'intermédiaire');
+            await transactionManager.executeSingle(async (tx) => {
+              await insertProbe(tx, 'imbriquée');
+              return failure('UNAUTHORIZED');
+            }, intermediateTx);
+            return success(undefined);
+          },
+          outerTx
+        );
+        return success(intermediateResult);
+      });
+
+      expect(await listProbeLabels()).toEqual(['appelant', 'intermédiaire']);
+    });
+  });
+
+  describe('avec une transaction partagée sans annulation des écritures de l’opération', () => {
+    it('retourne l’échec et conserve les écritures de l’opération dans la transaction de l’appelant', async () => {
+      const outerResult = await transactionManager.executeSingle(
+        async (outerTx) => {
+          await insertProbe(outerTx, 'appelant');
+          const innerResult = await transactionManager.executeSingle(
+            async (tx) => {
+              await insertProbe(tx, 'écriture conservée');
+              return failure('UNAUTHORIZED');
+            },
+            outerTx,
+            { undoWritesOnFailure: false }
+          );
+          return success(innerResult);
+        }
+      );
+
+      expect(outerResult).toEqual({
+        success: true,
+        data: { success: false, error: 'UNAUTHORIZED', cause: undefined },
+      });
+      expect(await listProbeLabels()).toEqual([
+        'appelant',
+        'écriture conservée',
+      ]);
+    });
+
+    it('laisse la transaction englobante tout annuler quand l’appelant propage l’échec', async () => {
+      const outerResult = await transactionManager.executeSingle(
+        async (outerTx) => {
+          await insertProbe(outerTx, 'appelant');
+          const innerResult = await transactionManager.executeSingle(
+            async (tx) => {
+              await insertProbe(tx, 'opération');
+              return failure('UNAUTHORIZED');
+            },
+            outerTx,
+            { undoWritesOnFailure: false }
+          );
+          return innerResult;
+        }
+      );
+
+      expect(outerResult).toEqual({
+        success: false,
+        error: 'UNAUTHORIZED',
+        cause: undefined,
+      });
+      expect(await listProbeLabels()).toEqual([]);
     });
   });
 });
