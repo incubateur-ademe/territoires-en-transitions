@@ -3,10 +3,15 @@
 import CardsWrapper from '@/site/components/cards/CardsWrapper';
 import Markdown from '@/site/components/markdown/Markdown';
 import Section from '@/site/components/sections/Section';
+import { ENV } from '@tet/api/environmentVariables';
 import { Alert, Button, Icon } from '@tet/ui';
 
-const PDF_FILENAME = 'ADEME-Methodo-Outil-trajectoire-reference_VF_Nov2024.pdf';
-const XLSX_FILENAME = 'Trajectoire-GES-de-reference-V1-1-20240905.xlsx';
+/**
+ * Fichiers de la dernière release SNBC 3 importée, servis par le backend sans
+ * authentification : le même millésime que la trajectoire de la plateforme.
+ */
+const getSnbc3FileUrl = (fichier: 'outil' | 'methodologie') =>
+  `${ENV.backend_browser_url}/api/v1/trajectoires/snbc3/public/${fichier}`;
 
 type DocumentationProps = {
   titre: string;
@@ -45,8 +50,7 @@ const Documentation = ({
             <Button
               variant="outlined"
               size="xs"
-              href={`/outil-numerique/trajectoire/${XLSX_FILENAME}`}
-              download={XLSX_FILENAME}
+              href={getSnbc3FileUrl('outil')}
             >
               Télécharger le fichier Excel
             </Button>
@@ -63,8 +67,7 @@ const Documentation = ({
             <Button
               variant="outlined"
               size="xs"
-              href={`/outil-numerique/trajectoire/${PDF_FILENAME}`}
-              external
+              href={getSnbc3FileUrl('methodologie')}
             >
               Télécharger le PDF
             </Button>
