@@ -33,6 +33,7 @@ export * from './valeurs/indicateur-period-presentation';
 export * from './valeurs/indicateur-reference-objectif.rules';
 export * from './valeurs/indicateur-total.rules';
 export * from './valeurs/sous-indicateur-series.rules';
+export * from './valeurs/indicateur-source-series.rules';
 export * from './valeurs/indicateur-valeur.schema';
 export * from './valeurs/iso-date.utils';
 export * from './valeurs/values.constants';

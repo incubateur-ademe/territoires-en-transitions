@@ -3,6 +3,7 @@ import { useListIndicateurValeurs } from '@/app/indicateurs/valeurs/use-list-ind
 import { PALETTE_LIGHT } from '@/app/ui/charts/echarts/constants';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import {
+  getPeriodicitesAvecVersionsEnConflit,
   IndicateurPeriodes,
   type IndicateurPeriodicite,
   IndicateurDetaille,
@@ -359,6 +360,20 @@ function prepareEnfantsParSegmentation(
   const dataParId: Record<number, PreparedData> = {};
   const sources: Array<{ source: string; ordreAffichage: number | null }> = [];
 
+  // Les segments s'empilent : une version n'est séparée que si elle est en
+  // conflit dans au moins un segment, et l'est alors dans tous (comme le back).
+  const periodicitesEnConflitParSource = new Map<string, Set<string>>();
+  for (const { sources: sourcesEnfant } of valeursSegments?.indicateurs ?? []) {
+    for (const { source, valeurs } of Object.values(sourcesEnfant)) {
+      const enConflit =
+        periodicitesEnConflitParSource.get(source) ?? new Set<string>();
+      getPeriodicitesAvecVersionsEnConflit(valeurs).forEach((p) =>
+        enConflit.add(p)
+      );
+      periodicitesEnConflitParSource.set(source, enConflit);
+    }
+  }
+
   // recherche la source la plus appropriée pour chaque sous-indicateur
   enfants?.forEach((enfant) => {
     // valeurs associées à l'indicateur
@@ -371,7 +386,13 @@ function prepareEnfantsParSegmentation(
     }
 
     // et transformées pour l'affichage
-    const data = prepareData(valeursEnfant, type, false);
+    const data = prepareData(
+      valeursEnfant,
+      type,
+      false,
+      [],
+      periodicitesEnConflitParSource
+    );
     dataParId[enfant.id] = data;
 
     // sélectionne la source la plus appropriée

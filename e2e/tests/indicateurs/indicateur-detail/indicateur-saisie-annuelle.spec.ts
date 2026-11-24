@@ -8,7 +8,7 @@ import { databaseService } from 'tests/shared/database.service';
 import { DropdownPom } from 'tests/shared/dropdown.pom';
 import { IndicateurValeursPom } from './indicateur-valeurs.pom';
 
-test('Distinguer deux versions annuelles de la même source après rechargement', async ({
+test('Regrouper deux versions annuelles successives de la même source après rechargement', async ({
   page,
   collectivites,
   indicateurs,
@@ -73,40 +73,33 @@ test('Distinguer deux versions annuelles de la même source après rechargement'
     ]);
     await indicateurDetailPom.goto(collectiviteId, indicateurId);
     const valeurs = new IndicateurValeursPom(page);
+    // Les versions ne se chevauchent pas : une seule ligne, décrite par la
+    // version la plus récente.
     const expectVersions = async () => {
-      await expect(valeurs.cell(2026, sourceId)).toHaveCount(2);
-      for (const [index, version] of versions.entries()) {
-        const row = valeurs.table.getByRole('row').filter({
-          has: page
-            .getByRole('rowheader')
-            .filter({ hasText: `Inventaire ${2025 + index}` }),
-        });
-        await expect(row.getByRole('rowheader')).toContainText('Annuelle');
-        await expect(row.getByRole('rowheader')).toContainText(
-          `Source ${version.id}`
-        );
-        await expect(
-          row.locator(`td[data-periode="${2025 + index}-01-01"]`)
-        ).toHaveText(index === 0 ? 'R0' : 'R20');
-        await expect(row.getByRole('button')).toHaveCount(0);
-        await row.locator('.ri-information-line').hover();
-        const tooltip = page.getByRole('tooltip');
-        await expect(tooltip).toContainText(`Inventaire ${2025 + index}`);
-        const automaticCalculationMessage =
-          'Indicateur calculé automatiquement à partir des données disponibles sur Territoires en Transitions.';
-        if (index === 0) {
-          await expect(tooltip).toContainText('Méthode de l’inventaire 2025');
-          await expect(tooltip).toContainText('Limites de l’inventaire 2025');
-          await expect(tooltip).not.toContainText(automaticCalculationMessage);
-        } else {
-          await expect(tooltip).toContainText(automaticCalculationMessage);
-          await expect(tooltip).not.toContainText(
-            'Limites de l’inventaire 2026'
-          );
-        }
-        await page.mouse.move(0, 0);
-        await expect(tooltip).toBeHidden();
-      }
+      await expect(valeurs.cell(2026, sourceId)).toHaveCount(1);
+      const row = valeurs.table.getByRole('row').filter({
+        has: page
+          .getByRole('rowheader')
+          .filter({ hasText: 'Inventaire annuel' }),
+      });
+      await expect(row).toHaveCount(1);
+      await expect(row.getByRole('rowheader')).not.toContainText('Source ');
+      await expect(row.locator('td[data-periode="2025-01-01"]')).toHaveText(
+        'R0'
+      );
+      await expect(row.locator('td[data-periode="2026-01-01"]')).toHaveText(
+        'R20'
+      );
+      await expect(row.getByRole('button')).toHaveCount(0);
+      await row.locator('.ri-information-line').hover();
+      const tooltip = page.getByRole('tooltip');
+      await expect(tooltip).toContainText('Inventaire 2026');
+      await expect(tooltip).not.toContainText('Méthode de l’inventaire 2025');
+      await expect(tooltip).toContainText(
+        'Indicateur calculé automatiquement à partir des données disponibles sur Territoires en Transitions.'
+      );
+      await page.mouse.move(0, 0);
+      await expect(tooltip).toBeHidden();
     };
     await expectVersions();
     await page.reload();
