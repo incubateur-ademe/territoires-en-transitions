@@ -2,7 +2,9 @@ import { describeLlmError, LlmError } from '@tet/backend/utils/llm/llm.errors';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { sumTokenUsage, TokenUsage } from '@tet/backend/utils/llm/token-usage';
 import { Result, success } from '@tet/backend/utils/result.type';
+import { stripTitleNumber } from '../../adapters/normalize-plan-labels';
 import { PlanSkeleton } from '../../models/plan-skeleton';
+import { titlesMatch } from '../extract-actions/similar-titles';
 import { DocumentUnit } from '../segment-document/document-unit';
 import { classifyUnits, UnitCategory } from './classify-units';
 import { extractSkeleton } from './extract-skeleton';
@@ -95,9 +97,13 @@ export const scoutUnits = async (
 
   // Sans squelette, la mise en cohérence est sautée : l'import y perd en
   // finesse, pas en contenu.
+  const setAsideSummaries = summariesOfFiches(
+    units,
+    readable.filter((unit) => !units.includes(unit))
+  );
   const skeleton = await extractSkeleton(llm, {
     units,
-    structureUnits,
+    structureUnits: [...setAsideSummaries, ...structureUnits],
     signal,
   });
   const skeletonWarnings = skeleton.success
@@ -149,6 +155,55 @@ const listActionsWithoutFiche = (
   return (unit) =>
     hasMore && numberedActionsOf(unit).length >= MIN_ACTIONS_WITHOUT_FICHE;
 };
+
+/**
+ * Le sommaire placé avant la partie actions (« 14 ACTIONS PRIORITAIRES » et
+ * leurs thèmes) : mis de côté avec le diagnostic, il est souvent seul à
+ * donner les regroupements des fiches. Sa page en redit au moins la moitié ;
+ * sur deux colonnes, la lecture peut le couper en plusieurs unités, toutes
+ * gardées.
+ */
+const summariesOfFiches = (
+  units: DocumentUnit[],
+  setAside: DocumentUnit[]
+): DocumentUnit[] => {
+  const titles = units.flatMap((unit) =>
+    unit.kind === 'fiche' && !unit.continued && unit.title
+      ? [stripTitleNumber(unit.title.replace(LEADING_NUMBER, ''))]
+      : []
+  );
+  if (titles.length < MIN_RESTATED_FICHES) {
+    return [];
+  }
+  const needed = Math.max(MIN_RESTATED_FICHES, Math.ceil(titles.length / 2));
+  const restatedByPage = new Map<number, Set<number>>();
+  const pagesByUnit = new Map<DocumentUnit, Set<number>>();
+  for (const unit of setAside) {
+    for (const line of unit.lines) {
+      const text = line.text.trim().replace(LEADING_NUMBER, '');
+      const index = titles.findIndex((title) => titlesMatch(text, title));
+      if (index === -1) {
+        continue;
+      }
+      restatedByPage.set(
+        line.pageIndex,
+        (restatedByPage.get(line.pageIndex) ?? new Set()).add(index)
+      );
+      pagesByUnit.set(
+        unit,
+        (pagesByUnit.get(unit) ?? new Set()).add(line.pageIndex)
+      );
+    }
+  }
+  return setAside.filter((unit) =>
+    [...(pagesByUnit.get(unit) ?? [])].some(
+      (page) => (restatedByPage.get(page)?.size ?? 0) >= needed
+    )
+  );
+};
+
+const LEADING_NUMBER = /^(?:\d{1,3}(?:\.\d{1,3})*[.)]?\s+)/u;
+const MIN_RESTATED_FICHES = 3;
 
 const isKept = (
   unit: DocumentUnit,

@@ -389,6 +389,10 @@ Ce que la mise en page trompe, et comment la segmentation s'en garde :
   contient au moins trois fiches, seule cette partie est structurée : un PCAET
   suit une structure réglementaire, et le diagnostic, la stratégie ou les
   annexes n'ont pas d'action à donner. Sans partie de ce type, tout est lu.
+  Le sommaire placé avant cette partie (« 14 ACTIONS PRIORITAIRES » et leurs
+  thèmes) va pourtant au squelette, sans tri ni appel : sa page redit au
+  moins la moitié des titres de fiches, et c'est souvent lui seul qui donne
+  leurs regroupements. Sur deux colonnes, toutes ses unités de la page y vont.
 - Avec des fiches, un extrait classé `structure` (sommaire, tableau
   récapitulatif) sert au squelette mais n'est pas structuré : il redit ce que
   les fiches détaillent. Sauf si les tableaux du document numérotent nettement
