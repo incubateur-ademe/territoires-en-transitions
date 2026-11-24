@@ -303,7 +303,7 @@ describe('normalizeExtractedActions', () => {
     ).toBe(true);
   });
 
-  it('retire le numéro des titres et donne une seule graphie à un même axe', () => {
+  it('garde le numéro des titres sous une seule forme et donne une seule graphie à un même axe', () => {
     const result = normalizeExtractedActions([
       toAction({
         axe: 'Axe 6 : DEVELOPPER LE POTENTIEL',
@@ -316,8 +316,11 @@ describe('normalizeExtractedActions', () => {
     ]);
 
     expect(result.actions.map(({ axe, titre }) => [axe, titre])).toEqual([
-      ['Axe 6 : Développer le potentiel', 'Développer l’énergie hydraulique'],
-      ['Axe 6 : Développer le potentiel', 'Développer le stockage'],
+      [
+        'Axe 6 : Développer le potentiel',
+        '6.2.5 Développer l’énergie hydraulique',
+      ],
+      ['Axe 6 : Développer le potentiel', '6 Développer le stockage'],
     ]);
   });
 

@@ -1,5 +1,4 @@
 import {
-  axisPathOf,
   axisSlotsOf,
   ExtractedAction,
   withAxisPath,
@@ -7,10 +6,9 @@ import {
 import { normalizeTitle } from '../pipeline/extract-actions/merge-chunk-actions';
 
 // « 2.1.3 Titre », « 1- Titre », « 6/ Titre », « ACTION 3 - Titre », « Fiche
-// n°12 : Titre » : le numéro sert au rattachement pendant l'import, pas au
-// titre de la fiche. Un tiret ne sépare un numéro que s'il touche un blanc
-// (« 2-roues » reste), et un nombre seul sans séparateur reste aussi
-// (« 10 bornes de recharge »).
+// n°12 : Titre » : le numéro d'une fiche. Un tiret ne sépare un numéro que
+// s'il touche un blanc (« 2-roues » reste), et un nombre seul sans séparateur
+// n'en est pas un (« 10 bornes de recharge »).
 const TITLE_NUMBER =
   /^(?:(?:fiche(?:[\s-]*actions?)?|action|mesure)\b\s*(?:n[°º]\s*)?\d{1,3}(?:[.-]\d{1,3})*(?!\d)\s*[.)\-–—:]?\s*|\d{1,2}(?:\.\d{1,2}){1,3}\.?\s+|\d{1,2}(?:[.)/]\s*|\s*[-–—:]\s+|\s+[-–—:]\s*))(?=\p{L})/iu;
 
@@ -18,29 +16,26 @@ export const stripTitleNumber = (titre: string): string =>
   titre.replace(TITLE_NUMBER, '').trim();
 
 /**
- * Retire le numéro des titres d'action, sauf quand deux actions du même
- * chemin d'axes ne se distingueraient plus que par lui.
+ * Le numéro de la fiche reste en tête de son titre, sous une seule forme :
+ * « Fiche n°12 : Titre » et « ACTION 12 - Titre » deviennent « 12 Titre »,
+ * « 2.1.3. Titre » devient « 2.1.3 Titre ». Il fait le lien avec le document
+ * et garde l'ordre de ses fiches.
  */
-export const stripTitleNumbers = (
-  actions: ExtractedAction[]
-): ExtractedAction[] => {
-  const keyOf = (action: ExtractedAction, titre: string) =>
-    [...axisPathOf(action), normalizeTitle(titre)]
-      .map((part) => part.trim())
-      .join('|');
-  const stripped = actions.map((action) => stripTitleNumber(action.titre));
-  const counts = new Map<string, number>();
-  actions.forEach((action, index) => {
-    const key = keyOf(action, stripped[index]);
-    counts.set(key, (counts.get(key) ?? 0) + 1);
-  });
-  return actions.map((action, index) => {
-    const titre = stripped[index];
-    return titre && counts.get(keyOf(action, titre)) === 1
-      ? { ...action, titre }
-      : action;
-  });
+export const normalizeTitleNumber = (titre: string): string => {
+  const prefix = titre.match(TITLE_NUMBER)?.[0];
+  const number = prefix?.match(/\d{1,3}(?:[.-]\d{1,3})*/u)?.[0];
+  return prefix && number
+    ? `${number} ${titre.slice(prefix.length).trim()}`
+    : titre;
 };
+
+export const normalizeTitleNumbers = (
+  actions: ExtractedAction[]
+): ExtractedAction[] =>
+  actions.map((action) => ({
+    ...action,
+    titre: normalizeTitleNumber(action.titre),
+  }));
 
 const AXE_PREFIX = /^axe\s+(\d{1,2}|[IVX]{1,4})\b\s*[:.\-–—]?\s*/iu;
 const SOUS_AXE_PREFIX = /^(\d{1,2}(?:\.\d{1,2})+)\.?\s*/u;

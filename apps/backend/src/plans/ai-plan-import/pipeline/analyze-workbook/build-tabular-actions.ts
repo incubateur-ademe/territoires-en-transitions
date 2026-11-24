@@ -601,8 +601,8 @@ const splitListItems = (value: string): string[] =>
     .filter((line) => line !== '');
 
 /**
- * Le titre précédé de son n°, à la façon que `stripTitleNumbers` sait
- * retirer : le n° départage deux fiches homonymes du même axe. Un titre
+ * Le titre précédé de son n°, que `normalizeTitleNumber` met ensuite sous sa
+ * forme commune : le n° départage deux fiches homonymes du même axe. Un titre
  * déjà numéroté le reste tel quel.
  */
 export const numberedTitle = (numero: string | null, titre: string): string => {

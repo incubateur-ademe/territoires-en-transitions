@@ -161,6 +161,27 @@ describe('matchHeading', () => {
       null,
       'Annexe 2 : Tableau de suivi des actions',
     ],
+    [
+      'Titre de l’action 1.1 Anticiper et planifier les réponses',
+      'fiche',
+      3,
+      '1.1',
+      'Anticiper et planifier les réponses',
+    ],
+    [
+      "Intitulé de l'action : Développer le covoiturage",
+      'fiche',
+      3,
+      null,
+      'Développer le covoiturage',
+    ],
+    [
+      'Axe stratégique AXE 2 : Nourrir l’offre touristique',
+      'axe',
+      1,
+      '2',
+      'Nourrir l’offre touristique',
+    ],
   ])('reconnaît « %s »', (line, kind, level, number, title) => {
     expect(matchHeading(line)).toMatchObject({ kind, level, number, title });
   });

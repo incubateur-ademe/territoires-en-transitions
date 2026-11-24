@@ -209,6 +209,46 @@ describe('extractSkeleton, avec des mesures qui rangent des actions', () => {
   });
 });
 
+describe('extractSkeleton, avec des fiches que leur cartouche nomme actions', () => {
+  it('ne fait pas un sous-axe de la fiche dont les A, B, C sont les sous-actions', async () => {
+    const { llm, calls } = llmRouting(
+      () => [],
+      () => ({
+        axes: [
+          {
+            numero: '1',
+            titre: 'S’adapter aux enjeux du futur',
+            sousAxes: [{ numero: '1.1', titre: 'Anticiper les défis' }],
+          },
+        ],
+      })
+    );
+    const fiche = {
+      ...buildUnit(
+        [
+          'Titre de l’action 1.1 Anticiper les défis',
+          'Synthèse A. Définir un groupe de réflexion',
+          'B. Elargir les missions du conseil',
+          'C. Disposer d’une personne à temps partiel',
+        ].map((text) => ({ text, pageIndex: 0 })),
+        ['1 S’adapter aux enjeux du futur'],
+        'fiche'
+      ),
+      title: '1.1 Anticiper les défis',
+    };
+
+    const result = await extractSkeleton(llm, {
+      units: [fiche],
+      structureUnits: [],
+    });
+
+    expect(calls[0].prompt).not.toContain('Anticiper les défis (regroupe');
+    expect(result.success && result.data.skeleton?.axes[0].sousAxes).toEqual(
+      []
+    );
+  });
+});
+
 describe('extractSkeleton, avec des parties titrées', () => {
   it('range les titres sous leur partie du document', async () => {
     const { llm, calls } = llmRouting(

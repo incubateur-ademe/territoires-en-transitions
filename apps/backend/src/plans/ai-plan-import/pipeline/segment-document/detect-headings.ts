@@ -8,6 +8,7 @@ import {
   HEADING_CONFIDENCE_THRESHOLD,
   HeadingMatch,
   isFicheLabel,
+  isTitleField,
   matchHeading,
   SECTION_LEVEL,
 } from './heading-patterns';
@@ -55,6 +56,8 @@ const BULLET = /^(?:[o•●▪◦■□*\-–—]|\d{1,2}[.)])\s/u;
 // une fiche, pas deux niveaux.
 const MIN_NAMED_FICHES = 3;
 const MARKDOWN_MARK = /^#{1,4}\s+/u;
+// « Fiche action n°1.2 », ou « Titre de l'action 1.2 » dans un cartouche.
+const NAMED_FICHE = /^(?:fiche|(?:titre|intitul[ée]|nom)\s+d)/iu;
 // Le choix entre fiche et étape ne se pose que si un quart des fiches au
 // moins détaillent plusieurs étapes titrées : 7 sur 16 dans un PLPDMA réel,
 // les autres fiches tenant en un seul bloc.
@@ -251,9 +254,17 @@ const scanHeadings = (
               (other) => sizeOf(other) === 'large'
             )
           : null;
-      const match = below ? { ...found, title: below.title } : found;
+      const inCell = isTitleField(line.text)
+        ? cellContinuation(page.lines, lineIndex)
+        : null;
+      const match = below
+        ? { ...found, title: below.title }
+        : inCell
+        ? { ...found, title: `${found.title} ${inCell.text}` }
+        : found;
       const lastLineIndex =
         below?.lastLineIndex ??
+        inCell?.lastLineIndex ??
         (joined ? continuation.lastLineIndex : lineIndex);
       skipUntil = lastLineIndex;
       headings.push({
@@ -307,7 +318,7 @@ const classifyNamedFicheActions = (
         ?.lines[heading.lineIndex]?.text.trim()
         .replace(MARKDOWN_MARK, '') ?? ''
     );
-  const fiches = headings.filter((heading) => startsWith(heading, /^fiche/iu));
+  const fiches = headings.filter((heading) => startsWith(heading, NAMED_FICHE));
   const empty: NamedFicheActions = {
     fiches,
     dropped: new Set(),
@@ -458,6 +469,29 @@ const titleBelow = (
     lastLineIndex = index;
   }
   return parts.length > 0 ? { title: parts.join(' '), lastLineIndex } : null;
+};
+
+/**
+ * La fin d'un titre de fiche donné dans son cartouche : la valeur passe à la
+ * ligne dans sa cellule, et sa suite commence par une minuscule.
+ */
+const cellContinuation = (
+  lines: PageLine[],
+  lineIndex: number
+): { text: string; lastLineIndex: number } | null => {
+  const parts: string[] = [];
+  let index = lineIndex + 1;
+  while (
+    index < lines.length &&
+    parts.length < MAX_TITLE_BELOW_LINES &&
+    /^\p{Ll}/u.test(lines[index].text.trim())
+  ) {
+    parts.push(lines[index].text.trim());
+    index++;
+  }
+  return parts.length > 0
+    ? { text: parts.join(' '), lastLineIndex: index - 1 }
+    : null;
 };
 
 /**

@@ -11,6 +11,7 @@ import { PlanSkeleton, planSkeletonSchema } from '../../models/plan-skeleton';
 import { SQUELETTE_PROMPT } from '../../prompts/squelette.prompt';
 import { titleIncludes, titlesMatch } from '../extract-actions/similar-titles';
 import { DocumentUnit } from '../segment-document/document-unit';
+import { isFicheTitleField } from '../segment-document/heading-patterns';
 
 // Les extraits de structure sont rarement longs ; au-delà, le sommaire suffit.
 const STRUCTURE_MAX_TOKENS = 15_000;
@@ -47,7 +48,7 @@ export const extractSkeleton = async (
   // actions lettrées sont citées avec son titre, seul indice du regroupement.
   const ficheTitles = fiches.map((unit) => {
     const lettered = letteredActionsOf(unit);
-    return lettered.length >= MIN_LETTERED_ACTIONS
+    return groupsLetteredActions(unit)
       ? `${unit.title} (regroupe : ${lettered
           .slice(0, MAX_CITED_LETTERED_ACTIONS)
           .map((line) => `« ${line.slice(0, MAX_CITED_LINE_LENGTH)} »`)
@@ -102,7 +103,10 @@ const letteredActionsOf = (unit: DocumentUnit): string[] =>
     .map((line) => line.text.trim())
     .filter((text) => LETTERED_ACTION.test(text));
 
+// Une fiche que son cartouche nomme action (« Titre de l'action 1.1 … ») est
+// une action : ses A, B, C sont ses sous-actions.
 const groupsLetteredActions = (unit: DocumentUnit): boolean =>
+  !isFicheTitleField(unit.lines[0]?.text ?? '') &&
   letteredActionsOf(unit).length >= MIN_LETTERED_ACTIONS;
 
 /**

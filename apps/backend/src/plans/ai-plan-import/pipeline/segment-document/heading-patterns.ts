@@ -50,6 +50,12 @@ const FICHE = new RegExp(
   String.raw`^(?:fiche(?:[\s-]*(?:actions?|projets?|op[ée]rations?|mesures?))?|action|mesure|op[ée]ration|projet)\s*${NUMBER}([A-Z]{0,3}[\s-]?\d+(?:[.\-]\d+){0,3}[a-z]?)${SEPARATOR}(.*)$`,
   'iu'
 );
+// « Titre de l'action | 1.1 Anticiper… » : le cartouche d'une fiche, lu ligne
+// par ligne, colle le libellé du champ à sa valeur. Le champ nomme la fiche.
+const FICHE_TITLE_FIELD =
+  /^(?:titre|intitul[ée]|nom)\s+(?:de\s+l['’]action|de\s+la\s+fiche(?:[\s-]actions?)?|de\s+la\s+mesure|du\s+projet)\s*[:：]?\s+(\S.*)$/iu;
+// « Axe stratégique AXE 1 : … » : le même cartouche, pour l'axe de la fiche.
+const AXE_FIELD = /^axe\s+strat[ée]gique\s+(?=axe\b)/iu;
 // « 1.2.4 Titre » : le titre commence par une majuscule, sinon c'est « 1.5 tonnes ».
 const NUMEROTATION =
   /^(\d{1,2}(?:\.\d{1,2}){1,3})\s*[.)\-–—:]?\s+(\p{Lu}.{2,119})$/u;
@@ -82,11 +88,19 @@ export type HeadingContext = {
 export const isFicheLabel = (text: string): boolean =>
   FICHE_LABEL.test(text.trim());
 
+/** « Titre de l'action 1.1 … » : la fiche se dit action dans son cartouche. */
+export const isFicheTitleField = (text: string): boolean =>
+  FICHE_TITLE_FIELD.test(text.trim());
+
+/** Un champ du cartouche dont la valeur, titre de fiche ou d'axe, peut passer à la ligne. */
+export const isTitleField = (text: string): boolean =>
+  isFicheTitleField(text) || AXE_FIELD.test(text.trim());
+
 export const matchHeading = (
   text: string,
   { isLarge = false }: HeadingContext = {}
 ): HeadingMatch | null => {
-  const line = text.trim();
+  const line = text.trim().replace(AXE_FIELD, '');
   if (
     line.length === 0 ||
     line.length > MAX_TITLE_LENGTH ||
@@ -121,6 +135,15 @@ export const matchHeading = (
       kind: 'markdown',
       level,
       ...splitNumber(markdown[2]),
+      confidence: 1,
+    };
+  }
+  const ficheTitle = line.match(FICHE_TITLE_FIELD);
+  if (ficheTitle) {
+    return {
+      kind: 'fiche',
+      level: FICHE_LEVEL,
+      ...splitNumber(ficheTitle[1]),
       confidence: 1,
     };
   }

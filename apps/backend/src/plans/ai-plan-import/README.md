@@ -335,7 +335,7 @@ flowchart TD
     C --> S0["partie du document (niveau 0)<br/>Diagnostic, État des lieux, Stratégie,<br/>Plan / Programme d'actions, Annexes…"]
     C --> S1["axe (niveau 1)<br/>Axe 2 : …, II. …"]
     C --> S2["sous-axe (niveau 2)<br/>Orientation, Objectif, Enjeu,<br/>Défi, Volet, Levier… 2.3 Titre"]
-    C --> S3["fiche (niveau 3)<br/>Fiche action n°, Action, Mesure,<br/>2.3.1 Titre, MOB-03, numéro seul en grand"]
+    C --> S3["fiche (niveau 3)<br/>Fiche action n°, Action, Mesure,<br/>Titre de l'action (cartouche),<br/>2.3.1 Titre, MOB-03, numéro seul en grand"]
     C --> SM["ligne en majuscules<br/>(plus sûre en grande police)"]
     C --> LB["libellés de champs<br/>Pilote :, Budget, Indicateurs…"]
     LB --> RO[3 libellés rapprochés sans titre :<br/>une fiche au titre manqué]
@@ -596,6 +596,14 @@ Le moteur sert à tout type de plan. Ce qui dépend du type :
   … » sont des étapes, leurs lignes de calendrier (« Actions 1-2 x x x ») ne
   sont pas des titres, et le numéro de la fiche donne son axe quand les axes
   ne sont nommés qu'au sommaire ;
+- il lit de même les fiches ouvertes par un cartouche « Axe stratégique |
+  AXE 1 : … », « Titre de l'action | 1.1 … » : le champ nomme la fiche (sa
+  valeur peut passer à la ligne), le rappel de l'axe complète un titre d'axe
+  écourté, et les A, B, C de sa « Synthèse » sont ses sous-actions, pas un
+  regroupement d'actions (squelette) ;
+- le titre d'une action garde le numéro que lui donne le document, sous une
+  seule forme (« Fiche n°12 : … » devient « 12 … ») : il fait le lien avec le
+  document source et garde l'ordre des fiches (`normalize-plan-labels.ts`) ;
 - le vocabulaire reconnu par le code couvre les autres plans : « Fiche projet
   n° », « Feuille de route », « Fiches projets », « Programme opérationnel »
   (`heading-patterns.ts`, `scout-units.ts`) ;

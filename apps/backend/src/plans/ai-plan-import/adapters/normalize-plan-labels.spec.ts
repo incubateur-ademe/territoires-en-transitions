@@ -4,8 +4,8 @@ import {
   withAxisPath,
 } from '../models/extracted-action';
 import {
+  normalizeTitleNumber,
   stripTitleNumber,
-  stripTitleNumbers,
   unifyAxisLabels,
 } from './normalize-plan-labels';
 
@@ -174,66 +174,33 @@ describe('unifyAxisLabels sur un chemin de plusieurs niveaux', () => {
   });
 });
 
-describe('stripTitleNumbers', () => {
-  it('compare les fiches sur leur chemin complet', () => {
-    const onPath = (titre: string, ...path: string[]) =>
-      withAxisPath(createEmptyExtractedAction({ titre }), path);
-
-    const actions = stripTitleNumbers([
-      onPath('Fiche 3 : Sensibiliser', 'Ambition 1', 'Sobriété', 'Écoles'),
-      onPath('Fiche 7 : Sensibiliser', 'Ambition 1', 'Sobriété', 'Écoles'),
-      onPath('Fiche 9 : Accompagner', 'Ambition 1', 'Sobriété', 'Écoles'),
-      onPath('Fiche 12 : Accompagner', 'Ambition 1', 'Sobriété', 'Mairies'),
-    ]);
-
-    expect(actions.map(({ titre }) => titre)).toEqual([
-      'Fiche 3 : Sensibiliser',
-      'Fiche 7 : Sensibiliser',
-      'Accompagner',
-      'Accompagner',
-    ]);
-  });
-
-  it('garde le numéro quand il est seul à distinguer deux fiches du même axe', () => {
-    const actions = stripTitleNumbers([
-      createEmptyExtractedAction({
-        axe: 'Axe 1 : Sensibiliser',
-        titre: 'Fiche 3 : Sensibiliser les habitants',
-      }),
-      createEmptyExtractedAction({
-        axe: 'Axe 1 : Sensibiliser',
-        titre: 'Fiche 7 : Sensibiliser les habitants',
-      }),
-      createEmptyExtractedAction({
-        axe: 'Axe 1 : Sensibiliser',
-        titre: '1.1.2 Former les élus',
-      }),
-    ]);
-
-    expect(actions.map(({ titre }) => titre)).toEqual([
-      'Fiche 3 : Sensibiliser les habitants',
-      'Fiche 7 : Sensibiliser les habitants',
-      'Former les élus',
-    ]);
-  });
-
-  it('compare les chemins compactés : un sous-axe vide ne distingue pas deux fiches', () => {
-    const actions = stripTitleNumbers([
-      createEmptyExtractedAction({
-        axe: 'Axe 1 : Sensibiliser',
-        titre: 'Fiche 3 : Sensibiliser les habitants',
-      }),
-      withAxisPath(
-        createEmptyExtractedAction({
-          titre: 'Fiche 7 : Sensibiliser les habitants',
-        }),
-        ['Axe 1 : Sensibiliser']
-      ),
-    ]);
-
-    expect(actions.map(({ titre }) => titre)).toEqual([
-      'Fiche 3 : Sensibiliser les habitants',
-      'Fiche 7 : Sensibiliser les habitants',
-    ]);
+describe('normalizeTitleNumber', () => {
+  it.each([
+    [
+      '2.1.3 Assurer le suivi des consommations',
+      '2.1.3 Assurer le suivi des consommations',
+    ],
+    ['ACTION 3 - ASSURER LE SUIVI', '3 ASSURER LE SUIVI'],
+    ['Fiche n°12 : Développer le covoiturage', '12 Développer le covoiturage'],
+    [
+      '6.2.5. Développer l’énergie hydraulique',
+      '6.2.5 Développer l’énergie hydraulique',
+    ],
+    ['1- Assurer la gouvernance', '1 Assurer la gouvernance'],
+    ['3/ Développer le réemploi', '3 Développer le réemploi'],
+    [
+      '10 bornes de recharge sur le territoire',
+      '10 bornes de recharge sur le territoire',
+    ],
+    [
+      'Actions de sensibilisation des scolaires',
+      'Actions de sensibilisation des scolaires',
+    ],
+    [
+      '2-roues : développer le stationnement',
+      '2-roues : développer le stationnement',
+    ],
+  ])('« %s » devient « %s »', (titre, expected) => {
+    expect(normalizeTitleNumber(titre)).toBe(expected);
   });
 });
