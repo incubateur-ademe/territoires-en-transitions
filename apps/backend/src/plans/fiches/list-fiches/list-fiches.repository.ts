@@ -209,10 +209,12 @@ export class ListFichesRepository {
       });
     }
 
-    if (queryOptions?.limit === 'all') {
-      return ficheIdsQuery;
-    }
-    if (queryOptions?.page && queryOptions?.limit) {
+    if (
+      queryOptions &&
+      queryOptions.limit !== 'all' &&
+      queryOptions.page &&
+      queryOptions.limit
+    ) {
       ficheIdsQuery
         .limit(queryOptions.limit)
         .offset((queryOptions.page - 1) * queryOptions.limit);
@@ -530,13 +532,11 @@ export class ListFichesRepository {
       data as unknown as FicheWithoutCompletion[]
     );
 
-    const fichesWithCompletion = data.map((fiche) => {
-      const completion = completionData.find((c) => c.ficheId === fiche.id);
-      if (!completion) {
-        throw new Error(`Completion data not found for action ${fiche.id}`);
-      }
-      return { ...fiche, completion };
-    });
+    // checkCompletion renvoie une complétion par fiche, dans le même ordre
+    const fichesWithCompletion = data.map((fiche, index) => ({
+      ...fiche,
+      completion: completionData[index],
+    }));
 
     return { data: fichesWithCompletion, count };
   }
