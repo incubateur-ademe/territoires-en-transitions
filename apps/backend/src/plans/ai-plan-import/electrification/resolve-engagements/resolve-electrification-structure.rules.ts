@@ -2,14 +2,16 @@ import { ElectrificationCatalogueRules } from '@tet/backend/plans/plans/electrif
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { ElectrificationConfig, StatutEnum } from '@tet/domain/plans';
 import { ImportSource } from '../../models/import-source.schema';
-import { electrificationEngagementsIssue } from './electrification-engagements.errors';
+import {
+  ElectrificationEngagementsErrors,
+  electrificationEngagementsIssue,
+} from './electrification-engagements.errors';
 import {
   ElectrificationEngagementsInput,
   ResolvedElectrificationAxe,
   ResolvedElectrificationEngagements,
 } from './electrification-engagements.schema';
 import { ElectrificationIssue } from '../electrification-issue';
-import { ElectrificationEngagementValuesRules } from './electrification-engagement-values.rules';
 
 export class ResolveElectrificationStructureRules {
   static resolve(
@@ -51,7 +53,7 @@ export class ResolveElectrificationStructureRules {
       }
       if (engagementCodes.has(engagement.code)) {
         issues.push(
-          ElectrificationEngagementValuesRules.duplicate(
+          ElectrificationEngagementsErrors.duplicate(
             engagement.code,
             engagement.source.location
           )
