@@ -4,6 +4,7 @@ import { isFailedResult } from '@tet/backend/utils/transaction/transaction-manag
 import { CommonError } from '@tet/backend/utils/trpc/common-errors';
 import { TrpcErrorHandlerConfig } from '@tet/backend/utils/trpc/trpc-error-handler';
 import type { IndicateurPeriodicite } from '@tet/domain/indicateurs';
+import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { match } from 'ts-pattern';
 import { UserIndicateurValeurNotAllowedException } from './write-indicateur-valeurs/user-indicateur-valeur.errors';
 
@@ -80,6 +81,26 @@ export const toNonCanonicalDateValeurFailure = ({
     'INVALID_VALUE',
     new Error(
       `Date de valeur ${dateValeur} non canonique pour l'indicateur ${indicateurId} (${periodicite})`
+    )
+  );
+
+const mutateOperation = PermissionOperationEnum['INDICATEURS.VALEURS.MUTATE'];
+
+export const toMutatePermissionDeniedFailure = ({
+  userId,
+  collectiviteId,
+  isApiKeyDenied,
+}: {
+  userId: string | null;
+  collectiviteId: number;
+  isApiKeyDenied: boolean;
+}): Result<never, 'UNAUTHORIZED'> =>
+  failure(
+    'UNAUTHORIZED',
+    new Error(
+      isApiKeyDenied
+        ? `Droits insuffisants, la clé d'api n'a pas l'autorisation ${mutateOperation}.`
+        : `Droits insuffisants, l'utilisateur ${userId} n'a pas l'autorisation ${mutateOperation} sur la ressource ${ResourceType.COLLECTIVITE} ${collectiviteId}`
     )
   );
 

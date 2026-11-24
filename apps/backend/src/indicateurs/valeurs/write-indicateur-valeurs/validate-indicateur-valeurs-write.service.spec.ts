@@ -1,8 +1,7 @@
-import { ForbiddenException } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { buildRequesterUser } from '@tet/backend/users/models/auth.models';
 import type { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { success } from '@tet/backend/utils/result.type';
+import { failure, success } from '@tet/backend/utils/result.type';
 import {
   Indicateur,
   INDICATEUR_SOURCES_WITH_DEDICATED_METADATA,
@@ -57,22 +56,27 @@ const toValidationServiceWithMocks = ({
   indicateurs,
   metadataSources = [],
   memberships = [],
-  assertAllowed = vi.fn().mockResolvedValue(undefined),
+  isAllowed = vi.fn().mockResolvedValue(success(undefined)),
+  isApiKeyAllowed = vi.fn(() => success(undefined)),
+  lockIndicateurs = vi.fn().mockResolvedValue(success(indicateurs)),
 }: {
   indicateurs: Indicateur[];
   metadataSources?: { id: number; sourceId: string }[];
   memberships?: { groupementId: number; collectiviteId: number }[];
-  assertAllowed?: ReturnType<typeof vi.fn>;
+  isAllowed?: ReturnType<typeof vi.fn>;
+  isApiKeyAllowed?: ReturnType<typeof vi.fn>;
+  lockIndicateurs?: ReturnType<typeof vi.fn>;
 }): ValidateIndicateurValeursWriteService => {
   const repository = {
     listMetadataSources: vi.fn().mockResolvedValue(metadataSources),
     lockGroupementMemberships: vi.fn().mockResolvedValue(memberships),
   } as unknown as IndicateurValeursRepository;
   const permissionService = {
-    assertAllowed,
+    isAllowed,
+    isApiKeyAllowed,
   } as unknown as PermissionService;
   const indicateurLockRepository = {
-    lockIndicateurs: vi.fn().mockResolvedValue(success(indicateurs)),
+    lockIndicateurs,
   } as unknown as IndicateurLockRepository;
   return new ValidateIndicateurValeursWriteService(
     repository,
@@ -99,24 +103,24 @@ describe('ValidateIndicateurValeursWriteService', () => {
     });
 
     it('accepte une capacité interne explicite sans vérifier de permission ni estampiller les valeurs', async () => {
-      const assertAllowed = vi.fn();
+      const isAllowed = vi.fn();
       const valeur = toValeur();
 
       const result = await toValidationServiceWithMocks({
         indicateurs: [],
-        assertAllowed,
+        isAllowed,
       }).prepare([valeur], { isUserTrusted: true });
 
       expect(result).toEqual(success({ valeurs: [valeur] }));
-      expect(assertAllowed).not.toHaveBeenCalled();
+      expect(isAllowed).not.toHaveBeenCalled();
     });
 
     it("vérifie la permission une fois par collectivité et estampille les valeurs avec l'utilisateur", async () => {
-      const assertAllowed = vi.fn().mockResolvedValue(undefined);
+      const isAllowed = vi.fn().mockResolvedValue(success(undefined));
 
       const result = await toValidationServiceWithMocks({
         indicateurs: [],
-        assertAllowed,
+        isAllowed,
       }).prepare(
         [
           toValeur(),
@@ -126,7 +130,7 @@ describe('ValidateIndicateurValeursWriteService', () => {
         { user, tx }
       );
 
-      expect(assertAllowed).toHaveBeenCalledTimes(2);
+      expect(isAllowed).toHaveBeenCalledTimes(2);
       expect(result).toMatchObject({
         success: true,
         data: {
@@ -139,23 +143,101 @@ describe('ValidateIndicateurValeursWriteService', () => {
       });
     });
 
-    it("retourne UNAUTHORIZED quand la permission est refusée pour l'utilisateur", async () => {
-      const refusal = new ForbiddenException('Permission refusée');
+    it("retourne UNAUTHORIZED avec le message de refus quand la permission est refusée pour l'utilisateur", async () => {
+      const result = await toValidationServiceWithMocks({
+        indicateurs: [],
+        isAllowed: vi.fn().mockResolvedValue(failure('UNAUTHORIZED')),
+      }).prepare([toValeur()], { user, tx });
+
+      expect(result).toEqual(
+        failure(
+          'UNAUTHORIZED',
+          new Error(
+            `Droits insuffisants, l'utilisateur ${user.id} n'a pas l'autorisation indicateurs.valeurs.mutate sur la ressource Collectivité ${collectiviteId}`
+          )
+        )
+      );
+    });
+
+    it('s’arrête au premier refus et nomme la collectivité refusée', async () => {
+      const isAllowed = vi
+        .fn()
+        .mockResolvedValueOnce(success(undefined))
+        .mockResolvedValueOnce(failure('UNAUTHORIZED'));
 
       const result = await toValidationServiceWithMocks({
         indicateurs: [],
-        assertAllowed: vi.fn().mockRejectedValue(refusal),
+        isAllowed,
+      }).prepare(
+        [toValeur(), toValeur({ collectiviteId: otherCollectiviteId })],
+        { user, tx }
+      );
+
+      expect(result).toEqual(
+        failure(
+          'UNAUTHORIZED',
+          new Error(
+            `Droits insuffisants, l'utilisateur ${user.id} n'a pas l'autorisation indicateurs.valeurs.mutate sur la ressource Collectivité ${otherCollectiviteId}`
+          )
+        )
+      );
+      expect(isAllowed).toHaveBeenCalledTimes(2);
+    });
+
+    it("nomme la clé d'api dans le refus quand sa permission manque", async () => {
+      const result = await toValidationServiceWithMocks({
+        indicateurs: [],
+        isAllowed: vi.fn().mockResolvedValue(failure('UNAUTHORIZED')),
+        isApiKeyAllowed: vi.fn(() => failure('UNAUTHORIZED')),
       }).prepare([toValeur()], { user, tx });
 
-      expect(result).toEqual({
-        success: false,
-        error: 'UNAUTHORIZED',
-        cause: refusal,
-      });
+      expect(result).toEqual(
+        failure(
+          'UNAUTHORIZED',
+          new Error(
+            "Droits insuffisants, la clé d'api n'a pas l'autorisation indicateurs.valeurs.mutate."
+          )
+        )
+      );
+    });
+
+    it('retourne DATABASE_ERROR avec sa cause quand la vérification des droits rejette', async () => {
+      const readError = new Error('connexion perdue');
+
+      const result = await toValidationServiceWithMocks({
+        indicateurs: [],
+        isAllowed: vi.fn().mockRejectedValue(readError),
+      }).prepare([toValeur()], { user, tx });
+
+      expect(result).toEqual(failure('DATABASE_ERROR', readError));
     });
   });
 
   describe('validate', () => {
+    it('retourne DATABASE_ERROR avec sa cause quand le verrouillage des indicateurs échoue', async () => {
+      const lockError = new Error('verrou indisponible');
+
+      const result = await toValidationServiceWithMocks({
+        indicateurs: [],
+        lockIndicateurs: vi
+          .fn()
+          .mockResolvedValue(failure('DATABASE_ERROR', lockError)),
+      }).validate({ valeurs: [toValeur()] }, { user, tx });
+
+      expect(result).toEqual(failure('DATABASE_ERROR', lockError));
+    });
+
+    it('retourne DATABASE_ERROR avec sa cause quand une lecture rejette', async () => {
+      const readError = new Error('connexion perdue');
+
+      const result = await toValidationServiceWithMocks({
+        indicateurs: [],
+        lockIndicateurs: vi.fn().mockRejectedValue(readError),
+      }).validate({ valeurs: [toValeur()] }, { user, tx });
+
+      expect(result).toEqual(failure('DATABASE_ERROR', readError));
+    });
+
     it("refuse une valeur dont l'indicateur est introuvable", async () => {
       const result = await toValidationServiceWithMocks({
         indicateurs: [],
