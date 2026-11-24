@@ -615,6 +615,18 @@ export const ALL_PCAET_DIAGNOSTIC_INDICATEUR_IDS =
   collectPcaetDiagnosticIndicateurIds();
 
 /**
+ * Les indicateurs du dépôt repris dans le suivi d'un plan : le total de chaque
+ * volet, sauf pour les polluants atmosphériques, dont le total n'a pas de
+ * formule et donc jamais de valeur : chaque polluant y figure à sa place.
+ */
+export const PCAET_INDICATEURS_REGLEMENTAIRES_SUIVI: readonly string[] =
+  PCAET_DIAGNOSTIC_INDICATEURS.flatMap((volet) =>
+    volet.code === POLLUANTS_ATMO.code
+      ? volet.children.map((polluant) => polluant.indicateurDefinitionId)
+      : [volet.indicateurDefinitionId]
+  );
+
+/**
  * Topic vulnérabilité du diagnostic PCAET (niveaux par thématique, hors
  * référentiel indicateurs).
  */

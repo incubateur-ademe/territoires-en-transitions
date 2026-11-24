@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { IndicateurPeriodiciteEnum } from '../../indicateurs/indicateur/indicateur-periodicite.schema';
 import {
+  buildDepot,
   compareIndicateursObjectifs,
   computeAvancementObjectif,
   computeEvolutionObjectif,
@@ -223,9 +224,30 @@ describe('compareIndicateursObjectifs', () => {
         { favori: false, titre: 'Air' },
         { favori: true, titre: 'Bâtiments' },
       ]
+        .map((i) => ({ ...i, sources: ['plan' as const] }))
         .toSorted(compareIndicateursObjectifs)
         .map(({ titre }) => titre)
     ).toEqual(['Bâtiments', 'Zéro artificialisation', 'Air', 'Émissions']);
+  });
+
+  it('ouvre la liste sur les réglementaires du dépôt, avant les favoris', () => {
+    expect(
+      [
+        { favori: true, titre: 'Bornes', sources: ['plan' as const] },
+        {
+          favori: false,
+          titre: 'Production ENR',
+          sources: ['reglementaire' as const],
+        },
+        {
+          favori: false,
+          titre: 'Émissions GES',
+          sources: ['reglementaire' as const, 'plan' as const],
+        },
+      ]
+        .toSorted(compareIndicateursObjectifs)
+        .map(({ titre }) => titre)
+    ).toEqual(['Émissions GES', 'Production ENR', 'Bornes']);
   });
 });
 
@@ -424,6 +446,33 @@ describe('computeAvancementObjectif, résultats de la même année', () => {
         cible: { annee: 2030, valeur: 80 },
         anneeCourante: 2026,
       })
+describe('buildDepot', () => {
+  it('part du résultat de l’année de référence et reprend les objectifs du dépôt', () => {
+    expect(
+      buildDepot(
+        [
+          { dateValeur: '2015-01-01', resultat: 160, objectif: null },
+          { dateValeur: '2018-01-01', resultat: 152, objectif: null },
+          { dateValeur: '2030-01-01', resultat: null, objectif: 90 },
+          { dateValeur: '2050-01-01', resultat: null, objectif: 20 },
+        ],
+        2026
+      )
+    ).toEqual({
+      departDepot: { annee: 2018, valeur: 152 },
+      objectifs: [
+        { annee: 2030, valeur: 90 },
+        { annee: 2050, valeur: 20 },
+      ],
+    });
+  });
+
+  it('n’a pas de départ sans résultat révolu hors horizon', () => {
+    expect(
+      buildDepot(
+        [{ dateValeur: '2030-01-01', resultat: 95, objectif: 90 }],
+        2026
+      ).departDepot
     ).toBeNull();
   });
 });
