@@ -8,6 +8,14 @@ const getUniteInput = (): HTMLInputElement =>
     name: new RegExp(`^${appLabels.indicateurUnite}`),
   });
 
+const getHoverTarget = (): HTMLElement => {
+  const target = getUniteInput().parentElement?.parentElement;
+  if (!target) {
+    throw new Error("Le champ d'unité n'est pas enveloppé");
+  }
+  return target;
+};
+
 const changeUnite = (unite: string): void => {
   fireEvent.change(getUniteInput(), { target: { value: unite } });
   fireEvent.blur(getUniteInput());
@@ -30,7 +38,7 @@ describe('IndicateurUniteInput', () => {
     expect(updateUnite).toHaveBeenCalledWith('kg');
   });
 
-  it("désactive le champ et explique qu'il s'appuie sur l'unité du parent pour un sous-indicateur", () => {
+  it("désactive le champ d'un sous-indicateur et n'affiche pas directement l'explication", () => {
     render(
       <IndicateurUniteInput
         titre="Verre"
@@ -42,8 +50,43 @@ describe('IndicateurUniteInput', () => {
     );
 
     expect(getUniteInput().disabled).toBe(true);
+    expect(screen.queryByRole('tooltip')).toBeNull();
+  });
+
+  it("explique au survol du champ désactivé d'un sous-indicateur qu'il s'appuie sur l'unité du parent", async () => {
+    render(
+      <IndicateurUniteInput
+        titre="Verre"
+        unite="t"
+        hasSousIndicateurs={false}
+        parentTitre="Déchets"
+        updateUnite={vi.fn()}
+      />
+    );
+
+    fireEvent.mouseEnter(getHoverTarget());
+
+    expect((await screen.findByRole('tooltip')).textContent).toBe(
+      appLabels.indicateurUniteDuParent({ parent: 'Déchets' })
+    );
+  });
+
+  it("décrit le champ désactivé d'un sous-indicateur par l'unité de son parent pour les lecteurs d'écran", () => {
+    render(
+      <IndicateurUniteInput
+        titre="Verre"
+        unite="t"
+        hasSousIndicateurs={false}
+        parentTitre="Déchets"
+        updateUnite={vi.fn()}
+      />
+    );
+
     expect(
-      screen.getByText(appLabels.indicateurUniteDuParent({ parent: 'Déchets' }))
+      screen.getByRole('textbox', {
+        name: new RegExp(`^${appLabels.indicateurUnite}`),
+        description: appLabels.indicateurUniteDuParent({ parent: 'Déchets' }),
+      })
     ).toBeDefined();
   });
 
