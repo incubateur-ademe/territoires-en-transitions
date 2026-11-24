@@ -4,10 +4,19 @@ import { appLabels } from '@/app/labels/catalog';
 import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
 import { RouterOutput } from '@tet/api';
 import { IndicateurPeriodes } from '@tet/domain/indicateurs';
-import { pickObjectifAHorizon } from '@tet/domain/plans';
+import {
+  computeAvancementObjectif,
+  pickDepart,
+  pickDernier,
+  pickObjectifAHorizon,
+} from '@tet/domain/plans';
 import { Icon, InfoTooltip } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
 import Link from 'next/link';
+import {
+  formatEvolution,
+  IndicateurObjectifAvancement,
+} from './indicateur-objectif.avancement';
 import { IndicateurObjectifSparkline } from './indicateur-objectif.sparkline';
 
 export type IndicateurObjectif =
@@ -52,6 +61,12 @@ export const IndicateurObjectifCard = ({
   const isOpenData = resultats?.source.type === 'open-data';
   const objectifsAHorizon = objectifs.filter(({ annee }) => annee <= horizon);
   const cible = pickObjectifAHorizon(objectifs, horizon);
+  const avancement = computeAvancementObjectif({
+    depart: pickDepart(points),
+    dernier: pickDernier(points),
+    cible,
+    anneeCourante: new Date().getFullYear(),
+  });
 
   return (
     <article
@@ -113,6 +128,7 @@ export const IndicateurObjectifCard = ({
           resultats={points}
           objectifs={objectifsAHorizon}
           cible={cible}
+          depart={avancement?.depart}
           isOpenData={isOpenData}
           formatValeur={formatNombre}
         />
@@ -128,12 +144,28 @@ export const IndicateurObjectifCard = ({
       )}
 
       {(cible || dernier) && (
-        <div className="flex items-center gap-2 pt-3 mt-auto text-sm border-t border-grey-3">
+        <div className="flex flex-col gap-2 pt-3 mt-auto text-sm border-t border-grey-3">
           {cible ? (
-            <span className="text-primary-9">
-              {appLabels.indicateursObjectifsObjectifAnnee(cible.annee)}{' '}
-              <b>{formatValeur(cible.valeur)}</b>
-            </span>
+            <>
+              <span className="text-primary-9">
+                {appLabels.indicateursObjectifsObjectifAnnee(cible.annee)}{' '}
+                <b>{formatValeur(cible.valeur)}</b>
+                {avancement && avancement.evolutionObjectif !== null && (
+                  <span className="block text-xs text-grey-8">
+                    {appLabels.indicateursObjectifsEvolutionObjectif(
+                      formatEvolution(avancement.evolutionObjectif),
+                      avancement.depart.annee
+                    )}
+                  </span>
+                )}
+              </span>
+              {avancement && (
+                <IndicateurObjectifAvancement
+                  avancement={avancement}
+                  formatValeur={formatValeur}
+                />
+              )}
+            </>
           ) : canMutateValeurs ? (
             <SaisirLink href={href}>
               {appLabels.indicateursObjectifsSaisirObjectif}
