@@ -350,12 +350,18 @@ describe('computeAvancementObjectif', () => {
     ).toBeNull();
   });
 
-  it('pas de barre si le dernier résultat précède le départ', () => {
+  it('pas de barre sans résultat postérieur au départ', () => {
     expect(
       computeAvancementObjectif({
         ...ges,
         depart: { annee: 2018, valeur: 150 },
         dernier: { annee: 2016, valeur: 145 },
+      })
+    ).toBeNull();
+    expect(
+      computeAvancementObjectif({
+        ...ges,
+        dernier: { annee: 2015, valeur: 152 },
       })
     ).toBeNull();
   });
