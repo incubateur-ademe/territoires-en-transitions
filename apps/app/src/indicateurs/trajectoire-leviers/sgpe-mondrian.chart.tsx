@@ -80,7 +80,9 @@ export function SgpeMondrianChart(props: Props) {
   );
   const containerRef = useRef<HTMLDivElement>(null);
   const legendId = useId();
-  const [activeKey, setActiveKey] = useState<string>();
+  const [hoveredKey, setHoveredKey] = useState<string>();
+  const [focusedKey, setFocusedKey] = useState<string>();
+  const isActive = (key: string) => key === hoveredKey || key === focusedKey;
   const [measureContext, setMeasureContext] =
     useState<CanvasRenderingContext2D | null>(null);
   const { treemapOptions, tiles } = useMondrianLabelLayout({
@@ -215,16 +217,15 @@ export function SgpeMondrianChart(props: Props) {
                   }`}
                   fill="none"
                   stroke="currentColor"
-                  strokeWidth={activeKey === tile.key ? 2 : 1}
-                  opacity={activeKey === tile.key ? 1 : 0.45}
+                  strokeWidth={isActive(tile.key) ? 2 : 1}
+                  opacity={isActive(tile.key) ? 1 : 0.45}
                 />
               ))}
             </svg>
           )}
           {labels.map((tile) => {
             const callout = calloutByKey.get(tile.key);
-            const highlighted =
-              activeKey === tile.key || selectedKey === tile.key;
+            const highlighted = isActive(tile.key) || selectedKey === tile.key;
             return (
               <div key={tile.key}>
                 <div
@@ -297,10 +298,10 @@ export function SgpeMondrianChart(props: Props) {
                       tile.valueLabel
                     )}
                     aria-describedby={`${legendId}-${tile.reference}`}
-                    onMouseEnter={() => setActiveKey(tile.key)}
-                    onMouseLeave={() => setActiveKey(undefined)}
-                    onFocus={() => setActiveKey(tile.key)}
-                    onBlur={() => setActiveKey(undefined)}
+                    onMouseEnter={() => setHoveredKey(tile.key)}
+                    onMouseLeave={() => setHoveredKey(undefined)}
+                    onFocus={() => setFocusedKey(tile.key)}
+                    onBlur={() => setFocusedKey(undefined)}
                     onClick={() => handleSelected(tile.secteur, tile.levier)}
                     data-test="indicateurs.trajectoires.leviers.repere"
                     data-reference={tile.reference}
@@ -331,12 +332,12 @@ export function SgpeMondrianChart(props: Props) {
                   type="button"
                   className={cn(
                     'flex w-full items-start gap-2 rounded px-1 py-0.5 text-left text-[13px] leading-5 text-primary-9 hover:bg-primary-1 focus-visible:outline focus-visible:outline-2 [@media(pointer:coarse)]:min-h-11',
-                    activeKey === tile.key && 'bg-primary-1'
+                    isActive(tile.key) && 'bg-primary-1'
                   )}
-                  onMouseEnter={() => setActiveKey(tile.key)}
-                  onMouseLeave={() => setActiveKey(undefined)}
-                  onFocus={() => setActiveKey(tile.key)}
-                  onBlur={() => setActiveKey(undefined)}
+                  onMouseEnter={() => setHoveredKey(tile.key)}
+                  onMouseLeave={() => setHoveredKey(undefined)}
+                  onFocus={() => setFocusedKey(tile.key)}
+                  onBlur={() => setFocusedKey(undefined)}
                   onClick={() => handleSelected(tile.secteur, tile.levier)}
                   data-test="indicateurs.trajectoires.leviers.legend-entry"
                   data-reference={tile.reference}

@@ -190,6 +190,21 @@ test.describe('Trajectoire SNBC 3', () => {
     });
     expect(overlaps).toEqual([]);
 
+    const tinyTile = tiles.and(chart.locator(`[data-levier*="${tinyLevier}"]`));
+    const tinyEntry = entries.filter({ hasText: tinyLevier });
+    for (const control of [tinyReference, tinyEntry]) {
+      await control.focus();
+      await control.hover();
+      await page.mouse.move(0, 0);
+      await expect(control).toBeFocused();
+      await expect(tinyTile).not.toHaveCSS('box-shadow', 'none');
+      await chart
+        .getByRole('button', { name: 'Télécharger le graphique (PNG)' })
+        .focus();
+      await expect(control).not.toBeFocused();
+      await expect(tinyTile).toHaveCSS('box-shadow', 'none');
+    }
+
     await tinyReference.focus();
     await page.keyboard.press('Enter');
     await expect(tiles).toHaveCount(4);
