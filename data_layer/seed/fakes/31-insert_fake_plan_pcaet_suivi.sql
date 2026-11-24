@@ -226,3 +226,44 @@ begin
         do update set favoris = excluded.favoris, confidentiel = excluded.confidentiel;
 end;
 $$;
+
+-- Totaux du dépôt PCAET de la collectivité 1, que le suivi du plan reprend
+-- comme indicateurs réglementaires. L'application les calcule à la saisie du
+-- diagnostic ; le seed 25 n'insère que les lignes de détail, d'où cet ajout.
+-- Les 6 polluants y ont déjà leurs valeurs (seed 25). Année de référence :
+-- 2018. Les objectifs du dépôt diffèrent un peu de ceux saisis hors dépôt
+-- pour GES et ENR : la carte doit montrer ceux du dépôt.
+do $$
+declare
+    depot_metadonnee integer;
+begin
+    select m.metadonnee_id
+    into depot_metadonnee
+    from public.demarche_pcaet_source_metadonnee m
+    join public.demarche d on d.id = m.demarche_id
+    where d.collectivite_id = 1
+      and d.type = 'pcaet'
+      and m.collectivite_id = 1
+    order by d.id desc
+    limit 1;
+
+    if depot_metadonnee is null then
+        return;
+    end if;
+
+    insert into public.indicateur_valeur (indicateur_id, collectivite_id, date_valeur,
+                                          periodicite, metadonnee_id, resultat, objectif)
+    select d.id, 1, make_date(v.annee, 1, 1), 'annuelle', depot_metadonnee,
+           v.resultat, v.objectif
+    from (values
+        ('cae_1.a', 2018, 216, null), ('cae_1.a', 2030, null, 140),
+        ('cae_1.a', 2036, null, 115), ('cae_1.a', 2050, null, 70),
+        ('cae_2.a', 2018, 588, null), ('cae_2.a', 2030, null, 480),
+        ('cae_2.a', 2036, null, 420), ('cae_2.a', 2050, null, 300),
+        ('cae_3.a', 2018, 52, null), ('cae_3.a', 2030, null, 150),
+        ('cae_3.a', 2036, null, 190), ('cae_3.a', 2050, null, 260)
+    ) as v (identifiant, annee, resultat, objectif)
+    join public.indicateur_definition d on d.identifiant_referentiel = v.identifiant
+    on conflict do nothing;
+end;
+$$;
