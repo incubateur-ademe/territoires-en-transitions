@@ -131,6 +131,37 @@ describe('structureUnits', () => {
     }
   });
 
+  it('remet le numéro de la fiche que le modèle a omis, sans en inventer', async () => {
+    const numbered = segmentDocument(
+      buildDocument('pdf', [
+        buildPage(0, [
+          { text: 'Action 3. Promouvoir le broyage des végétaux' },
+          { text: 'Pilote : Service déchets' },
+        ]),
+        buildPage(1, [
+          { text: 'Action 4. Lutter contre le gaspillage alimentaire' },
+          { text: 'Pilote : Service déchets' },
+        ]),
+      ]),
+      { minTokens: 0, maxTokens: 1000, overlapTokens: 0 }
+    );
+    const { llm } = llmAnswering(() => [
+      anExtractionAction('Promouvoir le broyage des végétaux'),
+      anExtractionAction('4 Lutter contre le gaspillage alimentaire'),
+      anExtractionAction('Sensibiliser au compostage'),
+    ]);
+
+    const result = await structureUnits(llm, { ...input, units: numbered });
+
+    expect(
+      result.success && result.data.actions.map(({ titre }) => titre)
+    ).toEqual([
+      '3 Promouvoir le broyage des végétaux',
+      '4 Lutter contre le gaspillage alimentaire',
+      'Sensibiliser au compostage',
+    ]);
+  });
+
   it('dit comment lire un tableur, et seulement pour un tableur', async () => {
     const { llm, calls } = llmAnswering(() => [anExtractionAction('A')]);
 

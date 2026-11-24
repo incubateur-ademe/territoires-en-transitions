@@ -15,6 +15,7 @@ import {
   STRUCTURATION_SYSTEM_PROMPT,
   STRUCTURATION_USER_PROMPT,
 } from '../../prompts/structuration.prompt';
+import { stripTitleNumber } from '../../adapters/normalize-plan-labels';
 import { DocumentUnit } from '../segment-document/document-unit';
 import { renderUnit } from '../segment-document/render-unit';
 import { ExtractActionsError, ExtractActionsResult } from './extract-actions';
@@ -25,6 +26,7 @@ import {
   dedupeByTitle,
   mergeChunkActions,
 } from './merge-chunk-actions';
+import { titlesMatch } from './similar-titles';
 
 // Le limiteur du service borne les appels réels ; ceci borne le travail en vol.
 export const STRUCTURATION_CONCURRENCY = 5;
@@ -229,11 +231,49 @@ const structurePack = async (
   }
   return result.success
     ? {
-        actions: result.data.actions,
+        actions: restoreFicheNumbers(
+          result.data.actions,
+          pack.map(({ unit }) => unit)
+        ),
         tokens: [result.data.tokens],
         failures: [],
       }
     : { actions: [], tokens: [], failures: [{ pack, error: result.error }] };
+};
+
+const FICHE_NUMBER = /^(\d{1,3}(?:\.\d{1,3})*)\s+(\S.*)$/u;
+
+/**
+ * Le modèle garde ou retire au hasard le numéro que le repère « fiche « 3 … » »
+ * lui donne : la fiche lue le porte, on le remet devant le titre qui la
+ * reprend sans numéro.
+ */
+const restoreFicheNumbers = (
+  actions: ExtractedAction[],
+  units: DocumentUnit[]
+): ExtractedAction[] => {
+  const numbered = units.flatMap((unit) => {
+    const match = unit.title?.match(FICHE_NUMBER);
+    return match ? [{ number: match[1], title: match[2] }] : [];
+  });
+  const used = new Set<string>();
+  return actions.map((action) => {
+    if (
+      stripTitleNumber(action.titre) !== action.titre ||
+      numbered.some(({ number }) => action.titre.startsWith(`${number} `))
+    ) {
+      return action;
+    }
+    const candidates = numbered.filter(
+      ({ number, title }) =>
+        !used.has(number) && titlesMatch(title, action.titre)
+    );
+    if (candidates.length !== 1) {
+      return action;
+    }
+    used.add(candidates[0].number);
+    return { ...action, titre: `${candidates[0].number} ${action.titre}` };
+  });
 };
 
 const isRecoverable = (error: LlmError): boolean =>
