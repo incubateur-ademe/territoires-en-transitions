@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import IndicateurSourcesService from '@tet/backend/indicateurs/sources/indicateur-sources.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { combineResults } from '@tet/backend/utils/result.type';
 import {
   COLLECTIVITE_SOURCE_ID,
   INDICATEUR_SOURCES_REQUIRING_DIRECT_VALUE_PER_FIELD,
@@ -80,12 +81,14 @@ export default class ComputeValeursService {
       if (!result.success) throw result.cause ?? result.error;
       indicateurs = result.data;
     }
+    const formulas = combineResults(
+      indicateurs.map((indicateur) => this.graphService.getFormula(indicateur))
+    );
+    if (!formulas.success) throw formulas.cause ?? formulas.error;
     return [
       ...new Set(
-        indicateurs.flatMap((indicateur) =>
-          this.graphService
-            .getFormula(indicateur)
-            .references.map(({ identifiant }) => identifiant)
+        formulas.data.flatMap(({ references }) =>
+          references.map(({ identifiant }) => identifiant)
         )
       ),
     ];

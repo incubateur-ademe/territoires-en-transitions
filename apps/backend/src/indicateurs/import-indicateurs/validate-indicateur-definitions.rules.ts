@@ -1,6 +1,7 @@
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { getErrorMessage } from '@tet/domain/utils';
 import { DepGraph } from 'dependency-graph';
+import type { IndicateurExpressionError } from '../valeurs/indicateur-expression.errors';
 import type { ImportIndicateurDefinitionType } from './import-indicateur-definition.dto';
 import {
   formatInvalidExpressionMessage,
@@ -12,8 +13,10 @@ export type ImportExpressionValidators = {
   indicateurs: {
     extractNeededSourceIndicateursFromFormula: (
       formula: string
-    ) => readonly { identifiant: string }[];
-    parseExpression: (formula: string) => unknown;
+    ) => Result<readonly { identifiant: string }[], IndicateurExpressionError>;
+    parseExpression: (
+      formula: string
+    ) => Result<unknown, IndicateurExpressionError>;
   };
   personnalisations: { validateExpression: (expression: string) => unknown };
 };
@@ -50,11 +53,28 @@ export function validateIndicateurDefinitions(
       }
     }
     if (indicateur.valeurCalcule) {
+      const toInvalidCalculExpression = (
+        err: unknown
+      ): Result<never, ImportIndicateurDefinitionError> =>
+        failure(
+          'INVALID_EXPRESSION',
+          new Error(
+            formatInvalidExpressionMessage({
+              label: `l'expression de calcul de l'indicateur ${indicateur.identifiantReferentiel}`,
+              expression: indicateur.valeurCalcule ?? '',
+              err,
+            })
+          )
+        );
       try {
-        const sources =
+        const extraction =
           validators.indicateurs.extractNeededSourceIndicateursFromFormula(
             indicateur.valeurCalcule
           );
+        if (!extraction.success) {
+          return toInvalidCalculExpression(extraction.cause);
+        }
+        const sources = extraction.data;
         for (const source of sources) {
           if (source.identifiant === indicateur.identifiantReferentiel) {
             throw new Error(
@@ -73,7 +93,10 @@ export function validateIndicateurDefinitions(
             );
           }
         }
-        validators.indicateurs.parseExpression(indicateur.valeurCalcule);
+        const parsing = validators.indicateurs.parseExpression(
+          indicateur.valeurCalcule
+        );
+        if (!parsing.success) return toInvalidCalculExpression(parsing.cause);
         if (!graph.hasNode(indicateur.identifiantReferentiel)) {
           graph.addNode(indicateur.identifiantReferentiel);
         }
@@ -86,16 +109,7 @@ export function validateIndicateurDefinitions(
           );
         }
       } catch (error) {
-        return failure(
-          'INVALID_EXPRESSION',
-          new Error(
-            formatInvalidExpressionMessage({
-              label: `l'expression de calcul de l'indicateur ${indicateur.identifiantReferentiel}`,
-              expression: indicateur.valeurCalcule,
-              err: error,
-            })
-          )
-        );
+        return toInvalidCalculExpression(error);
       }
     }
     for (const [label, expression] of [

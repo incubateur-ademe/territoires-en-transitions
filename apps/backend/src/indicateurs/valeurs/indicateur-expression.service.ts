@@ -10,9 +10,16 @@ import {
   tokenizeAndParse,
 } from '@tet/backend/utils/expression-parser';
 import { evaluateIdentite } from '@tet/backend/utils/expression-parser/evaluate-identite';
+import {
+  failure,
+  getDataOrThrow,
+  Result,
+  success,
+} from '@tet/backend/utils/result.type';
 import { IdentiteCollectivite } from '@tet/domain/collectivites';
 import { CstNode } from 'chevrotain';
 import { isEqual, isNil } from 'es-toolkit';
+import { IndicateurExpressionError } from './indicateur-expression.errors';
 import { computeProgression, computeValeurAttendue } from './progression.rules';
 import { ANNEE_REFERENCE_SNBC_V2 } from '@tet/domain/indicateurs';
 import {
@@ -537,35 +544,42 @@ export default class IndicateurExpressionService {
 
   extractNeededSourceIndicateursFromFormula(
     formula: string
-  ): ReferencedIndicateur[] {
+  ): Result<ReferencedIndicateur[], IndicateurExpressionError> {
     const cst = this.parseExpression(formula);
+    if (!cst.success) return cst;
     const refVisitor = new IndicateurReferenceExtractionVisitor();
-    refVisitor.visit(cst);
-    return refVisitor.references;
+    refVisitor.visit(cst.data);
+    return success(refVisitor.references);
   }
 
   extractPersonnalisationReferencesFromFormula(
     formula: string
-  ): PersonnalisationExpressionReferences {
+  ): Result<PersonnalisationExpressionReferences, IndicateurExpressionError> {
     const cst = this.parseExpression(formula);
+    if (!cst.success) return cst;
     const visitor = new IndicateurPersonnalisationReferenceExtractionVisitor();
-    visitor.visit(cst);
-    return {
+    visitor.visit(cst.data);
+    return success({
       questions: visitor.questions,
       identiteFields: visitor.identiteFields,
       scores: [],
       demarches: [],
-    };
+    });
   }
 
-  parseExpression(inputText: string): CstNode {
+  parseExpression(
+    inputText: string
+  ): Result<CstNode, IndicateurExpressionError> {
     try {
-      return tokenizeAndParse(parser, inputText);
+      return success(tokenizeAndParse(parser, inputText));
     } catch (error) {
       this.logger.error(
         `Parsing errors detected: ${JSON.stringify((error as Error).cause)}`
       );
-      throw error;
+      return failure(
+        'INVALID_EXPRESSION',
+        error instanceof Error ? error : new Error(String(error))
+      );
     }
   }
 
@@ -592,7 +606,7 @@ export default class IndicateurExpressionService {
         return null;
       }
     }
-    const cst = this.parseExpression(inputText);
+    const cst = getDataOrThrow(this.parseExpression(inputText));
     const visitor = new IndicateurExpressionVisitor();
     visitor.sourceIndicateursValeurs = sourceIndicateursValeurs;
     visitor.indicateurValeursComplementaires = valeursComplementaires;

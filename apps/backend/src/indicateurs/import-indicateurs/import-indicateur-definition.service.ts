@@ -314,12 +314,22 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
     if (!indicateur.valeurCalcule) {
       return [];
     }
+    const label = `la formule de calcul de l'indicateur ${indicateur.identifiantReferentiel}`;
     const references =
       this.indicateurExpressionService.extractPersonnalisationReferencesFromFormula(
         indicateur.valeurCalcule
       );
-    return verifyPersonnalisationExpressionReferences(references, {
-      label: `la formule de calcul de l'indicateur ${indicateur.identifiantReferentiel}`,
+    if (!references.success) {
+      return [
+        formatInvalidExpressionMessage({
+          label,
+          expression: indicateur.valeurCalcule,
+          err: references.cause,
+        }),
+      ];
+    }
+    return verifyPersonnalisationExpressionReferences(references.data, {
+      label,
       questions,
       unknownQuestionHint: UNKNOWN_QUESTION_HINT,
     });
