@@ -1,4 +1,4 @@
-import { BadRequestException } from '@nestjs/common';
+import { failure, Result, success } from '@tet/backend/utils/result.type';
 import {
   Indicateur,
   IndicateurPeriodiciteEnum,
@@ -27,29 +27,31 @@ export class IndicateurValeursRules {
   static normalize(
     valeur: IndicateurValeurCreate,
     indicateur: Pick<Indicateur, 'id' | 'precision'>
-  ): IndicateurValeurCreate {
+  ): Result<IndicateurValeurCreate, 'INVALID_VALUE'> {
     const periodicite =
       valeur.periodicite ?? IndicateurPeriodiciteEnum.ANNUELLE;
-    return {
+    const canonicalDateValeurResult = this.getCanonicalDateValeur(
+      valeur.dateValeur,
+      { id: indicateur.id, periodicite }
+    );
+    if (!canonicalDateValeurResult.success) return canonicalDateValeurResult;
+    return success({
       ...valeur,
       periodicite,
-      dateValeur: this.getCanonicalDateValeur(valeur.dateValeur, {
-        id: indicateur.id,
-        periodicite,
-      }),
+      dateValeur: canonicalDateValeurResult.data,
       resultat: !isNil(valeur.resultat)
         ? round(valeur.resultat, indicateur.precision)
         : null,
       objectif: !isNil(valeur.objectif)
         ? round(valeur.objectif, indicateur.precision)
         : null,
-    };
+    });
   }
 
   static getCanonicalDateValeur(
     dateValeur: string,
     indicateur: Pick<Indicateur, 'id' | 'periodicite'>
-  ): string {
+  ): Result<string, 'INVALID_VALUE'> {
     try {
       // L'API annuelle accepte une date dans l'année ; le stockage utilise son premier jour.
       const periode =
@@ -59,10 +61,13 @@ export class IndicateurValeursRules {
               indicateur.periodicite,
               dateValeur
             );
-      return IndicateurPeriodes.toDateValeur(periode);
+      return success(IndicateurPeriodes.toDateValeur(periode));
     } catch {
-      throw new BadRequestException(
-        `Date de valeur ${dateValeur} non canonique pour l'indicateur ${indicateur.id} (${indicateur.periodicite})`
+      return failure(
+        'INVALID_VALUE',
+        new Error(
+          `Date de valeur ${dateValeur} non canonique pour l'indicateur ${indicateur.id} (${indicateur.periodicite})`
+        )
       );
     }
   }
