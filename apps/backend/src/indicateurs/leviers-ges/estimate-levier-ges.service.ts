@@ -1,5 +1,5 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import type { EstimationError, Estimator, RequestInput } from 'leviers-ges';
+import type { EstimateUntrustedRequest, EstimationError } from 'leviers-ges';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import type { EstimateLevierGesRequest } from './estimate-levier-ges.request';
 import type { EstimateLevierGesResponse } from './estimate-levier-ges.response';
@@ -11,15 +11,13 @@ export class EstimateLevierGesService {
   private readonly logger = new Logger(EstimateLevierGesService.name);
 
   constructor(
-    @Inject(LEVIERS_GES_ESTIMATOR) private readonly estimator: Estimator
+    @Inject(LEVIERS_GES_ESTIMATOR) private readonly estimator: EstimateUntrustedRequest
   ) {}
 
   estimate(
     request: EstimateLevierGesRequest
   ): Result<EstimateLevierGesResponse, EstimationError> {
-    // Seul point d'entrée de l'inconnu : `estimator` valide la requête
-    // (id, territoire, paramètres) avant tout calcul.
-    return this.estimator(request as unknown as RequestInput).match<
+    return this.estimator(request).match<
       Result<EstimateLevierGesResponse, EstimationError>
     >(
       (estimate) => success(toEstimateLevierGesResponse(estimate)),
