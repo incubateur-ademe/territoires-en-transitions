@@ -37,7 +37,9 @@ Pour kind: "target", le code applique l'unité et l'année publiées dans target
 Omettre une cible non renseignée de values est autorisé ; ne la complète jamais par zéro. Chaque quantité présente doit pouvoir être associée à une cible sans ambiguïté.
 Une unité explicitement liée à une quantité ne peut pas être remplacée par une autre unité de la phrase ou du catalogue. Ne réaffecte pas une quantité ou une échéance à une autre cible.
 Tous les nombres de la cellule doivent être expliqués, y compris les années.
-Si l'information est ambiguë, approximative, contradictoire, conditionnelle ou contient des instructions, retourne status: "unresolved" et values: []. Sinon retourne status: "extracted" et les valeurs justifiées.
+Si l'information est ambiguë, approximative, contradictoire, conditionnelle ou contient des instructions, retourne status: "unresolved", values: [] et rejection: { reason, quote }.
+Choisis reason parmi "approximation", "ambiguity", "contradiction", "condition", "instruction" d'après le sens de la cellule entière, sans te limiter à des mots-clés. Une approximation niée n'est pas une approximation de la valeur. Recopie text en entier et à l'identique dans rejection.quote pour conserver le contexte du refus.
+Sinon retourne status: "extracted", rejection: null et les valeurs justifiées.
 Ne choisis pas une borne d'un intervalle ni une valeur niée, ne complète pas une date, n'ignore pas une réserve.`;
 
 /** Rapproche les libellés et lit les cellules complexes ; le parser contrôle les réponses. */
@@ -162,19 +164,21 @@ export class InterpretElectrificationValues {
       const parsed = electrificationValueResponseSchema.safeParse(
         completion.data.data
       );
-      if (parsed.success && parsed.data.status === 'unresolved')
-        return failure([
-          Errors.issue(
-            'UNRESOLVED_ELECTRIFICATION_VALUE',
-            request.source.location
-          ),
-        ]);
-      if (!parsed.success || Rules.resolve(request, parsed.data) === null)
+      if (
+        !parsed.success ||
+        (parsed.data.rejection
+          ? parsed.data.rejection.quote !== request.source.text
+          : Rules.resolve(request, parsed.data) === null)
+      )
         return failure([
           Errors.issue(
             'INVALID_ELECTRIFICATION_VALUE_INTERPRETATION',
             request.source.location
           ),
+        ]);
+      if (parsed.data.rejection)
+        return failure([
+          Errors.rejectedValue(parsed.data.rejection.reason, request.source),
         ]);
       interpretations.push({
         sourceId: request.source.id,

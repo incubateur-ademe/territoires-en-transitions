@@ -218,10 +218,6 @@ export class ElectrificationIndicateursDocumentRules {
     };
     const text = source.text.trim();
     if (!text) return success({ value: null, year: defaultYear, unit: null });
-    if (Values.isApproximate(text))
-      return failure([
-        Errors.valueIssue('APPROXIMATE_ELECTRIFICATION_VALUE', source),
-      ]);
     const date = text.match(/\s*\((\d{4})\)\s*$/);
     const value = date ? text.slice(0, date.index).trim() : text;
     const boolean = Values.normalize(value);

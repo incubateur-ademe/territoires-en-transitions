@@ -47,6 +47,10 @@ recette restent à faire.
 - [x] Préciser les erreurs simples : valeur approximative, code inconnu,
       lien d'une autre collectivité et périodicité attendue. Conserver les
       autorisations de partage et les erreurs par étapes.
+- [x] Remplacer la détection locale des approximations par un motif de refus
+      structuré dans l'appel IA existant, avec vérification de la cellule citée.
+      Ne pas traiter un mot inconnu après un nombre comme une unité. Conserver
+      la lecture déterministe des formats reconnus et le contrat de checkpoint.
 - [x] Retenir Grist comme référence métier, selon la décision du 24 novembre,
       en remplacement de la demande d'aligner Grist sur le Word.
 - [ ] Faire corriger et rediffuser le Word par l'équipe métier, notamment E05.
@@ -66,6 +70,13 @@ engagements et références passent en 25 s. Les nouveaux cas réutilisent le
 vrai lecteur DOCX et le faux LLM ; aucun nouveau fichier de tests ni appel
 à un modèle réel. Typage backend/specs et lint ciblé vérifiés. La recette
 déployée reste ouverte.
+
+Après revue des approximations : 231 tests passent dans les suites de fiches
+et de parcours complet (23 s, faux LLM), avec les refus structurés, les preuves
+invalides, une approximation niée et la reprise depuis un checkpoint.
+L'attente d'appel IA obsolète pour E07 est retirée du test de parcours complet.
+Typage, ESLint et Prettier vérifiés ; la compréhension du modèle réel reste
+à qualifier en recette.
 
 ## Retours de recette TT-67 - 20 novembre 2026
 

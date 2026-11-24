@@ -233,10 +233,6 @@ export class ElectrificationEngagementsDocumentRules {
             Errors.valueIssue('UNEXPECTED_ELECTRIFICATION_TARGET', source),
           ])
         : success([]);
-    if (Values.isApproximate(source.text))
-      return failure([
-        Errors.valueIssue('APPROXIMATE_ELECTRIFICATION_VALUE', source),
-      ]);
     const targets: Extract<
       ElectrificationValueRequest,
       { kind: 'target' }
