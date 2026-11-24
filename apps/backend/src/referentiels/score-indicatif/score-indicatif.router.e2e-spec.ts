@@ -1,6 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { indicateurCollectiviteTable } from '@tet/backend/indicateurs/indicateur/indicateur-collectivite.table';
+import { getOrCreateSnbc3MetadonneeId } from '@tet/backend/indicateurs/trajectoires/snbc3/trajectoire-snbc3.test-fixture';
 import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
 import {
   deleteActionScoreIndicateurValeursForCollectivite,
@@ -8,7 +9,6 @@ import {
   fixturePourScoreIndicatif,
   getAuthUserFromUserCredentials,
   getIndicateurIdByIdentifiant,
-  getSnbcMetadonneeId,
   getTestApp,
   getTestDatabase,
   getTestRouter,
@@ -854,7 +854,7 @@ describe('ScoreIndicatifRouter', () => {
         databaseService,
         ID
       );
-      const snbcId = await getSnbcMetadonneeId(databaseService);
+      const snbcId = await getOrCreateSnbc3MetadonneeId(databaseService);
       const insert = (
         valeurs: Parameters<typeof insertIndicateurValeurs>[1]['valeurs']
       ) =>
@@ -877,9 +877,9 @@ describe('ScoreIndicatifRouter', () => {
 
     test('progression_snbc : score fait de 0.5, programme null', async () => {
       const { snbcId, insert } = await setup(`progression_snbc(${ID})`);
-      // 2015 à une date qui n'est pas un 1er janvier
+      // 2021 à une date qui n'est pas un 1er janvier
       await insert([
-        { dateValeur: '2015-06-15', metadonneeId: snbcId, objectif: 100 },
+        { dateValeur: '2021-06-15', metadonneeId: snbcId, objectif: 100 },
         { dateValeur: '2025-01-01', metadonneeId: snbcId, objectif: 80 },
       ]);
 
@@ -889,7 +889,7 @@ describe('ScoreIndicatifRouter', () => {
       expect(score.calcul).toEqual({
         type: 'progression_snbc',
         identifiantReferentiel: ID,
-        anneeDepart: 2015,
+        anneeDepart: 2021,
         objectifSnbcDepart: 100,
         anneeUtilisee: 2025,
         valeurUtilisee: 90,
@@ -902,7 +902,7 @@ describe('ScoreIndicatifRouter', () => {
         `progression_snbc(${ID})`
       );
       await insert([
-        { dateValeur: '2015-01-01', metadonneeId: snbcId, objectif: 100 },
+        { dateValeur: '2021-01-01', metadonneeId: snbcId, objectif: 100 },
         { dateValeur: '2025-01-01', metadonneeId: snbcId, objectif: 80 },
       ]);
       const caller = router.createCaller({ user: testUser });
@@ -928,7 +928,7 @@ describe('ScoreIndicatifRouter', () => {
       expect(score.calcul).toEqual({
         type: 'progression_snbc',
         identifiantReferentiel: ID,
-        anneeDepart: 2015,
+        anneeDepart: 2021,
         objectifSnbcDepart: 100,
         anneeUtilisee: null,
         valeurUtilisee: null,
@@ -941,7 +941,7 @@ describe('ScoreIndicatifRouter', () => {
       expect((await getScore()).fait).toBeNull();
 
       await insert([
-        { dateValeur: '2015-01-01', metadonneeId: snbcId, objectif: 80 },
+        { dateValeur: '2021-01-01', metadonneeId: snbcId, objectif: 80 },
         { dateValeur: '2025-01-01', metadonneeId: snbcId, objectif: 80 },
       ]);
       expect((await getScore()).fait).toBeNull();

@@ -19,7 +19,7 @@ const SOURCE_COLLECTIVITE = 'Données de la collectivité';
 const SOUS_MESURE_REDUCTION = '2.2.1.3';
 const INDICATEUR_REDUCTION = 'cae_14.ac';
 
-/** Tâche TE notée par `progression_snbc(cae_1.a, 2015)` */
+/** Tâche TE notée par `progression_snbc(cae_1.a)` (départ 2021 par défaut) */
 const TACHE_PROGRESSION_SNBC = '1.1.6.3.b';
 const INDICATEUR_PROGRESSION_SNBC = 'cae_1.a';
 
@@ -315,7 +315,7 @@ test.describe('Indicateurs liés au score (référentiel CR)', () => {
       await referentielScoresPom.goToActionPage('1.1.6');
       await pom.openModal(TACHE_PROGRESSION_SNBC);
 
-      await expect(pom.getTrajectoireSnbcManquanteMessage(2015)).toBeVisible();
+      await expect(pom.getTrajectoireSnbcManquanteMessage(2021)).toBeVisible();
       // la collectivité n'a rien à saisir : pas de lien
       await expect(pom.valeurReferenceManquanteLink).toHaveCount(0);
       await expect(pom.resultatsTable).toHaveCSS('pointer-events', 'none');

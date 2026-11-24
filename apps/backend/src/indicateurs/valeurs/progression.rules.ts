@@ -1,6 +1,7 @@
 import {
   IndicateurPeriodiciteEnum,
   IndicateurPeriodes,
+  IndicateurSourceEnum,
 } from '@tet/domain/indicateurs';
 import { isNil } from 'es-toolkit';
 
@@ -16,7 +17,9 @@ export type LigneValeurProgression = {
   resultat: number | null;
 };
 
-const SOURCE_SNBC = 'snbc';
+// trajectoire de référence du score indicatif (`snbc` avant l'ouverture de la
+// SNBC 3, cf. ADR 0023 §4)
+const SOURCE_SNBC = IndicateurSourceEnum.SNBC3;
 
 /** Les valeurs de progression sont filtrées sur la cadence annuelle en lecture. */
 export const getAnnee = (dateValeur: string) =>

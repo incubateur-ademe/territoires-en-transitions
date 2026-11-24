@@ -1,7 +1,7 @@
 // paramètres d'un appel `progression_snbc(...)` ou `reduction(...)`
 export type ProgressionParams = {
   token: 'progression_snbc' | 'reduction';
-  // année de départ résolue (2015 par défaut pour `progression_snbc`)
+  // année de départ résolue (2021, `ANNEE_REFERENCE_SNBC_V3`, par défaut pour `progression_snbc`)
   anneeDepart: number;
   // uniquement pour `reduction`
   anneeCible?: number;
