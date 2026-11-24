@@ -1,4 +1,5 @@
 import { useSuperAdminMode } from '@/app/users/authorizations/super-admin-mode/super-admin-mode.provider';
+import { ENV } from '@tet/api/environmentVariables';
 import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
@@ -30,7 +31,10 @@ export const useAiImportAccess = () => {
     isAvailable: profiles.length > 0,
     isProfileAvailable,
     isSuperAdminRoleEnabled,
-    // Pour le moment, seuls les super-admins voient l'entrée de l'import.
-    isEntryPointVisible: isSuperAdminRoleEnabled && profiles.length > 0,
+    // Pour le moment, seuls les super-admins voient l'entrée de l'import,
+    // sauf en développement local.
+    isEntryPointVisible:
+      (isSuperAdminRoleEnabled || ENV.application_env === 'dev') &&
+      profiles.length > 0,
   };
 };
