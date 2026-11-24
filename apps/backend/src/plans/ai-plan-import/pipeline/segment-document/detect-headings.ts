@@ -141,6 +141,7 @@ export const detectActionLevelDoubt = (
   );
   const exampleAxe =
     titledAxes.find(({ match }) => match.number === axeNumber) ??
+    axes.find(({ match }) => match.number === axeNumber) ??
     titledAxes[0] ??
     axes[0];
   return {
@@ -356,11 +357,14 @@ const classifyNamedFicheActions = (
         lastStep = step;
       }
       dropped.add(heading);
-      // « Actions 1-2 x x » : une ligne du calendrier, pas une étape.
+      // « Actions 1-2 x x » : une ligne du calendrier, pas une étape. Une
+      // « Action 2 » qui suit « Action 1 » dans la fiche est une étape, même
+      // quand une fiche porte aussi le numéro 2 ; hors de cette suite, c'est
+      // un renvoi.
       if (
         current &&
-        startsWith(heading, /^action(?!\p{L})/iu) &&
-        !ficheNumbers.has(heading.match.number)
+        singular &&
+        (continuesSteps || !ficheNumbers.has(heading.match.number))
       ) {
         nested.add(heading);
         stepsByFiche.set(current, [

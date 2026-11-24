@@ -258,7 +258,10 @@ const buildMocks = (overrides: MockOverrides = {}) => {
   };
 };
 
-const buildService = (mocks: ReturnType<typeof buildMocks>) =>
+const buildService = (
+  mocks: ReturnType<typeof buildMocks>,
+  generic?: GenerateGenericImportService
+) =>
   new GenerateImportDraftService(
     mocks.jobRepository,
     mocks.documentStorage,
@@ -268,21 +271,22 @@ const buildService = (mocks: ReturnType<typeof buildMocks>) =>
     mocks.notifyPlanImportService,
     mocks.trackingService,
     mocks.stepRunRepository,
-    new GenerateGenericImportService(
-      mocks.jobRepository,
-      mocks.documentStorage,
-      mocks.llm,
-      mocks.importPlanService,
-      mocks.planVerificationRepository,
-      mocks.transactionManager,
-      mocks.effetAttenduService,
-      mocks.enqueueCompletePlanSecteursService,
-      new CompletePlanImportService(
+    generic ??
+      new GenerateGenericImportService(
         mocks.jobRepository,
-        mocks.planVerificationRepository
+        mocks.documentStorage,
+        mocks.llm,
+        mocks.importPlanService,
+        mocks.planVerificationRepository,
+        mocks.transactionManager,
+        mocks.effetAttenduService,
+        mocks.enqueueCompletePlanSecteursService,
+        new CompletePlanImportService(
+          mocks.jobRepository,
+          mocks.planVerificationRepository
+        ),
+        { listPlanTypes: async () => [] } as unknown as ListPlanTypesService
       ),
-      { listPlanTypes: async () => [] } as unknown as ListPlanTypesService
-    ),
     {} as GenerateElectrificationImportService,
     {
       authorizeExistingImport: async () => success(undefined),
@@ -323,6 +327,18 @@ describe('GenerateImportDraftService', () => {
       ).not.toHaveProperty('dropCheckpoint', true);
     }
   );
+
+  it('garde la source tant que l’import attend une réponse', async () => {
+    const mocks = buildMocks();
+    const awaitingAnswer = {
+      generate: async () => success({ awaitingAnswer: true }),
+    } as unknown as GenerateGenericImportService;
+
+    expect(await buildService(mocks, awaitingAnswer).generate('job-1')).toEqual(
+      success(undefined)
+    );
+    expect(mocks.removeDocument).not.toHaveBeenCalled();
+  });
 
   it('conserve la source en cas d’échec terminal d’un contrat non pris en charge', async () => {
     const mocks = buildMocks({

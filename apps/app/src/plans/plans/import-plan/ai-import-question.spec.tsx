@@ -25,8 +25,14 @@ const question = {
   answer: null,
 };
 
-const renderQuestion = (onAnswer = vi.fn()) => {
-  render(<AiImportQuestion question={question} onAnswer={onAnswer} />);
+const renderQuestion = (onAnswer = vi.fn(), withSousActions = true) => {
+  render(
+    <AiImportQuestion
+      question={question}
+      withSousActions={withSousActions}
+      onAnswer={onAnswer}
+    />
+  );
   return onAnswer;
 };
 
@@ -77,5 +83,20 @@ describe('AiImportQuestion', () => {
       })
     );
     expect(onAnswer).toHaveBeenCalledWith('etape');
+  });
+
+  it("n'annonce pas de sous-action quand l'import ne les crée pas", () => {
+    renderQuestion(vi.fn(), false);
+
+    expect(
+      screen.getByText(
+        appLabels.importPlanIaQuestionConsequenceFiche({
+          axes: 5,
+          sousAxes: 0,
+          actions: 16,
+          sousActions: 0,
+        })
+      )
+    ).toBeTruthy();
   });
 });

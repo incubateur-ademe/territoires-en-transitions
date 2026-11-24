@@ -29,7 +29,8 @@ make ai-import-eval f=plan-mobilite.pdf args='--type-plan "Plan Mobilité"'
 
 Quand le document laisse le choix du niveau de l'action (fiches nommées qui
 détaillent des étapes « Action 1 – … »), l'éval affiche la question que
-poserait l'application et lit par fiche. `--action-level` rejoue une réponse :
+poserait l'application et lit par fiche. `--action-level` rejoue une réponse,
+et segmente au niveau demandé même sans question (hors Électrification) :
 
 ```sh
 make ai-import-eval f=plpdma.pdf args='--action-level etape'

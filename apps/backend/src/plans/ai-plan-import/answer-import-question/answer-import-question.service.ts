@@ -93,10 +93,17 @@ export class AnswerImportQuestionService {
       this.logger.error(
         `Remise en file de l'import ${jobId}: ${getErrorMessage(error)}`
       );
-      await this.jobRepository.reopenQuestion({
+      const reopened = await this.jobRepository.reopenQuestion({
         id: jobId,
         attempt: answered.data.attempt,
       });
+      if (!reopened.success) {
+        // Comme pour la reprise : sans message en file, ce job `pending` bloque
+        // sa collectivité jusqu'à une intervention manuelle.
+        this.logger.error(
+          `Import ${jobId} resté en attente sans message en file : question non rouverte (${reopened.error})`
+        );
+      }
       return failure(AiPlanImportErrorEnum.CREATE_JOB_ERROR);
     }
 

@@ -22,10 +22,14 @@ BEGIN
     ), 'Le statut awaiting_answer doit être admis';
 
     ASSERT (
-        SELECT indexdef LIKE '%awaiting_answer%'
-        FROM pg_indexes
-        WHERE schemaname = 'public'
-          AND indexname = 'ai_plan_import_job_in_flight_unique'
+        SELECT i.indisunique
+           AND i.indisvalid
+           AND pg_get_indexdef(i.indexrelid, 1, true) = 'collectivite_id'
+           AND pg_get_expr(i.indpred, i.indrelid) LIKE '%pending%'
+           AND pg_get_expr(i.indpred, i.indrelid) LIKE '%running%'
+           AND pg_get_expr(i.indpred, i.indrelid) LIKE '%awaiting_answer%'
+        FROM pg_index i
+        WHERE i.indexrelid = 'public.ai_plan_import_job_in_flight_unique'::regclass
     ), 'Un import qui attend une réponse occupe sa collectivité';
 END $$;
 

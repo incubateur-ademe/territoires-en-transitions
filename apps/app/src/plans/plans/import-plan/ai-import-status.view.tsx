@@ -96,6 +96,7 @@ export const AiImportStatusView = ({
         <AiImportQuestion
           key={jobId}
           question={question}
+          withSousActions={status.withSousActions}
           isAnswering={answer.isPending}
           onAnswer={(actionLevel) => {
             tracker(Event.plans.importIa.repondreQuestion, {

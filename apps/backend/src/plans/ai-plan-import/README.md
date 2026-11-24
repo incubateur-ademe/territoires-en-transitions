@@ -664,12 +664,17 @@ l'import la demande au lieu de la deviner.
   déterministe : au moins trois fiches nommées, et la moitié d'entre elles au
   moins portent deux étapes ou plus. Une étape suit sa fiche sans titre d'axe
   entre les deux, et son numéro n'est celui d'aucune fiche (« Action 1.2 » du
-  récapitulatif renvoie à la fiche 1.2). Le choix proposé est l'étape quand le
+  récapitulatif renvoie à la fiche 1.2), sauf quand elle prolonge la suite
+  des étapes de sa fiche (« Action 2 » après « Action 1 », même s'il existe
+  une fiche 2). Le choix proposé est l'étape quand le
   document donne plus d'un pilote et demi par fiche, la fiche sinon. Ni
   tableur ni stratégie `whole-document` : pas de question.
 - **Pause** : après la lecture, avant le premier appel au modèle. Le point de
-  reprise `reading` garde les unités des deux lectures (`pendingQuestion`),
-  le document étant supprimé à la fin du passage. Le job passe
+  reprise `reading` garde les unités des deux lectures (`pendingQuestion`).
+  Le document reste jusqu'à l'issue de l'import : un point de reprise périmé
+  d'ici la réponse (autre modèle, autre format) le fait relire. Une lecture
+  qui dépasserait la limite d'unités n'est pas proposée : l'import lit
+  l'autre sans poser la question. Le job passe
   `awaiting_answer` et sa colonne `question` porte les exemples et les comptes
   affichés à l'utilisateur.
 - **Réponse** (`answer-import-question/`, `plans.fiches.import` sur la
@@ -677,11 +682,13 @@ l'import la demande au lieu de la deviner.
   prend les unités de la lecture choisie et ajoute une phrase au bloc des
   consignes de la structuration. Une seconde réponse est refusée (409).
 - **Sans réponse** : l'import occupe sa collectivité et son auteur (un import
-  en vol à la fois) mais pas le plafond global. Après sept jours, il échoue et
-  son plan passe en échec, au démarrage du backend, au prochain import ou à
+  en vol à la fois) mais pas le plafond global. Après sept jours, il échoue,
+  son plan passe en échec dans la même transaction et sa source est supprimée,
+  au démarrage du backend, au prochain import ou à
   une réponse tardive (`expire-import-questions/`).
 - Sans `pauseOnQuestion` (évals, specs), la lecture par fiche s'applique
-  comme avant, prompts inchangés.
+  comme avant, prompts inchangés. Un niveau donné d'avance (`--action-level`
+  de l'éval) segmente le document à ce niveau, question ou pas.
 
 ## Statistiques des imports
 
