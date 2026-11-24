@@ -1,6 +1,7 @@
 import {
   IndicateurObjectifHorizon,
   IndicateurResultat,
+  IndicateurValeurAnnee,
 } from '@tet/domain/plans';
 import { cn } from '@tet/ui/utils/cn';
 
@@ -12,6 +13,14 @@ const MIN_TICK_GAP = 32;
 const EDGE_LABEL_ZONE = 12;
 
 type Point = { x: number; valeur: number };
+
+type TickKind = 'cible' | 'depart' | 'resultat';
+
+const TICK_CLASSNAMES: Record<TickKind, string> = {
+  cible: 'fill-primary-9 font-bold',
+  depart: 'fill-new-1 font-bold',
+  resultat: 'fill-grey-8',
+};
 
 // Une date de valeur en année décimale : les périodicités infra-annuelles se
 // placent entre deux années.
@@ -30,18 +39,21 @@ const toPath = (points: { x: number; y: number }[]) =>
 /**
  * La mini-courbe d'une carte : les résultats en trait plein, puis les objectifs
  * jusqu'à l'horizon en pointillés depuis le dernier résultat. La couleur suit
- * celle du texte : primaire, ou info pour une donnée open data.
+ * celle du texte : primaire, ou info pour une donnée open data. Le point de
+ * départ du chemin parcouru ressort dans une autre couleur, avec son année.
  */
 export const IndicateurObjectifSparkline = ({
   resultats,
   objectifs,
   cible,
+  depart = null,
   isOpenData,
   formatValeur,
 }: {
   resultats: IndicateurResultat[];
   objectifs: IndicateurObjectifHorizon[];
   cible: IndicateurObjectifHorizon | null;
+  depart?: IndicateurValeurAnnee | null;
   isOpenData: boolean;
   formatValeur: (valeur: number) => string;
 }) => {
@@ -53,7 +65,15 @@ export const IndicateurObjectifSparkline = ({
     x: annee,
     valeur,
   }));
-  const tous = [...serie, ...projection];
+  // Le départ est un point de la série, ou celui du dépôt PCAET s'il n'en est
+  // pas un (année de référence absente des résultats de la collectivité).
+  const departPoint: Point | null = depart
+    ? serie.find(
+        ({ x, valeur }) =>
+          Math.floor(x) === depart.annee && valeur === depart.valeur
+      ) ?? { x: depart.annee, valeur: depart.valeur }
+    : null;
+  const tous = [...serie, ...projection, ...(departPoint ? [departPoint] : [])];
   if (!serie.length) {
     return null;
   }
@@ -96,24 +116,28 @@ export const IndicateurObjectifSparkline = ({
     ? toPath([dernier, ...objectifsAVenir].map(toXY))
     : '';
 
-  // Les années de l'axe : l'objectif retenu d'abord, puis le premier et le
-  // dernier résultat s'il reste de la place. Un repère se place sur son point
+  // Les années de l'axe : l'objectif retenu d'abord, puis le départ, le premier
+  // et le dernier résultat s'il reste de la place. Un repère se place sur son point
   // et seul son libellé est arrondi à l'année : un résultat d'octobre placé au
   // 1er janvier sortirait du dessin.
-  const ticks: { x: number; annee: number; isCible: boolean }[] = [];
-  const addTick = (position: number, isCible: boolean) => {
+  const ticks: { x: number; annee: number; kind: TickKind }[] = [];
+  const addTick = (position: number, kind: TickKind) => {
     const x = scaleX(position);
     if (ticks.every((tick) => Math.abs(tick.x - x) >= MIN_TICK_GAP)) {
-      ticks.push({ x, annee: Math.floor(position), isCible });
+      ticks.push({ x, annee: Math.floor(position), kind });
     }
   };
   if (cible) {
-    addTick(cible.annee, true);
+    addTick(cible.annee, 'cible');
   }
-  addTick(serie[0].x, false);
-  addTick(dernier.x, false);
+  if (departPoint) {
+    addTick(departPoint.x, 'depart');
+  }
+  addTick(serie[0].x, 'resultat');
+  addTick(dernier.x, 'resultat');
 
   const cibleXY = cible ? toXY({ x: cible.annee, valeur: cible.valeur }) : null;
+  const departXY = departPoint ? toXY(departPoint) : null;
 
   return (
     <svg
@@ -162,6 +186,16 @@ export const IndicateurObjectifSparkline = ({
           />
         );
       })}
+      {departXY && (
+        <circle
+          cx={departXY.x}
+          cy={departXY.y}
+          r={4}
+          className="fill-new-1 stroke-white"
+          strokeWidth={1.5}
+          data-test="plans.suivi.indicateurs-objectifs.depart"
+        />
+      )}
       {cible && cibleXY && (
         <text
           x={cibleXY.x}
@@ -172,17 +206,14 @@ export const IndicateurObjectifSparkline = ({
           {formatValeur(cible.valeur)}
         </text>
       )}
-      {ticks.map(({ x, annee, isCible }) => (
+      {ticks.map(({ x, annee, kind }) => (
         <text
           key={x}
           x={x}
           y={HEIGHT - 6}
           textAnchor={x < PADDING.left + EDGE_LABEL_ZONE ? 'start' : 'middle'}
           dx={x < PADDING.left + EDGE_LABEL_ZONE ? -PADDING.left : 0}
-          className={cn(
-            'text-[10px]',
-            isCible ? 'fill-primary-9 font-bold' : 'fill-grey-8'
-          )}
+          className={cn('text-[10px]', TICK_CLASSNAMES[kind])}
         >
           {annee}
         </text>

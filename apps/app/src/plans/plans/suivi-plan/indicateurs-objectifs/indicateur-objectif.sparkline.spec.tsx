@@ -55,4 +55,29 @@ describe('IndicateurObjectifSparkline', () => {
     );
     expect(ticks.every(isInsideViewBox)).toBe(true);
   });
+
+  it('marque le départ du dépôt même hors de la série, avec son année', () => {
+    const { container } = render(
+      <IndicateurObjectifSparkline
+        resultats={[
+          { dateValeur: '2021-01-01', valeur: 140 },
+          { dateValeur: '2024-01-01', valeur: 124 },
+        ]}
+        objectifs={[{ annee: 2030, valeur: 90 }]}
+        cible={{ annee: 2030, valeur: 90 }}
+        depart={{ annee: 2015, valeur: 152 }}
+        isOpenData={false}
+        formatValeur={String}
+      />
+    );
+
+    const depart = container.querySelector(
+      '[data-test="plans.suivi.indicateurs-objectifs.depart"]'
+    );
+    expect(depart).not.toBeNull();
+    const anneeDepart = [...container.querySelectorAll('text')].find(
+      (text) => text.textContent === '2015'
+    );
+    expect(anneeDepart?.getAttribute('class')).toContain('fill-new-1');
+  });
 });

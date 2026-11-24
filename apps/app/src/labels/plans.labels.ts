@@ -582,6 +582,31 @@ export const plansLabels = {
     `Aucun objectif d'ici ${horizon}`,
   indicateursObjectifsObjectifAnnee: (annee: number): string =>
     `Objectif ${annee} :`,
+  indicateursObjectifsEvolutionObjectif: (
+    evolution: string,
+    anneeDepart: number
+  ): string => `soit ${evolution} par rapport à ${anneeDepart}`,
+  indicateursObjectifsAvancement: "Chemin parcouru vers l'objectif",
+  indicateursObjectifsCheminTempsEcoule: (
+    chemin: string,
+    tempsEcoule: string,
+    anneeDepart: number
+  ): string =>
+    `${chemin} du chemin, ${tempsEcoule} du temps écoulé depuis ${anneeDepart}`,
+  indicateursObjectifsEnRecul: (
+    evolution: string,
+    anneeDepart: number
+  ): string => `En recul : ${evolution} depuis ${anneeDepart}`,
+  indicateursObjectifsAtteint: 'Objectif atteint',
+  indicateursObjectifsEcheanceAtteinte: (annee: number): string =>
+    `Objectif ${annee} atteint`,
+  indicateursObjectifsEcheanceManquee: (
+    annee: number,
+    dernier: string,
+    cible: string
+  ): string => `Objectif ${annee} non atteint (${dernier} au lieu de ${cible})`,
+  indicateursObjectifsFormule:
+    "Chemin parcouru : linéaire entre la valeur de départ et l'objectif, valable à la hausse comme à la baisse. Le repère sur la barre marque le temps écoulé.",
   indicateursObjectifsAucun:
     "Aucun indicateur n'est lié aux actions ou aux axes de ce plan.",
   indicateursObjectifsAucunRecherche:
