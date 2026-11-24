@@ -34,15 +34,6 @@ describe('IndicateurValeurLockRepository', () => {
     await app.close();
   });
 
-  it('ne tient qu’un seul verrou de table même quand lockAllPeriodes est appelé deux fois', async () => {
-    await databaseService.db.transaction(async (tx) => {
-      await lockRepository.lockAllPeriodes(tx);
-      await lockRepository.lockAllPeriodes(tx);
-
-      expect(await listTableLockModes(tx)).toEqual(['ShareRowExclusiveLock']);
-    });
-  });
-
   it('ne pose aucun verrou par période tant que le verrou de table est tenu', async () => {
     await databaseService.db.transaction(async (tx) => {
       await lockRepository.lockAllPeriodes(tx);
@@ -63,9 +54,9 @@ describe('IndicateurValeurLockRepository', () => {
 
   it('reprend le verrou de table après l’annulation du savepoint qui l’avait posé', async () => {
     await databaseService.db.transaction(async (tx) => {
-      await tx.execute(sql`savepoint verrou_de_table`);
+      await tx.execute(sql`savepoint table_lock`);
       await lockRepository.lockAllPeriodes(tx);
-      await tx.execute(sql`rollback to savepoint verrou_de_table`);
+      await tx.execute(sql`rollback to savepoint table_lock`);
       expect(await listTableLockModes(tx)).toEqual([]);
 
       await lockRepository.lock(

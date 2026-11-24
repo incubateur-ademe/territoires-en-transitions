@@ -3,7 +3,10 @@ import { chunk } from 'es-toolkit';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { Result, success } from '@tet/backend/utils/result.type';
-import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
+import {
+  TransactionExecutionOptions,
+  TransactionManager,
+} from '@tet/backend/utils/transaction/transaction-manager.service';
 import {
   IndicateurPredefini,
   IndicateurValeur,
@@ -51,9 +54,28 @@ export class ReconcileIndicateurValeursService {
     private readonly valeurLockRepository: IndicateurValeurLockRepository
   ) {}
 
-  async upsert(
+  upsert(
     valeurs: IndicateurValeurCreate[],
     context: IndicateurValeursContext
+  ): Promise<
+    Result<IndicateurValeurWithIdentifiant[], IndicateurValeursError>
+  > {
+    return this.upsertBatch(valeurs, context, {});
+  }
+
+  private upsertWithinPropagation(
+    valeurs: IndicateurValeurCreate[],
+    context: IndicateurValeursContext
+  ): Promise<
+    Result<IndicateurValeurWithIdentifiant[], IndicateurValeursError>
+  > {
+    return this.upsertBatch(valeurs, context, { undoWritesOnFailure: false });
+  }
+
+  private async upsertBatch(
+    valeurs: IndicateurValeurCreate[],
+    context: IndicateurValeursContext,
+    options: TransactionExecutionOptions
   ): Promise<
     Result<IndicateurValeurWithIdentifiant[], IndicateurValeursError>
   > {
@@ -75,7 +97,7 @@ export class ReconcileIndicateurValeursService {
           return success([...written.data, ...dependent.data]);
         },
         context.tx,
-        { undoWritesOnFailure: false }
+        options
       );
       return getIndicateurValeursDataOrThrow(result);
     });
@@ -143,7 +165,10 @@ export class ReconcileIndicateurValeursService {
           context.tx
         );
       return getIndicateurValeursDataOrThrow(
-        await this.upsert(calculated, { isUserTrusted: true, tx: context.tx })
+        await this.upsertWithinPropagation(calculated, {
+          isUserTrusted: true,
+          tx: context.tx,
+        })
       );
     });
   }
@@ -182,7 +207,7 @@ export class ReconcileIndicateurValeursService {
         : [];
       const upsertedDependentValeurs = reconciliation.valeursToUpsert.length
         ? getIndicateurValeursDataOrThrow(
-            await this.upsert(reconciliation.valeursToUpsert, {
+            await this.upsertWithinPropagation(reconciliation.valeursToUpsert, {
               isUserTrusted: true,
               tx,
             })
@@ -253,7 +278,7 @@ export class ReconcileIndicateurValeursService {
     // jusqu'au dernier upsert de la chaîne.
     const insertedValeurs = recomputed.valeursToUpsert.length
       ? getIndicateurValeursDataOrThrow(
-          await this.upsert(recomputed.valeursToUpsert, {
+          await this.upsertWithinPropagation(recomputed.valeursToUpsert, {
             isUserTrusted: true,
             tx,
           })

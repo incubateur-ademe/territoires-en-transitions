@@ -25,7 +25,7 @@ describe('TransactionManager', () => {
   let databaseService: DatabaseService;
   let transactionManager: TransactionManager;
 
-  const insertProbe = (tx: Transaction, label: string) =>
+  const insertProbe = (tx: Transaction, label: string): Promise<unknown> =>
     tx.execute(sql`insert into ${probeTable} (label) values (${label})`);
 
   const listProbeLabels = async (): Promise<string[]> => {
@@ -131,19 +131,17 @@ describe('TransactionManager', () => {
     });
 
     it('passe à l’opération la transaction de l’appelant elle-même, pas une transaction imbriquée', async () => {
-      const receivedTransactions: Transaction[] = [];
-
-      await transactionManager.executeSingle(async (outerTx) => {
-        receivedTransactions.push(outerTx);
-        await transactionManager.executeSingle(async (tx) => {
-          receivedTransactions.push(tx);
-          return success(undefined);
-        }, outerTx);
-        return success(undefined);
+      const result = await transactionManager.executeSingle(async (outerTx) => {
+        const nested = await transactionManager.executeSingle(
+          async (tx) => success(tx),
+          outerTx
+        );
+        if (!nested.success) return nested;
+        return success({ outerTx, operationTx: nested.data });
       });
 
-      const [outerTx, operationTx] = receivedTransactions;
-      expect(operationTx).toBe(outerTx);
+      if (!result.success) throw new Error('la transaction devait réussir');
+      expect(result.data.operationTx).toBe(result.data.outerTx);
     });
 
     it('annule les écritures de l’opération en échec et conserve celles de l’appelant', async () => {
@@ -279,11 +277,9 @@ describe('TransactionManager', () => {
     });
 
     it('annule les écritures de toutes les opérations quand l’une d’elles échoue', async () => {
-      let operationsResult: unknown;
-
-      await transactionManager.executeSingle(async (outerTx) => {
+      const result = await transactionManager.executeSingle(async (outerTx) => {
         await insertProbe(outerTx, 'appelant');
-        operationsResult = await transactionManager.executeTransaction(
+        const operations = await transactionManager.executeTransaction(
           [
             async (tx) => {
               await insertProbe(tx, 'première');
@@ -293,14 +289,16 @@ describe('TransactionManager', () => {
           ],
           outerTx
         );
-        return success(undefined);
+        return success(operations);
       });
 
-      expect(operationsResult).toEqual({
-        success: false,
-        error: 'UNAUTHORIZED',
-        cause: undefined,
-      });
+      expect(result).toEqual(
+        success({
+          success: false,
+          error: 'UNAUTHORIZED',
+          cause: undefined,
+        })
+      );
       expect(await listProbeLabels()).toEqual(['appelant']);
     });
 
