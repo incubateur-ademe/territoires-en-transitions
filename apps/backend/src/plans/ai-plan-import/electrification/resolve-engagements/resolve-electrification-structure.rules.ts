@@ -9,6 +9,7 @@ import {
   ResolvedElectrificationEngagements,
 } from './electrification-engagements.schema';
 import { ElectrificationIssue } from '../electrification-issue';
+import { ElectrificationEngagementValuesRules } from './electrification-engagement-values.rules';
 
 export class ResolveElectrificationStructureRules {
   static resolve(
@@ -50,7 +51,10 @@ export class ResolveElectrificationStructureRules {
       }
       if (engagementCodes.has(engagement.code)) {
         issues.push(
-          this.issue('DUPLICATE_ENGAGEMENT', engagement.source.location)
+          ElectrificationEngagementValuesRules.duplicate(
+            engagement.code,
+            engagement.source.location
+          )
         );
         continue;
       }

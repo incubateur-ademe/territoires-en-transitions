@@ -19,7 +19,12 @@ export const importReferenceErrors = {
   FICHE_REFERENCE_UNAVAILABLE: {
     kind: 'document-error',
     message:
-      "L'action est absente ou ne peut pas être reliée à un plan de cette collectivité avec vos droits.",
+      "L'action est absente ou ne peut pas être reliée à ce plan avec vos droits. Vérifiez son lien et son accès depuis la collectivité où vous importez.",
+  },
+  FICHE_REFERENCE_OTHER_COLLECTIVITE: {
+    kind: 'document-error',
+    message:
+      "Ce lien désigne une autre collectivité et l'action ne peut pas être reliée à ce plan avec vos droits. Utilisez le lien d'une action de la collectivité où vous importez, ou d'une action partagée avec elle.",
   },
   INDICATEUR_REFERENCE_UNAVAILABLE: {
     kind: 'document-error',

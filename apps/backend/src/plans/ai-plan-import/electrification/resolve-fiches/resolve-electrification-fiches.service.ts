@@ -117,7 +117,9 @@ export class ResolveElectrificationFichesService {
           continue;
         }
         if (fiche.reference && !mapping) {
-          issue('UNKNOWN_FICHE_REFERENCE');
+          issues.push(
+            Errors.unknownReference(fiche.reference, fiche.source.location)
+          );
           continue;
         }
         if (mapping && !Rules.matchesAxe(mapping, axe, structure.data.axes)) {

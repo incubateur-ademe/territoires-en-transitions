@@ -9,6 +9,11 @@ import {
 import { aiPlanImportJobErrorMessages } from '../../ai-plan-import.errors';
 
 export const electrificationExtractionErrors = {
+  APPROXIMATE_ELECTRIFICATION_VALUE: {
+    kind: 'document-error',
+    message:
+      'La valeur est approximative. Saisissez un nombre précis, par exemple "12 (2026)".',
+  },
   UNRESOLVED_ELECTRIFICATION_VALUE: {
     kind: 'document-error',
     message:

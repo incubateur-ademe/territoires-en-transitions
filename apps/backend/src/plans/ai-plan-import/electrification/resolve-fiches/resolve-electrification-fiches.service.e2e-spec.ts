@@ -801,6 +801,25 @@ describe('Résolution des fiches actions Électrification', () => {
     await expectIssue('INVALID_FICHE_AXIS');
   });
 
+  test("conserve le rattachement à l'axe quand le sous-axe facultatif est vide, sans accepter un sous-axe incorrect", async () => {
+    action().sousAxeNumero = '1.2';
+    config.sousAxes.push({
+      numero: '1.2',
+      axeNumero: 1,
+      titre: 'Autre sous-axe',
+    });
+    fiche().reference = 'test-A';
+    const result = await resolved();
+    expect(result.fiches[0].axeKey).toBe('axe:1');
+    expect(result.axes.every((axe) => axe.parentKey === null)).toBe(true);
+
+    input.axes[0].sousAxes = [
+      { source: source('sous-axe'), numero: '1.1', titre: 'Mauvais sous-axe' },
+    ];
+    fiche().axeSourceKey = 'sous-axe';
+    await expectIssue('INVALID_FICHE_AXIS');
+  });
+
   test('refuse un rattachement qui ne désigne aucune source d’axe', async () => {
     fiche().axeSourceKey = 'axe-inexistant';
     await expectIssue('INVALID_FICHE_AXIS');
@@ -831,10 +850,18 @@ describe('Résolution des fiches actions Électrification', () => {
       config.fiches = { actions: [], indicateurs: [] };
       if (type === 'action') fiche().reference = 'inconnu';
       else fiche().indicateurs = [quantitatif('inconnu')];
-      await expectIssue(
-        type === 'action'
-          ? 'UNKNOWN_FICHE_REFERENCE'
-          : 'UNKNOWN_INDICATEUR_REFERENCE'
+      const result = await resolve();
+      assert(!result.success);
+      expect(result.error).toContainEqual(
+        expect.objectContaining({
+          code:
+            type === 'action'
+              ? 'UNKNOWN_FICHE_REFERENCE'
+              : 'UNKNOWN_INDICATEUR_REFERENCE',
+          ...(type === 'action'
+            ? { message: expect.stringContaining('"inconnu"') }
+            : {}),
+        })
       );
     }
   );
@@ -963,6 +990,15 @@ describe('Résolution des fiches actions Électrification', () => {
     });
     indicateur.resultat.periode = '2025';
     await expectIssue('INVALID_INDICATEUR_PERIOD');
+    indicateur.periodicite = 'annuelle';
+    const rejected = await resolve();
+    assert(!rejected.success);
+    expect(rejected.error).toContainEqual(
+      expect.objectContaining({
+        code: 'INVALID_INDICATEUR_PERIODICITY',
+        message: expect.stringMatching(/mensuelle.*annuelle.*support TeT/),
+      })
+    );
   });
 
   test.each([
@@ -1669,6 +1705,70 @@ describe('Résolution des fiches actions Électrification', () => {
       );
     });
 
+    test("écarte les textes d'aide de la fiche V1 vierge et conserve une fiche V1 remplie", async () => {
+      const empty = ficheRows({
+        Axe: "N° et intitulé de l'axe (ex : 1. Logements privés : sortie du fioul et du gaz)",
+        'Sous-axe (facultatif)':
+          'N° et intitulé du sous-axe (ex : 1.1 Connaître et cibler les logements privés chauffés au fioul et au gaz)',
+        "Intitulé de l'action":
+          "Intitulé de l'action (peut reprendre celui du Référentiel1)",
+        'Structure pilote (facultatif)': 'Structure(s) responsable de l’action',
+        "État d'avancement au moment de la signature":
+          "À venir / En cours / Réalisé / En pause / Bloqué / Abandonné (ne conserver qu'une mention)",
+      });
+      empty.splice(
+        empty.findIndex((row) => row[0].text.startsWith("Code de l'action")),
+        1
+      );
+      const index =
+        empty.findIndex((row) => row[0].text === 'Indicateurs de suivi') + 1;
+      empty.splice(
+        index,
+        2,
+        [
+          { text: 'Code (facultatif)' },
+          { text: 'Indicateurs du Référentiel des actions' },
+          { text: 'Valeur de résultat (avec son année de référence)' },
+          { text: "Valeur d'objectif à 2030" },
+          { text: "Autre valeur d'objectif (avec son année)" },
+        ],
+        [
+          { text: "Code de l'indicateur dans le Référentiel, si connu" },
+          {
+            text: "Intitulé de l'indicateur, repris à l'identique du Référentiel",
+          },
+          { text: '' },
+          { text: '' },
+          { text: '' },
+        ],
+        [
+          {
+            text: 'Autres indicateurs (hors référentiel) : Intitulé et unité (ex : nombre de boulangeries ayant remplacé leur four au gaz)',
+            columnSpan: 2,
+          },
+          { text: '' },
+          { text: '' },
+          { text: '' },
+        ]
+      );
+      const filled = structuredClone(empty);
+      field(filled, 'Axe').text = '1';
+      field(filled, "Intitulé de l'action").text = 'Action V1 remplie';
+      await useForm({ fiches: [empty, filled] });
+      const result = await prepared();
+      expect(result.prepared.fiches).toMatchObject([
+        {
+          mode: 'create',
+          champs: { titre: 'Action V1 remplie' },
+        },
+      ]);
+      expect(result.checkpoint.response.fiches[0].champs.statut).toBeNull();
+      field(filled, "État d'avancement au moment de la signature").text =
+        'Statut invalide';
+      await useForm({ fiches: [empty, filled] });
+      await expectExtractionIssue('INVALID_ELECTRIFICATION_STATUS');
+    });
+
     test('copie les champs renseignés et les paragraphes sans interprétation ni budget', async () => {
       const rows = actionRows({
         "Description de l'action":
@@ -2225,26 +2325,50 @@ describe('Résolution des fiches actions Électrification', () => {
         fiches: [],
       });
 
-    const interpretTargets = (
-      text: string,
-      targets: { key: string; numberId: number }[]
-    ) => {
-      expectedInterpretationCalls++;
-      generate.mockResolvedValueOnce(
-        success({
-          data: {
-            status: 'extracted',
-            values: targets.map((target) => ({
-              ...target,
-              unit: null,
-              yearId: null,
-              quote: text,
-            })),
-          },
-          tokens: emptyTokenUsage(),
-        })
+    test('signale le doublon et les bornes des cibles même si une autre sélection est invalide', async () => {
+      const engagements = structuredClone(template.sections[0].rows);
+      engagements[1][2].text = 'Peut-être';
+      const reference = config.engagements.find(({ code }) => code === 'E06');
+      assert(reference);
+      engagements.push(
+        [
+          { text: `Axe ${reference.axeNumero}` },
+          { text: reference.libelleSource },
+          { text: 'Oui' },
+          { text: '150 %' },
+        ],
+        [
+          { text: `Axe ${reference.axeNumero}` },
+          { text: reference.libelleSource },
+          { text: 'Oui' },
+          { text: '40 %' },
+        ]
       );
-    };
+      engagements[7][2].text = 'Oui';
+      engagements[7][3].text = '30 bornes publiques dont 50 rapides';
+      await useForm({ engagements, fiches: [] });
+      const result = await prepare();
+      assert(!result.success);
+      expect(result.error).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            code: 'INVALID_ELECTRIFICATION_SELECTION',
+          }),
+          expect.objectContaining({
+            code: 'DUPLICATE_ENGAGEMENT',
+            message: expect.stringContaining('E06'),
+          }),
+          expect.objectContaining({
+            code: 'INVALID_ENGAGEMENT_VALUE',
+            message: expect.stringContaining('150 %'),
+          }),
+          expect.objectContaining({
+            code: 'INCONSISTENT_ENGAGEMENT_TARGETS',
+            message: expect.stringMatching(/50.*30/),
+          }),
+        ])
+      );
+    });
 
     test.each([
       { code: 'E05', identity: 'code', axe: 3, value: '25 %', expected: [25] },
@@ -2314,11 +2438,6 @@ describe('Résolution des fiches actions Électrification', () => {
             success({ data: { code, quote: label }, tokens: emptyTokenUsage() })
           );
         }
-        if (code === 'E07')
-          interpretTargets(value, [
-            { key: 'total', numberId: 0 },
-            { key: 'rapides', numberId: 1 },
-          ]);
 
         const result = await prepared();
 
@@ -2386,6 +2505,24 @@ describe('Résolution des fiches actions Électrification', () => {
           },
         ];
         await configureEngagementTargets(['RENOVATION']);
+      });
+
+      test('lit les cibles nommées et leur inclusion depuis le catalogue, indépendamment de leur ordre', async () => {
+        cibles()[1].reglesImport.plafondCible = 'parc';
+        cibles().reverse();
+        await useEngagement(label, '8 bâtiments (2040) dont 2 écoles (2040)');
+        expect((await prepared()).prepared.cibles).toMatchObject([
+          {
+            key: 'engagement:RENOVATION:ecoles',
+            objectif: 2,
+            dateValeur: '2040-01-01',
+          },
+          {
+            key: 'engagement:RENOVATION:parc',
+            objectif: 8,
+            dateValeur: '2040-01-01',
+          },
+        ]);
       });
 
       const interpret = async (
@@ -2902,8 +3039,8 @@ describe('Résolution des fiches actions Électrification', () => {
           title: 'Énergie économisée (MWh)',
         },
         {
-          text: '42 environ (2025)',
-          code: 'UNRESOLVED_ELECTRIFICATION_VALUE',
+          text: 'environ 12 (2026)',
+          code: 'APPROXIMATE_ELECTRIFICATION_VALUE',
           title: 'Énergie économisée',
         },
         {
@@ -3088,10 +3225,6 @@ describe('Résolution des fiches actions Électrification', () => {
       engagements[11][2].text = 'Oui';
       engagements[11][3].text = '1\u202f200,5 MWh (2030)';
       await useForm({ engagements, fiches: [] });
-      interpretTargets(engagements[7][3].text, [
-        { key: 'total', numberId: 0 },
-        { key: 'rapides', numberId: 1 },
-      ]);
       const result = await prepared();
       expect(
         result.prepared.cibles.map(({ key, objectif, unite, dateValeur }) => ({
@@ -3229,6 +3362,7 @@ describe('Résolution des fiches actions Électrification', () => {
       ['total: 100; rapides: 0', 100, 0],
       ['20 bornes rapides', null, 20],
       ['120 bornes publiques dont 30 rapides', 120, 30],
+      ['0 bornes dont 0 rapides', 0, 0],
     ])(
       'conserve les cibles E07 explicitement identifiées : %s',
       async (value, total, rapides) => {
@@ -3237,15 +3371,6 @@ describe('Résolution des fiches actions Électrification', () => {
         engagements[7][2].text = 'Oui';
         engagements[7][3].text = String(value);
         await useForm({ engagements, fiches: [] });
-        interpretTargets(
-          String(value),
-          total === null
-            ? [{ key: 'rapides', numberId: 0 }]
-            : [
-                { key: 'total', numberId: 0 },
-                { key: 'rapides', numberId: 1 },
-              ]
-        );
         expect(
           (await prepared()).prepared.cibles.map(
             ({ objectif, unite, dateValeur }) => ({

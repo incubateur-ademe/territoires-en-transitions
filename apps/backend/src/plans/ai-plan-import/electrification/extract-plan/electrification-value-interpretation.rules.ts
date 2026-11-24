@@ -16,7 +16,7 @@ const literalPattern = new RegExp(
   'u'
 );
 
-/** Vérifie les preuves et le contrat numérique ; le sens des phrases relève du modèle. */
+/** Lit les quantités explicites et vérifie les preuves des interprétations restantes. */
 export class ElectrificationValueInterpretationRules {
   static numbers(text: string) {
     return [...text.matchAll(numberLiteralPattern)].map((match, id) => ({
@@ -57,6 +57,10 @@ export class ElectrificationValueInterpretationRules {
       )
         return this.accepts(request, result) ? [result] : null;
     }
+    if (request.kind === 'target') {
+      const labelled = this.readLabelledTargets(request);
+      if (labelled !== null) return labelled;
+    }
     const numbers = this.numbers(text);
     if (
       !request.source.links.length &&
@@ -66,6 +70,72 @@ export class ElectrificationValueInterpretationRules {
     )
       context?.onUnparsedValue?.(request);
     return null;
+  }
+
+  /** Les libellés et la relation total/sous-ensemble viennent du catalogue publié. */
+  private static readLabelledTargets(
+    request: Extract<ElectrificationValueRequest, { kind: 'target' }>
+  ): ElectrificationInterpretedValue[] | null {
+    const text = request.source.text.trim();
+    const included = text.split(/\s+dont\s+/iu);
+    const parts = included.length === 2 ? included : text.split(/\s*;\s*/u);
+    if (included.length > 2) return null;
+    const result: ElectrificationInterpretedValue[] = [];
+    for (const part of parts) {
+      const match = part.match(
+        new RegExp(
+          `^(?:([^:;]+):\\s*(${Values.NUMBER_LITERAL})|(${Values.NUMBER_LITERAL})\\s+([^:;]+?))(?:\\s*\\((\\d{4})\\))?$`,
+          'u'
+        )
+      );
+      if (!match) return null;
+      const value = Values.number(match[2] ?? match[3]);
+      if (value === null) return null;
+      const label = Values.normalize(match[1] ?? match[4]);
+      const candidates = request.targets.filter((target) => {
+        const labels = [target.key, ...target.labels];
+        const units = [target.unit, ...target.units];
+        const names = [
+          ...labels,
+          ...units.flatMap((unit) => labels.map((name) => `${unit} ${name}`)),
+        ];
+        // "100 bornes dont 20 rapides" : l'unité seule identifie le total
+        // uniquement si la relation d'inclusion est confirmée ensuite.
+        if (included.length === 2 && result.length === 0) names.push(...units);
+        return names.some((name) => Values.normalize(name) === label);
+      });
+      // Une unité commune seule ne désigne pas la sous-cible. Le parent est
+      // identifiable par la relation publiée, sans supposer l'ordre du catalogue.
+      const matches =
+        candidates.length > 1 && included.length === 2 && result.length === 0
+          ? candidates.filter((candidate) =>
+              request.targets.some(
+                (target) => target.ceilingKey === candidate.key
+              )
+            )
+          : candidates;
+      if (matches.length !== 1) return null;
+      const target = matches[0];
+      const quantity = {
+        key: target.key,
+        value,
+        unit: null,
+        year: match[5] ? Number(match[5]) : null,
+      };
+      if (
+        result.some(({ key }) => key === target.key) ||
+        !this.accepts(request, quantity)
+      )
+        return null;
+      result.push(quantity);
+    }
+    if (
+      included.length === 2 &&
+      request.targets.find(({ key }) => key === result[1].key)?.ceilingKey !==
+        result[0].key
+    )
+      return null;
+    return result;
   }
 
   /** Chaque quantité a son occurrence ; une échéance commune peut être partagée. */

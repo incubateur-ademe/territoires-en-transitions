@@ -42,6 +42,11 @@ export class ElectrificationFicheFormRules {
     catalogue: ElectrificationConfig,
     valueContext?: ElectrificationValueContext
   ): FicheForm {
+    const format = rows
+      .map((row) => ElectrificationIndicateursTableAdapter.fromHeader(row))
+      .find((adapter) => adapter !== null)?.documentFormat;
+    const placeholders: Partial<Record<ElectrificationFicheFieldName, string>> =
+      format?.fieldPlaceholders ?? {};
     const titleDefinition = fields.titre;
     const titleCell = rows
       .map((row) => [...new Map(row.map((cell) => [cell.id, cell])).values()])
@@ -52,7 +57,12 @@ export class ElectrificationFicheFormRules {
       )?.[1];
     const actionLocation = Locations.entity(
       'Action',
-      titleCell ? Values.text(titleCell, titleDefinition.placeholder) : null,
+      titleCell
+        ? Values.text(titleCell, [
+            placeholders.titre ?? titleDefinition.placeholder,
+            titleDefinition.placeholder,
+          ])
+        : null,
       rows[0]?.[0]?.location
     );
     const form: FicheForm = {
@@ -93,7 +103,7 @@ export class ElectrificationFicheFormRules {
         continue;
       }
       if (section === 'fields') {
-        const field = this.readField(cells, form.fields);
+        const field = this.readField(cells, form.fields, placeholders);
         if (!field.success) issues.push(...field.error);
         continue;
       }
@@ -212,7 +222,8 @@ export class ElectrificationFicheFormRules {
 
   private static readField(
     cells: Source[],
-    fields: ElectrificationFicheFields
+    fields: ElectrificationFicheFields,
+    placeholders: Partial<Record<ElectrificationFicheFieldName, string>>
   ): Result<void, ElectrificationIssue[]> {
     const label = Values.normalize(cells[0]?.text ?? '');
     if (cells.length === 1 && headings.includes(label))
@@ -238,7 +249,10 @@ export class ElectrificationFicheFormRules {
     }
     fields.set(key, {
       source: cells[1],
-      value: Values.text(cells[1], placeholder),
+      value: Values.text(cells[1], [
+        placeholders[key] ?? placeholder,
+        placeholder,
+      ]),
     });
     return success(undefined);
   }

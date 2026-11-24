@@ -1,6 +1,6 @@
 import {
   electrificationDocumentFormats,
-  ElectrificationIndicateursTableFormat,
+  ElectrificationDocumentFormat,
 } from '@tet/backend/plans/plans/electrification/config/electrification-document-formats.config';
 import { electrificationIndicateursDocument } from '@tet/backend/plans/plans/electrification/config/electrification-indicateurs-document.config';
 import { ElectrificationImportLocations as Locations } from '../electrification-import-locations';
@@ -11,7 +11,7 @@ import { ElectrificationIndicateurCells } from './electrification-indicateur-cel
 /** Adapte la grille Word d'un format reconnu vers les cellules du lecteur commun. */
 export class ElectrificationIndicateursTableAdapter {
   private constructor(
-    private readonly format: ElectrificationIndicateursTableFormat,
+    readonly documentFormat: ElectrificationDocumentFormat,
     private readonly indices: number[],
     private readonly width: number
   ) {}
@@ -36,10 +36,14 @@ export class ElectrificationIndicateursTableAdapter {
     // Ne pas choisir arbitrairement un format inconnu ou ambigu.
     if (matches.length !== 1) return null;
     return new ElectrificationIndicateursTableAdapter(
-      matches[0].indicateurs,
+      matches[0],
       cells.map(({ index }) => index),
       row.length
     );
+  }
+
+  private get format() {
+    return this.documentFormat.indicateurs;
   }
 
   read(
@@ -87,11 +91,19 @@ export class ElectrificationIndicateursTableAdapter {
     )
       return null;
     return {
-      reference,
-      titre,
+      reference: this.withoutPlaceholder(reference),
+      titre: this.withoutPlaceholder(titre),
       resultat,
       objectif,
       objectifComplementaire,
     };
+  }
+
+  private withoutPlaceholder(cell: Source): Source {
+    if (cell.links.length) return cell;
+    const placeholders = Object.values(this.format.placeholders).flat();
+    return Values.text(cell, placeholders) === null
+      ? { ...cell, text: '' }
+      : cell;
   }
 }
