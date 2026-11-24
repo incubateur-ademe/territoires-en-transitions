@@ -61,6 +61,9 @@ import { UpsertFicheSecteursRouter } from './fiche-secteurs/upsert-fiche-secteur
 import { UpsertFicheSecteursService } from './fiche-secteurs/upsert-fiche-secteurs.service';
 import { ListFichesBelongingToPlansRepository } from './list-fiches/list-fiches-belonging-to-plans.repository';
 import { ListFichesBudgetRepository } from './list-fiches/list-fiches-budget.repository';
+import { ListFichesFiltersRepository } from './list-fiches/list-fiches-filters.repository';
+import { ListFichesRelationsRepository } from './list-fiches/list-fiches-relations.repository';
+import { ListFichesRepository } from './list-fiches/list-fiches.repository';
 import { NotifyPiloteService } from './notify-pilote/notify-pilote.service';
 import { FicheActionLinkRepository } from './update-fiche/fiche-action-link.repository';
 import { FicheActionLinkService } from './update-fiche/fiche-action-link.service';
@@ -89,6 +92,9 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     AxeService,
     ListFichesBudgetRepository,
     ListFichesBelongingToPlansRepository,
+    ListFichesFiltersRepository,
+    ListFichesRelationsRepository,
+    ListFichesRepository,
     ListFichesService,
     ListFichesRouter,
     CountByService,
