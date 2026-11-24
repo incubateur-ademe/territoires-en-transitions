@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import { Name, sql } from 'drizzle-orm';
+import { type Name, sql } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
 
 export type TransactionOperation<T, E = string> = (

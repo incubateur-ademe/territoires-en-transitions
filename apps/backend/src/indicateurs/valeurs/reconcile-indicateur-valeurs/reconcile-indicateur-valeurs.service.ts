@@ -103,35 +103,31 @@ export class ReconcileIndicateurValeursService {
   > {
     if (valeurs.length === 0) return success({ valeurs: [], conflits: [] });
     return captureIndicateurValeursResult(async () => {
-      const result = await this.transactionManager.executeSingle(
-        async (tx) => {
-          const writeContext = {
-            user: context.user,
-            metadataAuthorization: context.metadataAuthorization,
-            tx,
-          };
-          const prepared = await this.validationService.prepare(
-            valeurs,
-            writeContext
-          );
-          if (!prepared.success) return prepared;
-          const written = await this.writer.fillMissing(
-            prepared.data,
-            writeContext
-          );
-          if (!written.success) return written;
-          const dependent = written.data.valeurs.length
-            ? await this.propagateUpdated(written.data.valeurs, writeContext)
-            : success([]);
-          if (!dependent.success) return dependent;
-          return success({
-            valeurs: [...written.data.valeurs, ...dependent.data],
-            conflits: written.data.conflits,
-          });
-        },
-        context.tx,
-        { undoWritesOnFailure: false }
-      );
+      const result = await this.transactionManager.executeSingle(async (tx) => {
+        const writeContext = {
+          user: context.user,
+          metadataAuthorization: context.metadataAuthorization,
+          tx,
+        };
+        const prepared = await this.validationService.prepare(
+          valeurs,
+          writeContext
+        );
+        if (!prepared.success) return prepared;
+        const written = await this.writer.fillMissing(
+          prepared.data,
+          writeContext
+        );
+        if (!written.success) return written;
+        const dependent = written.data.valeurs.length
+          ? await this.propagateUpdated(written.data.valeurs, writeContext)
+          : success([]);
+        if (!dependent.success) return dependent;
+        return success({
+          valeurs: [...written.data.valeurs, ...dependent.data],
+          conflits: written.data.conflits,
+        });
+      }, context.tx);
       return getIndicateurValeursDataOrThrow(result);
     });
   }
