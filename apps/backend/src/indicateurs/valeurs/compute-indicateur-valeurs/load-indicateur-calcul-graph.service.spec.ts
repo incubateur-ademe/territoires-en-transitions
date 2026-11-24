@@ -1,6 +1,9 @@
 import type { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { failure, success } from '@tet/backend/utils/result.type';
+import { failure, Result, success } from '@tet/backend/utils/result.type';
+import type { IndicateurPredefini } from '@tet/domain/indicateurs';
 import { toIndicateurRow } from '../../indicateur/indicateur-row.test-fixture';
+import type { IndicateurExpressionError } from '../indicateur-expression.errors';
+import type { ReferencedIndicateur } from '../referenced-indicateur.dto';
 import { LoadIndicateurCalculGraphService } from './load-indicateur-calcul-graph.service';
 
 const cause = new Error(
@@ -15,6 +18,9 @@ const makeService = ({
   listIndicateursPredefinis = vi.fn(),
   listIndicateursPredefinisHavingComputedValue = vi.fn(),
   lockIndicateurs = vi.fn(),
+  extractNeededSourceIndicateursFromFormula = vi.fn(
+    (): Result<ReferencedIndicateur[], IndicateurExpressionError> => success([])
+  ),
 }) =>
   new LoadIndicateurCalculGraphService(
     {
@@ -22,7 +28,7 @@ const makeService = ({
       listIndicateursPredefinisHavingComputedValue,
     } as never,
     { lockForValueWrite: vi.fn(), lockIndicateurs } as never,
-    { extractNeededSourceIndicateursFromFormula: vi.fn(() => []) } as never
+    { extractNeededSourceIndicateursFromFormula } as never
   );
 
 describe('LoadIndicateurCalculGraphService', () => {
@@ -83,6 +89,51 @@ describe('LoadIndicateurCalculGraphService', () => {
 
     await expect(service.loadForRecompute([1], context)).resolves.toEqual(
       graphFailure
+    );
+  });
+
+  it('requalifie une formule invalide avec l’erreur de syntaxe en cause', async () => {
+    const syntaxError = new Error('Attendu « alors »');
+    const withFormula = toIndicateurRow({
+      id: 1,
+      identifiantReferentiel: 'cae_1.a',
+      valeurCalcule: 'si val(cae_1.b)',
+    });
+    const service = makeService({
+      listIndicateursPredefinis: vi
+        .fn()
+        .mockResolvedValue(success([withFormula])),
+      extractNeededSourceIndicateursFromFormula: vi.fn(() =>
+        failure('INVALID_EXPRESSION', syntaxError)
+      ),
+    });
+
+    await expect(service.loadForRecompute([1], context)).resolves.toEqual(
+      failure('LOAD_CALCUL_GRAPH_FAILED', syntaxError)
+    );
+  });
+
+  it('rend la définition et les références extraites de sa formule', () => {
+    const withFormula = toIndicateurRow({
+      id: 1,
+      identifiantReferentiel: 'cae_1.a',
+      valeurCalcule: 'val(cae_1.b)',
+    }) as IndicateurPredefini;
+    const reference: ReferencedIndicateur = {
+      identifiant: 'cae_1.b',
+      optional: false,
+      tokens: ['val'],
+    };
+    const extractNeededSourceIndicateursFromFormula = vi.fn(() =>
+      success([reference])
+    );
+    const service = makeService({ extractNeededSourceIndicateursFromFormula });
+
+    expect(service.getFormula(withFormula)).toEqual(
+      success({ definition: withFormula, references: [reference] })
+    );
+    expect(extractNeededSourceIndicateursFromFormula).toHaveBeenCalledWith(
+      'val(cae_1.b)'
     );
   });
 

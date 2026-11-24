@@ -53,23 +53,21 @@ export class GetIndicateursAssociesService {
     const indicateursParActionId: Record<string, ReferencedIndicateur[]> = {};
     const identifiantReferentielList: string[] = [];
 
-    try {
-      input.formules.forEach(({ actionId, exprScore }) => {
-        if (exprScore) {
-          const indicateurs =
-            this.indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
-              exprScore
-            );
-          indicateursParActionId[actionId] = indicateurs;
-          identifiantReferentielList.push(
-            ...indicateurs.map((ind) => ind.identifiant)
-          );
-        }
-      });
-    } catch (error) {
-      return failure(
-        ScoreIndicatifErrorEnum.INDICATEUR_EXPRESSION_ERROR,
-        error instanceof Error ? error : new Error(String(error))
+    for (const { actionId, exprScore } of input.formules) {
+      if (!exprScore) continue;
+      const indicateurs =
+        this.indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
+          exprScore
+        );
+      if (!indicateurs.success) {
+        return failure(
+          ScoreIndicatifErrorEnum.INDICATEUR_EXPRESSION_ERROR,
+          indicateurs.cause
+        );
+      }
+      indicateursParActionId[actionId] = indicateurs.data;
+      identifiantReferentielList.push(
+        ...indicateurs.data.map((ind) => ind.identifiant)
       );
     }
 

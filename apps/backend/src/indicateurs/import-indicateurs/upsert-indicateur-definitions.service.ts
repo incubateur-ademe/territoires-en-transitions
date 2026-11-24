@@ -18,6 +18,7 @@ import type {
 import type { ImportObjectifType } from './import-indicateur-objectif.dto';
 import { ImportIndicateurRelationsService } from './import-indicateur-relations.service';
 import { mapIndicateurObjectifs } from './map-indicateur-objectifs.rules';
+import { toThrowingIndicateurValidators } from './throwing-indicateur-validators.adapter';
 import {
   validateIndicateurDefinitions,
   validateObjectifIdentifiants,
@@ -57,7 +58,7 @@ export class UpsertIndicateurDefinitionsService {
     Result<UpsertIndicateurDefinitionsResult, ImportIndicateurDefinitionError>
   > {
     const validation = validateIndicateurDefinitions(imported, {
-      indicateurs: this.expressions,
+      indicateurs: toThrowingIndicateurValidators(this.expressions),
       personnalisations: this.personnalisations,
     });
     if (!validation.success) return validation;
