@@ -40,12 +40,16 @@ check "app_servers_routed" {
 }
 
 locals {
-  app_server_public_ips = flatten([
-    for tier in ["nonprod", "preview", "prod", "data"] : [
-      for s in data.scaleway_instance_servers.app[tier].servers : [
+  app_server_public_ips_by_tier = {
+    for tier, ds in data.scaleway_instance_servers.app : tier => flatten([
+      for s in ds.servers : [
         for ip in s.public_ips : ip.address if ip.family == "inet"
       ] if s.name == "tet-${tier}-apps"
-    ]
+    ])
+  }
+
+  app_server_public_ips = flatten([
+    for tier in ["nonprod", "preview", "prod", "data"] : local.app_server_public_ips_by_tier[tier]
   ])
 
   # Tiers portant un serveur applicatif. Le tier platform n'en fait pas partie :
@@ -63,6 +67,19 @@ locals {
   )
 
   vpn_server_cidr = "${var.vpn_private_ipv4_address}/32"
+
+  # Pairs à accès restreint : leurs tiers, traduits en destinations (Private
+  # Network s'il y en a un, IP publique du serveur). La prod n'a que la seconde.
+  vpn_peers = {
+    for name, p in var.vpn_peers : name => {
+      public_key = p.public_key
+      address    = p.address
+      routed_cidrs = p.tiers == null ? null : concat(
+        [for t in p.tiers : var.network_plan[t].ipv4_subnet if contains(keys(var.network_plan), t)],
+        flatten([for t in p.tiers : [for ip in local.app_server_public_ips_by_tier[t] : "${ip}/32"]]),
+      )
+    }
+  }
 
   # Ports privés ouverts aux opérateurs dans chaque tier : SSH, Postgres et
   # Redis managés (preprod). Destination : tout le /24, les bases managées y
@@ -131,7 +148,7 @@ module "vpn" {
   private_key_secret_name = var.vpn_private_key_secret_name
   tunnel_cidr             = var.vpn_tunnel_cidr
   routed_cidrs            = local.vpn_routed_cidrs
-  peers                   = var.vpn_peers
+  peers                   = local.vpn_peers
   ssh_allowed_ips         = var.vpn_ssh_allowed_ips
   ssh_authorized_keys     = var.vpn_ssh_authorized_keys
 }

@@ -258,7 +258,7 @@ passerelle VPN, ajoutée d'office à `ssh_allowed_ips`) : rien à reporter.
 Sur une infra vide, une fois les stacks applicatifs appliqués, réappliquer `platform` : il
 ajoute alors les IP publiques des serveurs aux routes du tunnel. Mettre ensuite à jour
 `AllowedIPs` dans la configuration WireGuard de chaque opérateur
-(`vpn_client_allowed_ips`) : sans cela, le tunnel ne relaie pas les IP publiques des
+(`vpn_client_allowed_ips`, une entrée par pair) : sans cela, le tunnel ne relaie pas les IP publiques des
 serveurs.
 
 Après le premier apply d'un stack applicatif, récupérer les mots de passe générés
@@ -315,8 +315,13 @@ wg genkey | scw secret version create \
    `"<prenom.nom>" = { public_key = "<publique>", address = "10.99.0.<n>" }` à `vpn_peers`
    et, s'il doit administrer la passerelle (`ssh tet-ops@10.99.0.1`), sa clé SSH publique à
    `vpn_ssh_authorized_keys`. Appliquer `platform`, puis ajouter la même clé à
-   `server_ssh_authorized_keys` des stacks `nonprod`, `preview` et `prod` pour qu'il
-   accède aux serveurs.
+   `server_ssh_authorized_keys` des stacks `nonprod`, `preview`, `prod` et `data` pour
+   qu'il accède aux serveurs.
+
+   Accès restreint (ex. le data analyst) : `tiers = ["data"]` dans son entrée. La
+   passerelle ne lui relaie que le Private Network et l'IP publique des serveurs de ces
+   tiers et jette le reste : ni la prod, ni la preprod (qui porte une copie des données de
+   prod). Sa clé SSH ne va alors que dans les stacks de ses tiers.
 3. Sa configuration (`/etc/wireguard/tet.conf`, ou l'app WireGuard) :
 
 ```ini
@@ -329,7 +334,7 @@ Address = 10.99.0.<n>/32
 #   revision=latest -o json | jq -r .data | base64 -d | wg pubkey
 PublicKey = <publique de la passerelle>
 Endpoint = <terraform -chdir=infra/platform output -raw vpn_endpoint>
-AllowedIPs = <terraform -chdir=infra/platform output -raw vpn_client_allowed_ips>
+AllowedIPs = <terraform -chdir=infra/platform output -json vpn_client_allowed_ips | jq -r '."<prenom.nom>"'>
 PersistentKeepalive = 25
 ```
 
@@ -535,7 +540,9 @@ Mise en place, une fois :
 2. `source infra/scripts/coolify-env.sh`, puis `terraform -chdir=infra/data apply`.
 3. Inviter le data analyst : **Teams → Members**, par e-mail ou lien d'invitation. Le
    provider n'a pas de ressource pour les membres.
-4. Les URIs des rôles (`stats_writer_private_connection_uri`,
+4. Accès VPN du data analyst : pair à accès restreint, `tiers = ["data"]` (cf.
+   [Ajouter un opérateur](#ajouter-un-opérateur)).
+5. Les URIs des rôles (`stats_writer_private_connection_uri`,
    `mcp_reader_private_connection_uri`, `metabase_private_connection_uri`) se collent dans
    les variables des ressources Coolify concernées.
 
