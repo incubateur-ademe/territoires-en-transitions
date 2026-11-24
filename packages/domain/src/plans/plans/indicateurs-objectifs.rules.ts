@@ -3,6 +3,7 @@ import { IndicateurPeriodicite } from '../../indicateurs/indicateur/indicateur-p
 import { normalizeIndicateurReferenceObjectifs } from '../../indicateurs/valeurs/indicateur-reference-objectif.rules';
 import { IndicateurPeriodes } from '../../indicateurs/valeurs/indicateur-periodes';
 import { maskDernierResultat } from '../../indicateurs/valeurs/mask-dernier-resultat.rules';
+import { computeProgression } from '../../indicateurs/valeurs/progression.rules';
 
 /** Valeur d'un indicateur pour la collectivité du plan, avec sa source éventuelle */
 export type LigneValeurIndicateurObjectif = {
@@ -190,4 +191,141 @@ export function compareIndicateursObjectifs(
     return a.favori ? -1 : 1;
   }
   return a.titre.localeCompare(b.titre, 'fr');
+}
+
+/** Une valeur datée à l'année : départ ou dernier résultat d'un indicateur. */
+export type IndicateurValeurAnnee = { annee: number; valeur: number };
+
+const getAnneeResultat = ({ dateValeur }: IndicateurResultat) =>
+  Number(dateValeur.slice(0, 4));
+
+const toValeurAnnee = (
+  point: IndicateurResultat | undefined
+): IndicateurValeurAnnee | null =>
+  point ? { annee: getAnneeResultat(point), valeur: point.valeur } : null;
+
+/**
+ * La valeur de départ : celle du dépôt PCAET quand elle est connue (année de
+ * référence du diagnostic), sinon le premier résultat de la série affichée.
+ */
+export function pickDepart(
+  points: IndicateurResultat[],
+  departDepot: IndicateurValeurAnnee | null = null
+): IndicateurValeurAnnee | null {
+  return departDepot ?? toValeurAnnee(points[0]);
+}
+
+/** Le dernier résultat de la série affichée. */
+export function pickDernier(
+  points: IndicateurResultat[]
+): IndicateurValeurAnnee | null {
+  return toValeurAnnee(points.at(-1));
+}
+
+export type AvancementObjectifEtat =
+  | 'a-l-heure'
+  | 'en-retard'
+  | 'en-recul'
+  | 'atteint'
+  | 'echeance-atteinte'
+  | 'echeance-manquee';
+
+export type AvancementObjectif = {
+  depart: IndicateurValeurAnnee;
+  dernier: IndicateurValeurAnnee;
+  cible: IndicateurObjectifHorizon;
+  /** Part du chemin parcouru entre le départ et l'objectif, signée et non bornée */
+  chemin: number;
+  /** Part du temps écoulé entre l'année de départ et celle de l'objectif, de 0 à 1 */
+  tempsEcoule: number;
+  /** Évolution du dernier résultat par rapport au départ, `null` si départ nul */
+  evolutionDepuisDepart: number | null;
+  /** Évolution visée par l'objectif par rapport au départ, `null` si départ nul */
+  evolutionObjectif: number | null;
+  etat: AvancementObjectifEtat;
+};
+
+const evolution = (depart: number, valeur: number) =>
+  depart === 0 ? null : (valeur - depart) / Math.abs(depart);
+
+const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
+
+/**
+ * Où en est un indicateur de son objectif. Le chemin parcouru vaut
+ * `(dernier - départ) / (objectif - départ)`, valable à la hausse comme à la
+ * baisse ; il est comparé au temps écoulé pour dire si l'indicateur tient le
+ * rythme d'une trajectoire linéaire.
+ *
+ * `null` (pas de barre) si une valeur manque, si le départ est déjà l'objectif,
+ * si l'objectif n'est pas postérieur au départ, ou si le dernier résultat est
+ * antérieur au départ.
+ */
+export function computeAvancementObjectif({
+  depart,
+  dernier,
+  cible,
+  anneeCourante,
+}: {
+  depart: IndicateurValeurAnnee | null;
+  dernier: IndicateurValeurAnnee | null;
+  cible: IndicateurObjectifHorizon | null;
+  anneeCourante: number;
+}): AvancementObjectif | null {
+  if (
+    !depart ||
+    !dernier ||
+    !cible ||
+    cible.annee <= depart.annee ||
+    dernier.annee < depart.annee
+  ) {
+    return null;
+  }
+  // `computeProgression(départ, attendue, utilisée)` vaut
+  // `(départ - utilisée) / (départ - attendue)` : null si départ = objectif.
+  const chemin = computeProgression(
+    depart.valeur,
+    cible.valeur,
+    dernier.valeur
+  );
+  if (chemin === null) {
+    return null;
+  }
+  const tempsEcoule = clamp01(
+    (dernier.annee - depart.annee) / (cible.annee - depart.annee)
+  );
+  return {
+    depart,
+    dernier,
+    cible,
+    chemin,
+    tempsEcoule,
+    evolutionDepuisDepart: evolution(depart.valeur, dernier.valeur),
+    evolutionObjectif: evolution(depart.valeur, cible.valeur),
+    etat: getEtat({
+      chemin,
+      tempsEcoule,
+      echeancePassee: anneeCourante > cible.annee,
+    }),
+  };
+}
+
+function getEtat({
+  chemin,
+  tempsEcoule,
+  echeancePassee,
+}: {
+  chemin: number;
+  tempsEcoule: number;
+  echeancePassee: boolean;
+}): AvancementObjectifEtat {
+  if (echeancePassee) {
+    return chemin >= 1 ? 'echeance-atteinte' : 'echeance-manquee';
+  }
+  if (chemin >= 1) {
+    return 'atteint';
+  }
+  if (chemin < 0) {
+    return 'en-recul';
+  }
+  return chemin >= tempsEcoule ? 'a-l-heure' : 'en-retard';
 }

@@ -2,6 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { IndicateurPeriodiciteEnum } from '../../indicateurs/indicateur/indicateur-periodicite.schema';
 import {
   compareIndicateursObjectifs,
+  computeAvancementObjectif,
+  pickDepart,
+  pickDernier,
   getHorizonParDefaut,
   LigneValeurIndicateurObjectif,
   listObjectifs,
@@ -222,5 +225,138 @@ describe('compareIndicateursObjectifs', () => {
         .toSorted(compareIndicateursObjectifs)
         .map(({ titre }) => titre)
     ).toEqual(['Bâtiments', 'Zéro artificialisation', 'Air', 'Émissions']);
+  });
+});
+
+describe('pickDepart / pickDernier', () => {
+  const points = [
+    { dateValeur: '2015-01-01', valeur: 152 },
+    { dateValeur: '2019-07-01', valeur: 140 },
+    { dateValeur: '2024-01-01', valeur: 124 },
+  ];
+
+  it('part du premier résultat et finit au dernier, à l’année', () => {
+    expect(pickDepart(points)).toEqual({ annee: 2015, valeur: 152 });
+    expect(pickDernier(points)).toEqual({ annee: 2024, valeur: 124 });
+  });
+
+  it('préfère le départ du dépôt PCAET', () => {
+    expect(pickDepart(points, { annee: 2018, valeur: 150 })).toEqual({
+      annee: 2018,
+      valeur: 150,
+    });
+  });
+
+  it('renvoie null sans résultat', () => {
+    expect(pickDepart([])).toBeNull();
+    expect(pickDernier([])).toBeNull();
+  });
+});
+
+describe('computeAvancementObjectif', () => {
+  // l'exemple d'Ugo : 152 en 2015, 124 en 2024, objectif 90 en 2030
+  const ges = {
+    depart: { annee: 2015, valeur: 152 },
+    dernier: { annee: 2024, valeur: 124 },
+    cible: { annee: 2030, valeur: 90 },
+    anneeCourante: 2026,
+  };
+
+  it('compare le chemin parcouru au temps écoulé : en retard', () => {
+    const avancement = computeAvancementObjectif(ges);
+    expect(avancement?.chemin).toBeCloseTo(28 / 62);
+    expect(avancement?.tempsEcoule).toBeCloseTo(0.6);
+    expect(avancement?.evolutionDepuisDepart).toBeCloseTo(-28 / 152);
+    expect(avancement?.evolutionObjectif).toBeCloseTo(-62 / 152);
+    expect(avancement?.etat).toBe('en-retard');
+  });
+
+  it('vaut aussi à la hausse : à l’heure', () => {
+    const avancement = computeAvancementObjectif({
+      depart: { annee: 2015, valeur: 100 },
+      dernier: { annee: 2020, valeur: 180 },
+      cible: { annee: 2030, valeur: 250 },
+      anneeCourante: 2026,
+    });
+    expect(avancement?.chemin).toBeCloseTo(80 / 150);
+    expect(avancement?.tempsEcoule).toBeCloseTo(1 / 3);
+    expect(avancement?.etat).toBe('a-l-heure');
+  });
+
+  it('signale le recul, avec un chemin négatif', () => {
+    const avancement = computeAvancementObjectif({
+      ...ges,
+      dernier: { annee: 2024, valeur: 160 },
+    });
+    expect(avancement?.chemin).toBeLessThan(0);
+    expect(avancement?.evolutionDepuisDepart).toBeCloseTo(8 / 152);
+    expect(avancement?.etat).toBe('en-recul');
+  });
+
+  it('dit l’objectif atteint au-delà de 100 %', () => {
+    expect(
+      computeAvancementObjectif({
+        ...ges,
+        dernier: { annee: 2024, valeur: 85 },
+      })?.etat
+    ).toBe('atteint');
+  });
+
+  it('après l’échéance, ne dit plus que atteint ou manqué', () => {
+    const apres = { ...ges, anneeCourante: 2031 };
+    expect(computeAvancementObjectif(apres)?.etat).toBe('echeance-manquee');
+    expect(
+      computeAvancementObjectif({
+        ...apres,
+        dernier: { annee: 2030, valeur: 88 },
+      })?.etat
+    ).toBe('echeance-atteinte');
+  });
+
+  it('borne le temps écoulé à 1 quand le dernier résultat dépasse l’échéance', () => {
+    expect(
+      computeAvancementObjectif({
+        ...ges,
+        dernier: { annee: 2032, valeur: 100 },
+        anneeCourante: 2033,
+      })?.tempsEcoule
+    ).toBe(1);
+  });
+
+  it('n’a pas d’évolution en pourcentage depuis un départ nul', () => {
+    const avancement = computeAvancementObjectif({
+      depart: { annee: 2015, valeur: 0 },
+      dernier: { annee: 2020, valeur: 10 },
+      cible: { annee: 2030, valeur: 40 },
+      anneeCourante: 2026,
+    });
+    expect(avancement?.chemin).toBeCloseTo(0.25);
+    expect(avancement?.evolutionDepuisDepart).toBeNull();
+    expect(avancement?.evolutionObjectif).toBeNull();
+  });
+
+  it('pas de barre sans départ, dernier résultat ou cible', () => {
+    expect(computeAvancementObjectif({ ...ges, depart: null })).toBeNull();
+    expect(computeAvancementObjectif({ ...ges, dernier: null })).toBeNull();
+    expect(computeAvancementObjectif({ ...ges, cible: null })).toBeNull();
+  });
+
+  it('pas de barre si le départ est déjà l’objectif ou à son année', () => {
+    expect(
+      computeAvancementObjectif({ ...ges, cible: { annee: 2030, valeur: 152 } })
+    ).toBeNull();
+    expect(
+      computeAvancementObjectif({ ...ges, cible: { annee: 2015, valeur: 90 } })
+    ).toBeNull();
+  });
+
+  it('pas de barre si le dernier résultat précède le départ', () => {
+    expect(
+      computeAvancementObjectif({
+        ...ges,
+        depart: { annee: 2018, valeur: 150 },
+        dernier: { annee: 2016, valeur: 145 },
+      })
+    ).toBeNull();
   });
 });
