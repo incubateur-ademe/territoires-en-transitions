@@ -145,9 +145,15 @@ jobs:
             APPLICATION_VERSION=${{ steps.meta.outputs.application-version }}
             ${{ matrix.extra-build-args }}
 
-  # Après les trois builds : on ne déploie pas une app sans le backend du même
-  # commit.
-  deploy:
+  # Après les trois builds, le backend d'abord : son conteneur applique les
+  # migrations Sqitch au démarrage (apps/backend/docker-entrypoint.sh). App et
+  # site ne partent que sur un schéma et une API à jour.
+  #
+  # Pas de cancel-in-progress : annuler le job n'arrête pas Coolify, qui
+  # finirait le déploiement (et ses migrations) sans que personne n'en lise
+  # l'issue. Un commit plus récent attend son tour ; GitHub ne garde que le
+  # dernier en attente.
+  deploy-backend:
     name: Déploie ${{ matrix.app }}
     needs: build
     # Environnement restreint à main (réglage GitHub) : c'est lui qui porte
@@ -155,27 +161,22 @@ jobs:
     environment:
       name: preprod-scaleway
       url: ${{ matrix.url }}
-    # Un commit plus récent remplace le déploiement en cours.
     concurrency:
       group: cd-preprod-${{ matrix.app }}
-      cancel-in-progress: true
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
       contents: read
 
+    # Matrice d'un élément : mêmes étapes que le job suivant, par ancre YAML.
     strategy:
-      fail-fast: false
       matrix:
         include:
-          - app: app
-            url: https://app.preprod.territoiresentransitions.fr
           - app: backend
             url: https://api.preprod.territoiresentransitions.fr
-          - app: site
-            url: https://preprod.territoiresentransitions.fr
 
-    steps:
+    steps: &deploy-steps
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
@@ -199,3 +200,28 @@ jobs:
           APP_ID: preprod/${{ matrix.app }}
           IMAGE_TAG: ${{ needs.build.outputs.image-tag }}
         run: infra/scripts/coolify-deploy.sh
+
+  deploy:
+    name: Déploie ${{ matrix.app }}
+    needs: [build, deploy-backend]
+    environment:
+      name: preprod-scaleway
+      url: ${{ matrix.url }}
+    concurrency:
+      group: cd-preprod-${{ matrix.app }}
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - app: app
+            url: https://app.preprod.territoiresentransitions.fr
+          - app: site
+            url: https://preprod.territoiresentransitions.fr
+
+    steps: *deploy-steps

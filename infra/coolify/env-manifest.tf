@@ -128,6 +128,9 @@ locals {
         SUPABASE_SERVICE_ROLE_KEY       = { secret = "supabase-service-role-key" }
         SUPABASE_ANON_KEY               = { secret = "supabase-anon-key" }
 
+        # Migrations Sqitch au démarrage du conteneur (apps/backend/docker-entrypoint.sh).
+        RUN_MIGRATIONS = { value = "true" }
+
         QUEUE_REDIS_URL    = { secret = "queue-redis-url" }
         QUEUE_REDIS_TLS_CA = { secret = "queue-redis-tls-ca", multiline = true }
 

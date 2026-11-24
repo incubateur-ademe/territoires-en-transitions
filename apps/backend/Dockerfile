@@ -88,7 +88,7 @@ RUN --mount=type=secret,id=bryntum_token,env=BRYNTUM_ACCESS_TOKEN \
 FROM manifests AS builder
 RUN --mount=type=secret,id=bryntum_token,env=BRYNTUM_ACCESS_TOKEN \
     env "pnpm_config_//npm.bryntum.com/:_authToken=$BRYNTUM_ACCESS_TOKEN" pnpm install -r --offline --frozen-lockfile
-COPY . .
+COPY --exclude=data_layer . .
 # `nx build backend` (aliased by this script) also builds the workspace
 # packages it depends on: domain, design-tokens, pdf-components.
 RUN pnpm run build:backend
@@ -100,9 +100,12 @@ WORKDIR /app
 # Runtime-only shared libs for canvas (no -dev headers, no compiler) +
 # fontconfig/fonts-liberation for PDF generation + the fr_FR locale used by
 # date/number formatting in generated documents.
+# sqitch + libdbd-pg-perl + postgresql-client : migrations appliquées au
+# démarrage (docker-entrypoint.sh). psql 15 comme l'image sqitch de la CI.
 RUN apt-get update && apt-get install -y --no-install-recommends \
       libcairo2 libpango-1.0-0 libjpeg62-turbo libgif7 librsvg2-2 \
       fontconfig fonts-liberation locales dumb-init \
+      sqitch libdbd-pg-perl postgresql-client \
     && sed -i '/fr_FR.UTF-8/s/^# //' /etc/locale.gen \
     && locale-gen fr_FR.UTF-8 \
     && rm -rf /var/lib/apt/lists/*
@@ -129,14 +132,24 @@ COPY --from=builder --chown=node:node /workspace/packages/pdf-components/package
 COPY --from=builder --chown=node:node /workspace/packages/pdf-components/dist ./packages/pdf-components/dist
 COPY --from=builder --chown=node:node /workspace/packages/pdf-components/assets ./packages/pdf-components/assets
 
+# Migrations Sqitch, à la même arborescence que dans le dépôt : sqitch.conf
+# pointe sur data_layer/sqitch, et `\ir` remonte vers data_layer/seed/imports.
+# Copiées depuis le contexte, pas depuis builder (qui exclut data_layer), et en
+# dernier : une migration n'invalide que ces couches.
+COPY sqitch.conf ./
+COPY data_layer/seed/imports ./data_layer/seed/imports
+COPY data_layer/sqitch ./data_layer/sqitch
+COPY apps/backend/docker-entrypoint.sh ./
+
 USER node
 
 EXPOSE ${PORT}
 
 # Pas de curl/wget dans l'image slim : le check HTTP de Coolify échouerait.
 # Même approche que apps/app/Dockerfile, via le fetch natif de Node.
-HEALTHCHECK --interval=5s --timeout=5s --start-period=10s --retries=5 \
+# start-period de 120 s : les migrations passent avant que Node n'écoute.
+HEALTHCHECK --interval=5s --timeout=5s --start-period=120s --retries=5 \
   CMD node -e "fetch('http://127.0.0.1:'+(process.env.PORT||3000)+'/version').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
 
 ENTRYPOINT ["dumb-init", "--"]
-CMD ["node", "dist/main.js"]
+CMD ["sh", "docker-entrypoint.sh"]

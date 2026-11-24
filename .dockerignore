@@ -65,6 +65,12 @@ keyfile.json
 # contexte petit ET évite qu'une modification qui n'a rien à voir (migration
 # SQL, spec e2e, note de doc) invalide les couches de build.
 data_layer
+# Migrations embarquées dans l'image backend (apps/backend/Dockerfile). Les
+# builders excluent data_layer de leur `COPY . .` : une migration n'invalide
+# pas leur cache.
+!data_layer/sqitch
+# Inclus par trois changes (`\ir ../../../seed/imports/...`).
+!data_layer/seed/imports
 supabase
 api_tests
 strapi
