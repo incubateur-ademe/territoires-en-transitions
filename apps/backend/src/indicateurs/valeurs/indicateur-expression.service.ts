@@ -15,8 +15,11 @@ import { IdentiteCollectivite } from '@tet/domain/collectivites';
 import { CstNode } from 'chevrotain';
 import { isEqual, isNil } from 'es-toolkit';
 import { IndicateurExpressionError } from './indicateur-expression.errors';
-import { computeProgression, computeValeurAttendue } from './progression.rules';
-import { ANNEE_REFERENCE_SNBC_V3 } from '@tet/domain/indicateurs';
+import { computeValeurAttendue } from './progression.rules';
+import {
+  ANNEE_REFERENCE_SNBC_V3,
+  computeProgression,
+} from '@tet/domain/indicateurs';
 import {
   ProgressionParams,
   ReferencedIndicateur,
