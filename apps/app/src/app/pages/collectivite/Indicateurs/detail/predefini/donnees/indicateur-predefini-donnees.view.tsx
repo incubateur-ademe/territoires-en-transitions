@@ -3,6 +3,7 @@ import { useState } from 'react';
 import IndicateurDetailChart from '../../../Indicateur/detail/IndicateurDetailChart';
 import { IndicateurValuesTabs } from '../../../Indicateur/detail/IndicateurValuesTabs';
 import { IndicateurCommentaireInput } from '../../content/donnees/indicateur-commentaire.input';
+import { IndicateurDonneesCard } from '../../content/donnees/indicateur-donnees.card';
 import { useIndicateurActions } from '../../context/indicateur-actions.context';
 import { useIndicateurChart } from '../../context/indicateur-chart.context';
 import { useIndicateurData } from '../../context/indicateur-data.context';
@@ -30,7 +31,7 @@ export const IndicateurPredefiniDonnees = () => {
     INDICATEUR_PERSONNALISATION_IDENTIFIANT;
 
   return (
-    <div className="flex flex-col gap-7 bg-white p-10 border border-grey-3 rounded-xl">
+    <IndicateurDonneesCard>
       <div className="flex flex-row gap-4">
         {sourceFilter.availableOptions.length > 1 && (
           <IndicateurSourcesSelect sourceFilter={sourceFilter} />
@@ -76,6 +77,6 @@ export const IndicateurPredefiniDonnees = () => {
         disabled={!canMutateIndicateur}
         updateCommentaire={updateCommentaire}
       />
-    </div>
+    </IndicateurDonneesCard>
   );
 };
