@@ -140,7 +140,12 @@ export class ValiderAvisService {
       return false;
     }
 
-    const result = await this.cloreInstructionService.clore(cible, { tx });
+    const result = await this.transactionManager.executeSingle(
+      (transaction) =>
+        this.cloreInstructionService.clore(cible, { tx: transaction }),
+      tx,
+      { undoWritesOnFailure: true }
+    );
     if (!result.success) {
       this.logger.warn(
         `Avis validé sur la demande ${demandeAvisId}, mais clôture de l'instruction en échec sur la démarche ${cible.demarcheId} : ${result.error}`

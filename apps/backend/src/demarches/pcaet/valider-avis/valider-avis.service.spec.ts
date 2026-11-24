@@ -22,12 +22,11 @@ const avisValide = { ...brouillon, valideLe: '2026-11-24T10:00:00.000Z' };
 const cible = { collectiviteId: 1, demarcheId: 7 };
 
 const makeService = ({ clore }: { clore: ReturnType<typeof vi.fn> }) => {
-  const transactionManager = {
-    executeSingle: vi.fn(
-      async (operation: (transaction: Transaction) => Promise<unknown>) =>
-        operation(tx)
-    ),
-  } as unknown as TransactionManager;
+  const executeSingle = vi.fn(
+    async (operation: (transaction: Transaction) => Promise<unknown>) =>
+      operation(tx)
+  );
+  const transactionManager = { executeSingle } as unknown as TransactionManager;
   const depotPermissionsService = {
     canDeposerAvis: vi.fn().mockResolvedValue(success({ cible })),
   } as unknown as DepotPermissionsService;
@@ -54,7 +53,7 @@ const makeService = ({ clore }: { clore: ReturnType<typeof vi.fn> }) => {
     notifyAvisRecuService,
     trackingService as unknown as DemarchePcaetTrackingService
   );
-  return { service, pcaetAvisRepository, trackingService };
+  return { service, pcaetAvisRepository, trackingService, executeSingle };
 };
 
 describe('ValiderAvisService', () => {
@@ -62,14 +61,16 @@ describe('ValiderAvisService', () => {
     const clore = vi
       .fn()
       .mockResolvedValue(failure('DATABASE_ERROR', new Error('clôture')));
-    const { service, pcaetAvisRepository, trackingService } = makeService({
-      clore,
-    });
+    const { service, pcaetAvisRepository, trackingService, executeSingle } =
+      makeService({ clore });
 
     const result = await service.validerAvis(input, { user, tx });
 
     expect(result).toEqual(success([avisValide]));
     expect(pcaetAvisRepository.valider).toHaveBeenCalledWith(input, tx);
+    expect(executeSingle).toHaveBeenCalledWith(expect.any(Function), tx, {
+      undoWritesOnFailure: true,
+    });
     expect(trackingService.trackInstructeur).toHaveBeenCalledWith(
       expect.anything(),
       expect.anything(),
