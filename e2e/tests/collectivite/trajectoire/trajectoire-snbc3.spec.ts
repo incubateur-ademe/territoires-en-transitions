@@ -85,10 +85,16 @@ test.describe('Trajectoire SNBC 3', () => {
     const getReferences = () =>
       entries.evaluateAll((elements) =>
         Object.fromEntries(
-          elements.map((element) => [
-            element.textContent,
-            element.getAttribute('data-reference'),
-          ])
+          elements.map((element) => {
+            const levier = element.getAttribute('data-levier');
+            const reference = element.getAttribute('data-reference');
+            if (!levier || !reference) {
+              throw new Error(
+                'Le repère doit identifier le levier et son numéro'
+              );
+            }
+            return [levier, reference];
+          })
         )
       );
 
@@ -164,10 +170,12 @@ test.describe('Trajectoire SNBC 3', () => {
       expect(text.weight).toBe(text.kind === 'tile-value' ? '400' : '600');
     }
     const narrowReferences = await getReferences();
-    for (const [label, reference] of Object.entries(narrowReferences).filter(
-      ([label]) => label in desktopReferences
-    )) {
-      expect(reference).toBe(desktopReferences[label]);
+    const sharedReferences = Object.entries(narrowReferences).filter(
+      ([levier]) => levier in desktopReferences
+    );
+    expect(sharedReferences.length).toBeGreaterThan(0);
+    for (const [levier, reference] of sharedReferences) {
+      expect(reference).toBe(desktopReferences[levier]);
     }
     expect(
       await references.evaluateAll((elements) =>
@@ -212,6 +220,8 @@ test.describe('Trajectoire SNBC 3', () => {
     await chart.getByText('Mondrian territorialisé', { exact: true }).click();
     await expect(tiles).toHaveCount(25);
     await expect(tinyReference).toHaveAccessibleName(new RegExp(tinyLevier));
+    await expect(tinyReference).not.toBeFocused();
+    await expect(tinyTile).toHaveCSS('box-shadow', 'none');
 
     const chartBounds = await chart.evaluate((element) => {
       const rect = element.getBoundingClientRect();

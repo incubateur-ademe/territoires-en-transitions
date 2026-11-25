@@ -137,6 +137,14 @@ export function SgpeMondrianChart(props: Props) {
     }));
   }, [measureContext, references, tiles]);
 
+  // Le retrait du bouton focalisé ne déclenche pas toujours onBlur.
+  if (
+    focusedKey &&
+    !labels.some((tile) => tile.key === focusedKey && !tile.fit)
+  ) {
+    setFocusedKey(undefined);
+  }
+
   const legend = labels
     .filter((tile) => !tile.fit)
     .sort((a, b) => (a.reference ?? 0) - (b.reference ?? 0));
@@ -340,6 +348,7 @@ export function SgpeMondrianChart(props: Props) {
                   onBlur={() => setFocusedKey(undefined)}
                   onClick={() => handleSelected(tile.secteur, tile.levier)}
                   data-test="indicateurs.trajectoires.leviers.legend-entry"
+                  data-levier={tile.key}
                   data-reference={tile.reference}
                 >
                   <span
