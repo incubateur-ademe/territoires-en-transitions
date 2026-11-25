@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import type { PersonnalisationQuestionReponse } from '@tet/domain/collectivites';
 import { describe, expect, it, vi } from 'vitest';
-import { IndicateurPersonnalisationProvider } from '../../context/indicateur-personnalisation.context';
+import { IndicateurPersonnalisationProvider } from '../context/indicateur-personnalisation.context';
 import { IndicateurPersonnalisationQuestions } from './indicateur-personnalisation.questions';
 
 vi.mock(

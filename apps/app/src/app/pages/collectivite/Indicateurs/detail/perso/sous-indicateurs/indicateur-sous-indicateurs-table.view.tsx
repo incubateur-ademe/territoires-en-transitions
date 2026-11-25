@@ -28,7 +28,7 @@ import { countCommentaires } from '../../../table/indicateur-periode-commentaire
 import type { IndicateurPeriodeCommentaires } from '../../../table/use-indicateur-periode-commentaires';
 import { useIndicateurPeriodeDeclaration } from '../../../table/use-indicateur-periode-declaration';
 import { useRevealIndicateurPeriode } from '../../../table/use-reveal-indicateur-periode';
-import { useIndicateurSousIndicateursTable } from '../../context/indicateur-sous-indicateurs-table.context';
+import { useIndicateurSousIndicateursTable } from '../context/indicateur-sous-indicateurs-table.context';
 import { CreateSousIndicateurButton } from './create-sous-indicateur.button';
 import { ConfirmDetachSousIndicateur } from './confirm-detach-sous-indicateur';
 import { ConfirmDeleteSousIndicateursPeriode } from './confirm-delete-sous-indicateurs-periode';
@@ -37,7 +37,7 @@ import {
   toSousIndicateurTable,
   type DetachTarget,
 } from './to-sous-indicateur-table-rows';
-import type { IndicateurNouveauSousIndicateurValue } from '@/app/app/pages/collectivite/Indicateurs/detail/context/indicateur-nouveau-sous-indicateur.context';
+import type { IndicateurNouveauSousIndicateurValue } from '@/app/app/pages/collectivite/Indicateurs/detail/perso/context/indicateur-nouveau-sous-indicateur.context';
 import { useSousIndicateurRowsExpansion } from './use-sous-indicateur-rows-expansion';
 
 type PrivateMode = Readonly<{

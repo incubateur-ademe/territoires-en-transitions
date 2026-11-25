@@ -3,7 +3,7 @@
 import { type JSX, useEffect } from 'react';
 import { ChartPngExportFrame } from '../../../chart/chart-png-export.frame';
 import { useChartPngExport } from '../../../chart/use-chart-png-export';
-import { useIndicateurSousIndicateursChart } from '../../context/indicateur-sous-indicateurs-chart.context';
+import { useIndicateurSousIndicateursChart } from '../context/indicateur-sous-indicateurs-chart.context';
 import type { ChartPresentation } from './indicateur-sous-indicateurs-chart.option';
 import { IndicateurSousIndicateursChart } from './indicateur-sous-indicateurs-chart.view';
 

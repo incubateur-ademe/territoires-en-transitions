@@ -4,12 +4,16 @@ import { useGetIndicateur } from '@/app/indicateurs/indicateurs/use-get-indicate
 import { INDICATEUR_TRAJECTOIRE_IDENTFIANTS } from '@/app/indicateurs/trajectoires/trajectoire-constants';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useCollectiviteId } from '@tet/api/collectivites';
-import { isIndicateurPredefini } from '@tet/domain/indicateurs';
+import {
+  isIndicateurPerso,
+  isIndicateurPredefini,
+} from '@tet/domain/indicateurs';
 import { useIsTrajectoireSnbc3Enabled } from '../../Trajectoire/trajectoire-snbc3/data/use-is-trajectoire-snbc3-enabled';
 import { useGetStatutTrajectoire } from '../../Trajectoire/use-get-statut-trajectoire';
 import { useGetTrajectoire } from '../../Trajectoire/use-trajectoire';
 import { IndicateurDetailDataProvider } from './data/indicateur-detail.data-provider';
-import { IndicateurLayout } from './indicateur-layout.view';
+import { IndicateurPersoLayout } from './perso/indicateur-perso-layout.view';
+import { IndicateurPredefiniLayout } from './predefini/indicateur-predefini-layout.view';
 
 type Props = {
   indicateurId: number | string;
@@ -56,7 +60,11 @@ export const IndicateurDetail = ({ indicateurId }: Props) => {
 
   return (
     <IndicateurDetailDataProvider indicateur={indicateur}>
-      <IndicateurLayout />
+      {isIndicateurPerso(indicateur) ? (
+        <IndicateurPersoLayout />
+      ) : (
+        <IndicateurPredefiniLayout />
+      )}
     </IndicateurDetailDataProvider>
   );
 };

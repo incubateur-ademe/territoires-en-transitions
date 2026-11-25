@@ -20,11 +20,11 @@ import {
   toTexteUpdate,
 } from './indicateur-texte.rules';
 import { IndicateurFichesLieesDataProvider } from './indicateur-fiches-liees.data-provider';
-import { IndicateurMesuresLieesDataProvider } from './indicateur-mesures-liees.data-provider';
-import { IndicateurPersonnalisationDataProvider } from './indicateur-personnalisation.data-provider';
-import { IndicateurSousIndicateursChartDataProvider } from './indicateur-sous-indicateurs-chart.data-provider';
-import { IndicateurNouveauSousIndicateurDataProvider } from './indicateur-nouveau-sous-indicateur.data-provider';
-import { IndicateurSousIndicateursTableDataProvider } from './indicateur-sous-indicateurs-table.data-provider';
+import { IndicateurMesuresLieesDataProvider } from '../predefini/data/indicateur-mesures-liees.data-provider';
+import { IndicateurPersonnalisationDataProvider } from '../predefini/data/indicateur-personnalisation.data-provider';
+import { IndicateurSousIndicateursChartDataProvider } from '../perso/data/indicateur-sous-indicateurs-chart.data-provider';
+import { IndicateurNouveauSousIndicateurDataProvider } from '../perso/data/indicateur-nouveau-sous-indicateur.data-provider';
+import { IndicateurSousIndicateursTableDataProvider } from '../perso/data/indicateur-sous-indicateurs-table.data-provider';
 import { useDeleteIndicateurValeur } from '../../data/use-delete-indicateur-valeur';
 import { useIndicateurChartInfo } from '../../data/use-indicateur-chart';
 import { useExportIndicateurs } from '../../Indicateur/useExportIndicateurs';

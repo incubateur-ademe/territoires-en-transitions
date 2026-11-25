@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import ThematiquesDropdown from '@/app/shared/thematiques/thematiques.dropdown';
 import { Field } from '@tet/ui';
 import { useIndicateurData } from '../../context/indicateur-data.context';
@@ -19,7 +20,7 @@ export const ThematiquesIndicateurInput = ({ disabled }: Props) => {
   };
 
   return (
-    <Field title="Thématique">
+    <Field title={appLabels.thematique()}>
       <ThematiquesDropdown
         values={thematiques.map((t) => t.id)}
         onChange={handleOnChange}

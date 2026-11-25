@@ -4,11 +4,10 @@ import type { SousIndicateursChartData } from '@/app/indicateurs/sous-indicateur
 import { appLabels } from '@/app/labels/catalog';
 import { ReactECharts } from '@/app/ui/charts/echarts/ReactECharts';
 import { useResizeGraphOnContainerSizeUpdate } from '@/app/ui/charts/echarts/use-resize-graph-on-container-size-update';
-import PictoIndicateurVide from '@/app/ui/pictogrammes/PictoIndicateurVide';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { EmptyCard } from '@tet/ui';
 import { type JSX, useId, useMemo, useRef } from 'react';
-import { useIndicateurSousIndicateursChart } from '../../context/indicateur-sous-indicateurs-chart.context';
+import { IndicateurEmptyChartCard } from '../../../chart/indicateur-empty-chart.card';
+import { useIndicateurSousIndicateursChart } from '../context/indicateur-sous-indicateurs-chart.context';
 import {
   type ChartPresentation,
   toSousIndicateursChartOption,
@@ -53,12 +52,7 @@ const EmptyState = (): JSX.Element => (
     className="flex items-center justify-center"
     style={{ height: CHART_HEIGHT }}
   >
-    <EmptyCard
-      size="xs"
-      className="h-64 w-full"
-      picto={(props) => <PictoIndicateurVide {...props} />}
-      title={appLabels.aucuneValeurTrouvee}
-    />
+    <IndicateurEmptyChartCard title={appLabels.aucuneValeurTrouvee} />
   </div>
 );
 

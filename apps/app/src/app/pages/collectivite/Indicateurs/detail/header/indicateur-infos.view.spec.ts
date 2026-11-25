@@ -15,7 +15,7 @@ const toIndicateur = (overrides: Partial<IndicateurDetaille>) =>
   } as IndicateurDetaille);
 
 const readonlyComposeSansAgregation = {
-  isPerso: false,
+  hasPersoBadge: false,
   isComposeSansAgregation: true,
   isReadonly: true,
 };
@@ -69,15 +69,19 @@ describe('hasIndicateurInfos', () => {
 
 describe('getInfosVisibility', () => {
   it.each([
-    { label: 'un indicateur perso', isPerso: true, hasOpenData: false },
-    { label: 'un indicateur en open data', isPerso: false, hasOpenData: true },
+    { label: 'un indicateur perso', hasPersoBadge: true, hasOpenData: false },
+    {
+      label: 'un indicateur en open data',
+      hasPersoBadge: false,
+      hasOpenData: true,
+    },
   ])(
     'affiche les badges pour $label hors composé sans agrégation',
-    ({ isPerso, hasOpenData }) => {
+    ({ hasPersoBadge, hasOpenData }) => {
       expect(
         getInfosVisibility({
           indicateur: toIndicateur({ hasOpenData }),
-          isPerso,
+          hasPersoBadge,
           isComposeSansAgregation: false,
           isReadonly: true,
         }).showBadges
@@ -90,7 +94,7 @@ describe('getInfosVisibility', () => {
       getInfosVisibility({
         indicateur: toIndicateur({ hasOpenData: true }),
         ...readonlyComposeSansAgregation,
-        isPerso: true,
+        hasPersoBadge: true,
       }).showBadges
     ).toBe(false);
   });

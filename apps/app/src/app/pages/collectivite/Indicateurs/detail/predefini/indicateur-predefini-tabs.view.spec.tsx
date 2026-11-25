@@ -2,8 +2,8 @@ import { appLabels } from '@/app/labels/catalog';
 import type { IndicateurDetaille } from '@tet/domain/indicateurs';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { IndicateurDataProvider } from './context/indicateur-data.context';
-import { IndicateurTabs } from './indicateur-tabs.view';
+import { IndicateurDataProvider } from '../context/indicateur-data.context';
+import { IndicateurPredefiniTabs } from './indicateur-predefini-tabs.view';
 
 const renderSousIndicateursListe = vi.hoisted(() => vi.fn());
 
@@ -13,19 +13,19 @@ vi.mock('@tet/api/collectivites', () => ({
     isSimplifiedView: false,
   }),
 }));
-vi.mock('./content/donnees/indicateur-donnees.view', () => ({
-  IndicateurDonnees: () => null,
+vi.mock('./donnees/indicateur-predefini-donnees.view', () => ({
+  IndicateurPredefiniDonnees: () => null,
 }));
-vi.mock('./content/fiches-liees/indicateur-fiches-liees.view', () => ({
+vi.mock('../content/fiches-liees/indicateur-fiches-liees.view', () => ({
   IndicateurFichesLiees: () => null,
 }));
-vi.mock('./content/informations/indicateur-informations.view', () => ({
+vi.mock('./informations/indicateur-informations.view', () => ({
   IndicateurInformations: () => null,
 }));
-vi.mock('./content/mesures-liees/indicateur-mesures-liees.view', () => ({
+vi.mock('./mesures-liees/indicateur-mesures-liees.view', () => ({
   IndicateurMesuresLiees: () => null,
 }));
-vi.mock('./content/sous-indicateurs/indicateur-sous-indicateurs.view', () => ({
+vi.mock('./sous-indicateurs/indicateur-sous-indicateurs.view', () => ({
   IndicateurSousIndicateurs: (props: {
     enfantsIds: number[];
     isReadonly: boolean;
@@ -35,11 +35,11 @@ vi.mock('./content/sous-indicateurs/indicateur-sous-indicateurs.view', () => ({
   },
 }));
 
-const toIndicateur = (collectiviteId: number | null): IndicateurDetaille =>
+const toIndicateur = (): IndicateurDetaille =>
   ({
     id: 10,
-    collectiviteId,
-    identifiantReferentiel: null,
+    collectiviteId: null,
+    identifiantReferentiel: 'cae_1.a',
     groupementId: null,
     titre: 'Déchets',
     unite: 't',
@@ -65,7 +65,7 @@ const renderTabs = ({
         canMutateValeur: true,
       }}
     >
-      <IndicateurTabs />
+      <IndicateurPredefiniTabs />
     </IndicateurDataProvider>
   );
 
@@ -73,23 +73,10 @@ const sousIndicateursTab = (indicateur: IndicateurDetaille) => ({
   name: appLabels.sousIndicateur({ count: indicateur.enfants.length }),
 });
 
-describe('IndicateurTabs : onglet des sous-indicateurs', () => {
-  it("n'a pas d'onglet des sous-indicateurs pour un indicateur perso, dont le tableau est dans l'onglet des données", () => {
-    const indicateur = toIndicateur(1);
-
-    renderTabs({ indicateur });
-
-    expect(
-      screen.getByRole('tab', { name: appLabels.indicateurOngletDonnees })
-    ).toBeDefined();
-    expect(
-      screen.queryByRole('tab', sousIndicateursTab(indicateur))
-    ).toBeNull();
-  });
-
+describe('IndicateurPredefiniTabs : onglet des sous-indicateurs', () => {
   it('garde la liste des sous-indicateurs dans un onglet pour un indicateur prédéfini', () => {
     renderSousIndicateursListe.mockClear();
-    const indicateur = toIndicateur(null);
+    const indicateur = toIndicateur();
 
     renderTabs({ indicateur });
     fireEvent.click(screen.getByRole('tab', sousIndicateursTab(indicateur)));
@@ -103,7 +90,7 @@ describe('IndicateurTabs : onglet des sous-indicateurs', () => {
 
   it("passe la liste d'un indicateur prédéfini en lecture seule quand l'utilisateur ne peut pas le modifier", () => {
     renderSousIndicateursListe.mockClear();
-    const indicateur = toIndicateur(null);
+    const indicateur = toIndicateur();
 
     renderTabs({ indicateur, canMutateIndicateur: false });
     fireEvent.click(screen.getByRole('tab', sousIndicateursTab(indicateur)));

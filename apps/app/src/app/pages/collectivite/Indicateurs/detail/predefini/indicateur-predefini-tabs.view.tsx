@@ -2,36 +2,32 @@
 
 import { appLabels } from '@/app/labels/catalog';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { isIndicateurPerso } from '@tet/domain/indicateurs';
 import { Tab, Tabs } from '@tet/ui';
-import { useIndicateurData } from './context/indicateur-data.context';
-import { IndicateurDonnees } from './content/donnees/indicateur-donnees.view';
-import { IndicateurFichesLiees } from './content/fiches-liees/indicateur-fiches-liees.view';
-import { IndicateurInformations } from './content/informations/indicateur-informations.view';
-import { IndicateurMesuresLiees } from './content/mesures-liees/indicateur-mesures-liees.view';
-import { IndicateurSousIndicateurs } from './content/sous-indicateurs/indicateur-sous-indicateurs.view';
+import { IndicateurFichesLiees } from '../content/fiches-liees/indicateur-fiches-liees.view';
+import { useIndicateurData } from '../context/indicateur-data.context';
+import { IndicateurPredefiniDonnees } from './donnees/indicateur-predefini-donnees.view';
+import { IndicateurInformations } from './informations/indicateur-informations.view';
+import { IndicateurMesuresLiees } from './mesures-liees/indicateur-mesures-liees.view';
+import { IndicateurSousIndicateurs } from './sous-indicateurs/indicateur-sous-indicateurs.view';
 
-export const IndicateurTabs = () => {
+export const IndicateurPredefiniTabs = () => {
   const { indicateur, canMutateIndicateur } = useIndicateurData();
   const { hasCollectivitePermission, isSimplifiedView } =
     useCurrentCollectivite();
 
   const { enfants = [], description, mesures } = indicateur;
-  const isPerso = isIndicateurPerso(indicateur);
 
   const hasSousIndicateursTab =
-    !isPerso && enfants.length > 0 && !indicateur.sansValeurUtilisateur;
+    enfants.length > 0 && !indicateur.sansValeurUtilisateur;
   const hasMesuresLieesTab =
-    !isPerso &&
-    hasCollectivitePermission('referentiels.read') &&
-    !isSimplifiedView;
+    hasCollectivitePermission('referentiels.read') && !isSimplifiedView;
   const hasFichesLieesTab = hasCollectivitePermission('plans.fiches.read');
-  const hasInformationsTab = !isPerso && !!description;
+  const hasInformationsTab = !!description;
 
   return (
     <Tabs tabsListClassName="justify-start flex-nowrap overflow-x-auto">
       <Tab label={appLabels.indicateurOngletDonnees}>
-        <IndicateurDonnees />
+        <IndicateurPredefiniDonnees />
       </Tab>
 
       {hasSousIndicateursTab ? (

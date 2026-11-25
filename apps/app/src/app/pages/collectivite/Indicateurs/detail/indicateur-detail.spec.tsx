@@ -1,5 +1,6 @@
 import { INDICATEUR_TRAJECTOIRE_IDENTFIANTS } from '@/app/indicateurs/trajectoires/trajectoire-constants';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import type { ReactNode } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { IndicateurDetail } from './indicateur-detail.view';
 
@@ -32,10 +33,14 @@ vi.mock('../../Trajectoire/use-trajectoire', () => ({
     mocks.useGetTrajectoire(args),
 }));
 vi.mock('./data/indicateur-detail.data-provider', () => ({
-  IndicateurDetailDataProvider: () => null,
+  IndicateurDetailDataProvider: ({ children }: { children: ReactNode }) =>
+    children,
 }));
-vi.mock('./indicateur-layout.view', () => ({
-  IndicateurLayout: () => null,
+vi.mock('./perso/indicateur-perso-layout.view', () => ({
+  IndicateurPersoLayout: () => <div role="group" aria-label="perso" />,
+}));
+vi.mock('./predefini/indicateur-predefini-layout.view', () => ({
+  IndicateurPredefiniLayout: () => <div role="group" aria-label="prédéfini" />,
 }));
 
 const indicateurTrajectoire = {
@@ -84,5 +89,34 @@ describe('IndicateurDetail : calcul de la trajectoire SNBC 2', () => {
     render(<IndicateurDetail indicateurId={1} />);
     expect(lastCall(mocks.useGetStatutTrajectoire)).toBe(false);
     expect(lastCall(mocks.useGetTrajectoire)).toEqual({ enabled: false });
+  });
+});
+
+describe("IndicateurDetail : mise en page selon le type d'indicateur", () => {
+  beforeEach(() => {
+    mocks.snbc3Enabled = true;
+  });
+
+  it('affiche la mise en page des indicateurs perso pour un indicateur de la collectivité', () => {
+    mocks.indicateur = {
+      id: 2,
+      collectiviteId: 1,
+      identifiantReferentiel: null,
+      groupementId: null,
+    };
+
+    render(<IndicateurDetail indicateurId={2} />);
+
+    expect(screen.getByRole('group', { name: 'perso' })).toBeDefined();
+    expect(screen.queryByRole('group', { name: 'prédéfini' })).toBeNull();
+  });
+
+  it('affiche la mise en page des indicateurs prédéfinis pour un indicateur du catalogue', () => {
+    mocks.indicateur = indicateurTrajectoire;
+
+    render(<IndicateurDetail indicateurId={1} />);
+
+    expect(screen.getByRole('group', { name: 'prédéfini' })).toBeDefined();
+    expect(screen.queryByRole('group', { name: 'perso' })).toBeNull();
   });
 });

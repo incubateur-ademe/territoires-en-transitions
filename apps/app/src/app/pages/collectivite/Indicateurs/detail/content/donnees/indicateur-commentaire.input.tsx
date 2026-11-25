@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { Field, Textarea } from '@tet/ui';
 import { useState } from 'react';
 
@@ -15,7 +16,7 @@ export const IndicateurCommentaireInput = ({
   const [value, setValue] = useState(commentaire ?? undefined);
 
   return (
-    <Field title="Description et méthodologie de calcul">
+    <Field title={appLabels.champDescriptionMethodologie}>
       <Textarea
         data-test="desc"
         rows={3}

@@ -19,7 +19,7 @@ import {
   type IndicateurPeriodicite,
 } from '@tet/domain/indicateurs';
 import { describe, expect, it, vi } from 'vitest';
-import { IndicateurSousIndicateursTableProvider } from '../../context/indicateur-sous-indicateurs-table.context';
+import { IndicateurSousIndicateursTableProvider } from '../context/indicateur-sous-indicateurs-table.context';
 import { IndicateurSousIndicateursTable } from './indicateur-sous-indicateurs-table.view';
 
 const COLLECTIVITE_ID = 7;
