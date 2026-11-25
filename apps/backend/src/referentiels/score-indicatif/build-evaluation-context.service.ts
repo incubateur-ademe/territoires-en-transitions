@@ -126,28 +126,25 @@ export class BuildEvaluationContextService {
     const indicateurIds = indicateursAssocies.map(
       ({ indicateurId }) => indicateurId
     );
-    let valeursReference;
-    try {
-      valeursReference = await this.valeursReferenceService.getValeursReference(
-        {
-          indicateurIds,
-          collectiviteId: input.collectiviteId,
-          collectiviteAvecType: identiteCollectivite,
-          personnalisationReponses,
-          referentielContext: {
-            referentielId: referentielContext.referentielId,
-            version: referentielContext.version,
-          },
-        }
-      );
-    } catch (error) {
+    const valeursReferenceResult =
+      await this.valeursReferenceService.getValeursReference({
+        indicateurIds,
+        collectiviteId: input.collectiviteId,
+        collectiviteAvecType: identiteCollectivite,
+        personnalisationReponses,
+        referentielContext: {
+          referentielId: referentielContext.referentielId,
+          version: referentielContext.version,
+        },
+      });
+    if (!valeursReferenceResult.success) {
       return failure(
         ScoreIndicatifErrorEnum.VALEURS_REFERENCE_ERROR,
-        error instanceof Error ? error : new Error(String(error))
+        valeursReferenceResult.cause ?? new Error(valeursReferenceResult.error)
       );
     }
     indicateursAssocies.forEach(({ identifiantReferentiel }) => {
-      const reference = valeursReference.find(
+      const reference = valeursReferenceResult.data.find(
         (v) => v?.identifiantReferentiel === identifiantReferentiel
       );
       if (reference && identifiantReferentiel) {

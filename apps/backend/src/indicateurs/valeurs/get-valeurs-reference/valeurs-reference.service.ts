@@ -1,4 +1,8 @@
-import { getDataOrThrow } from '@tet/backend/utils/result.type';
+import {
+  catchDatabaseFailure,
+  toDatabaseFailure,
+} from '@tet/backend/utils/database/catch-database-failure';
+import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { Injectable, Logger } from '@nestjs/common';
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { GetValeursReferenceRequest } from '@tet/backend/indicateurs/valeurs/get-valeurs-reference/get-valeurs-reference.request';
@@ -18,7 +22,29 @@ import { DatabaseService } from '../../../utils/database/database.service';
 import { ListIndicateursPredefinisRepository } from '../../indicateurs/list-indicateurs-predefinis/list-indicateurs-predefinis.repository';
 import { indicateurObjectifTable } from '../../shared/models/indicateur-objectif.table';
 import { ValeursReferenceDTO } from './valeurs-reference.dto';
-import { getIndicateurDataOrThrow } from '../../indicateur/indicateur-nature.utils';
+import { ReadValeursError } from '../read-valeurs.errors';
+
+type GetValeursReferenceOptions = GetValeursReferenceRequest & {
+  collectiviteAvecType?: CollectiviteAvecType;
+  personnalisationReponses?: PersonnalisationReponsesPayload;
+  referentielContext?: ReferentielContext | null;
+};
+
+type GetValeursReferenceForDefinitionOptions = {
+  collectiviteId: number;
+  indicateur: Pick<
+    Indicateur,
+    | 'id'
+    | 'identifiantReferentiel'
+    | 'exprCible'
+    | 'exprSeuil'
+    | 'libelleCibleSeuil'
+    | 'unite'
+  >;
+  collectiviteAvecType?: CollectiviteAvecType;
+  personnalisationReponses?: PersonnalisationReponsesPayload;
+  referentielContext?: ReferentielContext | null;
+};
 
 @Injectable()
 export default class ValeursReferenceService {
@@ -32,6 +58,19 @@ export default class ValeursReferenceService {
     private readonly personnalisationsExpressionService: PersonnalisationsExpressionService,
     private readonly getReferentielDefinitionService: GetReferentielDefinitionService
   ) {}
+
+  private async resolveCollectiviteInfo(
+    collectiviteId: number,
+    collectiviteAvecType?: CollectiviteAvecType
+  ): Promise<Result<CollectiviteAvecType, ReadValeursError>> {
+    if (collectiviteAvecType) return success(collectiviteAvecType);
+    const collectiviteResult =
+      await this.collectivitesService.getCollectiviteAvecType(collectiviteId);
+    if (!collectiviteResult.success) {
+      return failure(collectiviteResult.error, collectiviteResult.cause);
+    }
+    return success(collectiviteResult.data);
+  }
 
   private async getValeurObjectifsIndicateurs(indicateurIds: number[]) {
     return this.databaseService.db
@@ -59,13 +98,15 @@ export default class ValeursReferenceService {
   /**
    * Donne les valeurs de référence (cible et/ou seuil) des indicateurs pour une collectivité
    */
-  async getValeursReference(
-    options: GetValeursReferenceRequest & {
-      collectiviteAvecType?: CollectiviteAvecType;
-      personnalisationReponses?: PersonnalisationReponsesPayload;
-      referentielContext?: ReferentielContext | null;
-    }
-  ) {
+  getValeursReference(
+    options: GetValeursReferenceOptions
+  ): Promise<Result<(ValeursReferenceDTO | null)[], ReadValeursError>> {
+    return catchDatabaseFailure(() => this.readValeursReference(options));
+  }
+
+  private async readValeursReference(
+    options: GetValeursReferenceOptions
+  ): Promise<Result<(ValeursReferenceDTO | null)[], ReadValeursError>> {
     const {
       collectiviteId,
       indicateurIds,
@@ -93,12 +134,12 @@ export default class ValeursReferenceService {
     );
 
     // l'identité et la personnalisation de la collectivité
-    let collectiviteInfo = collectiviteAvecType;
-    if (!collectiviteInfo) {
-      collectiviteInfo = getDataOrThrow(
-        await this.collectivitesService.getCollectiviteAvecType(collectiviteId)
-      );
-    }
+    const collectiviteInfoResult = await this.resolveCollectiviteInfo(
+      collectiviteId,
+      collectiviteAvecType
+    );
+    if (!collectiviteInfoResult.success) return collectiviteInfoResult;
+    const collectiviteInfo = collectiviteInfoResult.data;
     const reponses =
       personnalisationReponses ||
       (await this.personnalisationsService.getPersonnalisationReponses(
@@ -106,38 +147,36 @@ export default class ValeursReferenceService {
       ));
 
     // les définitions des indicateurs
-    const indicateurs = getIndicateurDataOrThrow(
+    const indicateursResult =
       await this.listIndicateursPredefinisRepository.listIndicateursPredefinis({
         indicateurIds,
-      })
-    );
+      });
+    if (!indicateursResult.success) return toDatabaseFailure(indicateursResult);
 
-    return indicateurs.map((indicateur) =>
-      this.getValeursReferenceIndicateur(
-        indicateur,
-        valeursOBjectifsParIndicateurId[indicateur.id],
-        collectiviteInfo,
-        reponses,
-        referentielContext
+    return success(
+      indicateursResult.data.map((indicateur) =>
+        this.getValeursReferenceIndicateur(
+          indicateur,
+          valeursOBjectifsParIndicateurId[indicateur.id],
+          collectiviteInfo,
+          reponses,
+          referentielContext
+        )
       )
     );
   }
 
-  async getValeursReferenceForDefinition(options: {
-    collectiviteId: number;
-    indicateur: Pick<
-      Indicateur,
-      | 'id'
-      | 'identifiantReferentiel'
-      | 'exprCible'
-      | 'exprSeuil'
-      | 'libelleCibleSeuil'
-      | 'unite'
-    >;
-    collectiviteAvecType?: CollectiviteAvecType;
-    personnalisationReponses?: PersonnalisationReponsesPayload;
-    referentielContext?: ReferentielContext | null;
-  }) {
+  getValeursReferenceForDefinition(
+    options: GetValeursReferenceForDefinitionOptions
+  ): Promise<Result<ValeursReferenceDTO | null, ReadValeursError>> {
+    return catchDatabaseFailure(() =>
+      this.readValeursReferenceForDefinition(options)
+    );
+  }
+
+  private async readValeursReferenceForDefinition(
+    options: GetValeursReferenceForDefinitionOptions
+  ): Promise<Result<ValeursReferenceDTO | null, ReadValeursError>> {
     const {
       collectiviteId,
       indicateur,
@@ -159,24 +198,26 @@ export default class ValeursReferenceService {
     ]);
 
     // l'identité et la personnalisation de la collectivité
-    let collectiviteInfo = collectiviteAvecType;
-    if (!collectiviteInfo) {
-      collectiviteInfo = getDataOrThrow(
-        await this.collectivitesService.getCollectiviteAvecType(collectiviteId)
-      );
-    }
+    const collectiviteInfoResult = await this.resolveCollectiviteInfo(
+      collectiviteId,
+      collectiviteAvecType
+    );
+    if (!collectiviteInfoResult.success) return collectiviteInfoResult;
+    const collectiviteInfo = collectiviteInfoResult.data;
     const reponses =
       personnalisationReponses ||
       (await this.personnalisationsService.getPersonnalisationReponses(
         collectiviteId
       ));
 
-    return this.getValeursReferenceIndicateur(
-      indicateur,
-      valeurObjectifsIndicateur,
-      collectiviteInfo,
-      reponses,
-      referentielContext
+    return success(
+      this.getValeursReferenceIndicateur(
+        indicateur,
+        valeurObjectifsIndicateur,
+        collectiviteInfo,
+        reponses,
+        referentielContext
+      )
     );
   }
 

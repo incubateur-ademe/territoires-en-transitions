@@ -19,6 +19,7 @@ import { indicateurValeursErrorConfig } from './indicateur-valeurs.errors';
 import { upsertGridValeursInputSchema } from './upsert-grid-valeurs.input';
 import { upsertGridValeursErrorConfig } from './upsert-grid-valeurs.errors';
 import { UpsertGridValeursService } from './upsert-grid-valeurs.service';
+import { readValeursErrorConfig } from './read-valeurs.errors';
 
 @Injectable()
 export class IndicateurValeursRouter {
@@ -38,6 +39,9 @@ export class IndicateurValeursRouter {
   private readonly getIndicateurTotalsResultOrThrow = createTrpcErrorHandler();
   private readonly getIndicateurValeursResultOrThrow = createTrpcErrorHandler(
     indicateurValeursErrorConfig
+  );
+  private readonly getReadValeursResultOrThrow = createTrpcErrorHandler(
+    readValeursErrorConfig
   );
 
   router = this.trpc.router({
@@ -90,8 +94,12 @@ export class IndicateurValeursRouter {
       }),
     average: this.trpc.authedProcedure
       .input(getMoyenneCollectivitesRequestSchema)
-      .query(({ ctx, input }) => {
-        return this.valeursMoyenne.getMoyenneCollectivites(input, ctx.user);
+      .query(async ({ ctx, input }) => {
+        const result = await this.valeursMoyenne.getMoyenneCollectivites(
+          input,
+          ctx.user
+        );
+        return this.getReadValeursResultOrThrow(result);
       }),
     reference: this.trpc.authedProcedure
       .input(getValeursReferenceRequestSchema)
@@ -104,7 +112,8 @@ export class IndicateurValeursRouter {
           { collectiviteId: input.collectiviteId }
         );
 
-        return this.valeursReference.getValeursReference(input);
+        const result = await this.valeursReference.getValeursReference(input);
+        return this.getReadValeursResultOrThrow(result);
       }),
     recompute: this.trpc.serviceRoleProcedure
       .input(collectiviteIdInputSchemaPartial)
