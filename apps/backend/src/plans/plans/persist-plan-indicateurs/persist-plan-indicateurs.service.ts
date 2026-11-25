@@ -1,9 +1,4 @@
-import {
-  BadRequestException,
-  ForbiddenException,
-  Injectable,
-  Logger,
-} from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { IndicateurLockRepository } from '@tet/backend/indicateurs/indicateur/indicateur-lock.repository';
 import { AddIndicateurLinksService } from '@tet/backend/indicateurs/indicateurs/add-indicateur-links/add-indicateur-links.service';
 import { CreateIndicateurError } from '@tet/backend/indicateurs/indicateurs/mutate-indicateur/create-indicateur.errors';
@@ -264,19 +259,9 @@ export class PersistPlanIndicateursService {
     error: unknown,
     sourceKey?: string
   ): Result<never, PersistPlanIndicateursError[]> {
-    const code =
-      error instanceof ForbiddenException
-        ? 'UNAUTHORIZED'
-        : error instanceof BadRequestException
-        ? 'INVALID_VALUE'
-        : 'DATABASE_ERROR';
-    if (code === 'DATABASE_ERROR')
-      this.logger.error(
-        'Impossible de persister les indicateurs du plan',
-        error
-      );
+    this.logger.error('Impossible de persister les indicateurs du plan', error);
     return failure(
-      [{ code, sourceKey }],
+      [{ code: 'DATABASE_ERROR', sourceKey }],
       error instanceof Error ? error : new Error(String(error))
     );
   }

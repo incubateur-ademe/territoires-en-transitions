@@ -1,47 +1,90 @@
-import { Test } from '@nestjs/testing';
-import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches.service';
 import {
   FicheWithRelations,
   SANS_STATUT_LABEL,
   StatutEnum,
 } from '@tet/domain/plans';
-import { CountByService } from './count-by.service';
+import { DateTime } from 'luxon';
+import { getDataOrThrow } from '@tet/backend/utils/result.type';
+import { CountByRules } from './count-by.rules';
 
-describe('CountByService', () => {
-  let countByService: CountByService;
+describe('CountByRules', () => {
+  const now = DateTime.fromISO('2030-01-15T12:00:00Z');
+  const rules = new CountByRules(now);
 
-  beforeEach(async () => {
-    const moduleRef = await Test.createTestingModule({
-      providers: [CountByService],
-    })
-      .useMocker((token) => {
-        if (token === ListFichesService) {
-          return {};
-        }
-      })
-      .compile();
+  it('classe les dates par rapport à la date fournie et conserve les catégories sans échéance', () => {
+    const fiches = [
+      { dateFin: now.plus({ months: 3 }).toISO() },
+      { dateFin: now.plus({ months: 3 }).minus({ seconds: 1 }).toISO() },
+      { dateFin: null, ameliorationContinue: true },
+      { dateFin: null, ameliorationContinue: false },
+    ] as FicheWithRelations[];
 
-    countByService = moduleRef.get(CountByService);
+    const { counts, invalidDates } = getDataOrThrow(
+      rules.countByPropertyWithFiches(fiches, 'dateFin', {})
+    );
+
+    expect(counts).toMatchObject({
+      total: 4,
+      countByResult: {
+        between_3_month_and_6_month: { count: 1 },
+        inferior_to_3_month: { count: 1 },
+        ameliorationContinue: { count: 1 },
+        null: { count: 1 },
+      },
+    });
+    expect(invalidDates).toEqual([]);
+  });
+
+  it('signale une date invalide sans interrompre le comptage des autres fiches', () => {
+    const fiches = [
+      { id: 1, collectiviteId: 10, dateDebut: 'date invalide' },
+      { id: 2, collectiviteId: 10, dateDebut: now.toISO() },
+    ] as FicheWithRelations[];
+
+    const { counts, invalidDates } = getDataOrThrow(
+      rules.countByPropertyWithFiches(fiches, 'dateDebut', {})
+    );
+
+    expect(counts).toMatchObject({
+      total: 2,
+      countByResult: { inferior_to_3_month: { count: 1 }, null: { count: 0 } },
+    });
+    expect(
+      Object.values(counts.countByResult).reduce(
+        (total, category) => total + category.count,
+        0
+      )
+    ).toBe(1);
+    expect(invalidDates).toEqual([
+      {
+        ficheId: 1,
+        collectiviteId: 10,
+        countByProperty: 'dateDebut',
+        value: 'date invalide',
+      },
+    ]);
   });
 
   describe('countByPropertyForEachAxeWithFiches', () => {
-    it('should return empty array when there are no fiches', async () => {
+    it('should return empty array when there are no fiches', () => {
       const planId = 1;
       const fiches: FicheWithRelations[] = [];
       const countByProperty = 'statut';
       const filters = {};
 
-      const result = await countByService.countByPropertyForEachAxeWithFiches(
-        planId,
-        fiches,
-        countByProperty,
-        filters
+      const { counts: result } = getDataOrThrow(
+        rules.countByPropertyForEachAxeWithFiches(
+          planId,
+          fiches,
+          countByProperty,
+          filters
+        )
       );
 
       expect(result).toEqual([]);
     });
 
-    it('should group fiches by axe and count by property', async () => {
+    it('should group fiches by axe and count by property', () => {
       const planId = 1;
       const fiches: FicheWithRelations[] = [
         {
@@ -69,11 +112,13 @@ describe('CountByService', () => {
       const countByProperty = 'statut';
       const filters = {};
 
-      const result = await countByService.countByPropertyForEachAxeWithFiches(
-        planId,
-        fiches,
-        countByProperty,
-        filters
+      const { counts: result } = getDataOrThrow(
+        rules.countByPropertyForEachAxeWithFiches(
+          planId,
+          fiches,
+          countByProperty,
+          filters
+        )
       );
 
       expect(result).toHaveLength(3);
@@ -126,7 +171,7 @@ describe('CountByService', () => {
             value: StatutEnum.A_DISCUTER,
             label: StatutEnum.A_DISCUTER,
           },
-          [countByService.NULL_VALUE_KEY]: {
+          ['null']: {
             count: 0,
             value: null,
             label: SANS_STATUT_LABEL,
@@ -182,7 +227,7 @@ describe('CountByService', () => {
             value: StatutEnum.A_DISCUTER,
             label: StatutEnum.A_DISCUTER,
           },
-          [countByService.NULL_VALUE_KEY]: {
+          ['null']: {
             count: 0,
             value: null,
             label: SANS_STATUT_LABEL,
@@ -238,7 +283,7 @@ describe('CountByService', () => {
             value: StatutEnum.A_DISCUTER,
             label: StatutEnum.A_DISCUTER,
           },
-          [countByService.NULL_VALUE_KEY]: {
+          ['null']: {
             count: 0,
             value: null,
             label: SANS_STATUT_LABEL,
