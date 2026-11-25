@@ -16,9 +16,6 @@ import { estimateLevierGesResponseSchema } from './estimate-levier-ges.response'
 import { EstimateLevierGesService } from './estimate-levier-ges.service';
 import { toLeviersGesHttpException } from './to-leviers-ges-http-exception';
 
-/**
- * Création des classes de requête/réponse à partir du schema pour générer automatiquement la documentation OpenAPI et la validation des entrées
- */
 export class EstimateLevierGesRequestClass extends createZodDto(
   estimateLevierGesRequestSchema
 ) {}
@@ -31,14 +28,16 @@ export class EstimateLevierGesResponseClass extends createZodDto(
 @ApiBearerAuth()
 @Controller('planet')
 export class EstimateLevierGesController {
-  constructor(private readonly estimateLevierGesService: EstimateLevierGesService) {}
+  constructor(
+    private readonly estimateLevierGesService: EstimateLevierGesService
+  ) {}
 
   @Post('estimations')
   @HttpCode(HttpStatus.OK)
   @ApiUsage([ApiUsageEnum.EXTERNAL_API])
   @ApiOperation({
     summary:
-      "Estimation des tonnes de CO2e évitées par an par un levier de décarbonation, pour une région, un département ou un EPCI",
+      'Estimation des tonnes de CO2e évitées par an par un levier de décarbonation, pour une région, un département ou un EPCI',
     description:
       "Méthodes de calcul du tableur ADEME PlanET V1. Il s'agit d'estimations : restituer systématiquement les `limits` et `appliedAssumptions` renvoyées avec le résultat.",
   })
@@ -55,10 +54,10 @@ export class EstimateLevierGesController {
   estimate(
     @Body() request: EstimateLevierGesRequestClass
   ): EstimateLevierGesResponseClass {
-    const result = this.estimateLevierGesService.estimate(request);
-    if (!result.success) {
-      throw toLeviersGesHttpException(result.error);
+    const estimation = this.estimateLevierGesService.estimate(request);
+    if (!estimation.success) {
+      throw toLeviersGesHttpException(estimation.error);
     }
-    return result.data;
+    return estimation.data;
   }
 }

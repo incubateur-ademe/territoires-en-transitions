@@ -11,7 +11,8 @@ export class EstimateLevierGesService {
   private readonly logger = new Logger(EstimateLevierGesService.name);
 
   constructor(
-    @Inject(LEVIERS_GES_ESTIMATOR) private readonly estimator: EstimateUntrustedRequest
+    @Inject(LEVIERS_GES_ESTIMATOR)
+    private readonly estimator: EstimateUntrustedRequest
   ) {}
 
   estimate(

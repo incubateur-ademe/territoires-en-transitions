@@ -9,7 +9,7 @@ export const estimateLevierGesResponseSchema = z.object({
   status: z
     .enum(['no_open_question', 'workaround'])
     .describe(
-      "`workaround` : niveau calculé par un contournement documenté dans la méthodologie du levier"
+      '`workaround` : niveau calculé par un contournement documenté dans la méthodologie du levier'
     ),
   appliedAssumptions: z
     .record(

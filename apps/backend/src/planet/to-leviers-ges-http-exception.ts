@@ -8,10 +8,6 @@ import {
 import type { EstimationError } from 'leviers-ges';
 import { match } from 'ts-pattern';
 
-/**
- * Traduit une erreur d'estimation en exception HTTP.
- * Les détails d'un jeu de données invalide (erreur serveur) ne sont pas exposés.
- */
 export const toLeviersGesHttpException = (
   error: EstimationError
 ): HttpException =>

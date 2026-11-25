@@ -8,15 +8,27 @@ import { toLeviersGesHttpException } from './to-leviers-ges-http-exception';
 
 describe('toLeviersGesHttpException', () => {
   test('invalid_request → 400 avec le détail des issues', () => {
-    const issues = [{ parameter: 'parameters.x', message: 'must be a decimal number' }];
-    const exception = toLeviersGesHttpException({ kind: 'invalid_request', issues });
+    const issues = [
+      { parameter: 'parameters.x', message: 'must be a decimal number' },
+    ];
+    const exception = toLeviersGesHttpException({
+      kind: 'invalid_request',
+      issues,
+    });
     expect(exception).toBeInstanceOf(BadRequestException);
-    expect(exception.getResponse()).toMatchObject({ issues });
+    expect(exception.getResponse()).toEqual({
+      message: 'Requête invalide',
+      issues,
+    });
   });
 
   test('unknown_territory → 404', () => {
     expect(
-      toLeviersGesHttpException({ kind: 'unknown_territory', level: 'epci', code: '1' })
+      toLeviersGesHttpException({
+        kind: 'unknown_territory',
+        level: 'epci',
+        code: '1',
+      })
     ).toBeInstanceOf(NotFoundException);
   });
 
