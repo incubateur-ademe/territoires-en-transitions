@@ -62,29 +62,12 @@ Il est resté sur `snbc` pendant l'ouverture progressive (raison dans l'ADR §4)
 - Fait : `valeurs/progression.rules.ts`, `SOURCE_SNBC` vaut `IndicateurSourceEnum.SNBC3`. Le reste de `referentiels/score-indicatif/*` n'avait pas de source en dur.
 - Fait : `valeurs/indicateur-expression.service.ts`, l'année de référence par défaut de `progression_snbc` passe de `ANNEE_REFERENCE_SNBC_V2` (2015) à `ANNEE_REFERENCE_SNBC_V3` (2021).
 - Fait : le libellé `scoreIndicatifAnneeSnbc` affiche « SNBC3 » (`VERSION_SNBC` est retiré).
-- Fait : une valeur sélectionnée antérieure à l'année de départ ne donne plus de score (`null`, comme `reduction`). Une sélection 2020 faite avec la référence 2015 ne compte plus, jusqu’à sa suppression par le rattrapage ci-dessous.
+- Fait : une valeur sélectionnée antérieure à l'année de départ ne donne plus de score (`null`, comme `reduction`). Une sélection 2020 faite avec la référence 2015 ne compte plus.
 - Le paramètre de `progression_snbc` est l'année de départ de la trajectoire. Les expressions du référentiel TE (`cae_1.a`, `cae_2.a`, `cae_63.a`, `cae_1.k`) **perdent leur année** (`progression_snbc(cae_1.a)`) : l'année vient de la valeur par défaut du backend. Fait dans `referentiel-te-structure.csv` (seed local) ; à reporter dans le référentiel publié.
 - Ordre de mise en prod, pour éviter une fenêtre où le score lit `snbc3` en 2015 (absent : la trajectoire commence en 2020) :
   1. publier le référentiel sans année. L'ancien backend applique son défaut (2015, source `snbc`) : rien ne change ;
   2. déployer le backend : la source et l'année basculent ensemble ;
-  3. rafraîchir les statuts dérivés et recalculer les scores courants des collectivités concernées (voir ci-dessous). Les snapshots figés ne changent pas.
-- Retour arrière : revert du commit de bascule, sans republier le référentiel, puis le même rafraîchissement.
-- Les statuts TE posés à partir du score indicatif sont persistés dans `action_statut` : le score courant (`forceRecompute`) les relit sans les recalculer. Rattrapage ponctuel, la mutation service role `referentiels.actions.refreshStatutsProgressionSnbc({ collectiviteIds?, modifiedBy })`, sans `collectiviteIds` pour toute la base :
-  1. supprime les valeurs sélectionnées antérieures à l'année de départ des actions TE en `progression_snbc` ;
-  2. recalcule le statut dérivé de ces actions (`SetScoreFromIndicateurService.refreshActionsAvancementAndSnapshots`, règles de la saisie : sans sélection → « non renseigné »), puis le score courant TE, pour chaque collectivité qui avait une sélection.
-
-  `modifiedBy` est un compte existant (clé étrangère vers `auth.users`), inscrit dans `action_statut.modified_by` ; l'historique reste sans auteur et s'affiche « Équipe territoires en transitions ». À retirer une fois exécutée.
-- La suppression est définitive et ces sélections redeviendraient valides après un retour arrière (départ 2015). Avant de lancer, les exporter (et mesurer l'impact) :
-
-  ```sql
-  select s.*, v.date_valeur
-  from action_score_indicateur_valeur s
-  join action_definition a on a.action_id = s.action_id
-  join indicateur_valeur v on v.id = s.indicateur_valeur_id
-  where a.referentiel_id = 'te'
-    and a.expr_score ilike '%progression_snbc%'
-    and extract(year from v.date_valeur) < 2021;
-  ```
+- Retour arrière : revert du commit de bascule, sans republier le référentiel.
 
 ## Tests
 

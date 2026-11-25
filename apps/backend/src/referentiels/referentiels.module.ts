@@ -103,7 +103,6 @@ import { RequestPreuvesArchiveService } from './preuves-archive/request-preuves-
 import { ReferentielsCoreModule } from './referentiels-core.module';
 import { SetScoreFromIndicateurRouter } from './set-score-from-indicateur/set-score-from-indicateur.router';
 import { SetScoreFromIndicateurService } from './set-score-from-indicateur/set-score-from-indicateur.service';
-import { RefreshStatutsProgressionSnbcService } from './set-score-from-indicateur/refresh-statuts-progression-snbc/refresh-statuts-progression-snbc.service';
 import { ReferentielsRouter } from './referentiels.router';
 import { ComputeReferentielEngagementService } from './reset-display-preferences/compute-referentiel-engagement.service';
 import { ResetDisplayPreferencesRouter } from './reset-display-preferences/reset-display-preferences.router';
@@ -186,7 +185,6 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     UpdateActionStatutRouter,
 
     SetScoreFromIndicateurService,
-    RefreshStatutsProgressionSnbcService,
     SetScoreFromIndicateurRouter,
     UpdateActionCommentaireHistoriqueRepository,
     UpdateActionCommentaireService,
