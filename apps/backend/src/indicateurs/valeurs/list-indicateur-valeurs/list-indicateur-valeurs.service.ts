@@ -1,9 +1,8 @@
+import { Injectable, Logger } from '@nestjs/common';
 import {
-  BadRequestException,
-  ForbiddenException,
-  Injectable,
-  Logger,
-} from '@nestjs/common';
+  catchDatabaseFailure,
+  toDatabaseFailure,
+} from '@tet/backend/utils/database/catch-database-failure';
 import { Result, success } from '@tet/backend/utils/result.type';
 import {
   COLLECTIVITE_SOURCE_ID,
@@ -11,18 +10,18 @@ import {
   IndicateurValeurAvecMetadonnesDefinition,
 } from '@tet/domain/indicateurs';
 import { isNil } from 'es-toolkit';
-import { getIndicateurDataOrThrow } from '../../indicateur/indicateur-nature.utils';
 import { ListCollectiviteIndicateursRepository } from '../../indicateurs/list-collectivite-indicateurs/list-collectivite-indicateurs.repository';
 import { TrajectoireSnbc3FeatureFlagService } from '../../trajectoires/trajectoire-snbc3-feature-flag.service';
 import { IndicateurValeursReadAccessService } from '../indicateur-valeurs-read-access.service';
 import { IndicateurValeursRepository } from '../indicateur-valeurs.repository';
+import { GetIndicateursValeursResponse } from './get-indicateur-valeurs.response';
 import { ListIndicateurValeursInput } from './list-indicateur-valeurs.input';
 import { IndicateurValeursContext } from '../indicateur-valeurs-context.types';
 import {
-  captureIndicateurValeursResult,
-  captureIndicateurValeursResultOf,
-  getIndicateurValeursDataOrThrow,
   IndicateurValeursError,
+  toMissingIndicateurSelectionFailure,
+  toReadContextRequiredFailure,
+  toReadValeursDeniedFailure,
 } from '../indicateur-valeurs.errors';
 import {
   deduplicateIndicateurValeursBySource,
@@ -45,7 +44,7 @@ export class ListIndicateurValeursService {
   ): Promise<
     Result<IndicateurValeurAvecMetadonnesDefinition[], IndicateurValeursError>
   > {
-    return captureIndicateurValeursResultOf(async () => {
+    return catchDatabaseFailure(async () => {
       const listing = await this.repository.listIndicateurValeurs(
         options,
         context.tx
@@ -59,59 +58,59 @@ export class ListIndicateurValeursService {
     });
   }
 
-  list(options: ListIndicateurValeursInput, context: IndicateurValeursContext) {
-    return captureIndicateurValeursResult(() =>
-      this.listAuthorized(options, context)
-    );
+  list(
+    options: ListIndicateurValeursInput,
+    context: IndicateurValeursContext
+  ): Promise<Result<GetIndicateursValeursResponse, IndicateurValeursError>> {
+    return catchDatabaseFailure(() => this.listAuthorized(options, context));
   }
+
+  private async resolveHasPermissionLecture(
+    { collectiviteId }: ListIndicateurValeursInput,
+    { user, isUserTrusted = false, tx }: IndicateurValeursContext
+  ): Promise<Result<boolean, IndicateurValeursError>> {
+    if (isUserTrusted) return success(true);
+    if (!user) return toReadContextRequiredFailure(collectiviteId);
+    const readerResult = await this.readAccessService.resolveReader({
+      collectiviteId,
+      user,
+      tx,
+    });
+    if (!readerResult.success) {
+      return toReadValeursDeniedFailure({
+        userId: user.id,
+        collectiviteId,
+        denial: readerResult.error,
+      });
+    }
+    return success(readerResult.data === 'member');
+  }
+
   private async listAuthorized(
     options: ListIndicateurValeursInput,
     context: IndicateurValeursContext
-  ) {
-    const { user, isUserTrusted = false, tx } = context;
+  ): Promise<Result<GetIndicateursValeursResponse, IndicateurValeursError>> {
+    const { user, tx } = context;
     const { collectiviteId, indicateurIds, identifiantsReferentiel } = options;
 
-    // Vérifie les droits
-    let hasPermissionLecture;
-    if (!isUserTrusted && user) {
-      const readerResult = await this.readAccessService.resolveReader({
-        collectiviteId,
-        user,
-        tx,
-      });
-      if (!readerResult.success) {
-        throw new ForbiddenException(
-          `Droits insuffisants, l'utilisateur ${
-            user.id
-          } n'a pas l'autorisation ${
-            readerResult.error === 'READ_CONFIDENTIEL_DENIED'
-              ? 'indicateurs.valeurs.read_confidentiel'
-              : 'indicateurs.valeurs.read'
-          } sur la ressource Collectivité ${collectiviteId}`
-        );
-      }
-      hasPermissionLecture = readerResult.data === 'member';
-    } else if (isUserTrusted) {
-      hasPermissionLecture = true;
-    } else {
-      throw new ForbiddenException(
-        `Un contexte utilisateur ou une capacité interne explicite est requis pour lire les valeurs de la collectivité ${collectiviteId}`
-      );
-    }
+    const permissionLecture = await this.resolveHasPermissionLecture(
+      options,
+      context
+    );
+    if (!permissionLecture.success) return permissionLecture;
+    const hasPermissionLecture = permissionLecture.data;
 
     if (!indicateurIds?.length && !identifiantsReferentiel?.length) {
-      throw new BadRequestException(
-        `indicateurIds or identifiantsReferentiel required`
-      );
+      return toMissingIndicateurSelectionFailure();
     }
 
     // Point de passage des fiches indicateurs, du tRPC et de l'API publique :
     // la SNBC 3 n'y apparaît qu'avec le feature flag.
+    const listing = await this.get(options, { isUserTrusted: true, tx });
+    if (!listing.success) return listing;
     const indicateurValeurs =
       await this.trajectoireSnbc3FeatureFlag.filterSourcesSnbc3(
-        getIndicateurValeursDataOrThrow(
-          await this.get(options, { isUserTrusted: true, tx })
-        ),
+        listing.data,
         (v) => v.indicateurSourceMetadonnee?.sourceId,
         user,
         collectiviteId,
@@ -123,7 +122,7 @@ export class ListIndicateurValeursService {
       confidentiel: v.confidentiel,
     }));
 
-    const uniqueIndicateurs = getIndicateurDataOrThrow(
+    const definitions =
       await this.listCollectiviteIndicateursRepository.listCollectiviteIndicateurs(
         {
           indicateurIds: options.indicateurIds,
@@ -131,8 +130,9 @@ export class ListIndicateurValeursService {
           collectiviteId,
         },
         tx
-      )
-    );
+      );
+    if (!definitions.success) return toDatabaseFailure(definitions);
+    const uniqueIndicateurs = definitions.data;
 
     options.identifiantsReferentiel?.forEach((identifiant) => {
       if (
@@ -221,9 +221,9 @@ export class ListIndicateurValeursService {
         }
       });
     }
-    return {
+    return success({
       count: indicateurValeurGroupeesParSource.length,
       indicateurs: indicateurValeurGroupeesParSource,
-    };
+    });
   }
 }
