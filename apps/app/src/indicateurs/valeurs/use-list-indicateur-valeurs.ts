@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { RouterInput, RouterOutput, useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
 
@@ -25,7 +25,10 @@ type ListInput = Omit<
 /** Charge toutes les valeurs associées à un indicateur id (ou à un ou plusieurs identifiants d'indicateurs prédéfinis) */
 export const useListIndicateurValeurs = (
   input: ListInput,
-  { enabled }: { enabled: boolean } = { enabled: true }
+  {
+    enabled,
+    keepPreviousData: shouldKeepPreviousData = false,
+  }: { enabled: boolean; keepPreviousData?: boolean } = { enabled: true }
 ) => {
   const collectiviteId = useCollectiviteId();
   const trpc = useTRPC();
@@ -38,6 +41,7 @@ export const useListIndicateurValeurs = (
       },
       {
         enabled,
+        placeholderData: shouldKeepPreviousData ? keepPreviousData : undefined,
       }
     )
   );

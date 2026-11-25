@@ -3,14 +3,8 @@ import {
   IndicateurPeriodes,
   IndicateurPeriodiciteEnum,
 } from '@tet/domain/indicateurs';
-import {
-  type PropsWithChildren,
-  type ReactElement,
-  isValidElement,
-} from 'react';
+import { type ReactElement, isValidElement } from 'react';
 import { describe, expect, it, vi } from 'vitest';
-import { IndicateurActionsProvider } from '../detail/context/indicateur-actions.context';
-import { toIndicateurActions } from './to-indicateur-actions.fixture';
 import { useIndicateurTableDeclaration } from './use-indicateur-table-declaration';
 
 type OnAdd = (
@@ -33,22 +27,13 @@ const renderDeclaration = ({
   canWrite?: boolean;
   existingYears?: number[];
 }) =>
-  renderHook(
-    () =>
-      useIndicateurTableDeclaration({
-        canWrite,
-        periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
-        existingPeriodes: existingYears.map(IndicateurPeriodes.fromYear),
-      }),
-    {
-      wrapper: ({ children }: PropsWithChildren) => (
-        <IndicateurActionsProvider
-          value={toIndicateurActions({ declarePeriode })}
-        >
-          {children}
-        </IndicateurActionsProvider>
-      ),
-    }
+  renderHook(() =>
+    useIndicateurTableDeclaration({
+      canWrite,
+      periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+      existingPeriodes: existingYears.map(IndicateurPeriodes.fromYear),
+      declarePeriode,
+    })
   );
 
 describe('useIndicateurTableDeclaration', () => {

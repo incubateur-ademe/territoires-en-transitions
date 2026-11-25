@@ -2,6 +2,7 @@ import { isIndicateurPerso } from '@tet/domain/indicateurs';
 import { Divider } from '@tet/ui';
 import { useState } from 'react';
 import { useIndicateurActions } from '../../context/indicateur-actions.context';
+import { useIndicateurNouveauSousIndicateur } from '../../context/indicateur-nouveau-sous-indicateur.context';
 import { useIndicateurChart } from '../../context/indicateur-chart.context';
 import { useIndicateurData } from '../../context/indicateur-data.context';
 import {
@@ -10,7 +11,10 @@ import {
 } from './indicateur-personnalisation.questions';
 import IndicateurDetailChart from '../../../Indicateur/detail/IndicateurDetailChart';
 import { IndicateurValuesTabs } from '../../../Indicateur/detail/IndicateurValuesTabs';
+import { CreateSousIndicateurButton } from '../sous-indicateurs/create-sous-indicateur.button';
+import { IndicateurSousIndicateursTable } from '../sous-indicateurs/indicateur-sous-indicateurs-table.view';
 import { IndicateurCommentaireInput } from './indicateur-commentaire.input';
+import { IndicateurSousIndicateursChart } from './indicateur-sous-indicateurs-chart.view';
 import { IndicateurSourcesSelect } from './indicateur-sources.select';
 import { IndicateurUniteInput } from './indicateur-unite.input';
 import { ThematiquesIndicateurInput } from './thematiques-indicateur.input';
@@ -20,13 +24,16 @@ export const IndicateurDonnees = () => {
   const { indicateur, canMutateIndicateur, canMutateValeur } =
     useIndicateurData();
   const { chartInfo } = useIndicateurChart();
-  const { updateUnite, updateCommentaire } = useIndicateurActions();
+  const { updateUnite, updateCommentaire, updateIndicateur } =
+    useIndicateurActions();
   const [isTableModalOpen, setIsTableModalOpen] = useState(false);
+  const newSousIndicateur = useIndicateurNouveauSousIndicateur();
   const { commentaire, unite } = indicateur;
 
   const { sourceFilter, typesSegmentation } = chartInfo;
 
   const isPerso = isIndicateurPerso(indicateur);
+  const hasSousIndicateurs = isPerso && indicateur.enfants.length > 0;
   const hasPersonnalisationQuestions =
     indicateur.identifiantReferentiel ===
     INDICATEUR_PERSONNALISATION_IDENTIFIANT;
@@ -40,6 +47,7 @@ export const IndicateurDonnees = () => {
             unite={unite}
             updateUnite={updateUnite}
             disabled={!canMutateIndicateur}
+            parentTitre={indicateur.ancestors.at(-1)?.titre}
           />
         )}
 
@@ -63,25 +71,63 @@ export const IndicateurDonnees = () => {
       )}
 
       {/* Graphe */}
-      <IndicateurDetailChart
-        className="mb-6"
-        chartInfo={chartInfo}
-        indicateur={indicateur}
-        isReadonly={!canMutateValeur || indicateur.sansValeurUtilisateur}
-        onAddValue={() => setIsTableModalOpen(true)}
-      />
+      {hasSousIndicateurs ? (
+        <div className="mb-6">
+          <IndicateurSousIndicateursChart
+            indicateurId={indicateur.id}
+            isCumul={indicateur.totalEstCumulDesSousIndicateurs}
+            unite={unite}
+            periodicite={indicateur.periodicite}
+          />
+        </div>
+      ) : (
+        <IndicateurDetailChart
+          className="mb-6"
+          chartInfo={chartInfo}
+          indicateur={indicateur}
+          isReadonly={!canMutateValeur || indicateur.sansValeurUtilisateur}
+          onAddValue={() => setIsTableModalOpen(true)}
+        />
+      )}
 
       <div className="flex flex-col gap-7">
         <Divider color="primary" className="mb-6" />
 
         {/* Tableau */}
-        <IndicateurValuesTabs
-          isReadonly={!canMutateValeur || indicateur.sansValeurUtilisateur}
-          openModalState={{
-            isOpen: isTableModalOpen,
-            setIsOpen: setIsTableModalOpen,
-          }}
-        />
+        {hasSousIndicateurs ? (
+          <IndicateurSousIndicateursTable
+            indicateurId={indicateur.id}
+            titre={indicateur.titre}
+            unite={unite}
+            periodicite={indicateur.periodicite}
+            isReadonly={!canMutateValeur || indicateur.sansValeurUtilisateur}
+            canMutateIndicateur={canMutateIndicateur}
+            isCumul={indicateur.totalEstCumulDesSousIndicateurs}
+            newSousIndicateur={newSousIndicateur}
+            privateMode={{
+              isConfidentiel: indicateur.estConfidentiel ?? false,
+              onChange: (estConfidentiel) =>
+                updateIndicateur({ estConfidentiel }),
+            }}
+          />
+        ) : (
+          <IndicateurValuesTabs
+            isReadonly={!canMutateValeur || indicateur.sansValeurUtilisateur}
+            openModalState={{
+              isOpen: isTableModalOpen,
+              setIsOpen: setIsTableModalOpen,
+            }}
+            actions={
+              isPerso && canMutateIndicateur ? (
+                <CreateSousIndicateurButton
+                  parentId={indicateur.id}
+                  childCount={0}
+                  onCreated={newSousIndicateur.onCreated}
+                />
+              ) : undefined
+            }
+          />
+        )}
 
         <Divider color="primary" className="my-6" />
       </div>

@@ -6,12 +6,12 @@ import {
 import type { OpenState } from '@tet/ui/utils/types';
 import { useState, type ReactNode } from 'react';
 import { AddIndicateurPeriodeHeader } from './add-indicateur-periode.header';
-import { useIndicateurActions } from '../detail/context/indicateur-actions.context';
 
 export type IndicateurTableDeclarationProps = {
   canWrite: boolean;
   periodicite: SupportedIndicateurPeriodicite | undefined;
   existingPeriodes: readonly IndicateurPeriode[];
+  declarePeriode: (periode: IndicateurPeriode) => Promise<void>;
   openModalState?: OpenState;
 };
 
@@ -25,10 +25,10 @@ export const useIndicateurTableDeclaration = ({
   canWrite,
   periodicite,
   existingPeriodes,
+  declarePeriode,
   openModalState,
 }: IndicateurTableDeclarationProps): IndicateurTableDeclaration => {
   const [periodeToReveal, setPeriodeToReveal] = useState<IndicateurPeriode>();
-  const { declarePeriode } = useIndicateurActions();
   const existingKeys = new Set(existingPeriodes.map(IndicateurPeriodes.key));
 
   const addPeriode = async (

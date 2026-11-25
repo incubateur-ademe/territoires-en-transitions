@@ -20,7 +20,7 @@ export const IndicateurTabs = () => {
   const isPerso = isIndicateurPerso(indicateur);
 
   const hasSousIndicateursTab =
-    enfants.length > 0 && !indicateur.sansValeurUtilisateur;
+    !isPerso && enfants.length > 0 && !indicateur.sansValeurUtilisateur;
   const hasMesuresLieesTab =
     !isPerso &&
     hasCollectivitePermission('referentiels.read') &&

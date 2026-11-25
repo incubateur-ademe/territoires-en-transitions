@@ -1,15 +1,17 @@
 import { appLabels } from '@/app/labels/catalog';
-import { Modal, ModalFooterOKCancel } from '@tet/ui';
+import { Alert, Modal, ModalFooterOKCancel } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 
 type Props = {
   titre: string;
+  enfantsCount: number;
   openState: OpenState;
   onConfirm: () => void;
 };
 
 export const DeleteIndicateurConfirmationModal = ({
   titre,
+  enfantsCount,
   openState,
   onConfirm,
 }: Props) => (
@@ -17,9 +19,19 @@ export const DeleteIndicateurConfirmationModal = ({
     openState={openState}
     title={appLabels.suppressionIndicateur}
     subTitle={titre}
-    render={() => (
-      <p className="mb-0">{appLabels.suppressionIndicateurDescription}</p>
-    )}
+    render={() =>
+      enfantsCount > 0 ? (
+        <Alert
+          state="warning"
+          title={appLabels.indicateurSuppressionParentTitre}
+          description={appLabels.indicateurSuppressionParentSousIndicateurs({
+            count: enfantsCount,
+          })}
+        />
+      ) : (
+        <p className="mb-0">{appLabels.suppressionIndicateurDescription}</p>
+      )
+    }
     renderFooter={({ close }) => (
       <ModalFooterOKCancel
         btnCancelProps={{

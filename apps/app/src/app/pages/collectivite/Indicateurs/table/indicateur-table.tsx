@@ -1,20 +1,18 @@
-import { getIndicateurPeriodPresentation } from '@/app/indicateurs/valeurs/indicateur-period-presentation';
 import {
   IndicateurPeriodes,
-  IndicateurPeriodiciteEnum,
   type IndicateurPeriode,
 } from '@tet/domain/indicateurs';
-import { Button } from '@tet/ui';
 import type { OpenState } from '@tet/ui/utils/types';
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import {
   prepareIndicateurPeriodeData,
   type IndicateurPeriodeValue,
 } from '../data/prepare-indicateur-periode-data';
 import { ConfirmDelete } from './confirm-delete';
+import { IndicateurActionsRow } from './indicateur-actions.row';
 import { EditCommentaireModal } from './edit-commentaire-modal';
-import { AddIndicateurPeriodesModal } from './add-indicateur-periodes.modal';
-import { useIndicateurTableDeclaration } from './use-indicateur-table-declaration';
+import { useIndicateurPeriodeCommentaires } from './use-indicateur-periode-commentaires';
+import { useIndicateurPeriodeDeclaration } from './use-indicateur-periode-declaration';
 import { shouldConfirmValueDeletion } from './indicateur-valeur-deletion.rules';
 import { IndicateurValeursTable } from './indicateur-valeurs-table';
 import { PrivateModeSwitch } from './private-mode-switch';
@@ -25,11 +23,13 @@ import { useIndicateurActions } from '../detail/context/indicateur-actions.conte
 type IndicateurTableProps = {
   readonly?: boolean;
   openModalState?: OpenState;
+  actions?: ReactNode;
 };
 
 export const IndicateurTable = ({
   readonly,
   openModalState,
+  actions,
 }: IndicateurTableProps) => {
   const { indicateur } = useIndicateurData();
   const { chartInfo } = useIndicateurChart();
@@ -39,32 +39,34 @@ export const IndicateurTable = ({
   const objectifs = prepareIndicateurPeriodeData(
     chartInfo.data.valeurs.objectifs
   );
-  const isAnnual =
-    indicateur.periodicite === IndicateurPeriodiciteEnum.ANNUELLE;
-  const [internalIsOpen, setInternalIsOpen] = useState(false);
-  const isOpen = openModalState?.isOpen ?? internalIsOpen;
-  const setIsOpen = openModalState?.setIsOpen ?? setInternalIsOpen;
   const [toBeDeleted, setToBeDeleted] = useState<IndicateurPeriodeValue | null>(
     null
   );
-  const [comment, setComment] = useState<{
-    periode: IndicateurPeriode;
-    commentaires: { resultat: string; objectif: string };
-  } | null>(null);
-  const { saveValeur, declarePeriodes, deleteValeur } = useIndicateurActions();
+  const [commentedPeriode, setCommentedPeriode] =
+    useState<IndicateurPeriode | null>(null);
+  const commentaires = useIndicateurPeriodeCommentaires();
+  const { saveValeur, declarePeriode, declarePeriodes, deleteValeur } =
+    useIndicateurActions();
   const canWrite =
     !readonly &&
     !indicateur.sansValeurUtilisateur &&
     chartInfo.sourceFilter.avecDonneesCollectivite;
+  const hasPrivateMode =
+    canWrite &&
+    !!resultats.donneesCollectivite?.valeurs.some(
+      (value) => value.valeur != null
+    );
   const existingPeriodes = IndicateurPeriodes.merge(
     resultats.periodes,
     objectifs.periodes
   );
-  const declaration = useIndicateurTableDeclaration({
-    canWrite: canWrite && isAnnual,
+  const declaration = useIndicateurPeriodeDeclaration({
+    canWrite,
     periodicite: indicateur.periodicite,
     existingPeriodes,
-    openModalState: isAnnual ? openModalState : undefined,
+    declarePeriode,
+    declarePeriodes,
+    openModalState,
   });
   const getExisting = (periode: IndicateurPeriode) =>
     resultats.valeursExistantes.find(
@@ -102,18 +104,7 @@ export const IndicateurTable = ({
         indicateur={indicateur}
         resultats={resultats}
         objectifs={objectifs}
-        addPeriode={
-          isAnnual ? (
-            declaration.header
-          ) : canWrite ? (
-            <Button size="sm" onClick={() => setIsOpen(true)}>
-              {
-                getIndicateurPeriodPresentation(indicateur.periodicite).editor
-                  .addLabel
-              }
-            </Button>
-          ) : undefined
-        }
+        addPeriode={declaration.addPeriode}
         periodeToReveal={declaration.periodeToReveal}
         readonly={!canWrite}
         confidentiel={indicateur.estConfidentiel ?? false}
@@ -127,41 +118,32 @@ export const IndicateurTable = ({
           }
         }}
         onDelete={(periode) => void onDelete(periode)}
-        onComment={(periode) => {
-          const existing = getExisting(periode);
-          setComment({
-            periode,
-            commentaires: {
-              resultat: existing?.resultatCommentaire ?? '',
-              objectif: existing?.objectifCommentaire ?? '',
-            },
-          });
-        }}
+        onComment={setCommentedPeriode}
       />
-      {!!resultats.donneesCollectivite?.valeurs.some(
-        (value) => value.valeur != null
-      ) && <PrivateModeSwitch isReadOnly={!canWrite} />}
-      {comment && (
+      {(actions !== undefined || hasPrivateMode) && (
+        <IndicateurActionsRow leading={actions}>
+          {hasPrivateMode && <PrivateModeSwitch />}
+        </IndicateurActionsRow>
+      )}
+      {commentedPeriode && (
         <EditCommentaireModal
-          periodeLabel={IndicateurPeriodes.format(comment.periode)}
-          commentaires={comment.commentaires}
-          openState={{ isOpen: true, setIsOpen: () => setComment(null) }}
-          isReadonly={
-            !canWrite || comment.periode.periodicite !== indicateur.periodicite
-          }
-          onChange={async (commentaires) => {
-            if (!canWrite) return false;
-            try {
-              await saveValeur({
-                ...getWriteIdentity(comment.periode),
-                resultatCommentaire: commentaires.resultat,
-                objectifCommentaire: commentaires.objectif,
-              });
-              return true;
-            } catch {
-              return false;
-            }
+          periodeLabel={IndicateurPeriodes.format(commentedPeriode)}
+          commentaires={commentaires.commentairesOf(commentedPeriode)}
+          openState={{
+            isOpen: true,
+            setIsOpen: () => setCommentedPeriode(null),
           }}
+          isReadonly={
+            !canWrite || commentedPeriode.periodicite !== indicateur.periodicite
+          }
+          onChange={(periodeCommentaires) =>
+            canWrite
+              ? commentaires.save({
+                  periode: commentedPeriode,
+                  commentaires: periodeCommentaires,
+                })
+              : Promise.resolve(false)
+          }
         />
       )}
       {toBeDeleted && (
@@ -176,16 +158,7 @@ export const IndicateurTable = ({
           }}
         />
       )}
-      {indicateur.periodicite !== IndicateurPeriodiciteEnum.ANNUELLE &&
-        canWrite &&
-        isOpen && (
-          <AddIndicateurPeriodesModal
-            periodicite={indicateur.periodicite}
-            openState={{ isOpen, setIsOpen }}
-            existingPeriodes={existingPeriodes}
-            onAdd={declarePeriodes}
-          />
-        )}
+      {declaration.modal}
     </div>
   );
 };
