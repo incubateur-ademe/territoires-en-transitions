@@ -225,6 +225,12 @@ export const listFichesRequestFiltersObjectSchema = z.object({
     .describe(
       'Inclut les sous-actions dans les résultats. Par défaut, les sous-actions sont exclues. Mutuellement exclusif avec `parentsId`.'
     ),
+  withSousActionsMatches: z.coerce
+    .boolean()
+    .optional()
+    .describe(
+      "Applique aussi aux sous-actions les filtres sur leurs propres champs (titre, description, statut, pilotes, date de fin) : une action remonte si elle les satisfait, ou si l'une de ses sous-actions les satisfait tous. Les autres filtres portent toujours sur l'action. Sans effet avec `onlyChildren` ou `parentsId`."
+    ),
   withAxesAncestors: z.coerce
     .boolean()
     .optional()

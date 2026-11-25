@@ -393,3 +393,148 @@ describe('listFiches et la confidentialité', () => {
     ]);
   });
 });
+
+describe('countSousActionsMatches et listFiches avec withSousActionsMatches : confidentialité', () => {
+  let router: TrpcRouter;
+  let db: DatabaseService;
+  let collectiviteId: number;
+  let actionRestreinteId: number;
+  let actionOuverteId: number;
+  let visiteurVerifie: AuthenticatedUser;
+  let membreEnLecture: AuthenticatedUser;
+
+  beforeAll(async () => {
+    const app: INestApplication = await getTestApp();
+    router = await getTestRouter(app);
+    db = await getTestDatabase(app);
+
+    const { collectivite } = await addTestCollectivite(db);
+    collectiviteId = collectivite.id;
+
+    const { user: membre } = await addTestUser(db, {
+      collectiviteId,
+      role: CollectiviteRole.LECTURE,
+    });
+    membreEnLecture = getAuthUserFromUserCredentials(membre);
+    const { user: visiteur } = await addTestUser(db, {
+      collectiviteId: null,
+      role: CollectiviteRole.LECTURE,
+    });
+    visiteurVerifie = getAuthUserFromUserCredentials(visiteur);
+
+    const [actionRestreinte] = await db.db
+      .insert(ficheActionTable)
+      .values({
+        titre: 'Action restreinte',
+        description: 'Description confidentielle',
+        restreint: true,
+        collectiviteId,
+      })
+      .returning();
+    actionRestreinteId = actionRestreinte.id;
+    await db.db.insert(ficheActionTable).values({
+      titre: 'Sous-action',
+      description: 'Détail confidentiel',
+      statut: StatutEnum.EN_RETARD,
+      parentId: actionRestreinteId,
+      collectiviteId,
+    });
+
+    // action ouverte dont l'unique sous-action est restreinte et sans
+    // description
+    const [actionOuverte] = await db.db
+      .insert(ficheActionTable)
+      .values({
+        titre: 'Action ouverte',
+        description: 'Description publique',
+        restreint: false,
+        collectiviteId,
+      })
+      .returning();
+    actionOuverteId = actionOuverte.id;
+    await db.db.insert(ficheActionTable).values({
+      titre: 'Sous-action restreinte',
+      description: '',
+      restreint: true,
+      parentId: actionOuverteId,
+      collectiviteId,
+    });
+
+    return async () => {
+      await db.db
+        .delete(ficheActionTable)
+        .where(eq(ficheActionTable.collectiviteId, collectiviteId));
+      await app.close();
+    };
+  });
+
+  const callerFor = (user: AuthenticatedUser) =>
+    router.createCaller({ user }).plans.fiches;
+
+  it('rend masquée au visiteur l’action restreinte qui remonte par le statut de sa sous-action', async () => {
+    const filters = {
+      statuts: [StatutEnum.EN_RETARD],
+      withSousActionsMatches: true,
+    };
+    const { data } = await callerFor(visiteurVerifie).listFiches({
+      collectiviteId,
+      filters,
+    });
+    expect(data).toEqual([
+      expect.objectContaining({
+        id: actionRestreinteId,
+        description: null,
+        sousActionsCount: 1,
+      }),
+    ]);
+    expect(
+      await callerFor(visiteurVerifie).countSousActionsMatches({
+        collectiviteId,
+        filters,
+      })
+    ).toEqual({ sousActionsCount: 1, actionsCount: 1 });
+  });
+
+  it('ne révèle pas au visiteur la description d’une sous-action d’une action restreinte', async () => {
+    const filters = {
+      texteNomOuDescription: 'confidentiel',
+      withSousActionsMatches: true,
+    };
+    const visiteur = callerFor(visiteurVerifie);
+    expect(
+      (await visiteur.listFiches({ collectiviteId, filters })).data
+    ).toEqual([]);
+    expect(
+      await visiteur.countSousActionsMatches({ collectiviteId, filters })
+    ).toEqual({ sousActionsCount: 0, actionsCount: 0 });
+
+    const membre = callerFor(membreEnLecture);
+    expect(
+      (await membre.listFiches({ collectiviteId, filters })).data.map(
+        (fiche) => fiche.id
+      )
+    ).toEqual([actionRestreinteId]);
+    expect(
+      await membre.countSousActionsMatches({ collectiviteId, filters })
+    ).toEqual({ sousActionsCount: 1, actionsCount: 1 });
+  });
+
+  it('ne fait pas remonter pour le visiteur une action par sa sous-action restreinte quand il filtre sur un champ masqué', async () => {
+    const filters = { noDescription: true, withSousActionsMatches: true };
+    const visiteur = callerFor(visiteurVerifie);
+    expect(
+      (await visiteur.listFiches({ collectiviteId, filters })).data
+    ).toEqual([]);
+    expect(
+      await visiteur.countSousActionsMatches({ collectiviteId, filters })
+    ).toEqual({ sousActionsCount: 0, actionsCount: 0 });
+
+    const membre = callerFor(membreEnLecture);
+    expect((await membre.listFiches({ collectiviteId, filters })).data).toEqual(
+      [expect.objectContaining({ id: actionOuverteId, sousActionsCount: 1 })]
+    );
+    expect(
+      await membre.countSousActionsMatches({ collectiviteId, filters })
+    ).toEqual({ sousActionsCount: 1, actionsCount: 1 });
+  });
+});

@@ -46,6 +46,11 @@ export const listFichesInputSchema = z.object({
   queryOptions: queryOptionsSchema.optional(),
 });
 
+export const countSousActionsMatchesInputSchema = z.object({
+  collectiviteId: z.coerce.number(),
+  filters: listFichesRequestFiltersSchema.optional(),
+});
+
 export type ListFichesOutput = {
   count: number;
   nextPage: number | null;

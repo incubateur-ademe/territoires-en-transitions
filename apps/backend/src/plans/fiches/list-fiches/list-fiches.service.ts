@@ -7,6 +7,7 @@ import {
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import FicheActionPermissionsService from '@tet/backend/plans/fiches/fiche-action-permissions.service';
 import { QueryOptionsSchema } from '@tet/backend/plans/fiches/list-fiches/list-fiches.request';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { catchDatabaseFailure } from '@tet/backend/utils/database/catch-database-failure';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
@@ -17,6 +18,7 @@ import {
   FicheWithRelationsAndCollectivite,
   ListFichesRequestFilters,
 } from '@tet/domain/plans';
+import { ResourceType } from '@tet/domain/users';
 import { failure, Result, success } from '../../../utils/result.type';
 import {
   FichesRestreintesAccess,
@@ -31,7 +33,10 @@ import {
   ListFichesErrorEnum,
   ListFichesQueryError,
 } from './list-fiches.errors';
-import { ListFichesRepository } from './list-fiches.repository';
+import {
+  ListFichesRepository,
+  SousActionsMatchesCount,
+} from './list-fiches.repository';
 
 export type FichesReadContext = {
   user: AuthUser;
@@ -73,6 +78,7 @@ export default class ListFichesService {
   constructor(
     private readonly collectiviteService: CollectivitesService,
     private readonly fichePermissionService: FicheActionPermissionsService,
+    private readonly permissionService: PermissionService,
     private readonly listFichesRepository: ListFichesRepository
   ) {}
 
@@ -256,6 +262,61 @@ export default class ListFichesService {
     }
 
     return { kind: 'filters', filters, access };
+  }
+
+  /**
+   * Compte les sous-actions qui satisfont les filtres sur leurs propres champs
+   * (K) et leurs actions parentes (M), pour le résumé « K sous-actions
+   * correspondantes dans M d'entre elles » et l'état vide de la liste des
+   * actions. Les fiches
+   * restreintes suivent les mêmes règles que la liste.
+   */
+  async countSousActionsMatches(
+    {
+      collectiviteId,
+      filters,
+    }: { collectiviteId: number; filters: ListFichesRequestFilters },
+    { user, tx }: FichesReadContext
+  ): Promise<
+    Result<
+      SousActionsMatchesCount,
+      ListFichesQueryError | 'UNAUTHORIZED' | 'NOT_FOUND'
+    >
+  > {
+    return catchDatabaseFailure(async () => {
+      // Droit de lecture de base sur la collectivité, indépendant des fiches
+      // restreintes traitées ensuite par `getReadableFichesFilters`.
+      const isPrivateResult = await this.collectiviteService.isPrivate(
+        collectiviteId,
+        tx
+      );
+      if (!isPrivateResult.success) {
+        return failure(isPrivateResult.error, isPrivateResult.cause);
+      }
+      const permission = await this.permissionService.isAllowed(
+        user,
+        isPrivateResult.data ? 'plans.read_confidentiel' : 'plans.read',
+        ResourceType.COLLECTIVITE,
+        { collectiviteId },
+        tx
+      );
+      if (!permission.success) {
+        return failure(ListFichesErrorEnum.UNAUTHORIZED, permission.cause);
+      }
+      const readable = await this.getReadableFichesFilters(
+        { collectiviteId, filters, readsMaskedFields: false },
+        { user, tx }
+      );
+      if (readable.kind === 'no_readable_fiche') {
+        return success({ sousActionsCount: 0, actionsCount: 0 });
+      }
+      return this.listFichesRepository.countSousActionsMatches({
+        collectiviteId,
+        filters: readable.filters,
+        tx,
+        descriptionSearch: getDescriptionSearchScope(readable.access),
+      });
+    });
   }
 
   /**

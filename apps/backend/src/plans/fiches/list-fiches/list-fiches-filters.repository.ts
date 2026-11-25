@@ -51,6 +51,16 @@ import { ficheActionAxeTable } from '../shared/models/fiche-action-axe.table';
 import { ficheActionInstanceGouvernanceTableTag } from '../shared/models/fiche-action-instance-gouvernance';
 import { ficheActionPiloteTable } from '../shared/models/fiche-action-pilote.table';
 import { DescriptionSearchScope } from './fiches-restreintes.rules';
+import {
+  isSousActionsMatchingEnabled,
+  SousActionFieldFilters,
+  splitFiltersBySousActionScope,
+} from './list-fiches-sous-actions-scope.rules';
+
+type FicheTable = typeof ficheActionTable;
+
+/** Sous-action de la fiche listée, pour les conditions corrélées. */
+export const sousActionTable = aliasedTable(ficheActionTable, 'sous_action');
 
 export function formatFiltersForLogs(
   filters: ListFichesRequestFilters
@@ -79,8 +89,8 @@ export function formatFiltersForLogs(
 const isIncludingSousActions = (filters: ListFichesRequestFilters) =>
   Boolean(filters.withChildren || filters.onlyChildren);
 
-const isNotRestreintCondition = () =>
-  or(isNull(ficheActionTable.restreint), eq(ficheActionTable.restreint, false));
+export const isNotRestreintCondition = (fiche: FicheTable = ficheActionTable) =>
+  or(isNull(fiche.restreint), eq(fiche.restreint, false));
 
 /**
  * Traduit les filtres de `listFiches` en conditions SQL sur `fiche_action`.
@@ -89,19 +99,33 @@ const isNotRestreintCondition = () =>
 export class ListFichesFiltersRepository {
   constructor(private readonly databaseService: DatabaseService) {}
 
-  private getTimeColumn(typePeriode?: TypePeriodeEnum) {
+  private getTimeColumn(fiche: FicheTable, typePeriode?: TypePeriodeEnum) {
     switch (typePeriode) {
       case 'creation':
-        return ficheActionTable.createdAt;
+        return fiche.createdAt;
       case 'modification':
-        return ficheActionTable.modifiedAt;
+        return fiche.modifiedAt;
       case 'debut':
-        return ficheActionTable.dateDebut;
+        return fiche.dateDebut;
       case 'fin':
-        return ficheActionTable.dateFin;
+        return fiche.dateFin;
       default:
-        return ficheActionTable.modifiedAt;
+        return fiche.modifiedAt;
     }
+  }
+
+  private getPeriodeConditions(
+    fiche: FicheTable,
+    filters: Pick<
+      ListFichesRequestFilters,
+      'typePeriode' | 'debutPeriode' | 'finPeriode'
+    >
+  ): SQL[] {
+    const timeColumn = this.getTimeColumn(fiche, filters.typePeriode);
+    return [
+      filters.debutPeriode ? gte(timeColumn, filters.debutPeriode) : undefined,
+      filters.finPeriode ? lte(timeColumn, filters.finPeriode) : undefined,
+    ].filter((condition) => condition !== undefined);
   }
 
   /**
@@ -289,7 +313,8 @@ export class ListFichesFiltersRepository {
   private getHasNoLinkedEntityCondition<T extends TableConfig>(
     noLinkedEntity: boolean | undefined,
     linkedTable: Table<T>,
-    ficheIdColumn: T['columns'][keyof T['columns']]
+    ficheIdColumn: T['columns'][keyof T['columns']],
+    fiche: FicheTable = ficheActionTable
   ): SQLWrapper | undefined {
     if (!noLinkedEntity) {
       return;
@@ -297,7 +322,8 @@ export class ListFichesFiltersRepository {
     return this.getHasAnyLinkedEntityCondition(
       false,
       linkedTable,
-      ficheIdColumn
+      ficheIdColumn,
+      fiche
     );
   }
 
@@ -306,13 +332,15 @@ export class ListFichesFiltersRepository {
    *
    * @param hasLinkedEntity - Whether to check for existence (true) or non-existence (false)
    * @param linkedTable - The related table to check against
-   * @param ficheIdColumn - The column in the related table that links to ficheActionTable.id
+   * @param ficheIdColumn - The column in the related table that links to the fiche id
+   * @param fiche - The fiche table (or alias) the condition is correlated to
    * @returns SQLWrapper condition or undefined if hasLinkedEntity is null/undefined
    */
   private getHasAnyLinkedEntityCondition<T extends TableConfig>(
     hasLinkedEntity: boolean | undefined,
     linkedTable: Table<T>,
-    ficheIdColumn: T['columns'][keyof T['columns']]
+    ficheIdColumn: T['columns'][keyof T['columns']],
+    fiche: FicheTable = ficheActionTable
   ): SQLWrapper | undefined {
     if (isNil(hasLinkedEntity)) {
       return;
@@ -322,7 +350,7 @@ export class ListFichesFiltersRepository {
         ficheId: ficheIdColumn,
       })
       .from(linkedTable)
-      .where(eq(ficheIdColumn, ficheActionTable.id));
+      .where(eq(ficheIdColumn, fiche.id));
 
     return hasLinkedEntity
       ? exists(linkedEntityQuery)
@@ -371,7 +399,8 @@ export class ListFichesFiltersRepository {
     linkedTable: Table<T>,
     ficheIdColumn: T['columns'][keyof T['columns']],
     entityIdColumn: T['columns'][keyof T['columns']],
-    entityIds: number[] | string[] | undefined
+    entityIds: number[] | string[] | undefined,
+    fiche: FicheTable = ficheActionTable
   ): SQLWrapper | undefined {
     // Ignore si undefined/null ou si le tableau est vide
     // Un tableau vide signifie "pas de filtre" plutôt que "chercher des valeurs vides"
@@ -384,10 +413,7 @@ export class ListFichesFiltersRepository {
       })
       .from(linkedTable)
       .where(
-        and(
-          eq(ficheIdColumn, ficheActionTable.id),
-          inArray(entityIdColumn, entityIds)
-        )
+        and(eq(ficheIdColumn, fiche.id), inArray(entityIdColumn, entityIds))
       );
 
     return exists(linkedEntityQuery);
@@ -404,20 +430,23 @@ export class ListFichesFiltersRepository {
     identifiedEntities: {
       entityIdColumn: T['columns'][keyof T['columns']];
       entityIds: number[] | string[] | undefined;
-    }[]
+    }[],
+    fiche: FicheTable = ficheActionTable
   ): SQLWrapper | SQL | undefined {
     return or(
       this.getHasNoLinkedEntityCondition(
         noLinkedEntity,
         linkedTable,
-        ficheIdColumn
+        ficheIdColumn,
+        fiche
       ),
       ...identifiedEntities.map(({ entityIdColumn, entityIds }) =>
         this.getHasIdentifiedLinkedEntityCondition(
           linkedTable,
           ficheIdColumn,
           entityIdColumn,
-          entityIds
+          entityIds,
+          fiche
         )
       )
     );
@@ -483,6 +512,177 @@ export class ListFichesFiltersRepository {
     }
   }
 
+  /**
+   * Conditions des filtres qui portent sur les champs propres à une
+   * sous-action (titre, description, statut, pilotes, date de fin), sur la
+   * fiche listée ou sur une sous-action (`sousActionTable`).
+   */
+  getSousActionFieldConditions(
+    fiche: FicheTable,
+    filters: SousActionFieldFilters,
+    descriptionSearch: DescriptionSearchScope
+  ): (SQLWrapper | SQL)[] {
+    const conditions: (SQLWrapper | SQL | undefined)[] = [
+      this.getNullableFieldCondition(
+        fiche.statut,
+        filters.noStatut,
+        filters.statuts
+      ),
+      ...this.getPeriodeConditions(fiche, filters),
+      this.getHasAnyNotNullValueCondition(
+        filters.hasDateDeFinPrevisionnelle,
+        fiche.dateFin
+      ),
+      this.getNoneOrAnyOfCondition(
+        filters.noPilote,
+        ficheActionPiloteTable,
+        ficheActionPiloteTable.ficheId,
+        [
+          {
+            entityIdColumn: ficheActionPiloteTable.tagId,
+            entityIds: filters.personnePiloteIds,
+          },
+          {
+            entityIdColumn: ficheActionPiloteTable.userId,
+            entityIds: filters.utilisateurPiloteIds,
+          },
+        ],
+        fiche
+      ),
+    ];
+
+    if (filters.noTitre !== undefined) {
+      conditions.push(
+        this.getFieldEmptyCondition({
+          fieldColumn: fiche.titre,
+          shouldBeEmpty: filters.noTitre,
+          emptyValues: ['', 'Sans titre'],
+        })
+      );
+    }
+
+    if (filters.noDescription !== undefined) {
+      conditions.push(
+        this.getFieldEmptyCondition({
+          fieldColumn: fiche.description,
+          shouldBeEmpty: filters.noDescription,
+          emptyValues: [''],
+        })
+      );
+    }
+
+    if (filters.texteNomOuDescription) {
+      const textSearchConditions: (SQLWrapper | SQL | undefined)[] = [];
+      this.addTextSearchCondition(
+        textSearchConditions,
+        sql`${fiche.titre}`,
+        filters.texteNomOuDescription
+      );
+      const descriptionSearchConditions: (SQLWrapper | SQL | undefined)[] = [];
+      this.addTextSearchCondition(
+        descriptionSearchConditions,
+        sql`${fiche.description}`,
+        filters.texteNomOuDescription
+      );
+      if (descriptionSearch === 'unrestrictedFichesOnly') {
+        descriptionSearchConditions.push(isNotRestreintCondition(fiche));
+        // la description d'une sous-action ne doit rien révéler d'une action
+        // restreinte masquée
+        if (fiche !== ficheActionTable) {
+          descriptionSearchConditions.push(isNotRestreintCondition());
+        }
+      }
+      textSearchConditions.push(and(...descriptionSearchConditions));
+      conditions.push(or(...textSearchConditions));
+    }
+
+    return conditions.filter((condition) => condition !== undefined);
+  }
+
+  /**
+   * Sous-actions non supprimées de la fiche listée qui satisfont, chacune,
+   * tous les filtres donnés. Quand les fiches restreintes sont exclues
+   * (`restreint: false`), les sous-actions restreintes le sont aussi : elles
+   * ne font pas remonter leur action et ne sont pas comptées.
+   */
+  private getMatchingSousActionsConditions(
+    filters: SousActionFieldFilters,
+    descriptionSearch: DescriptionSearchScope,
+    excludesRestreintes: boolean
+  ): SQL | undefined {
+    return and(
+      eq(sousActionTable.parentId, ficheActionTable.id),
+      eq(sousActionTable.deleted, false),
+      excludesRestreintes
+        ? isNotRestreintCondition(sousActionTable)
+        : undefined,
+      ...this.getSousActionFieldConditions(
+        sousActionTable,
+        filters,
+        descriptionSearch
+      )
+    );
+  }
+
+  /**
+   * Avec `withSousActionsMatches`, une action remonte si elle satisfait les
+   * filtres sur les champs d'une sous-action, ou si l'une de ses sous-actions
+   * les satisfait tous. Les autres filtres restent évalués sur l'action.
+   */
+  private getSousActionFieldsCondition(
+    filters: ListFichesRequestFilters,
+    sousActionFieldFilters: SousActionFieldFilters,
+    descriptionSearch: DescriptionSearchScope
+  ): SQLWrapper | SQL | undefined {
+    const ficheConditions = this.getSousActionFieldConditions(
+      ficheActionTable,
+      sousActionFieldFilters,
+      descriptionSearch
+    );
+    if (ficheConditions.length === 0) {
+      return;
+    }
+    if (!isSousActionsMatchingEnabled(filters)) {
+      return and(...ficheConditions);
+    }
+    const matchingSousActionsQuery = this.databaseService.db
+      .select({ id: sousActionTable.id })
+      .from(sousActionTable)
+      .where(
+        this.getMatchingSousActionsConditions(
+          sousActionFieldFilters,
+          descriptionSearch,
+          filters.restreint === false
+        )
+      );
+    return or(and(...ficheConditions), exists(matchingSousActionsQuery));
+  }
+
+  /**
+   * Nombre de sous-actions non supprimées de la fiche listée. Avec
+   * `withSousActionsMatches`, seules comptent celles qui satisfont les filtres
+   * sur les champs d'une sous-action.
+   */
+  getSousActionsCountSql(
+    filters: ListFichesRequestFilters,
+    descriptionSearch: DescriptionSearchScope
+  ): SQL<number> {
+    const sousActionFieldFilters = isSousActionsMatchingEnabled(filters)
+      ? splitFiltersBySousActionScope(filters).sousActionFieldFilters
+      : {};
+    const countQuery = this.databaseService.db
+      .select({ count: sql`count(*)::int` })
+      .from(sousActionTable)
+      .where(
+        this.getMatchingSousActionsConditions(
+          sousActionFieldFilters,
+          descriptionSearch,
+          filters.restreint === false
+        )
+      );
+    return sql<number>`(${countQuery})`.mapWith(Number);
+  }
+
   getConditions({
     collectiviteId,
     filters = {},
@@ -492,6 +692,8 @@ export class ListFichesFiltersRepository {
     filters?: ListFichesRequestFilters;
     descriptionSearch: DescriptionSearchScope;
   }): (SQLWrapper | SQL | undefined)[] {
+    const { actionFilters, sousActionFieldFilters } =
+      splitFiltersBySousActionScope(filters);
     const conditions: (SQLWrapper | SQL | undefined)[] = [];
     // Exclut systématiquement les fiches soft-deleted
     conditions.push(eq(ficheActionTable.deleted, false));
@@ -522,14 +724,6 @@ export class ListFichesFiltersRepository {
 
       conditions.push(or(...ficheIdsConditions));
     }
-
-    conditions.push(
-      this.getNullableFieldCondition(
-        ficheActionTable.statut,
-        filters.noStatut,
-        filters.statuts
-      )
-    );
 
     conditions.push(
       this.getNullableFieldCondition(
@@ -588,17 +782,9 @@ export class ListFichesFiltersRepository {
       conditions.push(gte(ficheActionTable.modifiedAt, modifiedSinceDate));
     }
 
-    if (filters.debutPeriode) {
-      conditions.push(
-        gte(this.getTimeColumn(filters.typePeriode), filters.debutPeriode)
-      );
-    }
-
-    if (filters.finPeriode) {
-      conditions.push(
-        lte(this.getTimeColumn(filters.typePeriode), filters.finPeriode)
-      );
-    }
+    conditions.push(
+      ...this.getPeriodeConditions(ficheActionTable, actionFilters)
+    );
 
     if (filters.hasAtLeastBeginningOrEndDate) {
       conditions.push(
@@ -606,33 +792,6 @@ export class ListFichesFiltersRepository {
           isNotNull(ficheActionTable.dateDebut),
           isNotNull(ficheActionTable.dateFin)
         )
-      );
-    }
-
-    conditions.push(
-      this.getHasAnyNotNullValueCondition(
-        filters.hasDateDeFinPrevisionnelle,
-        ficheActionTable.dateFin
-      )
-    );
-
-    if (filters.noTitre !== undefined) {
-      conditions.push(
-        this.getFieldEmptyCondition({
-          fieldColumn: ficheActionTable.titre,
-          shouldBeEmpty: filters.noTitre,
-          emptyValues: ['', 'Sans titre'],
-        })
-      );
-    }
-
-    if (filters.noDescription !== undefined) {
-      conditions.push(
-        this.getFieldEmptyCondition({
-          fieldColumn: ficheActionTable.description,
-          shouldBeEmpty: filters.noDescription,
-          emptyValues: [''],
-        })
       );
     }
 
@@ -822,24 +981,6 @@ export class ListFichesFiltersRepository {
 
     conditions.push(
       this.getNoneOrAnyOfCondition(
-        filters.noPilote,
-        ficheActionPiloteTable,
-        ficheActionPiloteTable.ficheId,
-        [
-          {
-            entityIdColumn: ficheActionPiloteTable.tagId,
-            entityIds: filters.personnePiloteIds,
-          },
-          {
-            entityIdColumn: ficheActionPiloteTable.userId,
-            entityIds: filters.utilisateurPiloteIds,
-          },
-        ]
-      )
-    );
-
-    conditions.push(
-      this.getNoneOrAnyOfCondition(
         filters.noReferent,
         ficheActionReferentTable,
         ficheActionReferentTable.ficheId,
@@ -856,25 +997,13 @@ export class ListFichesFiltersRepository {
       )
     );
 
-    const textSearchConditions: (SQLWrapper | SQL | undefined)[] = [];
-    if (filters.texteNomOuDescription) {
-      this.addTextSearchCondition(
-        textSearchConditions,
-        sql`${ficheActionTable.titre}`,
-        filters.texteNomOuDescription
-      );
-      const descriptionSearchConditions: (SQLWrapper | SQL | undefined)[] = [];
-      this.addTextSearchCondition(
-        descriptionSearchConditions,
-        sql`${ficheActionTable.description}`,
-        filters.texteNomOuDescription
-      );
-      if (descriptionSearch === 'unrestrictedFichesOnly') {
-        descriptionSearchConditions.push(isNotRestreintCondition());
-      }
-      textSearchConditions.push(and(...descriptionSearchConditions));
-      conditions.push(or(...textSearchConditions));
-    }
+    conditions.push(
+      this.getSousActionFieldsCondition(
+        filters,
+        sousActionFieldFilters,
+        descriptionSearch
+      )
+    );
 
     // Gestion du filtrage des sous-fiches
     if (filters.parentsId?.length) {

@@ -1,6 +1,7 @@
 import { getTestApp, getTestDatabase, getTestRouter } from '@tet/backend/test';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { PrioriteEnum, StatutEnum } from '@tet/domain/plans';
 import { createListFichesScenario } from './list-fiches.test-fixture';
 
 /**
@@ -321,6 +322,356 @@ describe('listFiches et les sous-actions', () => {
       nbOfPages: 1,
       nextPage: null,
       titres: ['Action 2', 'Action 10'],
+    });
+  });
+  describe('périmètre « Actions et sous-actions » (withSousActionsMatches)', () => {
+    // Lot 2b : les filtres sur les champs d'une sous-action (titre,
+    // description, statut, pilotes, date de fin) font remonter l'action dont
+    // une sous-action les satisfait tous ; les autres filtres restent sur
+    // l'action.
+    const withSousActions = { withSousActionsMatches: true } as const;
+
+    test('personnePiloteIds : le pilote d’une sous-action fait remonter son action', async () => {
+      const s = await createScenario();
+      const pilote = await s.createPersonnePilote('Pilote');
+      const action = await s.createAction('Action sans pilote');
+      await s.createSousAction(action, 'Sous-action pilotée', {
+        pilotes: [pilote],
+      });
+      await s.createAction('Autre action');
+
+      const filters = { personnePiloteIds: [pilote.tagId] };
+      expect(await s.listTitres(filters)).toEqual([]);
+      expect(await s.listTitres({ ...filters, ...withSousActions })).toEqual([
+        'Action sans pilote',
+      ]);
+    });
+
+    test('utilisateurPiloteIds : le pilote d’une sous-action fait remonter son action, sans doublon', async () => {
+      const s = await createScenario();
+      const action = await s.createAction('Action pilotée', {
+        pilotes: [s.adminPilote],
+      });
+      await s.createSousAction(action, 'Sous-action 1', {
+        pilotes: [s.adminPilote],
+      });
+      await s.createSousAction(action, 'Sous-action 2', {
+        pilotes: [s.adminPilote],
+      });
+
+      expect(
+        await s.listTitres({
+          utilisateurPiloteIds: [s.admin.id],
+          ...withSousActions,
+        })
+      ).toEqual(['Action pilotée']);
+    });
+
+    test('noPilote : une sous-action sans pilote fait remonter son action pilotée', async () => {
+      const s = await createScenario();
+      const action = await s.createAction('Action pilotée', {
+        pilotes: [s.adminPilote],
+      });
+      await s.createSousAction(action, 'Sous-action sans pilote');
+
+      expect(await s.listTitres({ noPilote: true })).toEqual([]);
+      expect(
+        await s.listTitres({ noPilote: true, ...withSousActions })
+      ).toEqual(['Action pilotée']);
+    });
+
+    test('statuts : une sous-action en retard fait remonter son action', async () => {
+      const s = await createScenario();
+      const action = await s.createAction('Action à venir', {
+        champs: { statut: StatutEnum.A_VENIR },
+      });
+      await s.createSousAction(action, 'Sous-action en retard', {
+        champs: { statut: StatutEnum.EN_RETARD },
+      });
+
+      const filters = { statuts: [StatutEnum.EN_RETARD] };
+      expect(await s.listTitres(filters)).toEqual([]);
+      expect(await s.listTitres({ ...filters, ...withSousActions })).toEqual([
+        'Action à venir',
+      ]);
+    });
+
+    test('noStatut : une sous-action sans statut fait remonter son action', async () => {
+      const s = await createScenario();
+      const action = await s.createAction('Action en cours', {
+        champs: { statut: StatutEnum.EN_COURS },
+      });
+      // le statut vaut « À venir » par défaut
+      await s.createSousAction(action, 'Sous-action sans statut', {
+        champs: { statut: null },
+      });
+
+      expect(
+        await s.listTitres({ noStatut: true, ...withSousActions })
+      ).toEqual(['Action en cours']);
+    });
+
+    test('texteNomOuDescription : le titre ou la description d’une sous-action font remonter son action', async () => {
+      const s = await createScenario();
+      const parTitre = await s.createAction('Action A');
+      await s.createSousAction(parTitre, 'Pistes cyclables');
+      const parDescription = await s.createAction('Action B');
+      await s.createSousAction(parDescription, 'Sous-action', {
+        champs: { description: 'Aménager des pistes' },
+      });
+      await s.createAction('Action C');
+
+      const filters = { texteNomOuDescription: 'pistes' };
+      expect(await s.listTitres(filters)).toEqual([]);
+      expect(await s.listTitres({ ...filters, ...withSousActions })).toEqual([
+        'Action A',
+        'Action B',
+      ]);
+    });
+
+    test('hasDateDeFinPrevisionnelle : une sous-action datée fait remonter son action', async () => {
+      const s = await createScenario();
+      const action = await s.createAction('Action sans date de fin');
+      await s.createSousAction(action, 'Sous-action datée', {
+        champs: { dateFin: '2026-06-30' },
+      });
+
+      expect(
+        await s.listTitres({
+          hasDateDeFinPrevisionnelle: true,
+          ...withSousActions,
+        })
+      ).toEqual(['Action sans date de fin']);
+    });
+
+    test('période sur la date de fin : elle s’applique aux sous-actions, pas une période sur la date de début', async () => {
+      const s = await createScenario();
+      const action = await s.createAction('Action sans date');
+      await s.createSousAction(action, 'Sous-action de juin', {
+        champs: { dateFin: '2026-06-30' },
+      });
+
+      const periode = { debutPeriode: '2026-06-01', finPeriode: '2026-06-30' };
+      expect(
+        await s.listTitres({
+          ...periode,
+          typePeriode: 'fin',
+          ...withSousActions,
+        })
+      ).toEqual(['Action sans date']);
+      expect(
+        await s.listTitres({
+          ...periode,
+          typePeriode: 'debut',
+          ...withSousActions,
+        })
+      ).toEqual([]);
+    });
+
+    test('une même sous-action doit satisfaire tous les filtres qui s’appliquent aux sous-actions', async () => {
+      const s = await createScenario();
+      const action = await s.createAction('Action');
+      await s.createSousAction(action, 'Sous-action en retard sans pilote', {
+        champs: { statut: StatutEnum.EN_RETARD },
+      });
+      await s.createSousAction(action, 'Sous-action pilotée à venir', {
+        champs: { statut: StatutEnum.A_VENIR },
+        pilotes: [s.adminPilote],
+      });
+
+      const filters = {
+        statuts: [StatutEnum.EN_RETARD],
+        utilisateurPiloteIds: [s.admin.id],
+        ...withSousActions,
+      };
+      expect(await s.listTitres(filters)).toEqual([]);
+
+      await s.createSousAction(action, 'Sous-action pilotée en retard', {
+        champs: { statut: StatutEnum.EN_RETARD },
+        pilotes: [s.adminPilote],
+      });
+      expect(await s.listTitres(filters)).toEqual(['Action']);
+    });
+
+    test('les autres filtres restent évalués sur l’action : priorité de l’action et statut de la sous-action', async () => {
+      const s = await createScenario();
+      const prioritaire = await s.createAction('Action prioritaire', {
+        champs: { priorite: PrioriteEnum.ÉLEVÉ },
+      });
+      await s.createSousAction(prioritaire, 'Sous-action en retard', {
+        champs: { statut: StatutEnum.EN_RETARD },
+      });
+      const secondaire = await s.createAction('Action secondaire', {
+        champs: { priorite: PrioriteEnum.BAS },
+      });
+      await s.createSousAction(secondaire, 'Sous-action en retard', {
+        champs: { statut: StatutEnum.EN_RETARD, priorite: PrioriteEnum.ÉLEVÉ },
+      });
+
+      expect(
+        await s.listTitres({
+          priorites: [PrioriteEnum.ÉLEVÉ],
+          statuts: [StatutEnum.EN_RETARD],
+          ...withSousActions,
+        })
+      ).toEqual(['Action prioritaire']);
+    });
+
+    test('le plan reste celui de l’action', async () => {
+      const s = await createScenario();
+      const plan = await s.createPlan('Plan');
+      const pilote = await s.createPersonnePilote('Pilote');
+      const actionDuPlan = await s.createAction('Action du plan', {
+        axes: [plan],
+      });
+      await s.createSousAction(actionDuPlan, 'Sous-action sans axe', {
+        pilotes: [pilote],
+      });
+      const actionHorsPlan = await s.createAction('Action hors plan');
+      await s.createSousAction(actionHorsPlan, 'Sous-action du plan', {
+        pilotes: [pilote],
+        axes: [plan],
+      });
+
+      expect(
+        await s.listTitres({
+          planActionIds: [plan.id],
+          personnePiloteIds: [pilote.tagId],
+          ...withSousActions,
+        })
+      ).toEqual(['Action du plan']);
+    });
+
+    test('une sous-action supprimée ne fait pas remonter son action', async () => {
+      const s = await createScenario();
+      const action = await s.createAction('Action');
+      const sousAction = await s.createSousAction(action, 'Sous-action', {
+        pilotes: [s.adminPilote],
+      });
+      await s.deleteFiche(sousAction);
+
+      expect(
+        await s.listTitres({
+          utilisateurPiloteIds: [s.admin.id],
+          ...withSousActions,
+        })
+      ).toEqual([]);
+    });
+
+    test('sans effet quand les lignes listées sont des sous-actions', async () => {
+      const s = await createScenario();
+      const action = await s.createAction('Action pilotée', {
+        pilotes: [s.adminPilote],
+      });
+      await s.createSousAction(action, 'Sous-action pilotée', {
+        pilotes: [s.adminPilote],
+      });
+      await s.createSousAction(action, 'Sous-action sans pilote');
+
+      expect(
+        await s.listTitres({
+          utilisateurPiloteIds: [s.admin.id],
+          onlyChildren: true,
+          ...withSousActions,
+        })
+      ).toEqual(['Sous-action pilotée']);
+    });
+
+    describe('sousActionsCount', () => {
+      const sousActionsCountByTitre = async (
+        s: Awaited<ReturnType<typeof createScenario>>,
+        filters: Parameters<typeof s.listFiches>[0]
+      ) =>
+        Object.fromEntries(
+          (await s.listFiches(filters)).data.map((fiche) => [
+            fiche.titre,
+            fiche.sousActionsCount,
+          ])
+        );
+
+      test('compte toutes les sous-actions non supprimées sans le périmètre, et celles qui correspondent avec', async () => {
+        const s = await createScenario();
+        const action = await s.createAction('Action pilotée', {
+          pilotes: [s.adminPilote],
+        });
+        await s.createSousAction(action, 'Sous-action pilotée', {
+          pilotes: [s.adminPilote],
+        });
+        await s.createSousAction(action, 'Sous-action sans pilote');
+        await s.deleteFiche(
+          await s.createSousAction(action, 'Sous-action supprimée', {
+            pilotes: [s.adminPilote],
+          })
+        );
+        await s.createAction('Action sans sous-action', {
+          pilotes: [s.adminPilote],
+        });
+
+        const filters = { utilisateurPiloteIds: [s.admin.id] };
+        expect(await sousActionsCountByTitre(s, filters)).toEqual({
+          'Action pilotée': 2,
+          'Action sans sous-action': 0,
+        });
+        expect(
+          await sousActionsCountByTitre(s, { ...filters, ...withSousActions })
+        ).toEqual({
+          'Action pilotée': 1,
+          'Action sans sous-action': 0,
+        });
+      });
+    });
+
+    describe('countSousActionsMatches', () => {
+      test('compte les sous-actions qui correspondent et leurs actions, dans le plan de l’action', async () => {
+        const s = await createScenario();
+        const plan = await s.createPlan('Plan');
+        const pilote = await s.createPersonnePilote('Pilote');
+        const action1 = await s.createAction('Action 1', { axes: [plan] });
+        await s.createSousAction(action1, 'Sous-action 1a', {
+          pilotes: [pilote],
+        });
+        await s.createSousAction(action1, 'Sous-action 1b', {
+          pilotes: [pilote],
+        });
+        await s.createSousAction(action1, 'Sous-action 1c');
+        const action2 = await s.createAction('Action 2', { axes: [plan] });
+        await s.createSousAction(action2, 'Sous-action 2a', {
+          pilotes: [pilote],
+        });
+        const horsPlan = await s.createAction('Action hors plan');
+        await s.createSousAction(horsPlan, 'Sous-action hors plan', {
+          pilotes: [pilote],
+          axes: [plan],
+        });
+
+        expect(
+          await s.countSousActionsMatches({
+            planActionIds: [plan.id],
+            personnePiloteIds: [pilote.tagId],
+          })
+        ).toEqual({ sousActionsCount: 3, actionsCount: 2 });
+      });
+
+      test('ignore les sous-actions supprimées et celles d’une action supprimée', async () => {
+        const s = await createScenario();
+        const action = await s.createAction('Action');
+        await s.deleteFiche(
+          await s.createSousAction(action, 'Sous-action supprimée', {
+            pilotes: [s.adminPilote],
+          })
+        );
+        const actionSupprimee = await s.createAction('Action supprimée');
+        await s.deleteFiche(actionSupprimee);
+        await s.createSousAction(actionSupprimee, 'Sous-action orpheline', {
+          pilotes: [s.adminPilote],
+        });
+
+        expect(
+          await s.countSousActionsMatches({
+            utilisateurPiloteIds: [s.admin.id],
+          })
+        ).toEqual({ sousActionsCount: 0, actionsCount: 0 });
+      });
     });
   });
 });

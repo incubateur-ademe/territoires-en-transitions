@@ -15,7 +15,19 @@ type ListFichesInput =
 
 type AxeRef = { id: number; planId: number };
 type FicheRef = { id: number; titre: string };
-type FicheOptions = { axes?: AxeRef[]; pilotes?: PersonneId[] };
+type CreateFicheFields =
+  inferRouterInputs<AppRouter>['plans']['fiches']['create']['fiche'];
+type FicheOptions = {
+  axes?: AxeRef[];
+  pilotes?: PersonneId[];
+  /** champs de la fiche, posés à la création */
+  champs?: Partial<
+    Pick<
+      CreateFicheFields,
+      'statut' | 'description' | 'dateFin' | 'priorite' | 'restreint'
+    >
+  >;
+};
 
 /**
  * Collectivité neuve, avec un admin, pour écrire un scénario de listFiches
@@ -68,11 +80,11 @@ export async function createListFichesScenario({
 
   const createFiche = async (
     titre: string,
-    { axes, pilotes, parentId }: FicheOptions & { parentId?: number }
+    { axes, pilotes, champs, parentId }: FicheOptions & { parentId?: number }
   ): Promise<FicheRef> => {
     const { ficheId } = await createFicheAndCleanupFunction({
       caller,
-      ficheInput: { titre, collectiviteId, parentId, pilotes },
+      ficheInput: { ...champs, titre, collectiviteId, parentId, pilotes },
     });
     if (axes?.length) {
       await caller.plans.fiches.update({
@@ -127,5 +139,8 @@ export async function createListFichesScenario({
     },
 
     getFiche: (fiche: FicheRef) => caller.plans.fiches.get({ id: fiche.id }),
+
+    countSousActionsMatches: (filters: ListFichesRequestFilters) =>
+      caller.plans.fiches.countSousActionsMatches({ collectiviteId, filters }),
   };
 }

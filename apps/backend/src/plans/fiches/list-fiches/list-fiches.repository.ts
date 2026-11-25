@@ -39,6 +39,7 @@ import {
   SQLWrapper,
 } from 'drizzle-orm';
 import { PgColumn } from 'drizzle-orm/pg-core';
+import { omit } from 'es-toolkit';
 import { ficheActionPiloteTable } from '../shared/models/fiche-action-pilote.table';
 import { checkCompletion } from './completion';
 import { DescriptionSearchScope } from './fiches-restreintes.rules';
@@ -50,11 +51,21 @@ import {
 import { ListFichesBudgetRepository } from './list-fiches-budget.repository';
 import {
   formatFiltersForLogs,
+  isNotRestreintCondition,
   ListFichesFiltersRepository,
+  sousActionTable,
 } from './list-fiches-filters.repository';
+import { splitFiltersBySousActionScope } from './list-fiches-sous-actions-scope.rules';
 import { ListFichesRelationsRepository } from './list-fiches-relations.repository';
 
 type FicheWithoutCompletion = Omit<FicheWithRelations, 'completion'>;
+
+export type SousActionsMatchesCount = {
+  /** sous-actions qui satisfont les filtres sur leurs propres champs */
+  sousActionsCount: number;
+  /** actions parentes de ces sous-actions */
+  actionsCount: number;
+};
 
 type ListFichesWithDescriptionSearchArgs = {
   collectiviteId: number | null;
@@ -426,6 +437,11 @@ export class ListFichesRepository {
         docs: ficheActionDocs.docs,
         budgets: ficheActionBudgets.budgets,
         actionImpactId: actionImpactActionTable.actionImpactId,
+        sousActionsCount:
+          this.listFichesFiltersRepository.getSousActionsCountSql(
+            filters ?? {},
+            descriptionSearch
+          ),
         jaugeModifiedAt: sql<string | null>`(
           select ${sqlToDateTimeISO(sql`max(${historiqueJauge.modifiedAt})`)}
           from ${historiqueFicheActionTable} ${sql.identifier(
@@ -563,6 +579,69 @@ export class ListFichesRepository {
     }));
 
     return { data: fichesWithCompletion, count };
+  }
+
+  /**
+   * Compte les sous-actions non supprimées qui satisfont les filtres sur leurs
+   * propres champs, et leurs actions parentes, quand ces dernières satisfont
+   * les autres filtres (plan, thématique…).
+   */
+  async countSousActionsMatches({
+    collectiviteId,
+    filters,
+    tx,
+    descriptionSearch,
+  }: {
+    collectiviteId: number;
+    filters: ListFichesRequestFilters;
+    tx?: Transaction;
+    descriptionSearch: DescriptionSearchScope;
+  }): Promise<Result<SousActionsMatchesCount, ListFichesQueryError>> {
+    return catchDatabaseFailure(async () => {
+      const { actionFilters, sousActionFieldFilters } =
+        splitFiltersBySousActionScope(filters);
+      const actionConditions = this.listFichesFiltersRepository.getConditions({
+        collectiviteId,
+        filters: omit(actionFilters, [
+          'withChildren',
+          'onlyChildren',
+          'parentsId',
+        ]),
+        descriptionSearch,
+      });
+      const [result] = await (tx ?? this.databaseService.db)
+        .select({
+          sousActionsCount: sql<number>`count(*)::int`.mapWith(Number),
+          actionsCount:
+            sql<number>`count(distinct ${sousActionTable.parentId})::int`.mapWith(
+              Number
+            ),
+        })
+        .from(sousActionTable)
+        .innerJoin(
+          ficheActionTable,
+          eq(ficheActionTable.id, sousActionTable.parentId)
+        )
+        .where(
+          and(
+            ...actionConditions,
+            eq(sousActionTable.deleted, false),
+            // restreintes exclues : les sous-actions restreintes aussi
+            filters.restreint === false
+              ? isNotRestreintCondition(sousActionTable)
+              : undefined,
+            ...this.listFichesFiltersRepository.getSousActionFieldConditions(
+              sousActionTable,
+              sousActionFieldFilters,
+              descriptionSearch
+            )
+          )
+        );
+      return success({
+        sousActionsCount: result?.sousActionsCount ?? 0,
+        actionsCount: result?.actionsCount ?? 0,
+      });
+    });
   }
 
   async count(
