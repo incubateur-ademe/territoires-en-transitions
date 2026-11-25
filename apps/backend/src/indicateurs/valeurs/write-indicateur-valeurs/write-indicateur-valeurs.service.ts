@@ -9,6 +9,7 @@ import {
   COLLECTIVITE_SOURCE_ID,
 } from '@tet/domain/indicateurs';
 import { groupBy, isNil, partition, round } from 'es-toolkit';
+import { catchDatabaseFailure } from '@tet/backend/utils/database/catch-database-failure';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
   combineResults,
@@ -17,16 +18,16 @@ import {
   success,
 } from '@tet/backend/utils/result.type';
 import { IndicateurValeursRules } from '../indicateur-valeurs.rules';
-import { FillMissingIndicateurValeursRules } from './fill-missing-indicateur-valeurs.rules';
+import {
+  FillMissingIndicateurValeursRules,
+  IndicateurValeurConflict,
+} from './fill-missing-indicateur-valeurs.rules';
 import { AuthenticatedUser } from '../../../users/models/auth.models';
 import { IndicateurLockRepository } from '../../indicateur/indicateur-lock.repository';
 import { IndicateurValeursRepository } from '../indicateur-valeurs.repository';
 import { IndicateurValeurLockRepository } from '../indicateur-valeur-lock.repository';
 import { IndicateurValeursWriteContext } from '../indicateur-valeurs-context.types';
 import {
-  captureIndicateurValeursResult,
-  captureIndicateurValeursResultOf,
-  getIndicateurValeursDataOrThrow,
   IndicateurValeursError,
   toNonCanonicalDateValeurFailure,
 } from '../indicateur-valeurs.errors';
@@ -37,7 +38,6 @@ import {
   PreparedIndicateurValeurs,
   ValidateIndicateurValeursWriteService,
 } from './validate-indicateur-valeurs-write.service';
-import { getIndicateurDataOrThrow } from '../../indicateur/indicateur-nature.utils';
 
 /** Persists values under the caller's transaction; recalculation stays in the reconciliation service. */
 @Injectable()
@@ -52,19 +52,33 @@ export class WriteIndicateurValeursService {
   saveBatch(
     input: PreparedIndicateurValeurs,
     context: IndicateurValeursWriteContext
-  ) {
-    return captureIndicateurValeursResult(async () => {
-      const { valeurs, indicateurs } = await this.prepareBatch(input, context);
-      return this.persist(valeurs, indicateurs, context.tx);
+  ): Promise<
+    Result<IndicateurValeurWithIdentifiant[], IndicateurValeursError>
+  > {
+    return catchDatabaseFailure(async () => {
+      const prepared = await this.prepareBatch(input, context);
+      if (!prepared.success) return prepared;
+      const { valeurs, indicateurs } = prepared.data;
+      return success(await this.persist(valeurs, indicateurs, context.tx));
     });
   }
 
   fillMissing(
     input: PreparedIndicateurValeurs,
     context: IndicateurValeursWriteContext
-  ) {
-    return captureIndicateurValeursResult(async () => {
-      const { valeurs, indicateurs } = await this.prepareBatch(input, context);
+  ): Promise<
+    Result<
+      {
+        valeurs: IndicateurValeurWithIdentifiant[];
+        conflits: IndicateurValeurConflict[];
+      },
+      IndicateurValeursError
+    >
+  > {
+    return catchDatabaseFailure(async () => {
+      const prepared = await this.prepareBatch(input, context);
+      if (!prepared.success) return prepared;
+      const { valeurs, indicateurs } = prepared.data;
       const stored: IndicateurValeur[] = [];
       const scopes = groupBy(
         valeurs,
@@ -73,26 +87,27 @@ export class WriteIndicateurValeursService {
       for (const scope of Object.values(scopes)) {
         const first = scope[0];
         const dates = scope.map(({ dateValeur }) => dateValeur).sort();
-        const listing = getIndicateurValeursDataOrThrow(
-          await this.repository.listIndicateurValeurs(
-            {
-              collectiviteId: first.collectiviteId,
-              indicateurIds: [
-                ...new Set(scope.map(({ indicateurId }) => indicateurId)),
-              ],
-              ...(first.metadonneeId == null
-                ? { sources: [COLLECTIVITE_SOURCE_ID] }
-                : { metadonneeId: first.metadonneeId }),
-              dateDebut: dates[0],
-              dateFin: dates[dates.length - 1],
-            },
-            context.tx
-          )
+        const listing = await this.repository.listIndicateurValeurs(
+          {
+            collectiviteId: first.collectiviteId,
+            indicateurIds: [
+              ...new Set(scope.map(({ indicateurId }) => indicateurId)),
+            ],
+            ...(first.metadonneeId == null
+              ? { sources: [COLLECTIVITE_SOURCE_ID] }
+              : { metadonneeId: first.metadonneeId }),
+            dateDebut: dates[0],
+            dateFin: dates[dates.length - 1],
+          },
+          context.tx
         );
-        stored.push(...listing.map(({ indicateurValeur }) => indicateurValeur));
+        if (!listing.success) return listing;
+        stored.push(
+          ...listing.data.map(({ indicateurValeur }) => indicateurValeur)
+        );
       }
       const merged = FillMissingIndicateurValeursRules.merge(valeurs, stored);
-      return {
+      return success({
         valeurs: await this.persist(
           merged.valeurs,
           indicateurs,
@@ -100,26 +115,32 @@ export class WriteIndicateurValeursService {
           'fill-missing'
         ),
         conflits: merged.conflits,
-      };
+      });
     });
   }
 
   private async prepareBatch(
     input: PreparedIndicateurValeurs,
     context: IndicateurValeursWriteContext
-  ) {
-    const indicateurs = getIndicateurValeursDataOrThrow(
-      await this.validationService.validate(input, context)
-    );
-    const valeurs = getIndicateurValeursDataOrThrow(
-      combineResults(
-        input.valeurs.map((valeur) =>
-          this.normalizeValeur(valeur, indicateurs[valeur.indicateurId])
-        )
+  ): Promise<
+    Result<
+      {
+        valeurs: IndicateurValeurCreate[];
+        indicateurs: Record<number, Indicateur>;
+      },
+      IndicateurValeursError
+    >
+  > {
+    const indicateurs = await this.validationService.validate(input, context);
+    if (!indicateurs.success) return indicateurs;
+    const valeurs = combineResults(
+      input.valeurs.map((valeur) =>
+        this.normalizeValeur(valeur, indicateurs.data[valeur.indicateurId])
       )
     );
-    await this.lockRepository.lock(valeurs, context.tx);
-    return { valeurs, indicateurs };
+    if (!valeurs.success) return valeurs;
+    await this.lockRepository.lock(valeurs.data, context.tx);
+    return success({ valeurs: valeurs.data, indicateurs: indicateurs.data });
   }
 
   private normalizeValeur(
@@ -214,17 +235,17 @@ export class WriteIndicateurValeursService {
     { data }: { data: UpsertValeurIndicateur },
     { user, tx }: IndicateurValeursWriteContext & { user: AuthenticatedUser }
   ) {
-    return captureIndicateurValeursResultOf(
+    return catchDatabaseFailure(
       async (): Promise<
         Result<IndicateurValeur | undefined, IndicateurValeursError>
       > => {
         const { collectiviteId, indicateurId } = data;
-        const [lockedIndicateur] = getIndicateurDataOrThrow(
-          await this.indicateurLockRepository.lockIndicateurs(
-            [indicateurId],
-            tx
-          )
+        const locked = await this.indicateurLockRepository.lockIndicateurs(
+          [indicateurId],
+          tx
         );
+        if (!locked.success) return locked;
+        const [lockedIndicateur] = locked.data;
         if (!lockedIndicateur)
           return failure(
             'INDICATEUR_NOT_AVAILABLE',

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { failure, Result, success } from '@tet/backend/utils/result.type';
 import {
   IndicateurValeur,
   IndicateurValeurCreate,
@@ -24,7 +25,7 @@ export class UpsertGridValeursRepository {
   async upsert(
     valeurs: IndicateurValeurCreate[],
     tx: Transaction
-  ): Promise<IndicateurValeur[]> {
+  ): Promise<Result<IndicateurValeur[], 'DATABASE_ERROR'>> {
     const sortedValeurs = valeurs.toSorted(
       (left, right) =>
         left.indicateurId - right.indicateurId ||
@@ -73,13 +74,16 @@ export class UpsertGridValeursRepository {
         .returning();
 
       if (saved.length !== valeursWithSameFields.length) {
-        throw new Error(
-          `Échec de l'écriture d'un lot de ${valeursWithSameFields.length} valeurs d'indicateur`
+        return failure(
+          'DATABASE_ERROR',
+          new Error(
+            `Échec de l'écriture d'un lot de ${valeursWithSameFields.length} valeurs d'indicateur`
+          )
         );
       }
       result.push(...saved);
     }
 
-    return result;
+    return success(result);
   }
 }

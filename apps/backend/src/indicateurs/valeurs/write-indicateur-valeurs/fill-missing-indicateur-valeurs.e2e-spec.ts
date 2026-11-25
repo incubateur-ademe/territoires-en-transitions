@@ -403,6 +403,24 @@ describe('Complétion des valeurs sans écrasement', () => {
   });
 
   test.each(['upsert', 'fillMissing'] as const)(
+    'ne laisse aucune ligne quand un lot contient une date non canonique (%s)',
+    async (operation) => {
+      const { valeur, user, read } = await fixture();
+
+      const result = await service[operation](
+        [
+          { ...valeur, resultat: 1 },
+          { ...valeur, dateValeur: 'pas-une-date', resultat: 2 },
+        ],
+        { user }
+      );
+
+      expect(result).toMatchObject({ success: false, error: 'INVALID_VALUE' });
+      expect(await read()).toEqual([]);
+    }
+  );
+
+  test.each(['upsert', 'fillMissing'] as const)(
     '%s propage les valeurs puis annule toute la chaîne si un recalcul échoue',
     async (operation) => {
       const source = await fixture();
