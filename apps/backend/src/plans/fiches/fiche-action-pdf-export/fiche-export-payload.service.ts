@@ -134,22 +134,29 @@ export class FicheExportPayloadService {
           filters: { linkedFicheIds: [fiche.id] },
         })
       );
-      const accessResults = await Promise.all(
-        data.map((ficheLiee) =>
-          this.fichePermissions
-            .canReadFicheObject(ficheLiee, user, true)
-            .then((access) => ({ ficheLiee, access }))
-        )
-      );
-      return accessResults.flatMap(({ ficheLiee, access }) =>
-        access !== null ? [ficheLiee] : []
-      );
+      return this.filterReadableFiches(data, user);
     } catch (error) {
       this.logger.warn(
         `Impossible de charger les fiches liées pour la fiche ${fiche.id} : ${error}`
       );
       return [];
     }
+  }
+
+  private async filterReadableFiches(
+    fiches: FicheWithRelations[],
+    user: AuthenticatedUser
+  ): Promise<FicheWithRelations[]> {
+    const accessResults = await Promise.all(
+      fiches.map((fiche) =>
+        this.fichePermissions
+          .canReadFicheObject(fiche, user, true)
+          .then((access) => ({ fiche, access }))
+      )
+    );
+    return accessResults.flatMap(({ fiche, access }) =>
+      access !== null ? [fiche] : []
+    );
   }
 
   private mapBudgets(
