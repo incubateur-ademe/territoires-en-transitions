@@ -64,6 +64,7 @@ import { ListFichesBudgetRepository } from './list-fiches/list-fiches-budget.rep
 import { ListFichesFiltersRepository } from './list-fiches/list-fiches-filters.repository';
 import { ListFichesRelationsRepository } from './list-fiches/list-fiches-relations.repository';
 import { ListFichesRepository } from './list-fiches/list-fiches.repository';
+import { GeneratePiloteNotificationContentService } from './notify-pilote/generate-pilote-notification-content.service';
 import { NotifyPiloteService } from './notify-pilote/notify-pilote.service';
 import { FicheActionLinkRepository } from './update-fiche/fiche-action-link.repository';
 import { FicheActionLinkService } from './update-fiche/fiche-action-link.service';
@@ -140,6 +141,7 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     ListPlanFichesSecteursAVerifierRouter,
     FichesRouter,
     NotifyPiloteService,
+    GeneratePiloteNotificationContentService,
     FicheExportPayloadService,
     PdfRendererService,
     FicheActionPdfExportService,
