@@ -59,21 +59,41 @@ périodicités. Les cases de code ne valent pas validation en environnement dép
       leurs plans et jobs, distinguer plusieurs imports de nouveaux plans d'un
       éventuel doublon dans le même plan. Le stockage par plan et la conservation
       après suppression restent inchangés ; aucune déduplication automatique.
-- [ ] Déployer puis rejouer les quatre indicateurs trimestriels, le document 03
-      et les Word E05 déjà diffusés. Vérifier les avertissements et l'absence
-      d'objectifs annuels enregistrés sur les indicateurs trimestriels.
-      Tester aussi les reformulations d'autres engagements et les refus de
-      contradictions ou d'ambiguïtés avec le modèle réel.
+- [x] Recette de production de #6036 : V1 importé avec avertissement E05,
+      badge open data corrigé sur 5556, contradiction E05 refusée sans plan.
+      Les indicateurs trimestriels `1.2.1-a` et `1.2.1-b` restent liés sans
+      nouvelles valeurs annuelles dans la variante du document 03 utilisant
+      les codes d'engagement.
+- [x] Après cette recette, séparer les comparaisons IA du résultat attendu,
+      des objectifs et du périmètre ; déduire leur classification dans le code.
+      Distinguer une réponse IA invalide d'un refus documentaire, conserver
+      les refus de contradictions et la politique de tolérance à la reprise.
+- [ ] Rejouer le V1 et le document 03 avec leurs phrases originales après
+      cette correction. Confirmer la reconnaissance E10 (acceptée puis refusée
+      en production) et le même avertissement de périmètre pour E01 et E02
+      ("bâtiments" / "logements"). Les tests avec un faux LLM ne valident pas
+      cette compréhension sémantique. Compléter aussi la recette des quatre
+      indicateurs trimestriels et des ambiguïtés avec le modèle réel.
 - [ ] Clarifier avec Émeline la fréquence de mise à jour et la période mesurée.
       Cette clarification ne bloque plus l'import ; aucune conversion ou reprise
       automatique des valeurs ignorées n'est prévue.
 
-Validation locale de la tolérance : 241 tests passent dans les deux suites e2e
-existantes (29 s), avec le vrai lecteur DOCX, PostgreSQL local et un faux LLM.
-Le compte rendu persistant, la reprise et le refus lorsque la tolérance est
-désactivée sont vérifiés. Typage backend/specs, ESLint et Prettier ciblés passent.
-Aucun nouveau fichier de tests ni appel à un modèle réel. La recette déployée
-et l'évaluation sémantique du modèle restent ouvertes.
+Validation locale historique de #6036 : 241 tests passaient dans les deux
+suites e2e existantes (29 s), avec le vrai lecteur DOCX, PostgreSQL local et un
+faux LLM. Le compte rendu persistant, la reprise et le refus lorsque la tolérance
+est désactivée étaient vérifiés. Typage backend/specs, ESLint et Prettier ciblés
+passaient.
+Aucun nouveau fichier de tests ni appel à un modèle réel lors de cette validation
+locale. La recette de production et ses limites sont détaillées dans
+l'[ADR](../adr/0022-initialiser-plan-electrification-depuis-annexe-3.md#décisions-de-recette-du-25-novembre-2026).
+
+Validation locale du complément après recette : les deux suites passent avec
+246 tests en 30 s, toujours avec le vrai lecteur DOCX, la base locale et un faux
+LLM. Les cas existants couvrent désormais les trois dimensions, les réponses
+techniques invalides et les avertissements E01/E02 ; le parcours complet
+conserve son contrôle du compte rendu persisté. Aucun nouveau fichier de tests.
+Typage backend/specs, ESLint et Prettier ciblés passent. Le modèle réel n'a pas
+été relancé pour cette correction.
 
 Validation du badge : régression reproduite avant correction, puis 64 tests
 passants dans les suites e2e existantes de sources de plans et de liste

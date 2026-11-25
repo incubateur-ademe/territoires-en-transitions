@@ -4,9 +4,56 @@ import { ElectrificationConfig } from '@tet/domain/plans';
 import { ElectrificationIssue } from '../electrification-issue';
 import { ElectrificationExtractionCheckpoint } from './electrification-extraction-checkpoint.schema';
 import { ElectrificationExtractionErrors as Errors } from './electrification-extraction.errors';
+import {
+  electrificationEngagementComparisonSchema,
+  ElectrificationEngagementInterpretation,
+  ElectrificationEngagementMatchRequest,
+} from './electrification-engagement-interpretation.schema';
 
-/** Applique la politique courante aux rapprochements conservés, sans rappeler l'IA. */
+/** Valide les comparaisons IA et applique la politique aux rapprochements retenus. */
 export class ElectrificationEngagementMatchingRules {
+  static interpret(
+    request: ElectrificationEngagementMatchRequest,
+    response: unknown
+  ): Result<ElectrificationEngagementInterpretation, ElectrificationIssue[]> {
+    const comparison =
+      electrificationEngagementComparisonSchema.safeParse(response);
+    if (
+      !comparison.success ||
+      comparison.data.quote !== request.source.text ||
+      (comparison.data.code !== null &&
+        !request.candidates.some(({ code }) => code === comparison.data.code))
+    )
+      return failure([
+        Errors.issue(
+          'AI_ENGAGEMENT_INTERPRETATION_FAILED',
+          request.source.location
+        ),
+      ]);
+
+    const { code, quote, action, objectives, scope } = comparison.data;
+    if (
+      code === null ||
+      action !== 'same-outcome' ||
+      objectives !== 'compatible' ||
+      scope === 'uncertain'
+    )
+      return failure([
+        Errors.issue(
+          'INVALID_ELECTRIFICATION_ENGAGEMENT',
+          request.source.location
+        ),
+      ]);
+
+    return success({
+      sourceId: request.source.id,
+      code,
+      quote,
+      match: scope === 'different' ? 'scope-difference' : 'equivalent',
+    });
+  }
+
+  /** Réapplique la politique au checkpoint sans nouvel appel au modèle. */
   static report(
     checkpoint: ElectrificationExtractionCheckpoint,
     catalogue: ElectrificationConfig

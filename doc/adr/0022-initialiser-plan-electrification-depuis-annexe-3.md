@@ -103,10 +103,12 @@ Les codes et libellés normalisés identiques restent reconnus sans IA.
 Les variantes E05 gaz/fioul non identiques suivent le rapprochement IA commun,
 avec avertissement si elles sont acceptées ; leur reconnaissance sans IA
 n'est plus un objectif de cette livraison.
-Pour les autres libellés, le rapprochement IA existant choisit exclusivement
-parmi les engagements du même axe et distingue `equivalent`, `scope-difference`
-et `unresolved`. Une différence de périmètre concerne les biens, populations
-ou catégories auxquels s'applique la même action. Une action contraire, une
+Pour les autres libellés, le rapprochement IA choisit exclusivement parmi les
+engagements du même axe. Le contrat initial de #6036 demandait au modèle de
+distinguer `equivalent`, `scope-difference` et `unresolved` ; le complément de
+recette ci-dessous remplace cette classification directe. Une différence de
+périmètre concerne les biens, populations ou catégories auxquels s'applique la
+même action. Une action contraire, une
 échéance ou un objectif contradictoire, une condition ou plusieurs candidats
 plausibles doivent conduire à un refus, même si la tolérance est active.
 
@@ -138,8 +140,39 @@ indicateurs trimestriels. Leur besoin métier reste à préciser avec Émeline ;
 les valeurs omises ne seront pas restaurées automatiquement. La règle commune
 de périodicité de l'[ADR 0018](0018-periodicite-des-indicateurs.md) est conservée.
 La correction et la rediffusion du Word restent utiles, mais les documents
-déjà distribués doivent fonctionner. La recette déployée de ces changements
-reste à effectuer avec un lancement humain.
+déjà distribués doivent fonctionner.
+
+**Complément après la recette de production du 25 novembre.** Le
+[Word V1 original](https://app.territoiresentransitions.fr/collectivite/5460/plans/imports?importJobId=81d9dbee-eeca-4892-9ef5-bbb7b6f4018d)
+a créé un plan avec l'avertissement E05 attendu. Le badge open data sur 5556,
+le refus d'une action contraire et l'omission des valeurs annuelles de deux
+indicateurs trimestriels (`1.2.1-a`, `1.2.1-b`) ont été vérifiés. Ces résultats
+ne couvrent pas encore les quatre indicateurs trimestriels.
+
+Deux écarts restent à qualifier avec le modèle après correction : E10 a été
+accepté dans ce V1 puis refusé avec la même phrase dans le
+[document 03 adapté](https://app.territoiresentransitions.fr/collectivite/5460/plans/imports?importJobId=b48990b6-c965-4b46-b694-a14cae6ca31b) ;
+E01 et E02 ont reçu des classifications différentes malgré le même écart
+"bâtiments" / "logements". La réponse brute du refus E10 n'est pas disponible :
+le code d'erreur regroupait alors refus sémantique, citation modifiée et code
+non autorisé. Sa cause exacte n'est donc pas confirmée.
+
+Le modèle compare désormais séparément le résultat attendu de l'action, les
+objectifs et le périmètre. Des moyens différents peuvent viser explicitement
+le même résultat ; une description de moyens sans résultat explicite ne suffit
+pas. Une catégorie générale et une sous-catégorie doivent rester des périmètres
+différents, même dans le même axe. Le code déduit `equivalent` ou
+`scope-difference` uniquement si le résultat et les objectifs sont compatibles
+et le périmètre identifiable. Une dimension contradictoire ou incertaine reste
+bloquante. Aucune exception E10, E01 ou E02 n'est ajoutée.
+
+Une réponse IA hors contrat, une citation modifiée ou un code non proposé
+produisent une erreur de traitement invitant à réessayer, distincte du refus
+documentaire. Le format du checkpoint, les valeurs et la politique de tolérance
+restent identiques. Les tests avec un faux LLM vérifient ces contrôles, mais
+ne prouvent pas que le modèle réel classera correctement les formulations.
+Le V1 et le document 03 doivent être rejoués après déploiement, avec lancement
+humain, avant de clôturer ces deux écarts.
 
 **Preuve historique de la première approche, remplacée le 25 novembre :**
 les deux suites e2e existantes de fiches et de parcours complet avaient passé
