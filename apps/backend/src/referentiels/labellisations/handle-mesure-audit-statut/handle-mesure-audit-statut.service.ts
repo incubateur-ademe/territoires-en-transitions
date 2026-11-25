@@ -1,16 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { ListActionsService } from '@tet/backend/referentiels/list-actions/list-actions.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Result, failure, success } from '@tet/backend/utils/result.type';
 import {
-  ActionTypeEnum,
   getReferentielIdFromActionId,
   MesureAuditStatutEnum,
 } from '@tet/domain/referentiels';
 import { ResourceType } from '@tet/domain/users';
-import { and, asc, eq, inArray, sql } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { GetAuditEnCoursRepository } from '../get-audit-en-cours/get-audit-en-cours.repository';
 import {
   GetMesureAuditStatutInput,
@@ -21,6 +19,7 @@ import {
   UpdateMesureAuditStatutOutput,
 } from './handle-mesure-audit-statut.dto';
 import { HandleMesureAuditStatutError } from './handle-mesure-audit-statut.errors';
+import { ListMesureAuditStatutsRepository } from './list-mesure-audit-statuts.repository';
 import { mesureAuditStatutTable } from './mesure-audit-statut.table';
 
 @Injectable()
@@ -29,7 +28,7 @@ export class HandleMesureAuditStatutService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly permissions: PermissionService,
-    private readonly listActionsService: ListActionsService,
+    private readonly listMesureAuditStatutsRepository: ListMesureAuditStatutsRepository,
     private readonly getAuditEnCoursRepository: GetAuditEnCoursRepository
   ) {}
 
@@ -49,44 +48,11 @@ export class HandleMesureAuditStatutService {
       referentielId,
     });
 
-    const mesuresWithLevel = this.db
-      .$with('mesures_with_level')
-      .as(this.listActionsService.listWithDetails(collectiviteId));
-
-    const mesures = await this.db
-      .with(mesuresWithLevel)
-      .select({
-        mesureId: mesuresWithLevel.actionId,
-        mesureType: mesuresWithLevel.actionType,
-        mesureNom: mesuresWithLevel.nom,
-        statut: sql<MesureAuditStatutEnum>`COALESCE(${mesureAuditStatutTable.statut}, 'non_audite')`,
-        avis: sql<string>`COALESCE(${mesureAuditStatutTable.avis}, '')`,
-        ordreDuJour: sql<boolean>`COALESCE(${mesureAuditStatutTable.ordreDuJour}, false)`,
-        auditId: sql`${auditEnCours.id}`.mapWith(Number),
-        collectiviteId: sql`${collectiviteId}`.mapWith(Number),
-      })
-      .from(mesuresWithLevel)
-      .leftJoin(
-        mesureAuditStatutTable,
-        and(
-          eq(mesureAuditStatutTable.auditId, auditEnCours.id),
-          eq(mesureAuditStatutTable.collectiviteId, collectiviteId),
-          eq(mesureAuditStatutTable.mesureId, mesuresWithLevel.actionId)
-        )
-      )
-      .where(
-        and(
-          eq(mesuresWithLevel.referentiel, referentielId),
-          inArray(mesuresWithLevel.actionType, [
-            ActionTypeEnum.AXE,
-            ActionTypeEnum.SOUS_AXE,
-            ActionTypeEnum.ACTION,
-          ])
-        )
-      )
-      .orderBy(asc(mesuresWithLevel.actionId));
-
-    return mesures;
+    return this.listMesureAuditStatutsRepository.list({
+      collectiviteId,
+      referentielId,
+      auditId: auditEnCours.id,
+    });
   }
 
   async getStatut(

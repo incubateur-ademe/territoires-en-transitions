@@ -110,6 +110,35 @@ describe('listMesureAuditStatuts.router', () => {
       .insert(mesureAuditStatutTable)
       .values(mesureAuditStatuses);
 
+    const { audit: auditClos } = await createAuditWithOnTestFinished({
+      databaseService,
+      collectiviteId,
+      referentielId,
+      clos: true,
+    });
+    const { audit: autreAudit } = await createAuditWithOnTestFinished({
+      databaseService,
+      collectiviteId: noAuditCollectiviteId,
+      referentielId,
+    });
+    // La même mesure porte d'autres statuts, qui ne doivent ni remplacer le
+    // statut courant ni produire des lignes en double.
+    await databaseService.db.insert(mesureAuditStatutTable).values([
+      {
+        ...mesureAuditStatusCae111,
+        auditId: auditClos.id,
+        statut: MesureAuditStatutEnum.NON_AUDITE,
+        avis: 'Ancien audit',
+      },
+      {
+        ...mesureAuditStatusCae111,
+        auditId: autreAudit.id,
+        collectiviteId: noAuditCollectiviteId,
+        statut: MesureAuditStatutEnum.EN_COURS,
+        avis: 'Autre collectivité',
+      },
+    ]);
+
     const input = {
       collectiviteId,
       referentielId,
@@ -195,6 +224,46 @@ describe('listMesureAuditStatuts.router', () => {
       ]).not.toContain(mesure.mesureType);
     }
   });
+
+  test.each([
+    { referentielId: 'eci', mesureId: 'eci_1.1', sousActionId: 'eci_1.1.1' },
+    { referentielId: 'te', mesureId: 'te_1.1.1', sousActionId: 'te_1.1.1.1' },
+  ] as const)(
+    'respecte la hiérarchie du référentiel $referentielId',
+    async ({ referentielId, mesureId, sousActionId }) => {
+      await createAuditWithOnTestFinished({
+        databaseService,
+        collectiviteId,
+        referentielId,
+      });
+      const caller = router.createCaller({ user: testUser });
+      const result =
+        await caller.referentiels.labellisations.listMesureAuditStatuts({
+          collectiviteId,
+          referentielId,
+        });
+
+      // Une action est au niveau 2 pour ECI, au niveau 3 pour TE.
+      expect(result).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            mesureId: `${referentielId}_1`,
+            mesureType: ActionTypeEnum.AXE,
+          }),
+          expect.objectContaining({
+            mesureId,
+            mesureType: ActionTypeEnum.ACTION,
+          }),
+        ])
+      );
+      const mesureIds = result.map((mesure) => mesure.mesureId);
+      expect(mesureIds).not.toContain(referentielId);
+      expect(mesureIds).not.toContain(sousActionId);
+      expect(mesureIds.every((id) => id.startsWith(`${referentielId}_`))).toBe(
+        true
+      );
+    }
+  );
 
   test('should throw error when not authenticated', async () => {
     const caller = router.createCaller({ user: null });
