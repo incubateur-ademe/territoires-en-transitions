@@ -1,5 +1,8 @@
 import { failure, Result } from '@tet/backend/utils/result.type';
-import type { CommonError } from '@tet/backend/utils/trpc/common-errors';
+import {
+  commonErrors,
+  type CommonError,
+} from '@tet/backend/utils/trpc/common-errors';
 import { TrpcErrorHandlerConfig } from '@tet/backend/utils/trpc/trpc-error-handler';
 import { match } from 'ts-pattern';
 import {
@@ -25,6 +28,17 @@ export const upsertGridValeursErrorConfig: TrpcErrorHandlerConfig<SpecificError>
   };
 
 export type UpsertGridValeursError = SpecificError | CommonError;
+
+const upsertGridValeursErrors: UpsertGridValeursError[] = [
+  'INVALID_GRID_VALEUR',
+  'USER_VALUE_NOT_ALLOWED',
+  ...commonErrors,
+];
+
+export const isUpsertGridValeursError = (
+  error: unknown
+): error is UpsertGridValeursError =>
+  upsertGridValeursErrors.some((code) => code === error);
 
 const toGridError = (error: IndicateurValeursError): UpsertGridValeursError =>
   match(error)

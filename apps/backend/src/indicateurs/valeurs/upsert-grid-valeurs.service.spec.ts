@@ -1,5 +1,5 @@
 import { buildRequesterUser } from '@tet/backend/users/models/auth.models';
-import { failure, success } from '@tet/backend/utils/result.type';
+import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
 import { describe, expect, it, vi } from 'vitest';
 import { UpsertGridValeursService } from './upsert-grid-valeurs.service';
@@ -22,19 +22,35 @@ const toServiceWithMocks = ({
   nestedUpsert,
   validation = success({ [indicateurId]: { precision: 2 } }),
   gridUpsert = success([savedValeur]),
+  lock = vi.fn(),
+  rawManagerError,
+  publish = vi.fn().mockResolvedValue(undefined),
 }: {
   nestedUpsert?: unknown;
   validation?: unknown;
   gridUpsert?: unknown;
+  lock?: ReturnType<typeof vi.fn>;
+  rawManagerError?: unknown;
+  publish?: ReturnType<typeof vi.fn>;
 }) => {
   const manage = {
     canMutateValeurs: vi.fn().mockResolvedValue(success(undefined)),
     upsertIndicateurValeurs: vi.fn().mockResolvedValue(nestedUpsert),
-    publishValeurUpsertedEvents: vi.fn().mockResolvedValue(undefined),
+    publishValeurUpsertedEvents: publish,
   };
   const transactionManager = {
-    executeSingle: vi.fn(async (operation: (tx: unknown) => unknown) =>
-      operation(tx)
+    executeSingle: vi.fn(
+      async (operation: (tx: unknown) => Promise<Result<unknown, unknown>>) => {
+        if (rawManagerError !== undefined) return failure(rawManagerError);
+        try {
+          const result = await operation(tx);
+          return result.success
+            ? success(result.data)
+            : failure(result.error, result.cause);
+        } catch (error) {
+          return failure(error);
+        }
+      }
     ),
   };
   const service = new UpsertGridValeursService(
@@ -51,7 +67,7 @@ const toServiceWithMocks = ({
         .fn()
         .mockResolvedValue(success([calculatedValeur])),
     } as never,
-    { lock: vi.fn() } as never,
+    { lock } as never,
     { validate: vi.fn().mockResolvedValue(validation) } as never,
     { upsert: vi.fn().mockResolvedValue(gridUpsert) } as never
   );
@@ -149,4 +165,51 @@ describe('UpsertGridValeursService.upsertGridValeurs', () => {
     expect(manage.upsertIndicateurValeurs).not.toHaveBeenCalled();
     expect(manage.publishValeurUpsertedEvents).not.toHaveBeenCalled();
   });
+
+  it("convertit une exception imprévue de l'écriture en DATABASE_ERROR, sans écrire de valeurs calculées ni publier d'événement", async () => {
+    const cause = new Error('interblocage');
+    const { service, manage } = toServiceWithMocks({
+      lock: vi.fn().mockRejectedValue(cause),
+    });
+
+    const result = await service.upsertGridValeurs(input, {
+      user: user as never,
+    });
+
+    expect(result).toEqual(failure('DATABASE_ERROR', cause));
+    expect(manage.upsertIndicateurValeurs).not.toHaveBeenCalled();
+    expect(manage.publishValeurUpsertedEvents).not.toHaveBeenCalled();
+  });
+
+  it("garde le succès quand la publication des événements échoue après l'écriture", async () => {
+    const { service } = toServiceWithMocks({
+      nestedUpsert: success([calculatedValeur]),
+      publish: vi.fn().mockRejectedValue(new Error('listener en échec')),
+    });
+
+    const result = await service.upsertGridValeurs(input, {
+      user: user as never,
+    });
+
+    expect(result).toEqual(success([savedValeur]));
+  });
+
+  it.each([
+    { raw: new Error('commit refusé'), cause: new Error('commit refusé') },
+    { raw: 'commit refusé', cause: new Error('commit refusé') },
+  ])(
+    'convertit une erreur brute du gestionnaire de transaction ($raw) en DATABASE_ERROR',
+    async ({ raw, cause }) => {
+      const { service, manage } = toServiceWithMocks({ rawManagerError: raw });
+
+      const result = await service.upsertGridValeurs(input, {
+        user: user as never,
+      });
+
+      expect(result).toEqual(
+        failure('DATABASE_ERROR', raw instanceof Error ? raw : cause)
+      );
+      expect(manage.publishValeurUpsertedEvents).not.toHaveBeenCalled();
+    }
+  );
 });

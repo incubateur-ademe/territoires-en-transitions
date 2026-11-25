@@ -1,16 +1,13 @@
-import {
-  BadRequestException,
-  ForbiddenException,
-  Injectable,
-  Logger,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { UpdateIndicateurService } from '@tet/backend/indicateurs/indicateurs/mutate-indicateur/update-indicateur.service';
 import {
   AuthenticatedUser,
   AuthRole,
 } from '@tet/backend/users/models/auth.models';
-import { toDatabaseFailure } from '@tet/backend/utils/database/catch-database-failure';
+import {
+  catchDatabaseFailure,
+  toDatabaseFailure,
+} from '@tet/backend/utils/database/catch-database-failure';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import {
@@ -25,12 +22,12 @@ import ComputeValeursService from './compute-indicateur-valeurs/compute-valeurs.
 import ManageIndicateurValeursService from './manage-indicateur-valeurs/manage-indicateur-valeurs.service';
 import { IndicateurValeurLockRepository } from './indicateur-valeur-lock.repository';
 import {
+  isUpsertGridValeursError,
   toGridFailure,
   UpsertGridValeursError,
 } from './upsert-grid-valeurs.errors';
 import { UpsertGridValeursInput } from './upsert-grid-valeurs.input';
 import { UpsertGridValeursRepository } from './upsert-grid-valeurs.repository';
-import { UserIndicateurValeurNotAllowedException } from './write-indicateur-valeurs/user-indicateur-valeur.errors';
 import { ValidateIndicateurValeursWriteService } from './write-indicateur-valeurs/validate-indicateur-valeurs-write.service';
 
 type UpsertGridValeursContext = { user: AuthenticatedUser };
@@ -79,7 +76,7 @@ export class UpsertGridValeursService {
       return failure('UNAUTHORIZED');
     }
 
-    try {
+    return catchDatabaseFailure(async () => {
       const indicateurIds = [...new Set(valeurs.map((v) => v.indicateurId))];
       const listResult = await this.listIndicateursService.listIndicateurs(
         {
@@ -127,9 +124,9 @@ export class UpsertGridValeursService {
       const changed: IndicateurValeur[] = [];
       const transactionResult = await this.transactionManager.executeSingle<
         IndicateurValeur[],
-        UpsertGridValeursError
-      >(async (tx) => {
-        try {
+        UpsertGridValeursError | Error
+      >((tx) =>
+        catchDatabaseFailure(async () => {
           const now = new Date().toISOString();
           const valeursToValidate: IndicateurValeurCreate[] = mergedValeurs.map(
             ({ period, ...valeur }) => ({
@@ -200,18 +197,18 @@ export class UpsertGridValeursService {
             changed.push(...upsertedCalculated.data);
           }
           return success(saved);
-        } catch (error) {
-          if (error instanceof UserIndicateurValeurNotAllowedException) {
-            return failure('USER_VALUE_NOT_ALLOWED', error);
-          }
-          return failure(
-            'DATABASE_ERROR',
-            error instanceof Error ? error : new Error(getErrorMessage(error))
-          );
-        }
-      });
+        })
+      );
       if (!transactionResult.success) {
-        return transactionResult;
+        return isUpsertGridValeursError(transactionResult.error)
+          ? failure(transactionResult.error, transactionResult.cause)
+          : toDatabaseFailure({
+              error: String(transactionResult.error),
+              cause:
+                transactionResult.error instanceof Error
+                  ? transactionResult.error
+                  : undefined,
+            });
       }
       // The transaction is committed: publication failures cannot undo it.
       try {
@@ -227,26 +224,6 @@ export class UpsertGridValeursService {
         );
       }
       return success(transactionResult.data);
-    } catch (error) {
-      if (error instanceof UserIndicateurValeurNotAllowedException) {
-        return failure('USER_VALUE_NOT_ALLOWED', error);
-      }
-      if (error instanceof ForbiddenException) {
-        return failure('UNAUTHORIZED', error);
-      }
-      if (error instanceof NotFoundException) {
-        return failure('NOT_FOUND', error);
-      }
-      if (error instanceof BadRequestException) {
-        return failure('INVALID_GRID_VALEUR', error);
-      }
-      this.logger.error(
-        `Échec de l'upsert des valeurs de grille : ${getErrorMessage(error)}`
-      );
-      return failure(
-        'DATABASE_ERROR',
-        error instanceof Error ? error : new Error(getErrorMessage(error))
-      );
-    }
+    });
   }
 }
