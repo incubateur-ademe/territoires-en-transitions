@@ -10,14 +10,10 @@ import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { Result, failure, success } from '@tet/backend/utils/result.type';
 import { CommonErrorEnum } from '@tet/backend/utils/trpc/common-errors';
 import {
-  ActionScoreFinal,
   ConditionFichiers,
   Etoile,
-  EtoileEnum,
-  findActionById,
   getRoleMesureIds,
   getParcoursLabellisationStatus,
-  getParentId,
   getScoreRatios,
   LabellisationWithProchaineEtoile,
   LabellisationAudit,
@@ -28,8 +24,6 @@ import {
   ReferentRolesDefined,
   ScoreSnapshot,
   toReferentRolesDefined,
-  toReponseAttendue,
-  StatutAvancementEnum,
 } from '@tet/domain/referentiels';
 import {
   and,
@@ -60,6 +54,7 @@ import { etoileDefinitionTable } from './etoile-definition.table';
 import { labellisationDemandeTable } from './labellisation-demande.table';
 import { LabellisationService } from './labellisation.service';
 import { labellisationTable } from './labellisation.table';
+import { ParcoursLabellisationRules } from './parcours-labellisation.rules';
 type TLabellisationAndDemandeAndAudit = {
   labellisation: LabellisationWithProchaineEtoile | null;
   audit: LabellisationAudit | null;
@@ -705,7 +700,10 @@ from s_etoile s
         referentielId,
       });
 
-    const etoileCible = await this.getEtoileCible({
+    const etoilesDefinitions =
+      await this.labellisationService.getEtoileDefinitions();
+    const etoileCible = ParcoursLabellisationRules.getEtoileCible({
+      etoilesDefinitions,
       currentEtoile: labellisation?.etoiles,
       nextEtoile: labellisation?.prochaineEtoile ?? undefined,
       scoreFait: scoreRatios?.ratioFait,
@@ -724,9 +722,10 @@ from s_etoile s
         etoileCible: etoileCible.etoile,
       });
 
-    const criteresAction = actionConditionDefinitions
-      .map(addIsScoreConditionSatisfied(snapshot.scoresPayload.scores))
-      .filter((c) => c !== null);
+    const criteresAction = ParcoursLabellisationRules.buildCriteresAction({
+      actionScoresTree: snapshot.scoresPayload.scores,
+      actionConditionDefinitions,
+    });
 
     // Équivalent de la fonction PG `labellisation.critere_score_global()`, basée sur `client_scores`.
     const critereScore = {
@@ -790,116 +789,4 @@ from s_etoile s
         .map(([mesureId]) => mesureId),
     });
   }
-
-  private async getEtoileCible({
-    currentEtoile = EtoileEnum.PREMIERE_ETOILE,
-    nextEtoile = EtoileEnum.PREMIERE_ETOILE,
-    scoreFait,
-    etoileVisee,
-  }: {
-    currentEtoile: number | undefined;
-    nextEtoile: number | undefined;
-    scoreFait: number | null | undefined;
-    etoileVisee: Etoile | undefined;
-  }) {
-    const etoilesDefinitions =
-      await this.labellisationService.getEtoileDefinitions();
-
-    // Etoiles are sorted from 5 to 1
-    const maxEligibleEtoile = scoreFait
-      ? // Find the last item where minRealiseScore < scoreFait
-        etoilesDefinitions.find((etoile) => etoile.minRealiseScore <= scoreFait)
-          ?.etoile ?? EtoileEnum.PREMIERE_ETOILE
-      : EtoileEnum.PREMIERE_ETOILE;
-
-    const nbEtoilesCibles =
-      etoileVisee ??
-      (Math.max(
-        currentEtoile,
-        nextEtoile,
-        maxEligibleEtoile,
-        EtoileEnum.PREMIERE_ETOILE
-      ) as Etoile);
-
-    const etoileCible = etoilesDefinitions.find(
-      (etoile) => etoile.etoile === nbEtoilesCibles
-    );
-
-    if (!etoileCible) {
-      throw new Error(`Étoile cible ${nbEtoilesCibles} introuvable`);
-    }
-
-    return etoileCible;
-  }
-}
-
-/**
- * Équivalent de la fonction PG `labellisation.critere_action()`, basée sur `client_scores`.
- */
-function addIsScoreConditionSatisfied<
-  A extends { actionId: string; actionsEnfant: A[]; score: ActionScoreFinal }
->(actionScoresTree: A) {
-  return (
-    actionCondition: Awaited<
-      ReturnType<GetLabellisationService['listActionConditionDefinitions']>
-    >[number]
-  ) => {
-    const action = findActionById(actionScoresTree, actionCondition.actionId);
-
-    const actionScore = {
-      ...action.score,
-      ...getScoreRatios(action.score),
-    };
-
-    // Automatique non concerné (par la personnalisation) > ne doit pas être affiché
-    if (action.score.desactive) {
-      return null;
-    }
-
-    const actionSatisfyRatioFait =
-      actionScore.ratioFait * 100 >= actionCondition.minRealisePercentage;
-
-    const actionSatisfyRatioFaitPlusProgramme =
-      actionCondition.minProgrammePercentage !== null &&
-      (actionScore.ratioFait + actionScore.ratioProgramme) * 100 >=
-        actionCondition.minProgrammePercentage;
-
-    const parent = findActionById(
-      actionScoresTree,
-      getParentId({ actionId: actionCondition.actionId }) as string
-    );
-
-    const parentScore = {
-      ...parent.score,
-      ...getScoreRatios(parent.score),
-    };
-
-    const parentSatisfyRatioFait =
-      parentScore.ratioFait * 100 >= actionCondition.minRealisePercentage;
-
-    const parentSatisfyRatioFaitPlusProgramme =
-      actionCondition.minProgrammePercentage !== null &&
-      (parentScore.ratioFait + parentScore.ratioProgramme) * 100 >=
-        actionCondition.minProgrammePercentage;
-
-    const isConditionSatisfied =
-      parent.score.concerne &&
-      parent.score.avancement &&
-      parent.score.avancement !== StatutAvancementEnum.NON_RENSEIGNE
-        ? parentSatisfyRatioFait || parentSatisfyRatioFaitPlusProgramme
-        : actionSatisfyRatioFait || actionSatisfyRatioFaitPlusProgramme;
-
-    return {
-      ...actionCondition,
-      atteint: isConditionSatisfied,
-      proportionFait: actionScore.ratioFait,
-      proportionProgramme: actionScore.ratioProgramme,
-      reponseAttendue: toReponseAttendue({
-        referentiel: actionCondition.referentielId,
-        actionId: actionCondition.actionId,
-        minRealisePercentage: actionCondition.minRealisePercentage,
-        minProgrammePercentage: actionCondition.minProgrammePercentage,
-      }),
-    };
-  };
 }
