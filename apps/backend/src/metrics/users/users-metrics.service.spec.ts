@@ -15,7 +15,7 @@ const toServiceWithMocks = ({
   permission = success(undefined),
   isApiKeyAllowed = success(undefined),
   piloteCount = success(5),
-  countPiloteFiches = vi.fn().mockResolvedValue(1),
+  countPiloteFiches = vi.fn().mockResolvedValue(success(1)),
   countPiloteActions = vi.fn().mockResolvedValue(6),
 }: {
   permission?: Result<void, 'UNAUTHORIZED'>;
@@ -30,8 +30,8 @@ const toServiceWithMocks = ({
   } as unknown as PermissionService;
   const listFichesService = {
     countPiloteFiches,
-    countPiloteSubFiches: vi.fn().mockResolvedValue(2),
-    countPiloteFichesIndicateurs: vi.fn().mockResolvedValue(3),
+    countPiloteSubFiches: vi.fn().mockResolvedValue(success(2)),
+    countPiloteFichesIndicateurs: vi.fn().mockResolvedValue(success(3)),
   } as unknown as ListFichesService;
   const listIndicateursService = {
     getMesIndicateursCount: vi.fn().mockResolvedValue(piloteCount),
@@ -113,6 +113,18 @@ describe('UsersMetricsService.getMetrics', () => {
 
     const result = await toServiceWithMocks({
       countPiloteFiches: vi.fn().mockRejectedValue(cause),
+    }).getMetrics(collectiviteId, user);
+
+    expect(result).toEqual(failure('DATABASE_ERROR', cause));
+  });
+
+  it("convertit l'échec d'un comptage des fiches pilotées en DATABASE_ERROR avec sa cause", async () => {
+    const cause = new Error('requête des fiches pilotées en échec');
+
+    const result = await toServiceWithMocks({
+      countPiloteFiches: vi
+        .fn()
+        .mockResolvedValue(failure('DATABASE_ERROR', cause)),
     }).getMetrics(collectiviteId, user);
 
     expect(result).toEqual(failure('DATABASE_ERROR', cause));

@@ -2,7 +2,7 @@ import { Injectable, Logger, NotImplementedException } from '@nestjs/common';
 import { isCountByPropertyMasked } from '@tet/backend/plans/fiches/list-fiches/fiches-restreintes.rules';
 import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches.service';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
-import { Result } from '@tet/backend/utils/result.type';
+import { getDataOrThrow, Result } from '@tet/backend/utils/result.type';
 import {
   CountByPropertyEnumType,
   FicheWithRelations,
@@ -36,7 +36,7 @@ export class CountByService {
       )}`
     );
     try {
-      const { data: fiches } =
+      const { data: fiches } = getDataOrThrow(
         await this.ficheActionListService.getFichesActionResumes(
           {
             collectiviteId,
@@ -44,7 +44,8 @@ export class CountByService {
             readsMaskedFields: isCountByPropertyMasked(countByProperty),
           },
           { user }
-        );
+        )
+      );
       return this.countByPropertyWithFiches(fiches, countByProperty, filters);
     } catch (error) {
       this.logger.error(error);

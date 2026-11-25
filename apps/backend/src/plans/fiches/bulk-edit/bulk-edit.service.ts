@@ -8,6 +8,7 @@ import { PermissionService } from '@tet/backend/users/authorizations/permission.
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { getDataOrThrow } from '@tet/backend/utils/result.type';
 import { applyJaugeStatutChange, Statut } from '@tet/domain/plans';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { and, inArray, or, sql } from 'drizzle-orm';
@@ -40,13 +41,15 @@ export class BulkEditService {
       request.ficheIds === 'all'
         ? request.filters
         : { ficheIds: request.ficheIds };
-    const currentFiches = await this.listFichesService.getFichesActionResumes(
-      {
-        collectiviteId: request.collectiviteId,
-        filters,
-        readsMaskedFields: true,
-      },
-      { user }
+    const currentFiches = getDataOrThrow(
+      await this.listFichesService.getFichesActionResumes(
+        {
+          collectiviteId: request.collectiviteId,
+          filters,
+          readsMaskedFields: true,
+        },
+        { user }
+      )
     );
     const actualFicheIds = currentFiches.data.map((fiche) => fiche.id);
 
@@ -76,7 +79,7 @@ export class BulkEditService {
         this.logger.log(
           `Edition not allowed for collectivite ${c.collectiviteId}, checking fiche sharing`
         );
-        const { data: fiches } =
+        const { data: fiches } = getDataOrThrow(
           await this.listFichesService.getFichesActionResumes(
             {
               collectiviteId: c.collectiviteId,
@@ -84,7 +87,8 @@ export class BulkEditService {
               readsMaskedFields: true,
             },
             { user }
-          );
+          )
+        );
         // TODO: Optimize by avoid checking each fiche independently
         const ficheSharingsChecks = fiches.map((fiche) =>
           this.fichePermissionsService.isAllowedByFicheSharings(
@@ -290,13 +294,15 @@ export class BulkEditService {
 
     if ((request.isNotificationEnabled ?? true) && request.pilotes) {
       // recharge les fiches mises à jour
-      const updatedFiches = await this.listFichesService.getFichesActionResumes(
-        {
-          collectiviteId: request.collectiviteId,
-          filters,
-          readsMaskedFields: true,
-        },
-        { user }
+      const updatedFiches = getDataOrThrow(
+        await this.listFichesService.getFichesActionResumes(
+          {
+            collectiviteId: request.collectiviteId,
+            filters,
+            readsMaskedFields: true,
+          },
+          { user }
+        )
       );
 
       // prépare les paires de fiches (avant/après)

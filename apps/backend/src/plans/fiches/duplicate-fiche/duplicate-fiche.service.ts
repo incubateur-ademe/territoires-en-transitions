@@ -64,26 +64,29 @@ export class DuplicateFicheService {
       if (!authorizationResult.success) return authorizationResult;
       const authorization = authorizationResult.data;
 
-      const { data: matchedFiches } =
-        await this.listFichesService.listFichesQuery(
-          collectiviteId,
-          { ficheIds: [ficheId] },
-          undefined,
-          transaction
-        );
-      const [source] = ownedByCollectivite(matchedFiches, collectiviteId);
+      const matchedFichesResult = await this.listFichesService.listFichesQuery(
+        { collectiviteId, filters: { ficheIds: [ficheId] } },
+        { tx: transaction }
+      );
+      if (!matchedFichesResult.success) return matchedFichesResult;
+      const [source] = ownedByCollectivite(
+        matchedFichesResult.data.data,
+        collectiviteId
+      );
       if (!source) {
         return failure(DuplicateFicheErrorEnum.FICHE_NOT_FOUND);
       }
 
-      const { data: matchedChildren } =
+      const matchedChildrenResult =
         await this.listFichesService.listFichesQuery(
-          collectiviteId,
-          { parentsId: [ficheId] },
-          undefined,
-          transaction
+          { collectiviteId, filters: { parentsId: [ficheId] } },
+          { tx: transaction }
         );
-      const sousActions = ownedByCollectivite(matchedChildren, collectiviteId);
+      if (!matchedChildrenResult.success) return matchedChildrenResult;
+      const sousActions = ownedByCollectivite(
+        matchedChildrenResult.data.data,
+        collectiviteId
+      );
 
       const created = await this.ficheDuplicationService.duplicateFiche({
         source,
@@ -100,15 +103,14 @@ export class DuplicateFicheService {
       const newFicheId = created.data;
 
       for (const sousAction of sousActions) {
-        const createdChild =
-          await this.ficheDuplicationService.duplicateFiche({
-            source: sousAction,
-            collectiviteId,
-            parentId: newFicheId,
-            authorization,
-            axeIdRemapping: identityAxeRemapping(sousAction),
-            tx: transaction,
-          });
+        const createdChild = await this.ficheDuplicationService.duplicateFiche({
+          source: sousAction,
+          collectiviteId,
+          parentId: newFicheId,
+          authorization,
+          axeIdRemapping: identityAxeRemapping(sousAction),
+          tx: transaction,
+        });
         if (!createdChild.success) {
           return failure(DuplicateFicheErrorEnum.DUPLICATE_FICHE_ERROR);
         }

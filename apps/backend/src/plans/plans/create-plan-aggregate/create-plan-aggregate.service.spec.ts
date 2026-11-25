@@ -68,7 +68,10 @@ describe('CreatePlanAggregateService', () => {
     mocks.createFiches.createFicheWithAuthorization.mockImplementation(
       async () => success({ id: nextFicheId++ })
     );
-    mocks.listFiches.listFichesQuery.mockResolvedValue({ data: [], count: 0 });
+    mocks.listFiches.listFichesQuery.mockResolvedValue({
+      success: true,
+      data: { data: [], count: 0 },
+    });
     mocks.permissions.assertAllowed.mockResolvedValue(undefined);
     mocks.webhooks.sendWebhookNotifications.mockResolvedValue(undefined);
     mocks.secteurs.createFromImportIa.mockResolvedValue(null);
@@ -348,8 +351,8 @@ describe('CreatePlanAggregateService', () => {
         { id: 102, titre: 'Fiche 2' },
       ];
       mocks.listFiches.listFichesQuery.mockResolvedValue({
-        data: fiches,
-        count: 2,
+        success: true,
+        data: { data: fiches, count: 2 },
       });
 
       await service.notifyCreatedFiches({
@@ -357,10 +360,10 @@ describe('CreatePlanAggregateService', () => {
         planId: 1,
       });
 
-      expect(mocks.listFiches.listFichesQuery).toHaveBeenCalledExactlyOnceWith(
-        null,
-        { ficheIds: [101, 102], withChildren: true }
-      );
+      expect(mocks.listFiches.listFichesQuery).toHaveBeenCalledExactlyOnceWith({
+        collectiviteId: null,
+        filters: { ficheIds: [101, 102], withChildren: true },
+      });
       expect(
         mocks.webhooks.sendWebhookNotifications
       ).toHaveBeenCalledExactlyOnceWith(

@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ListCollectiviteIndicateursRepository } from '@tet/backend/indicateurs/indicateurs/list-collectivite-indicateurs/list-collectivite-indicateurs.repository';
 import { GetAxeService } from '@tet/backend/plans/axes/get-axe/get-axe.service';
 import FicheActionPermissionsService from '@tet/backend/plans/fiches/fiche-action-permissions.service';
@@ -10,7 +10,12 @@ import {
   catchDatabaseFailure,
   toDatabaseFailure,
 } from '@tet/backend/utils/database/catch-database-failure';
-import { failure, Result, success } from '@tet/backend/utils/result.type';
+import {
+  failure,
+  getDataOrThrow,
+  Result,
+  success,
+} from '@tet/backend/utils/result.type';
 import { isIndicateurPerso } from '@tet/domain/indicateurs';
 import type {
   AnnexeDocument,
@@ -47,18 +52,21 @@ export class FicheExportPayloadService {
     user: AuthenticatedUser;
   }): Promise<Result<FicheActionPdfExtendedProps, FicheExportPayloadError>> {
     return catchDatabaseFailure(async () => {
-      const ficheResult = await this.listFichesService
-        .getFicheById(ficheId, false, user)
-        .catch((error) => {
-          if (error instanceof ForbiddenException) {
-            return failure(`Accès refusé sur la fiche ${ficheId}`);
-          }
-          throw error;
-        });
+      const ficheResult = await this.listFichesService.getFicheById(
+        { ficheId },
+        { user }
+      );
       if (!ficheResult.success) {
+        if (ficheResult.error === 'DATABASE_ERROR') {
+          return toDatabaseFailure(ficheResult);
+        }
+        const reason =
+          ficheResult.error === 'UNAUTHORIZED'
+            ? `Accès refusé sur la fiche ${ficheId}`
+            : ficheResult.cause?.message ?? ficheResult.error;
         return failure(
           'FICHE_UNAVAILABLE',
-          new Error(`Fiche ${ficheId} : ${ficheResult.error}`)
+          new Error(`Fiche ${ficheId} : ${reason}`)
         );
       }
 
@@ -120,9 +128,11 @@ export class FicheExportPayloadService {
     user: AuthenticatedUser;
   }): Promise<FicheWithRelations[]> {
     try {
-      const { data } = await this.listFichesService.listFichesQuery(
-        fiche.collectiviteId,
-        { linkedFicheIds: [fiche.id] }
+      const { data } = getDataOrThrow(
+        await this.listFichesService.listFichesQuery({
+          collectiviteId: fiche.collectiviteId,
+          filters: { linkedFicheIds: [fiche.id] },
+        })
       );
       const accessResults = await Promise.all(
         data.map((ficheLiee) =>

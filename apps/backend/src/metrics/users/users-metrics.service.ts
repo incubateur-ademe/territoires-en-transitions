@@ -7,7 +7,11 @@ import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { ListIndicateursError } from '../../indicateurs/indicateurs/list-indicateurs/list-indicateurs.errors';
 import { ListIndicateursService } from '../../indicateurs/indicateurs/list-indicateurs/list-indicateurs.service';
 import { catchDatabaseFailure } from '@tet/backend/utils/database/catch-database-failure';
-import { Result, success } from '@tet/backend/utils/result.type';
+import {
+  getDataOrThrow,
+  Result,
+  success,
+} from '@tet/backend/utils/result.type';
 import { checkMetricsReadAllowed } from '../check-metrics-read-allowed';
 
 @Injectable()
@@ -61,27 +65,27 @@ export class UsersMetricsService {
 
     promises.push(
       this.listFichesService
-        .countPiloteFiches(collectiviteId, user)
+        .countPiloteFiches(collectiviteId, { user })
         .then((count) => {
-          response.plans.piloteFichesCount = count;
+          response.plans.piloteFichesCount = getDataOrThrow(count);
           return;
         })
     );
 
     promises.push(
       this.listFichesService
-        .countPiloteSubFiches(collectiviteId, user)
+        .countPiloteSubFiches(collectiviteId, { user })
         .then((count) => {
-          response.plans.piloteSubFichesCount = count;
+          response.plans.piloteSubFichesCount = getDataOrThrow(count);
           return;
         })
     );
 
     promises.push(
       this.listFichesService
-        .countPiloteFichesIndicateurs(collectiviteId, user)
+        .countPiloteFichesIndicateurs(collectiviteId, { user })
         .then((count) => {
-          response.plans.piloteFichesIndicateursCount = count;
+          response.plans.piloteFichesIndicateursCount = getDataOrThrow(count);
           return;
         })
     );

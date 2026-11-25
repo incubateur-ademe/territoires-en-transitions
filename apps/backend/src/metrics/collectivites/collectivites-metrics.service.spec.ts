@@ -36,7 +36,7 @@ const toServiceWithMocks = ({
     count: planCount,
   } as unknown as PlanActionsService;
   const listFichesService = {
-    count: vi.fn().mockResolvedValue(7),
+    count: vi.fn().mockResolvedValue(success(7)),
   } as unknown as ListFichesService;
   const listIndicateursService = {
     getFavorisCount: vi.fn().mockResolvedValue(favorisCount),

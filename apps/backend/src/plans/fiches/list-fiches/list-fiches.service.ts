@@ -1,16 +1,23 @@
-import { Injectable, Logger } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import FicheActionPermissionsService from '@tet/backend/plans/fiches/fiche-action-permissions.service';
 import { QueryOptionsSchema } from '@tet/backend/plans/fiches/list-fiches/list-fiches.request';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
+import { catchDatabaseFailure } from '@tet/backend/utils/database/catch-database-failure';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { UnsafeServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { Collectivite } from '@tet/domain/collectivites';
 import {
   FicheWithRelations,
   FicheWithRelationsAndCollectivite,
   ListFichesRequestFilters,
 } from '@tet/domain/plans';
-import { failure, Result } from '../../../utils/result.type';
+import { failure, Result, success } from '../../../utils/result.type';
 import {
   FichesRestreintesAccess,
   getDescriptionSearchScope,
@@ -18,11 +25,37 @@ import {
   maskFichesRestreintes,
 } from './fiches-restreintes.rules';
 import { formatFiltersForLogs } from './list-fiches-filters.repository';
+import {
+  CountPiloteFichesError,
+  GetFicheByIdError,
+  ListFichesErrorEnum,
+  ListFichesQueryError,
+} from './list-fiches.errors';
 import { ListFichesRepository } from './list-fiches.repository';
 
 export type FichesReadContext = {
   user: AuthUser;
   tx?: Transaction;
+};
+
+export type ListFichesQueryInput = {
+  collectiviteId: number | null;
+  filters?: ListFichesRequestFilters;
+  queryOptions?: QueryOptionsSchema;
+};
+
+export type GetFichesActionResumesInput = {
+  collectiviteId: number;
+  filters: ListFichesRequestFilters;
+  queryOptions?: QueryOptionsSchema;
+  readsMaskedFields: boolean;
+};
+
+export type FichesActionResumes = {
+  count: number;
+  nextPage: number | null;
+  nbOfPages: number;
+  data: FicheWithRelations[];
 };
 
 type ReadableFichesFilters =
@@ -44,40 +77,46 @@ export default class ListFichesService {
   ) {}
 
   async getFicheById(
-    ficheId: number,
-    addCollectiviteData?: boolean,
-    user?: AuthUser,
-    tx?: Transaction
+    {
+      ficheId,
+      addCollectiviteData = false,
+    }: { ficheId: number; addCollectiviteData?: boolean },
+    { user, tx }: { user?: AuthUser; tx?: Transaction } = {}
   ): Promise<
-    Result<FicheWithRelations | FicheWithRelationsAndCollectivite, string>
+    Result<
+      FicheWithRelations | FicheWithRelationsAndCollectivite,
+      GetFicheByIdError
+    >
   > {
     this.logger.log(`Récupération de la fiche action ${ficheId}`);
 
-    const { data: fichesAction } = await this.listFichesQuery(
-      null,
+    const fichesResult = await this.listFichesQuery(
       {
-        ficheIds: [ficheId],
-        withChildren: true,
+        collectiviteId: null,
+        filters: { ficheIds: [ficheId], withChildren: true },
       },
-      undefined,
-      tx
+      { tx }
     );
+    if (!fichesResult.success) {
+      return fichesResult;
+    }
 
-    const ficheAction = fichesAction?.find((f) => f.id === ficheId);
+    const ficheAction = fichesResult.data.data.find((f) => f.id === ficheId);
     if (!ficheAction) {
-      return {
-        success: false,
-        error: `Aucune action trouvée avec l'id ${ficheId}`,
-      };
+      return failure(
+        ListFichesErrorEnum.FICHE_NOT_FOUND,
+        new NotFoundException(`Aucune action trouvée avec l'id ${ficheId}`)
+      );
     }
 
     if (user) {
-      await this.fichePermissionService.canReadFicheObject(
-        ficheAction,
+      const readResult = await this.checkCanReadFiche(ficheAction, {
         user,
-        undefined,
-        tx
-      );
+        tx,
+      });
+      if (!readResult.success) {
+        return readResult;
+      }
     }
 
     if (addCollectiviteData) {
@@ -92,45 +131,82 @@ export default class ListFichesService {
         collectiviteResult.data.collectivite as Collectivite;
     }
 
-    return { success: true, data: ficheAction };
+    return success(ficheAction);
+  }
+
+  private async checkCanReadFiche(
+    fiche: FicheWithRelations,
+    { user, tx }: FichesReadContext
+  ): Promise<Result<void, 'UNAUTHORIZED' | 'DATABASE_ERROR'>> {
+    try {
+      await this.fichePermissionService.canReadFicheObject(
+        fiche,
+        user,
+        false,
+        tx
+      );
+      return success(undefined);
+    } catch (error) {
+      // Le refus arrive en ForbiddenException : on garde son message, qui
+      // nomme l'utilisateur et l'autorisation manquante.
+      if (error instanceof ForbiddenException) {
+        return failure(ListFichesErrorEnum.UNAUTHORIZED, error);
+      }
+      this.logger.error(
+        `Échec du contrôle de lecture de la fiche ${fiche.id}`,
+        error
+      );
+      return failure(
+        ListFichesErrorEnum.DATABASE_ERROR,
+        error instanceof Error ? error : new Error(String(error))
+      );
+    }
   }
 
   async countPiloteFiches(
     collectiviteId: number,
-    user: AuthUser,
-    subFiches = false
-  ) {
+    { user }: { user: AuthUser }
+  ): Promise<Result<number, CountPiloteFichesError>> {
+    return this.listFichesRepository.countPiloteFiches(collectiviteId, user);
+  }
+
+  async countPiloteSubFiches(
+    collectiviteId: number,
+    { user }: { user: AuthUser }
+  ): Promise<Result<number, CountPiloteFichesError>> {
     return this.listFichesRepository.countPiloteFiches(
       collectiviteId,
       user,
-      subFiches
+      true
     );
   }
 
-  async countPiloteSubFiches(collectiviteId: number, user: AuthUser) {
-    return this.listFichesRepository.countPiloteSubFiches(collectiviteId, user);
-  }
-
-  async countPiloteFichesIndicateurs(collectiviteId: number, user: AuthUser) {
+  async countPiloteFichesIndicateurs(
+    collectiviteId: number,
+    { user }: { user: AuthUser }
+  ): Promise<Result<number, CountPiloteFichesError>> {
     return this.listFichesRepository.countPiloteFichesIndicateurs(
       collectiviteId,
       user
     );
   }
 
-  async count(collectiviteId: number): Promise<number> {
+  async count(
+    collectiviteId: number
+  ): Promise<Result<number, ListFichesQueryError>> {
     return this.listFichesRepository.count(collectiviteId);
   }
 
+  /**
+   * Liste les fiches sans contrôle d'accès ni masquage des fiches restreintes :
+   * c'est à l'appelant de filtrer ce que l'utilisateur peut lire.
+   */
   async listFichesQuery(
-    collectiviteId: number | null,
-    filters?: ListFichesRequestFilters,
-    queryOptions?: QueryOptionsSchema,
-    tx?: Transaction
-  ): Promise<{
-    data: FicheWithRelations[];
-    count: number;
-  }> {
+    { collectiviteId, filters, queryOptions }: ListFichesQueryInput,
+    { tx }: UnsafeServiceSecondArg = {}
+  ): Promise<
+    Result<{ data: FicheWithRelations[]; count: number }, ListFichesQueryError>
+  > {
     return this.listFichesRepository.listFichesWithDescriptionSearch({
       collectiviteId,
       filters,
@@ -191,24 +267,23 @@ export default class ListFichesService {
    * @return an array of summarized fiches actions with count, next page, number of pages, completion infos and data
    */
   async getFichesActionResumes(
+    input: GetFichesActionResumesInput,
+    context: FichesReadContext
+  ): Promise<Result<FichesActionResumes, ListFichesQueryError>> {
+    return catchDatabaseFailure(() =>
+      this.listFichesActionResumes(input, context)
+    );
+  }
+
+  private async listFichesActionResumes(
     {
       collectiviteId,
       filters,
       queryOptions,
       readsMaskedFields,
-    }: {
-      collectiviteId: number;
-      filters: ListFichesRequestFilters;
-      queryOptions?: QueryOptionsSchema;
-      readsMaskedFields: boolean;
-    },
+    }: GetFichesActionResumesInput,
     { user, tx }: FichesReadContext
-  ): Promise<{
-    count: number;
-    nextPage: number | null;
-    nbOfPages: number;
-    data: FicheWithRelations[];
-  }> {
+  ): Promise<Result<FichesActionResumes, ListFichesQueryError>> {
     const filterSummary = filters ? formatFiltersForLogs(filters) : '';
     this.logger.log(
       `Récupération des fiches actions résumées pour la collectivité ${collectiviteId} ${
@@ -220,10 +295,10 @@ export default class ListFichesService {
       { user, tx }
     );
     if (readable.kind === 'no_readable_fiche') {
-      return { count: 0, nextPage: null, nbOfPages: 0, data: [] };
+      return success({ count: 0, nextPage: null, nbOfPages: 0, data: [] });
     }
 
-    const { data: fiches, count } =
+    const fichesResult =
       await this.listFichesRepository.listFichesWithDescriptionSearch({
         collectiviteId,
         filters: readable.filters,
@@ -231,29 +306,33 @@ export default class ListFichesService {
         tx,
         descriptionSearch: getDescriptionSearchScope(readable.access),
       });
+    if (!fichesResult.success) {
+      return fichesResult;
+    }
+    const { data: fiches, count } = fichesResult.data;
     const areFichesRestreintesReadable = readable.access === 'readable';
     const data = areFichesRestreintesReadable
       ? fiches
       : maskFichesRestreintes(fiches);
 
     if (queryOptions?.limit === 'all' || queryOptions === undefined) {
-      return {
+      return success({
         count,
         nextPage: null,
         nbOfPages: 1,
         data,
-      };
+      });
     }
     const { page, limit } = queryOptions;
 
     const nextPage = count > page * limit ? page + 1 : null;
     const nbOfPages = Math.ceil(count / limit);
 
-    return {
+    return success({
       count,
       nextPage,
       nbOfPages,
       data,
-    };
+    });
   }
 }

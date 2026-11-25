@@ -48,12 +48,14 @@ export class ListFichesActionDeReferenceService {
       return success([]);
     }
 
-    const { data: fiches } = await this.listFichesService.listFichesQuery(
-      null,
-      { ficheIds },
-      undefined,
-      tx
+    const fichesResult = await this.listFichesService.listFichesQuery(
+      { collectiviteId: null, filters: { ficheIds } },
+      { tx }
     );
+    if (!fichesResult.success) {
+      return failure(fichesResult.error, fichesResult.cause);
+    }
+    const fiches = fichesResult.data.data;
 
     const collectiviteIdsWithRestreinteAccess =
       await this.listCollectiviteIdsWithRestreinteAccess({

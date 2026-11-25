@@ -182,13 +182,23 @@ export class CreatePlanAggregateService {
   >): Promise<void> {
     if (createdFicheIds.length === 0) return;
     try {
-      const { data: fiches } = await this.listFichesService.listFichesQuery(
-        null,
-        { ficheIds: createdFicheIds, withChildren: true }
-      );
+      const fichesResult = await this.listFichesService.listFichesQuery({
+        collectiviteId: null,
+        filters: { ficheIds: createdFicheIds, withChildren: true },
+      });
+      if (!fichesResult.success) {
+        this.logger.error(
+          `[Import plan ${planId}] Webhook batch notification failed`,
+          fichesResult.cause?.stack ?? fichesResult.error
+        );
+        return;
+      }
       await this.webhookService.sendWebhookNotifications(
         ApplicationSousScopesEnum.FICHES,
-        fiches.map((fiche) => ({ entityId: `${fiche.id}`, payload: fiche }))
+        fichesResult.data.data.map((fiche) => ({
+          entityId: `${fiche.id}`,
+          payload: fiche,
+        }))
       );
     } catch (error) {
       this.logger.error(

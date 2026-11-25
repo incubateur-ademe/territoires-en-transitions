@@ -61,12 +61,17 @@ export class ResolveImportReferenceService {
       );
     try {
       const result = await this.fiches.getFicheById(
-        parsed.data.ficheId,
-        false,
-        user,
-        tx
+        { ficheId: parsed.data.ficheId },
+        { user, tx }
       );
-      if (!result.success) return unavailable();
+      if (!result.success) {
+        if (result.error !== 'DATABASE_ERROR') return unavailable();
+        this.logger.error(
+          'Impossible de résoudre la fiche action du lien TeT',
+          result.cause
+        );
+        return this.reject('IMPORT_REFERENCE_RESOLUTION_FAILED', reference);
+      }
       const fiche = result.data;
       const scopes = [
         fiche.collectiviteId,

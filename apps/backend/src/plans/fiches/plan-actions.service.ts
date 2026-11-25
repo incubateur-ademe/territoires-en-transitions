@@ -4,7 +4,12 @@ import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches
 import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { failure, Result, success } from '@tet/backend/utils/result.type';
+import {
+  failure,
+  getDataOrThrow,
+  Result,
+  success,
+} from '@tet/backend/utils/result.type';
 import { CommonError } from '@tet/backend/utils/trpc/common-errors';
 import { Fiche, FicheSecteurs, FicheWithRelations } from '@tet/domain/plans';
 import { and, count, eq, isNull, sql } from 'drizzle-orm';
@@ -100,7 +105,7 @@ export default class PlanActionsService {
     );
 
     const axesEtFicheIds = await this.getAxesEtFicheIds(input);
-    const { data: fiches } =
+    const { data: fiches } = getDataOrThrow(
       await this.listFichesService.getFichesActionResumes(
         {
           collectiviteId,
@@ -108,10 +113,11 @@ export default class PlanActionsService {
           readsMaskedFields: true,
         },
         { user }
-      );
+      )
+    );
     // une fiche restreinte illisible est déjà exclue : ses sous-actions ne sont pas demandées
     const sousActions = fiches.length
-      ? (
+      ? getDataOrThrow(
           await this.listFichesService.getFichesActionResumes(
             {
               collectiviteId,
@@ -167,22 +173,30 @@ export default class PlanActionsService {
     if (!axesEtFicheIds.some((axe) => axe.parent === null)) {
       return failure('NOT_FOUND');
     }
-    const { data: fiches } = await this.listFichesService.listFichesQuery(
-      collectiviteId,
-      { planActionIds: [planId] },
-      { limit: 'all' },
-      tx
+    const fichesResult = await this.listFichesService.listFichesQuery(
+      {
+        collectiviteId,
+        filters: { planActionIds: [planId] },
+        queryOptions: { limit: 'all' },
+      },
+      { tx }
     );
-    const sousActions = fiches.length
-      ? (
-          await this.listFichesService.listFichesQuery(
-            collectiviteId,
-            { parentsId: fiches.map((f) => f.id) },
-            SOUS_ACTIONS_QUERY_OPTIONS,
-            tx
-          )
-        ).data
-      : [];
+    if (!fichesResult.success) return fichesResult;
+    const fiches = fichesResult.data.data;
+
+    let sousActions: FicheWithRelations[] = [];
+    if (fiches.length) {
+      const sousActionsResult = await this.listFichesService.listFichesQuery(
+        {
+          collectiviteId,
+          filters: { parentsId: fiches.map((f) => f.id) },
+          queryOptions: SOUS_ACTIONS_QUERY_OPTIONS,
+        },
+        { tx }
+      );
+      if (!sousActionsResult.success) return sousActionsResult;
+      sousActions = sousActionsResult.data.data;
+    }
     const secteursByFicheId = await this.getSecteursByFicheId(
       [...fiches, ...sousActions],
       tx

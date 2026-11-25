@@ -6,7 +6,12 @@ import { auditeurTable } from '@tet/backend/referentiels/labellisations/auditeur
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import { failure, success, type Result } from '@tet/backend/utils/result.type';
+import {
+  failure,
+  getDataOrThrow,
+  success,
+  type Result,
+} from '@tet/backend/utils/result.type';
 import { unaccent } from '@tet/backend/utils/unaccent.utils';
 import {
   PersonneTagOrUser,
@@ -704,7 +709,7 @@ export class LoadScoreComparisonService {
     const fichesActionLiees: Record<string, string[]> = {};
 
     try {
-      const { data: fiches } =
+      const { data: fiches } = getDataOrThrow(
         await this.listFichesService.getFichesActionResumes(
           {
             collectiviteId,
@@ -714,7 +719,8 @@ export class LoadScoreComparisonService {
             readsMaskedFields: true,
           },
           { user }
-        );
+        )
+      );
 
       if (fiches && fiches.length > 0) {
         for (const fiche of fiches) {

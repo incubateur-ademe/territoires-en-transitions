@@ -6,6 +6,8 @@ import {
   referentielModeGuardSpecificErrors,
   referentielNotWritableTrpcErrorEntry,
 } from '@tet/backend/collectivites/collectivite-referentiel-mode/referentiel-mode-guard.errors';
+import { GetFicheByIdError } from '@tet/backend/plans/fiches/list-fiches/list-fiches.errors';
+import { failure, Result } from '@tet/backend/utils/result.type';
 import { jaugeStatutErrors } from '@tet/domain/plans';
 import {
   createErrorsEnum,
@@ -28,6 +30,11 @@ const specificErrors = [
 type SpecificError = (typeof specificErrors)[number];
 
 export const updateFicheErrorConfig: TrpcErrorHandlerConfig<SpecificError> = {
+  commonErrors: {
+    // Le refus de lecture d'une fiche (cf. toUpdateFicheFailure) garde le
+    // message du ForbiddenException, qui était déjà renvoyé avant le Result.
+    UNAUTHORIZED: { code: 'FORBIDDEN', messageFromCause: true },
+  },
   specificErrors: {
     SELF_REFERENCE: {
       code: 'BAD_REQUEST',
@@ -85,3 +92,20 @@ export const updateFicheErrorConfig: TrpcErrorHandlerConfig<SpecificError> = {
 
 export const UpdateFicheErrorEnum = createErrorsEnum(specificErrors);
 export type UpdateFicheError = keyof typeof UpdateFicheErrorEnum;
+
+/**
+ * Traduit l'échec de lecture d'une fiche : le refus d'accès et la panne
+ * remontent tels quels, une fiche introuvable devient `notFoundError`.
+ */
+export const toUpdateFicheFailure = (
+  { error, cause }: { error: GetFicheByIdError; cause?: Error },
+  notFoundError: Extract<
+    UpdateFicheError,
+    'FICHE_NOT_FOUND' | 'PARENT_NOT_FOUND'
+  >
+): Result<never, UpdateFicheError> => {
+  if (error === 'UNAUTHORIZED' || error === 'DATABASE_ERROR') {
+    return failure(error, cause);
+  }
+  return failure(notFoundError);
+};
