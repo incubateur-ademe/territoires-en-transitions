@@ -5,7 +5,6 @@ import type {
 import { uniq } from 'es-toolkit';
 import { toSousIndicateurColorOf } from './sous-indicateurs-colors';
 import {
-  hasNotAdditiveObjectif,
   listChildNodes,
   listSousIndicateurIdsInTableOrder,
   type SousIndicateurDatedValeur,
@@ -24,27 +23,12 @@ export type SousIndicateurChartSerie = Readonly<{
   valeurs: SousIndicateurChartValeurs;
 }>;
 
-export type SousIndicateurChartLine = Readonly<{
-  indicateurId: number;
-  label: string;
-  color: string;
-  resultatValeurs: SousIndicateurChartValeurs | null;
-  objectifValeurs: SousIndicateurChartValeurs | null;
+export type SousIndicateursChartData = Readonly<{
+  dates: readonly string[];
+  children: readonly SousIndicateurChartSerie[];
+  resultatTotal: SousIndicateurChartValeurs | null;
+  objectifTotal: SousIndicateurChartValeurs | null;
 }>;
-
-export type SousIndicateursChartData =
-  | Readonly<{
-      mode: 'stacked';
-      dates: readonly string[];
-      children: readonly SousIndicateurChartSerie[];
-      resultatTotal: SousIndicateurChartValeurs | null;
-      objectifTotal: SousIndicateurChartValeurs | null;
-    }>
-  | Readonly<{
-      mode: 'lines';
-      dates: readonly string[];
-      lines: readonly SousIndicateurChartLine[];
-    }>;
 
 type ChartField = 'resultat' | 'objectif';
 
@@ -135,29 +119,6 @@ const toSeries = ({
     valeurs: alignOnDates({ dates, valeurByDate: resultatByDate }),
   }));
 
-const toLines = ({
-  entries,
-  dates,
-  colorOf,
-}: {
-  entries: readonly NodeValeurs[];
-  dates: readonly string[];
-  colorOf: (indicateurId: number) => string;
-}): SousIndicateurChartLine[] =>
-  entries.map(({ node, resultatByDate, objectifByDate }, index) => ({
-    indicateurId: node.id,
-    label: toDistinctLabels(entries.map((entry) => entry.node.label))[index],
-    color: colorOf(node.id),
-    resultatValeurs: alignOnDatesOrNull({
-      dates,
-      valeurByDate: resultatByDate,
-    }),
-    objectifValeurs: alignOnDatesOrNull({
-      dates,
-      valeurByDate: objectifByDate,
-    }),
-  }));
-
 const alignOnDatesOrNull = ({
   dates,
   valeurByDate,
@@ -169,11 +130,6 @@ const alignOnDatesOrNull = ({
 
 const hasResultat = ({ resultatByDate }: NodeValeurs): boolean =>
   resultatByDate.size > 0;
-
-const hasResultatOrObjectif = ({
-  resultatByDate,
-  objectifByDate,
-}: NodeValeurs): boolean => resultatByDate.size > 0 || objectifByDate.size > 0;
 
 const isLeaf = ({ enfantIds }: SousIndicateurNode): boolean =>
   enfantIds.length === 0;
@@ -291,7 +247,6 @@ const buildStackedData = ({
     ],
   });
   return {
-    mode: 'stacked',
     dates,
     children: toSeries({ entries: childEntries, dates, colorOf }),
     resultatTotal: alignOnDatesOrNull({ dates, valeurByDate: resultatTotal }),
@@ -299,57 +254,13 @@ const buildStackedData = ({
   };
 };
 
-const buildLinesData = ({
-  rootId,
-  source,
-  colorOf,
-}: {
-  rootId: number;
-  source: SousIndicateursSource;
-  colorOf: (indicateurId: number) => string;
-}): SousIndicateursChartData | null => {
-  const rootChildNodes = listRootChildNodes({ rootId, source });
-  if (rootChildNodes === null) {
-    return null;
-  }
-  const entries = rootChildNodes
-    .map(toNodeValeurs(source))
-    .filter(hasResultatOrObjectif);
-  const traceableDates = listDates(
-    entries.flatMap(({ resultatByDate, objectifByDate }) => [
-      resultatByDate,
-      objectifByDate,
-    ])
-  );
-  if (traceableDates.length === 0) {
-    return null;
-  }
-  const dates = listObservedDates({
-    dates: traceableDates,
-    observedDates: entries.flatMap(({ observedDates }) => observedDates),
-  });
-  return {
-    mode: 'lines',
-    dates,
-    lines: toLines({ entries, dates, colorOf }),
-  };
-};
-
 export const buildSousIndicateursChartData = ({
   rootId,
-  isCumul,
   ...source
 }: SousIndicateursSource &
-  Readonly<{
-    rootId: number;
-    isCumul: boolean;
-  }>): SousIndicateursChartData | null => {
+  Readonly<{ rootId: number }>): SousIndicateursChartData | null => {
   const colorOf = toSousIndicateurColorOf(
     listSousIndicateurIdsInTableOrder({ rootId, nodesById: source.nodesById })
   );
-  const isStackable =
-    isCumul && !hasNotAdditiveObjectif(listRootTotals({ rootId, source }));
-  return isStackable
-    ? buildStackedData({ rootId, source, colorOf })
-    : buildLinesData({ rootId, source, colorOf });
+  return buildStackedData({ rootId, source, colorOf });
 };

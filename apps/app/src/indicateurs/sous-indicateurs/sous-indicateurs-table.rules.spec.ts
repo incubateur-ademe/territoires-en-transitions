@@ -554,38 +554,8 @@ describe('buildSousIndicateursTableData', () => {
     expect(toTableData({ rootId: 3 })).toEqual({
       columns: [],
       rows: [],
-      hasTotalRow: true,
       totalCells: [],
     });
-  });
-
-  it("n'affiche pas la ligne de total quand le cumul des sous-indicateurs est décoché", () => {
-    const { hasTotalRow } = toTableData({
-      totalsByIndicateurId: new Map([
-        [
-          1,
-          [
-            {
-              dateValeur: '2022-01-01',
-              resultat: { status: 'not-additive' },
-              objectif: { status: 'not-additive' },
-            },
-          ],
-        ],
-      ]),
-    });
-
-    expect(hasTotalRow).toBe(false);
-  });
-
-  it('affiche la ligne de total quand le cumul des sous-indicateurs est coché', () => {
-    const { hasTotalRow } = toTableData({
-      totalsByIndicateurId: new Map([
-        [1, [toCompleteTotal({ dateValeur: '2022-01-01', valeur: 9 })]],
-      ]),
-    });
-
-    expect(hasTotalRow).toBe(true);
   });
 
   it('rattache chaque ligne à son parent, les enfants directs de la racine sans parent', () => {

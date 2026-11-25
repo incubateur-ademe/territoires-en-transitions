@@ -34,17 +34,8 @@ type ChartSeries = Readonly<{
   series: LineSeriesOption[];
 }>;
 
-type StackedData = Extract<SousIndicateursChartData, { mode: 'stacked' }>;
-type LinesData = Extract<SousIndicateursChartData, { mode: 'lines' }>;
-
 const toChildDatasetId = (indicateurId: number): string =>
   `sous-indicateur-${indicateurId}`;
-
-const toResultatLineDatasetId = (indicateurId: number): string =>
-  `resultat-sous-indicateur-${indicateurId}`;
-
-const toObjectifLineDatasetId = (indicateurId: number): string =>
-  `objectif-sous-indicateur-${indicateurId}`;
 
 const RESULTAT_TOTAL_DATASET_ID = 'resultat-total';
 const OBJECTIF_TOTAL_DATASET_ID = 'objectif-total';
@@ -113,12 +104,12 @@ const toOptionalDatasets = ({
   return [toDataset({ id, name, color, dates, valeurs })];
 };
 
-const toStackedChartSeries = ({
+const toChartSeries = ({
   dates,
   children,
   resultatTotal,
   objectifTotal,
-}: StackedData): ChartSeries => {
+}: SousIndicateursChartData): ChartSeries => {
   const childDatasets = children.map(
     ({ indicateurId, label, color, valeurs }) =>
       toDataset({
@@ -156,35 +147,10 @@ const toStackedChartSeries = ({
   };
 };
 
-const toLinesChartSeries = ({ dates, lines }: LinesData): ChartSeries => {
-  const datasets = lines.flatMap(
-    ({ indicateurId, label, color, resultatValeurs, objectifValeurs }) => [
-      ...toOptionalDatasets({
-        id: toResultatLineDatasetId(indicateurId),
-        name: label,
-        color,
-        dates,
-        valeurs: resultatValeurs,
-      }),
-      ...toOptionalDatasets({
-        id: toObjectifLineDatasetId(indicateurId),
-        name: toObjectifName(label),
-        color,
-        dates,
-        valeurs: objectifValeurs,
-      }),
-    ]
-  );
-  return { datasets, series: makeLineSeries(datasets) };
-};
-
 export const toSousIndicateursChartSeries = (
   data: SousIndicateursChartData
 ): ChartSeries => {
-  const { datasets, series } =
-    data.mode === 'stacked'
-      ? toStackedChartSeries(data)
-      : toLinesChartSeries(data);
+  const { datasets, series } = toChartSeries(data);
   return { datasets, series: withHollowObjectifPoints(series) };
 };
 

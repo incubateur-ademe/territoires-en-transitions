@@ -12,7 +12,6 @@ const renderChart = (state: SousIndicateursChartState) => {
     <IndicateurSousIndicateursChartProvider value={{ useSousIndicateursChart }}>
       <IndicateurSousIndicateursChart
         indicateurId={1}
-        isCumul={false}
         unite="t"
         periodicite={IndicateurPeriodiciteEnum.ANNUELLE}
       />
@@ -22,10 +21,10 @@ const renderChart = (state: SousIndicateursChartState) => {
 };
 
 describe('IndicateurSousIndicateursChart', () => {
-  it("demande l'état du graphique pour l'indicateur affiché et son réglage de cumul", () => {
+  it("demande l'état du graphique pour l'indicateur affiché", () => {
     const useSousIndicateursChart = renderChart({ status: 'loading' });
 
-    expect(useSousIndicateursChart).toHaveBeenCalledWith(1, false);
+    expect(useSousIndicateursChart).toHaveBeenCalledWith(1);
   });
 
   it('annonce le chargement', () => {
@@ -48,17 +47,17 @@ describe('IndicateurSousIndicateursChart', () => {
     renderChart({
       status: 'ready',
       data: {
-        mode: 'lines',
         dates: ['2022-01-01'],
-        lines: [
+        children: [
           {
             indicateurId: 2,
             label: 'Verre',
             color: 'verre-color',
-            resultatValeurs: [3],
-            objectifValeurs: null,
+            valeurs: [3],
           },
         ],
+        resultatTotal: null,
+        objectifTotal: null,
       },
     });
 

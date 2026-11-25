@@ -10,21 +10,19 @@ import { IndicateurSousIndicateursChart } from './indicateur-sous-indicateurs-ch
 type Props = ChartPresentation &
   Readonly<{
     indicateurId: number;
-    isCumul: boolean;
     title: string;
     onDone: () => void;
   }>;
 
 export const IndicateurSousIndicateursChartPngExport = ({
   indicateurId,
-  isCumul,
   unite,
   periodicite,
   title,
   onDone,
 }: Props): JSX.Element | null => {
   const { useSousIndicateursChart } = useIndicateurSousIndicateursChart();
-  const state = useSousIndicateursChart(indicateurId, isCumul);
+  const state = useSousIndicateursChart(indicateurId);
   const { containerRef, onFinished } = useChartPngExport({ title, onDone });
   const hasNothingToExport =
     state.status === 'error' ||
@@ -44,7 +42,6 @@ export const IndicateurSousIndicateursChartPngExport = ({
     <ChartPngExportFrame containerRef={containerRef}>
       <IndicateurSousIndicateursChart
         indicateurId={indicateurId}
-        isCumul={isCumul}
         unite={unite}
         periodicite={periodicite}
         title={title}

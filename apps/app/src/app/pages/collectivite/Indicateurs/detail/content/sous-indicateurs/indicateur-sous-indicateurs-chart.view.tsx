@@ -22,7 +22,7 @@ type ExportOptions = Readonly<{
 
 type Props = ChartPresentation &
   ExportOptions &
-  Readonly<{ indicateurId: number; isCumul: boolean }>;
+  Readonly<{ indicateurId: number }>;
 
 type ReadyChartProps = ChartPresentation &
   ExportOptions &
@@ -99,14 +99,13 @@ const ReadyChart = ({
 
 export const IndicateurSousIndicateursChart = ({
   indicateurId,
-  isCumul,
   unite,
   periodicite,
   title,
   onFinished,
 }: Props): JSX.Element => {
   const { useSousIndicateursChart } = useIndicateurSousIndicateursChart();
-  const state = useSousIndicateursChart(indicateurId, isCumul);
+  const state = useSousIndicateursChart(indicateurId);
 
   if (state.status === 'loading') {
     return <LoadingState />;

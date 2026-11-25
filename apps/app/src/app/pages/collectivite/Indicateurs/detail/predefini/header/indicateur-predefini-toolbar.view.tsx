@@ -1,4 +1,3 @@
-import { toSousIndicateursCapabilities } from '@/app/indicateurs/sous-indicateurs/sous-indicateurs-capabilities.rules';
 import { PermissionOperation } from '@tet/domain/users';
 import { IndicateurChartInfo } from '../../../data/use-indicateur-chart';
 import { IndicateurSousIndicateursChartPngExport } from '../../content/sous-indicateurs/indicateur-sous-indicateurs-chart.png-export';
@@ -16,7 +15,6 @@ export const IndicateurPredefiniToolbar = ({
   hasCollectivitePermission,
 }: Props) => {
   const { indicateur } = useIndicateurData();
-  const capabilities = toSousIndicateursCapabilities(indicateur);
 
   return (
     <IndicateurToolbar
@@ -28,7 +26,6 @@ export const IndicateurPredefiniToolbar = ({
           ? ({ onDone }) => (
               <IndicateurSousIndicateursChartPngExport
                 indicateurId={indicateur.id}
-                isCumul={capabilities.cumul === 'enabled'}
                 unite={indicateur.unite}
                 periodicite={indicateur.periodicite}
                 title={indicateur.titre}

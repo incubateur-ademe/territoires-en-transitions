@@ -2,7 +2,6 @@
 
 import { useRenameSousIndicateur } from '@/app/indicateurs/sous-indicateurs/data/use-rename-sous-indicateur';
 import { useCreateSousIndicateur } from '@/app/indicateurs/sous-indicateurs/data/use-create-sous-indicateur';
-import { useUpdateSousIndicateursCumul } from '@/app/indicateurs/sous-indicateurs/data/use-update-sous-indicateurs-cumul';
 import { useDetachSousIndicateur } from '@/app/indicateurs/sous-indicateurs/data/use-detach-sous-indicateur';
 import { useDeleteSousIndicateursPeriode } from '@/app/indicateurs/sous-indicateurs/data/use-delete-sous-indicateurs-periode';
 import { useDeclareSousIndicateursPeriodes } from '@/app/indicateurs/sous-indicateurs/data/use-declare-sous-indicateurs-periodes';
@@ -23,7 +22,6 @@ const SOUS_INDICATEURS_TABLE_VALUE: IndicateurSousIndicateursTableValue = {
   useDetachSousIndicateur,
   useCreateSousIndicateur,
   useRenameSousIndicateur,
-  useUpdateSousIndicateursCumul,
   useIndicateurPeriodeCommentaires,
 };
 

@@ -21,7 +21,6 @@ export const IndicateurPredefiniComposeDonnees = () => {
       <div className="mb-6">
         <IndicateurSousIndicateursChart
           indicateurId={indicateur.id}
-          isCumul={capabilities.cumul === 'enabled'}
           unite={unite}
           periodicite={periodicite}
         />

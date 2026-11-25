@@ -2,45 +2,23 @@ import { describe, expect, it } from 'vitest';
 import { toSousIndicateursCapabilities } from './sous-indicateurs-capabilities.rules';
 
 describe('toSousIndicateursCapabilities', () => {
-  it('laisse un indicateur perso cumuler et modifier la structure de ses sous-indicateurs, selon son drapeau de cumul', () => {
-    const perso = {
-      collectiviteId: 4999,
-      groupementId: null,
-      identifiantReferentiel: null,
-    };
-
+  it('laisse un indicateur perso afficher un total et modifier la structure de ses sous-indicateurs', () => {
     expect(
       toSousIndicateursCapabilities({
-        ...perso,
-        totalEstCumulDesSousIndicateurs: true,
+        collectiviteId: 4999,
+        groupementId: null,
+        identifiantReferentiel: null,
       })
-    ).toEqual({ cumul: 'enabled', canEditStructure: true });
-    expect(
-      toSousIndicateursCapabilities({
-        ...perso,
-        totalEstCumulDesSousIndicateurs: false,
-      })
-    ).toEqual({ cumul: 'disabled', canEditStructure: true });
+    ).toEqual({ canTotaliser: true, canEditStructure: true });
   });
 
-  it("n'offre ni cumul ni modification de structure pour un indicateur prédéfini, quel que soit son drapeau de cumul", () => {
-    const predefini = {
-      collectiviteId: null,
-      groupementId: null,
-      identifiantReferentiel: 'emission_polluants_atmo',
-    };
-
+  it("n'offre ni total ni modification de structure pour un indicateur prédéfini", () => {
     expect(
       toSousIndicateursCapabilities({
-        ...predefini,
-        totalEstCumulDesSousIndicateurs: true,
+        collectiviteId: null,
+        groupementId: null,
+        identifiantReferentiel: 'emission_polluants_atmo',
       })
-    ).toEqual({ cumul: 'unavailable', canEditStructure: false });
-    expect(
-      toSousIndicateursCapabilities({
-        ...predefini,
-        totalEstCumulDesSousIndicateurs: false,
-      })
-    ).toEqual({ cumul: 'unavailable', canEditStructure: false });
+    ).toEqual({ canTotaliser: false, canEditStructure: false });
   });
 });

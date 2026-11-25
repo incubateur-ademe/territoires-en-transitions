@@ -6,8 +6,7 @@ import {
 import { useSousIndicateursQueries } from './use-sous-indicateurs-queries';
 
 export const useSousIndicateursChart = (
-  indicateurId: number,
-  isCumul: boolean
+  indicateurId: number
 ): SousIndicateursChartState => {
   const { collectiviteId, nodes, valeurs, totals } =
     useSousIndicateursQueries(indicateurId);
@@ -16,12 +15,11 @@ export const useSousIndicateursChart = (
     () =>
       toSousIndicateursChartState({
         indicateurId,
-        isCumul,
         collectiviteId,
         nodes,
         valeurs,
         totals,
       }),
-    [indicateurId, isCumul, collectiviteId, nodes, valeurs, totals]
+    [indicateurId, collectiviteId, nodes, valeurs, totals]
   );
 };

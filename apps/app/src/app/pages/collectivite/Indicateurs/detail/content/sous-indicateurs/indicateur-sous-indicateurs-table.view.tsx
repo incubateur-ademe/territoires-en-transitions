@@ -3,7 +3,6 @@
 import { PeriodesTable } from '@/app/indicateurs/valeurs/periodes-table/periodes-table';
 import type { SaveSousIndicateurValeur } from '@/app/indicateurs/sous-indicateurs/data/use-save-sous-indicateur-valeur';
 import type { RenameSousIndicateur } from '@/app/indicateurs/sous-indicateurs/data/use-rename-sous-indicateur';
-import type { UpdateSousIndicateursCumul } from '@/app/indicateurs/sous-indicateurs/data/use-update-sous-indicateurs-cumul';
 import type { DetachSousIndicateur } from '@/app/indicateurs/sous-indicateurs/data/use-detach-sous-indicateur';
 import type { DeleteSousIndicateursPeriode } from '@/app/indicateurs/sous-indicateurs/data/use-delete-sous-indicateurs-periode';
 import type { DeclareIndicateursPeriodes } from '@/app/indicateurs/valeurs/use-declare-indicateur-periodes';
@@ -14,7 +13,6 @@ import {
 } from '@/app/indicateurs/sous-indicateurs/sous-indicateurs-table.rules';
 import { appLabels } from '@/app/labels/catalog';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { Checkbox } from '@tet/ui';
 import {
   IndicateurPeriodes,
   type IndicateurPeriode,
@@ -65,7 +63,6 @@ type ReadyTableProps = Props & {
   deletePeriode: DeleteSousIndicateursPeriode;
   commentaires: IndicateurPeriodeCommentaires;
   detachSousIndicateur: DetachSousIndicateur;
-  updateCumul: UpdateSousIndicateursCumul;
   renameSousIndicateur: RenameSousIndicateur;
   data: SousIndicateursTableData;
 };
@@ -100,7 +97,6 @@ const ReadyTable = ({
   deletePeriode,
   commentaires,
   detachSousIndicateur,
-  updateCumul,
   renameSousIndicateur,
   canMutateIndicateur,
   capabilities,
@@ -108,17 +104,16 @@ const ReadyTable = ({
   privateMode,
   data,
 }: ReadyTableProps): JSX.Element => {
-  const isCumul = capabilities.cumul === 'enabled';
   const canMutateStructure =
     canMutateIndicateur && capabilities.canEditStructure;
-  const canMutateCumul =
-    canMutateIndicateur && capabilities.cumul !== 'unavailable';
+  const canTogglePrivateMode = canMutateIndicateur && capabilities.canTotaliser;
   const { visibleRows, isExpanded, toggle } = useSousIndicateurRowsExpansion(
     data.rows
   );
   const [detachTarget, setDetachTarget] = useState<DetachTarget | null>(null);
   const { periodes, rows } = toSousIndicateurTable({
-    data: { ...data, hasTotalRow: isCumul && data.hasTotalRow },
+    data,
+    hasTotalRow: capabilities.canTotaliser,
     visibleRows,
     periodicite,
     collectiviteId,
@@ -198,7 +193,7 @@ const ReadyTable = ({
         }}
         onDelete={onDelete}
       />
-      {(canMutateStructure || canMutateCumul) && (
+      {(canMutateStructure || canTogglePrivateMode) && (
         <IndicateurActionsRow
           leading={
             canMutateStructure ? (
@@ -210,16 +205,7 @@ const ReadyTable = ({
             ) : undefined
           }
         >
-          {canMutateCumul && periodes.length > 0 && (
-            <Checkbox
-              variant="switch"
-              label={appLabels.indicateurCumulSousIndicateurs}
-              labelClassname="text-primary-9"
-              checked={isCumul}
-              onChange={() => updateCumul(!isCumul)}
-            />
-          )}
-          {canMutateCumul && periodes.length > 0 && (
+          {canTogglePrivateMode && periodes.length > 0 && (
             <PrivateModeToggle
               isConfidentiel={privateMode.isConfidentiel}
               onChange={privateMode.onChange}
@@ -288,7 +274,6 @@ export const IndicateurSousIndicateursTable = ({
     useDeclareSousIndicateursPeriodes,
     useDeleteSousIndicateursPeriode,
     useDetachSousIndicateur,
-    useUpdateSousIndicateursCumul,
     useRenameSousIndicateur,
     useIndicateurPeriodeCommentaires,
   } = useIndicateurSousIndicateursTable();
@@ -297,7 +282,6 @@ export const IndicateurSousIndicateursTable = ({
   const declarePeriodes = useDeclareSousIndicateursPeriodes();
   const deletePeriode = useDeleteSousIndicateursPeriode();
   const detachSousIndicateur = useDetachSousIndicateur();
-  const updateCumul = useUpdateSousIndicateursCumul(indicateurId);
   const renameSousIndicateur = useRenameSousIndicateur();
   const commentaires = useIndicateurPeriodeCommentaires();
 
@@ -328,7 +312,6 @@ export const IndicateurSousIndicateursTable = ({
       deletePeriode={deletePeriode}
       commentaires={commentaires}
       detachSousIndicateur={detachSousIndicateur}
-      updateCumul={updateCumul}
       renameSousIndicateur={renameSousIndicateur}
       canMutateIndicateur={canMutateIndicateur}
       capabilities={capabilities}

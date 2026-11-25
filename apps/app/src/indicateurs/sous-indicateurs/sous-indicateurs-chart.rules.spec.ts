@@ -72,9 +72,7 @@ const toSource = ({
   nodes = NODES,
   valeurs = [],
   totals = [],
-  isCumul = true,
 }: {
-  isCumul?: boolean;
   nodes?: readonly SousIndicateurNode[];
   valeurs?: readonly (readonly [
     number,
@@ -83,22 +81,9 @@ const toSource = ({
   totals?: readonly (readonly [number, readonly IndicateurTotalAtDate[]])[];
 }) => ({
   rootId: ROOT_ID,
-  isCumul,
   nodesById: new Map(nodes.map((node) => [node.id, node])),
   valeursByIndicateurId: new Map(valeurs),
   totalsByIndicateurId: new Map(totals),
-});
-
-const toNotAdditiveTotalAtDate = ({
-  dateValeur,
-  resultat = { status: 'not-additive' },
-}: {
-  dateValeur: string;
-  resultat?: IndicateurTotal;
-}): IndicateurTotalAtDate => ({
-  dateValeur,
-  resultat,
-  objectif: { status: 'not-additive' },
 });
 
 const FULL_VALEURS = [
@@ -107,7 +92,7 @@ const FULL_VALEURS = [
   [VERRE_ID, [toResultat('2022-01-01', 3), toResultat('2023-01-01', 4)]],
 ] as const;
 
-const CUMUL_CHECKED_ROOT_TOTALS = [
+const ROOT_TOTALS = [
   toTotalAtDate({ dateValeur: '2022-01-01', resultat: toComplete(18) }),
   toTotalAtDate({ dateValeur: '2023-01-01', resultat: toComplete(22) }),
 ];
@@ -118,65 +103,27 @@ const COLLECTES_CONSOLIDATED_TOTALS = [
 ];
 
 describe('buildSousIndicateursChartData', () => {
-  describe('quand la case Cumul est décochée', () => {
-    it('trace une courbe par sous-indicateur direct, sans empiler, même si les totaux sont additifs', () => {
-      const data = buildSousIndicateursChartData(
-        toSource({
-          isCumul: false,
-          valeurs: FULL_VALEURS,
-          totals: [
-            [ROOT_ID, CUMUL_CHECKED_ROOT_TOTALS],
-            [
-              COLLECTES_ID,
-              [
-                toTotalAtDate({
-                  dateValeur: '2022-01-01',
-                  resultat: toComplete(15),
-                }),
-                toTotalAtDate({
-                  dateValeur: '2023-01-01',
-                  resultat: toComplete(18),
-                }),
-              ],
-            ],
-          ],
-        })
-      );
-
-      expect(data).toMatchObject({
-        mode: 'lines',
-        dates: ['2022-01-01', '2023-01-01'],
-        lines: [
-          { label: 'Collectes sélectives', resultatValeurs: [15, 18] },
-          { label: 'Verre', resultatValeurs: [3, 4] },
-        ],
-      });
-    });
-  });
-
-  describe('quand le cumul de la racine est coché', () => {
+  describe('empilement des enfants directs', () => {
     it("empile les enfants directs dans l'ordre de création, un niveau intermédiaire par son total consolidé", () => {
       const data = buildSousIndicateursChartData(
         toSource({
           valeurs: FULL_VALEURS,
           totals: [
-            [ROOT_ID, CUMUL_CHECKED_ROOT_TOTALS],
+            [ROOT_ID, ROOT_TOTALS],
             [COLLECTES_ID, COLLECTES_CONSOLIDATED_TOTALS],
           ],
         })
       );
 
       expect(data).toMatchObject({
-        mode: 'stacked',
         dates: ['2022-01-01', '2023-01-01'],
       });
       expect(
-        data?.mode === 'stacked' &&
-          data.children.map(({ indicateurId, label, valeurs }) => ({
-            indicateurId,
-            label,
-            valeurs,
-          }))
+        data?.children.map(({ indicateurId, label, valeurs }) => ({
+          indicateurId,
+          label,
+          valeurs,
+        }))
       ).toEqual([
         {
           indicateurId: COLLECTES_ID,
@@ -195,15 +142,14 @@ describe('buildSousIndicateursChartData', () => {
             [COLLECTES_ID, [toResultat('2022-01-01', 999)]],
           ],
           totals: [
-            [ROOT_ID, CUMUL_CHECKED_ROOT_TOTALS],
+            [ROOT_ID, ROOT_TOTALS],
             [COLLECTES_ID, COLLECTES_CONSOLIDATED_TOTALS],
           ],
         })
       );
 
       expect(
-        data?.mode === 'stacked' &&
-          data.children.map(({ label, valeurs }) => [label, valeurs])
+        data?.children.map(({ label, valeurs }) => [label, valeurs])
       ).toEqual([
         ['Collectes sélectives', [15, 18]],
         ['Verre', [3, 4]],
@@ -215,18 +161,16 @@ describe('buildSousIndicateursChartData', () => {
         toSource({
           valeurs: FULL_VALEURS,
           totals: [
-            [ROOT_ID, CUMUL_CHECKED_ROOT_TOTALS],
+            [ROOT_ID, ROOT_TOTALS],
             [COLLECTES_ID, COLLECTES_CONSOLIDATED_TOTALS],
           ],
         })
       );
 
-      expect(
-        data?.mode === 'stacked' && data.children.map(({ label }) => label)
-      ).not.toContain('Emballages');
-      expect(
-        data?.mode === 'stacked' && data.children.map(({ label }) => label)
-      ).not.toContain('Papier');
+      expect(data?.children.map(({ label }) => label)).not.toContain(
+        'Emballages'
+      );
+      expect(data?.children.map(({ label }) => label)).not.toContain('Papier');
     });
 
     it("aligne chaque série sur l'union triée des dates, avec un trou pour une date absente", () => {
@@ -257,8 +201,7 @@ describe('buildSousIndicateursChartData', () => {
         dates: ['2022-01-01', '2023-01-01', '2024-01-01'],
       });
       expect(
-        data?.mode === 'stacked' &&
-          data.children.map(({ label, valeurs }) => [label, valeurs])
+        data?.children.map(({ label, valeurs }) => [label, valeurs])
       ).toEqual([
         ['Collectes sélectives', [null, 12, null]],
         ['Verre', [3, null, 8]],
@@ -285,9 +228,9 @@ describe('buildSousIndicateursChartData', () => {
       expect(data).toMatchObject({
         dates: ['2022-01-01', '2023-01-01', '2024-01-01'],
       });
-      expect(
-        data?.mode === 'stacked' && data.children.map(({ valeurs }) => valeurs)
-      ).toEqual([[10, null, 12]]);
+      expect(data?.children.map(({ valeurs }) => valeurs)).toEqual([
+        [10, null, 12],
+      ]);
     });
 
     it('trace le total du résultat là où il est complet et laisse un trou ailleurs', () => {
@@ -316,10 +259,7 @@ describe('buildSousIndicateursChartData', () => {
         })
       );
 
-      expect(data?.mode === 'stacked' && data.resultatTotal).toEqual([
-        null,
-        22,
-      ]);
+      expect(data?.resultatTotal).toEqual([null, 22]);
     });
 
     it('trace le total des objectifs quand il est complet', () => {
@@ -345,10 +285,7 @@ describe('buildSousIndicateursChartData', () => {
         })
       );
 
-      expect(data?.mode === 'stacked' && data.objectifTotal).toEqual([
-        30,
-        null,
-      ]);
+      expect(data?.objectifTotal).toEqual([30, null]);
     });
 
     it('ne trace pas de courbe du total quand il est masqué à toutes les dates', () => {
@@ -374,8 +311,8 @@ describe('buildSousIndicateursChartData', () => {
         })
       );
 
-      expect(data?.mode === 'stacked' && data.resultatTotal).toBeNull();
-      expect(data?.mode === 'stacked' && data.children).toHaveLength(2);
+      expect(data?.resultatTotal).toBeNull();
+      expect(data?.children).toHaveLength(2);
     });
 
     it("omet un enfant direct qui n'a aucun résultat", () => {
@@ -401,9 +338,7 @@ describe('buildSousIndicateursChartData', () => {
         })
       );
 
-      expect(
-        data?.mode === 'stacked' && data.children.map(({ label }) => label)
-      ).toEqual(['Verre']);
+      expect(data?.children.map(({ label }) => label)).toEqual(['Verre']);
     });
 
     it("ne renvoie rien quand aucune valeur ni aucun total n'est renseigné", () => {
@@ -433,9 +368,10 @@ describe('buildSousIndicateursChartData', () => {
         })
       );
 
-      expect(
-        data?.mode === 'stacked' && data.children.map(({ label }) => label)
-      ).toEqual(['Collectes sélectives', 'Zinc']);
+      expect(data?.children.map(({ label }) => label)).toEqual([
+        'Collectes sélectives',
+        'Zinc',
+      ]);
     });
 
     it("n'empile qu'une fois un enfant direct listé deux fois", () => {
@@ -455,11 +391,10 @@ describe('buildSousIndicateursChartData', () => {
       );
 
       expect(
-        data?.mode === 'stacked' &&
-          data.children.map(({ indicateurId, valeurs }) => [
-            indicateurId,
-            valeurs,
-          ])
+        data?.children.map(({ indicateurId, valeurs }) => [
+          indicateurId,
+          valeurs,
+        ])
       ).toEqual([[VERRE_ID, [3]]]);
     });
 
@@ -492,11 +427,10 @@ describe('buildSousIndicateursChartData', () => {
       );
 
       expect(
-        data?.mode === 'stacked' &&
-          data.children.map(({ indicateurId, valeurs }) => [
-            indicateurId,
-            valeurs,
-          ])
+        data?.children.map(({ indicateurId, valeurs }) => [
+          indicateurId,
+          valeurs,
+        ])
       ).toEqual([[COLLECTES_ID, [3]]]);
     });
 
@@ -542,7 +476,6 @@ describe('buildSousIndicateursChartData', () => {
       );
 
       expect(data).toEqual({
-        mode: 'stacked',
         dates: ['2022-01-01'],
         children: [],
         resultatTotal: null,
@@ -569,230 +502,7 @@ describe('buildSousIndicateursChartData', () => {
         })
       );
 
-      expect(data?.mode).toBe('stacked');
-    });
-  });
-
-  describe('quand le cumul de la racine est décoché', () => {
-    const NOT_ADDITIVE_ROOT_TOTALS = [
-      toNotAdditiveTotalAtDate({ dateValeur: '2022-01-01' }),
-      toNotAdditiveTotalAtDate({ dateValeur: '2023-01-01' }),
-    ];
-
-    it("reconnaît le cumul décoché même quand le résultat de l'unique date est masqué pour un visiteur", () => {
-      const data = buildSousIndicateursChartData(
-        toSource({
-          valeurs: [[VERRE_ID, [toResultat('2022-01-01', 3)]]],
-          totals: [
-            [
-              ROOT_ID,
-              [
-                toNotAdditiveTotalAtDate({
-                  dateValeur: '2022-01-01',
-                  resultat: { status: 'hidden' },
-                }),
-              ],
-            ],
-          ],
-        })
-      );
-
-      expect(data).toEqual({
-        mode: 'lines',
-        dates: ['2022-01-01'],
-        lines: [
-          {
-            indicateurId: VERRE_ID,
-            label: 'Verre',
-            color: expect.any(String),
-            resultatValeurs: [3],
-            objectifValeurs: null,
-          },
-        ],
-      });
-    });
-
-    it('ne trace pas un enfant intermédiaire dont le total est incomplet à toutes les dates', () => {
-      const data = buildSousIndicateursChartData(
-        toSource({
-          valeurs: FULL_VALEURS,
-          totals: [
-            [ROOT_ID, NOT_ADDITIVE_ROOT_TOTALS],
-            [
-              COLLECTES_ID,
-              [
-                toTotalAtDate({
-                  dateValeur: '2022-01-01',
-                  resultat: {
-                    status: 'incomplete',
-                    filledCount: 1,
-                    expectedCount: 2,
-                  },
-                }),
-                toTotalAtDate({
-                  dateValeur: '2023-01-01',
-                  resultat: {
-                    status: 'incomplete',
-                    filledCount: 1,
-                    expectedCount: 2,
-                  },
-                }),
-              ],
-            ],
-          ],
-        })
-      );
-
-      expect(
-        data?.mode === 'lines' && data.lines.map(({ label }) => label)
-      ).toEqual(['Verre']);
-    });
-
-    it('trace une ligne par enfant direct, sans empiler ni tracer de total', () => {
-      const data = buildSousIndicateursChartData(
-        toSource({
-          valeurs: FULL_VALEURS,
-          totals: [
-            [ROOT_ID, NOT_ADDITIVE_ROOT_TOTALS],
-            [
-              COLLECTES_ID,
-              [
-                toTotalAtDate({
-                  dateValeur: '2022-01-01',
-                  resultat: toComplete(15),
-                }),
-                toTotalAtDate({
-                  dateValeur: '2023-01-01',
-                  resultat: toComplete(18),
-                }),
-              ],
-            ],
-          ],
-        })
-      );
-
-      expect(data).toEqual({
-        mode: 'lines',
-        dates: ['2022-01-01', '2023-01-01'],
-        lines: [
-          {
-            indicateurId: COLLECTES_ID,
-            label: 'Collectes sélectives',
-            color: expect.any(String),
-            resultatValeurs: [15, 18],
-            objectifValeurs: null,
-          },
-          {
-            indicateurId: VERRE_ID,
-            label: 'Verre',
-            color: expect.any(String),
-            resultatValeurs: [3, 4],
-            objectifValeurs: null,
-          },
-        ],
-      });
-    });
-
-    it("trace l'objectif de chaque enfant direct, saisi pour une feuille et total pour un niveau intermédiaire", () => {
-      const data = buildSousIndicateursChartData(
-        toSource({
-          valeurs: [
-            [
-              VERRE_ID,
-              [
-                { dateValeur: '2022-01-01', resultat: 3, objectif: 5 },
-                { dateValeur: '2023-01-01', resultat: 4, objectif: null },
-              ],
-            ],
-          ],
-          totals: [
-            [ROOT_ID, NOT_ADDITIVE_ROOT_TOTALS],
-            [
-              COLLECTES_ID,
-              [
-                toTotalAtDate({
-                  dateValeur: '2022-01-01',
-                  resultat: toComplete(15),
-                  objectif: toComplete(20),
-                }),
-                toTotalAtDate({
-                  dateValeur: '2023-01-01',
-                  resultat: toComplete(18),
-                  objectif: toComplete(22),
-                }),
-              ],
-            ],
-          ],
-        })
-      );
-
-      expect(
-        data?.mode === 'lines' &&
-          data.lines.map(({ label, resultatValeurs, objectifValeurs }) => ({
-            label,
-            resultatValeurs,
-            objectifValeurs,
-          }))
-      ).toEqual([
-        {
-          label: 'Collectes sélectives',
-          resultatValeurs: [15, 18],
-          objectifValeurs: [20, 22],
-        },
-        { label: 'Verre', resultatValeurs: [3, 4], objectifValeurs: [5, null] },
-      ]);
-    });
-
-    it("garde un enfant qui n'a que des objectifs, sans courbe de résultat", () => {
-      const data = buildSousIndicateursChartData(
-        toSource({
-          valeurs: [
-            [
-              VERRE_ID,
-              [{ dateValeur: '2022-01-01', resultat: null, objectif: 5 }],
-            ],
-          ],
-          totals: [[ROOT_ID, NOT_ADDITIVE_ROOT_TOTALS]],
-        })
-      );
-
-      expect(
-        data?.mode === 'lines' &&
-          data.lines.map(({ label, resultatValeurs, objectifValeurs }) => ({
-            label,
-            resultatValeurs,
-            objectifValeurs,
-          }))
-      ).toEqual([
-        { label: 'Verre', resultatValeurs: null, objectifValeurs: [5] },
-      ]);
-    });
-
-    it("omet l'enfant intermédiaire dont le cumul est lui aussi décoché", () => {
-      const data = buildSousIndicateursChartData(
-        toSource({
-          valeurs: FULL_VALEURS,
-          totals: [
-            [ROOT_ID, NOT_ADDITIVE_ROOT_TOTALS],
-            [
-              COLLECTES_ID,
-              [toNotAdditiveTotalAtDate({ dateValeur: '2022-01-01' })],
-            ],
-          ],
-        })
-      );
-
-      expect(
-        data?.mode === 'lines' && data.lines.map(({ label }) => label)
-      ).toEqual(['Verre']);
-    });
-
-    it("ne renvoie rien quand aucun enfant direct n'a de valeur", () => {
-      expect(
-        buildSousIndicateursChartData(
-          toSource({ totals: [[ROOT_ID, NOT_ADDITIVE_ROOT_TOTALS]] })
-        )
-      ).toBeNull();
+      expect(data).not.toBeNull();
     });
   });
 
@@ -823,50 +533,14 @@ describe('buildSousIndicateursChartData', () => {
       const data = buildSousIndicateursChartData(source);
       const tableColors = toTableColors(source);
 
-      expect(data?.mode === 'stacked' && data.children.length).toBeGreaterThan(
-        1
-      );
+      expect(data?.children.length).toBeGreaterThan(1);
       expect(
-        data?.mode === 'stacked' &&
-          data.children.map(({ indicateurId, color }) => [indicateurId, color])
+        data?.children.map(({ indicateurId, color }) => [indicateurId, color])
       ).toEqual(
-        data?.mode === 'stacked' &&
-          data.children.map(({ indicateurId }) => [
-            indicateurId,
-            tableColors.get(indicateurId),
-          ])
-      );
-    });
-
-    it('colore chaque ligne comme sa ligne du tableau quand le cumul est décoché', () => {
-      const source = toSource({
-        valeurs: FULL_VALEURS,
-        totals: [
-          [ROOT_ID, [toNotAdditiveTotalAtDate({ dateValeur: '2022-01-01' })]],
-          [
-            COLLECTES_ID,
-            [
-              toTotalAtDate({
-                dateValeur: '2022-01-01',
-                resultat: toComplete(15),
-              }),
-            ],
-          ],
-        ],
-      });
-      const data = buildSousIndicateursChartData(source);
-      const tableColors = toTableColors(source);
-
-      expect(data?.mode === 'lines' && data.lines.length).toBe(2);
-      expect(
-        data?.mode === 'lines' &&
-          data.lines.map(({ indicateurId, color }) => [indicateurId, color])
-      ).toEqual(
-        data?.mode === 'lines' &&
-          data.lines.map(({ indicateurId }) => [
-            indicateurId,
-            tableColors.get(indicateurId),
-          ])
+        data?.children.map(({ indicateurId }) => [
+          indicateurId,
+          tableColors.get(indicateurId),
+        ])
       );
     });
   });
@@ -876,13 +550,6 @@ describe('buildSousIndicateursChartData', () => {
       toNode({ id: ROOT_ID, label: 'Déchets', enfantIds: [10, 11] }),
       toNode({ id: 10, label: 'Verre' }),
       toNode({ id: 11, label: 'Verre' }),
-    ];
-    const NOT_ADDITIVE_TOTALS = [
-      toTotalAtDate({
-        dateValeur: '2022-01-01',
-        resultat: toComplete(7),
-        objectif: { status: 'not-additive' },
-      }),
     ];
     const DUPLICATE_TITLE_VALEURS = [
       [10, [toResultat('2022-01-01', 3)]],
@@ -894,27 +561,14 @@ describe('buildSousIndicateursChartData', () => {
         toSource({
           nodes: DUPLICATE_TITLE_NODES,
           valeurs: DUPLICATE_TITLE_VALEURS,
-          totals: [[ROOT_ID, CUMUL_CHECKED_ROOT_TOTALS]],
+          totals: [[ROOT_ID, ROOT_TOTALS]],
         })
       );
 
-      expect(
-        data?.mode === 'stacked' && data.children.map(({ label }) => label)
-      ).toEqual(['Verre', 'Verre (2)']);
-    });
-
-    it('distingue leurs courbes quand le cumul est décoché', () => {
-      const data = buildSousIndicateursChartData(
-        toSource({
-          nodes: DUPLICATE_TITLE_NODES,
-          valeurs: DUPLICATE_TITLE_VALEURS,
-          totals: [[ROOT_ID, NOT_ADDITIVE_TOTALS]],
-        })
-      );
-
-      expect(
-        data?.mode === 'lines' && data.lines.map(({ label }) => label)
-      ).toEqual(['Verre', 'Verre (2)']);
+      expect(data?.children.map(({ label }) => label)).toEqual([
+        'Verre',
+        'Verre (2)',
+      ]);
     });
   });
 });
