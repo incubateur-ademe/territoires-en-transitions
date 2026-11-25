@@ -359,6 +359,66 @@ describe('Indicateurs', () => {
     expect(childRow[3]).toBe('Indicateur parent'); // Indicateur parent = titre du parent
   });
 
+  test("Exporte tous les niveaux de descendants d'un indicateur (mode selection)", async () => {
+    const { collectivite, user } = await addTestCollectiviteAndUser(
+      databaseService,
+      { user: { role: CollectiviteRole.ADMIN } }
+    );
+    const caller = router.createCaller({
+      user: getAuthUserFromUserCredentials(user),
+    });
+    const [racineId, enfantId, petitEnfantId] = await Promise.all(
+      ['Racine', 'Enfant', 'Petit-enfant'].map((titre) =>
+        createIndicateurPerso({
+          caller,
+          indicateurData: {
+            collectiviteId: collectivite.id,
+            titre,
+            unite: 'kg',
+          },
+        })
+      )
+    );
+    await databaseService.db.insert(indicateurGroupeTable).values([
+      { parent: racineId, enfant: enfantId },
+      { parent: enfantId, enfant: petitEnfantId },
+    ]);
+    const collectiviteAuthToken = await getAuthToken({
+      email: user.email ?? '',
+      password: user.password,
+    });
+
+    const response = await request(app.getHttpServer())
+      .post('/indicateur-definitions/xlsx')
+      .set('Authorization', `Bearer ${collectiviteAuthToken}`)
+      .send({
+        mode: 'selection',
+        collectiviteId: collectivite.id,
+        indicateurIds: [racineId],
+      })
+      .expect(201)
+      .responseType('blob');
+
+    const wb = new Workbook();
+    await wb.xlsx.load(response.body as ArrayBuffer);
+    const ws = wb.getWorksheet(1);
+    if (!ws) {
+      throw new Error('Worksheet not found');
+    }
+
+    expect(ws.rowCount).toBe(4);
+    expect(
+      [2, 3, 4].map((rowNumber) => {
+        const row = ws.getRow(rowNumber).values as unknown[];
+        return [String(row[2]).trim(), row[3]];
+      })
+    ).toEqual([
+      ['Racine', ''],
+      ['Enfant', 'Racine'],
+      ['Petit-enfant', 'Enfant'],
+    ]);
+  });
+
   test('Refuse une requête sans mode (ancien contrat)', async () => {
     await request(app.getHttpServer())
       .post('/indicateur-definitions/xlsx')
