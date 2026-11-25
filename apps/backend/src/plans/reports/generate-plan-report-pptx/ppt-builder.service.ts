@@ -318,16 +318,20 @@ export class PptBuilderService {
         slideType: 'overview_section_slide',
       });
 
+      // Les comptes et graphiques du plan ne portent que sur les actions : une
+      // sous-action est rattachée à son action parente, pas comptée à part.
+      const actions = fiches.filter((fiche) => !fiche.parentId);
+
       await this.addPlanSummarySlide({
         ...slideGenerationArgs,
         mediaDir,
-        fiches,
+        fiches: actions,
       });
 
       const statutCountByForEachAxe = await this.addPlanProgressSlide({
         ...slideGenerationArgs,
         mediaDir,
-        fiches,
+        fiches: actions,
       });
 
       if (
@@ -339,7 +343,7 @@ export class PptBuilderService {
           id: this.countByService.NO_AXE_ID,
           nom: this.countByService.NO_AXE_NOM,
           parent: plan.id,
-          fiches: fiches
+          fiches: actions
             .filter(
               (fiche) =>
                 !fiche.axes?.some((axe) => axe.parentId === request.planId)
@@ -419,6 +423,19 @@ export class PptBuilderService {
           indicateurChartImageFiles.push(...indicateurChartImageFilesChunk);
         }
       }
+      // Une sous-action suit les axes de son action parente (ses propres
+      // lignes d'axe sont ignorées, comme dans les filtres de listFiches).
+      const fichesById = new Map(fiches.map((fiche) => [fiche.id, fiche]));
+      const isInAxe = (fiche: FicheWithRelations, axeId: number) => {
+        const owner = fiche.parentId ? fichesById.get(fiche.parentId) : fiche;
+        if (!owner) {
+          return false;
+        }
+        return axeId === this.countByService.NO_AXE_ID
+          ? !owner.axes?.some((a) => a.parentId === plan.id)
+          : owner.axes?.some((a) => a.id === axeId) ?? false;
+      };
+
       for (const axe of axes) {
         await this.addAxesSummarySlide({
           presentation,
@@ -435,9 +452,7 @@ export class PptBuilderService {
         });
 
         const axeFiches = filteredFiches.filter((fiche) =>
-          axe.id === this.countByService.NO_AXE_ID
-            ? !fiche.axes?.some((a) => a.parentId === plan.id)
-            : fiche.axes?.some((a) => a.id === axe.id)
+          isInAxe(fiche, axe.id)
         );
         const axeFilteredFiches = this.sortFichesForReport(axeFiches);
         for (const fiche of axeFilteredFiches) {
@@ -698,9 +713,13 @@ export class PptBuilderService {
 
       this.logger.log(`Found ${fiches.count} fiches for plan ${planId}`);
 
+      // Les comptes du plan ne portent que sur les actions, comme ceux de
+      // chaque axe (`getAxeGeneralInfo`).
+      const actions = fiches.data.filter((fiche) => !fiche.parentId);
+
       const indicateurs = Array.from(
         new Set(
-          fiches.data
+          actions
             .map((fiche) =>
               fiche.indicateurs?.map((indicateur) => indicateur.id)
             )
@@ -728,10 +747,10 @@ export class PptBuilderService {
         {}
       );
 
-      const budget = this.computeBudgetRules.computeBudget(fiches.data);
+      const budget = this.computeBudgetRules.computeBudget(actions);
       const planGeneralInfo: ReportPlanGeneralInfo = {
         PLAN_ID: planId,
-        PLAN_PROGRESS: this.planProgressRules.computeProgress(fiches.data),
+        PLAN_PROGRESS: this.planProgressRules.computeProgress(actions),
         COLLECTIVITE_NOM: collectivite.nom || '',
         PLAN_NOM: plan.data.nom || '',
         PLAN_TYPE: plan.data.type?.type || '',
@@ -741,7 +760,7 @@ export class PptBuilderService {
           year: 'numeric',
         }).format(new Date()),
         INDICATEURS_COUNT: indicateurs.length,
-        FICHES_COUNT: fiches.count,
+        FICHES_COUNT: actions.length,
         SOUS_FICHES_COUNT: 0,
         AXES_COUNT: axes.length,
         PLAN_BUDGET_FONCTIONNEMENT: this.formatBudget(

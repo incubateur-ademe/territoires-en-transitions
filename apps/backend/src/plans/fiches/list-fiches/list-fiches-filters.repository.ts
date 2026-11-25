@@ -76,6 +76,9 @@ export function formatFiltersForLogs(
     .join(', ');
 }
 
+const isIncludingSousActions = (filters: ListFichesRequestFilters) =>
+  Boolean(filters.withChildren || filters.onlyChildren);
+
 const isNotRestreintCondition = () =>
   or(isNull(ficheActionTable.restreint), eq(ficheActionTable.restreint, false));
 
@@ -101,9 +104,46 @@ export class ListFichesFiltersRepository {
     }
   }
 
+  /**
+   * Relie une ligne de `fiche_action_axe` à la fiche listée.
+   *
+   * Quand les sous-actions sont incluses, une sous-action appartient aux axes
+   * et aux plans de son action parente (ADR 0012-sous-actions) : on compare à
+   * `coalesce(parent_id, id)`, on ignore ses propres lignes `fiche_action_axe`
+   * (copiées à l'import ou à la duplication, sans cascade si le parent change
+   * d'axe), et une sous-action dont le parent est supprimé n'est dans aucun
+   * axe. Sans sous-actions incluses, le SQL reste celui d'une fiche seule.
+   */
+  private getAxeOwnerCondition(
+    axeFicheIdColumn: Column,
+    includeSousActions: boolean
+  ): SQL | undefined {
+    if (!includeSousActions) {
+      return eq(axeFicheIdColumn, ficheActionTable.id);
+    }
+    const parentFiche = aliasedTable(ficheActionTable, 'axe_owner_parent');
+    const activeParentQuery = this.databaseService.db
+      .select({ id: parentFiche.id })
+      .from(parentFiche)
+      .where(
+        and(
+          eq(parentFiche.id, ficheActionTable.parentId),
+          eq(parentFiche.deleted, false)
+        )
+      );
+    return and(
+      eq(
+        axeFicheIdColumn,
+        sql`coalesce(${ficheActionTable.parentId}, ${ficheActionTable.id})`
+      ),
+      or(isNull(ficheActionTable.parentId), exists(activeParentQuery))
+    );
+  }
+
   private getHasNoPlanCondition(
     noPlan: boolean | undefined,
-    collectiviteId: number | null
+    collectiviteId: number | null,
+    includeSousActions: boolean
   ): SQLWrapper | undefined {
     if (isNil(noPlan)) {
       return;
@@ -116,7 +156,10 @@ export class ListFichesFiltersRepository {
       .leftJoin(axeTable, eq(ficheActionAxeTable.axeId, axeTable.id))
       .where(
         and(
-          eq(ficheActionAxeTable.ficheId, ficheActionTable.id),
+          this.getAxeOwnerCondition(
+            ficheActionAxeTable.ficheId,
+            includeSousActions
+          ),
           collectiviteId
             ? eq(axeTable.collectiviteId, collectiviteId)
             : undefined
@@ -127,7 +170,8 @@ export class ListFichesFiltersRepository {
   }
 
   private getIdentifiedPlanCondition(
-    planIds: number[] | undefined
+    planIds: number[] | undefined,
+    includeSousActions: boolean
   ): SQLWrapper | undefined {
     if (isNil(planIds) || planIds.length === 0) {
       return;
@@ -141,7 +185,10 @@ export class ListFichesFiltersRepository {
       .leftJoin(axeTable, eq(ficheActionAxeTable.axeId, axeTable.id))
       .where(
         and(
-          eq(ficheActionAxeTable.ficheId, ficheActionTable.id),
+          this.getAxeOwnerCondition(
+            ficheActionAxeTable.ficheId,
+            includeSousActions
+          ),
           or(inArray(axeTable.plan, planIds), inArray(axeTable.id, planIds))
         )
       );
@@ -150,7 +197,8 @@ export class ListFichesFiltersRepository {
   }
 
   private getMultiplePlansCondition(
-    multiplePlans: boolean | undefined
+    multiplePlans: boolean | undefined,
+    includeSousActions: boolean
   ): SQLWrapper | undefined {
     if (isNil(multiplePlans)) {
       return;
@@ -165,11 +213,37 @@ export class ListFichesFiltersRepository {
       })
       .from(ficheActionAxeTable)
       .leftJoin(axeTable, eq(ficheActionAxeTable.axeId, axeTable.id))
-      .where(eq(ficheActionAxeTable.ficheId, ficheActionTable.id))
+      .where(
+        this.getAxeOwnerCondition(
+          ficheActionAxeTable.ficheId,
+          includeSousActions
+        )
+      )
       .groupBy(ficheActionAxeTable.ficheId)
       .having(multiplePlans ? gt(planCount, 1) : lte(planCount, 1));
 
     return exists(planCountQuery);
+  }
+
+  private getAxesCondition(
+    filters: ListFichesRequestFilters
+  ): SQLWrapper | undefined {
+    if (!filters.axesId?.length) {
+      return;
+    }
+    const axeQuery = this.databaseService.db
+      .select({ ficheId: ficheActionAxeTable.ficheId })
+      .from(ficheActionAxeTable)
+      .where(
+        and(
+          this.getAxeOwnerCondition(
+            ficheActionAxeTable.ficheId,
+            isIncludingSousActions(filters)
+          ),
+          inArray(ficheActionAxeTable.axeId, filters.axesId)
+        )
+      );
+    return exists(axeQuery);
   }
 
   private getPlanFilterCondition(
@@ -177,18 +251,29 @@ export class ListFichesFiltersRepository {
     collectiviteId: number | null
   ): SQLWrapper | SQL | undefined {
     const planConditions: (SQLWrapper | SQL | undefined)[] = [];
+    const includeSousActions = isIncludingSousActions(filters);
 
     if (filters.planActionIds?.length) {
       planConditions.push(
-        this.getIdentifiedPlanCondition(filters.planActionIds)
+        this.getIdentifiedPlanCondition(
+          filters.planActionIds,
+          includeSousActions
+        )
       );
     } else {
       planConditions.push(
-        this.getHasNoPlanCondition(filters.noPlan, collectiviteId)
+        this.getHasNoPlanCondition(
+          filters.noPlan,
+          collectiviteId,
+          includeSousActions
+        )
       );
     }
     planConditions.push(
-      this.getMultiplePlansCondition(filters.doesBelongToSeveralPlans)
+      this.getMultiplePlansCondition(
+        filters.doesBelongToSeveralPlans,
+        includeSousActions
+      )
     );
 
     return or(...planConditions);
@@ -425,14 +510,7 @@ export class ListFichesFiltersRepository {
       );
     }
 
-    conditions.push(
-      this.getHasIdentifiedLinkedEntityCondition(
-        ficheActionAxeTable,
-        ficheActionAxeTable.ficheId,
-        ficheActionAxeTable.axeId,
-        filters.axesId
-      )
-    );
+    conditions.push(this.getAxesCondition(filters));
 
     if (filters.ficheIds?.length) {
       const ficheIdsConditions = [

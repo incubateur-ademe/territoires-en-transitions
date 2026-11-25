@@ -4,10 +4,10 @@ import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { createListFichesScenario } from './list-fiches.test-fixture';
 
 /**
- * Tests de caractérisation (lot 1a) : ils figent le comportement actuel des
- * filtres de listFiches quand les sous-actions sont incluses, avant le
- * découpage du service. Un changement de résultat attendu doit être volontaire
- * et signalé dans la PR.
+ * Tests de caractérisation (lot 1a) : ils figent le comportement des filtres
+ * de listFiches quand les sous-actions sont incluses. Un changement de
+ * résultat attendu doit être volontaire et signalé dans la PR (lot 2a :
+ * rattachement des sous-actions au plan et aux axes de leur action parente).
  *
  * Chaque test crée ses fiches dans une collectivité neuve : les titres listés
  * sont exactement ceux du scénario.
@@ -29,7 +29,11 @@ describe('listFiches et les sous-actions', () => {
   const createScenario = () => createListFichesScenario({ router, db });
 
   describe('filtres sur le plan et les axes', () => {
-    test('planActionIds : une sous-action sans axe propre n’est pas dans le plan de son action parente', async () => {
+    // Lot 2a : une sous-action appartient au plan et aux axes de son action
+    // parente ; ses propres lignes d'axe sont ignorées dès que les
+    // sous-actions sont incluses (`withChildren` ou `onlyChildren`).
+
+    test('planActionIds : une sous-action sans axe propre est dans le plan de son action parente', async () => {
       const s = await createScenario();
       const plan = await s.createPlan('Plan');
       const action = await s.createAction('Action du plan', { axes: [plan] });
@@ -37,10 +41,10 @@ describe('listFiches et les sous-actions', () => {
 
       expect(
         await s.listTitres({ planActionIds: [plan.id], withChildren: true })
-      ).toEqual(['Action du plan']);
+      ).toEqual(['Action du plan', 'Sous-action sans axe']);
     });
 
-    test('planActionIds : une sous-action est dans le plan de son axe propre, sous-axe compris, même si son action parente est ailleurs', async () => {
+    test('planActionIds : une sous-action suit le plan de son action parente, sous-axe compris, et son axe propre est ignoré', async () => {
       const s = await createScenario();
       const planA = await s.createPlan('Plan A');
       const sousAxe = await s.createAxe(
@@ -48,19 +52,36 @@ describe('listFiches et les sous-actions', () => {
         await s.createAxe('Axe', planA)
       );
       const planB = await s.createPlan('Plan B');
-      const action = await s.createAction('Action du plan B', {
-        axes: [planB],
-      });
-      await s.createSousAction(action, 'Sous-action du sous-axe du plan A', {
+      const action = await s.createAction('Action du sous-axe du plan A', {
         axes: [sousAxe],
+      });
+      await s.createSousAction(action, 'Sous-action avec un axe du plan B', {
+        axes: [planB],
       });
 
       expect(
         await s.listTitres({ planActionIds: [planA.id], withChildren: true })
-      ).toEqual(['Sous-action du sous-axe du plan A']);
+      ).toEqual([
+        'Action du sous-axe du plan A',
+        'Sous-action avec un axe du plan B',
+      ]);
+      expect(
+        await s.listTitres({ planActionIds: [planB.id], withChildren: true })
+      ).toEqual([]);
     });
 
-    test('axesId : un axe ne retient que ses fiches directes, ni leurs sous-actions ni les fiches de ses sous-axes', async () => {
+    test('planActionIds sans sous-actions incluses : le filtre lit toujours les axes propres de la fiche', async () => {
+      const s = await createScenario();
+      const plan = await s.createPlan('Plan');
+      const action = await s.createAction('Action sans axe');
+      await s.createSousAction(action, 'Sous-action du plan', { axes: [plan] });
+
+      expect(
+        await s.listTitres({ planActionIds: [plan.id], parentsId: [action.id] })
+      ).toEqual(['Sous-action du plan']);
+    });
+
+    test('axesId : un axe retient ses fiches directes et leurs sous-actions, pas les fiches de ses sous-axes', async () => {
       const s = await createScenario();
       const axe = await s.createAxe('Axe', await s.createPlan('Plan'));
       const sousAxe = await s.createAxe('Sous-axe', axe);
@@ -70,21 +91,28 @@ describe('listFiches et les sous-actions', () => {
 
       expect(
         await s.listTitres({ axesId: [axe.id], withChildren: true })
-      ).toEqual(['Action de l’axe']);
+      ).toEqual(['Action de l’axe', 'Sous-action sans axe']);
     });
 
-    test('noPlan : une sous-action sans axe propre est « sans plan », même si son action parente est dans un plan', async () => {
+    test('noPlan : une sous-action suit son action parente, avec ou sans plan', async () => {
       const s = await createScenario();
       const plan = await s.createPlan('Plan');
-      const action = await s.createAction('Action du plan', { axes: [plan] });
-      await s.createSousAction(action, 'Sous-action sans axe');
+      const actionDuPlan = await s.createAction('Action du plan', {
+        axes: [plan],
+      });
+      await s.createSousAction(actionDuPlan, 'Sous-action sans axe');
+      const actionSansPlan = await s.createAction('Action sans plan');
+      await s.createSousAction(actionSansPlan, 'Sous-action avec un axe', {
+        axes: [plan],
+      });
 
       expect(await s.listTitres({ noPlan: true, withChildren: true })).toEqual([
-        'Sous-action sans axe',
+        'Action sans plan',
+        'Sous-action avec un axe',
       ]);
     });
 
-    test('doesBelongToSeveralPlans : la sous-action d’une action dans deux plans n’en hérite pas', async () => {
+    test('doesBelongToSeveralPlans : la sous-action d’une action dans deux plans en hérite', async () => {
       const s = await createScenario();
       const action = await s.createAction('Action dans deux plans', {
         axes: [await s.createPlan('Plan A'), await s.createPlan('Plan B')],
@@ -96,7 +124,7 @@ describe('listFiches et les sous-actions', () => {
           doesBelongToSeveralPlans: true,
           withChildren: true,
         })
-      ).toEqual(['Action dans deux plans']);
+      ).toEqual(['Action dans deux plans', 'Sous-action sans axe']);
     });
 
     test('doesBelongToSeveralPlans à false écarte les fiches sans axe', async () => {
@@ -135,15 +163,19 @@ describe('listFiches et les sous-actions', () => {
       ]);
     });
 
-    test('onlyChildren applique les filtres aux seules sous-actions', async () => {
+    test('onlyChildren applique les filtres aux seules sous-actions, rattachées par leur action parente', async () => {
       const s = await createScenario();
       const plan = await s.createPlan('Plan');
       const action = await s.createAction('Action du plan', { axes: [plan] });
-      await s.createSousAction(action, 'Sous-action du plan', { axes: [plan] });
+      await s.createSousAction(action, 'Sous-action sans axe');
+      const actionSansPlan = await s.createAction('Action sans plan');
+      await s.createSousAction(actionSansPlan, 'Sous-action avec un axe', {
+        axes: [plan],
+      });
 
       expect(
         await s.listTitres({ planActionIds: [plan.id], onlyChildren: true })
-      ).toEqual(['Sous-action du plan']);
+      ).toEqual(['Sous-action sans axe']);
     });
   });
 
@@ -212,6 +244,21 @@ describe('listFiches et les sous-actions', () => {
         id: sousAction.id,
         parentId: action.id,
       });
+    });
+
+    test('une sous-action dont l’action parente est supprimée n’est dans aucun plan', async () => {
+      const s = await createScenario();
+      const plan = await s.createPlan('Plan');
+      const action = await s.createAction('Action supprimée', { axes: [plan] });
+      await s.deleteFiche(action);
+      await s.createSousAction(action, 'Sous-action active', { axes: [plan] });
+
+      expect(
+        await s.listTitres({ planActionIds: [plan.id], withChildren: true })
+      ).toEqual([]);
+      expect(await s.listTitres({ noPlan: true, withChildren: true })).toEqual([
+        'Sous-action active',
+      ]);
     });
   });
 

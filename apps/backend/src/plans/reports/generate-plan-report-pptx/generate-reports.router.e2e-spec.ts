@@ -138,14 +138,16 @@ describe('generate-reports.router.e2e-spec.ts', () => {
       statuts,
       jauge,
       parentId,
+      titre = 'Action',
     }: {
+      titre?: string;
       axes?: number[];
       statuts: Statut[];
       jauge?: number;
       parentId?: number;
     }) => {
       const { id } = await caller.plans.fiches.create({
-        fiche: { titre: 'Action', collectiviteId, parentId },
+        fiche: { titre, collectiviteId, parentId },
       });
       if (axes.length) {
         await caller.plans.fiches.update({
@@ -186,7 +188,9 @@ describe('generate-reports.router.e2e-spec.ts', () => {
       statuts: [StatutEnum.EN_COURS],
       jauge: 60,
     });
+    // sans axe propre : rattachée au plan par son action parente (lot 2a)
     await createFiche({
+      titre: 'Sous-action sans axe',
       parentId: ficheAvecSousAction,
       statuts: [StatutEnum.REALISE],
     });
@@ -210,6 +214,14 @@ describe('generate-reports.router.e2e-spec.ts', () => {
     expect(avancementDuSlide('Synthèse du plan')).toBe('50');
     expect(avancementDuSlide('Axe Bâtiments')).toBe('70');
     expect(avancementDuSlide('Axe Mobilité')).toBe('53.3');
+
+    // la sous-action figure dans le rapport, sans créer d'axe « sans axe »
+    expect(slides.some((texte) => texte.includes('Sous-action sans axe'))).toBe(
+      true
+    );
+    expect(slides.some((texte) => texte.includes('Actions sans axe'))).toBe(
+      false
+    );
   }, 90000);
 
   async function generateReportSlidesText(
