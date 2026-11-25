@@ -6,7 +6,7 @@ import {
   hasIndicateurInfos,
   IndicateurInfos,
 } from '../../header/indicateur-infos.view';
-import IndicateurToolbar from '../../header/indicateur-toolbar.view';
+import { IndicateurPredefiniToolbar } from './indicateur-predefini-toolbar.view';
 
 type Props = {
   chartInfo?: IndicateurChartInfo;
@@ -37,10 +37,9 @@ export const IndicateurPredefiniHeader = ({
       isTitleEditable={false}
       hasUniteSuffix={!isComposeSansAgregation}
       toolbar={
-        <IndicateurToolbar
+        <IndicateurPredefiniToolbar
           chartInfo={chartInfo}
           hasCollectivitePermission={hasCollectivitePermission}
-          canDelete={false}
         />
       }
       infos={<IndicateurInfos {...infosProps} />}

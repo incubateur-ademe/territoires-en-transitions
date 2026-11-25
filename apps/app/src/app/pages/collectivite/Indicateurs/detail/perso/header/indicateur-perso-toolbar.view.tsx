@@ -2,9 +2,9 @@ import { PermissionOperation } from '@tet/domain/users';
 import { IndicateurChartInfo } from '../../../data/use-indicateur-chart';
 import { useIndicateurData } from '../../context/indicateur-data.context';
 import IndicateurToolbar from '../../header/indicateur-toolbar.view';
-import { useIndicateurNouveauSousIndicateur } from '../context/indicateur-nouveau-sous-indicateur.context';
-import { CreateSousIndicateurButton } from '../sous-indicateurs/create-sous-indicateur.button';
-import { IndicateurSousIndicateursChartPngExport } from '../sous-indicateurs/indicateur-sous-indicateurs-chart.png-export';
+import { useIndicateurNouveauSousIndicateur } from '../../context/indicateur-nouveau-sous-indicateur.context';
+import { CreateSousIndicateurButton } from '../../content/sous-indicateurs/create-sous-indicateur.button';
+import { IndicateurSousIndicateursChartPngExport } from '../../content/sous-indicateurs/indicateur-sous-indicateurs-chart.png-export';
 
 type Props = {
   chartInfo?: IndicateurChartInfo;

@@ -1,3 +1,4 @@
+import { toSousIndicateursCapabilities } from '@/app/indicateurs/sous-indicateurs/sous-indicateurs-capabilities.rules';
 import { Divider } from '@tet/ui';
 import { useState } from 'react';
 import IndicateurDetailChart from '../../../Indicateur/detail/IndicateurDetailChart';
@@ -7,10 +8,10 @@ import { IndicateurDonneesCard } from '../../content/donnees/indicateur-donnees.
 import { useIndicateurActions } from '../../context/indicateur-actions.context';
 import { useIndicateurChart } from '../../context/indicateur-chart.context';
 import { useIndicateurData } from '../../context/indicateur-data.context';
-import { useIndicateurNouveauSousIndicateur } from '../context/indicateur-nouveau-sous-indicateur.context';
-import { CreateSousIndicateurButton } from '../sous-indicateurs/create-sous-indicateur.button';
-import { IndicateurSousIndicateursChart } from '../sous-indicateurs/indicateur-sous-indicateurs-chart.view';
-import { IndicateurSousIndicateursTable } from '../sous-indicateurs/indicateur-sous-indicateurs-table.view';
+import { useIndicateurNouveauSousIndicateur } from '../../context/indicateur-nouveau-sous-indicateur.context';
+import { CreateSousIndicateurButton } from '../../content/sous-indicateurs/create-sous-indicateur.button';
+import { IndicateurSousIndicateursChart } from '../../content/sous-indicateurs/indicateur-sous-indicateurs-chart.view';
+import { IndicateurSousIndicateursTable } from '../../content/sous-indicateurs/indicateur-sous-indicateurs-table.view';
 import { IndicateurUniteInput } from './indicateur-unite.input';
 import { ThematiquesIndicateurInput } from './thematiques-indicateur.input';
 
@@ -24,6 +25,7 @@ export const IndicateurPersoDonnees = () => {
   const newSousIndicateur = useIndicateurNouveauSousIndicateur();
   const { commentaire, unite } = indicateur;
 
+  const sousIndicateursCapabilities = toSousIndicateursCapabilities(indicateur);
   const hasSousIndicateurs = indicateur.enfants.length > 0;
   const isValeursReadonly =
     !canMutateValeur || indicateur.sansValeurUtilisateur;
@@ -71,7 +73,7 @@ export const IndicateurPersoDonnees = () => {
             periodicite={indicateur.periodicite}
             isReadonly={isValeursReadonly}
             canMutateIndicateur={canMutateIndicateur}
-            isCumul={indicateur.totalEstCumulDesSousIndicateurs}
+            capabilities={sousIndicateursCapabilities}
             newSousIndicateur={newSousIndicateur}
             privateMode={{
               isConfidentiel: indicateur.estConfidentiel ?? false,

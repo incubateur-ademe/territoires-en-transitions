@@ -7,6 +7,7 @@ import type { UpdateSousIndicateursCumul } from '@/app/indicateurs/sous-indicate
 import type { DetachSousIndicateur } from '@/app/indicateurs/sous-indicateurs/data/use-detach-sous-indicateur';
 import type { DeleteSousIndicateursPeriode } from '@/app/indicateurs/sous-indicateurs/data/use-delete-sous-indicateurs-periode';
 import type { DeclareIndicateursPeriodes } from '@/app/indicateurs/valeurs/use-declare-indicateur-periodes';
+import type { SousIndicateursCapabilities } from '@/app/indicateurs/sous-indicateurs/sous-indicateurs-capabilities.rules';
 import {
   findLatestResultatDate,
   type SousIndicateursTableData,
@@ -28,7 +29,7 @@ import { countCommentaires } from '../../../table/indicateur-periode-commentaire
 import type { IndicateurPeriodeCommentaires } from '../../../table/use-indicateur-periode-commentaires';
 import { useIndicateurPeriodeDeclaration } from '../../../table/use-indicateur-periode-declaration';
 import { useRevealIndicateurPeriode } from '../../../table/use-reveal-indicateur-periode';
-import { useIndicateurSousIndicateursTable } from '../context/indicateur-sous-indicateurs-table.context';
+import { useIndicateurSousIndicateursTable } from '../../context/indicateur-sous-indicateurs-table.context';
 import { CreateSousIndicateurButton } from './create-sous-indicateur.button';
 import { ConfirmDetachSousIndicateur } from './confirm-detach-sous-indicateur';
 import { ConfirmDeleteSousIndicateursPeriode } from './confirm-delete-sous-indicateurs-periode';
@@ -37,7 +38,7 @@ import {
   toSousIndicateurTable,
   type DetachTarget,
 } from './to-sous-indicateur-table-rows';
-import type { IndicateurNouveauSousIndicateurValue } from '@/app/app/pages/collectivite/Indicateurs/detail/perso/context/indicateur-nouveau-sous-indicateur.context';
+import type { IndicateurNouveauSousIndicateurValue } from '@/app/app/pages/collectivite/Indicateurs/detail/context/indicateur-nouveau-sous-indicateur.context';
 import { useSousIndicateurRowsExpansion } from './use-sous-indicateur-rows-expansion';
 
 type PrivateMode = Readonly<{
@@ -52,7 +53,7 @@ type Props = {
   periodicite: IndicateurPeriodicite;
   isReadonly: boolean;
   canMutateIndicateur: boolean;
-  isCumul: boolean;
+  capabilities: SousIndicateursCapabilities;
   newSousIndicateur: IndicateurNouveauSousIndicateurValue;
   privateMode: PrivateMode;
 };
@@ -102,11 +103,16 @@ const ReadyTable = ({
   updateCumul,
   renameSousIndicateur,
   canMutateIndicateur,
-  isCumul,
+  capabilities,
   newSousIndicateur,
   privateMode,
   data,
 }: ReadyTableProps): JSX.Element => {
+  const isCumul = capabilities.cumul === 'enabled';
+  const canMutateStructure =
+    canMutateIndicateur && capabilities.canEditStructure;
+  const canMutateCumul =
+    canMutateIndicateur && capabilities.cumul !== 'unavailable';
   const { visibleRows, isExpanded, toggle } = useSousIndicateurRowsExpansion(
     data.rows
   );
@@ -118,12 +124,10 @@ const ReadyTable = ({
     collectiviteId,
     isReadonly,
     saveValeur,
-    requestDetachSousIndicateur: canMutateIndicateur
+    requestDetachSousIndicateur: canMutateStructure
       ? setDetachTarget
       : undefined,
-    renameSousIndicateur: canMutateIndicateur
-      ? renameSousIndicateur
-      : undefined,
+    renameSousIndicateur: canMutateStructure ? renameSousIndicateur : undefined,
     focusedNameIndicateurId: newSousIndicateur.id,
     onNameEditingEnd: newSousIndicateur.onNameEditingEnd,
     isExpanded,
@@ -194,17 +198,19 @@ const ReadyTable = ({
         }}
         onDelete={onDelete}
       />
-      {canMutateIndicateur && (
+      {(canMutateStructure || canMutateCumul) && (
         <IndicateurActionsRow
           leading={
-            <CreateSousIndicateurButton
-              parentId={indicateurId}
-              childCount={data.rows.filter((row) => row.depth === 0).length}
-              onCreated={newSousIndicateur.onCreated}
-            />
+            canMutateStructure ? (
+              <CreateSousIndicateurButton
+                parentId={indicateurId}
+                childCount={data.rows.filter((row) => row.depth === 0).length}
+                onCreated={newSousIndicateur.onCreated}
+              />
+            ) : undefined
           }
         >
-          {periodes.length > 0 && (
+          {canMutateCumul && periodes.length > 0 && (
             <Checkbox
               variant="switch"
               label={appLabels.indicateurCumulSousIndicateurs}
@@ -213,7 +219,7 @@ const ReadyTable = ({
               onChange={() => updateCumul(!isCumul)}
             />
           )}
-          {periodes.length > 0 && (
+          {canMutateCumul && periodes.length > 0 && (
             <PrivateModeToggle
               isConfidentiel={privateMode.isConfidentiel}
               onChange={privateMode.onChange}
@@ -272,7 +278,7 @@ export const IndicateurSousIndicateursTable = ({
   periodicite,
   isReadonly,
   canMutateIndicateur,
-  isCumul,
+  capabilities,
   newSousIndicateur,
   privateMode,
 }: Props): JSX.Element => {
@@ -325,7 +331,7 @@ export const IndicateurSousIndicateursTable = ({
       updateCumul={updateCumul}
       renameSousIndicateur={renameSousIndicateur}
       canMutateIndicateur={canMutateIndicateur}
-      isCumul={isCumul}
+      capabilities={capabilities}
       newSousIndicateur={newSousIndicateur}
       privateMode={privateMode}
       data={state.data}

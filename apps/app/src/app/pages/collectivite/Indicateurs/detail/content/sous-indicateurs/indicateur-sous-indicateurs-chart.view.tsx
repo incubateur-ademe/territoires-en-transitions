@@ -7,7 +7,7 @@ import { useResizeGraphOnContainerSizeUpdate } from '@/app/ui/charts/echarts/use
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { type JSX, useId, useMemo, useRef } from 'react';
 import { IndicateurEmptyChartCard } from '../../../chart/indicateur-empty-chart.card';
-import { useIndicateurSousIndicateursChart } from '../context/indicateur-sous-indicateurs-chart.context';
+import { useIndicateurSousIndicateursChart } from '../../context/indicateur-sous-indicateurs-chart.context';
 import {
   type ChartPresentation,
   toSousIndicateursChartOption,

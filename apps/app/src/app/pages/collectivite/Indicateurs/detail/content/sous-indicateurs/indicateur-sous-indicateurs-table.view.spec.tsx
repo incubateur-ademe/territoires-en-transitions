@@ -11,6 +11,7 @@ import {
   type PeriodeCommentaires,
 } from '../../../table/indicateur-periode-commentaires.rules';
 import { getIndicateurValeurFieldLabel } from '@/app/indicateurs/valeurs/grid/indicateur-valeur.field';
+import type { SousIndicateursCapabilities } from '@/app/indicateurs/sous-indicateurs/sous-indicateurs-capabilities.rules';
 import { appLabels } from '@/app/labels/catalog';
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import {
@@ -19,7 +20,7 @@ import {
   type IndicateurPeriodicite,
 } from '@tet/domain/indicateurs';
 import { describe, expect, it, vi } from 'vitest';
-import { IndicateurSousIndicateursTableProvider } from '../context/indicateur-sous-indicateurs-table.context';
+import { IndicateurSousIndicateursTableProvider } from '../../context/indicateur-sous-indicateurs-table.context';
 import { IndicateurSousIndicateursTable } from './indicateur-sous-indicateurs-table.view';
 
 const COLLECTIVITE_ID = 7;
@@ -151,6 +152,7 @@ type RenderOptions = {
   focusedIndicateurId?: number | null;
   isConfidentiel?: boolean;
   isCumul?: boolean;
+  capabilities?: SousIndicateursCapabilities;
   commentairesOf?: (periode: IndicateurPeriode) => PeriodeCommentaires;
   areCommentairesReady?: boolean;
 };
@@ -164,6 +166,10 @@ const renderTable = (
     focusedIndicateurId = null,
     isConfidentiel = false,
     isCumul = true,
+    capabilities = {
+      cumul: isCumul ? 'enabled' : 'disabled',
+      canEditStructure: true,
+    },
     commentairesOf = () => NO_COMMENTAIRES,
     areCommentairesReady = true,
   }: RenderOptions = {}
@@ -210,7 +216,7 @@ const renderTable = (
           onCreated,
           onNameEditingEnd,
         }}
-        isCumul={isCumul}
+        capabilities={capabilities}
         privateMode={{ isConfidentiel, onChange: onPrivateModeChange }}
       />
     </IndicateurSousIndicateursTableProvider>
@@ -707,6 +713,86 @@ describe('IndicateurSousIndicateursTable', () => {
         name: appLabels.indicateurCumulSousIndicateurs,
       })
     ).toBeNull();
+  });
+
+  describe("d'un indicateur prédéfini, sans cumul ni structure modifiable", () => {
+    const PREDEFINI: SousIndicateursCapabilities = {
+      cumul: 'unavailable',
+      canEditStructure: false,
+    };
+
+    it("n'offre aucune action de l'indicateur, même avec le droit de le modifier", () => {
+      renderReadyTable(toData({ totalCells: COMPLETE_TOTAL_CELLS }), {
+        isReadonly: false,
+        canMutateIndicateur: true,
+        capabilities: PREDEFINI,
+      });
+
+      expect(
+        screen.queryByRole('group', { name: appLabels.indicateurActions })
+      ).toBeNull();
+      expect(
+        screen.queryByRole('checkbox', {
+          name: appLabels.indicateurCumulSousIndicateurs,
+        })
+      ).toBeNull();
+      expect(
+        screen.queryByRole('checkbox', {
+          name: appLabels.indicateurResultatRecentModePrive,
+        })
+      ).toBeNull();
+      expect(
+        screen.queryByRole('button', {
+          name: appLabels.indicateurCreerSousIndicateur,
+        })
+      ).toBeNull();
+    });
+
+    it('masque la ligne Total même quand aucun total ne signale de somme impossible', () => {
+      renderReadyTable(
+        toData({ hasTotalRow: true, totalCells: COMPLETE_TOTAL_CELLS }),
+        { canMutateIndicateur: true, capabilities: PREDEFINI }
+      );
+
+      expect(
+        screen.queryByRole('rowheader', { name: TOTAL_ROW_NAME })
+      ).toBeNull();
+    });
+
+    it('ne propose ni renommage ni dissociation des sous-indicateurs', () => {
+      renderReadyTable(toData({ totalCells: COMPLETE_TOTAL_CELLS }), {
+        canMutateIndicateur: true,
+        capabilities: PREDEFINI,
+      });
+
+      expect(
+        screen.queryByRole('button', {
+          name: appLabels.indicateurSousIndicateurRenommer({ label: 'Papier' }),
+        })
+      ).toBeNull();
+      expect(
+        screen.queryByRole('button', {
+          name: appLabels.indicateurSousIndicateurDissocier({
+            label: 'Papier',
+          }),
+        })
+      ).toBeNull();
+      expect(screen.getByText('Papier')).toBeTruthy();
+    });
+
+    it('garde la saisie des valeurs des sous-indicateurs quand elle est autorisée', () => {
+      renderReadyTable(toData({ totalCells: COMPLETE_TOTAL_CELLS }), {
+        isReadonly: false,
+        canMutateIndicateur: true,
+        capabilities: PREDEFINI,
+      });
+
+      expect(
+        screen.getAllByRole('button', {
+          name: getIndicateurValeurFieldLabel('resultat', '2020'),
+        }).length
+      ).toBeGreaterThan(0);
+    });
   });
 
   it('crée un sous-indicateur de la racine nommé à la suite des sous-indicateurs de premier niveau', () => {
