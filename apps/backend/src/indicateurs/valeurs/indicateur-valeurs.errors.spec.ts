@@ -4,7 +4,6 @@ import { failure, success } from '@tet/backend/utils/result.type';
 import { createTrpcErrorHandler } from '@tet/backend/utils/trpc/trpc-error-handler';
 import { describe, expect, it } from 'vitest';
 import {
-  captureIndicateurValeursResult,
   getIndicateurValeursDataOrThrow,
   IndicateurValeursError,
   indicateurValeursErrorConfig,
@@ -39,26 +38,6 @@ describe('getIndicateurValeursDataOrThrow', () => {
 
     expect(thrown).toBe(result);
   });
-
-  it.each([
-    'UNAUTHORIZED',
-    'INVALID_VALUE',
-    'INDICATEUR_NOT_AVAILABLE',
-    'PERIODICITE_MISMATCH',
-    'USER_VALUE_NOT_ALLOWED',
-    'DATABASE_ERROR',
-  ] as const)(
-    'un échec %s relancé dans une capture est restitué avec son code et sa cause',
-    async (error) => {
-      const cause = new Error('détail précis');
-
-      const captured = await captureIndicateurValeursResult(() =>
-        getIndicateurValeursDataOrThrow(failure(error, cause))
-      );
-
-      expect(captured).toEqual({ success: false, error, cause });
-    }
-  );
 });
 
 describe('indicateurValeursErrorConfig', () => {

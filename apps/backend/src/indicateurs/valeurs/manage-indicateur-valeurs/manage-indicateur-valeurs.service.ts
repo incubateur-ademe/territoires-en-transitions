@@ -1,7 +1,11 @@
 import { isNil, round, uniqBy } from 'es-toolkit';
-import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { UpdateIndicateurService } from '@tet/backend/indicateurs/indicateurs/mutate-indicateur/update-indicateur.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import {
+  catchDatabaseFailure,
+  toDatabaseFailure,
+} from '@tet/backend/utils/database/catch-database-failure';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import {
@@ -34,12 +38,11 @@ import { DeleteValeursPeriode } from './delete-valeurs-periode.request';
 import { IndicateurValeurLockRepository } from '../indicateur-valeur-lock.repository';
 import { IndicateurValeursContext } from '../indicateur-valeurs-context.types';
 import {
-  captureIndicateurValeursResult,
-  captureIndicateurValeursResultOf,
   fromListIndicateursFailure,
   IndicateurValeursError,
   isIndicateurValeursError,
-  toIndicateurValeursFailure,
+  toMutatePermissionDeniedFailure,
+  toServiceRoleRequiredFailure,
 } from '../indicateur-valeurs.errors';
 import { GetIndicateursValeursResponse } from '../list-indicateur-valeurs/get-indicateur-valeurs.response';
 import {
@@ -361,10 +364,8 @@ export default class ManageIndicateurValeursService {
     } = {}
   ) {
     if (!options.skipPermissionCheck) {
-      const serviceRoleCheck = await captureIndicateurValeursResult(async () =>
-        this.permissionService.hasServiceRole(user)
-      );
-      if (!serviceRoleCheck.success) return serviceRoleCheck;
+      const hasServiceRole = this.permissionService.hasServiceRole(user, true);
+      if (!hasServiceRole) return toServiceRoleRequiredFailure();
     }
     return this.reconciliation.recomputeAll(
       {
@@ -380,11 +381,15 @@ export default class ManageIndicateurValeursService {
     const result = await this.transactionManager.executeSingle<
       T,
       IndicateurValeursError | Error
-    >(operation);
+    >((tx) => catchDatabaseFailure(() => operation(tx)));
     if (result.success) return result;
-    return isIndicateurValeursError(result.error)
-      ? failure(result.error, result.cause)
-      : toIndicateurValeursFailure(result.error);
+    if (isIndicateurValeursError(result.error)) {
+      return failure(result.error, result.cause);
+    }
+    return toDatabaseFailure({
+      error: String(result.error),
+      cause: result.error instanceof Error ? result.error : undefined,
+    });
   }
 
   async canMutateValeur(
@@ -407,12 +412,11 @@ export default class ManageIndicateurValeursService {
       'indicateurs.valeurs.mutate'
     );
     if (!apiKeyPermissionResult.success) {
-      return failure(
-        'UNAUTHORIZED',
-        new ForbiddenException(
-          "Droits insuffisants, la clé d'api n'a pas l'autorisation indicateurs.valeurs.mutate."
-        )
-      );
+      return toMutatePermissionDeniedFailure({
+        userId: user.id,
+        collectiviteId,
+        isApiKeyDenied: true,
+      });
     }
     const protectedIndicateurIds =
       getIndicateurIdsWithoutUserValeur(indicateurs);
@@ -428,7 +432,7 @@ export default class ManageIndicateurValeursService {
     if (!userPermissionsResult.success) {
       return failure(
         'UNAUTHORIZED',
-        new ForbiddenException(
+        new Error(
           `Droits insuffisants, l'utilisateur ${user.id} n'a pas les droits pour muter les valeurs d'indicateur de la collectivité ${collectiviteId}`
         )
       );
@@ -459,7 +463,7 @@ export default class ManageIndicateurValeursService {
 
     return failure(
       'UNAUTHORIZED',
-      new ForbiddenException(
+      new Error(
         `Droits insuffisants, l'utilisateur ${user.id} n'a pas l'autorisation indicateurs.valeurs.mutate sur la collectivité ${collectiviteId}`
       )
     );
@@ -469,9 +473,7 @@ export default class ManageIndicateurValeursService {
     data: UpsertValeurIndicateur,
     user: AuthenticatedUser
   ): Promise<Result<IndicateurValeur | undefined, IndicateurValeursError>> {
-    return captureIndicateurValeursResultOf(() =>
-      this.executeUpsertValeur(data, user)
-    );
+    return catchDatabaseFailure(() => this.executeUpsertValeur(data, user));
   }
 
   private async executeUpsertValeur(
@@ -518,7 +520,7 @@ export default class ManageIndicateurValeursService {
     data: DeleteValeurIndicateur,
     user: AuthenticatedUser
   ): Promise<Result<void, IndicateurValeursError>> {
-    return captureIndicateurValeursResultOf(() =>
+    return catchDatabaseFailure(() =>
       this.executeDeleteValeurIndicateur(data, user)
     );
   }
@@ -606,7 +608,7 @@ export default class ManageIndicateurValeursService {
     periode: DeleteValeursPeriode,
     user: AuthenticatedUser
   ): Promise<Result<void, IndicateurValeursError>> {
-    return captureIndicateurValeursResultOf(() =>
+    return catchDatabaseFailure(() =>
       this.executeDeleteValeursPeriode(periode, user)
     );
   }
@@ -759,7 +761,7 @@ export default class ManageIndicateurValeursService {
       IndicateurValeursError
     >
   > {
-    return captureIndicateurValeursResultOf(() =>
+    return catchDatabaseFailure(() =>
       this.executeDeleteIndicateurValeurs(options)
     );
   }
