@@ -9,7 +9,7 @@ import { useDeclareSousIndicateursPeriodes } from '@/app/indicateurs/sous-indica
 import { useSaveSousIndicateurValeur } from '@/app/indicateurs/sous-indicateurs/data/use-save-sous-indicateur-valeur';
 import { useSousIndicateursTable } from '@/app/indicateurs/sous-indicateurs/data/use-sous-indicateurs-table';
 import type { JSX, PropsWithChildren } from 'react';
-import { useIndicateurPeriodeCommentaires } from '../../../table/use-indicateur-periode-commentaires';
+import { useIndicateurPeriodeCommentaires } from '../../table/use-indicateur-periode-commentaires';
 import {
   IndicateurSousIndicateursTableProvider,
   type IndicateurSousIndicateursTableValue,

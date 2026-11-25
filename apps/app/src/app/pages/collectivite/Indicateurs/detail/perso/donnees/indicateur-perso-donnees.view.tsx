@@ -7,10 +7,10 @@ import { IndicateurDonneesCard } from '../../content/donnees/indicateur-donnees.
 import { useIndicateurActions } from '../../context/indicateur-actions.context';
 import { useIndicateurChart } from '../../context/indicateur-chart.context';
 import { useIndicateurData } from '../../context/indicateur-data.context';
-import { useIndicateurNouveauSousIndicateur } from '../context/indicateur-nouveau-sous-indicateur.context';
-import { CreateSousIndicateurButton } from '../sous-indicateurs/create-sous-indicateur.button';
-import { IndicateurSousIndicateursChart } from '../sous-indicateurs/indicateur-sous-indicateurs-chart.view';
-import { IndicateurSousIndicateursTable } from '../sous-indicateurs/indicateur-sous-indicateurs-table.view';
+import { useIndicateurNouveauSousIndicateur } from '../../context/indicateur-nouveau-sous-indicateur.context';
+import { CreateSousIndicateurButton } from '../../content/sous-indicateurs/create-sous-indicateur.button';
+import { IndicateurSousIndicateursChart } from '../../content/sous-indicateurs/indicateur-sous-indicateurs-chart.view';
+import { IndicateurSousIndicateursTable } from '../../content/sous-indicateurs/indicateur-sous-indicateurs-table.view';
 import { IndicateurUniteInput } from './indicateur-unite.input';
 import { ThematiquesIndicateurInput } from './thematiques-indicateur.input';
 

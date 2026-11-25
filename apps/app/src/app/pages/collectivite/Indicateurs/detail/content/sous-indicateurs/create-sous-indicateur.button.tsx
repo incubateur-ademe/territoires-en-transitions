@@ -3,7 +3,7 @@
 import { appLabels } from '@/app/labels/catalog';
 import { Button } from '@tet/ui';
 import type { JSX } from 'react';
-import { useIndicateurSousIndicateursTable } from '../context/indicateur-sous-indicateurs-table.context';
+import { useIndicateurSousIndicateursTable } from '../../context/indicateur-sous-indicateurs-table.context';
 
 type Props = {
   parentId: number;

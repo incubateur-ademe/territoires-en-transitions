@@ -3,7 +3,7 @@ import { appLabels } from '@/app/labels/catalog';
 import { cleanup, render, screen } from '@testing-library/react';
 import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
 import { describe, expect, it, vi } from 'vitest';
-import { IndicateurSousIndicateursChartProvider } from '../context/indicateur-sous-indicateurs-chart.context';
+import { IndicateurSousIndicateursChartProvider } from '../../context/indicateur-sous-indicateurs-chart.context';
 import { IndicateurSousIndicateursChart } from './indicateur-sous-indicateurs-chart.view';
 
 const renderChart = (state: SousIndicateursChartState) => {

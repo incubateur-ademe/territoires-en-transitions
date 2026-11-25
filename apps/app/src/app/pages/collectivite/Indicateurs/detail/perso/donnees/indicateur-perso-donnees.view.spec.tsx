@@ -11,8 +11,8 @@ import {
 } from '../../context/indicateur-actions.context';
 import { IndicateurChartProvider } from '../../context/indicateur-chart.context';
 import { IndicateurDataProvider } from '../../context/indicateur-data.context';
-import { IndicateurNouveauSousIndicateurProvider } from '../context/indicateur-nouveau-sous-indicateur.context';
-import { IndicateurSousIndicateursTableProvider } from '../context/indicateur-sous-indicateurs-table.context';
+import { IndicateurNouveauSousIndicateurProvider } from '../../context/indicateur-nouveau-sous-indicateur.context';
+import { IndicateurSousIndicateursTableProvider } from '../../context/indicateur-sous-indicateurs-table.context';
 import { IndicateurPersoDonnees } from './indicateur-perso-donnees.view';
 
 vi.mock('../../../Indicateur/detail/IndicateurDetailChart', () => ({
@@ -27,7 +27,7 @@ vi.mock('../../../Indicateur/detail/IndicateurValuesTabs', () => ({
     </div>
   ),
 }));
-vi.mock('../sous-indicateurs/indicateur-sous-indicateurs-chart.view', () => ({
+vi.mock('../../content/sous-indicateurs/indicateur-sous-indicateurs-chart.view', () => ({
   IndicateurSousIndicateursChart: () => (
     <div role="img" aria-label="graphique des sous-indicateurs" />
   ),

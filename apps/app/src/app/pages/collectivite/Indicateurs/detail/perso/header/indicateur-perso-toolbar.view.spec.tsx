@@ -6,8 +6,8 @@ import type { IndicateurChartInfo } from '../../../data/use-indicateur-chart';
 import { toIndicateurActions } from '../../../table/to-indicateur-actions.fixture';
 import { IndicateurActionsProvider } from '../../context/indicateur-actions.context';
 import { IndicateurDataProvider } from '../../context/indicateur-data.context';
-import { IndicateurNouveauSousIndicateurProvider } from '../context/indicateur-nouveau-sous-indicateur.context';
-import { IndicateurSousIndicateursTableProvider } from '../context/indicateur-sous-indicateurs-table.context';
+import { IndicateurNouveauSousIndicateurProvider } from '../../context/indicateur-nouveau-sous-indicateur.context';
+import { IndicateurSousIndicateursTableProvider } from '../../context/indicateur-sous-indicateurs-table.context';
 import { IndicateurPersoToolbar } from './indicateur-perso-toolbar.view';
 
 vi.mock('../../../chart/indicateur-chart.png-export', () => ({
@@ -16,7 +16,7 @@ vi.mock('../../../chart/indicateur-chart.png-export', () => ({
   ),
 }));
 vi.mock(
-  '../sous-indicateurs/indicateur-sous-indicateurs-chart.png-export',
+  '../../content/sous-indicateurs/indicateur-sous-indicateurs-chart.png-export',
   () => ({
     IndicateurSousIndicateursChartPngExport: () => (
       <div
