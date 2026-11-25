@@ -44,6 +44,7 @@ export const toFilters = (filters: Filters): FormFilters => {
     ...(referents.length > 0 && { referents }),
     ...(pilotes.length > 0 && { pilotes }),
     ...(suivi.length > 0 && { suivi }),
+    ...(filters.withSousActionsMatches && { withSousActionsMatches: true }),
   };
 };
 
@@ -56,6 +57,7 @@ export const splitReferentsAndPilotesIds = (filters: FormFilters): Filters => {
     referents,
     pilotes,
     suivi,
+    withSousActionsMatches,
   } = filters;
 
   const withNoPriorite = priorites?.includes(SANS_PRIORITE_LABEL);
@@ -96,6 +98,7 @@ export const splitReferentsAndPilotesIds = (filters: FormFilters): Filters => {
     ...(suivi?.includes(NON_MODIFIEE_DEPUIS_PLUS_D_UN_AN_LABEL) && {
       notModifiedForOverAYear: true,
     }),
+    ...(withSousActionsMatches && { withSousActionsMatches: true }),
   };
 };
 

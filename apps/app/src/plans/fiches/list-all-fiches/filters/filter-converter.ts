@@ -192,6 +192,7 @@ export const searchParametersParser: Record<FilterKeys, Parser<any>> = {
   noObjectif: parseAsBoolean,
   sharedWithCollectivites: parseAsBoolean,
   hasAtLeastBeginningOrEndDate: parseAsBoolean,
+  withSousActionsMatches: parseAsBoolean,
 
   notes: parseAsStringEnum([...notesOptionValues]),
   hasIndicateurLies: withOrWithoutArrayParserWithFlag(),

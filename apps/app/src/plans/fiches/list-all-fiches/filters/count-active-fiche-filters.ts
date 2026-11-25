@@ -1,3 +1,4 @@
+import { omit } from 'es-toolkit';
 import {
   CheckboxFilterKeys,
   filtersByCheckboxProperties,
@@ -82,9 +83,13 @@ const countIndividualFilters = (
   return periodFiltersCount + otherIndividualFiltersCount;
 };
 
+/** Le périmètre « Actions et sous-actions » n'est pas un filtre en soi. */
+const scopeFilterKeys: FilterKeys[] = ['withSousActionsMatches'];
+
 export const countActiveFicheFilters = (filters: FormFilters): number => {
   const activeFilters = Object.entries(filters)
     .filter(([key]) => isFilterKey(key))
+    .filter(([key]) => !scopeFilterKeys.includes(key as FilterKeys))
     .filter(isActiveFilter);
 
   const individualFiltersCount = countIndividualFilters(activeFilters, filters);
@@ -92,4 +97,23 @@ export const countActiveFicheFilters = (filters: FormFilters): number => {
     getActiveCombinedCategories(activeFilters).length;
 
   return individualFiltersCount + combinedCategoriesCount;
+};
+
+/**
+ * Le périmètre « Sous-actions incluses » ne s'applique qu'aux filtres et à la
+ * recherche texte : sans l'un ni l'autre, il est retiré pour ne changer ni les
+ * badges ni les résultats.
+ */
+export const removeIdleSousActionsScope = (
+  filters: FormFilters,
+  { hasTextSearch }: { hasTextSearch: boolean }
+): FormFilters => {
+  if (
+    !filters.withSousActionsMatches ||
+    hasTextSearch ||
+    countActiveFicheFilters(filters) > 0
+  ) {
+    return filters;
+  }
+  return omit(filters, ['withSousActionsMatches']);
 };

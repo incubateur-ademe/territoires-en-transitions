@@ -4,6 +4,7 @@ import { getTextFormattedDate } from '@/app/utils/formatUtils';
 import { PersonneTagOrUser, Tag } from '@tet/domain/collectivites';
 import { Icon } from '@tet/ui';
 import classNames from 'classnames';
+import { ReactNode } from 'react';
 import { isBefore, startOfToday } from 'date-fns';
 
 type FicheFooterProps = {
@@ -11,6 +12,8 @@ type FicheFooterProps = {
   services: Tag[] | null | undefined;
   dateDeFin: string | null | undefined;
   ameliorationContinue: boolean | null | undefined;
+  /** Mention ajoutée en fin de ligne, après les pilotes et services. */
+  extra?: ReactNode;
 };
 
 export const FicheFooter = ({
@@ -18,6 +21,7 @@ export const FicheFooter = ({
   services,
   dateDeFin,
   ameliorationContinue,
+  extra,
 }: FicheFooterProps) => {
   const hasPilotes = !!pilotes && pilotes.length > 0;
   const hasServices = !!services && services.length > 0;
@@ -78,6 +82,16 @@ export const FicheFooter = ({
             list={services.map((s) => s.nom)}
             icon="briefcase-line"
           />
+        </>
+      )}
+
+      {extra && (
+        <>
+          {(hasDateDeFin ||
+            ameliorationContinue ||
+            hasPilotes ||
+            hasServices) && <div className="w-[0.5px] h-4 bg-grey-5" />}
+          {extra}
         </>
       )}
     </div>

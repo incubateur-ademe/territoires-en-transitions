@@ -1,38 +1,14 @@
 import {
   ListFichesRequestFilters,
-  ListFichesRequestFiltersKeys,
+  sousActionFieldFilterKeys,
+  sousActionPeriodeFilterKeys,
 } from '@tet/domain/plans';
 import { omit, pick } from 'es-toolkit';
-
-/**
- * Filtres qui portent sur les champs qu'on saisit sur une sous-action : titre,
- * description, statut, pilotes et date de fin. Les autres filtres (priorité,
- * thématiques, services, tags, budget, indicateurs, mesures, notes…) portent
- * toujours sur l'action : la sous-action en hérite.
- */
-const sousActionFieldFilterKeys = [
-  'statuts',
-  'noStatut',
-  'utilisateurPiloteIds',
-  'personnePiloteIds',
-  'noPilote',
-  'texteNomOuDescription',
-  'noTitre',
-  'noDescription',
-  'hasDateDeFinPrevisionnelle',
-] as const satisfies readonly ListFichesRequestFiltersKeys[];
-
-/** La période ne porte sur la sous-action que si elle vise la date de fin. */
-const periodeFilterKeys = [
-  'typePeriode',
-  'debutPeriode',
-  'finPeriode',
-] as const satisfies readonly ListFichesRequestFiltersKeys[];
 
 export type SousActionFieldFilters = Pick<
   ListFichesRequestFilters,
   | (typeof sousActionFieldFilterKeys)[number]
-  | (typeof periodeFilterKeys)[number]
+  | (typeof sousActionPeriodeFilterKeys)[number]
 >;
 
 const isPeriodeOnDateFin = (filters: ListFichesRequestFilters) =>
@@ -51,7 +27,7 @@ export const splitFiltersBySousActionScope = (
   const sousActionKeys: (keyof SousActionFieldFilters)[] = isPeriodeOnDateFin(
     filters
   )
-    ? [...sousActionFieldFilterKeys, ...periodeFilterKeys]
+    ? [...sousActionFieldFilterKeys, ...sousActionPeriodeFilterKeys]
     : [...sousActionFieldFilterKeys];
 
   return {

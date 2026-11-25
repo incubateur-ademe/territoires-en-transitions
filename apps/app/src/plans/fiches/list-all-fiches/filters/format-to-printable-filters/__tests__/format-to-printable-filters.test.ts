@@ -261,4 +261,41 @@ describe('formatToPrintableFilters', () => {
       },
     ]);
   });
+
+  it('affiche le périmètre « Actions et sous-actions » comme une catégorie seule', () => {
+    const filters = {
+      withSousActionsMatches: true,
+      sort: 'titre',
+    } as FormFilters;
+
+    expect(formatToPrintableFilters(filters, {}, () => [])).toEqual([
+      expect.objectContaining({
+        key: 'withSousActionsMatches',
+        title: filterLabels.withSousActionsMatches,
+        onlyShowCategory: true,
+      }),
+    ]);
+  });
+
+  it('place le périmètre « Sous-actions incluses » en dernier, après la date', () => {
+    const filters = {
+      withSousActionsMatches: true,
+      statuts: ['À venir'],
+      typePeriode: 'debut',
+      debutPeriode: '2024-12-31T23:00:00.000Z',
+      noPilote: true,
+      sort: 'titre',
+    } as FormFilters;
+
+    const keys = formatToPrintableFilters(filters, {}, (key, values) =>
+      values.map((v) => v.toString())
+    ).map((category) => category.key);
+
+    expect(keys).toEqual([
+      'statuts',
+      'noPilote',
+      ['typePeriode', 'debutPeriode', 'finPeriode'],
+      'withSousActionsMatches',
+    ]);
+  });
 });

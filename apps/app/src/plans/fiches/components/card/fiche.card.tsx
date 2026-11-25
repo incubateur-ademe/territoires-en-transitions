@@ -54,6 +54,8 @@ type FicheCardBaseProps = {
   bottomBadge?: ReactNode;
   /** Badges du pied de carte, sous les pilotes et avant la date de modification. */
   footerBadges?: ReactNode;
+  /** Mention ajoutée sur la ligne des pilotes et services, après eux. */
+  footerExtra?: ReactNode;
 };
 
 type FicheCardSelectionProps =
@@ -90,6 +92,7 @@ export const FicheCard = ({
   axeId,
   bottomBadge,
   footerBadges,
+  footerExtra,
 }: FicheCardProps): JSX.Element => {
   const carteId = `fiche-${ficheAction.id}`;
   const isPlanSuiviEnabled = useIsPlanSuiviEnabled();
@@ -179,6 +182,7 @@ export const FicheCard = ({
               dateDeFin={ficheAction.dateFin}
               services={ficheAction.services}
               ameliorationContinue={ficheAction.ameliorationContinue}
+              extra={footerExtra}
             />
 
             {footerBadges}

@@ -258,3 +258,47 @@ export const isListFichesRequestFiltersKeys = (
 ): filters is ListFichesRequestFiltersKeys => {
   return Object.keys(listFichesRequestFiltersSchema.shape).includes(filters);
 };
+
+/**
+ * Filtres qui portent sur les champs qu'on saisit sur une sous-action : titre,
+ * description, statut, pilotes et date de fin. Avec `withSousActionsMatches`,
+ * ils s'appliquent aussi aux sous-actions ; les autres filtres portent
+ * toujours sur l'action.
+ */
+export const sousActionFieldFilterKeys = [
+  'statuts',
+  'noStatut',
+  'utilisateurPiloteIds',
+  'personnePiloteIds',
+  'noPilote',
+  'texteNomOuDescription',
+  'noTitre',
+  'noDescription',
+  'hasDateDeFinPrevisionnelle',
+] as const satisfies readonly ListFichesRequestFiltersKeys[];
+
+/** La période ne porte sur la sous-action que si elle vise la date de fin. */
+export const sousActionPeriodeFilterKeys = [
+  'typePeriode',
+  'debutPeriode',
+  'finPeriode',
+] as const satisfies readonly ListFichesRequestFiltersKeys[];
+
+const isFilterValueSet = (value: unknown): boolean =>
+  value !== undefined &&
+  value !== null &&
+  value !== '' &&
+  !(Array.isArray(value) && value.length === 0);
+
+/** Au moins un filtre actif porte sur les champs d'une sous-action. */
+export const hasSousActionFieldFilters = (
+  filters: ListFichesRequestFilters
+): boolean =>
+  sousActionFieldFilterKeys.some((key) =>
+    key === 'noPilote'
+      ? filters.noPilote === true
+      : isFilterValueSet(filters[key])
+  ) ||
+  (filters.typePeriode === 'fin' &&
+    (isFilterValueSet(filters.debutPeriode) ||
+      isFilterValueSet(filters.finPeriode)));

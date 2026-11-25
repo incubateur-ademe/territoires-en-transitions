@@ -2,6 +2,10 @@
 
 import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
 import { usePersonneListe } from '@/app/collectivites/tags/use-list-personnes';
+import {
+  SousActionsMatches,
+  useCountSousActionsMatches,
+} from '@/app/plans/fiches/list-all-fiches/data/use-count-sous-actions-matches';
 import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import {
   PrioriteOrNot,
@@ -13,13 +17,14 @@ import { Plan } from '@tet/domain/plans';
 import { without } from 'es-toolkit';
 import { createContext, ReactNode, useContext, useMemo } from 'react';
 import { useFichesActionFiltresListe } from '../data/use-fiches-filters-list';
-import { planFilterLabels } from './plan-filters.fields';
+import { appLabels } from '@/app/labels/catalog';
+import { PlanFilterKey, planFilterLabels } from './plan-filters.fields';
 import {
   FormFilters,
   SuiviOption,
 } from '../data/use-fiches-filters-list/types';
-type CurrentFilters = Omit<FormFilters, 'collectiviteId' | 'axes'>;
-export type CurrentFiltersKeys = keyof CurrentFilters;
+/** Filtres à valeurs, plus le périmètre « Sous-actions incluses » en badge */
+export type CurrentFiltersKeys = PlanFilterKey | 'withSousActionsMatches';
 
 type PlanActionFiltersContextType = {
   filters: FormFilters;
@@ -45,6 +50,9 @@ type PlanActionFiltersContextType = {
     values: string[]
   ) => string[];
   getFilterLabel: (key: CurrentFiltersKeys) => string;
+  /** Sous-actions qui correspondent aux filtres, et leurs actions */
+  sousActionsMatches?: SousActionsMatches;
+  includeSousActions: () => void;
 };
 
 const PlanFiltersContext = createContext<PlanActionFiltersContextType | null>(
@@ -66,7 +74,7 @@ export const PlanFiltersProvider = ({
   };
   const { data: personnes } = usePersonneListe();
 
-  const { filters, setFilters, items, filtersCount, isLoading } =
+  const { filters, setFilters, items, filtersCount, isLoading, queryFilters } =
     useFichesActionFiltresListe({
       parameters: {
         collectiviteId,
@@ -101,7 +109,9 @@ export const PlanFiltersProvider = ({
     categoryKey: CurrentFiltersKeys | CurrentFiltersKeys[];
     valueToDelete: string;
   }) => {
-    const keys = Array.isArray(categoryKey) ? categoryKey : [categoryKey];
+    const keys = (
+      Array.isArray(categoryKey) ? categoryKey : [categoryKey]
+    ).filter((k): k is PlanFilterKey => k !== 'withSousActionsMatches');
     const updatedFilters: FormFilters = { ...filters };
     const valueToActuallyDelete =
       personneOptions.find((personne) => personne.label === valueToDelete)
@@ -140,7 +150,17 @@ export const PlanFiltersProvider = ({
     );
   };
 
-  const getFilterLabel = (key: CurrentFiltersKeys) => planFilterLabels[key];
+  const getFilterLabel = (key: CurrentFiltersKeys) =>
+    key === 'withSousActionsMatches'
+      ? appLabels.filtresSousActionsIncluses
+      : planFilterLabels[key];
+
+  const hasNoResult = !isLoading && items.length === 0;
+  const sousActionsMatches = useCountSousActionsMatches({
+    collectiviteId,
+    filters: queryFilters,
+    enabled: !!filters.withSousActionsMatches || hasNoResult,
+  });
 
   return (
     <PlanFiltersContext
@@ -157,6 +177,9 @@ export const PlanFiltersProvider = ({
         onDeleteFilterValue,
         getFilterValuesLabels,
         getFilterLabel,
+        sousActionsMatches,
+        includeSousActions: () =>
+          setFilters({ ...filters, withSousActionsMatches: true }),
       }}
     >
       {children}

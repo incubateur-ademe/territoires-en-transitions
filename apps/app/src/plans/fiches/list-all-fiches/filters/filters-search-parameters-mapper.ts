@@ -57,7 +57,8 @@ type FicheSearchParameters =
   | 'nde'
   | 'nob'
   | 'bu'
-  | 'ig';
+  | 'ig'
+  | 'sa';
 
 export const nameToparams: Record<
   keyof Filters | 'sort' | 'page',
@@ -110,4 +111,5 @@ export const nameToparams: Record<
   noDescription: 'nde',
   noObjectif: 'nob',
   instanceGouvernanceIds: 'ig',
+  withSousActionsMatches: 'sa',
 };

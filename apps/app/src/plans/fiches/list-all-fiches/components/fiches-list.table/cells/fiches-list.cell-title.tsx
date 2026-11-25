@@ -1,5 +1,6 @@
 import { makeCollectiviteActionUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
+import { FicheSousActionsCountLink } from '@/app/plans/fiches/components/card/fiche-sous-actions-count.link';
 import { generateTitle } from '@/app/utils/generate-title';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { FicheWithRelationsAndCollectivite } from '@tet/domain/plans';
@@ -27,10 +28,16 @@ export const FichesListCellTitle = ({ fiche, canOpenAction }: Props) => {
   return (
     <TableCell>
       <div className="relative flex items-center gap-2 justify-between">
-        <FicheTitre
-          title={fiche.titre}
-          isReadOnlyIfPrivate={isReadOnlyIfPrivate}
-        />
+        <div className="flex flex-col items-start gap-1">
+          <FicheTitre
+            title={fiche.titre}
+            isReadOnlyIfPrivate={isReadOnlyIfPrivate}
+          />
+          <FicheSousActionsCountLink
+            fiche={fiche}
+            canNavigate={canOpenAction !== false}
+          />
+        </div>
         {!isReadOnlyIfPrivate && canOpenAction && (
           <Button
             variant="grey"

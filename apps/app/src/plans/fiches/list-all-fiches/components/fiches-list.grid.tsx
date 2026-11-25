@@ -1,6 +1,7 @@
-import { FicheCard } from '@/app/plans/fiches/components/card/fiche.card';
 import { makeCollectiviteActionUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
+import { FicheSousActionsCountLink } from '@/app/plans/fiches/components/card/fiche-sous-actions-count.link';
+import { FicheCard } from '@/app/plans/fiches/components/card/fiche.card';
 import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { CollectiviteCurrent } from '@tet/api/collectivites';
@@ -72,6 +73,14 @@ export const FichesListGrid = ({
             })}
             currentCollectivite={collectivite}
             currentUserId={currentUserId}
+            footerExtra={
+              fiche.sousActionsCount ? (
+                <FicheSousActionsCountLink
+                  fiche={fiche}
+                  canNavigate={!isGroupedActionsOn}
+                />
+              ) : undefined
+            }
           />
         ))}
       </div>

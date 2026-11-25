@@ -25,6 +25,8 @@ type HeaderFicheListProps = {
   toggleGroupedActionsMode: (checked: boolean) => void;
   isLoading: boolean;
   search: string | undefined;
+  /** Une recherche texte a été lancée (valeur soumise, pas la saisie). */
+  hasTextSearch: boolean;
   handleSearchChange: (value: string) => void;
   handleSearchSubmit: (value: string) => void;
   resetPagination: () => void;
@@ -48,6 +50,7 @@ export const HeaderFicheList = ({
   toggleGroupedActionsMode,
   isLoading,
   search,
+  hasTextSearch,
   handleSearchChange,
   handleSearchSubmit,
   resetPagination,
@@ -187,7 +190,7 @@ export const HeaderFicheList = ({
         </VisibleWhen>
       </div>
 
-      <FilterBadges />
+      <FilterBadges hasTextSearch={hasTextSearch} />
     </>
   );
 };
