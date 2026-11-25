@@ -1,0 +1,134 @@
+{
+  "manual": true,
+  "fichier": "plpdma/actionsplpdma_14jgyej.pdf",
+  "document": "Plan d'actions du PLPDMA 2023-2028 de la Communauté de communes du Pays de Fayence (CCPF), extrait de 10 pages (p. 29 à 38 du document source) : tableau récapitulatif p. 29, une page par axe p. 30 à 38 où les actions sont les en-têtes de colonne du tableau « Les actions » ; 8 axes, 0 sous-axe, 27 fiches, 0 étape.",
+  "remarques": [
+    "Le récapitulatif (p. 29) annonce « 28 actions » dont 6 pour l'axe 8, mais le tableau de l'axe 8 (p. 38) n'a que 5 colonnes d'actions : 27 fiches relevées dans le corps, aucune sixième action de l'axe 8 n'est retrouvable.",
+    "La couche texte du PDF (impression Microsoft Print To PDF) est tronquée par endroits (mots manquants dans les titres) : tous les titres ont été relevés sur l'image des pages.",
+    "Axe 4 : pas de tableau d'actions mais une « action phare » sans titre, décrite par « la CCPF a délibéré pour l'instauration d'une redevance incitative » (passage en REOM incitative). Le récapitulatif compte 1 action : fiche retenue sous le titre « Instauration d'une redevance incitative », repris mot pour mot de cette phrase.",
+    "Les actions ne sont pas numérotées dans le document : `numero` omis partout.",
+    "Les lignes sous chaque titre d'action (description, « Objectif : … ») sont du contenu de fiche, pas des étapes. Axe 7, action « Encourager à l'utilisation de textiles alternatifs » : les lignes « Encourager à l'utilisation de tissus réutilisables » (en gras), « Communication régulière… », « Organisation d'ateliers Do IT Yourself… », « Promouvoir l'utilisation des langes lavables » ne sont ni numérotées ni lettrées : traitées comme description, pas comme étapes.",
+    "Graphie du document conservée, y compris les majuscules non accentuées (« Eviter », « Etudier », « Equiper », « Elaborer ») et « boites » sans accent circonflexe ; apostrophes droites comme dans la couche texte.",
+    "Les axes sont notés « Axe 1 : … » dans le document ; la chaîne d'axe retenue est « <numéro> <titre> ». Les titres d'axe du corps et du récapitulatif sont identiques."
+  ],
+  "axes": [
+    "1 Lutter contre le gaspillage alimentaire",
+    "2 Eviter la production de déchets verts et encourager la gestion de proximité des biodéchets",
+    "3 Augmenter la durée de vie des produits",
+    "4 Utiliser les instruments économiques pour favoriser la prévention des déchets",
+    "5 Réduire les déchets des entreprises et du BTP",
+    "6 Être exemplaire en matière de prévention des déchets",
+    "7 Mettre en place ou renforcer des actions emblématiques favorisant la consommation responsable",
+    "8 Sensibiliser les acteurs et favoriser la visibilité de leurs efforts en faveur de la prévention des déchets"
+  ],
+  "actions": [
+    {
+      "axe": "1 Lutter contre le gaspillage alimentaire",
+      "titre": "Sensibiliser les établissements scolaires"
+    },
+    {
+      "axe": "1 Lutter contre le gaspillage alimentaire",
+      "titre": "Promouvoir le Gourmet Bag"
+    },
+    {
+      "axe": "1 Lutter contre le gaspillage alimentaire",
+      "titre": "Animer le réseau en partenariat avec le PAT"
+    },
+    {
+      "axe": "1 Lutter contre le gaspillage alimentaire",
+      "titre": "Mettre en place des marchés 0 déchet"
+    },
+    {
+      "axe": "2 Eviter la production de déchets verts et encourager la gestion de proximité des biodéchets",
+      "titre": "Développer le compostage individuel"
+    },
+    {
+      "axe": "2 Eviter la production de déchets verts et encourager la gestion de proximité des biodéchets",
+      "titre": "Développer le compostage partagé dans tous les villages, les établissements scolaires et les résidences de tourisme"
+    },
+    {
+      "axe": "2 Eviter la production de déchets verts et encourager la gestion de proximité des biodéchets",
+      "titre": "Former les services techniques communaux à la gestion différenciée des espaces verts et au jardinage au naturel"
+    },
+    {
+      "axe": "2 Eviter la production de déchets verts et encourager la gestion de proximité des biodéchets",
+      "titre": "Proposer une prestation de broyage à domicile sur RDV avec distribution d'un livret des bonnes pratiques"
+    },
+    {
+      "axe": "3 Augmenter la durée de vie des produits",
+      "titre": "Etudier la faisabilité d'un projet de recyclerie intercommunale"
+    },
+    {
+      "axe": "3 Augmenter la durée de vie des produits",
+      "titre": "Donner une seconde vie aux encombrants laissés en pied d'immeuble par l'organisation d'une collecte sur RDV et de vide-greniers/brocantes"
+    },
+    {
+      "axe": "3 Augmenter la durée de vie des produits",
+      "titre": "Organiser des journées de sensibilisation au réemploi en déchèteries et communiquer sur l'espace réemploi en déchèterie"
+    },
+    {
+      "axe": "3 Augmenter la durée de vie des produits",
+      "titre": "Favoriser le développement des Repair'Cafés"
+    },
+    {
+      "axe": "4 Utiliser les instruments économiques pour favoriser la prévention des déchets",
+      "titre": "Instauration d'une redevance incitative"
+    },
+    {
+      "axe": "5 Réduire les déchets des entreprises et du BTP",
+      "titre": "Informer les entreprises de leurs obligations réglementaires vis-à-vis des déchets"
+    },
+    {
+      "axe": "5 Réduire les déchets des entreprises et du BTP",
+      "titre": "Déployer le dispositif ECODEFIS sur le territoire en partenariat avec la CMA"
+    },
+    {
+      "axe": "6 Être exemplaire en matière de prévention des déchets",
+      "titre": "Favoriser l'éco-exemplarité des agents de la collectivité et des élus"
+    },
+    {
+      "axe": "6 Être exemplaire en matière de prévention des déchets",
+      "titre": "Diminuer les consommables dans les services (papiers, plastiques)"
+    },
+    {
+      "axe": "6 Être exemplaire en matière de prévention des déchets",
+      "titre": "Prendre en compte la prévention des déchets dans les achats publics"
+    },
+    {
+      "axe": "6 Être exemplaire en matière de prévention des déchets",
+      "titre": "Promouvoir les évènements éco-responsables 0 déchet"
+    },
+    {
+      "axe": "7 Mettre en place ou renforcer des actions emblématiques favorisant la consommation responsable",
+      "titre": "Equiper les boites aux lettres d'étiquette STOP PUB"
+    },
+    {
+      "axe": "7 Mettre en place ou renforcer des actions emblématiques favorisant la consommation responsable",
+      "titre": "Encourager à l'utilisation de textiles alternatifs"
+    },
+    {
+      "axe": "7 Mettre en place ou renforcer des actions emblématiques favorisant la consommation responsable",
+      "titre": "Signer la charte Zéro Plastique et promouvoir les actions existantes et les possibilités d'accompagnement aux initiatives innovantes"
+    },
+    {
+      "axe": "8 Sensibiliser les acteurs et favoriser la visibilité de leurs efforts en faveur de la prévention des déchets",
+      "titre": "Elaborer un plan de communication complet pour le SPPGD"
+    },
+    {
+      "axe": "8 Sensibiliser les acteurs et favoriser la visibilité de leurs efforts en faveur de la prévention des déchets",
+      "titre": "Mettre en place un plan de sensibilisation dédié en habitat collectif et pour les résidences de tourisme"
+    },
+    {
+      "axe": "8 Sensibiliser les acteurs et favoriser la visibilité de leurs efforts en faveur de la prévention des déchets",
+      "titre": "Créer et animer un réseau d'acteurs relais sur le territoire, favoriser leur visibilité"
+    },
+    {
+      "axe": "8 Sensibiliser les acteurs et favoriser la visibilité de leurs efforts en faveur de la prévention des déchets",
+      "titre": "Relayer les engagements emblématiques régionaux"
+    },
+    {
+      "axe": "8 Sensibiliser les acteurs et favoriser la visibilité de leurs efforts en faveur de la prévention des déchets",
+      "titre": "Faire une vidéo sur les bonnes pratiques de prévention et de gestion des déchets"
+    }
+  ]
+}

@@ -566,10 +566,11 @@ Ce qui limite les dégâts quand elle se trompe :
   n'est un titre de fiche qu'en grande police, en majuscules, et dans la suite
   des numéros précédents.
 
-Ce qui reste à faire pour la rendre fiable : un petit corpus de plans aux mises
-en page variées (5 à 10, dont des plans hors PCAET), chacun avec sa référence
-manuelle dans [`eval/references/`](eval/references/), et un test hors ligne qui
-vérifie le découpage de chacun, sans appel au modèle.
+Le [banc du découpage](eval/README.md#banc-du-découpage) mesure, sans appel au
+modèle, ce que le code transmet au modèle pour chaque document d'un corpus de
+plans réels, comparé à sa référence manuelle. Aucun score ne peut baisser :
+**tout changement de la lecture ou de la segmentation se valide par lui**, pas
+sur le seul document qui l'a motivé.
 
 ## Types de plan
 

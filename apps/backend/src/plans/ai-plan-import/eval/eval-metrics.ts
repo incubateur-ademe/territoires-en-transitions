@@ -9,6 +9,7 @@ import {
   FillRateField,
 } from '../pipeline/compute-import-metrics';
 import { titlesMatch } from '../pipeline/extract-actions/similar-titles';
+import type { ActionLevel } from '../models/import-question';
 
 export type { FillRateField };
 
@@ -74,12 +75,26 @@ export const computeEvalMetrics = ({
 export type ManualReference = {
   manual: true;
   document: string;
+  /** Chemin du document dans le corpus local, pour le banc de découpage. */
+  fichier?: string;
+  /** Niveaux de l'action que le banc mesure ; `fiche` seul par défaut. */
+  niveaux?: ActionLevel[];
+  remarques?: string[];
   axes: string[];
   /**
    * `cheminAxes`, quand le plan a plus d'un niveau d'axes, donne le chemin
-   * complet attendu ; il commence par `axe`.
+   * complet attendu ; il commence par `axe`. `numero` est celui que le
+   * document écrit, et `etapes` les étapes titrées que la fiche détaille.
    */
-  actions: { axe: string; titre: string; cheminAxes?: string[] }[];
+  actions: ManualReferenceAction[];
+};
+
+export type ManualReferenceAction = {
+  axe: string;
+  titre: string;
+  cheminAxes?: string[];
+  numero?: string;
+  etapes?: { numero?: string; titre: string }[];
 };
 
 export type ManualReferenceDiff = {
@@ -99,6 +114,33 @@ export type ManualReferenceDiff = {
   /** Actions sous le bon axe, mais à un autre chemin que celui attendu. */
   misplacedPaths: { titre: string; expectedPath: string; actualPath: string }[];
 };
+
+/**
+ * Les actions attendues au niveau choisi. Lue à l'étape, une fiche qui en
+ * détaille devient le sous-axe de ses étapes ; les autres restent des actions.
+ */
+export const referenceAtActionLevel = (
+  reference: ManualReference,
+  actionLevel: ActionLevel
+): ManualReference =>
+  actionLevel === 'fiche'
+    ? reference
+    : {
+        ...reference,
+        actions: reference.actions.flatMap((fiche) =>
+          fiche.etapes?.length
+            ? fiche.etapes.map((etape) => ({
+                axe: fiche.axe,
+                cheminAxes: [
+                  ...(fiche.cheminAxes ?? [fiche.axe]),
+                  fiche.numero ? `${fiche.numero} ${fiche.titre}` : fiche.titre,
+                ],
+                titre: etape.titre,
+                ...(etape.numero ? { numero: etape.numero } : {}),
+              }))
+            : [fiche]
+        ),
+      };
 
 export const isManualReference = (
   reference: EvalRun | ManualReference

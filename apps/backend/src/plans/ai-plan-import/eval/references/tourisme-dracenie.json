@@ -1,0 +1,369 @@
+{
+  "manual": true,
+  "fichier": "tourisme/ficheactiondracenie-total_g7vkt6.pdf",
+  "document": "Schéma de développement touristique et culturel de la Dracénie (Dracénie Provence Verdon Agglomération) 2024-2033, 132 pages ; structure relevée dans les cartouches des fiches (« Axe stratégique », « Titre de l’action », « Synthèse ») pages 6 à 126, croisée avec le sommaire (p. 3) et les intercalaires d’axe (p. 5, 39, 97) : 3 axes, 0 sous-axe, 16 fiches, 58 étapes.",
+  "remarques": [
+    "Axes : titres des intercalaires et des cartouches « AXE n : … » ; l’axe 3 est écrit « Faire évoluer hébergement-restauration et communication-marketing » (coupé « hébergement- / restauration » en fin de ligne, recomposé). Aucun sous-axe : les « Objectif(s) principal(aux) de l’action » sont des champs de fiche, pas un niveau du plan.",
+    "Les 16 fiches du sommaire correspondent exactement aux 16 cartouches du corps ; titres pris dans les cartouches (2.3 écrit « 2.3 : Créer une … » : deux-points retiré avec le numéro ; 2.5 garde ses points de suspension « emblématique… » tels qu’écrits).",
+    "Étapes = items lettrés A, B, C… de la « Synthèse » de chaque fiche, sans leurs puces de détail. Les rubriques A, B, C du « Descriptif » qui les redisent et leurs listes numérotées ou « Étape 1… » (ex. 2.2, 2.3, 2.4, activités C.1-C.3 de 1.5) ne sont pas relevées.",
+    "Titre d’étape : l’intitulé de l’item de synthèse. Quand l’item enchaîne un intitulé et une description séparée (deux-points, nouvelle ligne ou nouvelle phrase, note après un point), seul l’intitulé est gardé (ex. 1.3 A, 2.2 A-D, 2.3 D, 3.1 B, C, E, 3.2 B). Quand le gras de l’intitulé et le titre de la rubrique du Descriptif s’accordent sur la même forme courte, elle est retenue (2.7 A et C, 2.8 B). Sinon l’item est repris en entier, car le gras coupe souvent au milieu de la phrase (ex. 1.1 A « Définir un groupe de réflexion interservices » en gras, suite en maigre, Descriptif complet).",
+    "1.2 : la Synthèse numérote ses quatre items D, E, F, G (suite automatique de la liste A-C de la fiche 1.1) ; le Descriptif les reprend en A, B, C, D : lettres A-D retenues.",
+    "1.4 B : la Synthèse écrit « Et un de communication territoriale interne sur le tourisme et la culture » (mot manquant) ; titre pris dans la rubrique du Descriptif « B – Améliorer la communication territoriale interne sur le tourisme et la culture ».",
+    "1.3 C est écrit « • C Qualifier … » (lettre précédée d’une puce) : traité comme l’item C.",
+    "2.6 : la Synthèse présente ses trois sous-actions en puces sans lettre (intitulés en gras), mais la ligne « Durée prévisionnelle » les nomme A, B, C et le Descriptif les reprend en « A – », « B - » et « 3 - » : relevées en étapes A, B, C.",
+    "3.3 : la Synthèse liste « A – Rappel du contexte » puis B, C et un second « C- » ; la ligne « Durée prévisionnelle » ne cite que B, C, D. « Rappel du contexte » n’est pas une sous-action : non relevé. Le second item est gardé avec la lettre écrite « C » (le document l’écrit C dans la Synthèse et le Descriptif ; D seulement dans la ligne Durée).",
+    "Coquilles du document conservées : 2.1 A se termine par « Géoparc,) », 2.3 D « Poursuivre de la coordination ». Seule normalisation : « (10 ) » → « (10) » en 2.4 F, et le « 1er » en exposant de 2.3 C.",
+    "2.2 A : la note « (dépôt prévu 2025) » placée après le point est retirée du titre ; les parenthèses intégrées à la phrase sont gardées (1.1 A, 1.2 B, 2.1 B, 2.4 D-F, 3.2 C, 3.3 C)."
+  ],
+  "axes": [
+    "1 S’adapter aux enjeux du futur",
+    "2 Nourrir et renforcer l’offre touristique et culturelle représentative du territoire",
+    "3 Faire évoluer hébergement-restauration et communication-marketing"
+  ],
+  "actions": [
+    {
+      "axe": "1 S’adapter aux enjeux du futur",
+      "numero": "1.1",
+      "titre": "Anticiper et planifier les réponses aux défis qui viennent",
+      "etapes": [
+        {
+          "numero": "A",
+          "titre": "Définir un groupe de réflexion interservices (tourisme, culture, économie, agriculture, urbanisme, environnement, eau…) pouvant travailler sur l’horizon 2050"
+        },
+        {
+          "numero": "B",
+          "titre": "Elargir les missions et les profils de personnes du conseil d’exploitation de l’OT pour lui donner un rôle de pilotage de cette vision 2050"
+        },
+        {
+          "numero": "C",
+          "titre": "Disposer d’une personne à temps partiel pour animer cette réflexion et finaliser les avis"
+        }
+      ]
+    },
+    {
+      "axe": "1 S’adapter aux enjeux du futur",
+      "numero": "1.2",
+      "titre": "Planifier et faire évoluer les mobilités touristiques",
+      "etapes": [
+        {
+          "numero": "A",
+          "titre": "Faire évoluer la gare TGV comme un véritable Hub intermodal avec notamment un point info dédié"
+        },
+        {
+          "numero": "B",
+          "titre": "Disposer d’une offre de recharge des véhicules électriques (publique et privée en hébergement)"
+        },
+        {
+          "numero": "C",
+          "titre": "Disposer d’une offre cyclable attractive"
+        },
+        {
+          "numero": "D",
+          "titre": "Optimiser le système de transport en commun pour une utilisation touristique et culturelle améliorée"
+        }
+      ]
+    },
+    {
+      "axe": "1 S’adapter aux enjeux du futur",
+      "numero": "1.3",
+      "titre": "Accompagner les acteurs du tourisme et de la culture",
+      "etapes": [
+        {
+          "numero": "A",
+          "titre": "Formaliser un principe de centre de ressources - Formation"
+        },
+        {
+          "numero": "B",
+          "titre": "Renforcer les actions de formation et sensibilisation des professionnels du tourisme et de la culture et des décideurs aux enjeux et transitions"
+        },
+        {
+          "numero": "C",
+          "titre": "Qualifier l’office de tourisme en termes de responsabilité et de Qualité"
+        }
+      ]
+    },
+    {
+      "axe": "1 S’adapter aux enjeux du futur",
+      "numero": "1.4",
+      "titre": "Renforcer la gouvernance, la communication et l’animation",
+      "etapes": [
+        {
+          "numero": "A",
+          "titre": "Adopter un plan d’amélioration de la gouvernance"
+        },
+        {
+          "numero": "B",
+          "titre": "Améliorer la communication territoriale interne sur le tourisme et la culture"
+        }
+      ]
+    },
+    {
+      "axe": "1 S’adapter aux enjeux du futur",
+      "numero": "1.5",
+      "titre": "Renforcer les collaborations et les partenariats internes et externes",
+      "etapes": [
+        {
+          "numero": "A",
+          "titre": "Travailler à une parfaite synergie du schéma Tourisme et Culture de la Dracénie avec les stratégies et politiques du Département du Var et de la Région Sud"
+        },
+        {
+          "numero": "B",
+          "titre": "Renforcer les collaborations territoriales et les partenariats externes ou limitrophes au territoire dans les domaines tourisme et environnement"
+        },
+        {
+          "numero": "C",
+          "titre": "Établir des partenariats avec les territoires et métropoles voisins, ainsi qu'avec des institutions culturelles, pour enrichir l'offre culturelle et touristique de la Dracénie et renforcer sa visibilité"
+        }
+      ]
+    },
+    {
+      "axe": "2 Nourrir et renforcer l’offre touristique et culturelle représentative du territoire",
+      "numero": "2.1",
+      "titre": "Préserver et valoriser les patrimoines et paysages naturels",
+      "etapes": [
+        {
+          "numero": "A",
+          "titre": "Participer au développement des espaces naturels protégés en soutenant, les démarches PNR, OGS, Réserves, ENS, Natura 2000, Géoparc,)"
+        },
+        {
+          "numero": "B",
+          "titre": "Favoriser le développement d’une filière d’écotourisme en Dracénie (réseau, mise en avant de l’offre, labellisation…) en lien avec la filière régionale"
+        },
+        {
+          "numero": "C",
+          "titre": "Valoriser 10 sites emblématiques de nature afin d’améliorer l’accueil, la canalisation des flux, la sensibilisation et leur découverte"
+        },
+        {
+          "numero": "D",
+          "titre": "Faire monter en attractivité le réseau de promenades et de randonnées"
+        }
+      ]
+    },
+    {
+      "axe": "2 Nourrir et renforcer l’offre touristique et culturelle représentative du territoire",
+      "numero": "2.2",
+      "titre": "Préserver et valoriser les patrimoines et paysages culturels",
+      "etapes": [
+        {
+          "numero": "A",
+          "titre": "Poursuivre et finaliser la labellisation territoriale Pays d’Art et Histoire"
+        },
+        {
+          "numero": "B",
+          "titre": "Valoriser les savoir-faire artisanaux et métiers de bouche"
+        },
+        {
+          "numero": "C",
+          "titre": "Célébrer l'Eau, source de vie et d'Inspiration en Dracénie"
+        },
+        {
+          "numero": "D",
+          "titre": "Valoriser de manière sensorielle et culturelle les paysages"
+        },
+        {
+          "numero": "E",
+          "titre": "Créer un sentier en espace naturel de type Landart afin de valoriser la création artistique et les paysages Dracénois"
+        }
+      ]
+    },
+    {
+      "axe": "2 Nourrir et renforcer l’offre touristique et culturelle représentative du territoire",
+      "numero": "2.3",
+      "titre": "Créer une « matrice itinérante d’incubation culturelle et artistique »",
+      "etapes": [
+        {
+          "numero": "A",
+          "titre": "Créer la 1ère Coopérative d’artistes professionnels en Dracénie, pour répondre à un triple enjeu"
+        },
+        {
+          "numero": "B",
+          "titre": "Créer un réseau de Tiers-Lieux Culturels en Dracénie au sein des Médiathèques en lien avec le schéma des médiathèques"
+        },
+        {
+          "numero": "C",
+          "titre": "Créer un CIAP innovant et vivant, qui, en plus de sa fonction première, abritera le « 1er Incubateur culturel itinérant »"
+        },
+        {
+          "numero": "D",
+          "titre": "Poursuivre de la coordination de l’offre des acteurs culturels de la Dracénie"
+        }
+      ]
+    },
+    {
+      "axe": "2 Nourrir et renforcer l’offre touristique et culturelle représentative du territoire",
+      "numero": "2.4",
+      "titre": "Mettre en récit l’histoire de la Dracénie",
+      "etapes": [
+        {
+          "numero": "A",
+          "titre": "Renforcement de la mémoire orale, du patrimoine immatériel et des gestes de savoir-faire en Dracénie dans tous les villages"
+        },
+        {
+          "numero": "B",
+          "titre": "Evolution des musées en univers de médiation interactifs et immersifs"
+        },
+        {
+          "numero": "C",
+          "titre": "Tissage de Liens entre Patrimoine et Arts Vivants en Dracénie"
+        },
+        {
+          "numero": "D",
+          "titre": "Réalisation d’une « mise en récit de la Dracénie » par la résidence d’artistes (1 fois/an)"
+        },
+        {
+          "numero": "E",
+          "titre": "Compléter les circuits de découverte numériques des villages (12) qui n’ont pas encore été traités"
+        },
+        {
+          "numero": "F",
+          "titre": "Développer ce même type de principe de valorisation sur quelques sites (10) historiques du territoire"
+        }
+      ]
+    },
+    {
+      "axe": "2 Nourrir et renforcer l’offre touristique et culturelle représentative du territoire",
+      "numero": "2.5",
+      "titre": "Aider à la mise en tourisme de l’offre emblématique…",
+      "etapes": [
+        {
+          "numero": "A",
+          "titre": "Encourager et accompagner le développement et ou la mise en vitrine d'une offre innovante, créative et durable"
+        },
+        {
+          "numero": "B",
+          "titre": "Soutenir et développer les labellisations en cours ou à intégrer dans les domaines de la qualité, du développement durable et de l’inclusivité"
+        }
+      ]
+    },
+    {
+      "axe": "2 Nourrir et renforcer l’offre touristique et culturelle représentative du territoire",
+      "numero": "2.6",
+      "titre": "Poursuivre l’investissement dans l’offre cyclable",
+      "etapes": [
+        {
+          "numero": "A",
+          "titre": "Créer de nouveaux itinéraires de type voie verte pour compléter l'offre de la Vigne à vélo"
+        },
+        {
+          "numero": "B",
+          "titre": "Etendre le réseau cyclable pour le connecter à l’EV8 de Taradeau à Lorgues et des Arcs à Flayosc"
+        },
+        {
+          "numero": "C",
+          "titre": "Définir, planifier, les équipements et opérations nécessaires à une meilleure mise en tourisme de l'offre vélo"
+        }
+      ]
+    },
+    {
+      "axe": "2 Nourrir et renforcer l’offre touristique et culturelle représentative du territoire",
+      "numero": "2.7",
+      "titre": "Faire des OT une vitrine du territoire et de ses produits",
+      "etapes": [
+        {
+          "numero": "A",
+          "titre": "Réaménager à court terme l’office de tourisme de Draguignan"
+        },
+        {
+          "numero": "B",
+          "titre": "Développer un principe de relooking + mini-boutique de produits locaux et artisanaux sur l’ensemble des offices de tourisme de la Dracénie"
+        },
+        {
+          "numero": "C",
+          "titre": "Développer un projet d’Office de tourisme à Draguignan conçu comme un Visitors Center novateur"
+        }
+      ]
+    },
+    {
+      "axe": "2 Nourrir et renforcer l’offre touristique et culturelle représentative du territoire",
+      "numero": "2.8",
+      "titre": "Organiser une programmation artistique innovante et singulière pour l’ensemble du territoire",
+      "etapes": [
+        {
+          "numero": "A",
+          "titre": "Définition d'une signature événementielle forte, pour la programmation culturelle de Draguignan et de la Dracénie"
+        },
+        {
+          "numero": "B",
+          "titre": "Organisation de la programmation culturelle annuelle, autour de cette signature"
+        },
+        {
+          "numero": "C",
+          "titre": "Mise en place d’un système de soutien, en termes de communication, des événements locaux répondant à cette signature"
+        },
+        {
+          "numero": "D",
+          "titre": "Création, sur le long terme, d’un évènement majeur en utilisant comme embryon « autour du vin » reflétant le positionnement du territoire, en lien avec les productions territoriales et les structures culturelles"
+        }
+      ]
+    },
+    {
+      "axe": "3 Faire évoluer hébergement-restauration et communication-marketing",
+      "numero": "3.1",
+      "titre": "Action de soutien à l’hébergement touristique et à la restauration",
+      "etapes": [
+        {
+          "numero": "A",
+          "titre": "Développer une cellule de soutien à l’évolution de l’hébergement touristique et de la restauration en Dracénie"
+        },
+        {
+          "numero": "B",
+          "titre": "Mission information et accompagnement"
+        },
+        {
+          "numero": "C",
+          "titre": "Mission Qualité, durabilité, inclusivité"
+        },
+        {
+          "numero": "D",
+          "titre": "Mission investissement et installation création d’un groupe investissement"
+        },
+        {
+          "numero": "E",
+          "titre": "Mission évolution de l’offre"
+        }
+      ]
+    },
+    {
+      "axe": "3 Faire évoluer hébergement-restauration et communication-marketing",
+      "numero": "3.2",
+      "titre": "Adapter le marketing aux enjeux et au positionnement",
+      "etapes": [
+        {
+          "numero": "A",
+          "titre": "Affirmer la Marque Dracénie Provence Verdon dans le Var"
+        },
+        {
+          "numero": "B",
+          "titre": "Elaborer un plan marketing « Quatre Saisons »"
+        },
+        {
+          "numero": "C",
+          "titre": "Revisiter la Stratégie de Communication et la ligne éditoriale autour du positionnement et de 3 phases (l'inspiration, l'information et la planification) qui seront axées autour des 5 thématiques issues du positionnement"
+        },
+        {
+          "numero": "D",
+          "titre": "Intégrer fortement la durabilité et l’implication des habitants et des professionnels"
+        }
+      ]
+    },
+    {
+      "axe": "3 Faire évoluer hébergement-restauration et communication-marketing",
+      "numero": "3.3",
+      "titre": "Intégrer les nouveaux champs de l’innovation",
+      "etapes": [
+        {
+          "numero": "B",
+          "titre": "Formation des membres du personnel aux fondements de l'intelligence artificielle générative et de la réalité virtuelle"
+        },
+        {
+          "numero": "C",
+          "titre": "Adoption graduelle de l’IA générative et de la Réalité Virtuelle dans les opérations de l’OT et des musées et médiathèques (pour enrichir l'expérience clientèle, les traitements statistiques, la communication,…)"
+        },
+        {
+          "numero": "C",
+          "titre": "Formation et soutien des professionnels dans l'utilisation des logiciels spécialisés en IA générative et réalité virtuelle pour les secteurs en mutation"
+        }
+      ]
+    }
+  ]
+}

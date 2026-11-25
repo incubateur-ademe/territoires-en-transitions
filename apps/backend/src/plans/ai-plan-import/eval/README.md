@@ -216,6 +216,9 @@ attendue : un doublon compte parmi les titres en trop. Le `diff` juge la
 structure, pas le contenu des fiches : pour le contenu, comparer aussi avec une
 référence Gemini.
 
+Avec `--action-level etape`, une fiche qui détaille des `etapes` devient le
+sous-axe de ses étapes, et ce sont elles qui sont attendues.
+
 Une référence peut aussi donner, par action, le chemin d'axes complet
 (`cheminAxes`, qui commence par `axe`) quand le plan a plus de deux niveaux.
 C'est le cas de `ccpg-suivi-2021.json`, l'outil de suivi du PCAET de la CC du
@@ -240,6 +243,55 @@ une spec locale, sautée sans lui :
 cd apps/backend
 CCPG_XLSX="…/ccpg.xlsx" npx vitest run src/plans/ai-plan-import/pipeline/analyze-workbook/analyze-workbook.real-file.spec.ts
 ```
+
+## Banc du découpage
+
+Le banc compare, pour chaque référence qui donne son `fichier`, ce que la
+lecture et la segmentation transmettent au modèle à la structure attendue.
+Il n'appelle aucun modèle (ni structuration ni OCR : une page-image reste
+vide) et tourne en quelques secondes. Les documents restent hors du dépôt :
+
+```sh
+cd apps/backend
+AI_IMPORT_CORPUS=/chemin/du/corpus npx vitest run src/plans/ai-plan-import/eval/segment-bench
+```
+
+Sans `AI_IMPORT_CORPUS`, la spec est sautée ; un document absent du corpus
+aussi. Pour chaque document et chaque niveau de lecture (`niveaux`), le
+tableau donne, sur les actions attendues :
+
+| Colonne | Ce qui est compté |
+|---|---|
+| `trouvees` | une unité de fiche porte ce titre, même écourté |
+| `titres` | … avec tous les mots du titre attendu |
+| `numeros` | … avec le numéro du document en tête |
+| `axe`, `chemin` | … sous le bon axe, puis sous le chemin attendu en entier |
+| `enTrop` | unités de fiche qui ne répondent à aucune action attendue |
+| `axes`, `libellesAxes` | axes attendus en tête d'un chemin, puis avec leur libellé entier |
+| `question` | le document pose la question du niveau de l'action |
+
+Le détail (actions manquantes, titres écourtés, numéros perdus, fiches mal
+rangées, unités en trop) est écrit dans `apps/backend/eval-out/segment-bench.json`.
+
+[`segment-bench.baseline.json`](segment-bench/segment-bench.baseline.json) fixe
+le seuil de chaque document : un score qui baisse fait échouer le banc. Un
+score qui monte se fige en relançant avec `UPDATE_BASELINE=1`, et le seuil se
+commite avec le changement qui l'a fait monter.
+
+Le banc juge le découpage, pas le modèle : une action qui n'existe que dans
+un tableau ou une liste à puces n'ouvre aucune unité et compte comme
+manquante, même si le modèle sait l'en extraire. Ce manque dit que le code
+ne transmet pas la structure, et que le modèle doit la deviner.
+
+### Ajouter un document au corpus
+
+Relever sa structure à la main dans `references/` : `fichier` (chemin dans le
+corpus), `axes`, puis chaque fiche avec son `axe`, son `cheminAxes` s'il y a
+des sous-axes, son `numero` tel qu'écrit et son `titre` complet relevé dans le
+corps de la fiche. `etapes` donne les étapes titrées d'une fiche, et
+`niveaux: ["fiche", "etape"]` les fait mesurer aussi en lecture à l'étape.
+`remarques` garde les ambiguïtés tranchées pendant le relevé. Lancer le banc
+avec `UPDATE_BASELINE=1` pour fixer son premier seuil.
 
 ## Méthode conseillée
 

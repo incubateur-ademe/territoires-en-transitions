@@ -1,0 +1,242 @@
+{
+  "manual": true,
+  "fichier": "plpdma/plpdma-2026-2031_1nsft40.pdf",
+  "niveaux": [
+    "fiche",
+    "etape"
+  ],
+  "document": "Programme local de prévention des déchets ménagers et assimilés 2026-2031 : fiches actions p. 35-68, relevées dans le corps des fiches ; 5 axes, 16 fiches, 32 étapes titrées « Action N – … ». Les étapes 1 à 8 de la fiche 1.3 sont sur des pages-images (p. 40-43), illisibles sans OCR.",
+  "axes": [
+    "1 Limiter la production de déchets verts et encourager la gestion des biodéchets en proximité",
+    "2 Acheter et consommer responsable",
+    "3 Réduire le tout venant en déchèterie et renforcer le tri et les filières de valorisation",
+    "4 Prolonger la durée de vie des objets et des matériaux",
+    "5 Réduire les déchets produits par les activités économiques et touristiques"
+  ],
+  "actions": [
+    {
+      "axe": "1 Limiter la production de déchets verts et encourager la gestion des biodéchets en proximité",
+      "numero": "1.1",
+      "titre": "Développer une culture de l’éco-exemplarité au sein de la collectivité et des communes"
+    },
+    {
+      "axe": "1 Limiter la production de déchets verts et encourager la gestion des biodéchets en proximité",
+      "numero": "1.2",
+      "titre": "Accompagner les habitants vers le jardinage au naturel",
+      "etapes": [
+        {
+          "numero": "1",
+          "titre": "Diagnostiquer et orienter"
+        },
+        {
+          "numero": "2",
+          "titre": "Accompagner et former les habitants"
+        },
+        {
+          "numero": "3",
+          "titre": "Mettre à disposition des ressources et du matériel"
+        },
+        {
+          "numero": "4",
+          "titre": "Soutenir les pratiques de valorisation des déchets verts par des aides financières"
+        },
+        {
+          "numero": "5",
+          "titre": "Former les agents du service déchets"
+        },
+        {
+          "numero": "6",
+          "titre": "Communiquer et animer la dynamique collective"
+        }
+      ]
+    },
+    {
+      "axe": "1 Limiter la production de déchets verts et encourager la gestion des biodéchets en proximité",
+      "numero": "1.3",
+      "titre": "Poursuivre le développement du tri à la source des biodéchets",
+      "etapes": [
+        {
+          "numero": "1",
+          "titre": "Communiquer régulièrement sur l’évolution réglementaire du tri à la source des biodéchets et sur les dispositifs d’accompagnements proposés par Morlaix Communauté"
+        },
+        {
+          "numero": "2",
+          "titre": "Evaluer les freins et apporter des réponses aux usagers en adaptant les dispositifs proposés."
+        },
+        {
+          "numero": "3",
+          "titre": "Développer le compostage individuel pour les foyers en habitat pavillonnaire"
+        },
+        {
+          "numero": "4",
+          "titre": "Développer le compostage collectif pour l’habitat vertical"
+        },
+        {
+          "numero": "5",
+          "titre": "Faciliter la fourniture du broyat nécessaire pour composter"
+        },
+        {
+          "numero": "6",
+          "titre": "Informer et accompagner les agents des services communaux et dans les écoles maternelles-primaires"
+        },
+        {
+          "numero": "7",
+          "titre": "Animer des ateliers de sensibilisation sur le compostage et le gaspillage alimentaire à destination des scolaires"
+        },
+        {
+          "numero": "8",
+          "titre": "Sensibiliser les ménages et les professionnels sur le gaspillage alimentaire"
+        }
+      ]
+    },
+    {
+      "axe": "2 Acheter et consommer responsable",
+      "numero": "2.1",
+      "titre": "Accompagner les habitants pour tendre vers une consommation plus responsable",
+      "etapes": [
+        {
+          "numero": "1",
+          "titre": "Organiser des ateliers « presque zéro déchet »"
+        },
+        {
+          "numero": "2",
+          "titre": "Sensibiliser les ménages et les non-ménages à l’utilisation de couches lavables"
+        },
+        {
+          "numero": "3",
+          "titre": "Sensibiliser les ménages à l’utilisation de protections hygiéniques lavables"
+        },
+        {
+          "numero": "4",
+          "titre": "Proposer aux usagers une aide pour l’achat de protections adulte lavables"
+        },
+        {
+          "numero": "5",
+          "titre": "Communiquer sur les acteurs engagés"
+        }
+      ]
+    },
+    {
+      "axe": "2 Acheter et consommer responsable",
+      "numero": "2.2",
+      "titre": "Développer de nouvelles actions pour inciter les usagers à réduire leurs déchets",
+      "etapes": [
+        {
+          "numero": "1",
+          "titre": "Projet “la consommation responsable chez les jeunes”"
+        },
+        {
+          "numero": "2",
+          "titre": "Organiser une gratiféria textile"
+        },
+        {
+          "numero": "3",
+          "titre": "Tester l’installation de bacs de mise à disposition d’articles de plage"
+        }
+      ]
+    },
+    {
+      "axe": "3 Réduire le tout venant en déchèterie et renforcer le tri et les filières de valorisation",
+      "numero": "3.1",
+      "titre": "Caractériser et analyser les flux de déchets dans la benne tout venant, suivre les tonnages des autres bennes de tri et développer de nouvelles filières de valorisation"
+    },
+    {
+      "axe": "3 Réduire le tout venant en déchèterie et renforcer le tri et les filières de valorisation",
+      "numero": "3.2",
+      "titre": "Renforcer la communication en déchèterie pour améliorer le tri et mieux accompagner les usagers"
+    },
+    {
+      "axe": "3 Réduire le tout venant en déchèterie et renforcer le tri et les filières de valorisation",
+      "numero": "3.3",
+      "titre": "Impliquer et former les agents de déchèterie"
+    },
+    {
+      "axe": "3 Réduire le tout venant en déchèterie et renforcer le tri et les filières de valorisation",
+      "numero": "3.4",
+      "titre": "Proposer de nouvelles animations en déchèterie avec les acteurs du réemploi"
+    },
+    {
+      "axe": "4 Prolonger la durée de vie des objets et des matériaux",
+      "numero": "4.1",
+      "titre": "Développer une culture de l’éco-exemplarité au sein de la collectivité et des communes",
+      "etapes": [
+        {
+          "numero": "1",
+          "titre": "Poursuivre la commande publique responsable"
+        },
+        {
+          "numero": "2",
+          "titre": "Faciliter la mise en relation des services de la collectivité et des communes avec les acteurs locaux du réemploi"
+        },
+        {
+          "numero": "3",
+          "titre": "Créer le « bon coin des communes »"
+        }
+      ]
+    },
+    {
+      "axe": "4 Prolonger la durée de vie des objets et des matériaux",
+      "numero": "4.2",
+      "titre": "Déployer et optimiser les locaux réemploi",
+      "etapes": [
+        {
+          "numero": "1",
+          "titre": "Mettre en place un partenariat pour les 2 sites actuellement dépourvus d’acteurs du réemploi afin d’optimiser la valorisation des objets"
+        },
+        {
+          "numero": "2",
+          "titre": "Revoir les modalités de la convention réemploi"
+        },
+        {
+          "numero": "3",
+          "titre": "Assurer le suivi régulier des locaux réemploi"
+        }
+      ]
+    },
+    {
+      "axe": "4 Prolonger la durée de vie des objets et des matériaux",
+      "numero": "4.3",
+      "titre": "Animer le réseau local des acteurs du réemploi",
+      "etapes": [
+        {
+          "numero": "1",
+          "titre": "Organiser et animer les réunions du comité de pilotage de la convention réemploi"
+        },
+        {
+          "numero": "2",
+          "titre": "Proposer et organiser des événements collectifs"
+        }
+      ]
+    },
+    {
+      "axe": "4 Prolonger la durée de vie des objets et des matériaux",
+      "numero": "4.4",
+      "titre": "Faciliter la mise en relation des particuliers et des acteurs du réemploi",
+      "etapes": [
+        {
+          "numero": "1",
+          "titre": "Mettre en place un annuaire locale des acteurs du réemploi"
+        },
+        {
+          "numero": "2",
+          "titre": "Communiquer sur les solutions locales – relayer les événements pour promouvoir le réemploi"
+        }
+      ]
+    },
+    {
+      "axe": "5 Réduire les déchets produits par les activités économiques et touristiques",
+      "numero": "5.1",
+      "titre": "Accompagner les professionnels et les communes dans l’amélioration de la gestion et réduction de leurs déchets"
+    },
+    {
+      "axe": "5 Réduire les déchets produits par les activités économiques et touristiques",
+      "numero": "5.2",
+      "titre": "Promouvoir le tourisme durable"
+    },
+    {
+      "axe": "5 Réduire les déchets produits par les activités économiques et touristiques",
+      "numero": "5.3",
+      "titre": "Faciliter l’organisation de manifestations éco-responsables et mettre à disposition du matériel"
+    }
+  ]
+}

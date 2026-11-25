@@ -1,0 +1,190 @@
+{
+  "manual": true,
+  "fichier": "plpdma/plpdma-ccbv-fiches-actions_106lgc3.pdf",
+  "document": "Programme local de prévention des déchets ménagers et assimilés (PLPDMA) 2022-2028 de la Communauté de communes Baugeois-Vallée ; structure relevée dans les fiches actions en annexe (p. 35 à 83), croisée avec la « Liste des 31 fiches actions » (p. 33-34) : 11 axes, 0 sous-axe, 32 fiches, 0 étape.",
+  "remarques": [
+    "La liste récapitulative (p. 33-34) annonce 31 fiches mais numérote deux fiches « Action 19 » (broyage des déchets verts, axe 5, et zone de réemploi en déchèterie, axe 6) ; les fiches du corps sont numérotées de 1 à 32 sans doublon. La numérotation du corps est retenue : à partir de la zone de réemploi, chaque numéro vaut celui du récapitulatif + 1 (récap 19→20 … 31→32).",
+    "Les axes sont numérotés de 0 à 10 (AXE 0 Gouvernance participative) : 11 axes. La liste « 10 axes de travail » de la p. 32 est un classement de priorité des élus sans l’axe 0, pas la structure du plan.",
+    "Titres d’axes pris dans les en-têtes des fiches (tout en capitales, remis en casse de phrase). Axe 1 : le corps écrit « Exemplarité des collectivités », le récapitulatif « … en prévention des déchets » ; version du corps retenue.",
+    "Axe 7 : le corps écrit trois fois « ACTION EMBLEMATIQUES … » (sic), le récapitulatif « ACTIONS EMBLEMATIQUES … » ; graphie du corps conservée.",
+    "Axe 2 : le récapitulatif porte la coquille « VISIBIILITE » ; graphie du corps (« visibilité ») retenue.",
+    "Titres de fiches pris dans le corps quand ils diffèrent du récapitulatif : action 8 « ateliers « fait maison » » (récap : « ateliers faits maison »), action 9 « REOMI » (récap : « REOMi »), action 19 « Promouvoir la gestion différenciée et le broyage des déchets verts auprès des particuliers » (récap : « promouvoir le broyage… »), action 25 « stop pub » (récap : « stob pub »). Minuscule initiale conservée là où le document l’écrit (actions 1, 2, 5-8, 12, 13, 15).",
+    "Aucune étape titrée : les fiches ne contiennent que des puces descriptives et un tableau « planning prévisionnel » (tâches et échéances), non relevés comme étapes.",
+    "Le document s’ouvre sur une partie diagnostic (p. 1-31) et des tableaux de liens avec le PCAET (axes et objectifs du PCAET), non relevés comme axes."
+  ],
+  "axes": [
+    "0 Gouvernance participative",
+    "1 Exemplarité des collectivités",
+    "2 Sensibilisation des acteurs et favoriser la visibilité des efforts de prévention",
+    "3 Utiliser les instruments économiques",
+    "4 Lutte contre le gaspillage alimentaire",
+    "5 Réduction des déchets verts et tri à la source des biodéchets",
+    "6 Augmenter la durée de vie des produits",
+    "7 Action emblématiques favorisant la consommation responsable",
+    "8 Réduire les déchets des entreprises",
+    "9 Réduire les déchets du BTP",
+    "10 Réduire les déchets marins"
+  ],
+  "actions": [
+    {
+      "axe": "0 Gouvernance participative",
+      "numero": "1",
+      "titre": "constitution de la CCES et structuration des données du territoire"
+    },
+    {
+      "axe": "0 Gouvernance participative",
+      "numero": "2",
+      "titre": "animation du PLPDMA"
+    },
+    {
+      "axe": "1 Exemplarité des collectivités",
+      "numero": "3",
+      "titre": "Réduire l’impact climatique des déchets sur le territoire"
+    },
+    {
+      "axe": "1 Exemplarité des collectivités",
+      "numero": "4",
+      "titre": "Sensibiliser les acteurs des administrations publiques à la prévention des déchets"
+    },
+    {
+      "axe": "2 Sensibilisation des acteurs et favoriser la visibilité des efforts de prévention",
+      "numero": "5",
+      "titre": "communication et sensibilisation des jeunes"
+    },
+    {
+      "axe": "2 Sensibilisation des acteurs et favoriser la visibilité des efforts de prévention",
+      "numero": "6",
+      "titre": "communication et sensibilisation du grand public"
+    },
+    {
+      "axe": "2 Sensibilisation des acteurs et favoriser la visibilité des efforts de prévention",
+      "numero": "7",
+      "titre": "communication de proximité"
+    },
+    {
+      "axe": "2 Sensibilisation des acteurs et favoriser la visibilité des efforts de prévention",
+      "numero": "8",
+      "titre": "promotion des initiatives « zéro déchet », consommation durable et ateliers « fait maison »"
+    },
+    {
+      "axe": "3 Utiliser les instruments économiques",
+      "numero": "9",
+      "titre": "Accompagnement au changement de comportements par la tarification incitative en REOMI"
+    },
+    {
+      "axe": "3 Utiliser les instruments économiques",
+      "numero": "10",
+      "titre": "Soutiens financiers à la réduction des déchets"
+    },
+    {
+      "axe": "3 Utiliser les instruments économiques",
+      "numero": "11",
+      "titre": "Lancement d’un appel à manifestation d’intérêts à associations locales pour l’achat et la mise à disposition de broyeurs à végétaux"
+    },
+    {
+      "axe": "4 Lutte contre le gaspillage alimentaire",
+      "numero": "12",
+      "titre": "accompagnement de la restauration collective"
+    },
+    {
+      "axe": "4 Lutte contre le gaspillage alimentaire",
+      "numero": "13",
+      "titre": "accompagner des producteurs/commerçants sur les marchés locaux pour réduire le gaspillage alimentaire vers des marchés éco-responsables"
+    },
+    {
+      "axe": "4 Lutte contre le gaspillage alimentaire",
+      "numero": "14",
+      "titre": "Promouvoir l’anti-gaspi dans les foyers"
+    },
+    {
+      "axe": "4 Lutte contre le gaspillage alimentaire",
+      "numero": "15",
+      "titre": "développer chez les métiers de bouches/restaurateurs l’initiative de « doggy bag »"
+    },
+    {
+      "axe": "5 Réduction des déchets verts et tri à la source des biodéchets",
+      "numero": "16",
+      "titre": "Inciter à l’acquisition de composteur individuel ou de poulailler"
+    },
+    {
+      "axe": "5 Réduction des déchets verts et tri à la source des biodéchets",
+      "numero": "17",
+      "titre": "Développer le compostage partagé de quartier et pour les habitats collectifs"
+    },
+    {
+      "axe": "5 Réduction des déchets verts et tri à la source des biodéchets",
+      "numero": "18",
+      "titre": "Accompagner les établissements scolaires au tri à la source des biodéchets"
+    },
+    {
+      "axe": "5 Réduction des déchets verts et tri à la source des biodéchets",
+      "numero": "19",
+      "titre": "Promouvoir la gestion différenciée et le broyage des déchets verts auprès des particuliers"
+    },
+    {
+      "axe": "6 Augmenter la durée de vie des produits",
+      "numero": "20",
+      "titre": "Installation d’une zone au réemploi en déchèterie"
+    },
+    {
+      "axe": "6 Augmenter la durée de vie des produits",
+      "numero": "21",
+      "titre": "Sensibiliser aux autres alternatives de dons/re-ventes"
+    },
+    {
+      "axe": "6 Augmenter la durée de vie des produits",
+      "numero": "22",
+      "titre": "Communiquer sur les pratiques réemploi/réparation et mettre en valeur les acteurs du territoire"
+    },
+    {
+      "axe": "6 Augmenter la durée de vie des produits",
+      "numero": "23",
+      "titre": "Accompagner la création d’un repair’café dans le Noyantais"
+    },
+    {
+      "axe": "7 Action emblématiques favorisant la consommation responsable",
+      "numero": "24",
+      "titre": "Accompagnement des manifestations responsables"
+    },
+    {
+      "axe": "7 Action emblématiques favorisant la consommation responsable",
+      "numero": "25",
+      "titre": "Promotion du stop pub"
+    },
+    {
+      "axe": "7 Action emblématiques favorisant la consommation responsable",
+      "numero": "26",
+      "titre": "Promotion textiles lavables"
+    },
+    {
+      "axe": "8 Réduire les déchets des entreprises",
+      "numero": "27",
+      "titre": "Inciter les entreprises à s’engager et valoriser leurs initiatives"
+    },
+    {
+      "axe": "8 Réduire les déchets des entreprises",
+      "numero": "28",
+      "titre": "Faciliter des collectes spécifiques et le réemploi par les entreprises"
+    },
+    {
+      "axe": "8 Réduire les déchets des entreprises",
+      "numero": "29",
+      "titre": "Sensibiliser les entreprises aux enjeux des déchets"
+    },
+    {
+      "axe": "9 Réduire les déchets du BTP",
+      "numero": "30",
+      "titre": "Informer les habitants et les petites entreprises locales du bâtiment"
+    },
+    {
+      "axe": "10 Réduire les déchets marins",
+      "numero": "31",
+      "titre": "Soutien aux campagnes annuelles de nettoyage de la nature"
+    },
+    {
+      "axe": "10 Réduire les déchets marins",
+      "numero": "32",
+      "titre": "Établir un diagnostic et programme d’action en transversalité avec le service eau et assainissement"
+    }
+  ]
+}

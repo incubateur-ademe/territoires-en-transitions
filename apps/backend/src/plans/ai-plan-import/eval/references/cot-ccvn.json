@@ -1,0 +1,551 @@
+{
+  "manual": true,
+  "fichier": "cot/plan-dactions-cot-ccvn-v-17082_1ncb1b6.docx",
+  "document": "Ébauche de plan d'actions du contrat d'objectif territorial (COT) de la Communauté de communes du Vexin Normand (CCVN), version du 17/08/2026, sans période explicite (échéances 2026-2029 citées) ; structure relevée dans le corps du document (titres Axe / Groupe d'actions et listes à puces d'actions, document sans tableau), croisée avec la table des matières : 4 axes, 25 sous-axes, 66 fiches, 0 étape.",
+  "remarques": [
+    "Les sous-axes sont les « Groupe d'actions N.N — … » (titres de niveau 3), numérotés dans le document ; repris sous la forme « 1.1 Connaissance des milieux et adaptation climatique ». Les 25 groupes du corps correspondent exactement à ceux de la table des matières.",
+    "Les blocs « Objectifs de l'axe N » (titres de niveau 2 suivis d'une liste d'objectifs) ne regroupent aucune action : ce sont des objectifs descriptifs, pas des sous-axes ; ignorés.",
+    "Les actions sont de simples puces sans numéro dans le document : `numero` omis pour toutes les fiches (aucun numéro inventé).",
+    "Chaque action se termine par une étiquette de typologie en gras coloré « [Structurante] » ou « [Sensibilisation] » : retirée du titre (ce n'est pas une partie du libellé).",
+    "Les lignes Coût / Calendrier / Partenaires / Résultat attendu / Indicateur de suivi, présentes seulement sous les actions de l'axe 1, sont du contenu de fiche : ignorées. Aucune action ne liste d'étapes titrées.",
+    "Dernière action du groupe 4.7 : le document écrit « Mettre Collaborer avec des acteurs de l’économie sociale et solidaire… » (reste d'édition évident, sans étiquette de typologie) ; graphie du document conservée telle quelle.",
+    "La 3e action du groupe 1.2 commence par « Programme d’animations “transition écologique” sur trois ans, dont : … » : gardée comme une seule fiche avec son titre complet.",
+    "Apostrophes droites et typographiques mélangées dans le document : conservées telles quelles."
+  ],
+  "axes": [
+    "1 Un territoire résilient face au changement climatique",
+    "2 Un territoire qui agit en faveur de la qualité de l’air",
+    "3 Un territoire sobre et producteur d'énergie verte",
+    "4 Un territoire soutenant les activités économiques durables"
+  ],
+  "actions": [
+    {
+      "axe": "1 Un territoire résilient face au changement climatique",
+      "cheminAxes": [
+        "1 Un territoire résilient face au changement climatique",
+        "1.1 Connaissance des milieux et adaptation climatique"
+      ],
+      "titre": "Identifier, réhabiliter et renaturer des zones humides, mares et autres habitats naturels"
+    },
+    {
+      "axe": "1 Un territoire résilient face au changement climatique",
+      "cheminAxes": [
+        "1 Un territoire résilient face au changement climatique",
+        "1.1 Connaissance des milieux et adaptation climatique"
+      ],
+      "titre": "Élaborer une Trajectoire d'Adaptation au Changement Climatique Territoriale (TACCT) intercommunale — risques inondation / sécheresse"
+    },
+    {
+      "axe": "1 Un territoire résilient face au changement climatique",
+      "cheminAxes": [
+        "1 Un territoire résilient face au changement climatique",
+        "1.2 Sensibilisation aux enjeux climatiques"
+      ],
+      "titre": "Valoriser les actions de transition écologique déjà menées par les services de la CCVN (animations familles, médiathèques, braderie de livres)"
+    },
+    {
+      "axe": "1 Un territoire résilient face au changement climatique",
+      "cheminAxes": [
+        "1 Un territoire résilient face au changement climatique",
+        "1.2 Sensibilisation aux enjeux climatiques"
+      ],
+      "titre": "Former élus et agents aux enjeux climatiques (ateliers Fresque du climat / économie circulaire, formations ADEME, réseau « élus pour agir »)"
+    },
+    {
+      "axe": "1 Un territoire résilient face au changement climatique",
+      "cheminAxes": [
+        "1 Un territoire résilient face au changement climatique",
+        "1.2 Sensibilisation aux enjeux climatiques"
+      ],
+      "titre": "Programme d’animations “transition écologique” sur trois ans, dont : organiser une animation transition écologique par semestre dans les médiathèques intercommunales"
+    },
+    {
+      "axe": "1 Un territoire résilient face au changement climatique",
+      "cheminAxes": [
+        "1 Un territoire résilient face au changement climatique",
+        "1.3 Revitalisation des centres-bourgs (PVD)"
+      ],
+      "titre": "Suivre les stratégies de revitalisation des centres-bourgs concernés"
+    },
+    {
+      "axe": "1 Un territoire résilient face au changement climatique",
+      "cheminAxes": [
+        "1 Un territoire résilient face au changement climatique",
+        "1.4 Désimperméabilisation et végétalisation"
+      ],
+      "titre": "Créer des îlots de fraîcheur et végétaliser bâtiments, cours d'écoles et cimetières"
+    },
+    {
+      "axe": "1 Un territoire résilient face au changement climatique",
+      "cheminAxes": [
+        "1 Un territoire résilient face au changement climatique",
+        "1.4 Désimperméabilisation et végétalisation"
+      ],
+      "titre": "Valoriser le Parc communautaire du Couvent et planter des arbres autour des bâtiments de la CCVN"
+    },
+    {
+      "axe": "1 Un territoire résilient face au changement climatique",
+      "cheminAxes": [
+        "1 Un territoire résilient face au changement climatique",
+        "1.4 Désimperméabilisation et végétalisation"
+      ],
+      "titre": "Mettre en place des potagers partagés communaux (AMI Graines de demain)"
+    },
+    {
+      "axe": "1 Un territoire résilient face au changement climatique",
+      "cheminAxes": [
+        "1 Un territoire résilient face au changement climatique",
+        "1.4 Désimperméabilisation et végétalisation"
+      ],
+      "titre": "Intégrer la désimperméabilisation à la parcelle dans les documents de planification et lors des réfections de voirie"
+    },
+    {
+      "axe": "1 Un territoire résilient face au changement climatique",
+      "cheminAxes": [
+        "1 Un territoire résilient face au changement climatique",
+        "1.5 Sobriété foncière"
+      ],
+      "titre": "Prioriser l'utilisation des friches et optimiser le foncier pour limiter l'artificialisation"
+    },
+    {
+      "axe": "1 Un territoire résilient face au changement climatique",
+      "cheminAxes": [
+        "1 Un territoire résilient face au changement climatique",
+        "1.5 Sobriété foncière"
+      ],
+      "titre": "Intégrer les leviers juridiques de sobriété foncière dans les documents d’urbanisme"
+    },
+    {
+      "axe": "1 Un territoire résilient face au changement climatique",
+      "cheminAxes": [
+        "1 Un territoire résilient face au changement climatique",
+        "1.6 Stratégie biodiversité"
+      ],
+      "titre": "Candidater au dispositif « Territoires engagés pour la nature »"
+    },
+    {
+      "axe": "1 Un territoire résilient face au changement climatique",
+      "cheminAxes": [
+        "1 Un territoire résilient face au changement climatique",
+        "1.6 Stratégie biodiversité"
+      ],
+      "titre": "Réaliser un Atlas de la biodiversité ou des diagnostics naturalistes spécifiques"
+    },
+    {
+      "axe": "1 Un territoire résilient face au changement climatique",
+      "cheminAxes": [
+        "1 Un territoire résilient face au changement climatique",
+        "1.6 Stratégie biodiversité"
+      ],
+      "titre": "Intégrer une stratégie biodiversité dans les documents de planification"
+    },
+    {
+      "axe": "1 Un territoire résilient face au changement climatique",
+      "cheminAxes": [
+        "1 Un territoire résilient face au changement climatique",
+        "1.6 Stratégie biodiversité"
+      ],
+      "titre": "Communiquer et sensibiliser sur la préservation de la biodiversité (évènements annuels, fête de la nature)"
+    },
+    {
+      "axe": "1 Un territoire résilient face au changement climatique",
+      "cheminAxes": [
+        "1 Un territoire résilient face au changement climatique",
+        "1.7 Gestion et économie de l'eau"
+      ],
+      "titre": "Équiper les bâtiments intercommunaux de cuves de récupération des eaux pluviales"
+    },
+    {
+      "axe": "1 Un territoire résilient face au changement climatique",
+      "cheminAxes": [
+        "1 Un territoire résilient face au changement climatique",
+        "1.7 Gestion et économie de l'eau"
+      ],
+      "titre": "Intégrer les enjeux eau dans les documents de planification"
+    },
+    {
+      "axe": "1 Un territoire résilient face au changement climatique",
+      "cheminAxes": [
+        "1 Un territoire résilient face au changement climatique",
+        "1.7 Gestion et économie de l'eau"
+      ],
+      "titre": "Distribuer des kits d'économies d'eau et sensibiliser les acteurs du territoire"
+    },
+    {
+      "axe": "2 Un territoire qui agit en faveur de la qualité de l’air",
+      "cheminAxes": [
+        "2 Un territoire qui agit en faveur de la qualité de l’air",
+        "2.1 Plan de Mobilité Simplifié (PDMS)"
+      ],
+      "titre": "Valider le PDMS et/ou le schéma directeur cyclable"
+    },
+    {
+      "axe": "2 Un territoire qui agit en faveur de la qualité de l’air",
+      "cheminAxes": [
+        "2 Un territoire qui agit en faveur de la qualité de l’air",
+        "2.1 Plan de Mobilité Simplifié (PDMS)"
+      ],
+      "titre": "Recruter un chargé de mission mobilité"
+    },
+    {
+      "axe": "2 Un territoire qui agit en faveur de la qualité de l’air",
+      "cheminAxes": [
+        "2 Un territoire qui agit en faveur de la qualité de l’air",
+        "2.1 Plan de Mobilité Simplifié (PDMS)"
+      ],
+      "titre": "Étudier la stratégie de financement des services de mobilité à moyen/long terme (régie, versement mobilité)"
+    },
+    {
+      "axe": "2 Un territoire qui agit en faveur de la qualité de l’air",
+      "cheminAxes": [
+        "2 Un territoire qui agit en faveur de la qualité de l’air",
+        "2.1 Plan de Mobilité Simplifié (PDMS)"
+      ],
+      "titre": "Animer le comité des partenaires mobilité"
+    },
+    {
+      "axe": "2 Un territoire qui agit en faveur de la qualité de l’air",
+      "cheminAxes": [
+        "2 Un territoire qui agit en faveur de la qualité de l’air",
+        "2.2 Infrastructures et aménagements cyclables"
+      ],
+      "titre": "Intégrer des zones cyclables dans les travaux de voirie"
+    },
+    {
+      "axe": "2 Un territoire qui agit en faveur de la qualité de l’air",
+      "cheminAxes": [
+        "2 Un territoire qui agit en faveur de la qualité de l’air",
+        "2.2 Infrastructures et aménagements cyclables"
+      ],
+      "titre": "Sécuriser le stationnement vélo (consignes, racks)"
+    },
+    {
+      "axe": "2 Un territoire qui agit en faveur de la qualité de l’air",
+      "cheminAxes": [
+        "2 Un territoire qui agit en faveur de la qualité de l’air",
+        "2.3 Nouveaux services de mobilité"
+      ],
+      "titre": "Mettre en place un transport à la demande (TAD) pour toute la population"
+    },
+    {
+      "axe": "2 Un territoire qui agit en faveur de la qualité de l’air",
+      "cheminAxes": [
+        "2 Un territoire qui agit en faveur de la qualité de l’air",
+        "2.3 Nouveaux services de mobilité"
+      ],
+      "titre": "Mettre en place la location de vélos à assistance électrique et de vélos cargo à l'office du tourisme"
+    },
+    {
+      "axe": "2 Un territoire qui agit en faveur de la qualité de l’air",
+      "cheminAxes": [
+        "2 Un territoire qui agit en faveur de la qualité de l’air",
+        "2.3 Nouveaux services de mobilité"
+      ],
+      "titre": "Développer les bornes de recharge électrique, bioGNV et autres biocarburants"
+    },
+    {
+      "axe": "2 Un territoire qui agit en faveur de la qualité de l’air",
+      "cheminAxes": [
+        "2 Un territoire qui agit en faveur de la qualité de l’air",
+        "2.4 Sensibilisation et accompagnement aux mobilités douces"
+      ],
+      "titre": "Proposer des ateliers « savoir rouler à vélo » chaque année"
+    },
+    {
+      "axe": "2 Un territoire qui agit en faveur de la qualité de l’air",
+      "cheminAxes": [
+        "2 Un territoire qui agit en faveur de la qualité de l’air",
+        "2.4 Sensibilisation et accompagnement aux mobilités douces"
+      ],
+      "titre": "Expérimenter des pédibus"
+    },
+    {
+      "axe": "2 Un territoire qui agit en faveur de la qualité de l’air",
+      "cheminAxes": [
+        "2 Un territoire qui agit en faveur de la qualité de l’air",
+        "2.4 Sensibilisation et accompagnement aux mobilités douces"
+      ],
+      "titre": "Fermer des rues aux voitures pour favoriser l'appropriation du vélo"
+    },
+    {
+      "axe": "2 Un territoire qui agit en faveur de la qualité de l’air",
+      "cheminAxes": [
+        "2 Un territoire qui agit en faveur de la qualité de l’air",
+        "2.4 Sensibilisation et accompagnement aux mobilités douces"
+      ],
+      "titre": "Mettre en place un forfait mobilités durables, une aire de covoiturage, et développer le télétravail"
+    },
+    {
+      "axe": "2 Un territoire qui agit en faveur de la qualité de l’air",
+      "cheminAxes": [
+        "2 Un territoire qui agit en faveur de la qualité de l’air",
+        "2.5 Suivi et sensibilisation qualité de l'air"
+      ],
+      "titre": "Mettre en place une station ATMO de suivi indicatif de la qualité de l'air (convention ATMO 2026-2028)"
+    },
+    {
+      "axe": "2 Un territoire qui agit en faveur de la qualité de l’air",
+      "cheminAxes": [
+        "2 Un territoire qui agit en faveur de la qualité de l’air",
+        "2.5 Suivi et sensibilisation qualité de l'air"
+      ],
+      "titre": "Organiser des actions de sensibilisation à la qualité de l'air (ateliers micro-capteurs, expositions)"
+    },
+    {
+      "axe": "3 Un territoire sobre et producteur d'énergie verte",
+      "cheminAxes": [
+        "3 Un territoire sobre et producteur d'énergie verte",
+        "3.1 Solaire sur toiture"
+      ],
+      "titre": "Développer l'autoconsommation collective et le solaire, photovoltaïque ou thermique, sur toiture des bâtiments publics"
+    },
+    {
+      "axe": "3 Un territoire sobre et producteur d'énergie verte",
+      "cheminAxes": [
+        "3 Un territoire sobre et producteur d'énergie verte",
+        "3.1 Solaire sur toiture"
+      ],
+      "titre": "Élaborer un cadastre solaire et communiquer sur le potentiel photovoltaïque du territoire"
+    },
+    {
+      "axe": "3 Un territoire sobre et producteur d'énergie verte",
+      "cheminAxes": [
+        "3 Un territoire sobre et producteur d'énergie verte",
+        "3.2 Diversification des filières EnR"
+      ],
+      "titre": "Étudier le potentiel solaire et de stockage des friches industrielles"
+    },
+    {
+      "axe": "3 Un territoire sobre et producteur d'énergie verte",
+      "cheminAxes": [
+        "3 Un territoire sobre et producteur d'énergie verte",
+        "3.2 Diversification des filières EnR"
+      ],
+      "titre": "Accompagner les projets de méthanisation"
+    },
+    {
+      "axe": "3 Un territoire sobre et producteur d'énergie verte",
+      "cheminAxes": [
+        "3 Un territoire sobre et producteur d'énergie verte",
+        "3.2 Diversification des filières EnR"
+      ],
+      "titre": "Étudier le potentiel bois-énergie et co-porter une charte forestière avec Lyons Andelle"
+    },
+    {
+      "axe": "3 Un territoire sobre et producteur d'énergie verte",
+      "cheminAxes": [
+        "3 Un territoire sobre et producteur d'énergie verte",
+        "3.2 Diversification des filières EnR"
+      ],
+      "titre": "Étudier la faisabilité géothermie / biomasse"
+    },
+    {
+      "axe": "3 Un territoire sobre et producteur d'énergie verte",
+      "cheminAxes": [
+        "3 Un territoire sobre et producteur d'énergie verte",
+        "3.3 Exemplarité de la collectivité"
+      ],
+      "titre": "Développer les audits énergétiques du patrimoine intercommunal"
+    },
+    {
+      "axe": "3 Un territoire sobre et producteur d'énergie verte",
+      "cheminAxes": [
+        "3 Un territoire sobre et producteur d'énergie verte",
+        "3.3 Exemplarité de la collectivité"
+      ],
+      "titre": "Relancer un plan de sobriété énergétique avec suivi des consommations, agents/élus/usagers"
+    },
+    {
+      "axe": "3 Un territoire sobre et producteur d'énergie verte",
+      "cheminAxes": [
+        "3 Un territoire sobre et producteur d'énergie verte",
+        "3.4 Accompagnement des habitants et professionnels"
+      ],
+      "titre": "Faire connaître les conseillers en énergie partagée et les espaces France Rénov'"
+    },
+    {
+      "axe": "3 Un territoire sobre et producteur d'énergie verte",
+      "cheminAxes": [
+        "3 Un territoire sobre et producteur d'énergie verte",
+        "3.4 Accompagnement des habitants et professionnels"
+      ],
+      "titre": "Organiser chaque année un salon de l'habitat avec ateliers sobriété / efficacité / autoconsommation"
+    },
+    {
+      "axe": "3 Un territoire sobre et producteur d'énergie verte",
+      "cheminAxes": [
+        "3 Un territoire sobre et producteur d'énergie verte",
+        "3.4 Accompagnement des habitants et professionnels"
+      ],
+      "titre": "Animer le programme DECLICS auprès de 25 à 50 foyers sur six mois"
+    },
+    {
+      "axe": "3 Un territoire sobre et producteur d'énergie verte",
+      "cheminAxes": [
+        "3 Un territoire sobre et producteur d'énergie verte",
+        "3.5 Ressource et mise en réseau des entreprises"
+      ],
+      "titre": "Organiser des rencontres inter-entreprises thématiques avec les chambres consulaires (répar'acteurs, éco-défis CMA…)"
+    },
+    {
+      "axe": "3 Un territoire sobre et producteur d'énergie verte",
+      "cheminAxes": [
+        "3 Un territoire sobre et producteur d'énergie verte",
+        "3.5 Ressource et mise en réseau des entreprises"
+      ],
+      "titre": "Mettre en place une newsletter thématique transition écologique"
+    },
+    {
+      "axe": "3 Un territoire sobre et producteur d'énergie verte",
+      "cheminAxes": [
+        "3 Un territoire sobre et producteur d'énergie verte",
+        "3.6 Accompagnement de projets d'entreprises"
+      ],
+      "titre": "Faciliter les projets de production d’énergies renouvelables portés par des entreprises (ex. projet Lénéo, méthanisation de pailles à Dangu)"
+    },
+    {
+      "axe": "3 Un territoire sobre et producteur d'énergie verte",
+      "cheminAxes": [
+        "3 Un territoire sobre et producteur d'énergie verte",
+        "3.6 Accompagnement de projets d'entreprises"
+      ],
+      "titre": "Accompagner le montage de projets d'autoconsommation collective entre entreprises"
+    },
+    {
+      "axe": "4 Un territoire soutenant les activités économiques durables",
+      "cheminAxes": [
+        "4 Un territoire soutenant les activités économiques durables",
+        "4.1 Structuration de la filière alimentaire locale"
+      ],
+      "titre": "Élaborer une charte alimentaire territoriale (diagnostic préalable)"
+    },
+    {
+      "axe": "4 Un territoire soutenant les activités économiques durables",
+      "cheminAxes": [
+        "4 Un territoire soutenant les activités économiques durables",
+        "4.1 Structuration de la filière alimentaire locale"
+      ],
+      "titre": "Adhérer au réseau La Charrette et étudier la création d'un magasin de producteurs intercommunal"
+    },
+    {
+      "axe": "4 Un territoire soutenant les activités économiques durables",
+      "cheminAxes": [
+        "4 Un territoire soutenant les activités économiques durables",
+        "4.1 Structuration de la filière alimentaire locale"
+      ],
+      "titre": "Actualiser le recensement des producteurs alimentaires locaux"
+    },
+    {
+      "axe": "4 Un territoire soutenant les activités économiques durables",
+      "cheminAxes": [
+        "4 Un territoire soutenant les activités économiques durables",
+        "4.1 Structuration de la filière alimentaire locale"
+      ],
+      "titre": "Participer à un groupement de commande intercommunal (plusieurs communes) pour l'accès à une alimentation de qualité, en lien avec le projet de cuisine centrale porté par la grande ville voisine"
+    },
+    {
+      "axe": "4 Un territoire soutenant les activités économiques durables",
+      "cheminAxes": [
+        "4 Un territoire soutenant les activités économiques durables",
+        "4.2 Sensibilisation à l'alimentation durable"
+      ],
+      "titre": "Organiser des animations sur l'alimentation durable (fête de la nature, formation Cap Veggie)"
+    },
+    {
+      "axe": "4 Un territoire soutenant les activités économiques durables",
+      "cheminAxes": [
+        "4 Un territoire soutenant les activités économiques durables",
+        "4.3 Réduction à la source et compostage"
+      ],
+      "titre": "Déployer le compostage partagé et individuel"
+    },
+    {
+      "axe": "4 Un territoire soutenant les activités économiques durables",
+      "cheminAxes": [
+        "4 Un territoire soutenant les activités économiques durables",
+        "4.3 Réduction à la source et compostage"
+      ],
+      "titre": "Sensibiliser les cantines et écoles à la lutte contre le gaspillage alimentaire (pesée, défi assiette vide)"
+    },
+    {
+      "axe": "4 Un territoire soutenant les activités économiques durables",
+      "cheminAxes": [
+        "4 Un territoire soutenant les activités économiques durables",
+        "4.4 Valorisation matière et énergie des déchets"
+      ],
+      "titre": "Étudier une boucle de collecte et valorisation locale des biodéchets"
+    },
+    {
+      "axe": "4 Un territoire soutenant les activités économiques durables",
+      "cheminAxes": [
+        "4 Un territoire soutenant les activités économiques durables",
+        "4.4 Valorisation matière et énergie des déchets"
+      ],
+      "titre": "Réaliser une étude sur l'économie circulaire du territoire (cofinancement LEADER, avec Lyons Andelle)"
+    },
+    {
+      "axe": "4 Un territoire soutenant les activités économiques durables",
+      "cheminAxes": [
+        "4 Un territoire soutenant les activités économiques durables",
+        "4.5 Sensibilisation à l'économie circulaire et au réemploi"
+      ],
+      "titre": "Organiser un calendrier annuel d'animations économie circulaire (ateliers réparation, journée dédiée en 2027)"
+    },
+    {
+      "axe": "4 Un territoire soutenant les activités économiques durables",
+      "cheminAxes": [
+        "4 Un territoire soutenant les activités économiques durables",
+        "4.5 Sensibilisation à l'économie circulaire et au réemploi"
+      ],
+      "titre": "Organiser une braderie annuelle de livres avec don des invendus à une structure de l'ESS"
+    },
+    {
+      "axe": "4 Un territoire soutenant les activités économiques durables",
+      "cheminAxes": [
+        "4 Un territoire soutenant les activités économiques durables",
+        "4.5 Sensibilisation à l'économie circulaire et au réemploi"
+      ],
+      "titre": "Distribuer bioseaux et guides du tri, organiser des collectes thématiques"
+    },
+    {
+      "axe": "4 Un territoire soutenant les activités économiques durables",
+      "cheminAxes": [
+        "4 Un territoire soutenant les activités économiques durables",
+        "4.6 Achats durables"
+      ],
+      "titre": "Former les agents et élus à une politique d'achats durables"
+    },
+    {
+      "axe": "4 Un territoire soutenant les activités économiques durables",
+      "cheminAxes": [
+        "4 Un territoire soutenant les activités économiques durables",
+        "4.6 Achats durables"
+      ],
+      "titre": "Mettre en place une politique d'achats durables conforme à la réglementation"
+    },
+    {
+      "axe": "4 Un territoire soutenant les activités économiques durables",
+      "cheminAxes": [
+        "4 Un territoire soutenant les activités économiques durables",
+        "4.7 Synergies inter-entreprises (écologie industrielle et territoriale)"
+      ],
+      "titre": "Mettre en place une stratégie foncière économique cohérente et verte"
+    },
+    {
+      "axe": "4 Un territoire soutenant les activités économiques durables",
+      "cheminAxes": [
+        "4 Un territoire soutenant les activités économiques durables",
+        "4.7 Synergies inter-entreprises (écologie industrielle et territoriale)"
+      ],
+      "titre": "Créer des synergies inter-entreprises pour des boucles locales (newsletter, rencontres inter-entreprises)"
+    },
+    {
+      "axe": "4 Un territoire soutenant les activités économiques durables",
+      "cheminAxes": [
+        "4 Un territoire soutenant les activités économiques durables",
+        "4.7 Synergies inter-entreprises (écologie industrielle et territoriale)"
+      ],
+      "titre": "Mettre Collaborer avec des acteurs de l’économie sociale et solidaire, ESAT, coopératives, SPL et sociétés d’économie mixte"
+    }
+  ]
+}
