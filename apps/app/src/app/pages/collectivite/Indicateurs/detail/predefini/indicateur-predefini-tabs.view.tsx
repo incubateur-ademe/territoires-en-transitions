@@ -5,7 +5,9 @@ import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Tab, Tabs } from '@tet/ui';
 import { IndicateurFichesLiees } from '../content/fiches-liees/indicateur-fiches-liees.view';
 import { useIndicateurData } from '../context/indicateur-data.context';
+import { IndicateurPredefiniComposeDonnees } from './donnees/indicateur-predefini-compose-donnees.view';
 import { IndicateurPredefiniDonnees } from './donnees/indicateur-predefini-donnees.view';
+import { isComposeSansAgregation } from './indicateur-predefini-compose.rules';
 import { IndicateurInformations } from './informations/indicateur-informations.view';
 import { IndicateurMesuresLiees } from './mesures-liees/indicateur-mesures-liees.view';
 import { IndicateurSousIndicateurs } from './sous-indicateurs/indicateur-sous-indicateurs.view';
@@ -17,8 +19,8 @@ export const IndicateurPredefiniTabs = () => {
 
   const { enfants = [], description, mesures } = indicateur;
 
-  const hasSousIndicateursTab =
-    enfants.length > 0 && !indicateur.sansValeurUtilisateur;
+  const isCompose = isComposeSansAgregation(indicateur);
+  const hasSousIndicateursTab = enfants.length > 0 && !isCompose;
   const hasMesuresLieesTab =
     hasCollectivitePermission('referentiels.read') && !isSimplifiedView;
   const hasFichesLieesTab = hasCollectivitePermission('plans.fiches.read');
@@ -27,7 +29,11 @@ export const IndicateurPredefiniTabs = () => {
   return (
     <Tabs tabsListClassName="justify-start flex-nowrap overflow-x-auto">
       <Tab label={appLabels.indicateurOngletDonnees}>
-        <IndicateurPredefiniDonnees />
+        {isCompose ? (
+          <IndicateurPredefiniComposeDonnees />
+        ) : (
+          <IndicateurPredefiniDonnees />
+        )}
       </Tab>
 
       {hasSousIndicateursTab ? (

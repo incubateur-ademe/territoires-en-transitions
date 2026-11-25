@@ -6,6 +6,8 @@ import { IndicateurDataProvider } from '../context/indicateur-data.context';
 import { IndicateurPredefiniTabs } from './indicateur-predefini-tabs.view';
 
 const renderSousIndicateursListe = vi.hoisted(() => vi.fn());
+const renderDonneesParent = vi.hoisted(() => vi.fn());
+const renderDonneesCompose = vi.hoisted(() => vi.fn());
 
 vi.mock('@tet/api/collectivites', () => ({
   useCurrentCollectivite: () => ({
@@ -14,7 +16,16 @@ vi.mock('@tet/api/collectivites', () => ({
   }),
 }));
 vi.mock('./donnees/indicateur-predefini-donnees.view', () => ({
-  IndicateurPredefiniDonnees: () => null,
+  IndicateurPredefiniDonnees: () => {
+    renderDonneesParent();
+    return null;
+  },
+}));
+vi.mock('./donnees/indicateur-predefini-compose-donnees.view', () => ({
+  IndicateurPredefiniComposeDonnees: () => {
+    renderDonneesCompose();
+    return null;
+  },
 }));
 vi.mock('../content/fiches-liees/indicateur-fiches-liees.view', () => ({
   IndicateurFichesLiees: () => null,
@@ -99,5 +110,37 @@ describe('IndicateurPredefiniTabs : onglet des sous-indicateurs', () => {
       enfantsIds: [11, 12],
       isReadonly: true,
     });
+  });
+});
+
+describe('IndicateurPredefiniTabs : indicateur composé sans valeur propre', () => {
+  const toCompose = (): IndicateurDetaille =>
+    ({
+      ...toIndicateur(),
+      identifiantReferentiel: 'emission_polluants_atmo',
+      sansValeurUtilisateur: true,
+    } as IndicateurDetaille);
+
+  it("affiche les sous-indicateurs en tableau dans l'onglet Données, à la place de la liste de cartes", () => {
+    renderDonneesParent.mockClear();
+    renderDonneesCompose.mockClear();
+
+    renderTabs({ indicateur: toCompose() });
+
+    expect(renderDonneesCompose).toHaveBeenCalledTimes(1);
+    expect(renderDonneesParent).not.toHaveBeenCalled();
+    expect(
+      screen.queryByRole('tab', sousIndicateursTab(toCompose()))
+    ).toBeNull();
+  });
+
+  it("garde l'onglet Données habituel pour un parent qui porte ses propres valeurs", () => {
+    renderDonneesParent.mockClear();
+    renderDonneesCompose.mockClear();
+
+    renderTabs({ indicateur: toIndicateur() });
+
+    expect(renderDonneesParent).toHaveBeenCalledTimes(1);
+    expect(renderDonneesCompose).not.toHaveBeenCalled();
   });
 });
