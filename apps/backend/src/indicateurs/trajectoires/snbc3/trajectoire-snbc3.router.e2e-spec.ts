@@ -15,6 +15,7 @@ import {
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { getDataOrThrow } from '@tet/backend/utils/result.type';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite } from '@tet/domain/collectivites';
 import {
@@ -281,18 +282,20 @@ describe('Lecture de la trajectoire SNBC 3 (indicateurs.trajectoires.snbc3)', ()
     });
 
     /** Graphe des trajectoires SNBC 2 et SNBC 3 de cae_1.ca, comme le PPT. */
-    const getGraphe = (trajectoireSnbc3Enabled?: boolean) =>
-      app.get(IndicateurChartService).getIndicateurValeursAndChartData({
-        collectiviteId: epci.id,
-        identifiantReferentiel: 'cae_1.ca',
-        sources: [IndicateurSourceEnum.SNBC, IndicateurSourceEnum.SNBC3].map(
-          (sourceId) => ({
-            sourceId,
-            valeurTypes: [IndicateurValeurTypeEnum.OBJECTIF],
-          })
-        ),
-        trajectoireSnbc3Enabled,
-      });
+    const getGraphe = async (trajectoireSnbc3Enabled?: boolean) =>
+      getDataOrThrow(
+        await app.get(IndicateurChartService).getIndicateurValeursAndChartData({
+          collectiviteId: epci.id,
+          identifiantReferentiel: 'cae_1.ca',
+          sources: [IndicateurSourceEnum.SNBC, IndicateurSourceEnum.SNBC3].map(
+            (sourceId) => ({
+              sourceId,
+              valeurTypes: [IndicateurValeurTypeEnum.OBJECTIF],
+            })
+          ),
+          trajectoireSnbc3Enabled,
+        })
+      );
 
     const sourcesDuGraphe = async (trajectoireSnbc3Enabled?: boolean) => {
       const { indicateurValeurs } = await getGraphe(trajectoireSnbc3Enabled);

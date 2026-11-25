@@ -1,4 +1,9 @@
+import {
+  ForbiddenException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { Test } from '@nestjs/testing';
+import { failure, success } from '@tet/backend/utils/result.type';
 import { IndicateurSourceEnum } from '@tet/domain/indicateurs';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { mkdtempSync, rmSync, writeFileSync } from 'fs';
@@ -177,7 +182,9 @@ describe('PptBuilderService', () => {
       const isEnabled = vi.fn().mockResolvedValue(isSnbc3Enabled);
       service.trajectoireSnbc3FeatureFlag.isTrajectoireSnbc3EnabledForUserId =
         isEnabled;
-      const getChartData = vi.fn().mockResolvedValue({ chartData: {} });
+      const getChartData = vi
+        .fn()
+        .mockResolvedValue(success({ chartData: {} }));
       service.indicateurChartService.getIndicateurValeursAndChartData =
         getChartData;
       vi.spyOn(service, 'addSlide').mockImplementation(() => undefined);
@@ -222,5 +229,109 @@ describe('PptBuilderService', () => {
         }
       }
     );
+  });
+
+  describe('échec de lecture du graphique d’indicateur', () => {
+    it('relance un refus de lecture en ForbiddenException dans les données territoriales', async () => {
+      const service = pptBuilderService as any;
+      service.trajectoireSnbc3FeatureFlag.isTrajectoireSnbc3EnabledForUserId =
+        vi.fn().mockResolvedValue(false);
+      service.indicateurChartService.getIndicateurValeursAndChartData = vi
+        .fn()
+        .mockResolvedValue(
+          failure('UNAUTHORIZED', new Error('Droits insuffisants'))
+        );
+      vi.spyOn(service, 'addSlide').mockImplementation(() => undefined);
+
+      await expect(
+        service.addDonneesTerritorialesSlides({
+          collectivite: { id: 42 },
+          userId: 'user-id',
+        })
+      ).rejects.toEqual(
+        expect.objectContaining({
+          constructor: ForbiddenException,
+          message: 'Droits insuffisants',
+        })
+      );
+    });
+
+    it('relance une lecture en échec en InternalServerErrorException pour le graphique d’une fiche', async () => {
+      const service = pptBuilderService as any;
+      const cause = new Error('connexion perdue');
+      service.indicateurChartService.getIndicateurValeursAndChartData = vi
+        .fn()
+        .mockResolvedValue(failure('DATABASE_ERROR', cause));
+
+      await expect(
+        service.writeIndicateurChartImageFileAndLoadMedia({
+          indicateurId: 10,
+          collectivite: { id: 42 },
+          personnalisationReponses: {},
+          chartSize: { width: 100, height: 100 },
+        })
+      ).rejects.toEqual(
+        expect.objectContaining({
+          constructor: InternalServerErrorException,
+          message: 'connexion perdue',
+          cause,
+        })
+      );
+    });
+
+    it('remonte PPT_BUILDER_ERROR avec l’exception relancée quand le graphique échoue pendant la génération', async () => {
+      const service = pptBuilderService as any;
+      const mediaDir = mkdtempSync(path.join(tmpdir(), 'plan-report-'));
+      const outputDir = mkdtempSync(path.join(tmpdir(), 'plan-report-out-'));
+      onTestFinished(() => {
+        rmSync(mediaDir, { recursive: true, force: true });
+        rmSync(outputDir, { recursive: true, force: true });
+      });
+      vi.spyOn(service, 'getPlanData').mockResolvedValue(
+        success({
+          plan: { id: 1, type: { type: service.PCAET_TYPE } },
+          axes: [],
+          sousAxesByAxe: {},
+          fiches: [],
+          planGeneralInfo: {},
+          collectivite: { id: 42 },
+          personnalisationReponses: {},
+        })
+      );
+      vi.spyOn(service, 'loadCollectiviteLogo').mockResolvedValue(
+        success(null)
+      );
+      vi.spyOn(service, 'addSlide').mockImplementation(() => undefined);
+      vi.spyOn(service, 'addPlanSummarySlide').mockResolvedValue(undefined);
+      vi.spyOn(service, 'addPlanProgressSlide').mockResolvedValue([]);
+      service.trajectoireSnbc3FeatureFlag.isTrajectoireSnbc3EnabledForUserId =
+        vi.fn().mockResolvedValue(false);
+      service.indicateurChartService.getIndicateurValeursAndChartData = vi
+        .fn()
+        .mockResolvedValue(
+          failure('UNAUTHORIZED', new Error('Droits insuffisants'))
+        );
+
+      const result = await pptBuilderService.buildPresentation({
+        mediaDir,
+        outputDir,
+        reportName: 'rapport.pptx',
+        templateConfig: {
+          templatePath: 'template_bilan.pptx',
+          key: 'bilan',
+        } as never,
+        request: { planId: 1 } as never,
+        userId: 'user-id',
+      });
+
+      expect(result).toEqual({
+        success: false,
+        error: 'PPT_BUILDER_ERROR',
+        cause: expect.objectContaining({
+          constructor: ForbiddenException,
+          message: 'Droits insuffisants',
+        }),
+      });
+    });
   });
 });

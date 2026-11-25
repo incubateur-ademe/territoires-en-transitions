@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import PersonnalisationsService from '@tet/backend/collectivites/personnalisations/services/personnalisations-service';
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
+import { getIndicateurChartDataOrThrow } from '@tet/backend/indicateurs/charts/indicateur-chart.errors';
 import { IndicateurChartService } from '@tet/backend/indicateurs/charts/indicateur-chart.service';
 import { TrajectoireSnbc3FeatureFlagService } from '@tet/backend/indicateurs/trajectoires/trajectoire-snbc3-feature-flag.service';
 import { EchartsService } from '@tet/backend/utils/echarts/echarts.service';
@@ -1582,14 +1583,15 @@ export class PptBuilderService {
     const charts = await Promise.all(
       this.getDonneesTerritorialesIndicateurs(isSnbc3Enabled).map(
         async (configuration) => {
-          const { chartData } =
+          const { chartData } = getIndicateurChartDataOrThrow(
             await this.indicateurChartService.getIndicateurValeursAndChartData({
               collectiviteId: args.collectivite.id,
               identifiantReferentiel: configuration.identifiantReferentiel,
               sources: configuration.sources,
               includeSegmentation: configuration.segmentation,
               trajectoireSnbc3Enabled: isSnbc3Enabled,
-            });
+            })
+          );
           return {
             configuration,
             chartData,
@@ -1735,7 +1737,7 @@ export class PptBuilderService {
       chartSize,
     } = args;
 
-    const { chartData, indicateurValeurs } =
+    const { chartData, indicateurValeurs } = getIndicateurChartDataOrThrow(
       await this.indicateurChartService.getIndicateurValeursAndChartData({
         collectiviteId: collectivite.id,
         indicateurId,
@@ -1745,7 +1747,8 @@ export class PptBuilderService {
         includeMoyenne: false,
         includeSegmentation: {},
         chartSize,
-      });
+      })
+    );
 
     const buffer = await this.echartsService.renderToPngBuffer({
       width: chartSize.width,
