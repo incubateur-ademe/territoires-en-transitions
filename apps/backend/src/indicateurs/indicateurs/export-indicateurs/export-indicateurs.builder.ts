@@ -11,10 +11,11 @@ import {
   BOLD,
 } from '../../../utils/excel/export-excel.utils';
 
-type EnfantRow = {
+export type EnfantRow = {
   id: number;
   identifiantReferentiel: string | null;
   titre: string;
+  enfants?: EnfantRow[];
 };
 
 type RowData = EnfantRow & {
@@ -24,6 +25,7 @@ type RowData = EnfantRow & {
   commentaire: string | null;
   /** Remplit la troisième colonne d'une ligne sans indicateur parent. */
   categorie?: string;
+  depth?: number;
 };
 
 export type ParentRow = RowData & {
@@ -105,23 +107,17 @@ export function buildConsolidatedSheet(
       withMetaColumns
     );
 
-    for (const enfant of parent.enfants ?? []) {
-      addIndicateurRows(
-        worksheet,
-        {
-          ...enfant,
-          unite: parent.unite, // héritage de l'unité du parent
-          pilotes: [],
-          services: [],
-          commentaire: null,
-        },
-        parent.titre,
-        periods,
-        valeursByIndicateurId,
-        sourceLabels,
-        withMetaColumns
-      );
-    }
+    addDescendantRows({
+      worksheet,
+      enfants: parent.enfants ?? [],
+      parentTitre: parent.titre,
+      unite: parent.unite,
+      depth: 1,
+      periods,
+      valeursByIndicateurId,
+      sourceLabels,
+      withMetaColumns,
+    });
   }
 
   worksheet.getRow(1).font = BOLD;
@@ -131,6 +127,58 @@ export function buildConsolidatedSheet(
 }
 
 // --- helpers privés ---
+
+function addDescendantRows({
+  worksheet,
+  enfants,
+  parentTitre,
+  unite,
+  depth,
+  periods,
+  valeursByIndicateurId,
+  sourceLabels,
+  withMetaColumns,
+}: {
+  worksheet: Worksheet;
+  enfants: EnfantRow[];
+  parentTitre: string;
+  unite: string;
+  depth: number;
+  periods: PeriodsByType;
+  valeursByIndicateurId: Map<number, IndicateurValeurs>;
+  sourceLabels: Map<string, string>;
+  withMetaColumns: boolean;
+}): void {
+  for (const enfant of enfants) {
+    addIndicateurRows(
+      worksheet,
+      {
+        ...enfant,
+        unite,
+        pilotes: [],
+        services: [],
+        commentaire: null,
+        depth,
+      },
+      parentTitre,
+      periods,
+      valeursByIndicateurId,
+      sourceLabels,
+      withMetaColumns
+    );
+    addDescendantRows({
+      worksheet,
+      enfants: enfant.enfants ?? [],
+      parentTitre: enfant.titre,
+      unite,
+      depth: depth + 1,
+      periods,
+      valeursByIndicateurId,
+      sourceLabels,
+      withMetaColumns,
+    });
+  }
+}
 
 const valeurPeriod = (
   valeur: IndicateurValeurAvecMetadonnesDefinition
@@ -281,7 +329,9 @@ function addValeursRow(
     }
   }
 
-  const titre = parentTitre ? `  ${indicator.titre}` : indicator.titre;
+  const titre = parentTitre
+    ? `${'  '.repeat(indicator.depth ?? 1)}${indicator.titre}`
+    : indicator.titre;
 
   worksheet.addRow([
     indicator.identifiantReferentiel ?? String(indicator.id),
