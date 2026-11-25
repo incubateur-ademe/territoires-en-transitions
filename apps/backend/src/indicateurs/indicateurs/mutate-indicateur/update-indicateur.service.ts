@@ -294,7 +294,10 @@ export class UpdateIndicateurService {
       void,
       UpdateIndicateurError | Error
     >(async (tx) => {
-      if (unite !== undefined) {
+      if (
+        unite !== undefined ||
+        totalEstCumulDesSousIndicateurs !== undefined
+      ) {
         await this.indicateurLockRepository.lockForIndicateurMutation(tx);
       }
       const lockedIndicateur = await this.repository.lockIndicateurNature(
@@ -383,6 +386,13 @@ export class UpdateIndicateurService {
       if (uniteToPropagate !== null) {
         await this.repository.updateDescendantsUnite(
           { indicateurId, collectiviteId, unite: uniteToPropagate },
+          tx
+        );
+      }
+
+      if (totalEstCumulDesSousIndicateurs !== undefined) {
+        await this.repository.updateDescendantsTotalEstCumul(
+          { indicateurId, collectiviteId, totalEstCumulDesSousIndicateurs },
           tx
         );
       }

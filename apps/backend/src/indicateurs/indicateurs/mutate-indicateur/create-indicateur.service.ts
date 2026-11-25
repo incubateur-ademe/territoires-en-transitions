@@ -24,6 +24,7 @@ import { MutateIndicateurRepository } from './mutate-indicateur.repository';
 type IndicateurShape = Readonly<{
   unite: string;
   periodicite: IndicateurPeriodicite;
+  totalEstCumulDesSousIndicateurs?: boolean;
   parent: IndicateurInGroup | null;
   estConfidentiel: boolean;
   datesToMove: readonly string[];
@@ -78,8 +79,14 @@ export default class CreateIndicateurService {
       if (!shapeResult.success) {
         return failure(shapeResult.error);
       }
-      const { unite, periodicite, parent, estConfidentiel, datesToMove } =
-        shapeResult.data;
+      const {
+        unite,
+        periodicite,
+        totalEstCumulDesSousIndicateurs,
+        parent,
+        estConfidentiel,
+        datesToMove,
+      } = shapeResult.data;
 
       const createdResult = await this.repository.createIndicateurPerso(
         {
@@ -87,6 +94,7 @@ export default class CreateIndicateurService {
           titre: input.titre,
           unite,
           periodicite,
+          totalEstCumulDesSousIndicateurs,
           thematiqueIds: input.thematiques.map(({ id }) => id),
           commentaire: input.commentaire,
           estFavori: input.estFavori,
@@ -201,6 +209,7 @@ export default class CreateIndicateurService {
     return success({
       unite: parent.unite,
       periodicite: parent.periodicite,
+      totalEstCumulDesSousIndicateurs: parent.totalEstCumulDesSousIndicateurs,
       parent,
       estConfidentiel,
       datesToMove,

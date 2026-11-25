@@ -11,7 +11,7 @@ import type {
   IndicateurNatureFields,
   IndicateurPeriodicite,
 } from '@tet/domain/indicateurs';
-import { and, eq, inArray, isNotNull, isNull, or, sql } from 'drizzle-orm';
+import { and, eq, inArray, isNotNull, isNull, ne, or, sql } from 'drizzle-orm';
 import { indicateurGroupeTable } from '../../shared/models/indicateur-groupe.table';
 import { indicateurThematiqueTable } from '../../shared/models/indicateur-thematique.table';
 import { indicateurCollectiviteTable } from '../../indicateur/indicateur-collectivite.table';
@@ -28,6 +28,7 @@ type CreateIndicateurPerso = Readonly<{
   titre: string;
   unite: string;
   periodicite: IndicateurPeriodicite;
+  totalEstCumulDesSousIndicateurs?: boolean;
   thematiqueIds: number[];
   commentaire?: string;
   estFavori: boolean;
@@ -35,6 +36,9 @@ type CreateIndicateurPerso = Readonly<{
   isApplicable: boolean;
   modifiedBy: string;
 }>;
+
+export type IndicateurInGroupWithCumul = IndicateurInGroup &
+  Readonly<{ totalEstCumulDesSousIndicateurs: boolean }>;
 
 type UpdateCollectiviteFields = IndicateurPersoKey &
   Readonly<{
@@ -87,6 +91,7 @@ export class MutateIndicateurRepository {
         titre: input.titre,
         unite: input.unite,
         periodicite: input.periodicite,
+        totalEstCumulDesSousIndicateurs: input.totalEstCumulDesSousIndicateurs,
       })
       .returning({ id: indicateurDefinitionTable.id });
 
@@ -142,13 +147,15 @@ export class MutateIndicateurRepository {
       collectiviteId,
     }: { indicateurId: number; collectiviteId: number },
     tx: Transaction
-  ): Promise<IndicateurInGroup | null> {
+  ): Promise<IndicateurInGroupWithCumul | null> {
     const [indicateur] = await tx
       .select({
         id: indicateurDefinitionTable.id,
         collectiviteId: indicateurDefinitionTable.collectiviteId,
         unite: indicateurDefinitionTable.unite,
         periodicite: indicateurDefinitionTable.periodicite,
+        totalEstCumulDesSousIndicateurs:
+          indicateurDefinitionTable.totalEstCumulDesSousIndicateurs,
       })
       .from(indicateurDefinitionTable)
       .where(
@@ -206,15 +213,11 @@ export class MutateIndicateurRepository {
     return rows.map(({ id }) => ({ id, parentId }));
   }
 
-  async updateDescendantsUnite(
-    {
-      indicateurId,
-      collectiviteId,
-      unite,
-    }: { indicateurId: number; collectiviteId: number; unite: string },
-    tx: Transaction
-  ): Promise<void> {
-    const descendantIdsQuery = sql`(
+  private listDescendantIdsQuery({
+    indicateurId,
+    collectiviteId,
+  }: IndicateurPersoKey) {
+    return sql`(
       WITH RECURSIVE descendants AS (
         SELECT ${indicateurGroupeTable.enfant} AS id
         FROM ${indicateurGroupeTable}
@@ -232,15 +235,57 @@ export class MutateIndicateurRepository {
       )
       SELECT id FROM descendants
     )`;
+  }
 
+  async updateDescendantsUnite(
+    {
+      indicateurId,
+      collectiviteId,
+      unite,
+    }: { indicateurId: number; collectiviteId: number; unite: string },
+    tx: Transaction
+  ): Promise<void> {
     await tx
       .update(indicateurDefinitionTable)
       .set({ unite })
       .where(
         and(
           eq(indicateurDefinitionTable.collectiviteId, collectiviteId),
-          inArray(indicateurDefinitionTable.id, descendantIdsQuery),
+          inArray(
+            indicateurDefinitionTable.id,
+            this.listDescendantIdsQuery({ indicateurId, collectiviteId })
+          ),
           sql`${indicateurDefinitionTable.unite} IS DISTINCT FROM ${unite}`
+        )
+      );
+  }
+
+  async updateDescendantsTotalEstCumul(
+    {
+      indicateurId,
+      collectiviteId,
+      totalEstCumulDesSousIndicateurs,
+    }: {
+      indicateurId: number;
+      collectiviteId: number;
+      totalEstCumulDesSousIndicateurs: boolean;
+    },
+    tx: Transaction
+  ): Promise<void> {
+    await tx
+      .update(indicateurDefinitionTable)
+      .set({ totalEstCumulDesSousIndicateurs })
+      .where(
+        and(
+          eq(indicateurDefinitionTable.collectiviteId, collectiviteId),
+          inArray(
+            indicateurDefinitionTable.id,
+            this.listDescendantIdsQuery({ indicateurId, collectiviteId })
+          ),
+          ne(
+            indicateurDefinitionTable.totalEstCumulDesSousIndicateurs,
+            totalEstCumulDesSousIndicateurs
+          )
         )
       );
   }
