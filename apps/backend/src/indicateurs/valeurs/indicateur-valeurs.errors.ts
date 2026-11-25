@@ -1,6 +1,5 @@
-import { BadRequestException, ForbiddenException } from '@nestjs/common';
-import { failure, Result, success } from '@tet/backend/utils/result.type';
-import { isFailedResult } from '@tet/backend/utils/transaction/transaction-manager.service';
+import { AuthRole } from '@tet/backend/users/models/auth.models';
+import { failure, Result } from '@tet/backend/utils/result.type';
 import { CommonError } from '@tet/backend/utils/trpc/common-errors';
 import { TrpcErrorHandlerConfig } from '@tet/backend/utils/trpc/trpc-error-handler';
 import type { IndicateurPeriodicite } from '@tet/domain/indicateurs';
@@ -8,7 +7,6 @@ import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { match } from 'ts-pattern';
 import type { ListIndicateursError } from '../indicateurs/list-indicateurs/list-indicateurs.errors';
 import type { IndicateurValeursReadDenial } from './indicateur-valeurs-read-access.service';
-import { UserIndicateurValeurNotAllowedException } from './write-indicateur-valeurs/user-indicateur-valeur.errors';
 
 const indicateurValeursErrors = [
   'UNAUTHORIZED',
@@ -106,6 +104,14 @@ export const toMutatePermissionDeniedFailure = ({
     )
   );
 
+export const toServiceRoleRequiredFailure = (): Result<never, 'UNAUTHORIZED'> =>
+  failure(
+    'UNAUTHORIZED',
+    new Error(
+      `Droits insuffisants, l'utilisateur n'a pas le rôle ${AuthRole.SERVICE_ROLE}`
+    )
+  );
+
 export const toReadValeursDeniedFailure = ({
   userId,
   collectiviteId,
@@ -162,42 +168,6 @@ export const fromListIndicateursFailure = ({
   cause?: Error;
 }): Result<never, IndicateurValeursError> =>
   failure(indicateurValeursErrorByListError[error], cause);
-
-export function toIndicateurValeursFailure(
-  error: unknown
-): Result<never, IndicateurValeursError> {
-  if (isFailedResult<IndicateurValeursError>(error)) return error;
-  const code =
-    error instanceof UserIndicateurValeurNotAllowedException
-      ? 'USER_VALUE_NOT_ALLOWED'
-      : error instanceof ForbiddenException
-      ? 'UNAUTHORIZED'
-      : error instanceof BadRequestException
-      ? 'INVALID_VALUE'
-      : 'DATABASE_ERROR';
-  return failure(
-    code,
-    error instanceof Error ? error : new Error(String(error))
-  );
-}
-
-/** Preserve the legacy cause while application services expose typed results. */
-export async function captureIndicateurValeursResult<T>(
-  operation: () => Promise<T>
-): Promise<Result<T, IndicateurValeursError>> {
-  try {
-    return success(await operation());
-  } catch (error) {
-    return toIndicateurValeursFailure(error);
-  }
-}
-
-export async function captureIndicateurValeursResultOf<Data>(
-  operation: () => Promise<Result<Data, IndicateurValeursError>>
-): Promise<Result<Data, IndicateurValeursError>> {
-  const captured = await captureIndicateurValeursResult(operation);
-  return captured.success ? captured.data : captured;
-}
 
 export function getIndicateurValeursDataOrThrow<T>(
   result: Result<T, IndicateurValeursError>

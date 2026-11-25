@@ -1,6 +1,5 @@
 import { TrajectoireSnbc3FeatureFlagService } from '@tet/backend/indicateurs/trajectoires/trajectoire-snbc3-feature-flag.service';
 import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
-import { ForbiddenException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import ComputeValeursService from '@tet/backend/indicateurs/valeurs/compute-indicateur-valeurs/compute-valeurs.service';
 import { GetUserRolesAndPermissionsService } from '@tet/backend/users/authorizations/get-user-roles-and-permissions/get-user-roles-and-permissions.service';
@@ -196,11 +195,14 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
             userId: user.id,
           });
         } else {
-          expect(result).toMatchObject({
-            success: false,
-            error: 'UNAUTHORIZED',
-            cause: expect.any(ForbiddenException),
-          });
+          expect(result).toEqual(
+            failure(
+              'UNAUTHORIZED',
+              new Error(
+                "Droits insuffisants, la clé d'api n'a pas l'autorisation indicateurs.valeurs.mutate."
+              )
+            )
+          );
           expect(getUserRolesAndPermissions).not.toHaveBeenCalled();
         }
       }
@@ -1719,10 +1721,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
           canMutateValeur: vi
             .fn()
             .mockResolvedValue(
-              failure(
-                'UNAUTHORIZED',
-                new ForbiddenException('Droits insuffisants')
-              )
+              failure('UNAUTHORIZED', new Error('Droits insuffisants'))
             ),
         });
 
@@ -2513,6 +2512,122 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
       expect(
         computeValeursService.reconcileDeletedIndicateurValeurs
       ).toHaveBeenCalledWith([candidate], tx);
+    });
+  });
+
+  describe('recomputeAllCalculatedIndicateurValeurs, rôle de service', () => {
+    it('refuse un utilisateur sans le rôle de service, sans rien recalculer', async () => {
+      const recomputeAll = vi.spyOn(
+        ReconcileIndicateurValeursService.prototype,
+        'recomputeAll'
+      );
+      const service = createManageIndicateurValeursService(
+        {} as never,
+        new PermissionService({} as never, {} as never, {} as never),
+        {} as never,
+        {} as never,
+        {} as never,
+        {} as never,
+        {} as never,
+        {} as never,
+        {} as never,
+        {} as never,
+        {} as never,
+        {} as never
+      );
+      const user = buildRequesterUser('00000000-0000-0000-0000-000000000001');
+
+      const result = await service.recomputeAllCalculatedIndicateurValeurs(
+        undefined,
+        user
+      );
+
+      expect(result).toEqual(
+        failure(
+          'UNAUTHORIZED',
+          new Error(
+            "Droits insuffisants, l'utilisateur n'a pas le rôle service_role"
+          )
+        )
+      );
+      expect(recomputeAll).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('deleteIndicateurValeurs, échecs imprévus', () => {
+    it.each([
+      {
+        label: 'une Error brute du manager, sans cause',
+        rawError: new Error('échec du commit'),
+        expectedCause: new Error('échec du commit'),
+      },
+      {
+        label: 'une valeur brute qui n’est pas une Error',
+        rawError: 'commit refusé',
+        expectedCause: new Error('commit refusé'),
+      },
+    ])(
+      'convertit $label en DATABASE_ERROR portant la cause',
+      async ({ rawError, expectedCause }) => {
+        const transactionManager = {
+          executeSingle: vi
+            .fn()
+            .mockResolvedValue({ success: false, error: rawError }),
+        };
+        const service = createManageIndicateurValeursService(
+          {} as never,
+          {} as never,
+          {} as never,
+          {} as never,
+          {} as never,
+          {} as never,
+          {} as never,
+          {} as never,
+          {} as never,
+          {} as never,
+          {} as never,
+          transactionManager as never
+        );
+
+        const result = await service.deleteIndicateurValeurs({
+          collectiviteId: 1,
+          metadonneeId: 2,
+        });
+
+        expect(result).toEqual(failure('DATABASE_ERROR', expectedCause));
+      }
+    );
+
+    it('convertit une exception de la transaction en DATABASE_ERROR', async () => {
+      const cause = new Error('connexion perdue');
+      const transactionManager = createTransactionManager({});
+      const repository = {
+        listValeursToDelete: vi.fn().mockRejectedValue(cause),
+      };
+      const indicateurLockRepository = {
+        lockForValueWrite: vi.fn().mockResolvedValue(undefined),
+      };
+      const service = createManageIndicateurValeursService(
+        repository as never,
+        {} as never,
+        {} as never,
+        {} as never,
+        {} as never,
+        {} as never,
+        {} as never,
+        {} as never,
+        {} as never,
+        {} as never,
+        indicateurLockRepository as never,
+        transactionManager as never
+      );
+
+      const result = await service.deleteIndicateurValeurs({
+        collectiviteId: 1,
+        metadonneeId: 2,
+      });
+
+      expect(result).toEqual(failure('DATABASE_ERROR', cause));
     });
   });
 });
