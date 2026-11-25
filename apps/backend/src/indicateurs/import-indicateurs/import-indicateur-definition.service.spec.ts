@@ -269,6 +269,27 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
     );
   });
 
+  test("importe un indicateur prédéfini sans cumul des sous-indicateurs", async () => {
+    listIndicateursPredefinisRepository.listIndicateursPredefinis.mockResolvedValue(
+      success([])
+    );
+
+    await importIndicateurDefinitionService.upsertIndicateurDefinitions([
+      sampleImportIndicateurDefinition,
+    ]);
+
+    expect(importRepository.upsertDefinitions).toHaveBeenCalledWith(
+      [
+        expect.objectContaining({
+          identifiantReferentiel:
+            sampleImportIndicateurDefinition.identifiantReferentiel,
+          totalEstCumulDesSousIndicateurs: false,
+        }),
+      ],
+      transaction
+    );
+  });
+
   test("refuse un import dont l'instantané de périodicité a changé avant le verrou exclusif", async () => {
     const monthlyDefinition = cloneDeep(sampleImportIndicateurDefinition);
     monthlyDefinition.periodicite = 'mensuelle';

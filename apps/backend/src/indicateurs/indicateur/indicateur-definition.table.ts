@@ -58,7 +58,7 @@ export const indicateurDefinitionTable = pgTable(
     totalEstCumulDesSousIndicateurs: boolean(
       'total_est_cumul_des_sous_indicateurs'
     )
-      .default(true)
+      .default(false)
       .notNull(),
     createdAt,
     modifiedAt,

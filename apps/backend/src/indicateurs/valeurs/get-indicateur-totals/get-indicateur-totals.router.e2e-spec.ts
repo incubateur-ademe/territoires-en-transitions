@@ -65,12 +65,10 @@ describe('Totaux des sous-indicateurs', () => {
       unite: 't',
       estConfidentiel: parentIsConfidentiel,
     });
-    if (precision !== undefined) {
-      await databaseService.db
-        .update(indicateurDefinitionTable)
-        .set({ precision })
-        .where(eq(indicateurDefinitionTable.id, parentId));
-    }
+    await databaseService.db
+      .update(indicateurDefinitionTable)
+      .set({ totalEstCumulDesSousIndicateurs: true, precision })
+      .where(eq(indicateurDefinitionTable.id, parentId));
     const firstSousIndicateurId = await caller.indicateurs.indicateurs.create({
       collectiviteId: collectivite.id,
       titre: 'Ordures ménagères',
@@ -377,8 +375,8 @@ describe('Totaux des sous-indicateurs', () => {
       const ecoleId = await createSousIndicateur('École', communauxId);
       await caller.indicateurs.indicateurs.update({
         collectiviteId: collectivite.id,
-        indicateurId: communauxId,
-        indicateurFields: { totalEstCumulDesSousIndicateurs: false },
+        indicateurId: parentId,
+        indicateurFields: { totalEstCumulDesSousIndicateurs: true },
       });
 
       const saveResultat = (indicateurId: number, resultat: number) =>

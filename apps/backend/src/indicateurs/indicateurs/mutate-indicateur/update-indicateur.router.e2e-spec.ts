@@ -507,7 +507,7 @@ describe('UpdateIndicateurRouter', () => {
       expect(dbIndicateur[0].unite).toBe(updateData.indicateurFields.unite);
     });
 
-    test('le total d’un indicateur perso est le cumul de ses sous-indicateurs à sa création, puis il décoche ce cumul', async () => {
+    test('le total d’un indicateur perso n’est pas le cumul de ses sous-indicateurs à sa création, puis il coche ce cumul', async () => {
       const caller = router.createCaller({ user: authenticatedUser });
       const indicateurId = await createIndicateurPerso({
         caller,
@@ -526,15 +526,15 @@ describe('UpdateIndicateurRouter', () => {
           .where(eq(indicateurDefinitionTable.id, indicateurId));
         return indicateur.totalEstCumulDesSousIndicateurs;
       };
-      expect(await readTotalEstCumulDesSousIndicateurs()).toBe(true);
+      expect(await readTotalEstCumulDesSousIndicateurs()).toBe(false);
 
       await caller.indicateurs.indicateurs.update({
         indicateurId,
         collectiviteId: collectivite.id,
-        indicateurFields: { totalEstCumulDesSousIndicateurs: false },
+        indicateurFields: { totalEstCumulDesSousIndicateurs: true },
       });
 
-      expect(await readTotalEstCumulDesSousIndicateurs()).toBe(false);
+      expect(await readTotalEstCumulDesSousIndicateurs()).toBe(true);
     });
 
     test('rejects a periodicity change before the first value', async () => {
@@ -1373,7 +1373,7 @@ describe('UpdateIndicateurRouter', () => {
         caller.indicateurs.indicateurs.update({
           indicateurId: indicateur.id,
           collectiviteId: collectivite.id,
-          indicateurFields: { totalEstCumulDesSousIndicateurs: false },
+          indicateurFields: { totalEstCumulDesSousIndicateurs: true },
         })
       ).rejects.toThrow(/non trouvé/);
 
@@ -1384,7 +1384,7 @@ describe('UpdateIndicateurRouter', () => {
         })
         .from(indicateurDefinitionTable)
         .where(eq(indicateurDefinitionTable.id, indicateur.id));
-      expect(unchanged.totalEstCumulDesSousIndicateurs).toBe(true);
+      expect(unchanged.totalEstCumulDesSousIndicateurs).toBe(false);
     });
 
     test('refuse un indicateur personnalisé appartenant à une autre collectivité', async () => {

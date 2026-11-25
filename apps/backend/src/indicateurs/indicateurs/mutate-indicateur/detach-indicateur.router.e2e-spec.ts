@@ -51,6 +51,11 @@ describe('DetachIndicateurRouter', () => {
       titre: 'Déchets ménagers',
       unite: 't',
     });
+    await caller.indicateurs.indicateurs.update({
+      collectiviteId: collectivite.id,
+      indicateurId: parentId,
+      indicateurFields: { totalEstCumulDesSousIndicateurs: true },
+    });
     const sousIndicateurId = await caller.indicateurs.indicateurs.create({
       collectiviteId: collectivite.id,
       titre: 'Ordures ménagères',

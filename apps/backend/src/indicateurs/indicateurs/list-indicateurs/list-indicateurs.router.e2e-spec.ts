@@ -208,15 +208,15 @@ describe('ListIndicateursRouter', () => {
         return indicateurDetailleSchema.parse(data[0]);
       };
 
-      expect((await listRacine()).totalEstCumulDesSousIndicateurs).toBe(true);
+      expect((await listRacine()).totalEstCumulDesSousIndicateurs).toBe(false);
 
       await caller.indicateurs.indicateurs.update({
         collectiviteId: collectivite.id,
         indicateurId: racineId,
-        indicateurFields: { totalEstCumulDesSousIndicateurs: false },
+        indicateurFields: { totalEstCumulDesSousIndicateurs: true },
       });
 
-      expect((await listRacine()).totalEstCumulDesSousIndicateurs).toBe(false);
+      expect((await listRacine()).totalEstCumulDesSousIndicateurs).toBe(true);
     });
 
     test("n'affiche que les racines d'une collectivité avec le seul filtre estPerso, pas leurs sous-indicateurs", async () => {

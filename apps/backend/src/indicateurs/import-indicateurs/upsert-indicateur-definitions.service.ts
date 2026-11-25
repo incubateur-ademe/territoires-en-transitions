@@ -155,9 +155,10 @@ export class UpsertIndicateurDefinitionsService {
             tx
           );
           const created = await this.repository.upsertDefinitions(
-            imported.map((definition) =>
-              omit(definition, ['categories', 'thematiques', 'parents'])
-            ),
+            imported.map((definition) => ({
+              ...omit(definition, ['categories', 'thematiques', 'parents']),
+              totalEstCumulDesSousIndicateurs: false,
+            })),
             tx
           );
           const relations = await this.relations.replace(
