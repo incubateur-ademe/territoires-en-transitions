@@ -348,3 +348,54 @@ describe('buildConsolidatedSheet — sans colonnes de métadonnées', () => {
     ]);
   });
 });
+
+describe('buildConsolidatedSheet — descendants', () => {
+  const racine = {
+    ...parent,
+    enfants: [
+      {
+        id: 2,
+        identifiantReferentiel: 'cae_1.a',
+        titre: 'Enfant',
+        enfants: [
+          { id: 3, identifiantReferentiel: 'cae_1.a.1', titre: 'Petit-enfant' },
+        ],
+      },
+    ],
+  };
+
+  const getRows = () => {
+    const workbook = new Workbook();
+    buildConsolidatedSheet(workbook, [racine], []);
+    const ws = workbook.getWorksheet(1);
+    if (!ws) throw new Error('Worksheet not found');
+    return [2, 3, 4].map((rowNumber) => ({
+      identifiant: ws.getRow(rowNumber).getCell(1).value,
+      titre: ws.getRow(rowNumber).getCell(2).value,
+      parent: ws.getRow(rowNumber).getCell(3).value,
+      unite: ws.getRow(rowNumber).getCell(4).value,
+    }));
+  };
+
+  it('exporte les petits-enfants après leur parent, avec ce parent dans la colonne « Indicateur parent »', () => {
+    expect(
+      getRows().map(({ identifiant, parent: nom }) => [identifiant, nom])
+    ).toEqual([
+      ['cae_1', ''],
+      ['cae_1.a', 'Indicateur test'],
+      ['cae_1.a.1', 'Enfant'],
+    ]);
+  });
+
+  it('indente davantage chaque niveau de descendants', () => {
+    expect(getRows().map(({ titre }) => titre)).toEqual([
+      'Indicateur test',
+      '  Enfant',
+      '    Petit-enfant',
+    ]);
+  });
+
+  it("reprend l'unité de la racine pour tous les descendants", () => {
+    expect(getRows().map(({ unite }) => unite)).toEqual(['kg', 'kg', 'kg']);
+  });
+});
