@@ -3,6 +3,7 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
+  InternalServerErrorException,
   Logger,
   UnprocessableEntityException,
 } from '@nestjs/common';
@@ -12,12 +13,10 @@ import PersonnalisationsExpressionService from '@tet/backend/collectivites/perso
 import { verifyPersonnalisationExpressionReferences } from '@tet/backend/collectivites/personnalisations/services/verify-personnalisation-expression-references';
 import type { QuestionWithChoices } from '@tet/domain/collectivites';
 import { DEFAULT_ROUNDING_PRECISION } from '../valeurs/valeurs.constants';
-import { getDataOrThrow } from '@tet/backend/utils/result.type';
 import VersionService from '@tet/backend/utils/version/version.service';
 import BaseSpreadsheetImporterService from '../../shared/services/base-spreadsheet-importer.service';
 import ConfigurationService from '../../utils/config/configuration.service';
 import SheetService from '../../utils/google-sheets/sheet.service';
-import { getIndicateurDataOrThrow } from '../indicateur/indicateur-nature.utils';
 import { ListIndicateursPredefinisRepository } from '../indicateurs/list-indicateurs-predefinis/list-indicateurs-predefinis.repository';
 import IndicateurExpressionService from '../valeurs/indicateur-expression.service';
 import {
@@ -37,7 +36,6 @@ import type {
   UpsertIndicateurDefinitionsResult,
 } from './import-indicateur-definition.types';
 import { mapIndicateurObjectifs } from './map-indicateur-objectifs.rules';
-import { toThrowingIndicateurValidators } from './throwing-indicateur-validators.adapter';
 import {
   validateIndicateurDefinitions,
   validateObjectifIdentifiants,
@@ -107,11 +105,17 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
   }
 
   async importIndicateurDefinitions(): Promise<ImportIndicateurDefinitionsResult> {
-    const indicateurDefinitions = getIndicateurDataOrThrow(
+    const predefinisResult =
       await this.listIndicateursPredefinisRepository.listIndicateursPredefinis({
         identifiantsReferentiel: ['cae_1.a'],
-      })
-    );
+      });
+    if (!predefinisResult.success) {
+      throw new InternalServerErrorException(
+        predefinisResult.cause?.message ?? predefinisResult.error,
+        { cause: predefinisResult.cause }
+      );
+    }
+    const indicateurDefinitions = predefinisResult.data;
 
     const allowVersionOverwrite =
       this.versionService.getVersion().environment !== 'prod';
@@ -254,9 +258,7 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
     definitions: ImportIndicateurDefinitionType[]
   ): Promise<void> {
     const validation = validateIndicateurDefinitions(definitions, {
-      indicateurs: toThrowingIndicateurValidators(
-        this.indicateurExpressionService
-      ),
+      indicateurs: this.indicateurExpressionService,
       personnalisations: this.personnalisationsExpressionService,
     });
     if (!validation.success && validation.error === 'INVALID_EXPRESSION') {
@@ -318,12 +320,20 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
     if (!indicateur.valeurCalcule) {
       return [];
     }
-    const references = getDataOrThrow(
+    const referencesResult =
       this.indicateurExpressionService.extractPersonnalisationReferencesFromFormula(
         indicateur.valeurCalcule
-      )
-    );
-    return verifyPersonnalisationExpressionReferences(references, {
+      );
+    if (!referencesResult.success) {
+      return [
+        formatInvalidExpressionMessage({
+          label: `la formule de calcul de l'indicateur ${indicateur.identifiantReferentiel}`,
+          expression: indicateur.valeurCalcule,
+          err: referencesResult.cause ?? new Error(referencesResult.error),
+        }),
+      ];
+    }
+    return verifyPersonnalisationExpressionReferences(referencesResult.data, {
       label: `la formule de calcul de l'indicateur ${indicateur.identifiantReferentiel}`,
       questions,
       unknownQuestionHint: UNKNOWN_QUESTION_HINT,
