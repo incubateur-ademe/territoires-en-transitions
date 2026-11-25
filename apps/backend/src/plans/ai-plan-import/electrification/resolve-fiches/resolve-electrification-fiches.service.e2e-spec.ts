@@ -1646,7 +1646,6 @@ describe('Résolution des fiches actions Électrification', () => {
           data: {
             action: 'same-outcome',
             objectives: 'compatible',
-            scope: 'same',
             code: config.engagements[0].code,
             quote: engagements[1][1].text,
           },
@@ -1678,7 +1677,6 @@ describe('Résolution des fiches actions Électrification', () => {
                 data: {
                   action: 'same-outcome',
                   objectives: 'compatible',
-                  scope: 'same',
                   code: 'INVENTE',
                   quote: engagements[5][1].text,
                 },
@@ -2354,6 +2352,37 @@ describe('Résolution des fiches actions Électrification', () => {
         fiches: [],
       });
 
+    test.each([
+      { value: 'trente pour cent', unit: '%', year: 2035 },
+      { value: '25 MWh (2027)', unit: 'MWh', year: 2040 },
+    ])(
+      'rappelle la valeur refusée et la cible publiée : $value',
+      async ({ value, unit, year }) => {
+        const engagement = config.engagements.find(
+          ({ cibles }) => cibles.length === 1
+        );
+        assert(engagement);
+        const target = engagement.cibles[0];
+        target.libelleSource = 'Cible du catalogue de recette';
+        target.uniteImport = unit;
+        target.reglesImport.annee = year;
+        await useEngagement(engagement.code, value, engagement.axeNumero);
+
+        const issues = await expectExtractionIssue(
+          'INVALID_ELECTRIFICATION_TARGET'
+        );
+        const issue = issues.find(
+          ({ code }) => code === 'INVALID_ELECTRIFICATION_TARGET'
+        );
+        assert(issue);
+        expect(issue.message).toContain(`Valeur saisie : "${value}".`);
+        expect(issue.message).toContain('une valeur en chiffres');
+        expect(issue.message).toContain(
+          `"Cible du catalogue de recette" : unité ${unit}, année ${year}.`
+        );
+      }
+    );
+
     test('signale le doublon et les bornes des cibles même si une autre sélection est invalide', async () => {
       const engagements = structuredClone(template.sections[0].rows);
       engagements[1][2].text = 'Peut-être';
@@ -2406,35 +2435,30 @@ describe('Résolution des fiches actions Électrification', () => {
         axe: 3,
         value: '25 %',
         expected: [25],
-        scope: 'same',
       },
       {
         code: 'E05',
         identity: 'libellé courant',
-        scope: 'same',
         axe: 3,
         value: '25 %',
         expected: [25],
       },
       ...[
-        { identity: template.sections[0].rows[4][1].text, scope: 'different' },
+        { identity: template.sections[0].rows[4][1].text },
         {
           identity: template.sections[0].rows[4][1].text.replaceAll(
             'gaz',
             'fioul'
           ),
-          scope: 'different',
         },
         {
           identity: template.sections[0].rows[4][1].text
             .replace('du gaz', 'du gaz ou du fioul')
             .replace('au gaz', 'au gaz ou au fioul'),
-          scope: 'same',
         },
-      ].map(({ identity, scope }) => ({
+      ].map(({ identity }) => ({
         code: 'E05',
         identity,
-        scope,
         axe: 3,
         value: '25 %',
         expected: [25],
@@ -2442,7 +2466,6 @@ describe('Résolution des fiches actions Électrification', () => {
       {
         code: 'E01',
         identity: template.sections[0].rows[1][1].text,
-        scope: 'different',
         axe: 1,
         value: '25 %',
         expected: [25],
@@ -2450,7 +2473,6 @@ describe('Résolution des fiches actions Électrification', () => {
       {
         code: 'E02',
         identity: template.sections[0].rows[2][0].text,
-        scope: 'different',
         axe: 1,
         value: '25 %',
         expected: [25],
@@ -2458,7 +2480,6 @@ describe('Résolution des fiches actions Électrification', () => {
       {
         code: 'E07',
         identity: template.sections[0].rows[7][1].text,
-        scope: 'same',
         axe: 6,
         value: '100 bornes dont 20 rapides',
         expected: [100, 20],
@@ -2466,7 +2487,6 @@ describe('Résolution des fiches actions Électrification', () => {
       {
         code: 'E12',
         identity: template.sections[0].rows[8][1].text,
-        scope: 'same',
         axe: 7,
         value: '',
         expected: [],
@@ -2474,14 +2494,13 @@ describe('Résolution des fiches actions Électrification', () => {
       {
         code: 'E10',
         identity: template.sections[0].rows[11][1].text,
-        scope: 'same',
         axe: 10,
         value: '200 MWh',
         expected: [200],
       },
     ])(
       'prépare un document avec les définitions Grist courantes : $code / $identity',
-      async ({ code, identity, axe, value, expected, scope }) => {
+      async ({ code, identity, axe, value, expected }) => {
         Object.assign(
           config,
           ElectrificationGristAdapter.build({
@@ -2518,7 +2537,6 @@ describe('Résolution des fiches actions Électrification', () => {
               data: {
                 action: 'same-outcome',
                 objectives: 'compatible',
-                scope,
                 code,
                 quote: label,
               },
@@ -2540,8 +2558,7 @@ describe('Résolution des fiches actions Électrification', () => {
             ? [
                 {
                   sourceId: expect.any(String),
-                  match:
-                    scope === 'different' ? 'scope-difference' : 'equivalent',
+                  match: 'review-required',
                   code,
                   quote: label,
                 },
@@ -2556,10 +2573,7 @@ describe('Résolution des fiches actions Électrification', () => {
             ? [
                 expect.objectContaining({
                   kind: 'warning',
-                  code:
-                    scope === 'different'
-                      ? 'TOLERATED_ELECTRIFICATION_ENGAGEMENT_SCOPE'
-                      : 'INTERPRETED_ELECTRIFICATION_ENGAGEMENT',
+                  code: 'INTERPRETED_ELECTRIFICATION_ENGAGEMENT',
                   message: expect.stringContaining(definition.libelleSource),
                 }),
               ]
@@ -2602,7 +2616,6 @@ describe('Résolution des fiches actions Électrification', () => {
               data: {
                 action,
                 objectives,
-                scope: 'different',
                 code: 'E05',
                 quote: label,
               },
@@ -2681,66 +2694,97 @@ describe('Résolution des fiches actions Électrification', () => {
         ]);
       });
 
-      test('signale un périmètre différent et réapplique la tolérance à la reprise', async () => {
-        const documentLabel = 'Rénover le parc scolaire, dont les écoles.';
-        await useEngagement(documentLabel, 'parc communal : 8; écoles : 2');
-        expectedInterpretationCalls = 1;
-        generate.mockResolvedValue(
-          success({
-            data: {
-              action: 'same-outcome',
-              objectives: 'compatible',
-              scope: 'different',
-              code: 'RENOVATION',
-              quote: documentLabel,
-            },
-            tokens: emptyTokenUsage(),
-          })
-        );
-        const result = await prepared();
-        expect(result.prepared.cibles.map(({ objectif }) => objectif)).toEqual([
-          8, 2,
-        ]);
-        expect(result.prepared.report.issues).toEqual([
-          expect.objectContaining({
-            code: 'TOLERATED_ELECTRIFICATION_ENGAGEMENT_SCOPE',
-            kind: 'warning',
-            location: expect.stringContaining(documentLabel),
-            message: expect.stringContaining(
-              `Document : "${documentLabel}". Catalogue (RENOVATION) : "${label}".`
-            ),
-          }),
-        ]);
-        const resume = () =>
-          prepareService.prepare(
-            {
-              catalogueVersion: config.version,
-              collectiviteId: context.collectiviteId,
-              resumeFrom: JSON.parse(JSON.stringify(result.checkpoint)),
-            },
-            { user: context.user }
+      test.each(['review-required', 'equivalent', 'scope-difference'] as const)(
+        'signale le rapprochement à vérifier et réapplique la tolérance à la reprise : %s',
+        async (match) => {
+          const documentLabel = 'Rénover le parc scolaire, dont les écoles.';
+          await useEngagement(documentLabel, 'parc communal : 8; écoles : 2');
+          expectedInterpretationCalls = 1;
+          generate.mockResolvedValue(
+            success({
+              data: {
+                action: 'same-outcome',
+                objectives: 'compatible',
+                code: 'RENOVATION',
+                quote: documentLabel,
+              },
+              tokens: emptyTokenUsage(),
+            })
           );
-        expect(await resume()).toEqual(success(result));
-        const previous =
-          electrificationEngagementMatching.allowScopeDifferences;
-        electrificationEngagementMatching.allowScopeDifferences = false;
-        try {
-          expect(await resume()).toMatchObject({
-            success: false,
-            error: [
-              expect.objectContaining({
-                code: 'UNTOLERATED_ELECTRIFICATION_ENGAGEMENT_SCOPE',
-              }),
-            ],
-          });
-          expectedInterpretationCalls = 2;
-          await expectExtractionIssue(
-            'UNTOLERATED_ELECTRIFICATION_ENGAGEMENT_SCOPE'
+          const result = await prepared();
+          expect(
+            result.prepared.cibles.map(({ objectif }) => objectif)
+          ).toEqual([8, 2]);
+          expect(result.prepared.report.issues).toEqual([
+            expect.objectContaining({
+              code: 'INTERPRETED_ELECTRIFICATION_ENGAGEMENT',
+              kind: 'warning',
+              location: expect.stringContaining(documentLabel),
+              message: expect.stringContaining(
+                `Document : "${documentLabel}". Catalogue (RENOVATION) : "${label}".`
+              ),
+            }),
+          ]);
+          expect(result.prepared.report.issues[0].message).toContain(
+            'Rapprochement à vérifier.'
           );
-        } finally {
-          electrificationEngagementMatching.allowScopeDifferences = previous;
+          const checkpoint = JSON.parse(JSON.stringify(result.checkpoint));
+          checkpoint.engagementInterpretations[0].match = match;
+          const resume = () =>
+            prepareService.prepare(
+              {
+                catalogueVersion: config.version,
+                collectiviteId: context.collectiviteId,
+                resumeFrom: checkpoint,
+              },
+              { user: context.user }
+            );
+          const resumed = await resume();
+          assert(resumed.success);
+          expect(resumed.data.prepared).toEqual(result.prepared);
+          const previous =
+            electrificationEngagementMatching.allowInterpretedEngagements;
+          electrificationEngagementMatching.allowInterpretedEngagements = false;
+          try {
+            expect(await resume()).toMatchObject({
+              success: false,
+              error: [
+                expect.objectContaining({
+                  code: 'UNTOLERATED_ELECTRIFICATION_ENGAGEMENT',
+                }),
+              ],
+            });
+            expectedInterpretationCalls = 2;
+            await expectExtractionIssue(
+              'UNTOLERATED_ELECTRIFICATION_ENGAGEMENT'
+            );
+          } finally {
+            electrificationEngagementMatching.allowInterpretedEngagements =
+              previous;
+          }
         }
-      });
+      );
+
+      test.each(['RENOVATION', label])(
+        'conserve une identification déterministe avec la tolérance désactivée : %s',
+        async (identity) => {
+          const previous =
+            electrificationEngagementMatching.allowInterpretedEngagements;
+          electrificationEngagementMatching.allowInterpretedEngagements = false;
+          try {
+            await useEngagement(identity, 'parc communal : 8; écoles : 2');
+            const result = await prepared();
+            expect(result.checkpoint.engagementInterpretations).toEqual([]);
+            expect(result.prepared.report.issues).toEqual([]);
+            expect(
+              result.prepared.cibles.map(({ objectif }) => objectif)
+            ).toEqual([8, 2]);
+          } finally {
+            electrificationEngagementMatching.allowInterpretedEngagements =
+              previous;
+          }
+        }
+      );
 
       const interpret = async (
         text: string,
@@ -3067,7 +3111,6 @@ describe('Résolution des fiches actions Électrification', () => {
             data: {
               action: 'same-outcome',
               objectives: 'compatible',
-              scope: 'same',
               code: 'E07',
               quote: label,
             },
@@ -3096,7 +3139,7 @@ describe('Résolution des fiches actions Électrification', () => {
         expect(result.checkpoint.engagementInterpretations).toEqual([
           {
             sourceId: expect.any(String),
-            match: 'equivalent',
+            match: 'review-required',
             code: 'E07',
             quote: label,
           },
@@ -3817,12 +3860,6 @@ describe('Résolution des fiches actions Électrification', () => {
         kind: 'document-error',
       },
       {
-        name: 'périmètre incertain',
-        response: { scope: 'uncertain' },
-        issue: 'INVALID_ELECTRIFICATION_ENGAGEMENT',
-        kind: 'document-error',
-      },
-      {
         name: 'candidat hors axe',
         response: { code: 'E01' },
         issue: 'AI_ENGAGEMENT_INTERPRETATION_FAILED',
@@ -3842,7 +3879,7 @@ describe('Résolution des fiches actions Électrification', () => {
       },
       {
         name: 'réponse hors contrat',
-        response: { scope: null },
+        response: { action: null },
         issue: 'AI_ENGAGEMENT_INTERPRETATION_FAILED',
         kind: 'processing-error',
       },
@@ -3861,7 +3898,6 @@ describe('Résolution des fiches actions Électrification', () => {
               quote: 'Un nouvel engagement inconnu',
               action: 'same-outcome',
               objectives: 'compatible',
-              scope: 'different',
               ...response,
             },
             tokens: emptyTokenUsage(),

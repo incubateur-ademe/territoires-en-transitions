@@ -1,7 +1,7 @@
 /** Politique commune aux engagements, appliquée aussi à la reprise d'un import. */
 export const electrificationEngagementMatching = {
-  // Une différence acceptée est toujours signalée ; aucune cible n'est convertie.
-  allowScopeDifferences: true,
+  // Tout rapprochement IA est à vérifier, sans garantie d'équivalence de périmètre.
+  allowInterpretedEngagements: true,
 };
 
 /** En-têtes et ligne de socle commun des canevas Word officiels. */

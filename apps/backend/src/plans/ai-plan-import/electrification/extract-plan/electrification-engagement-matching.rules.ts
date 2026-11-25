@@ -18,11 +18,13 @@ export class ElectrificationEngagementMatchingRules {
   ): Result<ElectrificationEngagementInterpretation, ElectrificationIssue[]> {
     const comparison =
       electrificationEngagementComparisonSchema.safeParse(response);
+    const candidate = comparison.success
+      ? request.candidates.find(({ code }) => code === comparison.data.code)
+      : undefined;
     if (
       !comparison.success ||
       comparison.data.quote !== request.source.text ||
-      (comparison.data.code !== null &&
-        !request.candidates.some(({ code }) => code === comparison.data.code))
+      (comparison.data.code !== null && !candidate)
     )
       return failure([
         Errors.issue(
@@ -31,12 +33,11 @@ export class ElectrificationEngagementMatchingRules {
         ),
       ]);
 
-    const { code, quote, action, objectives, scope } = comparison.data;
+    const { code, quote, action, objectives } = comparison.data;
     if (
       code === null ||
       action !== 'same-outcome' ||
-      objectives !== 'compatible' ||
-      scope === 'uncertain'
+      objectives !== 'compatible'
     )
       return failure([
         Errors.issue(
@@ -49,7 +50,7 @@ export class ElectrificationEngagementMatchingRules {
       sourceId: request.source.id,
       code,
       quote,
-      match: scope === 'different' ? 'scope-difference' : 'equivalent',
+      match: 'review-required',
     });
   }
 
@@ -71,12 +72,9 @@ export class ElectrificationEngagementMatchingRules {
           Errors.issue('INCOMPATIBLE_ELECTRIFICATION_CHECKPOINT'),
         ]);
 
-      const code =
-        interpretation.match === 'scope-difference'
-          ? electrificationEngagementMatching.allowScopeDifferences
-            ? 'TOLERATED_ELECTRIFICATION_ENGAGEMENT_SCOPE'
-            : 'UNTOLERATED_ELECTRIFICATION_ENGAGEMENT_SCOPE'
-          : 'INTERPRETED_ELECTRIFICATION_ENGAGEMENT';
+      const code = electrificationEngagementMatching.allowInterpretedEngagements
+        ? 'INTERPRETED_ELECTRIFICATION_ENGAGEMENT'
+        : 'UNTOLERATED_ELECTRIFICATION_ENGAGEMENT';
       issues.push(Errors.engagementMatch(code, source, definition));
     }
     const errors = issues.filter(({ kind }) => kind !== 'warning');

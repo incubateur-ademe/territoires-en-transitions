@@ -7,12 +7,18 @@ export const electrificationEngagementComparisonSchema = z.strictObject({
   quote: z.string().min(1),
   action: z.enum(['same-outcome', 'different', 'uncertain']),
   objectives: z.enum(['compatible', 'different', 'uncertain']),
-  scope: z.enum(['same', 'different', 'uncertain']),
 });
 
 export const electrificationEngagementInterpretationSchema = z.strictObject({
   sourceId: z.string().min(1),
-  match: z.enum(['equivalent', 'scope-difference', 'unresolved']),
+  // Les anciennes classifications restent lisibles à la reprise ; tous les
+  // rapprochements sont désormais signalés à vérifier, quelle que soit celle-ci.
+  match: z.enum([
+    'review-required',
+    'equivalent',
+    'scope-difference',
+    'unresolved',
+  ]),
   code: z.string().min(1).nullable(),
   quote: z.string().min(1),
 });

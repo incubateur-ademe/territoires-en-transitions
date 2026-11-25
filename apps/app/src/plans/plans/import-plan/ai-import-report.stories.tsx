@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
-import { fn } from 'storybook/test';
+import { expect, fn, userEvent, within } from 'storybook/test';
 import { AiImportReport } from './ai-import-report';
 
 const meta = {
@@ -109,5 +109,39 @@ export const Succes: Story = {
         qualitativeReview: 'Vérifiez les pilotes des actions.',
       },
     },
+  },
+};
+
+export const SuccesAvecAvertissements: Story = {
+  args: {
+    status: {
+      ...meta.args.status,
+      status: 'done',
+      createdPlanId: 1,
+      report: {
+        issues: Array.from({ length: 12 }, (_, index) => ({
+          kind: 'warning' as const,
+          code: 'INTERPRETED_ELECTRIFICATION_ENGAGEMENT',
+          location: `Engagement ${index + 1}`,
+          message:
+            'Rapprochement à vérifier. Document : "Accompagner les projets de rénovation". Catalogue : "Électrifier les logements". Vérifiez que ce rattachement correspond à votre intention.',
+        })),
+        qualitativeReview: null,
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const warnings = canvas.getByRole('button', {
+      name: '12 avertissements à vérifier',
+    });
+    await expect(warnings).toHaveAttribute('aria-expanded', 'false');
+    await expect(canvas.queryAllByRole('listitem')).toHaveLength(0);
+    await userEvent.click(warnings);
+    await expect(warnings).toHaveAttribute('aria-expanded', 'true');
+    await expect(canvas.getAllByRole('listitem')).toHaveLength(12);
+    await expect(canvas.getAllByText(/Document : .*Catalogue :/)).toHaveLength(
+      12
+    );
   },
 };

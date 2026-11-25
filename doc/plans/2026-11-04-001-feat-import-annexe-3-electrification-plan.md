@@ -43,12 +43,12 @@ périodicités. Les cases de code ne valent pas validation en environnement dép
       des périodes, unités, références et de la définition publiée.
 - [x] Remplacer la règle spécifique E05 par le rapprochement IA existant pour
       les libellés non reconnus, y compris les variantes E05 gaz/fioul non
-      identiques au catalogue après normalisation. Classer les reformulations,
-      écarts de périmètre et cas non résolus ; appliquer `allowScopeDifferences`,
+      identiques au catalogue après normalisation. Signaler chaque rapprochement
+      à vérifier ; appliquer `allowInterpretedEngagements`,
       activé pour cette recette, sans liste de codes ou de variantes métier dans
       le lecteur.
 - [x] Signaler chaque rapprochement IA accepté avec les deux libellés. Conserver
-      la classification en checkpoint et réappliquer la politique à la reprise,
+      le rapprochement en checkpoint et réappliquer la politique à la reprise,
       sans nouvel appel IA ni conversion des valeurs.
 - [x] Valider les suites e2e existantes : création réelle du plan et des liens,
       absence d'écriture incompatible, valeurs existantes préservées, variantes
@@ -64,19 +64,71 @@ périodicités. Les cases de code ne valent pas validation en environnement dép
       Les indicateurs trimestriels `1.2.1-a` et `1.2.1-b` restent liés sans
       nouvelles valeurs annuelles dans la variante du document 03 utilisant
       les codes d'engagement.
-- [x] Après cette recette, séparer les comparaisons IA du résultat attendu,
-      des objectifs et du périmètre ; déduire leur classification dans le code.
-      Distinguer une réponse IA invalide d'un refus documentaire, conserver
+- [x] Distinguer une réponse IA invalide d'un refus documentaire, conserver
       les refus de contradictions et la politique de tolérance à la reprise.
-- [ ] Rejouer le V1 et le document 03 avec leurs phrases originales après
-      cette correction. Confirmer la reconnaissance E10 (acceptée puis refusée
-      en production) et le même avertissement de périmètre pour E01 et E02
-      ("bâtiments" / "logements"). Les tests avec un faux LLM ne valident pas
-      cette compréhension sémantique. Compléter aussi la recette des quatre
-      indicateurs trimestriels et des ambiguïtés avec le modèle réel.
+- [x] Rejouer le V1 et le document 03 après #6045 : refus sur E05 puis E02,
+      aucun plan créé. Cette livraison ne résout pas les refus intermittents.
+- [x] Reproduire le refus E05 localement avec le catalogue de production et
+      Albert `gpt-oss-120b`. Conserver les réponses structurées dans la CLI ;
+      le modèle juge l'action et les objectifs incertains malgré un périmètre
+      différent identifié.
+- [x] Fournir le contexte du programme Électrification et séparer les écarts
+      de périmètre de la comparaison des objectifs chiffrés, tout en conservant
+      le refus des solutions explicitement contraires.
+- [x] Décision du 25 novembre après les essais locaux non concluants : abandonner
+      la classification fine des périmètres par IA. Afficher systématiquement
+      "Rapprochement à vérifier" avec les deux libellés. Désactiver la tolérance
+      bloque tous les rapprochements IA, y compris à la reprise d'anciens
+      checkpoints ; les reconnaissances déterministes restent autorisées.
+- [x] Contraindre le schéma envoyé au modèle aux codes candidats et à la citation
+      exacte du document. Conserver le contrôle applicatif de ces réponses.
+- [x] Qualifier ce correctif avant publication : V1 et document 03 deux fois,
+      E10 reconnu, avertissement systématique pour chaque rapprochement IA ;
+      maintien du gaz, solution explicitement non électrique et échéance
+      contradictoire refusés.
+      Sept évaluations humaines réussies le 25 novembre avec le catalogue de
+      production et Albert `gpt-oss-120b` : 43 appels sans erreur technique.
+      La CLI qualifie l'extraction sans création de plan ; les e2e vérifient
+      le compte rendu et les écritures avec un faux LLM (249 tests réussis
+      en 29,57 s sur le code qualifié).
+- [ ] Après déploiement, confirmer ces résultats dans le navigateur, puis
+      compléter la recette des quatre indicateurs trimestriels et des ambiguïtés.
 - [ ] Clarifier avec Émeline la fréquence de mise à jour et la période mesurée.
       Cette clarification ne bloque plus l'import ; aucune conversion ou reprise
       automatique des valeurs ignorées n'est prévue.
+
+Complément des [retours de Clément du 25 novembre au soir][retours-tt67],
+intégré à #6047. Les décisions et limites sont détaillées dans
+l'[ADR](../adr/0022-initialiser-plan-electrification-depuis-annexe-3.md#complément-de-recette-de-clément-du-25-novembre-au-soir).
+
+- [x] Regrouper plusieurs avertissements dans une section dépliable du compte
+      rendu, avec leur nombre et tous leurs détails. Conserver les erreurs,
+      données préservées et avertissements isolés visibles, sans règle propre
+      à l'Électrification dans le composant commun.
+- [x] Préciser les erreurs de cible avec la valeur saisie et les libellés,
+      unités et échéances du catalogue, sans élargir la lecture sémantique.
+      Les cas B8/B9 restent hors périmètre selon la décision produit.
+- [x] Rappeler la décision annuelle déjà acceptée pour les deux recensements
+      `9.1.1-a` et `11.1.1-a`, conforme au catalogue de production exporté
+      le 25 novembre. Leur import avec valeurs annuelles reste inchangé.
+- [x] Prendre en compte la recette de Clément sur les quatre trimestriels :
+      liens conservés, valeurs annuelles omises, avertissements présents.
+      Ce constat ne valide pas la nouvelle présentation de #6047.
+- [ ] Confirmer la présentation et les diagnostics après déploiement de #6047,
+      puis reprendre la qualification des formulations avec lancement humain.
+- [ ] Vérifier le parcours avec les droits d'une collectivité hors super-admin
+      et des documents réellement remplis.
+- [ ] Nettoyer les 21 plans TEST signalés sur 5556, après identification des
+      plans concernés ; aucune suppression réalisée dans cette PR.
+
+Validation locale de ce complément : 251 tests réussis en 42,45 s dans les
+deux suites backend existantes, avec PostgreSQL et lecteur DOCX réels, faux
+LLM. Six scénarios Storybook réussis dans Chromium en 17,38 s, dont l'ouverture
+des douze avertissements et la présence de tous leurs détails. Le cas e2e
+mobile existant est complété pour conserver les erreurs visibles et consulter
+les avertissements ; il n'a pas été exécuté localement. Aucun nouveau
+fichier de tests ni appel IA réel. Les contrôles de typage frontend/backend
+et le lint ciblé passent.
 
 Validation locale historique de #6036 : 241 tests passaient dans les deux
 suites e2e existantes (29 s), avec le vrai lecteur DOCX, PostgreSQL local et un

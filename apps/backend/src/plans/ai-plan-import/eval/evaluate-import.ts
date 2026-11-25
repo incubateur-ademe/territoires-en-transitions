@@ -202,6 +202,7 @@ const evaluateElectrification = async (
   reportStep('extraction Électrification');
   const startedAt = Date.now();
   let contextPromise: Promise<EvalLlmContext> | undefined;
+  const interpretations: { request: unknown; response: unknown }[] = [];
   let result: Awaited<ReturnType<typeof InterpretElectrificationValues.run>>;
   try {
     result = await InterpretElectrificationValues.run({
@@ -211,7 +212,14 @@ const evaluateElectrification = async (
         generateStructured: async (args) => {
           contextPromise ??= createEvalLlm();
           const { llm } = await contextPromise;
-          return llm.generateStructured(args);
+          const completion = await llm.generateStructured(args);
+          interpretations.push({
+            request: JSON.parse(args.prompt),
+            response: completion.success
+              ? completion.data.data
+              : { error: completion.error },
+          });
+          return completion;
         },
       },
     });
@@ -231,6 +239,7 @@ const evaluateElectrification = async (
     referencesResolved: false,
     status: result.success ? 'done' : 'failed',
     checkpoint: result.success ? result.data : null,
+    trace: { interpretations },
     report: { issues, qualitativeReview: null },
     metrics: {
       ...computeLlmCallMetrics(context?.events ?? []),

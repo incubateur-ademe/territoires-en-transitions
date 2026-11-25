@@ -466,7 +466,7 @@ describe(
       }
     });
 
-    test('importe les engagements sans cible et leurs compléments en conservant le diagnostic de périmètre dans le compte rendu', async () => {
+    test('importe les engagements sans cible et leurs compléments en signalant le rapprochement à vérifier dans le compte rendu', async () => {
       Object.assign(catalogue, structuredClone(electrificationConfig));
       const engagement = catalogue.engagements.find(
         ({ code }) => code === EngagementCode.DECOMMISSIONNEMENT_RESEAU_GAZ
@@ -483,7 +483,6 @@ describe(
           text: JSON.stringify({
             action: 'same-outcome',
             objectives: 'compatible',
-            scope: 'different',
             code: engagement.code,
             quote: qualitativeEngagements[0].libelle,
           }),
@@ -507,7 +506,7 @@ describe(
         report: {
           issues: expect.arrayContaining([
             expect.objectContaining({
-              code: 'TOLERATED_ELECTRIFICATION_ENGAGEMENT_SCOPE',
+              code: 'INTERPRETED_ELECTRIFICATION_ENGAGEMENT',
               kind: 'warning',
               message: expect.stringContaining(engagement.libelleSource),
             }),
