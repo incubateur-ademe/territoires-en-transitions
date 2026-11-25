@@ -22,7 +22,7 @@ vi.mock('../../../Indicateur/detail/IndicateurValuesTabs', () => ({
 vi.mock('../../content/donnees/indicateur-commentaire.input', () => ({
   IndicateurCommentaireInput: () => null,
 }));
-vi.mock('./indicateur-sources.select', () => ({
+vi.mock('../../content/donnees/indicateur-sources.select', () => ({
   IndicateurSourcesSelect: () => <div role="group" aria-label="sources" />,
 }));
 

@@ -13,7 +13,7 @@ import { IndicateurChartProvider } from '../../context/indicateur-chart.context'
 import { IndicateurDataProvider } from '../../context/indicateur-data.context';
 import { IndicateurNouveauSousIndicateurProvider } from '../../context/indicateur-nouveau-sous-indicateur.context';
 import { IndicateurSousIndicateursTableProvider } from '../../context/indicateur-sous-indicateurs-table.context';
-import { IndicateurPersoDonnees } from './indicateur-perso-donnees.view';
+import { IndicateurDonnees } from './indicateur-donnees.view';
 
 vi.mock('../../../Indicateur/detail/IndicateurDetailChart', () => ({
   default: ({ isReadonly }: { isReadonly: boolean }) => (
@@ -27,15 +27,12 @@ vi.mock('../../../Indicateur/detail/IndicateurValuesTabs', () => ({
     </div>
   ),
 }));
-vi.mock(
-  '../../content/sous-indicateurs/indicateur-sous-indicateurs-chart.view',
-  () => ({
-    IndicateurSousIndicateursChart: () => (
-      <div role="img" aria-label="graphique des sous-indicateurs" />
-    ),
-  })
-);
-vi.mock('../../content/donnees/indicateur-commentaire.input', () => ({
+vi.mock('../sous-indicateurs/indicateur-sous-indicateurs-chart.view', () => ({
+  IndicateurSousIndicateursChart: () => (
+    <div role="img" aria-label="graphique des sous-indicateurs" />
+  ),
+}));
+vi.mock('./indicateur-commentaire.input', () => ({
   IndicateurCommentaireInput: () => null,
 }));
 vi.mock('./indicateur-unite.input', () => ({
@@ -45,6 +42,9 @@ vi.mock('./indicateur-unite.input', () => ({
 }));
 vi.mock('./thematiques-indicateur.input', () => ({
   ThematiquesIndicateurInput: () => null,
+}));
+vi.mock('./indicateur-sources.select', () => ({
+  IndicateurSourcesSelect: () => <div role="group" aria-label="sources" />,
 }));
 
 const chartInfo = {
@@ -94,15 +94,17 @@ const toIndicateur = ({
   collectiviteId,
   enfants,
   ancestors = [],
+  identifiantReferentiel = null,
 }: {
   collectiviteId: number | null;
   enfants: { id: number; titre: string }[];
   ancestors?: { id: number; titre: string }[];
+  identifiantReferentiel?: string | null;
 }): IndicateurDetaille =>
   ({
     id: 10,
     collectiviteId,
-    identifiantReferentiel: null,
+    identifiantReferentiel,
     groupementId: null,
     titre: 'Déchets',
     unite: 't',
@@ -113,14 +115,17 @@ const toIndicateur = ({
     ancestors,
   } as IndicateurDetaille);
 
-const renderDonnees = (indicateur: IndicateurDetaille) => {
+const renderDonnees = (
+  indicateur: IndicateurDetaille,
+  chartInfoOverride: IndicateurChartInfo = chartInfo
+) => {
   const createSousIndicateur = vi.fn();
   const useSousIndicateursTable = vi.fn(() => readyState);
   render(
     <IndicateurDataProvider
       value={{ indicateur, canMutateIndicateur: true, canMutateValeur: true }}
     >
-      <IndicateurChartProvider value={{ chartInfo }}>
+      <IndicateurChartProvider value={{ chartInfo: chartInfoOverride }}>
         <IndicateurActionsProvider value={actions}>
           <IndicateurSousIndicateursTableProvider
             value={{
@@ -145,7 +150,7 @@ const renderDonnees = (indicateur: IndicateurDetaille) => {
                 onNameEditingEnd: vi.fn(),
               }}
             >
-              <IndicateurPersoDonnees />
+              <IndicateurDonnees />
             </IndicateurNouveauSousIndicateurProvider>
           </IndicateurSousIndicateursTableProvider>
         </IndicateurActionsProvider>
@@ -162,7 +167,7 @@ const valeursDuParent = { name: 'valeurs' };
 const graphiqueDuParent = { name: 'graphique' };
 const graphiqueDesSousIndicateurs = { name: 'graphique des sous-indicateurs' };
 
-describe('IndicateurPersoDonnees : tableau des valeurs', () => {
+describe('IndicateurDonnees : tableau des valeurs', () => {
   it('affiche le graphique et le tableau des sous-indicateurs à la place de ceux du parent pour un perso qui a des enfants', () => {
     const { useSousIndicateursTable } = renderDonnees(
       toIndicateur({
@@ -257,5 +262,41 @@ describe('IndicateurPersoDonnees : tableau des valeurs', () => {
     expect(useSousIndicateursTable).not.toHaveBeenCalled();
     expect(screen.getByRole('img', graphiqueDuParent)).toBeDefined();
     expect(screen.queryByRole('img', graphiqueDesSousIndicateurs)).toBeNull();
+  });
+});
+
+describe('IndicateurDonnees : indicateur prédéfini sans enfant', () => {
+  const predefini = toIndicateur({
+    collectiviteId: null,
+    identifiantReferentiel: 'cae_5',
+    enfants: [],
+  });
+
+  it("n'affiche ni l'unité, ni la création de sous-indicateurs, qui n'appartiennent qu'à un perso", () => {
+    renderDonnees(predefini);
+
+    expect(screen.queryByRole('group', { name: 'unité' })).toBeNull();
+    expect(
+      screen.queryByRole('button', {
+        name: appLabels.indicateurCreerSousIndicateur,
+      })
+    ).toBeNull();
+    expect(screen.getByRole('group', valeursDuParent)).toBeDefined();
+    expect(screen.getByRole('img', graphiqueDuParent)).toBeDefined();
+  });
+
+  it('propose le choix de la source quand plusieurs sources de données sont disponibles', () => {
+    renderDonnees(predefini, {
+      sourceFilter: { availableOptions: ['insee', 'collectivite'] },
+      typesSegmentation: [],
+    } as unknown as IndicateurChartInfo);
+
+    expect(screen.getByRole('group', { name: 'sources' })).toBeDefined();
+  });
+
+  it('ne propose pas le choix de la source quand une seule source est disponible', () => {
+    renderDonnees(predefini);
+
+    expect(screen.queryByRole('group', { name: 'sources' })).toBeNull();
   });
 });
