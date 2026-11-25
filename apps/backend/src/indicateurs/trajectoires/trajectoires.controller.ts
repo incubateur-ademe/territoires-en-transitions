@@ -10,11 +10,16 @@ import { collectiviteIdInputSchemaCoerce } from '@tet/backend/collectivites/coll
 import TrajectoiresSpreadsheetService from '@tet/backend/indicateurs/trajectoires/trajectoires-spreadsheet.service';
 import { ApiUsageEnum } from '@tet/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@tet/backend/utils/api/api-usage.decorator';
+import { createControllerErrorHandler } from '@tet/backend/utils/nest/controller-error-handler';
 import type { NextFunction, Response } from 'express';
 import { createZodDto } from 'nestjs-zod';
 import { AllowPublicAccess } from '../../users/decorators/allow-public-access.decorator';
 import { TokenInfo } from '../../users/decorators/token-info.decorators';
 import type { AuthenticatedUser } from '../../users/models/auth.models';
+import {
+  calculTrajectoireErrorConfig,
+  rethrowHttpExceptionCause,
+} from './calcul-trajectoire.errors';
 import { calculTrajectoireRequestSchema } from './calcul-trajectoire.request';
 import { calculTrajectoireResponseSchema } from './calcul-trajectoire.response';
 import { modeleTrajectoireTelechargementRequestSchema } from './modele-trajectoire-telechargement.request';
@@ -60,6 +65,10 @@ export class TrajectoiresController {
     private readonly trajectoiresSpreadsheetService: TrajectoiresSpreadsheetService
   ) {}
 
+  private readonly getResultDataOrThrowError = createControllerErrorHandler(
+    calculTrajectoireErrorConfig
+  );
+
   @Get('')
   @ApiUsage([ApiUsageEnum.EXTERNAL_API])
   @ApiOperation({
@@ -82,11 +91,14 @@ export class TrajectoiresController {
       }`
     );
 
-    const { spreadsheetId, ...response } =
-      await this.trajectoiresSpreadsheetService.calculeTrajectoireSnbc(
-        request,
-        tokenInfo
-      );
+    const { spreadsheetId, ...response } = this.getResultDataOrThrowError(
+      rethrowHttpExceptionCause(
+        await this.trajectoiresSpreadsheetService.calculeTrajectoireSnbc(
+          request,
+          tokenInfo
+        )
+      )
+    );
     return response;
   }
 

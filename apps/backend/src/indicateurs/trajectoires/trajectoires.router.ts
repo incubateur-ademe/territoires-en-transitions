@@ -7,7 +7,12 @@ import {
 } from '@tet/backend/indicateurs/trajectoires/calcul-trajectoire.request';
 import TrajectoiresDataService from '@tet/backend/indicateurs/trajectoires/trajectoires-data.service';
 import { verificationTrajectoireRequestSchema } from '@tet/backend/indicateurs/trajectoires/verification-trajectoire.request';
+import { createTrpcErrorHandler } from '@tet/backend/utils/trpc/trpc-error-handler';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
+import {
+  calculTrajectoireErrorConfig,
+  rethrowHttpExceptionCause,
+} from './calcul-trajectoire.errors';
 import { TrajectoireSnbc3Router } from './snbc3/trajectoire-snbc3.router';
 import TrajectoiresSpreadsheetService from './trajectoires-spreadsheet.service';
 
@@ -21,6 +26,10 @@ export class TrajectoiresRouter {
     private readonly trajectoireSnbc3Router: TrajectoireSnbc3Router
   ) {}
 
+  private readonly getResultDataOrThrowError = createTrpcErrorHandler(
+    calculTrajectoireErrorConfig
+  );
+
   router = this.trpc.router({
     leviers: this.trajectoireLeviersRouter.router,
 
@@ -29,23 +38,31 @@ export class TrajectoiresRouter {
     snbc: this.trpc.router({
       getOrCompute: this.trpc.authedOrServiceRoleProcedure
         .input(calculTrajectoireRequestSchema)
-        .query(({ input, ctx }) => {
-          return this.trajectoiresSpreadsheetService.calculeTrajectoireSnbc(
-            input,
-            ctx.user
+        .query(async ({ input, ctx }) => {
+          return this.getResultDataOrThrowError(
+            rethrowHttpExceptionCause(
+              await this.trajectoiresSpreadsheetService.calculeTrajectoireSnbc(
+                input,
+                ctx.user
+              )
+            )
           );
         }),
 
       compute: this.trpc.authedOrServiceRoleProcedure
         .input(collectiviteIdInputSchemaCoerce)
-        .mutation(({ input, ctx }) => {
-          return this.trajectoiresSpreadsheetService.calculeTrajectoireSnbc(
-            {
-              collectiviteId: input.collectiviteId,
-              mode: CalculTrajectoireReset.MAJ_SPREADSHEET_EXISTANT,
-              forceUtilisationDonneesCollectivite: true,
-            },
-            ctx.user
+        .mutation(async ({ input, ctx }) => {
+          return this.getResultDataOrThrowError(
+            rethrowHttpExceptionCause(
+              await this.trajectoiresSpreadsheetService.calculeTrajectoireSnbc(
+                {
+                  collectiviteId: input.collectiviteId,
+                  mode: CalculTrajectoireReset.MAJ_SPREADSHEET_EXISTANT,
+                  forceUtilisationDonneesCollectivite: true,
+                },
+                ctx.user
+              )
+            )
           );
         }),
 

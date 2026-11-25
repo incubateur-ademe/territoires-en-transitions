@@ -1,13 +1,12 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-  UnprocessableEntityException,
-} from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import ListCollectivitesService from '@tet/backend/collectivites/list-collectivites/list-collectivites.service';
 import { VerificationTrajectoireRequest } from '@tet/backend/indicateurs/trajectoires/verification-trajectoire.request';
 import { VerificationTrajectoireResultType } from '@tet/backend/indicateurs/trajectoires/verification-trajectoire.response';
-import { getDataOrThrow } from '@tet/backend/utils/result.type';
+import {
+  catchDatabaseFailure,
+  toDatabaseFailure,
+} from '@tet/backend/utils/database/catch-database-failure';
+import { Result, success } from '@tet/backend/utils/result.type';
 import { CollectiviteResume } from '@tet/domain/collectivites';
 import {
   Indicateur,
@@ -32,7 +31,11 @@ import { CalculTrajectoireResult } from './calcul-trajectoire.response';
 import { DataInputForTrajectoireCompute } from './donnees-calcul-trajectoire-a-remplir.dto';
 import TrajectoiresDataService from './trajectoires-data.service';
 import { UNSUPPORTED_MESSAGES } from './verification-trajectoire.rules';
-import { getIndicateurDataOrThrow } from '../indicateur/indicateur-nature.utils';
+import {
+  CalculTrajectoireError,
+  toTrajectoireServerFailure,
+  toUnprocessableTrajectoireFailure,
+} from './calcul-trajectoire.errors';
 
 @Injectable()
 export default class TrajectoiresSpreadsheetService {
@@ -62,19 +65,29 @@ export default class TrajectoiresSpreadsheetService {
     });
   }
 
-  async calculeTrajectoireSnbc(
+  calculeTrajectoireSnbc(
     request: CalculTrajectoireRequestType,
     tokenInfo: AuthUser,
     maybeEPCI?: CollectiviteResume
-  ): Promise<CalculTrajectoireResult> {
+  ): Promise<Result<CalculTrajectoireResult, CalculTrajectoireError>> {
+    return catchDatabaseFailure(() =>
+      this.computeTrajectoireSnbc(request, tokenInfo, maybeEPCI)
+    );
+  }
+
+  private async computeTrajectoireSnbc(
+    request: CalculTrajectoireRequestType,
+    tokenInfo: AuthUser,
+    maybeEPCI?: CollectiviteResume
+  ): Promise<Result<CalculTrajectoireResult, CalculTrajectoireError>> {
     if (!this.getIdentifiantSpreadsheetCalcul()) {
-      throw new InternalServerErrorException(
+      return toTrajectoireServerFailure(
         "L'identifiant de la feuille de calcul pour les trajectoires SNBC est manquante"
       );
     }
 
     if (!this.getIdentifiantDossierResultat()) {
-      throw new InternalServerErrorException(
+      return toTrajectoireServerFailure(
         "L'identifiant du dossier pour le stockage des trajectoires SNBC calculées est manquant"
       );
     }
@@ -107,13 +120,13 @@ export default class TrajectoiresSpreadsheetService {
       resultatVerification.status ===
       VerificationTrajectoireStatus.DROITS_INSUFFISANTS
     ) {
-      throw new UnprocessableEntityException(
+      return toUnprocessableTrajectoireFailure(
         'Droits insuffisants pour calculer la trajectoire SNBC'
       );
     }
 
     if (isUnsupportedTrajectoireStatus(resultatVerification.status)) {
-      throw new UnprocessableEntityException(
+      return toUnprocessableTrajectoireFailure(
         UNSUPPORTED_MESSAGES[resultatVerification.status]
       );
     }
@@ -141,7 +154,7 @@ export default class TrajectoiresSpreadsheetService {
         ...(resultatVerification.donneesEntree?.consommationsFinales
           .identifiantsReferentielManquants || []),
       ];
-      throw new UnprocessableEntityException(
+      return toUnprocessableTrajectoireFailure(
         `Les indicateurs suivants n'ont pas de valeur pour l'année 2015 ou avec une interpolation possible : ${identifiantsReferentielManquants.join(
           ', '
         )}, impossible de calculer la trajectoire SNBC.`
@@ -178,7 +191,7 @@ export default class TrajectoiresSpreadsheetService {
     }
 
     if (!resultatVerification.donneesEntree) {
-      throw new InternalServerErrorException(
+      return toTrajectoireServerFailure(
         `Les données d'entrée de la trajectoire SNBC sont manquantes`
       );
     }
@@ -208,7 +221,7 @@ export default class TrajectoiresSpreadsheetService {
     // Ecriture du SIREN
     const sirenNumber = parseInt(epci.siren || '');
     if (isNaN(sirenNumber)) {
-      throw new InternalServerErrorException(
+      return toTrajectoireServerFailure(
         `Le SIREN de l'EPCI ${epci.nom} (${epci.siren}) n'est pas un nombre`
       );
     }
@@ -253,14 +266,17 @@ export default class TrajectoiresSpreadsheetService {
       consommationSpreadsheetData
     );
 
-    const indicateursResultat = getIndicateurDataOrThrow(
+    const indicateursResultatResult =
       await this.listIndicateursPredefinisRepository.listIndicateursPredefinis({
         identifiantsReferentiel:
           this.trajectoiresDataService.SNBC_TRAJECTOIRE_RESULTAT_IDENTIFIANTS_REFERENTIEL.filter(
             (identifiant) => identifiant !== ''
           ),
-      })
-    );
+      });
+    if (!indicateursResultatResult.success) {
+      return toDatabaseFailure(indicateursResultatResult);
+    }
+    const indicateursResultat = indicateursResultatResult.data;
 
     const trajectoireCalculResultat =
       await this.sheetService.getRawDataFromSheet(
@@ -282,12 +298,15 @@ export default class TrajectoiresSpreadsheetService {
     this.logger.log(
       `Ecriture des ${indicateurValeursTrajectoireResultat.length} valeurs des indicateurs correspondant à la trajectoire SNBC pour la collectivité ${request.collectiviteId}`
     );
-    const upsertedTrajectoireIndicateurValeurs = getDataOrThrow(
+    const upsertedValeursResult =
       await this.valeursService.upsertIndicateurValeurs(
         indicateurValeursTrajectoireResultat,
         { isUserTrusted: true } // this use case already checked its dedicated permission
-      )
-    );
+      );
+    if (!upsertedValeursResult.success) {
+      return toDatabaseFailure(upsertedValeursResult);
+    }
+    const upsertedTrajectoireIndicateurValeurs = upsertedValeursResult.data;
 
     const [
       indicateursResultatConsommation,
@@ -356,7 +375,7 @@ export default class TrajectoiresSpreadsheetService {
     };
 
     this.inverseSigneSequestrations(result);
-    return result;
+    return success(result);
   }
 
   private getTrajectoireCalculMode({
@@ -569,13 +588,13 @@ export default class TrajectoiresSpreadsheetService {
 
   private async getExistingTrajectoireResults(
     results: VerificationTrajectoireResultType
-  ): Promise<CalculTrajectoireResult> {
+  ): Promise<Result<CalculTrajectoireResult, CalculTrajectoireError>> {
     this.logger.log(
       'Résultats de la trajectoire SNBC déjà calculés, lecture des données en base'
     );
 
     if (!results.epci) {
-      throw new InternalServerErrorException(
+      return toTrajectoireServerFailure(
         'EPCI information is missing from verification result'
       );
     }
@@ -585,13 +604,16 @@ export default class TrajectoiresSpreadsheetService {
       this.getIdentifiantDossierResultat()
     );
 
-    const indicateurs = getIndicateurDataOrThrow(
+    const indicateursResult =
       await this.listIndicateursPredefinisRepository.listIndicateursPredefinis({
         identifiantsReferentiel:
           this.trajectoiresDataService
             .SNBC_TRAJECTOIRE_RESULTAT_IDENTIFIANTS_REFERENTIEL,
-      })
-    );
+      });
+    if (!indicateursResult.success) {
+      return toDatabaseFailure(indicateursResult);
+    }
+    const indicateurs = indicateursResult.data;
     const [indicateursConsommation, indicateursEmissionsSequestration] =
       partition(
         indicateurs,
@@ -610,7 +632,9 @@ export default class TrajectoiresSpreadsheetService {
     );
 
     if (!results.valeurs) {
-      throw new Error('Valeurs are missing from verification result');
+      return toTrajectoireServerFailure(
+        'Valeurs are missing from verification result'
+      );
     }
 
     const emissionGesTrajectoire =
@@ -648,7 +672,7 @@ export default class TrajectoiresSpreadsheetService {
     };
     this.inverseSigneSequestrations(result);
 
-    return result;
+    return success(result);
   }
 
   private async createOrOverrideTrajectoireSpreadsheet(
