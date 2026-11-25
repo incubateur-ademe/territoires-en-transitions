@@ -1,6 +1,11 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { membreTable } from '@tet/backend/collectivites/membres/membre.table';
 import { pickFreeRegionCode } from '@tet/backend/demarches/pcaet/demarches-pcaet.test-fixture';
+import {
+  createFiche,
+  createPlan,
+} from '@tet/backend/plans/fiches/fiches.test-fixture';
 import { servicesDeconcentresTypes } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
 import { labellisationTable } from '@tet/backend/referentiels/labellisations/labellisation.table';
@@ -332,11 +337,108 @@ describe('Test recherches collectivite', () => {
     expect(result.items.length).toEqual(0);
   });
 
+  test('trie les trois onglets et conserve les comptes pendant la pagination', async () => {
+    const nom = `Pagination recherche ${crypto.randomUUID()}`;
+    const collectiviteIds: Record<string, number> = {};
+    // Insérer dans un ordre différent de celui attendu dans les résultats.
+    for (const suffix of ['C', 'A', 'B']) {
+      const setup = await addTestCollectiviteAndUser(db, {
+        user: { role: CollectiviteRole.ADMIN },
+        collectivite: { nom: `${nom} ${suffix}` },
+      });
+      onTestFinished(() => setup.cleanup());
+      collectiviteIds[suffix] = setup.collectivite.id;
+      await createPlan({
+        caller: router.createCaller({
+          user: getAuthUserFromUserCredentials(setup.user),
+        }),
+        planData: { collectiviteId: setup.collectivite.id, nom: 'Plan test' },
+      });
+    }
+
+    const recherches = router.createCaller({ user: authenticatedUser })
+      .collectivites.recherches;
+    const filters: inputType = { ...input, nom, trierPar: ['nom'] };
+    for (const tab of ['collectivites', 'referentiels', 'plans'] as const) {
+      const firstPage = await recherches[tab](filters);
+      const secondPage = await recherches[tab]({ ...filters, page: 2 });
+      const pastLastPage = await recherches[tab]({ ...filters, page: 3 });
+
+      expect(firstPage.count, tab).toBe(3);
+      expect(
+        firstPage.items.map((item) => item.collectiviteId),
+        tab
+      ).toEqual([collectiviteIds.A, collectiviteIds.B]);
+      expect(secondPage.count, tab).toBe(3);
+      expect(
+        secondPage.items.map((item) => item.collectiviteId),
+        tab
+      ).toEqual([collectiviteIds.C]);
+      // Les onglets paginés en SQL renvoient 0 au-delà de la dernière page.
+      // Les plans, paginés en mémoire, conservent le compte total.
+      expect(pastLastPage, tab).toEqual({
+        count: tab === 'plans' ? 3 : 0,
+        items: [],
+      });
+    }
+  });
+
   /**
    * Les contacts (nom, e-mail, téléphone) sont réservés aux utilisateurs
    * vérifiés et membres actifs d'au moins une collectivité.
    */
   describe('contacts', () => {
+    test('applique la visibilité aux référentiels et aux plans', async () => {
+      const nom = `Contacts autres onglets ${crypto.randomUUID()}`;
+      const cible = await addTestCollectiviteAndUser(db, {
+        user: { role: CollectiviteRole.ADMIN },
+        collectivite: { nom },
+      });
+      onTestFinished(() => cible.cleanup());
+      await db.db.insert(membreTable).values({
+        collectiviteId: cible.collectivite.id,
+        userId: cible.user.id,
+        estReferent: true,
+      });
+
+      const membreCaller = router.createCaller({
+        user: getAuthUserFromUserCredentials(cible.user),
+      });
+      const plan = await createPlan({
+        caller: membreCaller,
+        planData: { collectiviteId: cible.collectivite.id, nom: 'Plan test' },
+      });
+      await createFiche({
+        caller: membreCaller,
+        ficheInput: {
+          collectiviteId: cible.collectivite.id,
+          titre: 'Fiche avec pilote',
+          axeId: plan.id,
+          pilotes: [{ userId: cible.user.id }],
+        },
+      });
+
+      const nonMembreCaller = router.createCaller({ user: authenticatedUser });
+      for (const tab of ['referentiels', 'plans'] as const) {
+        const filters = { ...input, nom };
+        const visible = await membreCaller.collectivites.recherches[tab](
+          filters
+        );
+        expect(visible.items, tab).toHaveLength(1);
+        expect(visible.items[0].contacts, tab).toEqual([
+          expect.objectContaining({ email: cible.user.email }),
+        ]);
+
+        const masked = await nonMembreCaller.collectivites.recherches[tab](
+          filters
+        );
+        expect(masked, tab).toEqual({
+          ...visible,
+          items: visible.items.map((item) => ({ ...item, contacts: [] })),
+        });
+      }
+    });
+
     const contactsOf = async (
       user: AuthenticatedUser,
       collectiviteId: number,
