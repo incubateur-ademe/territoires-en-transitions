@@ -1,7 +1,10 @@
 import { IndicateurReferenceExterneRepository } from '../indicateur/indicateur-reference-externe.repository';
 import { indicateurReferencesSheet } from './import-indicateur-reference.dto';
 import { ReconcileIndicateurValeursService } from '../valeurs/reconcile-indicateur-valeurs/reconcile-indicateur-valeurs.service';
-import { UnprocessableEntityException } from '@nestjs/common';
+import {
+  InternalServerErrorException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { ImportIndicateurRelationsService } from './import-indicateur-relations.service';
 import { UpsertIndicateurDefinitionsService } from './upsert-indicateur-definitions.service';
 import { Test } from '@nestjs/testing';
@@ -55,6 +58,7 @@ describe('importObjectifSchema', () => {
 describe('Indicateurs → import-indicateur-definition.service', () => {
   let importIndicateurDefinitionService: ImportIndicateurDefinitionService;
   let versionService: VersionService;
+  let indicateurExpressionService: IndicateurExpressionService;
   const configurationService = { get: vi.fn(() => 'spreadsheet-id') };
   const sheetService = {
     getDefaultRangeFromHeader: vi.fn(() => 'Objectifs!A:C'),
@@ -142,6 +146,7 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
       ImportIndicateurDefinitionService
     );
     versionService = moduleRef.get(VersionService);
+    indicateurExpressionService = moduleRef.get(IndicateurExpressionService);
     vi.clearAllMocks();
     transactionManager.executeSingle.mockImplementation(
       async (operation: (tx: Transaction) => Promise<unknown>) => {
@@ -442,6 +447,21 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
     expect(sheetService.getDataFromSheet).toHaveBeenCalledOnce();
   });
 
+  test("relance l'échec de lecture des prédéfinis en InternalServerErrorException avec sa cause", async () => {
+    const cause = new Error('connexion perdue');
+    listIndicateursPredefinisRepository.listIndicateursPredefinis.mockResolvedValueOnce(
+      failure('DATABASE_ERROR', cause)
+    );
+
+    const thrown = await importIndicateurDefinitionService
+      .importIndicateurDefinitions()
+      .catch((error: unknown) => error);
+
+    expect(thrown).toBeInstanceOf(InternalServerErrorException);
+    expect(thrown).toMatchObject({ message: 'connexion perdue', cause });
+    expect(sheetService.getDataFromSheet).not.toHaveBeenCalled();
+  });
+
   test("échoue si le recalcul échoue et permet de reprendre l'import", async () => {
     const importedDefinition = {
       ...cloneDeep(sampleImportIndicateurDefinition),
@@ -555,6 +575,31 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
           indicateurDefinition2,
         ])
       ).rejects.toThrowError(/circular dependency/i);
+    });
+
+    test("rapporte l'échec d'extraction des références de personnalisation de la formule", async () => {
+      vi.spyOn(
+        indicateurExpressionService,
+        'extractPersonnalisationReferencesFromFormula'
+      ).mockReturnValueOnce(
+        failure('INVALID_EXPRESSION', new Error('référence illisible'))
+      );
+      const parent = cloneDeep(sampleImportIndicateurDefinition);
+      const child = {
+        ...cloneDeep(sampleImportIndicateurDefinition2),
+        valeurCalcule: 'val(cae_1.a) / 10',
+      };
+
+      await expect(
+        importIndicateurDefinitionService.checkIndicateurDefinitions([
+          parent,
+          child,
+        ])
+      ).rejects.toThrow(
+        new UnprocessableEntityException(
+          `La formule de calcul de l'indicateur cae_1.b "val(cae_1.a) / 10" est invalide : référence illisible`
+        )
+      );
     });
 
     test('Everything ok', async () => {

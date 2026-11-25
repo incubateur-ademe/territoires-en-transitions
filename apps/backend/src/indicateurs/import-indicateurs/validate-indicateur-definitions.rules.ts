@@ -12,11 +12,32 @@ export type ImportExpressionValidators = {
   indicateurs: {
     extractNeededSourceIndicateursFromFormula: (
       formula: string
-    ) => readonly { identifiant: string }[];
-    parseExpression: (formula: string) => unknown;
+    ) => Result<readonly { identifiant: string }[], string>;
+    parseExpression: (formula: string) => Result<unknown, string>;
   };
   personnalisations: { validateExpression: (expression: string) => unknown };
 };
+
+function toInvalidCalculationFailure({
+  identifiantReferentiel,
+  valeurCalcule,
+  err,
+}: {
+  identifiantReferentiel: string;
+  valeurCalcule: string;
+  err: unknown;
+}): Result<never, 'INVALID_EXPRESSION'> {
+  return failure(
+    'INVALID_EXPRESSION',
+    new Error(
+      formatInvalidExpressionMessage({
+        label: `l'expression de calcul de l'indicateur ${identifiantReferentiel}`,
+        expression: valeurCalcule,
+        err,
+      })
+    )
+  );
+}
 
 export function validateIndicateurDefinitions(
   definitions: ImportIndicateurDefinitionType[],
@@ -49,52 +70,67 @@ export function validateIndicateurDefinitions(
         );
       }
     }
-    if (indicateur.valeurCalcule) {
-      try {
-        const sources =
-          validators.indicateurs.extractNeededSourceIndicateursFromFormula(
-            indicateur.valeurCalcule
-          );
-        for (const source of sources) {
-          if (source.identifiant === indicateur.identifiantReferentiel) {
-            throw new Error(
+    const { valeurCalcule } = indicateur;
+    if (valeurCalcule) {
+      const sourcesResult =
+        validators.indicateurs.extractNeededSourceIndicateursFromFormula(
+          valeurCalcule
+        );
+      if (!sourcesResult.success) {
+        return toInvalidCalculationFailure({
+          identifiantReferentiel: indicateur.identifiantReferentiel,
+          valeurCalcule,
+          err: sourcesResult.cause ?? new Error(sourcesResult.error),
+        });
+      }
+      const sources = sourcesResult.data;
+      for (const source of sources) {
+        if (source.identifiant === indicateur.identifiantReferentiel) {
+          return toInvalidCalculationFailure({
+            identifiantReferentiel: indicateur.identifiantReferentiel,
+            valeurCalcule,
+            err: new Error(
               `Indicateur ${indicateur.identifiantReferentiel} cannot depend on itself in formula`
-            );
-          }
-          const definition = byIdentifiant.get(source.identifiant);
-          if (!definition) {
-            throw new Error(
+            ),
+          });
+        }
+        const definition = byIdentifiant.get(source.identifiant);
+        if (!definition) {
+          return toInvalidCalculationFailure({
+            identifiantReferentiel: indicateur.identifiantReferentiel,
+            valeurCalcule,
+            err: new Error(
               `Indicateur ${indicateur.identifiantReferentiel} depends on unknown indicateur ${source.identifiant}`
-            );
-          }
-          if (definition.periodicite !== indicateur.periodicite) {
-            throw new Error(
+            ),
+          });
+        }
+        if (definition.periodicite !== indicateur.periodicite) {
+          return toInvalidCalculationFailure({
+            identifiantReferentiel: indicateur.identifiantReferentiel,
+            valeurCalcule,
+            err: new Error(
               `Indicateur ${indicateur.identifiantReferentiel} (${indicateur.periodicite}) cannot depend on ${source.identifiant} (${definition.periodicite}) with a different periodicite`
-            );
-          }
+            ),
+          });
         }
-        validators.indicateurs.parseExpression(indicateur.valeurCalcule);
-        if (!graph.hasNode(indicateur.identifiantReferentiel)) {
-          graph.addNode(indicateur.identifiantReferentiel);
-        }
-        for (const source of sources) {
-          if (!graph.hasNode(source.identifiant))
-            graph.addNode(source.identifiant);
-          graph.addDependency(
-            indicateur.identifiantReferentiel,
-            source.identifiant
-          );
-        }
-      } catch (error) {
-        return failure(
-          'INVALID_EXPRESSION',
-          new Error(
-            formatInvalidExpressionMessage({
-              label: `l'expression de calcul de l'indicateur ${indicateur.identifiantReferentiel}`,
-              expression: indicateur.valeurCalcule,
-              err: error,
-            })
-          )
+      }
+      const parsed = validators.indicateurs.parseExpression(valeurCalcule);
+      if (!parsed.success) {
+        return toInvalidCalculationFailure({
+          identifiantReferentiel: indicateur.identifiantReferentiel,
+          valeurCalcule,
+          err: parsed.cause ?? new Error(parsed.error),
+        });
+      }
+      if (!graph.hasNode(indicateur.identifiantReferentiel)) {
+        graph.addNode(indicateur.identifiantReferentiel);
+      }
+      for (const source of sources) {
+        if (!graph.hasNode(source.identifiant))
+          graph.addNode(source.identifiant);
+        graph.addDependency(
+          indicateur.identifiantReferentiel,
+          source.identifiant
         );
       }
     }
