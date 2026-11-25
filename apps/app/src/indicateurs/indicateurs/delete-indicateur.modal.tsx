@@ -7,7 +7,7 @@ import { DeleteIndicateurConfirmationModal } from './delete-indicateur-confirmat
  * Modale pour la suppression d'un indicateur personnalisé
  */
 type Props = {
-  indicateur: Pick<IndicateurDetaille, 'id' | 'titre'>;
+  indicateur: Pick<IndicateurDetaille, 'id' | 'titre' | 'enfants'>;
   openState: OpenState;
   redirectAfterDelete?: boolean;
 };
@@ -23,6 +23,7 @@ export const DeleteIndicateurModal = ({
   return (
     <DeleteIndicateurConfirmationModal
       titre={indicateur.titre}
+      enfantsCount={indicateur.enfants.length}
       openState={openState}
       onConfirm={() => deleteIndicateur()}
     />

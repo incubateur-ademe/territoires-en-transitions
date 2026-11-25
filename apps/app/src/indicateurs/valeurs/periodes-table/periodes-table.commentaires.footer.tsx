@@ -4,41 +4,31 @@ import {
   type IndicateurPeriode,
 } from '@tet/domain/indicateurs';
 import { Button, TableCell, TableHeaderCell } from '@tet/ui';
-import type { IndicateurPeriodeData } from '../data/prepare-indicateur-periode-data';
-import { ADD_PERIODE_CELL_CLASSNAME } from './indicateur-valeurs-table.styles';
+import { ADD_PERIODE_CELL_CLASSNAME } from './periodes-table.styles';
+import type { PeriodeTableCommentaires } from './periodes-table.types';
 
 type Props = {
   periodes: readonly IndicateurPeriode[];
-  resultats: IndicateurPeriodeData['donneesCollectivite'];
-  objectifs: IndicateurPeriodeData['donneesCollectivite'];
-  readonly?: boolean;
-  periodicite: IndicateurPeriode['periodicite'];
+  commentaires: PeriodeTableCommentaires;
   showAddPeriodeColumn: boolean;
-  onComment: (periode: IndicateurPeriode) => void;
 };
 
-export const IndicateurValeursTableCommentairesFooter = ({
+export const hasCommentairesFooter = ({
   periodes,
-  resultats,
-  objectifs,
-  readonly,
-  periodicite,
-  showAddPeriodeColumn,
-  onComment,
-}: Props) => {
-  if (periodes.length === 0 || (!resultats && !objectifs)) return null;
+  commentaires: { isReadonly, countOf },
+}: Pick<Props, 'periodes' | 'commentaires'>): boolean =>
+  periodes.length > 0 &&
+  (!isReadonly || periodes.some((periode) => countOf(periode) > 0));
 
-  const commentCounts = periodes.map(
-    (periode) =>
-      [resultats, objectifs].filter((source) =>
-        source?.valeurs.some(
-          (value) =>
-            IndicateurPeriodes.key(value.periode) ===
-              IndicateurPeriodes.key(periode) && value.commentaire
-        )
-      ).length
-  );
-  if (readonly && !commentCounts.some((count) => count > 0)) return null;
+export const PeriodesTableCommentairesFooter = ({
+  periodes,
+  commentaires,
+  showAddPeriodeColumn,
+}: Props) => {
+  if (!hasCommentairesFooter({ periodes, commentaires })) return null;
+
+  const { countOf, canComment, onComment } = commentaires;
+  const commentCounts = periodes.map(countOf);
 
   return (
     <tfoot>
@@ -56,8 +46,7 @@ export const IndicateurValeursTableCommentairesFooter = ({
               key={IndicateurPeriodes.key(periode)}
               className="border-r border-primary-4 text-center"
             >
-              {((!readonly && periode.periodicite === periodicite) ||
-                commentCount > 0) && (
+              {(canComment(periode) || commentCount > 0) && (
                 <Button
                   icon="question-answer-line"
                   variant="outlined"

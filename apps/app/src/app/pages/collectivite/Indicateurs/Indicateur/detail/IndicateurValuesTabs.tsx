@@ -1,5 +1,6 @@
 import { Alert } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
+import type { ReactNode } from 'react';
 import { IndicateurTable } from '../../table/indicateur-table';
 import { useIndicateurData } from '../../detail/context/indicateur-data.context';
 
@@ -10,9 +11,11 @@ const ID_SEQUESTRATION = 'cae_63.';
 export const IndicateurValuesTabs = ({
   isReadonly,
   openModalState,
+  actions,
 }: {
   isReadonly: boolean;
   openModalState?: OpenState;
+  actions?: ReactNode;
 }) => {
   const { indicateur } = useIndicateurData();
 
@@ -33,6 +36,7 @@ export const IndicateurValuesTabs = ({
         key={indicateur.id}
         readonly={isReadonly}
         openModalState={openModalState}
+        actions={actions}
       />
     </>
   );

@@ -44,6 +44,9 @@ export const invalidateIndicateurValeursQueries = async ({
         collectiviteId,
       }),
     }),
+    queryClient.invalidateQueries({
+      queryKey: trpc.indicateurs.valeurs.totals.pathKey(),
+    }),
     ...scoreQueryKeys.map((queryKey) =>
       queryClient.invalidateQueries({ queryKey })
     ),

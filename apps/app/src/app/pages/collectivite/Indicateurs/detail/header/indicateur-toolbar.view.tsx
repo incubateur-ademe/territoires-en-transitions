@@ -8,6 +8,9 @@ import { IndicateurChartPngExport } from '../../chart/indicateur-chart.png-expor
 import { IndicateurChartInfo } from '../../data/use-indicateur-chart';
 import { useIndicateurActions } from '../context/indicateur-actions.context';
 import { useIndicateurData } from '../context/indicateur-data.context';
+import { useIndicateurNouveauSousIndicateur } from '../context/indicateur-nouveau-sous-indicateur.context';
+import { IndicateurSousIndicateursChartPngExport } from '../content/donnees/indicateur-sous-indicateurs-chart.png-export';
+import { CreateSousIndicateurButton } from '../content/sous-indicateurs/create-sous-indicateur.button';
 
 type ModalType = 'activityLog' | 'deleting' | 'none';
 
@@ -29,8 +32,10 @@ const IndicateurToolbar = ({
   const { updateIndicateur, exportIndicateur, deleteIndicateur } =
     useIndicateurActions();
 
-  const { indicateur } = useIndicateurData();
+  const { indicateur, canMutateIndicateur } = useIndicateurData();
+  const { onCreated } = useIndicateurNouveauSousIndicateur();
   const { estFavori } = indicateur;
+  const hasSousIndicateurs = isPerso && indicateur.enfants.length > 0;
 
   const actions: MenuAction[] = [
     {
@@ -39,7 +44,7 @@ const IndicateurToolbar = ({
       onClick: exportIndicateur,
     },
     {
-      isVisible: !!chartInfo?.hasValeur,
+      isVisible: hasSousIndicateurs || !!chartInfo?.hasValeur,
       icon: 'image-line',
       label: appLabels.telechargerLeGraphiquePng,
       onClick: () => setIsExportingPng(true),
@@ -63,6 +68,15 @@ const IndicateurToolbar = ({
   return (
     <>
       <div className="flex items-center gap-2">
+        {isPerso && canMutateIndicateur && (
+          <CreateSousIndicateurButton
+            variant="primary"
+            size="xs"
+            parentId={indicateur.id}
+            childCount={indicateur.enfants.length}
+            onCreated={onCreated}
+          />
+        )}
         <Tooltip
           label={
             estFavori
@@ -101,12 +115,24 @@ const IndicateurToolbar = ({
       {currentModal === 'deleting' && (
         <DeleteIndicateurConfirmationModal
           titre={indicateur.titre}
+          enfantsCount={indicateur.enfants.length}
           openState={{ isOpen: true, setIsOpen: closeModal }}
           onConfirm={deleteIndicateur}
         />
       )}
 
-      {isExportingPng && chartInfo && (
+      {isExportingPng && hasSousIndicateurs && (
+        <IndicateurSousIndicateursChartPngExport
+          indicateurId={indicateur.id}
+          isCumul={indicateur.totalEstCumulDesSousIndicateurs}
+          unite={indicateur.unite}
+          periodicite={indicateur.periodicite}
+          title={indicateur.titre}
+          onDone={() => setIsExportingPng(false)}
+        />
+      )}
+
+      {isExportingPng && !hasSousIndicateurs && chartInfo && (
         <IndicateurChartPngExport
           chartInfo={chartInfo}
           title={indicateur.titre}

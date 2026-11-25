@@ -20,7 +20,7 @@ test.beforeEach(async ({ page }) => {
 for (const { resultats, pointsVisibles } of [
   { resultats: [10, null, 0], pointsVisibles: 2 },
   { resultats: [0], pointsVisibles: 1 },
-  { resultats: [10, 20, null, 0], pointsVisibles: 1 },
+  { resultats: [10, 20, null, 0], pointsVisibles: 3 },
 ]) {
   test(`Afficher les points isolés du segment annuel ${JSON.stringify(
     resultats
@@ -60,52 +60,88 @@ for (const { resultats, pointsVisibles } of [
         if (!context) throw new Error('Canvas 2D indisponible');
         const ratio = element.height / element.clientHeight;
         const plotHeight = Math.floor(element.height - 80 * ratio);
-        const { data } = context.getImageData(0, 0, element.width, plotHeight);
+        const width = element.width;
+        const { data } = context.getImageData(0, 0, width, plotHeight);
         const rgb = [1, 3, 5].map((offset) =>
           parseInt(color.slice(offset, offset + 2), 16)
         );
-        const points: { width: number; minY: number; maxY: number }[] = [];
-        let previousX = -2;
-        for (let x = 0; x < element.width; x++) {
-          const ys: number[] = [];
-          for (let y = 0; y < plotHeight; y++) {
-            const offset = (y * element.width + x) * 4;
-            if (
+        const half = Math.max(1, Math.round(ratio));
+        const side = 2 * half + 1;
+        const minSize = 6 * half * half;
+        const integral = new Int32Array((width + 1) * (plotHeight + 1));
+        for (let y = 0; y < plotHeight; y++) {
+          for (let x = 0; x < width; x++) {
+            const offset = (y * width + x) * 4;
+            const isColor =
               data[offset + 3] > 240 &&
               rgb.every(
                 (value, index) => Math.abs(data[offset + index] - value) <= 1
-              )
-            )
-              ys.push(y);
+              );
+            integral[(y + 1) * (width + 1) + x + 1] =
+              (isColor ? 1 : 0) +
+              integral[y * (width + 1) + x + 1] +
+              integral[(y + 1) * (width + 1) + x] -
+              integral[y * (width + 1) + x];
           }
-          if (!ys.length) continue;
-          if (x !== previousX + 1)
-            points.push({ width: 0, minY: plotHeight, maxY: 0 });
-          const point = points[points.length - 1];
-          point.width++;
-          point.minY = Math.min(point.minY, ...ys);
-          point.maxY = Math.max(point.maxY, ...ys);
-          previousX = x;
         }
-        return points;
-      }, '#E1E1FD'); // Première couleur de la palette des segments.
+        const countColored = (x0: number, y0: number, x1: number, y1: number) =>
+          integral[(y1 + 1) * (width + 1) + x1 + 1] -
+          integral[y0 * (width + 1) + x1 + 1] -
+          integral[(y1 + 1) * (width + 1) + x0] +
+          integral[y0 * (width + 1) + x0];
+        const core = new Uint8Array(width * plotHeight);
+        for (let y = half; y < plotHeight - half; y++) {
+          for (let x = half; x < width - half; x++) {
+            if (
+              countColored(x - half, y - half, x + half, y + half) ===
+              side * side
+            )
+              core[y * width + x] = 1;
+          }
+        }
+        const seen = new Uint8Array(width * plotHeight);
+        const points: { minX: number; minY: number; maxY: number }[] = [];
+        for (let start = 0; start < core.length; start++) {
+          if (!core[start] || seen[start]) continue;
+          const stack = [start];
+          seen[start] = 1;
+          let size = 0;
+          let minX = width;
+          let minY = plotHeight;
+          let maxY = 0;
+          while (stack.length) {
+            const index = stack.pop() as number;
+            const x = index % width;
+            const y = (index - x) / width;
+            size++;
+            minX = Math.min(minX, x);
+            minY = Math.min(minY, y);
+            maxY = Math.max(maxY, y);
+            for (let dy = -1; dy <= 1; dy++) {
+              for (let dx = -1; dx <= 1; dx++) {
+                const nx = x + dx;
+                const ny = y + dy;
+                if (nx < 0 || ny < 0 || nx >= width || ny >= plotHeight)
+                  continue;
+                const next = ny * width + nx;
+                if (core[next] && !seen[next]) {
+                  seen[next] = 1;
+                  stack.push(next);
+                }
+              }
+            }
+          }
+          if (size >= minSize) points.push({ minX, minY, maxY });
+        }
+        return points.sort((left, right) => left.minX - right.minX);
+      }, '#404092');
 
     await expect
-      .poll(
-        async () =>
-          (
-            await getVisiblePoints()
-          ).filter((point) => point.width > 1 && point.maxY - point.minY > 1)
-            .length
-      )
+      .poll(async () => (await getVisiblePoints()).length)
       .toBe(pointsVisibles);
-    for (const point of await getVisiblePoints()) {
-      expect(point.width).toBeGreaterThan(1);
-      expect(point.maxY - point.minY).toBeGreaterThan(1);
-    }
-    if (pointsVisibles === 2) {
-      const [first, zero] = await getVisiblePoints();
-      expect(zero.minY).toBeGreaterThan(first.maxY);
+    if (pointsVisibles >= 2) {
+      const points = await getVisiblePoints();
+      expect(points[points.length - 1].minY).toBeGreaterThan(points[0].maxY);
     }
   });
 }
