@@ -8,6 +8,7 @@ import { Result, success } from '@tet/backend/utils/result.type';
 import { ListIndicateursInputFilters } from '@tet/domain/indicateurs';
 import { ResourceType } from '@tet/domain/users';
 import { format } from 'date-fns';
+import { uniq } from 'es-toolkit';
 import { Workbook } from 'exceljs';
 import CollectivitesService from '../../../collectivites/services/collectivites.service';
 import { AuthenticatedUser } from '../../../users/models/auth.models';
@@ -15,7 +16,10 @@ import IndicateurSourcesService from '../../sources/indicateur-sources.service';
 import { TrajectoireSnbc3FeatureFlagService } from '../../trajectoires/trajectoire-snbc3-feature-flag.service';
 import ManageIndicateurValeursService from '../../valeurs/manage-indicateur-valeurs/manage-indicateur-valeurs.service';
 import { ListIndicateursService } from '../list-indicateurs/list-indicateurs.service';
-import { buildConsolidatedSheet } from './export-indicateurs.builder';
+import {
+  buildConsolidatedSheet,
+  type EnfantRow,
+} from './export-indicateurs.builder';
 import {
   ExportIndicateursError,
   toExportTooLargeFailure,
@@ -23,6 +27,37 @@ import {
 import { ExportIndicateursRequestType } from './export-indicateurs.request';
 
 type XlsxBuffer = Awaited<ReturnType<Workbook['xlsx']['writeBuffer']>>;
+
+type ExportedChildRef = Pick<
+  EnfantRow,
+  'id' | 'identifiantReferentiel' | 'titre'
+>;
+
+type ExportedLevelNode = ExportedChildRef & {
+  enfants?: readonly ExportedChildRef[];
+};
+
+type ExportedChild = ExportedChildRef & { enfants: ExportedChild[] };
+
+type ExportedParent<TParent extends ExportedLevelNode> = Omit<
+  TParent,
+  'enfants'
+> & {
+  enfants: ExportedChild[];
+};
+
+const toConfidentialityFilters = (
+  canReadConfidentiel: boolean
+): ListIndicateursInputFilters =>
+  canReadConfidentiel
+    ? {}
+    : { estConfidentiel: false, sansAncetreConfidentiel: true };
+
+const listDescendantIds = (enfants: readonly ExportedChild[]): number[] =>
+  enfants.flatMap((enfant) => [
+    enfant.id,
+    ...listDescendantIds(enfant.enfants),
+  ]);
 
 type ExportedXlsx = {
   buffer: XlsxBuffer;
@@ -138,38 +173,14 @@ export default class ExportIndicateursService {
       }
     }
 
-    // Les enfants proviennent de la projection de ListIndicateursService qui
-    // n'applique pas le filtrage de confidentialité. On les repasse donc par le
-    // même service (mêmes droits + gate estConfidentiel) pour exclure à la source
-    // les enfants confidentiels, avant de les conserver et d'alimenter les
-    // valeurs exportées.
-    const enfantIds = parents.flatMap((p) => p.enfants?.map((e) => e.id) ?? []);
-    if (enfantIds.length) {
-      const enfantsFilters: ListIndicateursInputFilters = {
-        indicateurIds: enfantIds,
-      };
-      if (!canReadConfidentiel) {
-        enfantsFilters.estConfidentiel = false;
-        enfantsFilters.sansAncetreConfidentiel = true;
-      }
-      const enfantsResult = await this.listIndicateursService.listIndicateurs(
-        {
-          collectiviteId: options.collectiviteId,
-          filters: enfantsFilters,
-          queryOptions: { page: 1, limit: this.MAX_EXPORT_COUNT },
-        },
-        tokenInfo
-      );
-      if (!enfantsResult.success) return enfantsResult;
-      const allowedEnfantIds = new Set(
-        enfantsResult.data.data.map((d) => d.id)
-      );
-      for (const parent of parents) {
-        parent.enfants = (parent.enfants ?? []).filter((e) =>
-          allowedEnfantIds.has(e.id)
-        );
-      }
-    }
+    const descendantsResult = await this.listDescendants({
+      parents,
+      collectiviteId: options.collectiviteId,
+      canReadConfidentiel,
+      tokenInfo,
+    });
+    if (!descendantsResult.success) return descendantsResult;
+    const exportedParents = descendantsResult.data;
 
     // Charge la collectivité
     const collectiviteResult = await this.collectiviteService.getCollectivite(
@@ -178,13 +189,12 @@ export default class ExportIndicateursService {
     if (!collectiviteResult.success) return collectiviteResult;
     const { collectivite } = collectiviteResult.data;
 
-    const filename = this.getFilename(parents, collectivite.nom ?? '');
+    const filename = this.getFilename(exportedParents, collectivite.nom ?? '');
     if (!filename) return success(null);
 
-    // Charge les valeurs pour tous les indicateurs (parents + enfants).
-    const allIndicateurIds = parents.flatMap((p) => [
-      p.id,
-      ...(p.enfants?.map((e) => e.id) ?? []),
+    const allIndicateurIds = exportedParents.flatMap((parent) => [
+      parent.id,
+      ...listDescendantIds(parent.enfants),
     ]);
 
     // Lecture interne non filtrée : la SNBC 3 en est retirée sans le flag,
@@ -213,10 +223,104 @@ export default class ExportIndicateursService {
     // Génère le classeur consolidé (1 onglet, 1 ligne par indicateur + 1 ligne
     // par source open-data disposant de valeurs).
     const workbook = new Workbook();
-    buildConsolidatedSheet(workbook, parents, indicateursValeurs, sourceLabels);
+    buildConsolidatedSheet(
+      workbook,
+      exportedParents,
+      indicateursValeurs,
+      sourceLabels
+    );
 
     const buffer = await workbook.xlsx.writeBuffer();
     return success({ buffer, filename });
+  }
+
+  private async listAllowedChildren({
+    candidateIds,
+    collectiviteId,
+    canReadConfidentiel,
+    tokenInfo,
+  }: {
+    candidateIds: readonly number[];
+    collectiviteId: number;
+    canReadConfidentiel: boolean;
+    tokenInfo: AuthenticatedUser;
+  }): Promise<Result<ExportedLevelNode[], ExportIndicateursError>> {
+    const childrenResult = await this.listIndicateursService.listIndicateurs(
+      {
+        collectiviteId,
+        filters: {
+          indicateurIds: [...candidateIds],
+          ...toConfidentialityFilters(canReadConfidentiel),
+        },
+        queryOptions: { page: 1, limit: this.MAX_EXPORT_COUNT },
+      },
+      tokenInfo
+    );
+    if (!childrenResult.success) return childrenResult;
+    if (childrenResult.data.count > this.MAX_EXPORT_COUNT) {
+      return toExportTooLargeFailure(this.MAX_EXPORT_COUNT);
+    }
+    return success(childrenResult.data.data);
+  }
+
+  private async listDescendants<TParent extends ExportedLevelNode>({
+    parents,
+    collectiviteId,
+    canReadConfidentiel,
+    tokenInfo,
+  }: {
+    parents: readonly TParent[];
+    collectiviteId: number;
+    canReadConfidentiel: boolean;
+    tokenInfo: AuthenticatedUser;
+  }): Promise<Result<ExportedParent<TParent>[], ExportIndicateursError>> {
+    const childrenByParentId = new Map<number, ExportedChildRef[]>();
+    const visitedIds = new Set(parents.map(({ id }) => id));
+    let currentLevelNodes: readonly ExportedLevelNode[] = parents;
+
+    while (currentLevelNodes.length > 0) {
+      const candidateIds = uniq(
+        currentLevelNodes
+          .flatMap(({ enfants }) => enfants ?? [])
+          .map(({ id }) => id)
+          .filter((id) => !visitedIds.has(id))
+      );
+      if (candidateIds.length === 0) break;
+
+      const allowedResult = await this.listAllowedChildren({
+        candidateIds,
+        collectiviteId,
+        canReadConfidentiel,
+        tokenInfo,
+      });
+      if (!allowedResult.success) return allowedResult;
+      const allowedById = new Map(
+        allowedResult.data.map((child) => [child.id, child])
+      );
+
+      currentLevelNodes = currentLevelNodes.flatMap((levelNode) => {
+        const allowedChildren = (levelNode.enfants ?? []).filter(
+          ({ id }) => allowedById.has(id) && !visitedIds.has(id)
+        );
+        allowedChildren.forEach(({ id }) => visitedIds.add(id));
+        childrenByParentId.set(levelNode.id, allowedChildren);
+        return allowedChildren.flatMap(({ id }) => allowedById.get(id) ?? []);
+      });
+    }
+
+    const toExportedChild = (child: ExportedChildRef): ExportedChild => ({
+      id: child.id,
+      identifiantReferentiel: child.identifiantReferentiel,
+      titre: child.titre,
+      enfants: (childrenByParentId.get(child.id) ?? []).map(toExportedChild),
+    });
+
+    return success(
+      parents.map((parent) => ({
+        ...parent,
+        enfants: (childrenByParentId.get(parent.id) ?? []).map(toExportedChild),
+      }))
+    );
   }
 
   getFilename(
