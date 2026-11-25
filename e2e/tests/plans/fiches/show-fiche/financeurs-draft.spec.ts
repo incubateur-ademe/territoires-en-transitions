@@ -223,7 +223,14 @@ test.describe('Financeurs — brouillons persistés en localStorage', () => {
       name: 'Montant de subvention obtenu',
     });
     await montantInput.fill('12345');
+    // L'affichage est optimiste : attendre la réponse serveur avant le reload,
+    // sinon le rechargement annule la mutation en cours.
+    const ficheSaved = page.waitForResponse(
+      (response) =>
+        response.url().includes('/trpc/plans.fiches.update') && response.ok()
+    );
     await montantInput.press('Enter');
+    await ficheSaved;
 
     // Le placeholder « Ajouter un montant » disparaît, le montant formaté apparaît
     await expect(
