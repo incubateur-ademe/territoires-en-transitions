@@ -14,13 +14,9 @@ export type SousIndicateursChartState =
 
 export const toSousIndicateursChartState = ({
   indicateurId,
-  isCumul,
   ...outcomes
 }: SousIndicateursOutcomes &
-  Readonly<{
-    indicateurId: number;
-    isCumul: boolean;
-  }>): SousIndicateursChartState => {
+  Readonly<{ indicateurId: number }>): SousIndicateursChartState => {
   const sourceState = toSousIndicateursSourceState({
     indicateurId,
     ...outcomes,
@@ -32,7 +28,6 @@ export const toSousIndicateursChartState = ({
     status: 'ready',
     data: buildSousIndicateursChartData({
       rootId: indicateurId,
-      isCumul,
       ...sourceState.source,
     }),
   };

@@ -2,7 +2,6 @@
 
 import type { RenameSousIndicateur } from '@/app/indicateurs/sous-indicateurs/data/use-rename-sous-indicateur';
 import type { CreateSousIndicateur } from '@/app/indicateurs/sous-indicateurs/data/use-create-sous-indicateur';
-import type { UpdateSousIndicateursCumul } from '@/app/indicateurs/sous-indicateurs/data/use-update-sous-indicateurs-cumul';
 import type { DetachSousIndicateur } from '@/app/indicateurs/sous-indicateurs/data/use-detach-sous-indicateur';
 import type { DeleteSousIndicateursPeriode } from '@/app/indicateurs/sous-indicateurs/data/use-delete-sous-indicateurs-periode';
 import type { SaveSousIndicateurValeur } from '@/app/indicateurs/sous-indicateurs/data/use-save-sous-indicateur-valeur';
@@ -24,9 +23,6 @@ export type IndicateurSousIndicateursTableValue = {
   useDetachSousIndicateur: () => DetachSousIndicateur;
   useCreateSousIndicateur: () => CreateSousIndicateur;
   useRenameSousIndicateur: () => RenameSousIndicateur;
-  useUpdateSousIndicateursCumul: (
-    indicateurId: number
-  ) => UpdateSousIndicateursCumul;
   useIndicateurPeriodeCommentaires: () => IndicateurPeriodeCommentaires;
 };
 

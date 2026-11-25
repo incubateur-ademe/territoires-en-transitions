@@ -47,7 +47,6 @@ export const IndicateurPersoDonnees = () => {
         <div className="mb-6">
           <IndicateurSousIndicateursChart
             indicateurId={indicateur.id}
-            isCumul={indicateur.totalEstCumulDesSousIndicateurs}
             unite={unite}
             periodicite={indicateur.periodicite}
           />

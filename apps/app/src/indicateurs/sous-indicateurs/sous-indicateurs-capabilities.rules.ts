@@ -3,42 +3,17 @@ import {
   isIndicateurPerso,
 } from '@tet/domain/indicateurs';
 
-export type SousIndicateursCumul = 'enabled' | 'disabled' | 'unavailable';
-
 export type SousIndicateursCapabilities = Readonly<{
-  cumul: SousIndicateursCumul;
+  canTotaliser: boolean;
   canEditStructure: boolean;
 }>;
-
-const toCumul = ({
-  isPerso,
-  totalEstCumulDesSousIndicateurs,
-}: {
-  isPerso: boolean;
-  totalEstCumulDesSousIndicateurs: boolean;
-}): SousIndicateursCumul => {
-  if (!isPerso) {
-    return 'unavailable';
-  }
-  return totalEstCumulDesSousIndicateurs ? 'enabled' : 'disabled';
-};
 
 export const toSousIndicateursCapabilities = (
   indicateur: Pick<
     IndicateurDetaille,
-    | 'collectiviteId'
-    | 'groupementId'
-    | 'identifiantReferentiel'
-    | 'totalEstCumulDesSousIndicateurs'
+    'collectiviteId' | 'groupementId' | 'identifiantReferentiel'
   >
 ): SousIndicateursCapabilities => {
   const isPerso = isIndicateurPerso(indicateur);
-  return {
-    cumul: toCumul({
-      isPerso,
-      totalEstCumulDesSousIndicateurs:
-        indicateur.totalEstCumulDesSousIndicateurs,
-    }),
-    canEditStructure: isPerso,
-  };
+  return { canTotaliser: isPerso, canEditStructure: isPerso };
 };

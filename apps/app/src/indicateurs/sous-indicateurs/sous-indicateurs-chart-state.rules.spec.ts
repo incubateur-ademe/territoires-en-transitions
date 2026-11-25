@@ -62,7 +62,6 @@ const readyOutcomes: SousIndicateursOutcomes = {
 const toState = (overrides: Partial<SousIndicateursOutcomes> = {}) =>
   toSousIndicateursChartState({
     indicateurId: ROOT_ID,
-    isCumul: true,
     ...readyOutcomes,
     ...overrides,
   });
@@ -72,7 +71,6 @@ describe('toSousIndicateursChartState', () => {
     expect(toState()).toMatchObject({
       status: 'ready',
       data: {
-        mode: 'stacked',
         dates: ['2022-01-01'],
         resultatTotal: [5],
       },

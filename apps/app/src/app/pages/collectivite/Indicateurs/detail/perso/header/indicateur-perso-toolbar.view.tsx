@@ -40,7 +40,6 @@ export const IndicateurPersoToolbar = ({
           ? ({ onDone }) => (
               <IndicateurSousIndicateursChartPngExport
                 indicateurId={indicateur.id}
-                isCumul={indicateur.totalEstCumulDesSousIndicateurs}
                 unite={indicateur.unite}
                 periodicite={indicateur.periodicite}
                 title={indicateur.titre}

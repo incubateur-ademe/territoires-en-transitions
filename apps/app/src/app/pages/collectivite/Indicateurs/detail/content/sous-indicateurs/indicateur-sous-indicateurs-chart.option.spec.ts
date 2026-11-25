@@ -8,12 +8,11 @@ import {
   toSousIndicateursChartSeries,
 } from './indicateur-sous-indicateurs-chart.option';
 
-type StackedData = Extract<SousIndicateursChartData, { mode: 'stacked' }>;
-
 const DATES = ['2022-01-01', '2023-01-01'] as const;
 
-const toStackedData = (overrides: Partial<StackedData> = {}): StackedData => ({
-  mode: 'stacked',
+const toStackedData = (
+  overrides: Partial<SousIndicateursChartData> = {}
+): SousIndicateursChartData => ({
   dates: DATES,
   children: [
     {
@@ -37,7 +36,7 @@ const toNames = (data: SousIndicateursChartData): unknown[] =>
   toSousIndicateursChartSeries(data).series.map(({ name }) => name);
 
 describe('toSousIndicateursChartSeries', () => {
-  describe('en mode empilé', () => {
+  describe('séries empilées', () => {
     it("empile les enfants directs dans l'ordre reçu puis trace la courbe du total", () => {
       expect(toNames(toStackedData())).toEqual([
         'Emballages',
@@ -125,84 +124,6 @@ describe('toSousIndicateursChartSeries', () => {
       });
     });
   });
-
-  describe('en mode lignes', () => {
-    const lines: SousIndicateursChartData = {
-      mode: 'lines',
-      dates: DATES,
-      lines: [
-        {
-          indicateurId: 3,
-          label: 'Collectes sélectives',
-          color: 'collectes-color',
-          resultatValeurs: [15, 18],
-          objectifValeurs: [20, null],
-        },
-        {
-          indicateurId: 2,
-          label: 'Verre',
-          color: 'verre-color',
-          resultatValeurs: [3, 4],
-          objectifValeurs: null,
-        },
-      ],
-    };
-
-    it('trace une ligne de résultats par enfant direct suivie de celle de ses objectifs quand il en a, sans empilement', () => {
-      const { series } = toSousIndicateursChartSeries(lines);
-
-      expect(series.map(({ name }) => name)).toEqual([
-        'Collectes sélectives',
-        appLabels.indicateurSousIndicateursObjectifDe({
-          label: 'Collectes sélectives',
-        }),
-        'Verre',
-      ]);
-      expect(series.every(({ stack }) => stack === undefined)).toBe(true);
-    });
-
-    it("donne à l'objectif d'un enfant la couleur de ses résultats", () => {
-      const { series } = toSousIndicateursChartSeries(lines);
-
-      expect(series.map(({ color }) => color)).toEqual([
-        'collectes-color',
-        'collectes-color',
-        'verre-color',
-      ]);
-    });
-
-    it('trace les résultats en trait plein avec des points pleins et les objectifs en tirets avec des points creux', () => {
-      const [resultat, objectif] = toSousIndicateursChartSeries(lines).series;
-
-      expect(resultat).toMatchObject({ symbol: 'circle', symbolSize: 8 });
-      expect(resultat.lineStyle).not.toHaveProperty('type');
-      expect(objectif).toMatchObject({
-        symbol: 'emptyCircle',
-        symbolSize: 8,
-        lineStyle: { type: 'dashed' },
-      });
-    });
-
-    it("ne trace pas de courbe de résultats pour un enfant qui n'en a pas", () => {
-      const { series } = toSousIndicateursChartSeries({
-        mode: 'lines',
-        dates: DATES,
-        lines: [
-          {
-            indicateurId: 2,
-            label: 'Verre',
-            color: 'verre-color',
-            resultatValeurs: null,
-            objectifValeurs: [5, 6],
-          },
-        ],
-      });
-
-      expect(series.map(({ name }) => name)).toEqual([
-        appLabels.indicateurSousIndicateursObjectifDe({ label: 'Verre' }),
-      ]);
-    });
-  });
 });
 
 describe('toSousIndicateursChartOption', () => {
@@ -249,41 +170,6 @@ describe('toSousIndicateursChartOption', () => {
         expect.objectContaining({ name: OBJECTIF_TOTAL_NAME }),
         'Emballages',
         'Verre',
-      ],
-    });
-  });
-
-  it("garde l'ordre des lignes dans la légende quand le cumul est décoché", () => {
-    const option = toOption({
-      mode: 'lines',
-      dates: DATES,
-      lines: [
-        {
-          indicateurId: 3,
-          label: 'Collectes',
-          color: 'collectes-color',
-          resultatValeurs: [1, 2],
-          objectifValeurs: [3, 4],
-        },
-        {
-          indicateurId: 2,
-          label: 'Verre',
-          color: 'verre-color',
-          resultatValeurs: [1, 2],
-          objectifValeurs: null,
-        },
-      ],
-    });
-
-    expect(option.legend).toMatchObject({
-      data: [
-        expect.objectContaining({ name: 'Collectes' }),
-        expect.objectContaining({
-          name: appLabels.indicateurSousIndicateursObjectifDe({
-            label: 'Collectes',
-          }),
-        }),
-        expect.objectContaining({ name: 'Verre' }),
       ],
     });
   });

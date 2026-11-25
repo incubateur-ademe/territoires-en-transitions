@@ -9,10 +9,7 @@ import {
 } from 'react';
 
 export type IndicateurSousIndicateursChartValue = {
-  useSousIndicateursChart: (
-    indicateurId: number,
-    isCumul: boolean
-  ) => SousIndicateursChartState;
+  useSousIndicateursChart: (indicateurId: number) => SousIndicateursChartState;
 };
 
 const IndicateurSousIndicateursChartContext =

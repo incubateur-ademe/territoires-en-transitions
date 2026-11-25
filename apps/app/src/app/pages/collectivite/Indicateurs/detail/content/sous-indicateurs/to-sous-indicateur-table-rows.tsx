@@ -287,6 +287,7 @@ const toSousIndicateurRow = ({
 
 export const toSousIndicateurTable = ({
   data,
+  hasTotalRow,
   visibleRows,
   periodicite,
   collectiviteId,
@@ -300,6 +301,7 @@ export const toSousIndicateurTable = ({
   onToggle,
 }: {
   data: SousIndicateursTableData;
+  hasTotalRow: boolean;
   visibleRows: readonly SousIndicateurTableRow[];
   periodicite: IndicateurPeriodicite;
   collectiviteId: number;
@@ -319,7 +321,7 @@ export const toSousIndicateurTable = ({
     (periode) => IndicateurPeriodes.key(periode)
   ),
   rows: [
-    ...(data.hasTotalRow ? [toTotalRow({ data, periodicite })] : []),
+    ...(hasTotalRow ? [toTotalRow({ data, periodicite })] : []),
     ...visibleRows.map((row) =>
       toSousIndicateurRow({
         row,

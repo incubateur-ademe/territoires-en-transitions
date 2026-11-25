@@ -78,11 +78,9 @@ const toRow = ({
 
 const toData = ({
   totalCells,
-  hasTotalRow = true,
   ordureCells = toResultatCells(100, 110),
 }: {
   totalCells: PeriodCells;
-  hasTotalRow?: boolean;
   ordureCells?: PeriodCells;
 }): SousIndicateursTableData => ({
   columns: [{ dateValeur: FIRST_DATE }, { dateValeur: SECOND_DATE }],
@@ -133,7 +131,6 @@ const toData = ({
       cells: toResultatCells(1, 2),
     }),
   ],
-  hasTotalRow,
   totalCells: toRowCells(totalCells),
 });
 
@@ -151,7 +148,6 @@ type RenderOptions = {
   canMutateIndicateur?: boolean;
   focusedIndicateurId?: number | null;
   isConfidentiel?: boolean;
-  isCumul?: boolean;
   capabilities?: SousIndicateursCapabilities;
   commentairesOf?: (periode: IndicateurPeriode) => PeriodeCommentaires;
   areCommentairesReady?: boolean;
@@ -165,11 +161,7 @@ const renderTable = (
     canMutateIndicateur = false,
     focusedIndicateurId = null,
     isConfidentiel = false,
-    isCumul = true,
-    capabilities = {
-      cumul: isCumul ? 'enabled' : 'disabled',
-      canEditStructure: true,
-    },
+    capabilities = { canTotaliser: true, canEditStructure: true },
     commentairesOf = () => NO_COMMENTAIRES,
     areCommentairesReady = true,
   }: RenderOptions = {}
@@ -180,7 +172,6 @@ const renderTable = (
   const deletePeriode = vi.fn().mockResolvedValue(undefined);
   const saveCommentaires = vi.fn().mockResolvedValue(true);
   const detachSousIndicateur = vi.fn();
-  const updateCumul = vi.fn();
   const createSousIndicateur = vi.fn();
   const renameSousIndicateur = vi.fn();
   const onNameEditingEnd = vi.fn();
@@ -196,7 +187,6 @@ const renderTable = (
         useDetachSousIndicateur: () => detachSousIndicateur,
         useCreateSousIndicateur: () => createSousIndicateur,
         useRenameSousIndicateur: () => renameSousIndicateur,
-        useUpdateSousIndicateursCumul: () => updateCumul,
         useIndicateurPeriodeCommentaires: () => ({
           commentairesOf,
           isReady: areCommentairesReady,
@@ -228,7 +218,6 @@ const renderTable = (
     deletePeriode,
     saveCommentaires,
     detachSousIndicateur,
-    updateCumul,
     createSousIndicateur,
     renameSousIndicateur,
     onNameEditingEnd,
@@ -653,71 +642,9 @@ describe('IndicateurSousIndicateursTable', () => {
     ).toBeNull();
   });
 
-  it('propose le cumul coché quand le total est affiché, et le décoche', () => {
-    const { updateCumul } = renderReadyTable(
-      toData({ totalCells: COMPLETE_TOTAL_CELLS }),
-      { canMutateIndicateur: true }
-    );
-
-    const cumul = screen.getByRole('checkbox', {
-      name: appLabels.indicateurCumulSousIndicateurs,
-    }) as HTMLInputElement;
-    expect(cumul.checked).toBe(true);
-    fireEvent.click(cumul);
-
-    expect(updateCumul).toHaveBeenCalledWith(false);
-  });
-
-  it("propose le cumul décoché quand le total n'est pas affiché, et le coche", () => {
-    const { updateCumul } = renderReadyTable(
-      toData({ totalCells: COMPLETE_TOTAL_CELLS, hasTotalRow: false }),
-      { canMutateIndicateur: true, isCumul: false }
-    );
-
-    const cumul = screen.getByRole('checkbox', {
-      name: appLabels.indicateurCumulSousIndicateurs,
-    }) as HTMLInputElement;
-    expect(cumul.checked).toBe(false);
-    fireEvent.click(cumul);
-
-    expect(updateCumul).toHaveBeenCalledWith(true);
-  });
-
-  it("montre le cumul décoché et masque la ligne Total quand l'indicateur n'est pas un cumul, même si aucun total n'a signalé de somme impossible", () => {
-    renderReadyTable(
-      toData({ hasTotalRow: true, totalCells: COMPLETE_TOTAL_CELLS }),
-      {
-        canMutateIndicateur: true,
-        isCumul: false,
-      }
-    );
-
-    const cumul = screen.getByRole('checkbox', {
-      name: appLabels.indicateurCumulSousIndicateurs,
-    }) as HTMLInputElement;
-    expect(cumul.checked).toBe(false);
-    expect(
-      screen.queryByRole('rowheader', {
-        name: appLabels.indicateurSousIndicateursTotalSomme,
-      })
-    ).toBeNull();
-  });
-
-  it("ne propose pas le cumul sans le droit de modifier l'indicateur", () => {
-    renderReadyTable(toData({ totalCells: COMPLETE_TOTAL_CELLS }), {
-      canMutateIndicateur: false,
-    });
-
-    expect(
-      screen.queryByRole('checkbox', {
-        name: appLabels.indicateurCumulSousIndicateurs,
-      })
-    ).toBeNull();
-  });
-
-  describe("d'un indicateur prédéfini, sans cumul ni structure modifiable", () => {
+  describe("d'un indicateur prédéfini, sans total ni structure modifiable", () => {
     const PREDEFINI: SousIndicateursCapabilities = {
-      cumul: 'unavailable',
+      canTotaliser: false,
       canEditStructure: false,
     };
 
@@ -733,11 +660,6 @@ describe('IndicateurSousIndicateursTable', () => {
       ).toBeNull();
       expect(
         screen.queryByRole('checkbox', {
-          name: appLabels.indicateurCumulSousIndicateurs,
-        })
-      ).toBeNull();
-      expect(
-        screen.queryByRole('checkbox', {
           name: appLabels.indicateurResultatRecentModePrive,
         })
       ).toBeNull();
@@ -748,11 +670,11 @@ describe('IndicateurSousIndicateursTable', () => {
       ).toBeNull();
     });
 
-    it('masque la ligne Total même quand aucun total ne signale de somme impossible', () => {
-      renderReadyTable(
-        toData({ hasTotalRow: true, totalCells: COMPLETE_TOTAL_CELLS }),
-        { canMutateIndicateur: true, capabilities: PREDEFINI }
-      );
+    it('ne montre pas la ligne Total', () => {
+      renderReadyTable(toData({ totalCells: COMPLETE_TOTAL_CELLS }), {
+        canMutateIndicateur: true,
+        capabilities: PREDEFINI,
+      });
 
       expect(
         screen.queryByRole('rowheader', { name: TOTAL_ROW_NAME })
@@ -813,7 +735,7 @@ describe('IndicateurSousIndicateursTable', () => {
     );
   });
 
-  it("range la création, le cumul et le mode privé dans le même groupe d'actions de l'indicateur", () => {
+  it("range la création et le mode privé dans le même groupe d'actions de l'indicateur", () => {
     renderReadyTable(toData({ totalCells: COMPLETE_TOTAL_CELLS }), {
       canMutateIndicateur: true,
     });
@@ -825,11 +747,6 @@ describe('IndicateurSousIndicateursTable', () => {
     expect(
       actions.getByRole('button', {
         name: appLabels.indicateurCreerSousIndicateur,
-      })
-    ).toBeDefined();
-    expect(
-      actions.getByRole('checkbox', {
-        name: appLabels.indicateurCumulSousIndicateurs,
       })
     ).toBeDefined();
     expect(
@@ -885,7 +802,6 @@ describe('IndicateurSousIndicateursTable', () => {
             cells: [],
           },
         ],
-        hasTotalRow: false,
         totalCells: [],
       },
       { canMutateIndicateur: true }
@@ -1138,7 +1054,7 @@ describe('IndicateurSousIndicateursTable', () => {
     expect(getRowOf(/^Papier/).className).not.toContain('bg-grey-2');
   });
 
-  it('aligne sur une même ligne le bouton de création, le cumul et le résultat récent privé', () => {
+  it('aligne sur une même ligne le bouton de création et le résultat récent privé', () => {
     renderReadyTable(toData({ totalCells: COMPLETE_TOTAL_CELLS }), {
       canMutateIndicateur: true,
     });
@@ -1148,11 +1064,12 @@ describe('IndicateurSousIndicateursTable', () => {
     }).parentElement as HTMLElement;
 
     expect(
-      [
-        appLabels.indicateurCumulSousIndicateurs,
-        appLabels.indicateurResultatRecentModePrive,
-      ].map((name) => bar.contains(screen.getByRole('checkbox', { name })))
-    ).toEqual([true, true]);
+      bar.contains(
+        screen.getByRole('checkbox', {
+          name: appLabels.indicateurResultatRecentModePrive,
+        })
+      )
+    ).toBe(true);
     expect(bar.className).toContain('flex');
   });
 
@@ -1208,16 +1125,6 @@ describe('IndicateurSousIndicateursTable', () => {
       'Ménagers niveau 1',
       'Papier niveau 1',
     ]);
-  });
-
-  it("n'affiche pas de ligne de total quand le cumul des sous-indicateurs est décoché", () => {
-    renderReadyTable(
-      toData({ totalCells: COMPLETE_TOTAL_CELLS, hasTotalRow: false })
-    );
-
-    expect(
-      screen.queryByRole('rowheader', { name: TOTAL_ROW_NAME })
-    ).toBeNull();
   });
 
   it("ne montre que les enfants directs de la racine tant que rien n'est déplié", () => {
@@ -1432,7 +1339,6 @@ describe('IndicateurSousIndicateursTable', () => {
     renderReadyTable({
       columns: [],
       rows: [],
-      hasTotalRow: true,
       totalCells: [],
     });
 

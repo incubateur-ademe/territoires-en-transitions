@@ -28,7 +28,6 @@ const toRowCell = ({
 
 const toData = (cells: SousIndicateurRowCell[]): SousIndicateursTableData => ({
   columns: cells.map(({ dateValeur }) => ({ dateValeur })),
-  hasTotalRow: false,
   totalCells: [],
   rows: [
     {
@@ -71,6 +70,7 @@ describe('toSousIndicateurTable', () => {
 
     const { rows } = toSousIndicateurTable({
       data,
+      hasTotalRow: false,
       visibleRows: data.rows,
       periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
       collectiviteId: 1,

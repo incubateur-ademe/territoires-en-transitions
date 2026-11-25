@@ -27,11 +27,14 @@ vi.mock('../../../Indicateur/detail/IndicateurValuesTabs', () => ({
     </div>
   ),
 }));
-vi.mock('../../content/sous-indicateurs/indicateur-sous-indicateurs-chart.view', () => ({
-  IndicateurSousIndicateursChart: () => (
-    <div role="img" aria-label="graphique des sous-indicateurs" />
-  ),
-}));
+vi.mock(
+  '../../content/sous-indicateurs/indicateur-sous-indicateurs-chart.view',
+  () => ({
+    IndicateurSousIndicateursChart: () => (
+      <div role="img" aria-label="graphique des sous-indicateurs" />
+    ),
+  })
+);
 vi.mock('../../content/donnees/indicateur-commentaire.input', () => ({
   IndicateurCommentaireInput: () => null,
 }));
@@ -77,7 +80,6 @@ const readyState: SousIndicateursTableState = {
         ],
       },
     ],
-    hasTotalRow: true,
     totalCells: [
       {
         dateValeur: '2022-01-01',
@@ -129,7 +131,6 @@ const renderDonnees = (indicateur: IndicateurDetaille) => {
               useDetachSousIndicateur: () => vi.fn(),
               useCreateSousIndicateur: () => createSousIndicateur,
               useRenameSousIndicateur: () => vi.fn(),
-              useUpdateSousIndicateursCumul: () => vi.fn(),
               useIndicateurPeriodeCommentaires: () => ({
                 isReady: true,
                 commentairesOf: () => ({ resultat: '', objectif: '' }),

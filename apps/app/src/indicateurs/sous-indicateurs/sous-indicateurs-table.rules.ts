@@ -52,7 +52,6 @@ export type SousIndicateurTableRow = Readonly<{
 export type SousIndicateursTableData = Readonly<{
   columns: readonly SousIndicateurColumn[];
   rows: readonly SousIndicateurTableRow[];
-  hasTotalRow: boolean;
   totalCells: readonly SousIndicateurRowCell[];
 }>;
 
@@ -294,10 +293,6 @@ const toRowCells = ({
     objectif: cellsByDate.get(dateValeur)?.objectif ?? EMPTY_CELL,
   }));
 
-export const hasNotAdditiveObjectif = (
-  totals: readonly IndicateurTotalAtDate[]
-): boolean => totals.some(({ objectif }) => objectif.status === 'not-additive');
-
 export const buildSousIndicateursTableData = ({
   rootId,
   ...context
@@ -347,7 +342,6 @@ export const buildSousIndicateursTableData = ({
         cells: toRowCells({ cellsByDate, columns }),
       })
     ),
-    hasTotalRow: !hasNotAdditiveObjectif(rootTotals),
     totalCells: toRowCells({ cellsByDate: totalCellsByDate, columns }),
   };
 };
