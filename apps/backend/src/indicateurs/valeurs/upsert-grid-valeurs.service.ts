@@ -168,7 +168,9 @@ export class UpsertGridValeursService {
           });
 
           await this.lockRepository.lock(valeursToWrite, tx);
-          const saved = await this.repository.upsert(valeursToWrite, tx);
+          const savedResult = await this.repository.upsert(valeursToWrite, tx);
+          if (!savedResult.success) return savedResult;
+          const saved = savedResult.data;
           await this.updateIndicateurService.updateIndicateursModifiedFields(
             { indicateurIds, collectiviteId, user },
             tx

@@ -1,13 +1,20 @@
 import { buildRequesterUser } from '@tet/backend/users/models/auth.models';
 import type { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { success } from '@tet/backend/utils/result.type';
-import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
+import { failure, Result, success } from '@tet/backend/utils/result.type';
+import {
+  IndicateurPeriodiciteEnum,
+  IndicateurValeurCreate,
+} from '@tet/domain/indicateurs';
+import { IndicateurValeursError } from '../indicateur-valeurs.errors';
 import { describe, expect, it, vi } from 'vitest';
 import { IndicateurLockRepository } from '../../indicateur/indicateur-lock.repository';
 import { IndicateurValeurLockRepository } from '../indicateur-valeur-lock.repository';
 import { IndicateurValeursRepository } from '../indicateur-valeurs.repository';
 import { UpsertValeurIndicateur } from './upsert-valeur-indicateur.request';
-import { ValidateIndicateurValeursWriteService } from './validate-indicateur-valeurs-write.service';
+import {
+  PreparedIndicateurValeurs,
+  ValidateIndicateurValeursWriteService,
+} from './validate-indicateur-valeurs-write.service';
 import { WriteIndicateurValeursService } from './write-indicateur-valeurs.service';
 
 const collectiviteId = 3;
@@ -24,31 +31,63 @@ const indicateurAnnuel = {
 
 const toWriteServiceWithMocks = ({
   lockedIndicateurs = [indicateurAnnuel],
+  lockResult = success(lockedIndicateurs),
   existing = null,
   stored = null,
+  validation = success({ [indicateurId]: indicateurAnnuel }),
+  upsertWithoutMetadata = vi.fn().mockResolvedValue([]),
+  upsertUserValeur = vi.fn().mockResolvedValue(stored),
+  lock = vi.fn().mockResolvedValue(undefined),
+  listIndicateurValeurs = vi.fn().mockResolvedValue(success([])),
 }: {
   lockedIndicateurs?: unknown[];
+  lockResult?: Result<unknown[], 'DATABASE_ERROR'>;
   existing?: unknown;
   stored?: unknown;
+  validation?: Result<unknown, IndicateurValeursError>;
+  upsertWithoutMetadata?: ReturnType<typeof vi.fn>;
+  upsertUserValeur?: ReturnType<typeof vi.fn>;
+  lock?: ReturnType<typeof vi.fn>;
+  listIndicateurValeurs?: ReturnType<typeof vi.fn>;
 }) => {
   const repository = {
     findUserValeur: vi.fn().mockResolvedValue(existing),
     updateUserValeur: vi.fn().mockResolvedValue(stored),
-    upsertUserValeur: vi.fn().mockResolvedValue(stored),
+    upsertUserValeur,
+    upsertValeursWithoutMetadata: upsertWithoutMetadata,
+    listIndicateurValeurs,
+    listMetadataSources: vi.fn().mockResolvedValue([]),
   } as unknown as IndicateurValeursRepository;
   const indicateurLockRepository = {
-    lockIndicateurs: vi.fn().mockResolvedValue(success(lockedIndicateurs)),
+    lockIndicateurs: vi.fn().mockResolvedValue(lockResult),
   } as unknown as IndicateurLockRepository;
   const lockRepository = {
-    lock: vi.fn().mockResolvedValue(undefined),
+    lock,
   } as unknown as IndicateurValeurLockRepository;
+  const validationService = {
+    validate: vi.fn().mockResolvedValue(validation),
+  } as unknown as ValidateIndicateurValeursWriteService;
   return new WriteIndicateurValeursService(
     repository,
-    {} as ValidateIndicateurValeursWriteService,
+    validationService,
     indicateurLockRepository,
     lockRepository
   );
 };
+
+const toPrepared = (
+  valeurs: Partial<IndicateurValeurCreate>[] = [{}]
+): PreparedIndicateurValeurs =>
+  ({
+    valeurs: valeurs.map((valeur) => ({
+      collectiviteId,
+      indicateurId,
+      dateValeur: '2026-01-01',
+      periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+      resultat: 1,
+      ...valeur,
+    })),
+  } as unknown as PreparedIndicateurValeurs);
 
 const toData = (
   overrides: Partial<UpsertValeurIndicateur> = {}
@@ -181,5 +220,99 @@ describe('WriteIndicateurValeursService.saveSingle', () => {
     );
 
     expect(result).toEqual(success(stored));
+  });
+});
+
+describe('WriteIndicateurValeursService.saveSingle, échecs imprévus', () => {
+  it('retourne le failure du verrou de définition', async () => {
+    const cause = new Error('nature incohérente');
+
+    const result = await toWriteServiceWithMocks({
+      lockResult: failure('DATABASE_ERROR', cause),
+    }).saveSingle({ data: toData() }, { user, tx });
+
+    expect(result).toEqual(failure('DATABASE_ERROR', cause));
+  });
+
+  it('convertit une exception du repository en DATABASE_ERROR', async () => {
+    const cause = new Error('connexion perdue');
+
+    const result = await toWriteServiceWithMocks({
+      upsertUserValeur: vi.fn().mockRejectedValue(cause),
+    }).saveSingle({ data: toData() }, { user, tx });
+
+    expect(result).toEqual(failure('DATABASE_ERROR', cause));
+  });
+});
+
+describe('WriteIndicateurValeursService.saveBatch', () => {
+  it('retourne le failure de la validation sans rien verrouiller ni écrire', async () => {
+    const cause = new Error('refusé');
+    const lock = vi.fn();
+    const upsertWithoutMetadata = vi.fn();
+
+    const result = await toWriteServiceWithMocks({
+      validation: failure('UNAUTHORIZED', cause),
+      lock,
+      upsertWithoutMetadata,
+    }).saveBatch(toPrepared(), { user, tx });
+
+    expect(result).toEqual(failure('UNAUTHORIZED', cause));
+    expect(lock).not.toHaveBeenCalled();
+    expect(upsertWithoutMetadata).not.toHaveBeenCalled();
+  });
+
+  it('refuse un lot contenant une date non canonique sans rien écrire', async () => {
+    const lock = vi.fn();
+    const upsertWithoutMetadata = vi.fn();
+
+    const result = await toWriteServiceWithMocks({
+      lock,
+      upsertWithoutMetadata,
+    }).saveBatch(toPrepared([{}, { dateValeur: 'pas-une-date' }]), {
+      user,
+      tx,
+    });
+
+    expect(result).toMatchObject({ success: false, error: 'INVALID_VALUE' });
+    expect(lock).not.toHaveBeenCalled();
+    expect(upsertWithoutMetadata).not.toHaveBeenCalled();
+  });
+
+  it('convertit une exception d’écriture en DATABASE_ERROR', async () => {
+    const cause = new Error('violation de contrainte');
+
+    const result = await toWriteServiceWithMocks({
+      upsertWithoutMetadata: vi.fn().mockRejectedValue(cause),
+    }).saveBatch(toPrepared(), { user, tx });
+
+    expect(result).toEqual(failure('DATABASE_ERROR', cause));
+  });
+
+  it('retourne les valeurs écrites avec l’identifiant référentiel', async () => {
+    const written = { id: 1, collectiviteId, indicateurId, resultat: 1 };
+
+    const result = await toWriteServiceWithMocks({
+      upsertWithoutMetadata: vi.fn().mockResolvedValue([written]),
+    }).saveBatch(toPrepared(), { user, tx });
+
+    expect(result).toEqual(success([written]));
+  });
+});
+
+describe('WriteIndicateurValeursService.fillMissing', () => {
+  it('retourne le failure de la lecture des valeurs existantes sans écrire', async () => {
+    const cause = new Error('lecture impossible');
+    const upsertWithoutMetadata = vi.fn();
+
+    const result = await toWriteServiceWithMocks({
+      listIndicateurValeurs: vi
+        .fn()
+        .mockResolvedValue(failure('DATABASE_ERROR', cause)),
+      upsertWithoutMetadata,
+    }).fillMissing(toPrepared(), { user, tx });
+
+    expect(result).toEqual(failure('DATABASE_ERROR', cause));
+    expect(upsertWithoutMetadata).not.toHaveBeenCalled();
   });
 });

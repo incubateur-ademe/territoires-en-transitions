@@ -21,9 +21,11 @@ const calculatedValeur = { ...savedValeur, id: 2, indicateurId: 11 };
 const toServiceWithMocks = ({
   nestedUpsert,
   validation = success({ [indicateurId]: { precision: 2 } }),
+  gridUpsert = success([savedValeur]),
 }: {
   nestedUpsert?: unknown;
   validation?: unknown;
+  gridUpsert?: unknown;
 }) => {
   const manage = {
     canMutateValeurs: vi.fn().mockResolvedValue(success(undefined)),
@@ -51,7 +53,7 @@ const toServiceWithMocks = ({
     } as never,
     { lock: vi.fn() } as never,
     { validate: vi.fn().mockResolvedValue(validation) } as never,
-    { upsert: vi.fn().mockResolvedValue([savedValeur]) } as never
+    { upsert: vi.fn().mockResolvedValue(gridUpsert) } as never
   );
   return { service, manage };
 };
@@ -129,5 +131,22 @@ describe('UpsertGridValeursService.upsertGridValeurs', () => {
       [savedValeur, calculatedValeur],
       user
     );
+  });
+
+  it("retourne l'échec d'écriture de la grille sans écrire de valeurs calculées ni publier d'événement", async () => {
+    const cause = new Error(
+      "Échec de l'écriture d'un lot de 1 valeurs d'indicateur"
+    );
+    const { service, manage } = toServiceWithMocks({
+      gridUpsert: failure('DATABASE_ERROR', cause),
+    });
+
+    const result = await service.upsertGridValeurs(input, {
+      user: user as never,
+    });
+
+    expect(result).toEqual(failure('DATABASE_ERROR', cause));
+    expect(manage.upsertIndicateurValeurs).not.toHaveBeenCalled();
+    expect(manage.publishValeurUpsertedEvents).not.toHaveBeenCalled();
   });
 });
