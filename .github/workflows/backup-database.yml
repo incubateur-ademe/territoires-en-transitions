@@ -87,8 +87,21 @@ jobs:
       - name: Install AWS CLI
         uses: ./.github/actions/providers/aws/cli
 
+      # ponytail: rebuilt every night (a few minutes); pull the cached ghcr image
+      # like actions/database/sqitch does if that becomes a problem.
+      - name: Build sqitch image
+        run: docker build --tag tet-sqitch .github/actions/database/sqitch-local
+
+      # La staging suit main : elle est en avance sur la prod jusqu'à la prochaine
+      # release. Avec SQITCH, restore.sh annule ces migrations avant de charger le
+      # backup, puis les redéploie sur les données restaurées (cf. ADR 0016 §8).
       - name: Restore latest backup to staging
         env:
+          SQITCH: >-
+            docker run --rm --entrypoint sqitch
+            -v ${{ github.workspace }}/sqitch.conf:/sqitch.conf
+            -v ${{ github.workspace }}/data_layer:/data_layer
+            tet-sqitch
           TO_DB_URL: ${{ secrets.STAGING_DB_URL }}
           RESTORE_ENCRYPTED_PASSWORD: ${{ secrets.RESTORE_ENCRYPTED_PASSWORD }}
           BACKUP_AWS_ACCESS_KEY_ID: ${{ vars.BACKUP_AWS_ACCESS_KEY_ID }}
