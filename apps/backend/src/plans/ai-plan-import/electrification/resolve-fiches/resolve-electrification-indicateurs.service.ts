@@ -2,7 +2,10 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ListIndicateursService } from '@tet/backend/indicateurs/indicateurs/list-indicateurs/list-indicateurs.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import { IndicateurPeriodicite } from '@tet/domain/indicateurs';
+import {
+  indicateurPeriodiciteSchema,
+  IndicateurPeriodicite,
+} from '@tet/domain/indicateurs';
 import { ElectrificationConfig, StatutEnum } from '@tet/domain/plans';
 import { ElectrificationIssue } from '../electrification-issue';
 import { importReferenceErrors } from '../../resolve-import-reference/import-reference.errors';
@@ -281,7 +284,18 @@ export class ResolveElectrificationIndicateursService {
     if (unite === null) return failure([issue('MISSING_INDICATEUR_UNIT')]);
     if (input.unite !== null && input.unite !== unite)
       return failure([issue('INVALID_INDICATEUR_UNIT')]);
-    if (input.periodicite !== null && input.periodicite !== periodicite)
+    const suppliedPeriodicity = indicateurPeriodiciteSchema.safeParse(
+      input.periodicite
+    );
+    const ignoreValues =
+      mapping?.type === 'quantitatif' &&
+      suppliedPeriodicity.success &&
+      suppliedPeriodicity.data !== periodicite;
+    if (
+      input.periodicite !== null &&
+      input.periodicite !== periodicite &&
+      !ignoreValues
+    )
       return failure([
         Errors.incompatiblePeriodicity(
           periodicite,
@@ -291,7 +305,7 @@ export class ResolveElectrificationIndicateursService {
       ]);
     const valeurs = ResolveElectrificationIndicateursRules.resolveValeurs(
       input,
-      periodicite
+      ignoreValues ? suppliedPeriodicity.data : periodicite
     );
     if (!valeurs.success) return valeurs;
     return success({
@@ -303,9 +317,18 @@ export class ResolveElectrificationIndicateursService {
         titre,
         unite,
         periodicite,
-        valeurs: valeurs.data,
+        valeurs: ignoreValues ? [] : valeurs.data,
       },
-      issues: [],
+      issues:
+        ignoreValues && valeurs.data.length
+          ? [
+              Errors.ignoredIncompatibleValues(
+                periodicite,
+                suppliedPeriodicity.data,
+                input.source.location
+              ),
+            ]
+          : [],
     });
   }
 }

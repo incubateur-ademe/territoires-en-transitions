@@ -221,6 +221,27 @@ describe('Source de valeurs propre au plan', () => {
         [{ metadonneeId, objectif }]
       );
     }
+    // Les objectifs propres aux plans ne sont pas des données open data,
+    // même quand plusieurs plans portent le même indicateur.
+    for (const hasOpenData of [undefined, false, true]) {
+      const listed = await caller.indicateurs.indicateurs.list({
+        collectiviteId: f.collectiviteId,
+        filters: {
+          indicateurIds: [f.valeur.indicateurId],
+          ...(hasOpenData === undefined ? {} : { hasOpenData }),
+        },
+      });
+      expect(listed.data).toEqual(
+        hasOpenData
+          ? []
+          : [
+              expect.objectContaining({
+                id: f.valeur.indicateurId,
+                hasOpenData: false,
+              }),
+            ]
+      );
+    }
     const emptyPlan = await caller.plans.plans.get({ planId: empty });
     expect(emptyPlan.indicateurSource).toEqual({
       id: emptyMetadata.id,

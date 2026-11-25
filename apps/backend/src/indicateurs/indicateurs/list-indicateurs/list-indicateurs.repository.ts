@@ -14,6 +14,7 @@ import { sqlToDateTimeISO } from '@tet/backend/utils/column.utils';
 import { escapeLikePattern } from '@tet/backend/utils/database/like-pattern.utils';
 import { PersonneTagOrUser, Tag } from '@tet/domain/collectivites';
 import {
+  INDICATEUR_SOURCES_WITH_DEDICATED_METADATA,
   SOURCES_TRAJECTOIRE,
   type IndicateurAncestor,
 } from '@tet/domain/indicateurs';
@@ -169,7 +170,10 @@ export class ListIndicateursRepository {
           indicateurValeurTable.metadonneeId
         } is not null and ${notInArray(
           indicateurSourceMetadonneeTable.sourceId,
-          [...SOURCES_TRAJECTOIRE]
+          [
+            ...SOURCES_TRAJECTOIRE,
+            ...INDICATEUR_SOURCES_WITH_DEDICATED_METADATA,
+          ]
         )})`.as('open_data'),
       })
       .from(indicateurValeurTable)

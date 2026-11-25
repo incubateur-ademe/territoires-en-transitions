@@ -20,6 +20,7 @@ import { ElectrificationExtractionErrors as Errors } from './electrification-ext
 import { ElectrificationExtractionRules } from './electrification-extraction.rules';
 import { InterpretElectrificationValues } from './interpret-electrification-values';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
+import { ElectrificationEngagementMatchingRules } from './electrification-engagement-matching.rules';
 
 type PrepareInput = {
   collectiviteId: number;
@@ -121,6 +122,11 @@ export class PrepareElectrificationImportService {
       checkpoint.sources
     );
     if (!draft.success) return draft;
+    const matchingReport = ElectrificationEngagementMatchingRules.report(
+      checkpoint,
+      catalogue.data
+    );
+    if (!matchingReport.success) return matchingReport;
     // La reprise résout à nouveau les références à partir du brouillon conservé.
     await input.onCheckpoint?.(checkpoint);
     const resolved = await this.resolver.resolve(
@@ -131,8 +137,8 @@ export class PrepareElectrificationImportService {
       },
       context
     );
-    return resolved.success
-      ? success({ checkpoint, prepared: resolved.data })
-      : resolved;
+    if (!resolved.success) return resolved;
+    resolved.data.report.issues.unshift(...matchingReport.data);
+    return success({ checkpoint, prepared: resolved.data });
   }
 }

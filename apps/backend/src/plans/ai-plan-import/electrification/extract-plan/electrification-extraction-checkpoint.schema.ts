@@ -36,8 +36,9 @@ export const electrificationExtractionCheckpointSchema = z
         new Set(engagementInterpretations.map(({ sourceId }) => sourceId))
           .size === engagementInterpretations.length &&
         engagementInterpretations.every(
-          ({ sourceId, quote, code }) =>
+          ({ sourceId, quote, code, match }) =>
             code !== null &&
+            match !== 'unresolved' &&
             sources.some(({ id, text }) => id === sourceId && text === quote) &&
             response.engagements.some(
               (engagement) =>

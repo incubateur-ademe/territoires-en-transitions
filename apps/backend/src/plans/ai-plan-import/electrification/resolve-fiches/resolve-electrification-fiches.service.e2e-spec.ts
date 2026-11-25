@@ -5,6 +5,7 @@ import {
 } from '@tet/backend/plans/plans/electrification/publish-electrification-data/electrification-data.test-fixture';
 import { ElectrificationDataService } from '@tet/backend/plans/plans/electrification/publish-electrification-data/electrification-data.service';
 import { ElectrificationGristAdapter } from '@tet/backend/plans/plans/electrification/publish-electrification-data/sources/electrification-grist.adapter';
+import { electrificationEngagementMatching } from '@tet/backend/plans/plans/electrification/config/electrification-engagements-document.config';
 import gristAxes from '@tet/backend/plans/plans/electrification/publish-electrification-data/sources/__fixtures__/electrification-grist-axes.json';
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
@@ -962,7 +963,7 @@ describe('Résolution des fiches actions Électrification', () => {
     }
   );
 
-  test('respecte la périodicité mensuelle d’un indicateur catalogue et refuse une période annuelle', async () => {
+  test('respecte les périodes mensuelles et ignore les valeurs annuelles incompatibles avec avertissement', async () => {
     const identifiantReferentiel = `test-mensuel-${randomUUID()}`;
     const [existing] = await db.db
       .insert(indicateurDefinitionTable)
@@ -992,14 +993,29 @@ describe('Résolution des fiches actions Électrification', () => {
     indicateur.resultat.periode = '2025';
     await expectIssue('INVALID_INDICATEUR_PERIOD');
     indicateur.periodicite = 'annuelle';
-    const rejected = await resolve();
-    assert(!rejected.success);
-    expect(rejected.error).toContainEqual(
+    indicateur.objectif.periode = '2030';
+    indicateur.objectifComplementaire = { valeur: 5, periode: '2028' };
+    const result = await resolve();
+    assert(result.success);
+    const prepared = result.data.fiches[0];
+    assert(prepared.mode === 'create');
+    expect(prepared.indicateurs[0]).toMatchObject({
+      mode: 'catalogue',
+      indicateurId: existing.id,
+      periodicite: 'mensuelle',
+      valeurs: [],
+    });
+    expect(result.data.report.issues).toContainEqual(
       expect.objectContaining({
-        code: 'INVALID_INDICATEUR_PERIODICITY',
-        message: expect.stringMatching(/mensuelle.*annuelle.*support TeT/),
+        code: 'INCOMPATIBLE_INDICATEUR_VALUES_IGNORED',
+        kind: 'warning',
+        message: expect.stringMatching(
+          /mensuelle.*annuelle.*n'ont pas été importés/
+        ),
       })
     );
+    indicateur.resultat.periode = null;
+    await expectIssue('MISSING_INDICATEUR_YEAR');
   });
 
   test.each([
@@ -1628,6 +1644,7 @@ describe('Résolution des fiches actions Électrification', () => {
       generate.mockResolvedValue(
         success({
           data: {
+            match: 'equivalent',
             code: config.engagements[0].code,
             quote: engagements[1][1].text,
           },
@@ -1656,7 +1673,11 @@ describe('Résolution des fiches actions Électrification', () => {
           failureKind === 'provider'
             ? failure({ kind: 'api_error', httpStatus: 503 })
             : success({
-                data: { code: 'INVENTE', quote: engagements[5][1].text },
+                data: {
+                  match: 'equivalent',
+                  code: 'INVENTE',
+                  quote: engagements[5][1].text,
+                },
                 tokens: emptyTokenUsage(),
               })
         );
@@ -2386,6 +2407,19 @@ describe('Résolution des fiches actions Électrification', () => {
         value: '25 %',
         expected: [25],
       },
+      ...[
+        template.sections[0].rows[4][1].text,
+        template.sections[0].rows[4][1].text.replaceAll('gaz', 'fioul'),
+        template.sections[0].rows[4][1].text
+          .replace('du gaz', 'du gaz ou du fioul')
+          .replace('au gaz', 'au gaz ou au fioul'),
+      ].map((identity) => ({
+        code: 'E05',
+        identity,
+        axe: 3,
+        value: '25 %',
+        expected: [25],
+      })),
       {
         code: 'E02',
         identity: template.sections[0].rows[2][0].text,
@@ -2442,7 +2476,14 @@ describe('Résolution des fiches actions Électrification', () => {
         if (identity !== 'code' && identity !== 'libellé courant') {
           expectedInterpretationCalls = 1;
           generate.mockResolvedValueOnce(
-            success({ data: { code, quote: label }, tokens: emptyTokenUsage() })
+            success({
+              data: {
+                match: code === 'E05' ? 'scope-difference' : 'equivalent',
+                code,
+                quote: label,
+              },
+              tokens: emptyTokenUsage(),
+            })
           );
         }
 
@@ -2456,12 +2497,59 @@ describe('Résolution des fiches actions Électrification', () => {
         );
         expect(result.checkpoint.engagementInterpretations).toEqual(
           expectedInterpretationCalls
-            ? [{ sourceId: expect.any(String), code, quote: label }]
+            ? [
+                {
+                  sourceId: expect.any(String),
+                  match: code === 'E05' ? 'scope-difference' : 'equivalent',
+                  code,
+                  quote: label,
+                },
+              ]
             : []
         );
         expect(result.checkpoint.sources).toContainEqual(
           expect.objectContaining({ text: label })
         );
+        expect(result.prepared.report.issues).toEqual(
+          expectedInterpretationCalls
+            ? [
+                expect.objectContaining({
+                  kind: 'warning',
+                  code:
+                    code === 'E05'
+                      ? 'TOLERATED_ELECTRIFICATION_ENGAGEMENT_SCOPE'
+                      : 'INTERPRETED_ELECTRIFICATION_ENGAGEMENT',
+                  message: expect.stringContaining(definition.libelleSource),
+                }),
+              ]
+            : []
+        );
+      }
+    );
+
+    test.each([
+      ['autre échéance', (label: string) => label.replace('2030', '2040'), 3],
+      [
+        'action contraire',
+        (label: string) => label.replace('sortie du gaz', 'maintien du gaz'),
+        3,
+      ],
+      ['mauvais axe', (label: string) => label, 2],
+    ] as const)(
+      'ne rapproche pas automatiquement E05 avec %s',
+      async (_name, changeLabel, axe) => {
+        const label = changeLabel(template.sections[0].rows[4][1].text);
+        await useEngagement(label, '25 %', axe);
+        if (axe === 3) {
+          expectedInterpretationCalls = 1;
+          generate.mockResolvedValueOnce(
+            success({
+              data: { match: 'unresolved', code: null, quote: label },
+              tokens: emptyTokenUsage(),
+            })
+          );
+        }
+        await expectExtractionIssue('INVALID_ELECTRIFICATION_ENGAGEMENT');
       }
     );
 
@@ -2530,6 +2618,65 @@ describe('Résolution des fiches actions Électrification', () => {
             dateValeur: '2040-01-01',
           },
         ]);
+      });
+
+      test('signale un périmètre différent et réapplique la tolérance à la reprise', async () => {
+        const documentLabel = 'Rénover le parc scolaire, dont les écoles.';
+        await useEngagement(documentLabel, 'parc communal : 8; écoles : 2');
+        expectedInterpretationCalls = 1;
+        generate.mockResolvedValue(
+          success({
+            data: {
+              match: 'scope-difference',
+              code: 'RENOVATION',
+              quote: documentLabel,
+            },
+            tokens: emptyTokenUsage(),
+          })
+        );
+        const result = await prepared();
+        expect(result.prepared.cibles.map(({ objectif }) => objectif)).toEqual([
+          8, 2,
+        ]);
+        expect(result.prepared.report.issues).toEqual([
+          expect.objectContaining({
+            code: 'TOLERATED_ELECTRIFICATION_ENGAGEMENT_SCOPE',
+            kind: 'warning',
+            location: expect.stringContaining(documentLabel),
+            message: expect.stringContaining(
+              `Document : "${documentLabel}". Catalogue (RENOVATION) : "${label}".`
+            ),
+          }),
+        ]);
+        const resume = () =>
+          prepareService.prepare(
+            {
+              catalogueVersion: config.version,
+              collectiviteId: context.collectiviteId,
+              resumeFrom: JSON.parse(JSON.stringify(result.checkpoint)),
+            },
+            { user: context.user }
+          );
+        expect(await resume()).toEqual(success(result));
+        const previous =
+          electrificationEngagementMatching.allowScopeDifferences;
+        electrificationEngagementMatching.allowScopeDifferences = false;
+        try {
+          expect(await resume()).toMatchObject({
+            success: false,
+            error: [
+              expect.objectContaining({
+                code: 'UNTOLERATED_ELECTRIFICATION_ENGAGEMENT_SCOPE',
+              }),
+            ],
+          });
+          expectedInterpretationCalls = 2;
+          await expectExtractionIssue(
+            'UNTOLERATED_ELECTRIFICATION_ENGAGEMENT_SCOPE'
+          );
+        } finally {
+          electrificationEngagementMatching.allowScopeDifferences = previous;
+        }
       });
 
       const interpret = async (
@@ -2854,7 +3001,7 @@ describe('Résolution des fiches actions Électrification', () => {
         expectedInterpretationCalls = 2;
         generate.mockResolvedValueOnce(
           success({
-            data: { code: 'E07', quote: label },
+            data: { match: 'equivalent', code: 'E07', quote: label },
             tokens: emptyTokenUsage(),
           })
         );
@@ -2878,9 +3025,21 @@ describe('Résolution des fiches actions Électrification', () => {
         ).toMatchObject({ text: engagements[7][3].text });
         expect(result.checkpoint.tokens).toMatchObject({ totalTokens: 20 });
         expect(result.checkpoint.engagementInterpretations).toEqual([
-          { sourceId: expect.any(String), code: 'E07', quote: label },
+          {
+            sourceId: expect.any(String),
+            match: 'equivalent',
+            code: 'E07',
+            quote: label,
+          },
         ]);
         const checkpoint = JSON.parse(JSON.stringify(result.checkpoint));
+        expect(result.prepared.report.issues).toContainEqual(
+          expect.objectContaining({
+            code: 'INTERPRETED_ELECTRIFICATION_ENGAGEMENT',
+            kind: 'warning',
+            message: expect.stringContaining(label),
+          })
+        );
 
         const resumed = await prepareService.prepare(
           {
@@ -3570,9 +3729,27 @@ describe('Résolution des fiches actions Électrification', () => {
     });
 
     test.each([
-      { code: null, quote: 'Un nouvel engagement inconnu' },
-      { code: 'INVENTE', quote: 'Un nouvel engagement inconnu' },
-      { code: 'E03', quote: 'Citation inventée' },
+      {
+        match: 'unresolved',
+        code: null,
+        quote: 'Un nouvel engagement inconnu',
+      },
+      {
+        match: 'unresolved',
+        code: 'E03',
+        quote: 'Un nouvel engagement inconnu',
+      },
+      {
+        match: 'scope-difference',
+        code: 'E01',
+        quote: 'Un nouvel engagement inconnu',
+      },
+      {
+        match: 'equivalent',
+        code: 'INVENTE',
+        quote: 'Un nouvel engagement inconnu',
+      },
+      { match: 'equivalent', code: 'E03', quote: 'Citation inventée' },
     ])(
       'refuse un rapprochement non justifié : $code / $quote',
       async (response) => {

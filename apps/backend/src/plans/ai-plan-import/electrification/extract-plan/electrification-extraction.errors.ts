@@ -8,6 +8,7 @@ import {
   type ElectrificationIssue,
 } from '../electrification-issue';
 import { aiPlanImportJobErrorMessages } from '../../ai-plan-import.errors';
+import { ElectrificationImportLocations as Locations } from '../electrification-import-locations';
 
 export const electrificationExtractionErrors = {
   APPROXIMATE_ELECTRIFICATION_VALUE: {
@@ -142,6 +143,21 @@ export const electrificationExtractionErrors = {
     message:
       "Cet engagement n'a pas été reconnu. Ne modifiez pas la phrase de la colonne Engagement du programme. Contactez-nous avec votre document.",
   },
+  INTERPRETED_ELECTRIFICATION_ENGAGEMENT: {
+    kind: 'warning',
+    message:
+      "Le libellé du document a été rapproché d'un engagement du catalogue. Vérifiez que ce rattachement correspond à votre intention.",
+  },
+  TOLERATED_ELECTRIFICATION_ENGAGEMENT_SCOPE: {
+    kind: 'warning',
+    message:
+      "Une différence de périmètre a été tolérée. Les cibles renseignées sont rattachées à l'engagement du catalogue sans conversion. Vérifiez que ce rattachement correspond à votre intention.",
+  },
+  UNTOLERATED_ELECTRIFICATION_ENGAGEMENT_SCOPE: {
+    kind: 'document-error',
+    message:
+      'Le périmètre de cet engagement diffère du catalogue et la tolérance est désactivée. Vérifiez le libellé du document.',
+  },
   INVALID_ELECTRIFICATION_SELECTION: {
     kind: 'document-error',
     message:
@@ -201,6 +217,24 @@ export const electrificationExtractionErrors = {
 
 export class ElectrificationExtractionErrors {
   static issue = createIssueFactory(electrificationExtractionErrors);
+
+  static engagementMatch(
+    code:
+      | 'INTERPRETED_ELECTRIFICATION_ENGAGEMENT'
+      | 'TOLERATED_ELECTRIFICATION_ENGAGEMENT_SCOPE'
+      | 'UNTOLERATED_ELECTRIFICATION_ENGAGEMENT_SCOPE',
+    source: Pick<ElectrificationDocumentSource, 'text' | 'location'>,
+    engagement: { code: string; libelleSource: string }
+  ): ElectrificationIssue {
+    const issue = this.issue(
+      code,
+      Locations.entity('Engagement', source.text, source.location)
+    );
+    return {
+      ...issue,
+      message: `${issue.message} Document : "${source.text}". Catalogue (${engagement.code}) : "${engagement.libelleSource}".`,
+    };
+  }
 
   static rejectedValue(
     reason: ElectrificationValueRejection['reason'],
