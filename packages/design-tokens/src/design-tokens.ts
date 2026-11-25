@@ -92,6 +92,14 @@ export const designTokens = {
     extrabold: '800',
     black: '900',
   },
+  spacingScale: {
+    none: '0',
+    xs: '1',
+    sm: '2',
+    md: '4',
+    lg: '6',
+    xl: '8',
+  },
   boxShadow: {
     button: '0 2px 4px 0 rgba(0,0,0,0.05)',
     card: '2px 2px 10px 0 rgba(233, 233, 233, 0.9)',
