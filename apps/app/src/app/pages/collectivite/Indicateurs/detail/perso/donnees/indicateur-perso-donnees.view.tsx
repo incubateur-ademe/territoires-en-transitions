@@ -1,3 +1,4 @@
+import { toSousIndicateursCapabilities } from '@/app/indicateurs/sous-indicateurs/sous-indicateurs-capabilities.rules';
 import { Divider } from '@tet/ui';
 import { useState } from 'react';
 import IndicateurDetailChart from '../../../Indicateur/detail/IndicateurDetailChart';
@@ -24,6 +25,7 @@ export const IndicateurPersoDonnees = () => {
   const newSousIndicateur = useIndicateurNouveauSousIndicateur();
   const { commentaire, unite } = indicateur;
 
+  const sousIndicateursCapabilities = toSousIndicateursCapabilities(indicateur);
   const hasSousIndicateurs = indicateur.enfants.length > 0;
   const isValeursReadonly =
     !canMutateValeur || indicateur.sansValeurUtilisateur;
@@ -71,7 +73,7 @@ export const IndicateurPersoDonnees = () => {
             periodicite={indicateur.periodicite}
             isReadonly={isValeursReadonly}
             canMutateIndicateur={canMutateIndicateur}
-            isCumul={indicateur.totalEstCumulDesSousIndicateurs}
+            capabilities={sousIndicateursCapabilities}
             newSousIndicateur={newSousIndicateur}
             privateMode={{
               isConfidentiel: indicateur.estConfidentiel ?? false,
