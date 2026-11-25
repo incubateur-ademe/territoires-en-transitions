@@ -53,5 +53,3 @@ overrides:
 permissions:
   '@tanstack/react-table':
     skills: false
-minimumReleaseAgeExclude:
-  - leviers-ges@0.1.0
