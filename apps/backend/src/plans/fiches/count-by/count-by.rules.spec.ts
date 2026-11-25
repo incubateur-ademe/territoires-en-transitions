@@ -49,6 +49,12 @@ describe('CountByRules', () => {
       total: 2,
       countByResult: { inferior_to_3_month: { count: 1 }, null: { count: 0 } },
     });
+    expect(
+      Object.values(counts.countByResult).reduce(
+        (total, category) => total + category.count,
+        0
+      )
+    ).toBe(1);
     expect(invalidDates).toEqual([
       {
         ficheId: 1,
