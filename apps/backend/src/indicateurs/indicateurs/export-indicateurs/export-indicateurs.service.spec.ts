@@ -205,3 +205,62 @@ describe('ExportIndicateursService : échecs', () => {
     expect(result).toEqual(failure('DATABASE_ERROR', cause));
   });
 });
+
+describe('ExportIndicateursService : descendants', () => {
+  const toLevel = (nodes: { id: number; enfantIds: number[] }[]) =>
+    success({
+      count: nodes.length,
+      data: nodes.map(({ id, enfantIds }) => ({
+        id,
+        identifiantReferentiel: `ind_${id}`,
+        titre: `Indicateur ${id}`,
+        enfants: enfantIds.map((enfantId) => ({
+          id: enfantId,
+          identifiantReferentiel: `ind_${enfantId}`,
+          titre: `Indicateur ${enfantId}`,
+        })),
+      })),
+    });
+
+  it('charge chaque niveau de descendants avec la même exclusion des confidentiels', async () => {
+    const listIndicateurs = vi
+      .fn()
+      .mockResolvedValueOnce(toLevel([{ id: 1, enfantIds: [2] }]))
+      .mockResolvedValueOnce(toLevel([{ id: 2, enfantIds: [3] }]))
+      .mockResolvedValueOnce(toLevel([{ id: 3, enfantIds: [] }]));
+    const service = toService({ canReadConfidentiel: false, listIndicateurs });
+
+    await exportSelection(service);
+
+    expect(listIndicateurs).toHaveBeenCalledTimes(3);
+    expect(filtersOfCall(listIndicateurs, 2)).toMatchObject({
+      indicateurIds: [3],
+      estConfidentiel: false,
+      sansAncetreConfidentiel: true,
+    });
+  });
+
+  it("s'arrête sans boucler quand un descendant renvoie vers un ancêtre déjà exporté", async () => {
+    const listIndicateurs = vi
+      .fn()
+      .mockResolvedValueOnce(toLevel([{ id: 1, enfantIds: [2] }]))
+      .mockResolvedValueOnce(toLevel([{ id: 2, enfantIds: [1] }]));
+    const service = toService({ canReadConfidentiel: true, listIndicateurs });
+
+    await exportSelection(service);
+
+    expect(listIndicateurs).toHaveBeenCalledTimes(2);
+  });
+
+  it('refuse un niveau de descendants plus large que le plafond au lieu de le tronquer', async () => {
+    const listIndicateurs = vi
+      .fn()
+      .mockResolvedValueOnce(toLevel([{ id: 1, enfantIds: [2] }]))
+      .mockResolvedValueOnce(success({ count: 5001, data: [] }));
+    const service = toService({ canReadConfidentiel: true, listIndicateurs });
+
+    const result = await exportSelection(service);
+
+    expect(result.success).toBe(false);
+  });
+});
