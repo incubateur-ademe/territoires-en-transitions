@@ -1,6 +1,7 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
-import { getDataOrThrow } from '@tet/backend/utils/result.type';
+import { catchDatabaseFailure } from '@tet/backend/utils/database/catch-database-failure';
+import { failure, Result, success } from '@tet/backend/utils/result.type';
 import {
   CollectiviteAvecType,
   PersonnalisationReponsesPayload,
@@ -10,14 +11,17 @@ import {
   IndicateurDetaille,
 } from '@tet/domain/indicateurs';
 import { EChartsOption } from 'echarts/types/dist/echarts';
-import { getListIndicateursDataOrThrow } from '../indicateurs/list-indicateurs/list-indicateurs.errors';
 import { ListIndicateursService } from '../indicateurs/list-indicateurs/list-indicateurs.service';
 import ManageIndicateurValeursService from '../valeurs/manage-indicateur-valeurs/manage-indicateur-valeurs.service';
 import ValeursMoyenneService from '../valeurs/get-moyenne-indicateur-valeurs/valeurs-moyenne.service';
 import { ValeursReferenceDTO } from '../valeurs/get-valeurs-reference/valeurs-reference.dto';
 import ValeursReferenceService from '../valeurs/get-valeurs-reference/valeurs-reference.service';
-import { getReadValeursDataOrThrow } from '../valeurs/read-valeurs.errors';
 import { IndicateurChartBuilder } from './indicateur-chart.builder';
+import {
+  IndicateurChartError,
+  toIndicateurValeursChartFailure,
+  toInvalidChartInputFailure,
+} from './indicateur-chart.errors';
 import {
   IndicateurChartInput,
   IndicateurChartSegmentation,
@@ -48,15 +52,17 @@ export class IndicateurChartService {
     collectiviteId: number,
     indicateur: Pick<IndicateurDetaille, 'estAgregation' | 'enfants'>,
     segmentation: IndicateurChartSegmentation
-  ): Promise<IndicateurChartSegmentationWithValeurs | null> {
+  ): Promise<
+    Result<IndicateurChartSegmentationWithValeurs | null, IndicateurChartError>
+  > {
     const indicateursEnfantIds =
       indicateur.estAgregation && indicateur.enfants?.length
         ? indicateur.enfants.map((e) => e.id)
         : [];
     if (!indicateursEnfantIds.length) {
-      return null;
+      return success(null);
     }
-    const indicateursEnfant = getListIndicateursDataOrThrow(
+    const indicateursEnfantResult =
       await this.listIndicateursService.listIndicateurs({
         collectiviteId,
         filters: {
@@ -66,11 +72,16 @@ export class IndicateurChartService {
           page: 1,
           limit: indicateursEnfantIds.length,
         },
-      })
-    );
+      });
+    if (!indicateursEnfantResult.success) {
+      return failure(
+        indicateursEnfantResult.error,
+        indicateursEnfantResult.cause
+      );
+    }
 
     const { orderedAvailableSegmentations, indicateursBySegmentation } =
-      groupIndicateursByOrderedSegmentation(indicateursEnfant.data);
+      groupIndicateursByOrderedSegmentation(indicateursEnfantResult.data.data);
 
     if (!segmentation.type) {
       this.logger.log(
@@ -86,18 +97,22 @@ export class IndicateurChartService {
     const segmentatedIndicateursEnfantIds =
       indicateursBySegmentation[segmentationType];
     if (!segmentatedIndicateursEnfantIds?.length) {
-      return null;
+      return success(null);
     }
 
-    const indicateursEnfantValeurs = getDataOrThrow(
+    const indicateursEnfantValeursResult =
       await this.indicateurValeursService.listIndicateurValeurs(
         {
           collectiviteId,
           indicateurIds: segmentatedIndicateursEnfantIds,
         },
         { isUserTrusted: true }
-      )
-    ).indicateurs;
+      );
+    if (!indicateursEnfantValeursResult.success) {
+      return toIndicateurValeursChartFailure(indicateursEnfantValeursResult);
+    }
+    const indicateursEnfantValeurs =
+      indicateursEnfantValeursResult.data.indicateurs;
 
     const sourceAndValeurType =
       segmentation.source && segmentation.valeurType
@@ -111,17 +126,17 @@ export class IndicateurChartService {
             segmentation.valeurType
           );
     if (!sourceAndValeurType) {
-      return null;
+      return success(null);
     }
 
-    return {
+    return success({
       type: segmentationType,
       indicateursEnfantValeurs,
       ...sourceAndValeurType,
-    };
+    });
   }
 
-  async getIndicateurValeursAndChartData(
+  getIndicateurValeursAndChartData(
     args: IndicateurChartInput & {
       collectiviteAvecType?: CollectiviteAvecType;
       personnalisationReponses?: PersonnalisationReponsesPayload;
@@ -133,35 +148,37 @@ export class IndicateurChartService {
       trajectoireSnbc3Enabled?: boolean;
     },
     user?: AuthUser
-  ): Promise<{
-    indicateurValeurs: IndicateurAvecValeursParSource;
-    indicateurSegmentation?: IndicateurChartSegmentationWithValeurs | null;
-    valeursReference?: ValeursReferenceDTO | null;
-    chartData: EChartsOption;
-  }> {
-    const {
-      collectiviteId,
-      indicateurId,
-      identifiantReferentiel,
-      sources,
-      collectiviteAvecType,
-      personnalisationReponses,
-      includeReferenceValeurs,
-      includeMoyenne,
-      includeSegmentation,
-      chartSize,
-      trajectoireSnbc3Enabled,
-    } = args;
+  ): Promise<
+    Result<
+      {
+        indicateurValeurs: IndicateurAvecValeursParSource;
+        indicateurSegmentation?: IndicateurChartSegmentationWithValeurs | null;
+        valeursReference?: ValeursReferenceDTO | null;
+        chartData: EChartsOption;
+      },
+      IndicateurChartError
+    >
+  > {
+    return catchDatabaseFailure(async () => {
+      const {
+        collectiviteId,
+        indicateurId,
+        identifiantReferentiel,
+        sources,
+        collectiviteAvecType,
+        personnalisationReponses,
+        includeReferenceValeurs,
+        includeMoyenne,
+        includeSegmentation,
+        chartSize,
+        trajectoireSnbc3Enabled,
+      } = args;
 
-    if (!indicateurId && !identifiantReferentiel) {
-      // TODO: use result
-      throw new BadRequestException(
-        'Either indicateurId or identifiantReferentiel must be provided'
-      );
-    }
+      if (!indicateurId && !identifiantReferentiel) {
+        return toInvalidChartInputFailure();
+      }
 
-    const indicateur = getListIndicateursDataOrThrow(
-      indicateurId
+      const indicateurResult = indicateurId
         ? await this.listIndicateursService.getIndicateur({
             indicateurId,
             collectiviteId,
@@ -171,42 +188,40 @@ export class IndicateurChartService {
               identifiantReferentiel: identifiantReferentiel ?? '',
               collectiviteId,
             }
-          )
-    );
+          );
+      if (!indicateurResult.success) {
+        return failure(indicateurResult.error, indicateurResult.cause);
+      }
+      const indicateur = indicateurResult.data;
 
-    // Parallelize all independent queries
-    const [
-      indicateurValeurs,
-      valeursReference,
-      valeursMoyenneCollectivites,
-      indicateurSegmentation,
-    ] = await Promise.all([
-      // Always fetch indicateur valeurs
-      this.indicateurValeursService
-        .listIndicateurValeurs(
+      // Parallelize all independent queries
+      const [
+        indicateurValeursResult,
+        valeursReferenceResult,
+        valeursMoyenneCollectivitesResult,
+        indicateurSegmentationResult,
+      ] = await Promise.all([
+        // Always fetch indicateur valeurs
+        this.indicateurValeursService.listIndicateurValeurs(
           {
             collectiviteId,
             indicateurIds: [indicateur.id],
             sources: sources?.map((s) => s.sourceId),
           },
           { isUserTrusted: true, trajectoireSnbc3Enabled }
-        )
-        .then((result) => getDataOrThrow(result).indicateurs[0]),
-      // Conditionally fetch reference valeurs
-      includeReferenceValeurs
-        ? this.valeurReferenceService
-            .getValeursReferenceForDefinition({
+        ),
+        // Conditionally fetch reference valeurs
+        includeReferenceValeurs
+          ? this.valeurReferenceService.getValeursReferenceForDefinition({
               collectiviteId,
               indicateur,
               collectiviteAvecType,
               personnalisationReponses,
             })
-            .then(getReadValeursDataOrThrow)
-        : Promise.resolve(null),
-      // Conditionally fetch moyenne collectivites
-      includeMoyenne
-        ? this.valeursMoyenneService
-            .getMoyenneCollectivites(
+          : Promise.resolve(success(null)),
+        // Conditionally fetch moyenne collectivites
+        includeMoyenne
+          ? this.valeursMoyenneService.getMoyenneCollectivites(
               {
                 collectiviteId,
                 indicateurId: indicateur.id,
@@ -214,35 +229,63 @@ export class IndicateurChartService {
               },
               user
             )
-            .then(getReadValeursDataOrThrow)
-        : Promise.resolve(null),
-      // Conditionally fetch segmentation
-      includeSegmentation
-        ? this.getIndicateursSegmentationValeurs(
-            collectiviteId,
-            indicateur,
-            includeSegmentation
-          )
-        : Promise.resolve(null),
-    ]);
+          : Promise.resolve(success(null)),
+        // Conditionally fetch segmentation
+        includeSegmentation
+          ? this.getIndicateursSegmentationValeurs(
+              collectiviteId,
+              indicateur,
+              includeSegmentation
+            )
+          : Promise.resolve(success(null)),
+      ]);
 
-    const chartData = this.chartBuilder.build({
-      indicateurValeurs,
-      valeursReference,
-      valeursMoyenneCollectivites,
-      sourcesFilter: sources,
-      segmentation: indicateurSegmentation,
+      if (!indicateurValeursResult.success) {
+        return toIndicateurValeursChartFailure(indicateurValeursResult);
+      }
+      if (!valeursReferenceResult.success) {
+        return failure(
+          valeursReferenceResult.error,
+          valeursReferenceResult.cause
+        );
+      }
+      if (!valeursMoyenneCollectivitesResult.success) {
+        return failure(
+          valeursMoyenneCollectivitesResult.error,
+          valeursMoyenneCollectivitesResult.cause
+        );
+      }
+      if (!indicateurSegmentationResult.success) {
+        return failure(
+          indicateurSegmentationResult.error,
+          indicateurSegmentationResult.cause
+        );
+      }
+
+      const indicateurValeurs = indicateurValeursResult.data.indicateurs[0];
+      const valeursReference = valeursReferenceResult.data;
+      const valeursMoyenneCollectivites =
+        valeursMoyenneCollectivitesResult.data;
+      const indicateurSegmentation = indicateurSegmentationResult.data;
+
+      const chartData = this.chartBuilder.build({
+        indicateurValeurs,
+        valeursReference,
+        valeursMoyenneCollectivites,
+        sourcesFilter: sources,
+        segmentation: indicateurSegmentation,
+      });
+
+      if (chartSize?.width) {
+        this.chartBuilder.adjustOptionsWithWidth(chartData, chartSize.width);
+      }
+
+      return success({
+        indicateurValeurs,
+        indicateurSegmentation,
+        valeursReference,
+        chartData,
+      });
     });
-
-    if (chartSize?.width) {
-      this.chartBuilder.adjustOptionsWithWidth(chartData, chartSize.width);
-    }
-
-    return {
-      indicateurValeurs,
-      indicateurSegmentation,
-      valeursReference,
-      chartData,
-    };
   }
 }

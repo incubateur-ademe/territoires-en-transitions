@@ -5,6 +5,7 @@ import { buildTestPdf } from '@tet/backend/plans/ai-plan-import/pipeline/__fixtu
 import { getAuthUserFromUserCredentials, getTestApp } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { getDataOrThrow } from '@tet/backend/utils/result.type';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
 import { CollectiviteRole } from '@tet/domain/users';
@@ -169,16 +170,16 @@ describe('Régressions de la saisie annuelle des indicateurs', () => {
         }
       }
     }
-    const chart = await app
-      .get(IndicateurChartService)
-      .getIndicateurValeursAndChartData(
+    const chart = getDataOrThrow(
+      await app.get(IndicateurChartService).getIndicateurValeursAndChartData(
         {
           collectiviteId,
           indicateurId: parentId,
           includeSegmentation: { source },
         },
         authenticatedUser
-      );
+      )
+    );
     return { ...chart, enfantIds };
   };
 
@@ -410,13 +411,15 @@ describe('Régressions de la saisie annuelle des indicateurs', () => {
       });
     }
     const service = app.get(IndicateurChartService);
-    const { chartData } = await service.getIndicateurValeursAndChartData(
-      {
-        collectiviteId,
-        indicateurId,
-        includeReferenceValeurs: true,
-      },
-      authenticatedUser
+    const { chartData } = getDataOrThrow(
+      await service.getIndicateurValeursAndChartData(
+        {
+          collectiviteId,
+          indicateurId,
+          includeReferenceValeurs: true,
+        },
+        authenticatedUser
+      )
     );
     expect(chartData.dataset).toEqual(
       expect.arrayContaining([

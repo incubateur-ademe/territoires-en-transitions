@@ -179,9 +179,11 @@ describe('Périodicité de déclaration des indicateurs', () => {
         await caller.indicateurs.valeurs.upsert(valeur);
       }
 
-      const { chartData } = await app
-        .get(IndicateurChartService)
-        .getIndicateurValeursAndChartData({ collectiviteId, indicateurId });
+      const { chartData } = getDataOrThrow(
+        await app
+          .get(IndicateurChartService)
+          .getIndicateurValeursAndChartData({ collectiviteId, indicateurId })
+      );
       const datasets = chartData.dataset as DatasetComponentOption[];
       expect(datasets).toHaveLength(2);
       expect(datasets.map(({ source }) => source)).toEqual(
@@ -413,9 +415,11 @@ describe('Périodicité de déclaration des indicateurs', () => {
     expect(result.indicateurs[0].sources.collectivite.valeurs).toMatchObject([
       { periodicite: IndicateurPeriodiciteEnum.MENSUELLE, resultat: 10 },
     ]);
-    const { chartData } = await app
-      .get(IndicateurChartService)
-      .getIndicateurValeursAndChartData({ collectiviteId, indicateurId });
+    const { chartData } = getDataOrThrow(
+      await app
+        .get(IndicateurChartService)
+        .getIndicateurValeursAndChartData({ collectiviteId, indicateurId })
+    );
     const datasets = chartData.dataset as DatasetComponentOption[];
     expect(datasets).toHaveLength(2);
     expect(new Set(datasets.map(({ id }) => id)).size).toBe(2);
