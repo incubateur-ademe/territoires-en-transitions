@@ -57,14 +57,10 @@ const isInCollectiviteScope = (
 const hasDefinitionFieldsToUpdate = ({
   titre,
   unite,
-  totalEstCumulDesSousIndicateurs,
 }: Pick<
   UpdateIndicateurInput['indicateurFields'],
-  'titre' | 'unite' | 'totalEstCumulDesSousIndicateurs'
->): boolean =>
-  titre !== undefined ||
-  unite !== undefined ||
-  totalEstCumulDesSousIndicateurs !== undefined;
+  'titre' | 'unite'
+>): boolean => titre !== undefined || unite !== undefined;
 
 const getUniteToPropagate = ({
   indicateurInGroup,
@@ -275,7 +271,6 @@ export class UpdateIndicateurService {
       isSuivi,
       titre,
       unite,
-      totalEstCumulDesSousIndicateurs,
       isApplicable,
       ficheIds,
       pilotes,
@@ -364,7 +359,6 @@ export class UpdateIndicateurService {
             collectiviteId,
             titre,
             unite,
-            totalEstCumulDesSousIndicateurs,
           },
           tx
         );

@@ -47,10 +47,7 @@ type UpdateCollectiviteFields = IndicateurPersoKey &
   }>;
 
 type UpdateIndicateurPersoFields = IndicateurPersoKey &
-  Partial<
-    Pick<Indicateur, 'titre' | 'unite'> &
-      Readonly<{ totalEstCumulDesSousIndicateurs: boolean }>
-  >;
+  Partial<Pick<Indicateur, 'titre' | 'unite'>>;
 
 @Injectable()
 export class MutateIndicateurRepository {
@@ -461,13 +458,7 @@ export class MutateIndicateurRepository {
   }
 
   async updateIndicateurPerso(
-    {
-      indicateurId,
-      collectiviteId,
-      titre,
-      unite,
-      totalEstCumulDesSousIndicateurs,
-    }: UpdateIndicateurPersoFields,
+    { indicateurId, collectiviteId, titre, unite }: UpdateIndicateurPersoFields,
     tx: Transaction
   ): Promise<boolean> {
     const updatedIndicateurs = await tx
@@ -475,9 +466,6 @@ export class MutateIndicateurRepository {
       .set({
         ...(titre !== undefined && { titre }),
         ...(unite !== undefined && { unite }),
-        ...(totalEstCumulDesSousIndicateurs !== undefined && {
-          totalEstCumulDesSousIndicateurs,
-        }),
       })
       .where(
         and(

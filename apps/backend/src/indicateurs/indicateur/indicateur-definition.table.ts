@@ -55,11 +55,6 @@ export const indicateurDefinitionTable = pgTable(
     exprCible: text('expr_cible'),
     exprSeuil: text('expr_seuil'),
     libelleCibleSeuil: text('libelle_cible_seuil'),
-    totalEstCumulDesSousIndicateurs: boolean(
-      'total_est_cumul_des_sous_indicateurs'
-    )
-      .default(true)
-      .notNull(),
     createdAt,
     modifiedAt,
     createdBy,

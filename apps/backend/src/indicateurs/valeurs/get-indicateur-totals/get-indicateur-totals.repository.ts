@@ -10,7 +10,6 @@ import { and, eq, sql } from 'drizzle-orm';
 type ParentKey = Readonly<{ parentId: number; collectiviteId: number }>;
 
 export type ParentForTotals = Readonly<{
-  totalEstCumulDesSousIndicateurs: boolean;
   precision: number;
   confidentiel: boolean;
 }>;
@@ -25,8 +24,6 @@ export class GetIndicateurTotalsRepository {
   ): Promise<ParentForTotals | null> {
     const [parent] = await (tx ?? this.databaseService.db)
       .select({
-        totalEstCumulDesSousIndicateurs:
-          indicateurDefinitionTable.totalEstCumulDesSousIndicateurs,
         precision: indicateurDefinitionTable.precision,
         confidentiel: sql<boolean>`coalesce(${indicateurCollectiviteTable.confidentiel}, false)`,
       })
