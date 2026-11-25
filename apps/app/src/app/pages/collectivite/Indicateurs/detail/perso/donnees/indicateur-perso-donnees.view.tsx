@@ -32,7 +32,9 @@ export const IndicateurPersoDonnees = () => {
     <IndicateurDonneesCard>
       <div className="flex flex-row gap-4">
         <IndicateurUniteInput
+          titre={indicateur.titre}
           unite={unite}
+          hasSousIndicateurs={hasSousIndicateurs}
           updateUnite={updateUnite}
           disabled={!canMutateIndicateur}
           parentTitre={indicateur.ancestors.at(-1)?.titre}
