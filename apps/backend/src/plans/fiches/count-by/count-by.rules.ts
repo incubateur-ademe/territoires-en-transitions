@@ -433,7 +433,7 @@ export class CountByRules {
                 id: CountByRules.NO_AXE_ID,
                 nom: CountByRules.NO_AXE_NOM,
               };
-            } else if (axe && !acc[axe.id]) {
+            } else if (!acc[axe.id]) {
               acc[axe.id] = axe;
             }
             return acc;
@@ -458,7 +458,9 @@ export class CountByRules {
         return result;
       }
       counts.push({ id: axe.id, nom: axe.nom, ...result.data.counts });
-      invalidDates.push(...result.data.invalidDates);
+      for (const invalidDate of result.data.invalidDates) {
+        invalidDates.push(invalidDate);
+      }
     }
     return success({ counts, invalidDates });
   }
