@@ -6,7 +6,11 @@ import { useCallback } from 'react';
 import { invalidateIndicateurValeursQueries } from '../../valeurs/invalidate-indicateur-valeurs-queries';
 
 export type CreateSousIndicateur = (
-  input: Readonly<{ parentId: number; titre: string }>,
+  input: Readonly<{
+    parentId: number;
+    titre: string;
+    titreSecondSousIndicateur?: string;
+  }>,
   options?: Readonly<{ onCreated: (indicateurId: number) => void }>
 ) => void;
 
@@ -36,9 +40,9 @@ export const useCreateSousIndicateur = (): CreateSousIndicateur => {
   );
 
   return useCallback(
-    ({ parentId, titre }, options) =>
+    ({ parentId, titre, titreSecondSousIndicateur }, options) =>
       mutate(
-        { collectiviteId, parentId, titre },
+        { collectiviteId, parentId, titre, titreSecondSousIndicateur },
         { onSuccess: (indicateurId) => options?.onCreated(indicateurId) }
       ),
     [mutate, collectiviteId]
