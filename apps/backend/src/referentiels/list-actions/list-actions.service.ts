@@ -3,7 +3,6 @@ import CollectivitesService from '@tet/backend/collectivites/services/collectivi
 import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
 import { serviceTagTable } from '@tet/backend/collectivites/tags/service-tag.table';
 import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
-import { questionActionTable } from '@tet/backend/referentiels/models/question-action.table';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import {
   AuthenticatedUser,
@@ -19,26 +18,17 @@ import {
 import {
   ActionDynamicState,
   ActionId,
-  ActionThematique,
-  ActionType,
   filterHiddenActionsFromGroupedById,
   isNewReferentiel,
   ListActionsDynamicStateResult,
   ReferentielId,
-  ReferentielLabel,
-  ReferentielLabelEnum,
-  ReferentielTagTypeEnum,
   scoreSnapshotTreeToActionsWithGenealogyGroupedById,
 } from '@tet/domain/referentiels';
 import { ResourceType } from '@tet/domain/users';
-import { and, count, eq, getTableColumns, inArray, sql } from 'drizzle-orm';
-import { ImportActionDefinitionCoremeasureType } from '../import-referentiel/import-action-definition.dto';
-import { actionDefinitionTagTable } from '../models/action-definition-tag.table';
-import { actionDepth } from '../models/action-depth.column';
+import { and, count, eq, sql } from 'drizzle-orm';
 import { actionPiloteTable } from '../models/action-pilote.table';
 import { actionServiceTable } from '../models/action-service.table';
 import { referentielDefinitionTable } from '../models/referentiel-definition.table';
-import { referentielTagTable } from '../models/referentiel-tag.table';
 import { SnapshotsService } from '../snapshots/snapshots.service';
 import { ListActionsGroupedByIdInput } from './list-actions-grouped-by-id.input';
 import {
@@ -286,16 +276,6 @@ export class ListActionsService {
     };
   }
 
-  private listWithDepth() {
-    return this.db
-      .select({
-        ...getTableColumns(actionDefinitionTable),
-
-        depth: actionDepth.as('depth'),
-      })
-      .from(actionDefinitionTable);
-  }
-
   async countPiloteActions(collectiviteId: number, user: AuthUser) {
     if (!user.id) {
       throw new BadRequestException(
@@ -318,203 +298,5 @@ export class ListActionsService {
     const queryResult = await query;
 
     return queryResult[0]?.count ?? 0;
-  }
-
-  public listWithDetails(collectiviteId: number) {
-    const subQuery = this.db
-      .$with('action_definition_with_depth')
-      .as(this.listWithDepth());
-
-    return this.db
-      .with(subQuery)
-      .select({
-        modifiedAt: subQuery.modifiedAt,
-        actionId: subQuery.actionId,
-        referentiel: subQuery.referentiel,
-        identifiant: subQuery.identifiant,
-        nom: subQuery.nom,
-        description: subQuery.description,
-        contexte: subQuery.contexte,
-        exemples: subQuery.exemples,
-        ressources: subQuery.ressources,
-        reductionPotentiel: subQuery.reductionPotentiel,
-        perimetreEvaluation: subQuery.perimetreEvaluation,
-        preuve: subQuery.preuve,
-        points: subQuery.points,
-        pourcentage: subQuery.pourcentage,
-        categorie: subQuery.categorie,
-        referentielId: subQuery.referentielId,
-        referentielVersion: subQuery.referentielVersion,
-        depth: subQuery.depth,
-        exprScore: subQuery.exprScore,
-        adaptationNiveau: subQuery.adaptationNiveau,
-        thematiqueSgpe: subQuery.thematiqueSgpe,
-
-        // Add the action type from the `referentiel_definition.hierarchie` array
-        // Ex: 'axe', 'sous-axe', etc
-        actionType:
-          sql<ActionType>`${referentielDefinitionTable.hierarchie}[${subQuery.depth} + 1]`.as(
-            'actionType'
-          ),
-
-        questionIds: sql<Array<string>>`
-          COALESCE(
-            (
-              SELECT array_to_json(
-                array_agg(DISTINCT ${questionActionTable.questionId})
-              )
-              FROM ${questionActionTable}
-              WHERE ${eq(questionActionTable.actionId, subQuery.actionId)}
-            ),
-            '[]'::json
-          )
-        `.as('questionIds'),
-
-        pilotes: sql<Array<PersonneTagOrUser>>`
-          array_remove(
-            array_agg(
-              DISTINCT
-              CASE
-                WHEN ${actionPiloteTable.userId} IS NOT NULL THEN
-                  jsonb_build_object(
-                    'collectiviteId', ${actionPiloteTable.collectiviteId},
-                    'userId', ${actionPiloteTable.userId},
-                    'tagId', null,
-                    'nom', CONCAT(${dcpTable.prenom}, ' ', ${dcpTable.nom})
-                  )
-                WHEN ${personneTagTable.id} IS NOT NULL THEN
-                  jsonb_build_object(
-                    'collectiviteId', ${actionPiloteTable.collectiviteId},
-                    'userId', null,
-                    'tagId', ${personneTagTable.id},
-                    'nom', ${personneTagTable.nom}
-                  )
-              END
-            ),
-            null
-          )
-        `.as('pilotes'),
-
-        services: sql<Array<TagWithCollectiviteId>>`
-          array_remove(
-            array_agg(
-              DISTINCT
-              CASE
-                WHEN ${actionServiceTable.collectiviteId} IS NOT NULL
-                  OR ${serviceTagTable.nom} IS NOT NULL
-                  OR ${actionServiceTable.serviceTagId} IS NOT NULL
-                THEN
-                  jsonb_build_object(
-                    'collectiviteId', ${actionServiceTable.collectiviteId},
-                    'nom', ${serviceTagTable.nom},
-                    'id', ${actionServiceTable.serviceTagId}
-                  )
-              END
-            ),
-            null
-          )
-        `.as('services'),
-
-        labels: sql<Array<ReferentielLabel>>`
-          COALESCE(
-            array_agg(DISTINCT ${actionDefinitionTagTable.tagRef})
-              FILTER (WHERE ${inArray(actionDefinitionTagTable.tagRef, [
-                ReferentielLabelEnum.TE_CAE,
-                ReferentielLabelEnum.TE_ECI,
-              ])}),
-            '{}'
-          )
-        `.as('labels'),
-
-        isCoremeasure: sql<boolean>`
-          COALESCE(
-            bool_or(${eq(
-              actionDefinitionTagTable.tagRef,
-              ImportActionDefinitionCoremeasureType.COREMEASURE
-            )}),
-            false
-          )
-        `.as('isCoremeasure'),
-
-        thematiques: sql<Array<ActionThematique>>`
-          COALESCE(
-            jsonb_agg(
-              DISTINCT jsonb_build_object(
-                'ref', ${referentielTagTable.ref},
-                'nom', ${referentielTagTable.nom}
-              )
-            ) FILTER (
-              WHERE ${referentielTagTable.type} = ${ReferentielTagTypeEnum.THEMATIQUE}
-            ),
-            '[]'::jsonb
-          )
-        `.as('thematiques'),
-      })
-      .from(subQuery)
-      .innerJoin(
-        referentielDefinitionTable,
-        and(
-          eq(referentielDefinitionTable.id, subQuery.referentielId),
-          eq(referentielDefinitionTable.version, subQuery.referentielVersion)
-        )
-      )
-      .leftJoin(
-        actionPiloteTable,
-        and(
-          eq(actionPiloteTable.actionId, subQuery.actionId),
-          eq(actionPiloteTable.collectiviteId, collectiviteId)
-        )
-      )
-      .leftJoin(dcpTable, eq(dcpTable.id, actionPiloteTable.userId))
-      .leftJoin(
-        personneTagTable,
-        eq(personneTagTable.id, actionPiloteTable.tagId)
-      )
-      .leftJoin(
-        actionServiceTable,
-        and(
-          eq(actionServiceTable.actionId, subQuery.actionId),
-          eq(actionServiceTable.collectiviteId, collectiviteId)
-        )
-      )
-      .leftJoin(
-        serviceTagTable,
-        eq(serviceTagTable.id, actionServiceTable.serviceTagId)
-      )
-      .leftJoin(
-        actionDefinitionTagTable,
-        and(
-          eq(actionDefinitionTagTable.actionId, subQuery.actionId),
-          eq(actionDefinitionTagTable.referentielId, subQuery.referentielId)
-        )
-      )
-      .leftJoin(
-        referentielTagTable,
-        eq(referentielTagTable.ref, actionDefinitionTagTable.tagRef)
-      )
-      .groupBy(
-        subQuery.modifiedAt,
-        subQuery.actionId,
-        subQuery.referentiel,
-        subQuery.identifiant,
-        subQuery.nom,
-        subQuery.description,
-        subQuery.contexte,
-        subQuery.exemples,
-        subQuery.ressources,
-        subQuery.reductionPotentiel,
-        subQuery.perimetreEvaluation,
-        subQuery.preuve,
-        subQuery.points,
-        subQuery.pourcentage,
-        subQuery.categorie,
-        subQuery.referentielId,
-        subQuery.referentielVersion,
-        subQuery.depth,
-        subQuery.exprScore,
-        subQuery.adaptationNiveau,
-        subQuery.thematiqueSgpe,
-        referentielDefinitionTable.hierarchie
-      );
   }
 }

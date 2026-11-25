@@ -51,6 +51,7 @@ import { GetAuditEnCoursRepository } from './labellisations/get-audit-en-cours/g
 import { GetLabellisationRouter } from './labellisations/get-labellisation.router';
 import { GetLabellisationService } from './labellisations/get-labellisation.service';
 import { HandleMesureAuditStatutRouter } from './labellisations/handle-mesure-audit-statut/handle-mesure-audit-statut.router';
+import { ListMesureAuditStatutsRepository } from './labellisations/handle-mesure-audit-statut/list-mesure-audit-statuts.repository';
 import { HandleMesureAuditStatutService } from './labellisations/handle-mesure-audit-statut/handle-mesure-audit-statut.service';
 import { LabellisationService } from './labellisations/labellisation.service';
 import { ListDocumentsAuditRouter } from './documents/list-documents-audit/list-documents-audit.router';
@@ -239,6 +240,7 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     CloseDossierLabellisationService,
     HandleCotService,
     DossiersLabellisationRouter,
+    ListMesureAuditStatutsRepository,
     HandleMesureAuditStatutService,
     HandleMesureAuditStatutRouter,
 
