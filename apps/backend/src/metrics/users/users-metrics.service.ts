@@ -4,9 +4,11 @@ import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches
 import { ListActionsService } from '@tet/backend/referentiels/list-actions/list-actions.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
-import { ResourceType } from '@tet/domain/users';
-import { getListIndicateursDataOrThrow } from '../../indicateurs/indicateurs/list-indicateurs/list-indicateurs.errors';
+import { ListIndicateursError } from '../../indicateurs/indicateurs/list-indicateurs/list-indicateurs.errors';
 import { ListIndicateursService } from '../../indicateurs/indicateurs/list-indicateurs/list-indicateurs.service';
+import { catchDatabaseFailure } from '@tet/backend/utils/database/catch-database-failure';
+import { Result, success } from '@tet/backend/utils/result.type';
+import { checkMetricsReadAllowed } from '../check-metrics-read-allowed';
 
 @Injectable()
 export class UsersMetricsService {
@@ -19,16 +21,23 @@ export class UsersMetricsService {
     private readonly listActionsService: ListActionsService
   ) {}
 
-  async getMetrics(
+  getMetrics(
     collectiviteId: number,
     user: AuthUser
-  ): Promise<PersonalMetricsOutput> {
-    await this.permissionsService.assertAllowed(
+  ): Promise<Result<PersonalMetricsOutput, ListIndicateursError>> {
+    return catchDatabaseFailure(() => this.readMetrics(collectiviteId, user));
+  }
+
+  private async readMetrics(
+    collectiviteId: number,
+    user: AuthUser
+  ): Promise<Result<PersonalMetricsOutput, ListIndicateursError>> {
+    const permission = await checkMetricsReadAllowed({
+      permissionService: this.permissionsService,
       user,
-      'collectivites.read',
-      ResourceType.COLLECTIVITE,
-      { collectiviteId }
-    );
+      collectiviteId,
+    });
+    if (!permission.success) return permission;
 
     this.logger.log(
       `Récupération des métriques personnelles pour la collectivité ${collectiviteId} et l'utilisateur ${user.id}`
@@ -78,16 +87,6 @@ export class UsersMetricsService {
     );
 
     promises.push(
-      this.listIndicateursService
-        .getMesIndicateursCount({ collectiviteId }, user)
-        .then((piloteCount) => {
-          response.indicateurs.piloteCount =
-            getListIndicateursDataOrThrow(piloteCount);
-          return;
-        })
-    );
-
-    promises.push(
       this.listActionsService
         .countPiloteActions(collectiviteId, user)
         .then((piloteMesuresCount) => {
@@ -96,8 +95,16 @@ export class UsersMetricsService {
         })
     );
 
-    await Promise.all(promises);
+    const [piloteCountResult] = await Promise.all([
+      this.listIndicateursService.getMesIndicateursCount(
+        { collectiviteId },
+        user
+      ),
+      ...promises,
+    ]);
+    if (!piloteCountResult.success) return piloteCountResult;
+    response.indicateurs.piloteCount = piloteCountResult.data;
 
-    return response;
+    return success(response);
   }
 }

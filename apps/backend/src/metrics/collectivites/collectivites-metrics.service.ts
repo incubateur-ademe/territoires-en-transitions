@@ -6,10 +6,12 @@ import { ListLabellisationsService } from '@tet/backend/referentiels/labellisati
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { ReferentielId } from '@tet/domain/referentiels';
-import { ResourceType } from '@tet/domain/users';
-import { getListIndicateursDataOrThrow } from '../../indicateurs/indicateurs/list-indicateurs/list-indicateurs.errors';
+import { ListIndicateursError } from '../../indicateurs/indicateurs/list-indicateurs/list-indicateurs.errors';
 import { ListIndicateursService } from '../../indicateurs/indicateurs/list-indicateurs/list-indicateurs.service';
 import { LabellisationRecord } from '../../referentiels/labellisations/list-labellisations.api-response';
+import { catchDatabaseFailure } from '@tet/backend/utils/database/catch-database-failure';
+import { Result, success } from '@tet/backend/utils/result.type';
+import { checkMetricsReadAllowed } from '../check-metrics-read-allowed';
 
 @Injectable()
 export class CollectivitesMetricsService {
@@ -26,16 +28,23 @@ export class CollectivitesMetricsService {
   /**
    * Fetch les metriques du tableau de bord pour une collectivité.
    */
-  async getMetrics(
+  getMetrics(
     collectiviteId: number,
     user: AuthUser
-  ): Promise<CollectiviteMetricsOutput> {
-    await this.permissionsService.assertAllowed(
+  ): Promise<Result<CollectiviteMetricsOutput, ListIndicateursError>> {
+    return catchDatabaseFailure(() => this.readMetrics(collectiviteId, user));
+  }
+
+  private async readMetrics(
+    collectiviteId: number,
+    user: AuthUser
+  ): Promise<Result<CollectiviteMetricsOutput, ListIndicateursError>> {
+    const permission = await checkMetricsReadAllowed({
+      permissionService: this.permissionsService,
       user,
-      'collectivites.read',
-      ResourceType.COLLECTIVITE,
-      { collectiviteId }
-    );
+      collectiviteId,
+    });
+    if (!permission.success) return permission;
 
     this.logger.log(
       `Récupération des métriques globales pour la collectivité ${collectiviteId}`
@@ -91,28 +100,19 @@ export class CollectivitesMetricsService {
       })
     );
 
-    promises.push(
-      this.listIndicateursService
-        .getFavorisCount({ collectiviteId }, user)
-        .then((favorisCount) => {
-          response.indicateurs.favoris =
-            getListIndicateursDataOrThrow(favorisCount);
-          return;
-        })
-    );
+    const [favorisCountResult, personnalisesCountResult] = await Promise.all([
+      this.listIndicateursService.getFavorisCount({ collectiviteId }, user),
+      this.listIndicateursService.getPersonnalisesCount(
+        { collectiviteId },
+        user
+      ),
+      ...promises,
+    ]);
+    if (!favorisCountResult.success) return favorisCountResult;
+    if (!personnalisesCountResult.success) return personnalisesCountResult;
+    response.indicateurs.favoris = favorisCountResult.data;
+    response.indicateurs.personnalises = personnalisesCountResult.data;
 
-    promises.push(
-      this.listIndicateursService
-        .getPersonnalisesCount({ collectiviteId }, user)
-        .then((personnalisesCount) => {
-          response.indicateurs.personnalises =
-            getListIndicateursDataOrThrow(personnalisesCount);
-          return;
-        })
-    );
-
-    await Promise.all(promises);
-
-    return response;
+    return success(response);
   }
 }
