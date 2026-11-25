@@ -2,7 +2,7 @@
   "biodiversite · fiche": {
     "attendues": 51,
     "trouvees": 24,
-    "titresComplets": 1,
+    "titresComplets": 24,
     "numerosAttendus": 51,
     "numeros": 24,
     "bonAxe": 24,
@@ -10,7 +10,7 @@
     "enTrop": 0,
     "axesAttendus": 6,
     "axesTrouves": 6,
-    "axesComplets": 3
+    "axesComplets": 6
   },
   "cot-ccvn · fiche": {
     "attendues": 66,
@@ -54,7 +54,7 @@
   "plpdma-2026 · etape": {
     "attendues": 40,
     "trouvees": 32,
-    "titresComplets": 23,
+    "titresComplets": 32,
     "numerosAttendus": 40,
     "numeros": 32,
     "bonAxe": 32,
@@ -62,12 +62,12 @@
     "enTrop": 0,
     "axesAttendus": 5,
     "axesTrouves": 5,
-    "axesComplets": 3
+    "axesComplets": 4
   },
   "plpdma-2026 · fiche": {
     "attendues": 16,
     "trouvees": 15,
-    "titresComplets": 14,
+    "titresComplets": 15,
     "numerosAttendus": 16,
     "numeros": 15,
     "bonAxe": 15,
@@ -75,7 +75,7 @@
     "enTrop": 0,
     "axesAttendus": 5,
     "axesTrouves": 5,
-    "axesComplets": 3
+    "axesComplets": 4
   },
   "plpdma-actions · fiche": {
     "attendues": 27,
@@ -88,12 +88,12 @@
     "enTrop": 2,
     "axesAttendus": 8,
     "axesTrouves": 7,
-    "axesComplets": 5
+    "axesComplets": 7
   },
   "plpdma-capg · fiche": {
     "attendues": 14,
     "trouvees": 14,
-    "titresComplets": 12,
+    "titresComplets": 14,
     "numerosAttendus": 14,
     "numeros": 14,
     "bonAxe": 14,
@@ -106,15 +106,15 @@
   "plpdma-ccbv · fiche": {
     "attendues": 32,
     "trouvees": 32,
-    "titresComplets": 25,
+    "titresComplets": 30,
     "numerosAttendus": 32,
     "numeros": 24,
-    "bonAxe": 31,
-    "bonChemin": 28,
+    "bonAxe": 32,
+    "bonChemin": 32,
     "enTrop": 43,
     "axesAttendus": 11,
     "axesTrouves": 11,
-    "axesComplets": 10
+    "axesComplets": 11
   },
   "tourisme-dracenie · fiche": {
     "attendues": 16,

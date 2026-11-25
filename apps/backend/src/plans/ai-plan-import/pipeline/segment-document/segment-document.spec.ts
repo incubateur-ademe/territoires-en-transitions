@@ -1058,3 +1058,395 @@ describe('niveau de l’action : fiche ou étape', () => {
     expect(detectActionLevelDoubt(pages)?.axes?.exampleTitle).toBe('Axe 2');
   });
 });
+
+type Line = { text: string; fontSize?: number; y?: number };
+// Le corps du texte, en 10 points, loin sous le titre.
+const corps = (from: number, count = 5): Line[] =>
+  Array.from({ length: count }, (_, i) => ({
+    text: `Un paragraphe de corps de texte normal, numéro ${i}.`,
+    fontSize: 10,
+    y: from + i * 12,
+  }));
+const titres = (lines: Line[]) =>
+  detectHeadings([buildPage(0, lines)]).map(({ match }) => [
+    match.kind,
+    match.title,
+  ]);
+
+describe('titre explicite qui passe à la ligne dans sa police', () => {
+  it('recolle la suite en minuscule d’un titre de fiche en grande police, sans prendre le bandeau d’axe', () => {
+    expect(
+      titres([
+        {
+          text: 'Action 3 : Capitaliser les connaissances sur la faune et évaluer',
+          fontSize: 14,
+          y: 100,
+        },
+        {
+          text: 'l’efficacité des actions de protection',
+          fontSize: 14,
+          y: 118.5,
+        },
+        {
+          text: 'Axe stratégique 1 : Connaître le territoire',
+          fontSize: 12,
+          y: 160,
+        },
+        ...corps(200),
+      ])
+    ).toEqual([
+      [
+        'fiche',
+        'Capitaliser les connaissances sur la faune et évaluer l’efficacité des actions de protection',
+      ],
+      ['axe', 'Connaître le territoire'],
+    ]);
+  });
+
+  it('recolle une suite qui commence par une majuscule, dans la même police et à l’interligne', () => {
+    expect(
+      titres([
+        {
+          text: 'Action 21 : Décliner les Plans de Gestion',
+          fontSize: 14,
+          y: 100,
+        },
+        { text: 'Stratégique des Zones Humides', fontSize: 14, y: 118.5 },
+        ...corps(160),
+      ])
+    ).toEqual([
+      ['fiche', 'Décliner les Plans de Gestion Stratégique des Zones Humides'],
+    ]);
+  });
+
+  it('ne recolle ni une ligne éloignée, ni après un point, ni un libellé de champ, ni le titre suivant', () => {
+    expect(
+      titres([
+        {
+          text: 'Action 1 – Organiser les réunions du comité',
+          fontSize: 14,
+          y: 100,
+        },
+        { text: 'Contexte du projet de territoire', fontSize: 14, y: 140 },
+        {
+          text: 'Action 2 – Réduire les déchets du marché.',
+          fontSize: 14,
+          y: 200,
+        },
+        { text: 'les habitants y sont associés', fontSize: 14, y: 216 },
+        {
+          text: 'Action 3 – Faciliter la mise en relation',
+          fontSize: 14,
+          y: 260,
+        },
+        { text: '⚙Pilote et partenaires :', fontSize: 14, y: 276 },
+        { text: 'Action 4 – Revoir la signalétique', fontSize: 14, y: 320 },
+        {
+          text: 'Action 5 – Communiquer sur le réemploi',
+          fontSize: 14,
+          y: 336,
+        },
+        ...corps(380),
+      ]).map(([, title]) => title)
+    ).toEqual([
+      'Organiser les réunions du comité',
+      'Réduire les déchets du marché.',
+      'Faciliter la mise en relation',
+      'Revoir la signalétique',
+      'Communiquer sur le réemploi',
+    ]);
+  });
+
+  it('garde la suite en capitales seule pour un grand titre qui ne se nomme pas', () => {
+    expect(
+      titres([
+        { text: 'RÉNOVER LE PATRIMOINE BÂTI', fontSize: 18, y: 100 },
+        { text: 'des bâtiments publics exemplaires', fontSize: 18, y: 120 },
+        ...corps(160),
+      ])
+    ).toEqual([['majuscules', 'RÉNOVER LE PATRIMOINE BÂTI']]);
+  });
+
+  it('ne recolle rien sans ordonnée, comme dans un document Word', () => {
+    expect(
+      titres([
+        {
+          text: 'Action 3 : Capitaliser les connaissances sur la faune et',
+          fontSize: 14,
+        },
+        { text: 'l’efficacité des actions de protection', fontSize: 14 },
+        ...corps(160).map(({ text }) => ({ text, fontSize: 10 })),
+      ])
+    ).toEqual([['fiche', 'Capitaliser les connaissances sur la faune et']]);
+  });
+});
+
+describe('titre explicite en police du corps', () => {
+  it('recolle une seule ligne en minuscule, à l’interligne', () => {
+    expect(
+      titres([
+        {
+          text: 'Action 30 : Informer les habitants et les entreprises locales du',
+          fontSize: 10,
+          y: 100,
+        },
+        { text: 'bâtiment', fontSize: 10, y: 113 },
+        { text: 'Autres fiches actions en lien :', fontSize: 10, y: 134 },
+        {
+          text: 'Action 31 : Accompagner les associations pour l’achat et la mise à',
+          fontSize: 10,
+          y: 160,
+        },
+        {
+          text: 'disposition de broyeurs à végétaux pour',
+          fontSize: 10,
+          y: 172,
+        },
+        { text: 'les jardiniers du territoire', fontSize: 10, y: 184 },
+        ...corps(220),
+      ]).map(([, title]) => title)
+    ).toEqual([
+      'Informer les habitants et les entreprises locales du bâtiment',
+      'Accompagner les associations pour l’achat et la mise à disposition de broyeurs à végétaux pour',
+    ]);
+  });
+
+  it('ne recolle pas le paragraphe qui commence par une majuscule sous l’axe', () => {
+    expect(
+      titres([
+        {
+          text: 'Axe 1 : Limiter la production de déchets verts et encourager la gestion des biodéchets en',
+          fontSize: 10,
+          y: 100,
+        },
+        { text: 'proximité', fontSize: 10, y: 114 },
+        {
+          text: 'L’objectif de cet axe est de réduire les déchets',
+          fontSize: 10,
+          y: 128,
+        },
+        ...corps(142),
+      ])
+    ).toEqual([
+      [
+        'axe',
+        'Limiter la production de déchets verts et encourager la gestion des biodéchets en proximité',
+      ],
+    ]);
+  });
+
+  it('ne recolle pas la colonne voisine entrelacée sous l’interligne', () => {
+    expect(
+      titres([
+        {
+          text: 'Action 4 : Développer le compostage partagé dans les',
+          fontSize: 10,
+          y: 231,
+        },
+        { text: 'compostage, etc.).', fontSize: 10, y: 239.4 },
+        ...corps(260),
+      ])
+    ).toEqual([['fiche', 'Développer le compostage partagé dans les']]);
+  });
+
+  it('ne prolonge pas un titre posé dans une rangée de tableau, ni coupé par une colonne collée', () => {
+    expect(
+      titres([
+        { text: 'Axe 5 : Réduire les déchets', fontSize: 10, y: 100 },
+        {
+          text: '- Action ciblée auprès des activités saisonnières.',
+          fontSize: 10,
+          y: 100,
+        },
+        { text: 'produits par les activités', fontSize: 10, y: 114 },
+        {
+          text: 'Axe 3 Réduire le tout venant etAction 3.1 Caractériser les flux de',
+          fontSize: 10,
+          y: 200,
+        },
+        {
+          text: 'renforcer le tri déchets dans la benne',
+          fontSize: 10,
+          y: 212,
+        },
+        ...corps(240),
+      ])
+    ).toEqual([
+      ['axe', 'Réduire les déchets'],
+      ['axe', 'Réduire le tout venant et'],
+    ]);
+  });
+
+  it('recolle la fin en capitales d’un bandeau d’axe, sans en faire le thème des fiches', () => {
+    const page = (index: number, fiche: string) =>
+      buildPage(index, [
+        {
+          text: 'AXE 2 : SENSIBILISER LES ACTEURS ET FAVORISER LA',
+          fontSize: 10,
+          y: 123,
+        },
+        { text: 'VISIBILITE DES EFFORTS DE PREVENTION', fontSize: 10, y: 136 },
+        { text: fiche, fontSize: 10, y: 157 },
+        ...corps(180),
+      ]);
+    expect(
+      detectHeadings([
+        page(0, 'Action 5 : Sensibiliser les jeunes'),
+        page(1, 'Action 6 : Sensibiliser les entreprises'),
+      ]).map(({ match }) => [match.kind, match.title])
+    ).toEqual([
+      [
+        'axe',
+        'SENSIBILISER LES ACTEURS ET FAVORISER LA VISIBILITE DES EFFORTS DE PREVENTION',
+      ],
+      ['fiche', 'Sensibiliser les jeunes'],
+      [
+        'axe',
+        'SENSIBILISER LES ACTEURS ET FAVORISER LA VISIBILITE DES EFFORTS DE PREVENTION',
+      ],
+      ['fiche', 'Sensibiliser les entreprises'],
+    ]);
+  });
+});
+
+describe('titre sous « Fiche Action n°… » et dans un cartouche', () => {
+  it('prend une quatrième ligne dans la police du titre, pas en corps de texte', () => {
+    const fiche = (last: Line) => [
+      { text: 'Fiche Action n°3.1', fontSize: 20, y: 76 },
+      {
+        text: 'Caractériser et analyser les flux de déchets dans la',
+        fontSize: 18,
+        y: 98,
+      },
+      {
+        text: 'benne tout venant, suivre les tonnages des autres',
+        fontSize: 18,
+        y: 119,
+      },
+      {
+        text: 'bennes de tri et développer de nouvelles filières de',
+        fontSize: 18,
+        y: 139,
+      },
+      last,
+      { text: 'o Action à réaliser', fontSize: 10, y: 191 },
+      ...corps(220),
+    ];
+    expect(
+      titres(fiche({ text: 'valorisation', fontSize: 18, y: 160 }))
+    ).toEqual([
+      [
+        'fiche',
+        'Caractériser et analyser les flux de déchets dans la benne tout venant, suivre les tonnages des autres bennes de tri et développer de nouvelles filières de valorisation',
+      ],
+    ]);
+    expect(
+      titres(fiche({ text: 'valorisation des déchets', fontSize: 10, y: 160 }))
+    ).toEqual([
+      [
+        'fiche',
+        'Caractériser et analyser les flux de déchets dans la benne tout venant, suivre les tonnages des autres bennes de tri et développer de nouvelles filières de',
+      ],
+    ]);
+  });
+
+  it('ne double pas la suite d’un axe de cartouche', () => {
+    expect(
+      titres([
+        {
+          text: 'Axe stratégique AXE 2 : Nourrir et renforcer l’offre touristique',
+          fontSize: 16,
+          y: 88,
+        },
+        {
+          text: 'et culturelle représentative du territoire',
+          fontSize: 16,
+          y: 108,
+        },
+        ...corps(150),
+      ])
+    ).toEqual([
+      [
+        'axe',
+        'Nourrir et renforcer l’offre touristique et culturelle représentative du territoire',
+      ],
+    ]);
+  });
+});
+
+describe('titre explicite : ce qui ne passe pas à la ligne', () => {
+  const titreDe = (lines: Line[], kind: string) =>
+    titres(lines).find(([found]) => found === kind)?.[1];
+
+  it.each([
+    ['un intertitre', 'CONTEXTE ET ENJEUX'],
+    ['une date', 'MARS 2025'],
+    ['un organisme', 'SYNDICAT MIXTE DES TRANSPORTS'],
+  ])(
+    'en police du corps, ne colle pas %s en capitales sous un titre en casse de phrase',
+    (_, capitales) => {
+      const lines = [
+        { text: 'Action 3 : Rénover les écoles', fontSize: 10, y: 100 },
+        { text: capitales, fontSize: 10, y: 112 },
+        ...corps(124),
+      ];
+      expect(titreDe(lines, 'fiche')).toBe('Rénover les écoles');
+    }
+  );
+
+  it('garde le thème en capitales posé entre deux fiches', () => {
+    expect(
+      titres([
+        { text: 'Axe 1 : Mobilité durable', fontSize: 10, y: 100 },
+        { text: 'TRANSPORTS EN COMMUN', fontSize: 10, y: 112 },
+        { text: 'Action 1 : Renforcer les lignes', fontSize: 10, y: 124 },
+        ...corps(136),
+      ])
+    ).toEqual([
+      ['axe', 'Mobilité durable'],
+      ['majuscules', 'TRANSPORTS EN COMMUN'],
+      ['fiche', 'Renforcer les lignes'],
+    ]);
+  });
+
+  it.each([
+    [
+      'un chapeau',
+      { text: 'Action 3 : Rénover les écoles', fontSize: 14, y: 100 },
+      {
+        text: 'Un programme pluriannuel d’investissement',
+        fontSize: 14,
+        y: 117,
+      },
+      'fiche',
+      'Rénover les écoles',
+    ],
+    [
+      'un libellé sans deux-points final',
+      { text: 'Action 3 : Rénover les écoles', fontSize: 14, y: 100 },
+      {
+        text: 'Service porteur : Direction du patrimoine',
+        fontSize: 14,
+        y: 117,
+      },
+      'fiche',
+      'Rénover les écoles',
+    ],
+    [
+      'le nom de la collectivité',
+      { text: 'Axe 2 : Se déplacer autrement', fontSize: 24, y: 100 },
+      {
+        text: 'Communauté d’agglomération du Pays de Grasse',
+        fontSize: 24,
+        y: 130,
+      },
+      'axe',
+      'Se déplacer autrement',
+    ],
+  ])(
+    'en grande police, ne colle pas %s dont le premier mot aurait tenu sur la ligne',
+    (_, titre, suivante, kind, attendu) => {
+      expect(titreDe([titre, suivante, ...corps(180)], kind)).toBe(attendu);
+    }
+  );
+});
