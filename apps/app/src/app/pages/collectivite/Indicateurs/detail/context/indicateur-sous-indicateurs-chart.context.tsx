@@ -1,5 +1,6 @@
 'use client';
 
+import type { SousIndicateursQueryOptions } from '@/app/indicateurs/sous-indicateurs/data/use-sous-indicateurs-queries';
 import type { SousIndicateursChartState } from '@/app/indicateurs/sous-indicateurs/sous-indicateurs-chart-state.rules';
 import {
   createContext,
@@ -9,7 +10,10 @@ import {
 } from 'react';
 
 export type IndicateurSousIndicateursChartValue = {
-  useSousIndicateursChart: (indicateurId: number) => SousIndicateursChartState;
+  useSousIndicateursChart: (
+    indicateurId: number,
+    options: SousIndicateursQueryOptions
+  ) => SousIndicateursChartState;
 };
 
 const IndicateurSousIndicateursChartContext =

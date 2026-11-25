@@ -156,6 +156,27 @@ describe('buildSousIndicateursChartData', () => {
       ]);
     });
 
+    it("trace un niveau intermédiaire par ses valeurs propres quand aucun total n'a été calculé pour lui", () => {
+      const data = buildSousIndicateursChartData(
+        toSource({
+          valeurs: [
+            ...FULL_VALEURS,
+            [
+              COLLECTES_ID,
+              [toResultat('2022-01-01', 20), toResultat('2023-01-01', 22)],
+            ],
+          ],
+        })
+      );
+
+      expect(
+        data?.children.map(({ label, valeurs }) => [label, valeurs])
+      ).toEqual([
+        ['Collectes sélectives', [20, 22]],
+        ['Verre', [3, 4]],
+      ]);
+    });
+
     it("ne trace pas les sous-indicateurs d'un enfant direct", () => {
       const data = buildSousIndicateursChartData(
         toSource({
@@ -443,7 +464,10 @@ describe('buildSousIndicateursChartData', () => {
               toNode({ id: VERRE_ID, label: 'Verre', enfantIds: [ROOT_ID] }),
             ],
             valeurs: [[VERRE_ID, [toResultat('2022-01-01', 3)]]],
-            totals: [[ROOT_ID, []]],
+            totals: [
+              [ROOT_ID, []],
+              [VERRE_ID, []],
+            ],
           })
         )
       ).toBeNull();

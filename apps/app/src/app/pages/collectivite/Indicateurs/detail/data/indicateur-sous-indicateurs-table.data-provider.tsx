@@ -6,6 +6,7 @@ import { useDetachSousIndicateur } from '@/app/indicateurs/sous-indicateurs/data
 import { useDeleteSousIndicateursPeriode } from '@/app/indicateurs/sous-indicateurs/data/use-delete-sous-indicateurs-periode';
 import { useDeclareSousIndicateursPeriodes } from '@/app/indicateurs/sous-indicateurs/data/use-declare-sous-indicateurs-periodes';
 import { useSaveSousIndicateurValeur } from '@/app/indicateurs/sous-indicateurs/data/use-save-sous-indicateur-valeur';
+import { useSousIndicateursOpenData } from '@/app/indicateurs/sous-indicateurs/data/use-sous-indicateurs-open-data';
 import { useSousIndicateursTable } from '@/app/indicateurs/sous-indicateurs/data/use-sous-indicateurs-table';
 import type { JSX, PropsWithChildren } from 'react';
 import { useIndicateurPeriodeCommentaires } from '../../table/use-indicateur-periode-commentaires';
@@ -22,6 +23,7 @@ const SOUS_INDICATEURS_TABLE_VALUE: IndicateurSousIndicateursTableValue = {
   useDetachSousIndicateur,
   useCreateSousIndicateur,
   useRenameSousIndicateur,
+  useSousIndicateursOpenData,
   useIndicateurPeriodeCommentaires,
 };
 

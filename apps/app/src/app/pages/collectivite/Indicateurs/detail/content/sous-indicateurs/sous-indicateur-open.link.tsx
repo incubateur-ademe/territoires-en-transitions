@@ -16,6 +16,6 @@ export const SousIndicateurOpenLink = ({ label, href }: Props): JSX.Element => (
     href={href}
     aria-label={appLabels.indicateurSousIndicateurOuvrir({ label })}
   >
-    <Icon icon="arrow-right-s-line" size="sm" />
+    <Icon icon="external-link-line" size="sm" />
   </Link>
 );

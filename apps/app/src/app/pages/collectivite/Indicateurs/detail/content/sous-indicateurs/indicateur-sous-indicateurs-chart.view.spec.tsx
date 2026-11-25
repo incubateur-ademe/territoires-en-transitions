@@ -3,19 +3,43 @@ import { appLabels } from '@/app/labels/catalog';
 import { cleanup, render, screen } from '@testing-library/react';
 import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
 import { describe, expect, it, vi } from 'vitest';
+import type { IndicateurDetaille } from '@tet/domain/indicateurs';
+import { IndicateurDataProvider } from '../../context/indicateur-data.context';
 import { IndicateurSousIndicateursChartProvider } from '../../context/indicateur-sous-indicateurs-chart.context';
 import { IndicateurSousIndicateursChart } from './indicateur-sous-indicateurs-chart.view';
 
-const renderChart = (state: SousIndicateursChartState) => {
+const PERSO = {
+  id: 1,
+  collectiviteId: 1,
+  groupementId: null,
+  identifiantReferentiel: null,
+} as IndicateurDetaille;
+
+const PREDEFINI = {
+  ...PERSO,
+  collectiviteId: null,
+  identifiantReferentiel: 'cae_9',
+} as IndicateurDetaille;
+
+const renderChart = (
+  state: SousIndicateursChartState,
+  indicateur: IndicateurDetaille = PERSO
+) => {
   const useSousIndicateursChart = vi.fn(() => state);
   render(
-    <IndicateurSousIndicateursChartProvider value={{ useSousIndicateursChart }}>
-      <IndicateurSousIndicateursChart
-        indicateurId={1}
-        unite="t"
-        periodicite={IndicateurPeriodiciteEnum.ANNUELLE}
-      />
-    </IndicateurSousIndicateursChartProvider>
+    <IndicateurDataProvider
+      value={{ indicateur, canMutateIndicateur: true, canMutateValeur: true }}
+    >
+      <IndicateurSousIndicateursChartProvider
+        value={{ useSousIndicateursChart }}
+      >
+        <IndicateurSousIndicateursChart
+          indicateurId={1}
+          unite="t"
+          periodicite={IndicateurPeriodiciteEnum.ANNUELLE}
+        />
+      </IndicateurSousIndicateursChartProvider>
+    </IndicateurDataProvider>
   );
   return useSousIndicateursChart;
 };
@@ -24,7 +48,20 @@ describe('IndicateurSousIndicateursChart', () => {
   it("demande l'état du graphique pour l'indicateur affiché", () => {
     const useSousIndicateursChart = renderChart({ status: 'loading' });
 
-    expect(useSousIndicateursChart).toHaveBeenCalledWith(1);
+    expect(useSousIndicateursChart).toHaveBeenCalledWith(1, {
+      withTotals: true,
+    });
+  });
+
+  it("ne demande aucun total pour un indicateur prédéfini, qui n'en a pas", () => {
+    const useSousIndicateursChart = renderChart(
+      { status: 'loading' },
+      PREDEFINI
+    );
+
+    expect(useSousIndicateursChart).toHaveBeenCalledWith(1, {
+      withTotals: false,
+    });
   });
 
   it('annonce le chargement', () => {

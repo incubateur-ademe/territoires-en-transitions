@@ -188,6 +188,8 @@ const toSousIndicateurRow = ({
   onNameEditingEnd,
   isExpanded,
   onToggle,
+  hasExtraRows,
+  parentValeursAreComputed,
 }: {
   row: SousIndicateurTableRow;
   periodicite: IndicateurPeriodicite;
@@ -200,90 +202,104 @@ const toSousIndicateurRow = ({
   onNameEditingEnd: () => void;
   isExpanded: boolean;
   onToggle: () => void;
-}): PeriodeTableRow => ({
-  key: row.rowKey,
-  title: (
-    <SousIndicateurRowHeaderCell
-      color={row.color}
-      indentationRem={row.depth * INDENTATION_REM_PER_DEPTH}
-      toggle={
-        row.isExpandable ? (
-          <SousIndicateurExpandToggle
-            label={row.label}
-            isExpanded={isExpanded}
-            onToggle={onToggle}
-          />
-        ) : (
-          <span aria-hidden />
-        )
-      }
-      actions={
-        <>
-          {onRequestDetach && (
-            <SousIndicateurDetachButton
+  hasExtraRows: boolean;
+  parentValeursAreComputed: boolean;
+}): PeriodeTableRow => {
+  const hasReadonlyValeurs =
+    row.isExpandable &&
+    (parentValeursAreComputed || row.acceptsOwnValeurs === false);
+  return {
+    key: row.rowKey,
+    title: (
+      <SousIndicateurRowHeaderCell
+        color={row.color}
+        indentationRem={row.depth * INDENTATION_REM_PER_DEPTH}
+        toggle={
+          row.isExpandable || hasExtraRows ? (
+            <SousIndicateurExpandToggle
               label={row.label}
-              onDetach={() =>
-                onRequestDetach({
-                  indicateurId: row.indicateurId,
-                  label: row.label,
-                })
-              }
+              isExpanded={isExpanded}
+              onToggle={onToggle}
             />
-          )}
-          <SousIndicateurOpenLink
-            label={row.label}
-            href={makeCollectiviteIndicateursUrl({
-              collectiviteId,
-              indicateurView: 'perso',
-              indicateurId: row.indicateurId,
-            })}
-          />
-        </>
-      }
-    >
-      <SousIndicateurNameEditor
-        label={row.label}
-        shouldEdit={isNameFocused}
-        onRename={
-          renameSousIndicateur
-            ? (titre) =>
-                renameSousIndicateur({ indicateurId: row.indicateurId, titre })
-            : undefined
+          ) : (
+            <span aria-hidden />
+          )
         }
-        onEditingEnd={onNameEditingEnd}
-      />{' '}
-      <span className="sr-only">
-        {appLabels.indicateurSousIndicateurNiveau({ niveau: row.depth + 1 })}
-      </span>
-    </SousIndicateurRowHeaderCell>
-  ),
-  cellOf: (periode) => {
-    const cells = toCellsOfPeriode({ cells: row.cells, periode, periodicite });
-    const leafCell = row.isExpandable
-      ? null
-      : toLeafCell({
-          cells,
-          indicateurId: row.indicateurId,
-          isReadonly,
-        });
-    return leafCell ?? toContentCell({ cells, isBold: false });
-  },
-  onSave: row.isExpandable
-    ? SAVE_UNAVAILABLE
-    : (periode, field, value) =>
-        saveValeur({
-          indicateurId: row.indicateurId,
-          periode,
-          dateValeur: findDateOfFilledValeur({
-            cells: row.cells,
+        actions={
+          <>
+            {onRequestDetach && (
+              <SousIndicateurDetachButton
+                label={row.label}
+                onDetach={() =>
+                  onRequestDetach({
+                    indicateurId: row.indicateurId,
+                    label: row.label,
+                  })
+                }
+              />
+            )}
+            <SousIndicateurOpenLink
+              label={row.label}
+              href={makeCollectiviteIndicateursUrl({
+                collectiviteId,
+                indicateurView: 'perso',
+                indicateurId: row.indicateurId,
+              })}
+            />
+          </>
+        }
+      >
+        <SousIndicateurNameEditor
+          label={row.label}
+          shouldEdit={isNameFocused}
+          onRename={
+            renameSousIndicateur
+              ? (titre) =>
+                  renameSousIndicateur({
+                    indicateurId: row.indicateurId,
+                    titre,
+                  })
+              : undefined
+          }
+          onEditingEnd={onNameEditingEnd}
+        />{' '}
+        <span className="sr-only">
+          {appLabels.indicateurSousIndicateurNiveau({ niveau: row.depth + 1 })}
+        </span>
+      </SousIndicateurRowHeaderCell>
+    ),
+    cellOf: (periode) => {
+      const cells = toCellsOfPeriode({
+        cells: row.cells,
+        periode,
+        periodicite,
+      });
+      const leafCell = hasReadonlyValeurs
+        ? null
+        : toLeafCell({
+            cells,
+            indicateurId: row.indicateurId,
+            isReadonly,
+          });
+      return leafCell ?? toContentCell({ cells, isBold: false });
+    },
+    onSave: hasReadonlyValeurs
+      ? SAVE_UNAVAILABLE
+      : (periode, field, value) =>
+          saveValeur({
+            indicateurId: row.indicateurId,
             periode,
-            periodicite,
+            dateValeur: findDateOfFilledValeur({
+              cells: row.cells,
+              periode,
+              periodicite,
+              field,
+            }),
             field,
+            value,
           }),
-          field,
-          value,
-        }),
-});
+  };
+};
 
 export const toSousIndicateurTable = ({
   data,
@@ -299,6 +315,8 @@ export const toSousIndicateurTable = ({
   onNameEditingEnd,
   isExpanded,
   onToggle,
+  extraRows,
+  parentValeursAreComputed = true,
 }: {
   data: SousIndicateursTableData;
   hasTotalRow: boolean;
@@ -313,6 +331,8 @@ export const toSousIndicateurTable = ({
   onNameEditingEnd: () => void;
   isExpanded: (rowKey: string) => boolean;
   onToggle: (rowKey: string) => void;
+  extraRows?: (row: SousIndicateurTableRow) => readonly PeriodeTableRow[];
+  parentValeursAreComputed?: boolean;
 }): { periodes: IndicateurPeriode[]; rows: PeriodeTableRow[] } => ({
   periodes: uniqBy(
     data.columns.map(({ dateValeur }) =>
@@ -322,21 +342,28 @@ export const toSousIndicateurTable = ({
   ),
   rows: [
     ...(hasTotalRow ? [toTotalRow({ data, periodicite })] : []),
-    ...visibleRows.map((row) =>
-      toSousIndicateurRow({
-        row,
-        periodicite,
-        collectiviteId,
-        isReadonly,
-        saveValeur,
-        onRequestDetach: requestDetachSousIndicateur,
-        renameSousIndicateur,
-        isNameFocused: row.indicateurId === focusedNameIndicateurId,
-        onNameEditingEnd,
-        isExpanded: isExpanded(row.rowKey),
-        onToggle: () => onToggle(row.rowKey),
-      })
-    ),
+    ...visibleRows.flatMap((row) => {
+      const rowExtraRows = extraRows?.(row) ?? [];
+      const isRowExpanded = isExpanded(row.rowKey);
+      return [
+        toSousIndicateurRow({
+          row,
+          periodicite,
+          collectiviteId,
+          isReadonly,
+          saveValeur,
+          onRequestDetach: requestDetachSousIndicateur,
+          renameSousIndicateur,
+          isNameFocused: row.indicateurId === focusedNameIndicateurId,
+          onNameEditingEnd,
+          isExpanded: isRowExpanded,
+          onToggle: () => onToggle(row.rowKey),
+          hasExtraRows: rowExtraRows.length > 0,
+          parentValeursAreComputed,
+        }),
+        ...(isRowExpanded ? rowExtraRows : []),
+      ];
+    }),
   ],
 });
 
@@ -344,13 +371,15 @@ export const hasValeursOnPeriode = ({
   data,
   periode,
   periodicite,
+  withOwnValeursOnParentRows = false,
 }: {
   data: SousIndicateursTableData;
   periode: IndicateurPeriode;
   periodicite: IndicateurPeriodicite;
+  withOwnValeursOnParentRows?: boolean;
 }): boolean =>
   data.rows
-    .filter((row) => !row.isExpandable)
+    .filter((row) => withOwnValeursOnParentRows || !row.isExpandable)
     .some((row) => {
       const { resultat, objectif } = toCellsOfPeriode({
         cells: row.cells,

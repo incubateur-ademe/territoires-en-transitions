@@ -136,6 +136,7 @@ const renderDonnees = (
               useDetachSousIndicateur: () => vi.fn(),
               useCreateSousIndicateur: () => createSousIndicateur,
               useRenameSousIndicateur: () => vi.fn(),
+              useSousIndicateursOpenData: () => new Map(),
               useIndicateurPeriodeCommentaires: () => ({
                 isReady: true,
                 commentairesOf: () => ({ resultat: '', objectif: '' }),
@@ -178,7 +179,9 @@ describe('IndicateurDonnees : tableau des valeurs', () => {
 
     expect(screen.getByRole('table', sousIndicateursTable)).toBeDefined();
     expect(screen.queryByRole('group', valeursDuParent)).toBeNull();
-    expect(useSousIndicateursTable).toHaveBeenCalledWith(10);
+    expect(useSousIndicateursTable).toHaveBeenCalledWith(10, {
+      withTotals: true,
+    });
     expect(screen.getByRole('img', graphiqueDesSousIndicateurs)).toBeDefined();
     expect(screen.queryByRole('img', graphiqueDuParent)).toBeNull();
   });

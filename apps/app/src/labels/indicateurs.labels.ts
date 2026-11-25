@@ -76,15 +76,13 @@ export const indicateursLabels = {
     `Déplier ${label}`,
   indicateurSousIndicateurReplier: ({ label }: { label: string }) =>
     `Replier ${label}`,
+  indicateurSousIndicateurResultatsSource: ({ source }: { source: string }) =>
+    `Résultats ${source}`,
   indicateurTableDefilement: 'Défilement horizontal du tableau',
   indicateurOptions: "Plus d'options",
   indicateurTelechargerExcel: "Télécharger l'indicateur (Excel)",
 
   indicateur: plural({ one: 'indicateur', other: 'indicateurs' }),
-  sousIndicateur: plural({
-    one: 'sous-indicateur',
-    other: 'sous-indicateurs',
-  }),
   indicateurOngletDonnees: 'Données',
   indicateurOngletInformations: 'Informations sur l’indicateur',
 

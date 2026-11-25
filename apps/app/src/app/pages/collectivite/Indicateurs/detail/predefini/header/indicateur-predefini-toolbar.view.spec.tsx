@@ -27,8 +27,10 @@ vi.mock(
 
 const toIndicateur = ({
   sansValeurUtilisateur,
+  enfants,
 }: {
   sansValeurUtilisateur: boolean;
+  enfants: { id: number; titre: string }[];
 }): IndicateurDetaille =>
   ({
     id: 10,
@@ -41,20 +43,22 @@ const toIndicateur = ({
     totalEstCumulDesSousIndicateurs: true,
     sansValeurUtilisateur,
     estFavori: false,
-    enfants: [{ id: 11, titre: 'NOx' }],
+    enfants,
   } as IndicateurDetaille);
 
 const renderToolbar = ({
   sansValeurUtilisateur,
   hasValeurPropre = false,
+  enfants = [{ id: 11, titre: 'NOx' }],
 }: {
   sansValeurUtilisateur: boolean;
   hasValeurPropre?: boolean;
+  enfants?: { id: number; titre: string }[];
 }) =>
   render(
     <IndicateurDataProvider
       value={{
-        indicateur: toIndicateur({ sansValeurUtilisateur }),
+        indicateur: toIndicateur({ sansValeurUtilisateur, enfants }),
         canMutateIndicateur: true,
         canMutateValeur: true,
       }}
@@ -90,8 +94,28 @@ describe('IndicateurPredefiniToolbar : téléchargement du graphique', () => {
     ).toBeDefined();
   });
 
-  it("télécharge le graphique du parent pour un indicateur qui porte ses propres valeurs, même s'il a des sous-indicateurs", () => {
+  it("télécharge le graphique des sous-indicateurs d'un indicateur qui porte ses propres valeurs, puisque c'est celui de la page", () => {
     renderToolbar({ sansValeurUtilisateur: false, hasValeurPropre: true });
+
+    openOptions();
+    fireEvent.click(screen.getByRole('button', TELECHARGER_LE_GRAPHIQUE));
+
+    expect(
+      screen.getByRole('status', {
+        name: 'export du graphique des sous-indicateurs',
+      })
+    ).toBeDefined();
+    expect(
+      screen.queryByRole('status', { name: 'export du graphique du parent' })
+    ).toBeNull();
+  });
+
+  it("télécharge le graphique de l'indicateur quand il n'a pas de sous-indicateur", () => {
+    renderToolbar({
+      sansValeurUtilisateur: false,
+      hasValeurPropre: true,
+      enfants: [],
+    });
 
     openOptions();
     fireEvent.click(screen.getByRole('button', TELECHARGER_LE_GRAPHIQUE));
@@ -99,15 +123,10 @@ describe('IndicateurPredefiniToolbar : téléchargement du graphique', () => {
     expect(
       screen.getByRole('status', { name: 'export du graphique du parent' })
     ).toBeDefined();
-    expect(
-      screen.queryByRole('status', {
-        name: 'export du graphique des sous-indicateurs',
-      })
-    ).toBeNull();
   });
 
-  it("ne propose pas de télécharger le graphique d'un parent sans valeur propre qui n'est pas un composé", () => {
-    renderToolbar({ sansValeurUtilisateur: false });
+  it("ne propose pas de télécharger le graphique d'un indicateur sans valeur et sans sous-indicateur", () => {
+    renderToolbar({ sansValeurUtilisateur: false, enfants: [] });
 
     openOptions();
 

@@ -3,7 +3,6 @@ import { IndicateurChartInfo } from '../../../data/use-indicateur-chart';
 import { IndicateurSousIndicateursChartPngExport } from '../../content/sous-indicateurs/indicateur-sous-indicateurs-chart.png-export';
 import { useIndicateurData } from '../../context/indicateur-data.context';
 import IndicateurToolbar from '../../header/indicateur-toolbar.view';
-import { isComposeSansAgregation } from '../indicateur-predefini-compose.rules';
 
 type Props = {
   chartInfo?: IndicateurChartInfo;
@@ -22,7 +21,7 @@ export const IndicateurPredefiniToolbar = ({
       hasCollectivitePermission={hasCollectivitePermission}
       canDelete={false}
       renderPngExport={
-        isComposeSansAgregation(indicateur)
+        indicateur.enfants.length > 0
           ? ({ onDone }) => (
               <IndicateurSousIndicateursChartPngExport
                 indicateurId={indicateur.id}

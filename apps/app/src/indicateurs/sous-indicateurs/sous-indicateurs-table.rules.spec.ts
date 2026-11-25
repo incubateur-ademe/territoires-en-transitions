@@ -702,6 +702,31 @@ describe('findLatestResultatDate', () => {
   });
 });
 
+describe('buildSousIndicateursTableData : valeurs propres', () => {
+  const nodes = (sansValeurUtilisateur: boolean) =>
+    toNodes([
+      { id: 1, label: 'Racine', enfantIds: [2] },
+      { id: 2, label: 'Groupe', enfantIds: [3], sansValeurUtilisateur },
+      { id: 3, label: 'Feuille', enfantIds: [] },
+    ]);
+
+  it("marque qu'une ligne accepte des valeurs propres sauf si l'indicateur n'en accepte aucune", () => {
+    const acceptsOwnValeursOf = (sansValeurUtilisateur: boolean) =>
+      toTableData({ nodesById: nodes(sansValeurUtilisateur) }).rows.map(
+        ({ label, acceptsOwnValeurs }) => [label, acceptsOwnValeurs]
+      );
+
+    expect(acceptsOwnValeursOf(false)).toEqual([
+      ['Groupe', true],
+      ['Feuille', true],
+    ]);
+    expect(acceptsOwnValeursOf(true)).toEqual([
+      ['Groupe', false],
+      ['Feuille', true],
+    ]);
+  });
+});
+
 describe('toSousIndicateurNode', () => {
   it('nomme le sous-indicateur par son titre court quand il existe', () => {
     expect(
@@ -712,6 +737,18 @@ describe('toSousIndicateurNode', () => {
         enfants: [{ id: 8 }, { id: 9 }],
       })
     ).toEqual({ id: 4, label: 'Ordures', enfantIds: [8, 9] });
+  });
+
+  it("garde l'information qu'un sous-indicateur n'accepte aucune valeur utilisateur", () => {
+    expect(
+      toSousIndicateurNode({
+        id: 4,
+        titre: 'Regroupement',
+        titreCourt: null,
+        enfants: [{ id: 8 }],
+        sansValeurUtilisateur: true,
+      }).sansValeurUtilisateur
+    ).toBe(true);
   });
 
   it('nomme le sous-indicateur par son titre quand le titre court est vide ou absent', () => {
@@ -731,5 +768,32 @@ describe('toSousIndicateurNode', () => {
         enfants: [],
       }).label
     ).toBe('Ordures ménagères');
+  });
+});
+
+describe('buildSousIndicateursTableData : parent sans total', () => {
+  it("affiche les valeurs propres d'un sous-indicateur qui a des enfants quand aucun total n'a été calculé pour lui", () => {
+    const data = toTableData({
+      valeursByIndicateurId: new Map([
+        [2, [{ dateValeur: '2020-01-01', resultat: 20, objectif: null }]],
+      ]),
+    });
+
+    expect(toCellsOfRow(data, 'Ménagers')).toEqual([
+      { dateValeur: '2020-01-01', resultat: toValue(20), objectif: EMPTY },
+    ]);
+  });
+
+  it("garde le total d'un sous-indicateur qui a des enfants quand un total a été calculé pour lui", () => {
+    const data = toTableData({
+      valeursByIndicateurId: new Map([
+        [2, [{ dateValeur: '2020-01-01', resultat: 20, objectif: null }]],
+      ]),
+      totalsByIndicateurId: new Map([
+        [2, [toCompleteTotal({ dateValeur: '2020-01-01', valeur: 15 })]],
+      ]),
+    });
+
+    expect(toCellsOfRow(data, 'Ménagers')?.[0].resultat).toEqual(toValue(15));
   });
 });

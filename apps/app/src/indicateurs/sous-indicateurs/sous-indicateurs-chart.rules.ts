@@ -134,6 +134,14 @@ const hasResultat = ({ resultatByDate }: NodeValeurs): boolean =>
 const isLeaf = ({ enfantIds }: SousIndicateurNode): boolean =>
   enfantIds.length === 0;
 
+const usesOwnValeurs = ({
+  node,
+  source,
+}: {
+  node: SousIndicateurNode;
+  source: SousIndicateursSource;
+}): boolean => isLeaf(node) || !source.totalsByIndicateurId.has(node.id);
+
 const toNodeValeurByDate = ({
   node,
   source,
@@ -143,7 +151,7 @@ const toNodeValeurByDate = ({
   source: SousIndicateursSource;
   field: ChartField;
 }): ValeurByDate => {
-  if (isLeaf(node)) {
+  if (usesOwnValeurs({ node, source })) {
     return toValeurByDateFromValeurs({
       valeurs: source.valeursByIndicateurId.get(node.id) ?? [],
       field,
@@ -162,7 +170,7 @@ const toNodeObservedDates = ({
   node: SousIndicateurNode;
   source: SousIndicateursSource;
 }): string[] =>
-  isLeaf(node)
+  usesOwnValeurs({ node, source })
     ? (source.valeursByIndicateurId.get(node.id) ?? []).map(
         ({ dateValeur }) => dateValeur
       )
