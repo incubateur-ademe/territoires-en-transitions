@@ -14,8 +14,8 @@ vi.mock('@tet/api/collectivites', () => ({
     isSimplifiedView: false,
   }),
 }));
-vi.mock('./donnees/indicateur-perso-donnees.view', () => ({
-  IndicateurPersoDonnees: () => null,
+vi.mock('../content/donnees/indicateur-donnees.view', () => ({
+  IndicateurDonnees: () => null,
 }));
 vi.mock('../content/fiches-liees/indicateur-fiches-liees.view', () => ({
   IndicateurFichesLiees: () => null,

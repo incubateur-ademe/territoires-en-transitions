@@ -5,12 +5,29 @@ import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Tab, Tabs } from '@tet/ui';
 import { IndicateurFichesLiees } from '../content/fiches-liees/indicateur-fiches-liees.view';
 import { useIndicateurData } from '../context/indicateur-data.context';
+import { IndicateurDonnees } from '../content/donnees/indicateur-donnees.view';
 import { IndicateurPredefiniComposeDonnees } from './donnees/indicateur-predefini-compose-donnees.view';
 import { IndicateurPredefiniDonnees } from './donnees/indicateur-predefini-donnees.view';
 import { isComposeSansAgregation } from './indicateur-predefini-compose.rules';
 import { IndicateurInformations } from './informations/indicateur-informations.view';
 import { IndicateurMesuresLiees } from './mesures-liees/indicateur-mesures-liees.view';
 import { IndicateurSousIndicateurs } from './sous-indicateurs/indicateur-sous-indicateurs.view';
+
+const IndicateurPredefiniDonneesTab = ({
+  isCompose,
+  hasEnfants,
+}: {
+  isCompose: boolean;
+  hasEnfants: boolean;
+}) => {
+  if (isCompose) {
+    return <IndicateurPredefiniComposeDonnees />;
+  }
+  if (!hasEnfants) {
+    return <IndicateurDonnees />;
+  }
+  return <IndicateurPredefiniDonnees />;
+};
 
 export const IndicateurPredefiniTabs = () => {
   const { indicateur, canMutateIndicateur } = useIndicateurData();
@@ -29,11 +46,10 @@ export const IndicateurPredefiniTabs = () => {
   return (
     <Tabs tabsListClassName="justify-start flex-nowrap overflow-x-auto">
       <Tab label={appLabels.indicateurOngletDonnees}>
-        {isCompose ? (
-          <IndicateurPredefiniComposeDonnees />
-        ) : (
-          <IndicateurPredefiniDonnees />
-        )}
+        <IndicateurPredefiniDonneesTab
+          isCompose={isCompose}
+          hasEnfants={enfants.length > 0}
+        />
       </Tab>
 
       {hasSousIndicateursTab ? (

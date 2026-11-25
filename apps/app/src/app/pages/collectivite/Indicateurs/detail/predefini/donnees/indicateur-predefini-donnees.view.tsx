@@ -7,12 +7,8 @@ import { IndicateurDonneesCard } from '../../content/donnees/indicateur-donnees.
 import { useIndicateurActions } from '../../context/indicateur-actions.context';
 import { useIndicateurChart } from '../../context/indicateur-chart.context';
 import { useIndicateurData } from '../../context/indicateur-data.context';
-import {
-  INDICATEUR_PERSONNALISATION_IDENTIFIANT,
-  IndicateurPersonnalisationQuestions,
-} from './indicateur-personnalisation.questions';
-import { IndicateurSourcesSelect } from './indicateur-sources.select';
-import { TypeSegmentationSelect } from './type-segmentation.select';
+import { IndicateurDonneesSelects } from '../../content/donnees/indicateur-donnees-selects.view';
+import { IndicateurPersonnalisationSection } from '../../content/donnees/indicateur-personnalisation.view';
 
 export const IndicateurPredefiniDonnees = () => {
   const { indicateur, canMutateIndicateur, canMutateValeur } =
@@ -22,32 +18,16 @@ export const IndicateurPredefiniDonnees = () => {
   const [isTableModalOpen, setIsTableModalOpen] = useState(false);
   const { commentaire } = indicateur;
 
-  const { sourceFilter, typesSegmentation } = chartInfo;
-
   const isValeursReadonly =
     !canMutateValeur || indicateur.sansValeurUtilisateur;
-  const hasPersonnalisationQuestions =
-    indicateur.identifiantReferentiel ===
-    INDICATEUR_PERSONNALISATION_IDENTIFIANT;
 
   return (
     <IndicateurDonneesCard>
       <div className="flex flex-row gap-4">
-        {sourceFilter.availableOptions.length > 1 && (
-          <IndicateurSourcesSelect sourceFilter={sourceFilter} />
-        )}
-
-        {typesSegmentation?.length > 1 && (
-          <TypeSegmentationSelect chartInfo={chartInfo} />
-        )}
+        <IndicateurDonneesSelects />
       </div>
 
-      {hasPersonnalisationQuestions && (
-        <IndicateurPersonnalisationQuestions
-          isDrom={chartInfo.sourceFilter.valeursReference?.drom ?? false}
-          canEdit={canMutateIndicateur}
-        />
-      )}
+      <IndicateurPersonnalisationSection />
 
       <IndicateurDetailChart
         className="mb-6"
