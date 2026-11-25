@@ -1,24 +1,26 @@
 import { INestApplication } from '@nestjs/common';
+import { render } from '@react-email/components';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   getAuthUserFromUserCredentials,
-  getTestApp,
+  getDisposableTestApp,
   getTestDatabase,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { UserPreferencesService } from '@tet/backend/users/preferences/user-preferences.service';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { NotificationContentGenerator } from '@tet/backend/utils/notifications/models/notification-template.dto';
 import { notificationTable } from '@tet/backend/utils/notifications/models/notification.table';
+import { NotificationsService } from '@tet/backend/utils/notifications/notifications.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
 import { NotificationStatusEnum, NotifiedOnEnum } from '@tet/domain/utils';
 import { eq, inArray, sql } from 'drizzle-orm';
-import { describe, expect, test } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
 import { createFiche } from '../fiches.test-fixture';
 import { ficheActionPiloteTable } from '../shared/models/fiche-action-pilote.table';
-import { NotifyPiloteService } from './notify-pilote.service';
 
 describe("Notifications envoyées lors de la mise à jour d'une fiche action", () => {
   let app: INestApplication;
@@ -26,17 +28,32 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
   let router: TrpcRouter;
   let collectivite: Collectivite;
   let editorUser: AuthenticatedUser;
-  let notifyPiloteService: NotifyPiloteService;
+  let generateNotificationContent: NotificationContentGenerator;
   let userPreferencesService: UserPreferencesService;
 
   const testUsers: Array<{ userId: string; cleanup: () => Promise<void> }> = [];
   const testFicheIds: number[] = [];
 
   beforeAll(async () => {
-    app = await getTestApp();
+    // Exerce le callback enregistré au démarrage, comme lors de l'envoi.
+    const registerGenerator = vi.spyOn(
+      NotificationsService.prototype,
+      'registerContentGenerator'
+    );
+    try {
+      app = await getDisposableTestApp({});
+      const generator = registerGenerator.mock.calls.find(
+        ([notifiedOn]) => notifiedOn === NotifiedOnEnum.UPDATE_FICHE_PILOTE
+      )?.[1];
+      if (!generator) {
+        throw new Error('Générateur de notification pilote non enregistré');
+      }
+      generateNotificationContent = generator;
+    } finally {
+      registerGenerator.mockRestore();
+    }
     databaseService = await getTestDatabase(app);
     router = await app.get(TrpcRouter);
-    notifyPiloteService = app.get(NotifyPiloteService);
     userPreferencesService = app.get(UserPreferencesService);
 
     const testCollectiviteAndUserResult = await addTestCollectiviteAndUser(
@@ -657,13 +674,19 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
     // crée deux fiches
     const ficheId1 = await createFiche({
       caller,
-      ficheInput: { collectiviteId: collectivite.id },
+      ficheInput: {
+        collectiviteId: collectivite.id,
+        titre: 'Rénover les écoles',
+      },
     });
     testFicheIds.push(ficheId1);
 
     const ficheId2 = await createFiche({
       caller,
-      ficheInput: { collectiviteId: collectivite.id },
+      ficheInput: {
+        collectiviteId: collectivite.id,
+        titre: 'Développer les pistes cyclables',
+      },
     });
     testFicheIds.push(ficheId2);
 
@@ -689,16 +712,17 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
     expect(notifications).toHaveLength(1);
     const notification = notifications[0];
 
-    // vérifie que getPiloteNotificationContent génère le bon template
-    const contentResult =
-      await notifyPiloteService.getPiloteNotificationContent(notification);
+    // vérifie que le générateur de contenu génère le bon template
+    const contentResult = await generateNotificationContent(notification);
     expect(contentResult.success).toBe(true);
     if (contentResult.success) {
       expect(contentResult.data.subject).toBe(
         'Vous avez été assigné(e) à plusieurs actions sur Territoires en Transitions'
       );
-      // vérifie que le contenu contient les deux fiches (via le template multi-fiches)
-      expect(contentResult.data.content).toBeDefined();
+      expect(contentResult.data.sendToEmail).toBe(user1.email);
+      const html = await render(contentResult.data.content);
+      expect(html).toContain('Rénover les écoles');
+      expect(html).toContain('Développer les pistes cyclables');
     }
   });
 
@@ -738,11 +762,8 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
         },
       });
 
-      // vérifie que getPiloteNotificationContent retourne une erreur car toutes les fiches sont filtrées
-      const contentResult =
-        await notifyPiloteService.getPiloteNotificationContent(
-          notifications[0]
-        );
+      // vérifie que le générateur de contenu retourne une erreur car toutes les fiches sont filtrées
+      const contentResult = await generateNotificationContent(notifications[0]);
       expect(contentResult.success).toBe(false);
       if (!contentResult.success) {
         expect(contentResult.error).toContain(
@@ -803,11 +824,8 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
         },
       });
 
-      // vérifie que getPiloteNotificationContent retourne une erreur car toutes les fiches sont filtrées
-      const contentResult =
-        await notifyPiloteService.getPiloteNotificationContent(
-          notifications[0]
-        );
+      // vérifie que le générateur de contenu retourne une erreur car toutes les fiches sont filtrées
+      const contentResult = await generateNotificationContent(notifications[0]);
       expect(contentResult.success).toBe(false);
       if (!contentResult.success) {
         expect(contentResult.error).toContain(
@@ -851,59 +869,8 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
         },
       });
 
-      // vérifie que getPiloteNotificationContent retourne une erreur
-      const contentResult =
-        await notifyPiloteService.getPiloteNotificationContent(
-          notifications[0]
-        );
-      expect(contentResult.success).toBe(false);
-      if (!contentResult.success) {
-        expect(contentResult.error).toContain(
-          'Notification pilote désactivée globalement'
-        );
-      }
-    });
-
-    test('getPiloteNotificationContent retourne une erreur si les préférences désactivent toutes les notifications', async () => {
-      const caller = router.createCaller({ user: editorUser });
-
-      const user1 = await createTestUser();
-      const user1Auth = getAuthUserFromUserCredentials(user1);
-
-      // crée une fiche et assigne user1 comme pilote (notification créée)
-      const ficheId = await createFiche({
-        caller,
-        ficheInput: { collectiviteId: collectivite.id },
-      });
-      testFicheIds.push(ficheId);
-
-      await caller.plans.fiches.update({
-        ficheId,
-        ficheFields: {
-          pilotes: [{ userId: user1.id }],
-        },
-        isNotificationEnabled: true,
-      });
-
-      // vérifie qu'une notification a été créée
-      const notifications = await getNotificationsForUser(user1.id);
-      expect(notifications).toHaveLength(1);
-
-      // désactive toutes les notifications après la création
-      await userPreferencesService.updateUserPreferences(user1Auth, {
-        utils: {
-          notifications: {
-            isNotifyPiloteActionEnabled: false,
-            isNotifyPiloteSousActionEnabled: false,
-          },
-        },
-      });
-
-      // vérifie que getPiloteNotificationContent retourne une erreur
-      const contentResult =
-        await notifyPiloteService.getPiloteNotificationContent(
-          notifications[0]
-        );
+      // vérifie que le générateur de contenu retourne une erreur
+      const contentResult = await generateNotificationContent(notifications[0]);
       expect(contentResult.success).toBe(false);
       if (!contentResult.success) {
         expect(contentResult.error).toContain(
@@ -921,19 +888,28 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
       // crée une action et une sous-action
       const actionId = await createFiche({
         caller,
-        ficheInput: { collectiviteId: collectivite.id },
+        ficheInput: {
+          collectiviteId: collectivite.id,
+          titre: 'Action conservée',
+        },
       });
       testFicheIds.push(actionId);
 
       const parentFicheId = await createFiche({
         caller,
-        ficheInput: { collectiviteId: collectivite.id },
+        ficheInput: {
+          collectiviteId: collectivite.id,
+          titre: 'Action parente filtrée',
+        },
       });
       testFicheIds.push(parentFicheId);
 
       const sousActionId = await createFiche({
         caller,
-        ficheInput: { collectiviteId: collectivite.id },
+        ficheInput: {
+          collectiviteId: collectivite.id,
+          titre: 'Sous-action filtrée',
+        },
       });
       testFicheIds.push(sousActionId);
 
@@ -981,11 +957,8 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
         },
       });
 
-      // vérifie que getPiloteNotificationContent filtre la sous-action
-      const contentResult =
-        await notifyPiloteService.getPiloteNotificationContent(
-          notifications[0]
-        );
+      // vérifie que le générateur de contenu filtre la sous-action
+      const contentResult = await generateNotificationContent(notifications[0]);
       expect(contentResult.success).toBe(true);
       if (contentResult.success) {
         // vérifie que le sujet correspond à une seule action (pas "plusieurs actions")
@@ -993,8 +966,10 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
           'Vous avez été assigné(e) à une action sur Territoires en Transitions'
         );
         // vérifie que le contenu ne mentionne que l'action, pas la sous-action
-        expect(contentResult.data.content).toBeDefined();
-        expect(contentResult.data.content).not.toContain('sous-action');
+        const html = await render(contentResult.data.content);
+        expect(html).toContain('Action conservée');
+        expect(html).not.toContain('Sous-action filtrée');
+        expect(html).not.toContain('Action parente filtrée');
       }
     });
 
@@ -1039,7 +1014,7 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
       });
     });
 
-    test('crée une notification pour une sous-action même si les actions sont désactivées', async () => {
+    test('prépare la notification de sous-action avec son parent même si les actions sont désactivées', async () => {
       const caller = router.createCaller({ user: editorUser });
 
       const user1 = await createTestUser();
@@ -1058,14 +1033,20 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
       // crée une fiche parente
       const parentFicheId = await createFiche({
         caller,
-        ficheInput: { collectiviteId: collectivite.id },
+        ficheInput: {
+          collectiviteId: collectivite.id,
+          titre: 'Rénover les bâtiments',
+        },
       });
       testFicheIds.push(parentFicheId);
 
       // crée une sous-action
       const sousActionId = await createFiche({
         caller,
-        ficheInput: { collectiviteId: collectivite.id },
+        ficheInput: {
+          collectiviteId: collectivite.id,
+          titre: 'Isoler la mairie',
+        },
       });
       testFicheIds.push(sousActionId);
 
@@ -1094,6 +1075,21 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
         ficheIds: [sousActionId],
         piloteId: user1.id,
       });
+
+      const contentResult = await generateNotificationContent(notifications[0]);
+      expect(contentResult.success).toBe(true);
+      if (contentResult.success) {
+        expect(contentResult.data.sendToEmail).toBe(user1.email);
+        expect(contentResult.data.subject).toBe(
+          'Vous avez été assigné(e) à une sous-action sur Territoires en Transitions'
+        );
+        const html = await render(contentResult.data.content);
+        expect(html).toContain('Rénover les bâtiments');
+        expect(html).toContain('Isoler la mairie');
+        expect(html).toContain(
+          `/collectivite/${collectivite.id}/actions/${parentFicheId}/sous-actions`
+        );
+      }
     });
   });
 });
