@@ -33,8 +33,14 @@ const MAX_CONTINUATION_LINES = 4;
 const MAX_JOINED_LENGTH = 120;
 // « ACTION 2 - ACCOMPAGNER LES PROJETS … » ou « OBJECTIF 2 - … » annonce son
 // niveau sans ambiguïté : sa suite peut être plus longue, et d'une autre
-// grande police.
-const MAX_JOINED_EXPLICIT_LENGTH = 200;
+// grande police. Quatre lignes de titre, libellé « Action 38 : » compris, vont
+// jusqu'à 240 caractères.
+const MAX_JOINED_EXPLICIT_LENGTH = 250;
+// Un titre qui passe à la ligne garde l'interligne de son texte (1,15 à 1,4
+// fois la police) : au-delà, la ligne du dessous ouvre un autre bloc ; en
+// deçà, deux colonnes s'entrelacent.
+const MIN_WRAPPED_LINE_GAP_RATIO = 1;
+const MAX_WRAPPED_LINE_GAP_RATIO = 1.5;
 // Une page qui aligne des lignes « 2.1.3 Titre » presque sans texte entre
 // elles est un tableau récapitulatif : ce sont des lignes de tableau, pas des
 // fiches. Un plan compact donne au moins deux lignes de texte par action.
@@ -226,12 +232,21 @@ const scanHeadings = (
         (isExplicit(alone, 'fiche') ||
           isExplicit(alone, 'orientation') ||
           isExplicit(alone, 'axe'));
-      const continuation = isLarge
-        ? continuationOf(page.lines, lineIndex, {
-            explicit,
-            isLargeLine: (other) => sizeOf(other) === 'large',
-          })
-        : { lines: [], lastLineIndex: lineIndex };
+      // Le titre coupé par une colonne collée (« … etAction 3.1 ») ne se
+      // prolonge pas : la ligne du dessous mêle les deux colonnes.
+      const endsLine =
+        explicit &&
+        alone !== null &&
+        alone.title !== '' &&
+        line.text.trim().endsWith(alone.title);
+      const continuation =
+        isLarge || endsLine
+          ? continuationOf(page.lines, lineIndex, {
+              explicit,
+              endsLine,
+              isLargeLine: (other) => sizeOf(other) === 'large',
+            })
+          : { lines: [], lastLineIndex: lineIndex };
       const continuationText = continuation.lines
         .map((l) => l.text.trim())
         .join(' ');
@@ -249,16 +264,17 @@ const scanHeadings = (
       if (!found) {
         return;
       }
+      const headEnd = joined ? continuation.lastLineIndex : lineIndex;
       const below =
         isExplicit(found, 'fiche') && found.title === ''
           ? titleBelow(
               page.lines,
-              joined ? continuation.lastLineIndex : lineIndex,
+              headEnd,
               (other) => sizeOf(other) === 'large'
             )
           : null;
       const inCell = isTitleField(line.text)
-        ? cellContinuation(page.lines, lineIndex)
+        ? cellContinuation(page.lines, headEnd)
         : null;
       const match = below
         ? { ...found, title: below.title }
@@ -266,9 +282,7 @@ const scanHeadings = (
         ? { ...found, title: `${found.title} ${inCell.text}` }
         : found;
       const lastLineIndex =
-        below?.lastLineIndex ??
-        inCell?.lastLineIndex ??
-        (joined ? continuation.lastLineIndex : lineIndex);
+        below?.lastLineIndex ?? inCell?.lastLineIndex ?? headEnd;
       skipUntil = lastLineIndex;
       headings.push({
         pageIndex: page.index,
@@ -444,26 +458,24 @@ const titleBelow = (
   let length = 0;
   for (
     let index = lineIndex + 1;
-    index < lines.length && parts.length < MAX_TITLE_BELOW_LINES;
+    index < lines.length && parts.length < MAX_CONTINUATION_LINES;
     index++
   ) {
     const line = lines[index];
     const text = line.text.trim().replace(MARKDOWN_MARK, '');
-    const first = lines[lineIndex + 1];
+    const inTitleFont =
+      isLargeLine(line) && hasSameFontSize(line, lines[lineIndex + 1]);
+    // Au-delà de trois lignes, seule la police du titre le prolonge.
     const continues =
       parts.length === 0
         ? /^[\p{L}\p{N}«"“]/u.test(text)
-        : /^\p{Ll}/u.test(text) ||
-          (isLargeLine(line) &&
-            first.fontSize !== undefined &&
-            line.fontSize !== undefined &&
-            Math.abs(line.fontSize - first.fontSize) <= SAME_FONT_TOLERANCE);
+        : inTitleFont ||
+          (parts.length < MAX_TITLE_BELOW_LINES && startsLowercase(text));
     length += text.length + 1;
     if (
       !continues ||
       length > MAX_JOINED_EXPLICIT_LENGTH ||
-      BULLET.test(text) ||
-      isFicheLabel(text.split(/[:：]/u)[0]) ||
+      opensField(text) ||
       startsExplicitHeading(text)
     ) {
       break;
@@ -487,7 +499,7 @@ const cellContinuation = (
   while (
     index < lines.length &&
     parts.length < MAX_TITLE_BELOW_LINES &&
-    /^\p{Ll}/u.test(lines[index].text.trim())
+    startsLowercase(lines[index].text)
   ) {
     parts.push(lines[index].text.trim());
     index++;
@@ -539,9 +551,15 @@ const addThemesAboveFiches = (
       heading,
     ])
   );
-  const headingEndsAt = new Set(
-    headings.map(
-      ({ pageIndex, lastLineIndex }) => `${pageIndex}:${lastLineIndex}`
+  // La suite d'un titre sur plusieurs lignes, ou la ligne qui le suit
+  // (« PREVENTION » sous « 2 SENSIBILISATION … DES EFFORTS DE ») : la fin du
+  // titre, coupé par la mise en page, pas un thème.
+  const tailOfHeading = new Set(
+    headings.flatMap(({ pageIndex, lineIndex, lastLineIndex }) =>
+      Array.from(
+        { length: lastLineIndex - lineIndex + 1 },
+        (_, offset) => `${pageIndex}:${lineIndex + offset + 1}`
+      )
     )
   );
   const themes = new Map<DetectedHeading, DetectedHeading>();
@@ -558,9 +576,7 @@ const addThemesAboveFiches = (
       !lines ||
       !line ||
       (above !== undefined && above.match.kind !== 'majuscules') ||
-      // « PREVENTION » sous « 2 SENSIBILISATION … DES EFFORTS DE » : la fin
-      // du titre d'axe, coupé par la mise en page.
-      headingEndsAt.has(`${fiche.pageIndex}:${index - 1}`)
+      tailOfHeading.has(`${fiche.pageIndex}:${index}`)
     ) {
       continue;
     }
@@ -570,8 +586,7 @@ const addThemesAboveFiches = (
       THEME_START.test(text) &&
       text.length <= MAX_THEME_LENGTH &&
       !/[.:;]$/u.test(text) &&
-      !BULLET.test(text) &&
-      !isFicheLabel(text.split(/[:：]/u)[0]) &&
+      !opensField(text) &&
       (ficheFont === undefined ||
         line.fontSize === undefined ||
         line.fontSize >= ficheFont - SAME_FONT_TOLERANCE)
@@ -702,20 +717,32 @@ const accepted = (match: HeadingMatch | null): HeadingMatch | null =>
  * plus longue, dans une autre police tant qu'elle reste grande, mais jamais
  * un chiffre clé en encadré (« 2030 », « 400 000 € »). Le morceau de la
  * colonne voisine, posé sur la même ligne physique, est sauté.
+ *
+ * Un titre explicite qui finit sa ligne admet aussi sa phrase qui passe à la
+ * ligne en casse de phrase (« Action 3 : … et évaluer » puis « l’efficacité
+ * des actions… »), dans sa police et à son interligne, hors rangée de tableau.
  */
 const continuationOf = (
   lines: PageLine[],
   lineIndex: number,
   {
     explicit,
+    endsLine,
     isLargeLine,
-  }: { explicit: boolean; isLargeLine: (line: PageLine) => boolean }
+  }: {
+    explicit: boolean;
+    endsLine: boolean;
+    isLargeLine: (line: PageLine) => boolean;
+  }
 ): { lines: PageLine[]; lastLineIndex: number } => {
   const first = lines[lineIndex];
+  const isLarge = isLargeLine(first);
   const maxLength = explicit ? MAX_JOINED_EXPLICIT_LENGTH : MAX_JOINED_LENGTH;
   const continuation: PageLine[] = [];
   let lastLineIndex = lineIndex;
   let length = first.text.trim().length;
+  // Une rangée de tableau mêle ses colonnes : la suite n'y est jamais sûre.
+  let besideColumn = hasSameRowNeighbour(lines, lineIndex);
   for (
     let index = lineIndex + 1;
     index < lines.length && continuation.length < MAX_CONTINUATION_LINES;
@@ -724,18 +751,32 @@ const continuationOf = (
     const line = lines[index];
     const text = line.text.trim();
     if (isSameRow(lines[lastLineIndex], line)) {
+      besideColumn = true;
       continue;
     }
     length += text.length + 1;
-    const sameFont =
-      first.fontSize !== undefined &&
-      line.fontSize !== undefined &&
-      (Math.abs(line.fontSize - first.fontSize) <= SAME_FONT_TOLERANCE ||
-        (explicit && isLargeLine(line)));
+    const sameSize = hasSameFontSize(line, first);
+    const sameFont = sameSize || (explicit && isLarge && isLargeLine(line));
+    const capitals = hasNoLowercase(text);
+    // Un titre explicite passe à la ligne dans sa police, à son interligne ;
+    // en police du corps, sur une seule ligne, en minuscule ou en capitales.
+    const wrapped =
+      endsLine &&
+      sameSize &&
+      !besideColumn &&
+      !hasSameRowNeighbour(lines, index) &&
+      (isLarge ||
+        (continuation.length === 0 && (capitals || startsLowercase(text)))) &&
+      wrapsTo(lines[lastLineIndex], line, text) &&
+      fitsWrap(
+        lines[lastLineIndex].text.trim(),
+        text,
+        hasNoLowercase(first.text)
+      );
     if (
       !sameFont ||
       length > maxLength ||
-      !hasNoLowercase(text) ||
+      !((isLarge && capitals) || wrapped) ||
       // « II. » ou « 3 » : le début du titre suivant, pas la suite de celui-ci.
       /^(?:[IVX]{1,4}|\d{1,2})[.)]?(?:\s|$)/u.test(text) ||
       // « ACTION 1- PILOTER » sous « 1- ASSURER LA GOUVERNANCE » : un autre titre.
@@ -749,6 +790,68 @@ const continuationOf = (
   }
   return { lines: continuation, lastLineIndex };
 };
+
+/** La ligne du dessous, à l'interligne, d'un texte qui ne s'est pas arrêté. */
+const wrapsTo = (previous: PageLine, line: PageLine, text: string): boolean =>
+  previous.y !== undefined &&
+  line.y !== undefined &&
+  line.fontSize !== undefined &&
+  line.y - previous.y >= MIN_WRAPPED_LINE_GAP_RATIO * line.fontSize &&
+  line.y - previous.y <= MAX_WRAPPED_LINE_GAP_RATIO * line.fontSize &&
+  !/[.:;!?]$/u.test(previous.text.trim()) &&
+  !/[:：]$/u.test(text) &&
+  !MARKDOWN_MARK.test(text) &&
+  !opensField(text);
+
+const hasSameRowNeighbour = (lines: PageLine[], index: number): boolean =>
+  [lines[index - 1], lines[index + 1]].some(
+    (other) => other !== undefined && isSameRow(lines[index], other)
+  );
+
+// Une ligne qui finit sur un mot-outil appelle sa suite : « … tarification
+// incitative en » puis « REOMI ».
+const ENDS_WITH_FUNCTION_WORD =
+  /(?:^|\s)(?:de|des|du|d['’]|la|le|les|l['’]|et|en|à|aux|au|pour|sur|dans|par|avec|vers|ou|entre)$/iu;
+
+/**
+ * `text` est-il la ligne où passe la phrase de `previous`, plutôt qu'un
+ * chapeau, un intertitre ou un libellé dans la même police ? Une suite en
+ * minuscule l'est. Une ligne en capitales sous un titre en casse de phrase
+ * ne l'est que si la phrase appelle sa suite (« CONTEXTE ET ENJEUX », « MARS
+ * 2025 » restent à part). Sinon, le premier mot de `text` ne doit pas avoir pu
+ * tenir sur la ligne d'au-dessus : à défaut d'abscisses, une ligne plus longue
+ * que `previous` et son premier mot réunis n'est pas un retour à la ligne.
+ */
+const fitsWrap = (
+  previous: string,
+  text: string,
+  titleInCapitals: boolean
+): boolean => {
+  if (startsLowercase(text)) {
+    return true;
+  }
+  if (
+    hasNoLowercase(text) &&
+    !titleInCapitals &&
+    !ENDS_WITH_FUNCTION_WORD.test(previous)
+  ) {
+    return false;
+  }
+  const firstWord = text.split(/\s+/u)[0];
+  return text.length < previous.length + 1 + firstWord.length;
+};
+
+/** Une puce, ou un libellé de champ (« ⚙Pilote : ») : un autre bloc commence. */
+const opensField = (text: string): boolean =>
+  BULLET.test(text) ||
+  isFicheLabel(text.replace(/^[^\p{L}]+/u, '').split(/[:：]/u)[0]);
+
+const hasSameFontSize = (a: PageLine, b: PageLine): boolean =>
+  a.fontSize !== undefined &&
+  b.fontSize !== undefined &&
+  Math.abs(a.fontSize - b.fontSize) <= SAME_FONT_TOLERANCE;
+
+const startsLowercase = (text: string): boolean => /^\p{Ll}/u.test(text.trim());
 
 const isSameRow = (a: PageLine, b: PageLine): boolean =>
   a.y !== undefined &&

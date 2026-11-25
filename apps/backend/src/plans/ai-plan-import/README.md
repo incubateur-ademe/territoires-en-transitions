@@ -358,7 +358,13 @@ Ce que la mise en page trompe, et comment la segmentation s'en garde :
 - un titre sur plusieurs lignes : recollé jusqu'à quatre lignes de même
   police ; un titre explicite (« ACTION 2 - … », « OBJECTIF 2 - … ») admet une
   suite plus longue dans une autre grande police, mais n'avale jamais le titre
-  explicite suivant ;
+  explicite suivant. Sa phrase qui passe à la ligne en casse de phrase
+  (« Action 3 : … et évaluer » puis « l’efficacité des actions… ») est
+  recollée quand elle garde sa police et son interligne, hors rangée de
+  tableau, et que son premier mot n'aurait pas tenu sur la ligne du dessus ;
+  une ligne en capitales sous un titre en casse de phrase (« CONTEXTE ET
+  ENJEUX ») reste à part, sauf après un mot-outil (« … incitative en » puis
+  « REOMI ») ;
 - le tableau récapitulatif : une page qui aligne au moins quatre lignes
   « 2.1.3 Titre » presque sans texte entre elles n'ouvre aucune fiche ;
 - le bandeau d'objectif en tête de fiche (« 1- AMELIORER… » juste au-dessus de
