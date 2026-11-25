@@ -1,8 +1,9 @@
 import {
   ForbiddenException,
   INestApplication,
-  UnprocessableEntityException,
+  NotFoundException,
 } from '@nestjs/common';
+import { failure } from '@tet/backend/utils/result.type';
 import TrajectoiresDataService from '@tet/backend/indicateurs/trajectoires/trajectoires-data.service';
 import { VerificationTrajectoireResponseType } from '@tet/backend/indicateurs/trajectoires/verification-trajectoire.response';
 import { EPCI_FISCALITE_PROPRE_REQUIRED_MESSAGE } from '@tet/backend/indicateurs/trajectoires/verification-trajectoire.rules';
@@ -21,6 +22,7 @@ import SheetService from '@tet/backend/utils/google-sheets/sheet.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { VerificationTrajectoireStatus } from '@tet/domain/indicateurs';
 import { expect, vi } from 'vitest';
+import TrajectoiresSpreadsheetService from './trajectoires-spreadsheet.service';
 
 describe('Calcul de trajectoire SNBC', () => {
   let app: INestApplication;
@@ -142,13 +144,14 @@ describe('Calcul de trajectoire SNBC', () => {
       user: getAuthUserFromUserCredentials(commune.user),
     });
 
-    await expect(() =>
+    await expect(
       caller.indicateurs.trajectoires.snbc.getOrCompute({
         collectiviteId: commune.collectivite.id,
       })
-    ).toThrowTrpcHttpError(
-      new UnprocessableEntityException(EPCI_FISCALITE_PROPRE_REQUIRED_MESSAGE)
-    );
+    ).rejects.toMatchObject({
+      code: 'UNPROCESSABLE_CONTENT',
+      message: EPCI_FISCALITE_PROPRE_REQUIRED_MESSAGE,
+    });
   });
 
   test(`Verification avec donnees manquantes`, async () => {
@@ -359,20 +362,88 @@ describe('Calcul de trajectoire SNBC', () => {
     expect(statusResponse).toMatchObject(verificationReponseAttendue);
   });
 
+  test(`Calcul : l'exception HTTP d'un service non migré garde son statut`, async () => {
+    const caller = router.createCaller({
+      user: getAuthUserFromUserCredentials(emptyEpci.user),
+    });
+    vi.spyOn(
+      app.get(TrajectoiresSpreadsheetService),
+      'calculeTrajectoireSnbc'
+    ).mockResolvedValueOnce(
+      failure(
+        'DATABASE_ERROR',
+        new NotFoundException('Collectivité introuvable')
+      )
+    );
+
+    await expect(
+      caller.indicateurs.trajectoires.snbc.getOrCompute({
+        collectiviteId: emptyEpci.collectivite.id,
+      })
+    ).rejects.toMatchObject({
+      message: 'Collectivité introuvable',
+      cause: { status: 404, message: 'Collectivité introuvable' },
+    });
+  });
+
+  test(`Mise à jour du calcul : l'exception HTTP d'un service non migré garde son statut`, async () => {
+    const caller = router.createCaller({
+      user: getAuthUserFromUserCredentials(emptyEpci.user),
+    });
+    vi.spyOn(
+      app.get(TrajectoiresSpreadsheetService),
+      'calculeTrajectoireSnbc'
+    ).mockResolvedValueOnce(
+      failure(
+        'DATABASE_ERROR',
+        new NotFoundException('Collectivité introuvable')
+      )
+    );
+
+    await expect(
+      caller.indicateurs.trajectoires.snbc.compute({
+        collectiviteId: emptyEpci.collectivite.id,
+      })
+    ).rejects.toMatchObject({
+      message: 'Collectivité introuvable',
+      cause: { status: 404, message: 'Collectivité introuvable' },
+    });
+  });
+
+  test(`Calcul : une erreur serveur explicite renvoie le message de sa cause`, async () => {
+    const caller = router.createCaller({
+      user: getAuthUserFromUserCredentials(emptyEpci.user),
+    });
+    vi.spyOn(
+      app.get(TrajectoiresSpreadsheetService),
+      'calculeTrajectoireSnbc'
+    ).mockResolvedValueOnce(
+      failure('SERVER_ERROR', new Error("Le SIREN de l'EPCI est invalide"))
+    );
+
+    await expect(
+      caller.indicateurs.trajectoires.snbc.getOrCompute({
+        collectiviteId: emptyEpci.collectivite.id,
+      })
+    ).rejects.toMatchObject({
+      code: 'INTERNAL_SERVER_ERROR',
+      message: "Le SIREN de l'EPCI est invalide",
+    });
+  });
+
   test(`Calcul avec donnees manquantes`, async () => {
     const caller = router.createCaller({
       user: getAuthUserFromUserCredentials(emptyEpci.user),
     });
 
-    await expect(() =>
+    await expect(
       caller.indicateurs.trajectoires.snbc.getOrCompute({
         collectiviteId: emptyEpci.collectivite.id,
       })
-    ).toThrowTrpcHttpError(
-      new UnprocessableEntityException(
-        `Les indicateurs suivants n'ont pas de valeur pour l'année 2015 ou avec une interpolation possible : cae_1.c, cae_1.d, cae_1.i, cae_1.g, cae_1.e, cae_1.f, cae_1.h, cae_1.j, cae_2.e, cae_2.f, cae_2.k, cae_2.i, cae_2.g, cae_2.h, cae_2.j, cae_2.l_pcaet, impossible de calculer la trajectoire SNBC.`
-      )
-    );
+    ).rejects.toMatchObject({
+      code: 'UNPROCESSABLE_CONTENT',
+      message: `Les indicateurs suivants n'ont pas de valeur pour l'année 2015 ou avec une interpolation possible : cae_1.c, cae_1.d, cae_1.i, cae_1.g, cae_1.e, cae_1.f, cae_1.h, cae_1.j, cae_2.e, cae_2.f, cae_2.k, cae_2.i, cae_2.g, cae_2.h, cae_2.j, cae_2.l_pcaet, impossible de calculer la trajectoire SNBC.`,
+    });
   }, 10000);
 
   test(`Calcul/récupération avec droit suffisant - visite`, async () => {
