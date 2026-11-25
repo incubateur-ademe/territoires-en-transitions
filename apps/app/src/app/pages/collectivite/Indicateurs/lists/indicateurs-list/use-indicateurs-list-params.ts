@@ -76,18 +76,13 @@ export const listIndicateursParamsSerializer = createSerializer(
 );
 
 export const useIndicateursListParams = (
-  defaultFilters: ListIndicateursInputFilters,
-  defaultOptions?: Partial<ListOptions>
+  defaultFilters: ListIndicateursInputFilters
 ) => {
   const [queryParams, setQueryParams] = useQueryStates(
     {
       ...searchParamsMap,
-      sortBy: searchParamsMap.sortBy.withDefault(
-        defaultOptions?.sortBy ?? 'estRempli'
-      ),
-      displayGraphs: searchParamsMap.displayGraphs.withDefault(
-        defaultOptions?.displayGraphs ?? true
-      ),
+      sortBy: searchParamsMap.sortBy.withDefault('estRempli'),
+      displayGraphs: searchParamsMap.displayGraphs.withDefault(true),
     },
     {
       urlKeys: searchParamsShortMap,

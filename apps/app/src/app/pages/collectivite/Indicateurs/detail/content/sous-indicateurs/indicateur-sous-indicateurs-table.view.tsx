@@ -12,14 +12,13 @@ import {
   type SousIndicateursTableData,
 } from '@/app/indicateurs/sous-indicateurs/sous-indicateurs-table.rules';
 import { appLabels } from '@/app/labels/catalog';
-import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import {
   IndicateurPeriodes,
   type IndicateurPeriode,
   type IndicateurPeriodicite,
 } from '@tet/domain/indicateurs';
 import { uniq } from 'es-toolkit';
-import { useRef, useState, type JSX, type PropsWithChildren } from 'react';
+import { useRef, useState, type JSX } from 'react';
 import { IndicateurActionsRow } from '../../../table/indicateur-actions.row';
 import { PrivateModeToggle } from '../../../table/private-mode-toggle';
 import { EditCommentaireModal } from '../../../table/edit-commentaire-modal';
@@ -37,6 +36,7 @@ import {
   type DetachTarget,
 } from './to-sous-indicateur-table-rows';
 import type { IndicateurNouveauSousIndicateurValue } from '@/app/app/pages/collectivite/Indicateurs/detail/context/indicateur-nouveau-sous-indicateur.context';
+import { LoadingState, StatusMessage } from './sous-indicateurs-status';
 import { useSousIndicateurRowsExpansion } from './use-sous-indicateur-rows-expansion';
 
 type PrivateMode = Readonly<{
@@ -66,24 +66,6 @@ type ReadyTableProps = Props & {
   renameSousIndicateur: RenameSousIndicateur;
   data: SousIndicateursTableData;
 };
-
-const StatusMessage = ({
-  role,
-  children,
-}: PropsWithChildren<{ role?: 'alert' }>): JSX.Element => (
-  <p role={role} className="text-center text-sm text-grey-7">
-    {children}
-  </p>
-);
-
-const LoadingState = (): JSX.Element => (
-  <div role="status" className="my-8 flex justify-center">
-    <SpinnerLoader className="mx-auto" />
-    <span className="sr-only">
-      {appLabels.indicateurSousIndicateursChargement}
-    </span>
-  </div>
-);
 
 const ReadyTable = ({
   indicateurId,
@@ -277,7 +259,9 @@ export const IndicateurSousIndicateursTable = ({
     useRenameSousIndicateur,
     useIndicateurPeriodeCommentaires,
   } = useIndicateurSousIndicateursTable();
-  const state = useSousIndicateursTable(indicateurId);
+  const state = useSousIndicateursTable(indicateurId, {
+    withTotals: capabilities.canTotaliser,
+  });
   const saveValeur = useSaveSousIndicateurValeur();
   const declarePeriodes = useDeclareSousIndicateursPeriodes();
   const deletePeriode = useDeleteSousIndicateursPeriode();

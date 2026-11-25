@@ -1,13 +1,11 @@
-import { appLabels } from '@/app/labels/catalog';
 import type { IndicateurDetaille } from '@tet/domain/indicateurs';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { IndicateurDataProvider } from '../context/indicateur-data.context';
 import { IndicateurPredefiniTabs } from './indicateur-predefini-tabs.view';
 
-const renderSousIndicateursListe = vi.hoisted(() => vi.fn());
-const renderDonneesParent = vi.hoisted(() => vi.fn());
-const renderDonneesCompose = vi.hoisted(() => vi.fn());
+const renderDonneesPerso = vi.hoisted(() => vi.fn());
+const renderDonneesAvecEnfants = vi.hoisted(() => vi.fn());
 
 vi.mock('@tet/api/collectivites', () => ({
   useCurrentCollectivite: () => ({
@@ -15,15 +13,15 @@ vi.mock('@tet/api/collectivites', () => ({
     isSimplifiedView: false,
   }),
 }));
-vi.mock('./donnees/indicateur-predefini-donnees.view', () => ({
-  IndicateurPredefiniDonnees: () => {
-    renderDonneesParent();
+vi.mock('../content/donnees/indicateur-donnees.view', () => ({
+  IndicateurDonnees: () => {
+    renderDonneesPerso();
     return null;
   },
 }));
-vi.mock('./donnees/indicateur-predefini-compose-donnees.view', () => ({
-  IndicateurPredefiniComposeDonnees: () => {
-    renderDonneesCompose();
+vi.mock('./donnees/indicateur-predefini-avec-enfants-donnees.view', () => ({
+  IndicateurPredefiniAvecEnfantsDonnees: () => {
+    renderDonneesAvecEnfants();
     return null;
   },
 }));
@@ -36,17 +34,14 @@ vi.mock('./informations/indicateur-informations.view', () => ({
 vi.mock('./mesures-liees/indicateur-mesures-liees.view', () => ({
   IndicateurMesuresLiees: () => null,
 }));
-vi.mock('./sous-indicateurs/indicateur-sous-indicateurs.view', () => ({
-  IndicateurSousIndicateurs: (props: {
-    enfantsIds: number[];
-    isReadonly: boolean;
-  }) => {
-    renderSousIndicateursListe(props);
-    return null;
-  },
-}));
 
-const toIndicateur = (): IndicateurDetaille =>
+const toIndicateur = ({
+  enfants,
+  sansValeurUtilisateur = false,
+}: {
+  enfants: { id: number; titre: string }[];
+  sansValeurUtilisateur?: boolean;
+}): IndicateurDetaille =>
   ({
     id: 10,
     collectiviteId: null,
@@ -54,25 +49,21 @@ const toIndicateur = (): IndicateurDetaille =>
     groupementId: null,
     titre: 'Déchets',
     unite: 't',
-    sansValeurUtilisateur: false,
-    enfants: [
-      { id: 11, titre: 'Ménagers' },
-      { id: 12, titre: 'Verre' },
-    ],
+    sansValeurUtilisateur,
+    enfants,
   } as IndicateurDetaille);
 
-const renderTabs = ({
-  indicateur,
-  canMutateIndicateur = true,
-}: {
-  indicateur: IndicateurDetaille;
-  canMutateIndicateur?: boolean;
-}) =>
+const deuxEnfants = [
+  { id: 11, titre: 'Ménagers' },
+  { id: 12, titre: 'Verre' },
+];
+
+const renderTabs = (indicateur: IndicateurDetaille) =>
   render(
     <IndicateurDataProvider
       value={{
         indicateur,
-        canMutateIndicateur,
+        canMutateIndicateur: true,
         canMutateValeur: true,
       }}
     >
@@ -80,67 +71,45 @@ const renderTabs = ({
     </IndicateurDataProvider>
   );
 
-const sousIndicateursTab = (indicateur: IndicateurDetaille) => ({
-  name: appLabels.sousIndicateur({ count: indicateur.enfants.length }),
+const sousIndicateursTab = { name: /sous-indicateurs?/i };
+
+const clearRenders = () => {
+  renderDonneesPerso.mockClear();
+  renderDonneesAvecEnfants.mockClear();
+};
+
+describe('IndicateurPredefiniTabs : indicateur prédéfini avec enfants', () => {
+  it.each([
+    ['avec valeurs propres', false],
+    ['composé sans valeur propre', true],
+  ])(
+    "affiche le tableau des sous-indicateurs dans l'onglet Données pour un parent %s",
+    (_, sansValeurUtilisateur) => {
+      clearRenders();
+
+      renderTabs(toIndicateur({ enfants: deuxEnfants, sansValeurUtilisateur }));
+
+      expect(renderDonneesAvecEnfants).toHaveBeenCalledTimes(1);
+      expect(renderDonneesPerso).not.toHaveBeenCalled();
+    }
+  );
+
+  it("n'a plus d'onglet de sous-indicateurs en cartes", () => {
+    clearRenders();
+
+    renderTabs(toIndicateur({ enfants: deuxEnfants }));
+
+    expect(screen.queryByRole('tab', sousIndicateursTab)).toBeNull();
+  });
 });
 
-describe('IndicateurPredefiniTabs : onglet des sous-indicateurs', () => {
-  it('garde la liste des sous-indicateurs dans un onglet pour un indicateur prédéfini', () => {
-    renderSousIndicateursListe.mockClear();
-    const indicateur = toIndicateur();
+describe('IndicateurPredefiniTabs : indicateur prédéfini sans enfant', () => {
+  it("affiche la vue des données d'un indicateur sans tableau de sous-indicateurs", () => {
+    clearRenders();
 
-    renderTabs({ indicateur });
-    fireEvent.click(screen.getByRole('tab', sousIndicateursTab(indicateur)));
+    renderTabs(toIndicateur({ enfants: [] }));
 
-    expect(renderSousIndicateursListe).toHaveBeenCalledTimes(1);
-    expect(renderSousIndicateursListe.mock.calls[0][0]).toEqual({
-      enfantsIds: [11, 12],
-      isReadonly: false,
-    });
-  });
-
-  it("passe la liste d'un indicateur prédéfini en lecture seule quand l'utilisateur ne peut pas le modifier", () => {
-    renderSousIndicateursListe.mockClear();
-    const indicateur = toIndicateur();
-
-    renderTabs({ indicateur, canMutateIndicateur: false });
-    fireEvent.click(screen.getByRole('tab', sousIndicateursTab(indicateur)));
-
-    expect(renderSousIndicateursListe.mock.calls[0][0]).toEqual({
-      enfantsIds: [11, 12],
-      isReadonly: true,
-    });
-  });
-});
-
-describe('IndicateurPredefiniTabs : indicateur composé sans valeur propre', () => {
-  const toCompose = (): IndicateurDetaille =>
-    ({
-      ...toIndicateur(),
-      identifiantReferentiel: 'emission_polluants_atmo',
-      sansValeurUtilisateur: true,
-    } as IndicateurDetaille);
-
-  it("affiche les sous-indicateurs en tableau dans l'onglet Données, à la place de la liste de cartes", () => {
-    renderDonneesParent.mockClear();
-    renderDonneesCompose.mockClear();
-
-    renderTabs({ indicateur: toCompose() });
-
-    expect(renderDonneesCompose).toHaveBeenCalledTimes(1);
-    expect(renderDonneesParent).not.toHaveBeenCalled();
-    expect(
-      screen.queryByRole('tab', sousIndicateursTab(toCompose()))
-    ).toBeNull();
-  });
-
-  it("garde l'onglet Données habituel pour un parent qui porte ses propres valeurs", () => {
-    renderDonneesParent.mockClear();
-    renderDonneesCompose.mockClear();
-
-    renderTabs({ indicateur: toIndicateur() });
-
-    expect(renderDonneesParent).toHaveBeenCalledTimes(1);
-    expect(renderDonneesCompose).not.toHaveBeenCalled();
+    expect(renderDonneesPerso).toHaveBeenCalledTimes(1);
+    expect(renderDonneesAvecEnfants).not.toHaveBeenCalled();
   });
 });

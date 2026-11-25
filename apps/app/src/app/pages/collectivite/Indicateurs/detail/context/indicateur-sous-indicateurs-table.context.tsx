@@ -1,5 +1,7 @@
 'use client';
 
+import type { SousIndicateurOpenData } from '@/app/indicateurs/sous-indicateurs/sous-indicateurs-open-data.rules';
+import type { SousIndicateursQueryOptions } from '@/app/indicateurs/sous-indicateurs/data/use-sous-indicateurs-queries';
 import type { RenameSousIndicateur } from '@/app/indicateurs/sous-indicateurs/data/use-rename-sous-indicateur';
 import type { CreateSousIndicateur } from '@/app/indicateurs/sous-indicateurs/data/use-create-sous-indicateur';
 import type { DetachSousIndicateur } from '@/app/indicateurs/sous-indicateurs/data/use-detach-sous-indicateur';
@@ -16,13 +18,19 @@ import {
 import type { IndicateurPeriodeCommentaires } from '../../table/use-indicateur-periode-commentaires';
 
 export type IndicateurSousIndicateursTableValue = {
-  useSousIndicateursTable: (indicateurId: number) => SousIndicateursTableState;
+  useSousIndicateursTable: (
+    indicateurId: number,
+    options: SousIndicateursQueryOptions
+  ) => SousIndicateursTableState;
   useSaveSousIndicateurValeur: () => SaveSousIndicateurValeur;
   useDeclareSousIndicateursPeriodes: () => DeclareIndicateursPeriodes;
   useDeleteSousIndicateursPeriode: () => DeleteSousIndicateursPeriode;
   useDetachSousIndicateur: () => DetachSousIndicateur;
   useCreateSousIndicateur: () => CreateSousIndicateur;
   useRenameSousIndicateur: () => RenameSousIndicateur;
+  useSousIndicateursOpenData: (
+    indicateurIds: readonly number[]
+  ) => ReadonlyMap<number, SousIndicateurOpenData>;
   useIndicateurPeriodeCommentaires: () => IndicateurPeriodeCommentaires;
 };
 

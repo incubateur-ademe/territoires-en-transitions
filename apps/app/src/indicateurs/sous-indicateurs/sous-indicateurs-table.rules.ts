@@ -12,6 +12,7 @@ export type SousIndicateurNode = Readonly<{
   id: number;
   label: string;
   enfantIds: readonly number[];
+  sansValeurUtilisateur?: boolean;
 }>;
 
 export type SousIndicateurDatedValeur = Readonly<
@@ -42,6 +43,7 @@ export type SousIndicateurTableRow = Readonly<{
   rowKey: string;
   parentRowKey: string | null;
   isExpandable: boolean;
+  acceptsOwnValeurs?: boolean;
   indicateurId: number;
   label: string;
   color: string;
@@ -80,13 +82,16 @@ export const toSousIndicateurNode = ({
   titre,
   titreCourt,
   enfants,
+  sansValeurUtilisateur,
 }: Pick<IndicateurDetaille, 'id' | 'titre' | 'titreCourt'> &
+  Partial<Pick<IndicateurDetaille, 'sansValeurUtilisateur'>> &
   Readonly<{
     enfants: readonly Pick<IndicateurDetaille['enfants'][number], 'id'>[];
   }>): SousIndicateurNode => ({
   id,
   label: titreCourt || titre,
   enfantIds: enfants.map((enfant) => enfant.id),
+  sansValeurUtilisateur,
 });
 
 const toCellFromValeur = (valeur: number | null): SousIndicateurCell =>
@@ -266,7 +271,7 @@ const toCellsByDateOfNode = ({
   node: SousIndicateurNode;
   context: SousIndicateursSource;
 }): CellsByDate =>
-  node.enfantIds.length > 0
+  node.enfantIds.length > 0 && context.totalsByIndicateurId.has(node.id)
     ? toCellsByDateFromTotals({
         totals: context.totalsByIndicateurId.get(node.id) ?? [],
         listMissingLabels: toMissingLabelsLister({ parent: node, context }),
@@ -335,6 +340,7 @@ export const buildSousIndicateursTableData = ({
         rowKey,
         parentRowKey,
         isExpandable: parentRowKeys.has(rowKey),
+        acceptsOwnValeurs: node.sansValeurUtilisateur !== true,
         indicateurId: node.id,
         label: node.label,
         color: colorOf(node.id),

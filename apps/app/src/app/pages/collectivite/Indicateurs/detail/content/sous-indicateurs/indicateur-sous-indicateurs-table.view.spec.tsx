@@ -187,6 +187,7 @@ const renderTable = (
         useDetachSousIndicateur: () => detachSousIndicateur,
         useCreateSousIndicateur: () => createSousIndicateur,
         useRenameSousIndicateur: () => renameSousIndicateur,
+        useSousIndicateursOpenData: () => new Map(),
         useIndicateurPeriodeCommentaires: () => ({
           commentairesOf,
           isReady: areCommentairesReady,
@@ -275,7 +276,20 @@ describe('IndicateurSousIndicateursTable', () => {
       toData({ totalCells: COMPLETE_TOTAL_CELLS })
     );
 
-    expect(useSousIndicateursTable).toHaveBeenCalledWith(1);
+    expect(useSousIndicateursTable).toHaveBeenCalledWith(1, {
+      withTotals: true,
+    });
+  });
+
+  it("ne demande aucun total pour un indicateur prédéfini, qui n'en a pas", () => {
+    const { useSousIndicateursTable } = renderReadyTable(
+      toData({ totalCells: COMPLETE_TOTAL_CELLS }),
+      { capabilities: { canTotaliser: false, canEditStructure: false } }
+    );
+
+    expect(useSousIndicateursTable).toHaveBeenCalledWith(1, {
+      withTotals: false,
+    });
   });
 
   it("nomme le tableau et son en-tête de titre avec le titre et l'unité de l'indicateur", () => {

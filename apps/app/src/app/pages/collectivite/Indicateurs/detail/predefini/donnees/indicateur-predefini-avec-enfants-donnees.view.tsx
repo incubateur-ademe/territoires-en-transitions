@@ -1,23 +1,27 @@
-import { toSousIndicateursCapabilities } from '@/app/indicateurs/sous-indicateurs/sous-indicateurs-capabilities.rules';
 import { Divider } from '@tet/ui';
 import { IndicateurCommentaireInput } from '../../content/donnees/indicateur-commentaire.input';
 import { IndicateurDonneesCard } from '../../content/donnees/indicateur-donnees.card';
+import { IndicateurDonneesSelects } from '../../content/donnees/indicateur-donnees-selects.view';
+import { IndicateurPersonnalisationSection } from '../../content/donnees/indicateur-personnalisation.view';
 import { IndicateurSousIndicateursChart } from '../../content/sous-indicateurs/indicateur-sous-indicateurs-chart.view';
-import { IndicateurSousIndicateursTable } from '../../content/sous-indicateurs/indicateur-sous-indicateurs-table.view';
 import { useIndicateurActions } from '../../context/indicateur-actions.context';
 import { useIndicateurData } from '../../context/indicateur-data.context';
-import { useIndicateurNouveauSousIndicateur } from '../../context/indicateur-nouveau-sous-indicateur.context';
+import { IndicateurPredefiniAvecEnfantsTable } from './indicateur-predefini-avec-enfants.table';
 
-export const IndicateurPredefiniComposeDonnees = () => {
+export const IndicateurPredefiniAvecEnfantsDonnees = () => {
   const { indicateur, canMutateIndicateur, canMutateValeur } =
     useIndicateurData();
-  const { updateCommentaire, updateIndicateur } = useIndicateurActions();
-  const newSousIndicateur = useIndicateurNouveauSousIndicateur();
-  const capabilities = toSousIndicateursCapabilities(indicateur);
+  const { updateCommentaire } = useIndicateurActions();
   const { commentaire, unite, periodicite } = indicateur;
 
   return (
     <IndicateurDonneesCard>
+      <div className="flex flex-row gap-4">
+        <IndicateurDonneesSelects />
+      </div>
+
+      <IndicateurPersonnalisationSection />
+
       <div className="mb-6">
         <IndicateurSousIndicateursChart
           indicateurId={indicateur.id}
@@ -29,21 +33,7 @@ export const IndicateurPredefiniComposeDonnees = () => {
       <div className="flex flex-col gap-7">
         <Divider color="primary" className="mb-6" />
 
-        <IndicateurSousIndicateursTable
-          indicateurId={indicateur.id}
-          titre={indicateur.titre}
-          unite={unite}
-          periodicite={periodicite}
-          isReadonly={!canMutateValeur}
-          canMutateIndicateur={canMutateIndicateur}
-          capabilities={capabilities}
-          newSousIndicateur={newSousIndicateur}
-          privateMode={{
-            isConfidentiel: indicateur.estConfidentiel ?? false,
-            onChange: (estConfidentiel) =>
-              updateIndicateur({ estConfidentiel }),
-          }}
-        />
+        <IndicateurPredefiniAvecEnfantsTable isReadonly={!canMutateValeur} />
 
         <Divider color="primary" className="my-6" />
       </div>

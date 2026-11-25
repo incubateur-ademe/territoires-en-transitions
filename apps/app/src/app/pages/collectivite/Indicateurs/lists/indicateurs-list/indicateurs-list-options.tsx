@@ -1,5 +1,5 @@
 import { appLabels } from '@/app/labels/catalog';
-import { Checkbox, cn, Input, Select } from '@tet/ui';
+import { Checkbox, Input, Select } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
 import {
@@ -9,7 +9,6 @@ import {
 } from './use-indicateurs-list-params';
 
 export type IndicateursListeOptionsProps = {
-  isEmbedded?: boolean;
   isLoading?: boolean;
   isError?: boolean;
   searchParams: SearchParams;
@@ -30,7 +29,6 @@ export const IndicateursListeOptions = (
     isLoading,
     isError,
     countTotal,
-    isEmbedded,
     searchParams,
     setSearchParams,
     status,
@@ -60,12 +58,7 @@ export const IndicateursListeOptions = (
   };
 
   return (
-    <div
-      className={cn(
-        'flex flex-wrap max-xl:flex-col justify-between xl:items-center gap-4 pt-1',
-        !isEmbedded && 'pb-6 border-b border-primary-3'
-      )}
-    >
+    <div className="flex flex-wrap max-xl:flex-col justify-between xl:items-center gap-4 pt-1 pb-6 border-b border-primary-3">
       <div className="flex max-md:flex-col gap-x-8 gap-y-4 md:items-center">
         {/** Tri */}
         <div className="w-full md:w-64">

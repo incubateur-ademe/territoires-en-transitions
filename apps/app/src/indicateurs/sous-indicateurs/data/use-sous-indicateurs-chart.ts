@@ -3,13 +3,19 @@ import {
   toSousIndicateursChartState,
   type SousIndicateursChartState,
 } from '../sous-indicateurs-chart-state.rules';
-import { useSousIndicateursQueries } from './use-sous-indicateurs-queries';
+import {
+  useSousIndicateursQueries,
+  type SousIndicateursQueryOptions,
+} from './use-sous-indicateurs-queries';
 
 export const useSousIndicateursChart = (
-  indicateurId: number
+  indicateurId: number,
+  options: SousIndicateursQueryOptions
 ): SousIndicateursChartState => {
-  const { collectiviteId, nodes, valeurs, totals } =
-    useSousIndicateursQueries(indicateurId);
+  const { collectiviteId, nodes, valeurs, totals } = useSousIndicateursQueries(
+    indicateurId,
+    options
+  );
 
   return useMemo(
     () =>

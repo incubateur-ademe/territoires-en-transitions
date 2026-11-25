@@ -3,10 +3,12 @@
 import type { SousIndicateursChartData } from '@/app/indicateurs/sous-indicateurs/sous-indicateurs-chart.rules';
 import { appLabels } from '@/app/labels/catalog';
 import { ReactECharts } from '@/app/ui/charts/echarts/ReactECharts';
+import { toSousIndicateursCapabilities } from '@/app/indicateurs/sous-indicateurs/sous-indicateurs-capabilities.rules';
 import { useResizeGraphOnContainerSizeUpdate } from '@/app/ui/charts/echarts/use-resize-graph-on-container-size-update';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { type JSX, useId, useMemo, useRef } from 'react';
 import { IndicateurEmptyChartCard } from '../../../chart/indicateur-empty-chart.card';
+import { useIndicateurData } from '../../context/indicateur-data.context';
 import { useIndicateurSousIndicateursChart } from '../../context/indicateur-sous-indicateurs-chart.context';
 import {
   type ChartPresentation,
@@ -105,7 +107,10 @@ export const IndicateurSousIndicateursChart = ({
   onFinished,
 }: Props): JSX.Element => {
   const { useSousIndicateursChart } = useIndicateurSousIndicateursChart();
-  const state = useSousIndicateursChart(indicateurId);
+  const { indicateur } = useIndicateurData();
+  const state = useSousIndicateursChart(indicateurId, {
+    withTotals: toSousIndicateursCapabilities(indicateur).canTotaliser,
+  });
 
   if (state.status === 'loading') {
     return <LoadingState />;

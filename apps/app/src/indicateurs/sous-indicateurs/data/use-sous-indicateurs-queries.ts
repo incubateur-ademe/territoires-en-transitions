@@ -24,8 +24,11 @@ import { toNodesQueryKey } from './to-nodes-query-key';
 const NODES_PAGE_SIZE = 50;
 const NODES_STALE_TIME_MS = 5 * 60 * 1000;
 
+export type SousIndicateursQueryOptions = Readonly<{ withTotals: boolean }>;
+
 export const useSousIndicateursQueries = (
-  indicateurId: number
+  indicateurId: number,
+  { withTotals }: SousIndicateursQueryOptions
 ): SousIndicateursOutcomes => {
   const collectiviteId = useCollectiviteId();
   const trpc = useTRPC();
@@ -73,8 +76,12 @@ export const useSousIndicateursQueries = (
   );
   const parentIds = useMemo(
     () =>
-      nodes.filter(({ enfantIds }) => enfantIds.length > 0).map(({ id }) => id),
-    [nodes]
+      withTotals
+        ? nodes
+            .filter(({ enfantIds }) => enfantIds.length > 0)
+            .map(({ id }) => id)
+        : [],
+    [nodes, withTotals]
   );
 
   const valeursQuery = useListIndicateurValeurs(
