@@ -168,48 +168,6 @@ describe('Totaux des sous-indicateurs', () => {
     ]);
   });
 
-  test('ne calcule aucun total quand le parent décoche le cumul de ses sous-indicateurs', async () => {
-    const { caller, parentId, firstSousIndicateurId, secondSousIndicateurId } =
-      await createParentWithTwoSousIndicateurs();
-    await saveValeurs({
-      caller,
-      indicateurId: firstSousIndicateurId,
-      valeurs: { '2023-01-01': { resultat: 10, objectif: 100 } },
-    });
-    await saveValeurs({
-      caller,
-      indicateurId: secondSousIndicateurId,
-      valeurs: { '2023-01-01': { resultat: 5.5, objectif: 50 } },
-    });
-    await caller.indicateurs.indicateurs.update({
-      collectiviteId: collectivite.id,
-      indicateurId: parentId,
-      indicateurFields: { totalEstCumulDesSousIndicateurs: false },
-    });
-
-    await expect(getTotals(caller, parentId)).resolves.toEqual([
-      {
-        dateValeur: '2023-01-01',
-        resultat: { status: 'not-additive' },
-        objectif: { status: 'not-additive' },
-      },
-    ]);
-
-    await caller.indicateurs.indicateurs.update({
-      collectiviteId: collectivite.id,
-      indicateurId: parentId,
-      indicateurFields: { totalEstCumulDesSousIndicateurs: true },
-    });
-
-    await expect(getTotals(caller, parentId)).resolves.toEqual([
-      {
-        dateValeur: '2023-01-01',
-        resultat: complete(15.5),
-        objectif: complete(150),
-      },
-    ]);
-  });
-
   test('indique le nombre de sous-indicateurs renseignés quand il en manque', async () => {
     const { caller, parentId, firstSousIndicateurId } =
       await createParentWithTwoSousIndicateurs();
@@ -403,18 +361,6 @@ describe('Totaux des sous-indicateurs', () => {
       expectedCount: 3,
     });
 
-    test('somme les sous-indicateurs de bas niveau d’un sous-indicateur intermédiaire qui décoche son cumul', async () => {
-      const { caller, parentId } = await createTree({ tertiaireResultat: 80 });
-
-      await expect(getTotals(caller, parentId)).resolves.toEqual([
-        {
-          dateValeur: '2022-01-01',
-          resultat: complete(208),
-          objectif: incompleteOfThree(0),
-        },
-      ]);
-    });
-
     test('compte les sous-indicateurs directs du parent pour signaler un total incomplet', async () => {
       const { caller, parentId } = await createTree();
 
@@ -423,20 +369,6 @@ describe('Totaux des sous-indicateurs', () => {
           dateValeur: '2022-01-01',
           resultat: incompleteOfThree(2),
           objectif: incompleteOfThree(0),
-        },
-      ]);
-    });
-
-    test('ne calcule aucun total sur la page du sous-indicateur qui décoche son cumul', async () => {
-      const { caller, communauxId } = await createTree({
-        tertiaireResultat: 80,
-      });
-
-      await expect(getTotals(caller, communauxId)).resolves.toEqual([
-        {
-          dateValeur: '2022-01-01',
-          resultat: { status: 'not-additive' },
-          objectif: { status: 'not-additive' },
         },
       ]);
     });

@@ -9,7 +9,6 @@ export type SousIndicateurValeur = Readonly<{
 export type IndicateurTotalReader = 'member' | 'visitor';
 
 export type IndicateurTotal =
-  | Readonly<{ status: 'not-additive' }>
   | Readonly<{ status: 'no-sous-indicateur' }>
   | Readonly<{ status: 'hidden' }>
   | Readonly<{
@@ -23,19 +22,14 @@ const listFilledNumbers = (valeurs: readonly (number | null)[]): number[] =>
   valeurs.flatMap((valeur) => (valeur === null ? [] : [valeur]));
 
 export const calculateIndicateurTotal = ({
-  totalEstCumulDesSousIndicateurs,
   reader,
   precision,
   sousIndicateurs,
 }: {
-  totalEstCumulDesSousIndicateurs: boolean;
   reader: IndicateurTotalReader;
   precision: number;
   sousIndicateurs: readonly SousIndicateurValeur[];
 }): IndicateurTotal => {
-  if (!totalEstCumulDesSousIndicateurs) {
-    return { status: 'not-additive' };
-  }
   if (sousIndicateurs.length === 0) {
     return { status: 'no-sous-indicateur' };
   }
@@ -91,7 +85,6 @@ type SousIndicateurContribution = Readonly<{
 }>;
 
 type TotalAtDateParams = Readonly<{
-  totalEstCumulDesSousIndicateurs: boolean;
   reader: IndicateurTotalReader;
   precision: number;
   sousIndicateurs: readonly FilledSousIndicateur[];
@@ -246,13 +239,11 @@ const calculateContribution = ({
 
 const calculateTotalAtDate = ({
   dateValeur,
-  totalEstCumulDesSousIndicateurs,
   reader,
   precision,
   sousIndicateurs,
 }: TotalAtDateParams & Readonly<{ dateValeur: string }>): IndicateurTotal =>
   calculateIndicateurTotal({
-    totalEstCumulDesSousIndicateurs,
     reader,
     precision,
     sousIndicateurs: sousIndicateurs.map((sousIndicateur) => {
@@ -265,13 +256,11 @@ const calculateTotalAtDate = ({
   });
 
 export const calculateIndicateurTotalsByDate = ({
-  totalEstCumulDesSousIndicateurs,
   reader,
   precision,
   parentConfidentiel,
   sousIndicateurs,
 }: {
-  totalEstCumulDesSousIndicateurs: boolean;
   reader: IndicateurTotalReader;
   precision: number;
   parentConfidentiel: boolean;
@@ -308,14 +297,12 @@ export const calculateIndicateurTotalsByDate = ({
         ? HIDDEN_TOTAL
         : calculateTotalAtDate({
             dateValeur,
-            totalEstCumulDesSousIndicateurs,
             reader,
             precision,
             sousIndicateurs: resultatSousIndicateurs,
           }),
       objectif: calculateTotalAtDate({
         dateValeur,
-        totalEstCumulDesSousIndicateurs,
         reader,
         precision,
         sousIndicateurs: objectifSousIndicateurs,

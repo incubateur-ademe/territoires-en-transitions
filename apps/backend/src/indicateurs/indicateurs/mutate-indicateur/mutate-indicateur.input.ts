@@ -95,12 +95,6 @@ export const updateIndicateurInputSchema = z.object({
         isApplicable: true,
       }).shape,
       unite: z.optional(indicateurCommonSchema.shape.unite),
-      totalEstCumulDesSousIndicateurs: z
-        .boolean()
-        .optional()
-        .describe(
-          'Si true, le total des sous-indicateurs est la somme de leurs valeurs. Indicateurs personnalisés uniquement.'
-        ),
 
       // La périodicité appartient uniquement au contrat de création.
       // Refuser aussi sa présence dans un payload externe de mise à jour.

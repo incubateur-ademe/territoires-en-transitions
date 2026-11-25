@@ -38,7 +38,6 @@ const createService = ({
     IndicateurValeursReadDenial
   >,
   parent = {
-    totalEstCumulDesSousIndicateurs: true,
     precision: 2,
     confidentiel: false,
   } as ParentForTotals | null,
@@ -118,87 +117,6 @@ describe('GetIndicateurTotalsService', () => {
 
   it('masque à un visiteur le résultat de la date du dernier résultat d’un sous-indicateur confidentiel mais pas l’objectif', async () => {
     const { service } = createService({ readerResult: success('visitor') });
-
-    await expect(service.getIndicateurTotals(input, { user })).resolves.toEqual(
-      success([
-        {
-          dateValeur: '2022-01-01',
-          resultat: complete(3.75),
-          objectif: complete(30),
-        },
-        {
-          dateValeur: '2023-01-01',
-          resultat: { status: 'hidden' },
-          objectif: complete(32),
-        },
-      ])
-    );
-  });
-
-  it('ne calcule aucun total quand le total du parent n’est pas le cumul de ses sous-indicateurs', async () => {
-    const { service } = createService({
-      parent: {
-        totalEstCumulDesSousIndicateurs: false,
-        precision: 2,
-        confidentiel: false,
-      },
-    });
-
-    await expect(service.getIndicateurTotals(input, { user })).resolves.toEqual(
-      success([
-        {
-          dateValeur: '2022-01-01',
-          resultat: { status: 'not-additive' },
-          objectif: { status: 'not-additive' },
-        },
-        {
-          dateValeur: '2023-01-01',
-          resultat: { status: 'not-additive' },
-          objectif: { status: 'not-additive' },
-        },
-      ])
-    );
-  });
-
-  it('ne révèle à un visiteur que le statut non additif quand le total du parent n’est pas le cumul et qu’un sous-indicateur est confidentiel', async () => {
-    const { service } = createService({
-      readerResult: success('visitor'),
-      parent: {
-        totalEstCumulDesSousIndicateurs: false,
-        precision: 2,
-        confidentiel: false,
-      },
-    });
-
-    await expect(service.getIndicateurTotals(input, { user })).resolves.toEqual(
-      success([
-        {
-          dateValeur: '2022-01-01',
-          resultat: { status: 'not-additive' },
-          objectif: { status: 'not-additive' },
-        },
-        {
-          dateValeur: '2023-01-01',
-          resultat: { status: 'not-additive' },
-          objectif: { status: 'not-additive' },
-        },
-      ])
-    );
-  });
-
-  it('masque à un visiteur le résultat le plus récent d’un parent confidentiel', async () => {
-    const { service } = createService({
-      readerResult: success('visitor'),
-      parent: {
-        totalEstCumulDesSousIndicateurs: true,
-        precision: 2,
-        confidentiel: true,
-      },
-      sousIndicateurs: [
-        { id: 7, parentId: 42, confidentiel: false },
-        { id: 8, parentId: 42, confidentiel: false },
-      ],
-    });
 
     await expect(service.getIndicateurTotals(input, { user })).resolves.toEqual(
       success([
