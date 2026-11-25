@@ -17,7 +17,10 @@ import type { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import FicheActionPermissionsService from '@tet/backend/plans/fiches/fiche-action-permissions.service';
 import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches.service';
 import { FICHE_ACTION_PDF_EXPORT_CONFIG } from './fiche-action-pdf-export.config';
-import { FicheExportPayloadService } from './fiche-export-payload.service';
+import {
+  FicheExportPayloadError,
+  FicheExportPayloadService,
+} from './fiche-export-payload.service';
 import { PdfRendererService } from './pdf-renderer.service';
 
 type GeneratePdfInput = {
@@ -51,7 +54,7 @@ type GeneratePdfError =
 
 type FichePayloadOutcome = Result<
   FicheActionPdfExtendedProps,
-  { ficheId: number; error: string }
+  { ficheId: number; error: FicheExportPayloadError; cause?: Error }
 >;
 
 @Injectable()
@@ -97,8 +100,14 @@ export class FicheActionPdfExportService {
 
     for (const failed of failedOutcomes) {
       this.logger.warn(
-        `Payload assembly failed for fiche ${failed.error.ficheId}: ${failed.error.error}`
+        `Payload assembly failed for fiche ${failed.error.ficheId}: ${
+          failed.error.cause?.message ?? failed.error.error
+        }`
       );
+    }
+
+    if (failedOutcomes.some(({ error }) => error.error === 'DATABASE_ERROR')) {
+      return failure('INTERNAL_ERROR');
     }
 
     if (successfulOutcomes.length === 0) {
@@ -147,7 +156,7 @@ export class FicheActionPdfExportService {
     });
     return payload.success
       ? success(payload.data)
-      : failure({ ficheId, error: payload.error });
+      : failure({ ficheId, error: payload.error, cause: payload.cause });
   }
 
   private async resolveRequestedIds(input: GeneratePdfInput): Promise<number[]> {

@@ -1,5 +1,4 @@
 import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
-import { getIndicateurDataOrThrow } from '@tet/backend/indicateurs/indicateur/indicateur-nature.utils';
 import { ListCollectiviteIndicateursRepository } from '@tet/backend/indicateurs/indicateurs/list-collectivite-indicateurs/list-collectivite-indicateurs.repository';
 import { GetAxeService } from '@tet/backend/plans/axes/get-axe/get-axe.service';
 import FicheActionPermissionsService from '@tet/backend/plans/fiches/fiche-action-permissions.service';
@@ -7,6 +6,10 @@ import { FicheAnnexesService } from '@tet/backend/plans/fiches/fiche-annexes/fic
 import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches.service';
 import { ActionDefinitionsRepository } from '@tet/backend/referentiels/action-definitions/action-definitions.repository';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import {
+  catchDatabaseFailure,
+  toDatabaseFailure,
+} from '@tet/backend/utils/database/catch-database-failure';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { isIndicateurPerso } from '@tet/domain/indicateurs';
 import type {
@@ -20,6 +23,8 @@ import type {
   PdfIndicateur,
   PdfLinkedAction,
 } from '@tet/pdf-components';
+
+export type FicheExportPayloadError = 'FICHE_UNAVAILABLE' | 'DATABASE_ERROR';
 
 @Injectable()
 export class FicheExportPayloadService {
@@ -40,39 +45,45 @@ export class FicheExportPayloadService {
   }: {
     ficheId: number;
     user: AuthenticatedUser;
-  }): Promise<Result<FicheActionPdfExtendedProps, string>> {
-    const ficheResult = await this.listFichesService
-      .getFicheById(ficheId, false, user)
-      .catch((error) => {
-        if (error instanceof ForbiddenException) {
-          return failure(`Accès refusé sur la fiche ${ficheId}`);
-        }
-        throw error;
+  }): Promise<Result<FicheActionPdfExtendedProps, FicheExportPayloadError>> {
+    return catchDatabaseFailure(async () => {
+      const ficheResult = await this.listFichesService
+        .getFicheById(ficheId, false, user)
+        .catch((error) => {
+          if (error instanceof ForbiddenException) {
+            return failure(`Accès refusé sur la fiche ${ficheId}`);
+          }
+          throw error;
+        });
+      if (!ficheResult.success) {
+        return failure(
+          'FICHE_UNAVAILABLE',
+          new Error(`Fiche ${ficheId} : ${ficheResult.error}`)
+        );
+      }
+
+      const fiche = ficheResult.data;
+
+      const [chemins, fichesLiees, indicateursResult, actionsLiees, annexes] =
+        await Promise.all([
+          this.loadChemins({ fiche, user }),
+          this.loadFichesLiees({ fiche, user }),
+          this.loadIndicateurs({ fiche }),
+          this.loadActionsLiees({ fiche }),
+          this.loadAnnexes({ fiche, user }),
+        ]);
+      if (!indicateursResult.success) return indicateursResult;
+
+      return success({
+        fiche,
+        chemins,
+        indicateursListe: indicateursResult.data,
+        fichesLiees,
+        actionsLiees,
+        annexes: annexes.length > 0 ? annexes : undefined,
+        notes: fiche.notes ?? undefined,
+        budgets: this.mapBudgets(fiche.budgets),
       });
-    if (!ficheResult.success) {
-      return failure(`Fiche ${ficheId} : ${ficheResult.error}`);
-    }
-
-    const fiche = ficheResult.data;
-
-    const [chemins, fichesLiees, indicateursListe, actionsLiees, annexes] =
-      await Promise.all([
-        this.loadChemins({ fiche, user }),
-        this.loadFichesLiees({ fiche, user }),
-        this.loadIndicateurs({ fiche }),
-        this.loadActionsLiees({ fiche }),
-        this.loadAnnexes({ fiche, user }),
-      ]);
-
-    return success({
-      fiche,
-      chemins,
-      indicateursListe,
-      fichesLiees,
-      actionsLiees,
-      annexes: annexes.length > 0 ? annexes : undefined,
-      notes: fiche.notes ?? undefined,
-      budgets: this.mapBudgets(fiche.budgets),
     });
   }
 
@@ -147,21 +158,23 @@ export class FicheExportPayloadService {
     fiche,
   }: {
     fiche: FicheWithRelations;
-  }): Promise<PdfIndicateur[]> {
+  }): Promise<Result<PdfIndicateur[], 'DATABASE_ERROR'>> {
     const indicateurIds = (fiche.indicateurs ?? []).map((i) => i.id);
     if (indicateurIds.length === 0) {
-      return [];
+      return success([]);
     }
-    const indicateurs = getIndicateurDataOrThrow(
+    const indicateursResult =
       await this.listCollectiviteIndicateursRepository.listCollectiviteIndicateurs(
         { indicateurIds }
-      )
+      );
+    if (!indicateursResult.success) return toDatabaseFailure(indicateursResult);
+    return success(
+      indicateursResult.data.map((indicateur) => ({
+        ...indicateur,
+        estPerso: isIndicateurPerso(indicateur),
+        hasOpenData: false,
+      }))
     );
-    return indicateurs.map((indicateur) => ({
-      ...indicateur,
-      estPerso: isIndicateurPerso(indicateur),
-      hasOpenData: false,
-    }));
   }
 
   private async loadActionsLiees({
