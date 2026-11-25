@@ -2,12 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { collectiviteIdInputSchemaCoerce } from '@tet/backend/collectivites/collectivite-id.input';
 import { UsersModulesService } from '@tet/backend/metrics/users/users-modules.service';
 import { UsersMetricsService } from '@tet/backend/metrics/users/users-metrics.service';
+import { createTrpcErrorHandler } from '@tet/backend/utils/trpc/trpc-error-handler';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import {
   moduleSchemaInsert,
   personalDefaultModuleKeysSchema,
 } from '@tet/domain/metrics';
 import z from 'zod';
+import { listIndicateursErrorConfig } from '../../indicateurs/indicateurs/list-indicateurs/list-indicateurs.errors';
 
 @Injectable()
 export class UsersMetricsRouter {
@@ -17,13 +19,19 @@ export class UsersMetricsRouter {
     private readonly usersModulesService: UsersModulesService
   ) {}
 
+  private readonly getResultDataOrThrowError = createTrpcErrorHandler(
+    listIndicateursErrorConfig
+  );
+
   router = this.trpc.router({
     getMetrics: this.trpc.authedProcedure
       .input(collectiviteIdInputSchemaCoerce)
       .query(async ({ input, ctx }) => {
-        return this.usersMetricsService.getMetrics(
-          input.collectiviteId,
-          ctx.user
+        return this.getResultDataOrThrowError(
+          await this.usersMetricsService.getMetrics(
+            input.collectiviteId,
+            ctx.user
+          )
         );
       }),
 

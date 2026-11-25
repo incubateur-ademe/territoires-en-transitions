@@ -3,9 +3,11 @@ import { collectiviteIdInputSchemaCoerce } from '@tet/backend/collectivites/coll
 import { getModuleRequestSchema } from '@tet/backend/metrics/collectivites/get-module.request';
 import { CollectivitesModulesService } from '@tet/backend/metrics/collectivites/collectivites-modules.service';
 import { CollectivitesMetricsService } from '@tet/backend/metrics/collectivites/collectivites-metrics.service';
+import { createTrpcErrorHandler } from '@tet/backend/utils/trpc/trpc-error-handler';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { collectiviteModuleSchemaCreate } from '@tet/domain/metrics';
 import z from 'zod';
+import { listIndicateursErrorConfig } from '../../indicateurs/indicateurs/list-indicateurs/list-indicateurs.errors';
 
 @Injectable()
 export class CollectivitesMetricsRouter {
@@ -15,13 +17,19 @@ export class CollectivitesMetricsRouter {
     private readonly collectivitesModulesService: CollectivitesModulesService
   ) {}
 
+  private readonly getResultDataOrThrowError = createTrpcErrorHandler(
+    listIndicateursErrorConfig
+  );
+
   router = this.trpc.router({
     getMetrics: this.trpc.authedProcedure
       .input(collectiviteIdInputSchemaCoerce)
       .query(async ({ input, ctx }) => {
-        return this.collectivitesMetricsService.getMetrics(
-          input.collectiviteId,
-          ctx.user
+        return this.getResultDataOrThrowError(
+          await this.collectivitesMetricsService.getMetrics(
+            input.collectiviteId,
+            ctx.user
+          )
         );
       }),
 
