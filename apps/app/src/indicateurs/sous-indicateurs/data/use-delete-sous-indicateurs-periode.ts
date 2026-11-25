@@ -4,7 +4,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import {
-  COLLECTIVITE_SOURCE_ID,
   IndicateurPeriodes,
   type IndicateurPeriode,
 } from '@tet/domain/indicateurs';
@@ -24,8 +23,8 @@ export const useDeleteSousIndicateursPeriode =
     const trpc = useTRPC();
     const queryClient = useQueryClient();
     const { setToast } = useToastContext();
-    const { mutateAsync: removeValeur } = useMutation(
-      trpc.indicateurs.valeurs.delete.mutationOptions({
+    const { mutateAsync: removePeriode } = useMutation(
+      trpc.indicateurs.valeurs.deletePeriode.mutationOptions({
         meta: { disableToast: true },
       })
     );
@@ -34,38 +33,14 @@ export const useDeleteSousIndicateursPeriode =
       async ({ indicateurIds, periode }) => {
         const periodeLabel = IndicateurPeriodes.format(periode);
         try {
-          const { indicateurs } = await queryClient.fetchQuery(
-            trpc.indicateurs.valeurs.list.queryOptions({
-              collectiviteId,
-              indicateurIds: [...indicateurIds],
-              sources: [COLLECTIVITE_SOURCE_ID],
-            })
-          );
-          const periodeKey = IndicateurPeriodes.key(periode);
-          const valeursToRemove = indicateurs.flatMap(
-            ({ definition, sources }) =>
-              (sources[COLLECTIVITE_SOURCE_ID]?.valeurs ?? [])
-                .filter(
-                  ({ dateValeur, periodicite }) =>
-                    IndicateurPeriodes.key(
-                      IndicateurPeriodes.containing(periodicite, dateValeur)
-                    ) === periodeKey
-                )
-                .map(({ id }) => ({ id, indicateurId: definition.id }))
-          );
-          const results = await Promise.allSettled(
-            valeursToRemove.map(({ id, indicateurId }) =>
-              removeValeur({ id, collectiviteId, indicateurId })
-            )
-          );
-          const hasFailure = results.some(
-            ({ status }) => status === 'rejected'
-          );
+          await removePeriode({
+            collectiviteId,
+            indicateurIds: [...indicateurIds],
+            dateValeur: periode.dateDebut,
+          });
           setToast(
-            hasFailure ? 'error' : 'success',
-            hasFailure
-              ? appLabels.indicateurPeriodeSuppressionErreur(periodeLabel)
-              : appLabels.indicateurPeriodeSupprimee(periodeLabel)
+            'success',
+            appLabels.indicateurPeriodeSupprimee(periodeLabel)
           );
         } catch {
           setToast(
@@ -80,6 +55,6 @@ export const useDeleteSousIndicateursPeriode =
           });
         }
       },
-      [collectiviteId, trpc, queryClient, setToast, removeValeur]
+      [collectiviteId, trpc, queryClient, setToast, removePeriode]
     );
   };
