@@ -51,7 +51,10 @@ describe('ValeursReferenceService', () => {
         indicateur,
       });
 
-      expect(valeurs).toMatchObject({ seuil: 1, cible: 3 });
+      expect(valeurs).toMatchObject({
+        success: true,
+        data: { seuil: 1, cible: 3 },
+      });
     });
 
     it('ne répond à aucune typologie pour une collectivité sans typologie', async () => {
@@ -62,7 +65,10 @@ describe('ValeursReferenceService', () => {
         indicateur,
       });
 
-      expect(valeurs).toMatchObject({ seuil: 0, cible: 3 });
+      expect(valeurs).toMatchObject({
+        success: true,
+        data: { seuil: 0, cible: 3 },
+      });
     });
   });
 });

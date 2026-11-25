@@ -1,4 +1,6 @@
-import { getDataOrThrow } from '@tet/backend/utils/result.type';
+import { toReadPermissionDeniedFailure } from '@tet/backend/indicateurs/indicateurs/list-indicateurs/list-indicateurs.errors';
+import { catchDatabaseFailure } from '@tet/backend/utils/database/catch-database-failure';
+import { failure, Result, success } from '@tet/backend/utils/result.type';
 import {
   INDICATEUR_SOURCES_WITH_DEDICATED_METADATA,
   IndicateurPeriodiciteEnum,
@@ -25,6 +27,7 @@ import { indicateurSourceMetadonneeTable } from '@tet/backend/indicateurs/shared
 import { indicateurSourceTable } from '@tet/backend/indicateurs/shared/models/indicateur-source.table';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { ResourceType } from '@tet/domain/users';
+import { ReadValeursError } from '../read-valeurs.errors';
 import { indicateurValeurTable } from '../indicateur-valeur.table';
 import { GetMoyenneCollectivitesRequest } from './get-moyenne-collectivites.request';
 import { ValeursMoyenneDTO } from './valeurs-moyenne.dto';
@@ -42,25 +45,51 @@ export default class ValeursMoyenneService {
   /**
    * Donne la moyenne par date d'un indicateur pour les collectivités de même type
    */
-  async getMoyenneCollectivites(
+  getMoyenneCollectivites(
     options: GetMoyenneCollectivitesRequest,
     user?: AuthUser
-  ): Promise<ValeursMoyenneDTO | null> {
+  ): Promise<Result<ValeursMoyenneDTO | null, ReadValeursError>> {
+    return catchDatabaseFailure(() => this.readMoyenne(options, user));
+  }
+
+  private async checkReadAllowed(
+    user: AuthUser,
+    collectiviteId: number
+  ): Promise<Result<void, ReadValeursError>> {
+    const isPrivateResult = await this.collectiviteService.isPrivate(
+      collectiviteId
+    );
+    if (!isPrivateResult.success) {
+      return failure(isPrivateResult.error, isPrivateResult.cause);
+    }
+    const operation = isPrivateResult.data
+      ? 'indicateurs.indicateurs.read_confidentiel'
+      : 'indicateurs.indicateurs.read';
+    const permission = await this.permissionService.isAllowed(
+      user,
+      operation,
+      ResourceType.COLLECTIVITE,
+      { collectiviteId }
+    );
+    if (permission.success) return success(undefined);
+    return toReadPermissionDeniedFailure({
+      userId: user.id,
+      collectiviteId,
+      isApiKeyDenied: !this.permissionService.isApiKeyAllowed(user, operation)
+        .success,
+      operation,
+    });
+  }
+
+  private async readMoyenne(
+    options: GetMoyenneCollectivitesRequest,
+    user?: AuthUser
+  ): Promise<Result<ValeursMoyenneDTO | null, ReadValeursError>> {
     const { collectiviteId, indicateurId } = options;
 
-    // Vérifie les droits if needed
     if (user) {
-      const collectivitePrivate = getDataOrThrow(
-        await this.collectiviteService.isPrivate(collectiviteId)
-      );
-      await this.permissionService.assertAllowed(
-        user,
-        collectivitePrivate
-          ? 'indicateurs.indicateurs.read_confidentiel'
-          : 'indicateurs.indicateurs.read',
-        ResourceType.COLLECTIVITE,
-        { collectiviteId }
-      );
+      const readPermission = await this.checkReadAllowed(user, collectiviteId);
+      if (!readPermission.success) return readPermission;
     }
 
     this.logger.log(
@@ -91,7 +120,7 @@ export default class ValeursMoyenneService {
       .then((result) => result[0]);
 
     if (!typeCollectiviteResult) {
-      return null;
+      return success(null);
     }
 
     const { typeCollectivite } = typeCollectiviteResult;
@@ -189,10 +218,10 @@ export default class ValeursMoyenneService {
       `Récupération de ${valeurs.length} valeurs moyenne d'indicateur`
     );
 
-    return {
+    return success({
       indicateurId,
       typeCollectivite: typeCollectivite ?? '',
       valeurs,
-    };
+    });
   }
 }

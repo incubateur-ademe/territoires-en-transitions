@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { failure, Result } from '@tet/backend/utils/result.type';
 import { TrpcErrorHandlerConfig } from '@tet/backend/utils/trpc/trpc-error-handler';
-import { ResourceType } from '@tet/domain/users';
+import { PermissionOperation, ResourceType } from '@tet/domain/users';
 
 export type ListIndicateursError =
   | 'UNAUTHORIZED'
@@ -32,17 +32,19 @@ export const toReadPermissionDeniedFailure = ({
   userId,
   collectiviteId,
   isApiKeyDenied,
+  operation,
 }: {
   userId: string | null;
   collectiviteId: number;
   isApiKeyDenied: boolean;
+  operation: PermissionOperation;
 }): Result<never, 'UNAUTHORIZED'> =>
   failure(
     'UNAUTHORIZED',
     new Error(
       isApiKeyDenied
-        ? `Droits insuffisants, la clé d'api n'a pas l'autorisation ${readOperation}.`
-        : `Droits insuffisants, l'utilisateur ${userId} n'a pas l'autorisation ${readOperation} sur la ressource ${ResourceType.COLLECTIVITE} ${collectiviteId}`
+        ? `Droits insuffisants, la clé d'api n'a pas l'autorisation ${operation}.`
+        : `Droits insuffisants, l'utilisateur ${userId} n'a pas l'autorisation ${operation} sur la ressource ${ResourceType.COLLECTIVITE} ${collectiviteId}`
     )
   );
 

@@ -236,6 +236,7 @@ export class ListIndicateursService {
         user,
         readOperation
       ).success,
+      operation: readOperation,
     });
   }
 }

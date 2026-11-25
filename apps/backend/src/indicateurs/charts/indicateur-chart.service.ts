@@ -16,6 +16,7 @@ import ManageIndicateurValeursService from '../valeurs/manage-indicateur-valeurs
 import ValeursMoyenneService from '../valeurs/get-moyenne-indicateur-valeurs/valeurs-moyenne.service';
 import { ValeursReferenceDTO } from '../valeurs/get-valeurs-reference/valeurs-reference.dto';
 import ValeursReferenceService from '../valeurs/get-valeurs-reference/valeurs-reference.service';
+import { getReadValeursDataOrThrow } from '../valeurs/read-valeurs.errors';
 import { IndicateurChartBuilder } from './indicateur-chart.builder';
 import {
   IndicateurChartInput,
@@ -193,23 +194,27 @@ export class IndicateurChartService {
         .then((result) => getDataOrThrow(result).indicateurs[0]),
       // Conditionally fetch reference valeurs
       includeReferenceValeurs
-        ? this.valeurReferenceService.getValeursReferenceForDefinition({
-            collectiviteId,
-            indicateur,
-            collectiviteAvecType,
-            personnalisationReponses,
-          })
+        ? this.valeurReferenceService
+            .getValeursReferenceForDefinition({
+              collectiviteId,
+              indicateur,
+              collectiviteAvecType,
+              personnalisationReponses,
+            })
+            .then(getReadValeursDataOrThrow)
         : Promise.resolve(null),
       // Conditionally fetch moyenne collectivites
       includeMoyenne
-        ? this.valeursMoyenneService.getMoyenneCollectivites(
-            {
-              collectiviteId,
-              indicateurId: indicateur.id,
-              periodicite: indicateur.periodicite,
-            },
-            user
-          )
+        ? this.valeursMoyenneService
+            .getMoyenneCollectivites(
+              {
+                collectiviteId,
+                indicateurId: indicateur.id,
+                periodicite: indicateur.periodicite,
+              },
+              user
+            )
+            .then(getReadValeursDataOrThrow)
         : Promise.resolve(null),
       // Conditionally fetch segmentation
       includeSegmentation
