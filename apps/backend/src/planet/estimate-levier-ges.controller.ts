@@ -27,9 +27,9 @@ export class EstimateLevierGesResponseClass extends createZodDto(
   estimateLevierGesResponseSchema
 ) {}
 
-@ApiTags('Leviers GES')
+@ApiTags('PlanET')
 @ApiBearerAuth()
-@Controller('leviers-ges')
+@Controller('planet')
 export class EstimateLevierGesController {
   constructor(private readonly estimateLevierGesService: EstimateLevierGesService) {}
 

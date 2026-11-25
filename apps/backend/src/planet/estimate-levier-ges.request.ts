@@ -4,7 +4,7 @@ import { z } from 'zod';
  * Enveloppe de la requête. Les paramètres propres à chaque levier sont validés
  * (clés inconnues refusées, bornes, types) par `leviers-ges` : c'est la
  * seule source de vérité, on ne duplique pas ses schémas ici.
- * Voir `packages/leviers-ges/README.md` pour la liste des leviers et paramètres.
+ * Voir le README du paquet npm `leviers-ges` pour la liste des leviers et paramètres.
  */
 export const estimateLevierGesRequestSchema = z.object({
   id: z

@@ -51,9 +51,6 @@ import { ListIndicateursService } from './indicateurs/list-indicateurs/list-indi
 import { IndicateurSourcesRouter } from './sources/indicateur-sources.router';
 import { IndicateurSourcesRepository } from './sources/indicateur-sources.repository';
 import IndicateurSourcesService from './sources/indicateur-sources.service';
-import { EstimateLevierGesController } from './leviers-ges/estimate-levier-ges.controller';
-import { EstimateLevierGesService } from './leviers-ges/estimate-levier-ges.service';
-import { leviersGesEstimatorProvider } from './leviers-ges/leviers-ges-estimator.provider';
 import { TrajectoireLeviersService } from './trajectoire-leviers/trajectoire-leviers.service';
 import TrajectoiresDataService from './trajectoires/trajectoires-data.service';
 import { VerificationTrajectoireRules } from './trajectoires/verification-trajectoire.rules';
@@ -186,8 +183,6 @@ const DEFINITIONS_PROVIDERS = [
     TrajectoiresRouter,
     TrajectoireLeviersService,
     TrajectoireLeviersRouter,
-    leviersGesEstimatorProvider,
-    EstimateLevierGesService,
     ImportTrajectoireSnbc3Router,
     EnqueueImportTrajectoireSnbc3Service,
     ImportTrajectoireSnbc3Service,
@@ -256,7 +251,6 @@ const DEFINITIONS_PROVIDERS = [
     TrajectoiresController,
     TrajectoireSnbc3Controller,
     TrajectoireLeviersController,
-    EstimateLevierGesController,
   ],
 })
 export class IndicateursModule {}
