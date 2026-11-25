@@ -168,10 +168,3 @@ export const fromListIndicateursFailure = ({
   cause?: Error;
 }): Result<never, IndicateurValeursError> =>
   failure(indicateurValeursErrorByListError[error], cause);
-
-export function getIndicateurValeursDataOrThrow<T>(
-  result: Result<T, IndicateurValeursError>
-): T {
-  if (result.success) return result.data;
-  throw result;
-}

@@ -1,11 +1,9 @@
 import { BadRequestException, ForbiddenException } from '@nestjs/common';
 import { createControllerErrorHandler } from '@tet/backend/utils/nest/controller-error-handler';
-import { failure, success } from '@tet/backend/utils/result.type';
+import { failure } from '@tet/backend/utils/result.type';
 import { createTrpcErrorHandler } from '@tet/backend/utils/trpc/trpc-error-handler';
 import { describe, expect, it } from 'vitest';
 import {
-  getIndicateurValeursDataOrThrow,
-  IndicateurValeursError,
   indicateurValeursErrorConfig,
   toCommonError,
   toMissingIndicateurSelectionFailure,
@@ -22,23 +20,6 @@ const toThrownValue = (operation: () => unknown): unknown => {
   }
   return undefined;
 };
-
-describe('getIndicateurValeursDataOrThrow', () => {
-  it('retourne les données d’un succès', () => {
-    expect(getIndicateurValeursDataOrThrow(success(42))).toBe(42);
-  });
-
-  it('lance l’échec lui-même, sans le convertir en exception HTTP', () => {
-    const result = failure<IndicateurValeursError>(
-      'INVALID_VALUE',
-      new Error('Valeur invalide')
-    );
-
-    const thrown = toThrownValue(() => getIndicateurValeursDataOrThrow(result));
-
-    expect(thrown).toBe(result);
-  });
-});
 
 describe('indicateurValeursErrorConfig', () => {
   const getResultDataOrThrow = createTrpcErrorHandler(

@@ -40,7 +40,7 @@ import { IndicateurValeursReadAccessService } from '../indicateur-valeurs-read-a
 import { ListIndicateurValeursService } from '../list-indicateur-valeurs/list-indicateur-valeurs.service';
 import { ValidateIndicateurValeursWriteService } from '../write-indicateur-valeurs/validate-indicateur-valeurs-write.service';
 import { WriteIndicateurValeursService } from '../write-indicateur-valeurs/write-indicateur-valeurs.service';
-import { UserIndicateurValeurNotAllowedException } from '../write-indicateur-valeurs/user-indicateur-valeur.errors';
+import { toUserValeurNotAllowedFailure } from '../write-indicateur-valeurs/user-indicateur-valeur.errors';
 import { ReconcileIndicateurValeursService } from '../reconcile-indicateur-valeurs/reconcile-indicateur-valeurs.service';
 
 // Compose the real workflows around repository mocks so these tests continue to
@@ -1736,12 +1736,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
         const service = toServiceWithMocks({
           canMutateValeur: vi
             .fn()
-            .mockResolvedValue(
-              failure(
-                'USER_VALUE_NOT_ALLOWED',
-                new UserIndicateurValeurNotAllowedException([10])
-              )
-            ),
+            .mockResolvedValue(toUserValeurNotAllowedFailure([10])),
         });
 
         await expect(appeler(service)).resolves.toMatchObject({
