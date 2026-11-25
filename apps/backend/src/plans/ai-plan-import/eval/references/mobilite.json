@@ -1,0 +1,419 @@
+{
+  "manual": true,
+  "fichier": "mobilité/PDMS_CMC_Phase 3_Feuilles de route.pdf",
+  "document": "Plan de mobilité simplifié de Centre Morbihan Communauté (CMC), phase 3 « Définition du programme d’actions », version finale de novembre 2023 (diaporama de 33 pages, sans période d'application explicite) ; structure relevée dans le sommaire (p. 2), les pages de synthèse par axe (p. 3-4, 22, 30) et le corps des fiches (p. 5-33) : 3 axes, 11 sous-axes (mesures), 44 fiches (actions lettrées), 0 étape.",
+  "remarques": [
+    "Hiérarchie retenue : Axe → Mesure (sous-axe, numérotée 1.1…3.2) → Action lettrée A, B, C… (fiche). Chaque action a son propre cartouche (échéance, porteurs, partenaires, territoires, publics, budget) : c'est elle la fiche, la mesure ne fait que les regrouper. Aucune étape titrée sous les actions (seulement des puces de description).",
+    "Numéro des fiches : la lettre telle qu'écrite dans le document (« A », « B »…), qui recommence à A dans chaque mesure ; le rattachement se lit dans `cheminAxes`. Le document n'écrit jamais de numéro composé du type « 1.1.A ».",
+    "Le sommaire (p. 2) annonce « 3 axes et 13 mesures » mais n'en liste que 11, et le corps du document n'en contient que 11 : 11 sous-axes retenus.",
+    "Mesure 2.2 F « Encourager la mutualisation de services itinérants » : présente dans le sommaire (2.2 compte « 6 actions ») et sur la page de synthèse de l'axe 2 (p. 22), mais sans fiche détaillée dans le corps (la p. 28 s'arrête à l'action E). Conservée comme fiche, titre pris sur la page de synthèse. Les 43 autres fiches ont une fiche détaillée.",
+    "Titres des mesures : repris des en-têtes des pages de fiches (concordants avec les pages de synthèse), plutôt que du sommaire qui diffère : 1.3 « … des plus vulnérables / dépendants / non motorisés » au sommaire, 1.4 « pour tous et pout tous motifs » (coquille) au sommaire, 3.1 « … carburants alternatifs et leur accessibilité » au sommaire, 1.2 « (A VELO 2) » au sommaire vs « (AVELO 2) » dans les en-têtes.",
+    "Titres des fiches : repris du titre en gras dans le corps. Divergences avec la page de synthèse : 1.2 A « … voies vertes d’intérêt communal » en synthèse vs « … voies vertes » dans la fiche ; 1.2 D « cœurs de bourgs » vs « cœurs de bourg » ; 2.1 C « dans les écoles et les collèges (communes et/ou département) » en synthèse ; 3.2 B « Déployer les zone 30 et les zones de rencontre (communal) » en synthèse vs « Déployer des zones 30 et des zones de rencontres » dans la fiche.",
+    "Notes en italique accolées au titre gras exclues du titre : 1.1 C « (en lien avec l’Axe 2 - Mesure 2.1 Sensibiliser et accompagner à l'usage des modes alternatifs) », 1.5 A « (avec en complément une option de rabattement en TAD vers ces deux nouveaux arrêts) », 2.1 E « (Identifier au préalable des itinéraires en lien avec le schéma directeur cyclable. Possibilité d’expérimenter cette action…) ». En revanche les parenthèses en gras font partie du titre et sont conservées (1.3 B, 1.6 A, 3.1 B).",
+    "Astérisques de renvoi supprimés en fin de titre (1.3 F « (TUS)* », 1.4 A « unique* », 2.2 B « visiteurs * », 2.2 E « itinérantes* », 2.2 F « itinérants* ») : aucune note correspondante dans le document.",
+    "Coquilles et graphie du document conservées (« Communiquer, animer et sensibilisation », « aux avantage du recrutement », « en connexion direct », « A adapter », apostrophes droites ou typographiques telles qu'écrites). Le tiret de 1.5 C « Baud Ploërmel » suit la fiche (« – Baud Ploërmel »), la synthèse écrivant « - Baud-Ploërmel(Région) »."
+  ],
+  "axes": [
+    "1 Garantir le droit à se déplacer",
+    "2 Accompagner vers de nouveaux usages moins impactants",
+    "3 Réduire notre dépendance aux transports carbonés"
+  ],
+  "actions": [
+    {
+      "axe": "1 Garantir le droit à se déplacer",
+      "cheminAxes": [
+        "1 Garantir le droit à se déplacer",
+        "1.1 Développer des services en faveur de l'usage du vélo au quotidien"
+      ],
+      "numero": "A",
+      "titre": "Organiser des bourses à vélo"
+    },
+    {
+      "axe": "1 Garantir le droit à se déplacer",
+      "cheminAxes": [
+        "1 Garantir le droit à se déplacer",
+        "1.1 Développer des services en faveur de l'usage du vélo au quotidien"
+      ],
+      "numero": "B",
+      "titre": "Soutenir le développement d’une activité de réparation vélo"
+    },
+    {
+      "axe": "1 Garantir le droit à se déplacer",
+      "cheminAxes": [
+        "1 Garantir le droit à se déplacer",
+        "1.1 Développer des services en faveur de l'usage du vélo au quotidien"
+      ],
+      "numero": "C",
+      "titre": "Former à la pratique du vélo"
+    },
+    {
+      "axe": "1 Garantir le droit à se déplacer",
+      "cheminAxes": [
+        "1 Garantir le droit à se déplacer",
+        "1.2 Elaborer un schéma directeur cyclable (AVELO 2)"
+      ],
+      "numero": "A",
+      "titre": "Développer un réseau de pistes cyclables et voies vertes"
+    },
+    {
+      "axe": "1 Garantir le droit à se déplacer",
+      "cheminAxes": [
+        "1 Garantir le droit à se déplacer",
+        "1.2 Elaborer un schéma directeur cyclable (AVELO 2)"
+      ],
+      "numero": "B",
+      "titre": "Identifier l’ensemble des axes cyclables intercommunaux potentiels à partir des chemins, voyettes et petites routes communales"
+    },
+    {
+      "axe": "1 Garantir le droit à se déplacer",
+      "cheminAxes": [
+        "1 Garantir le droit à se déplacer",
+        "1.2 Elaborer un schéma directeur cyclable (AVELO 2)"
+      ],
+      "numero": "C",
+      "titre": "Coordonner localement avec les communes le maillage cyclable en proposant un soutien en ingénierie"
+    },
+    {
+      "axe": "1 Garantir le droit à se déplacer",
+      "cheminAxes": [
+        "1 Garantir le droit à se déplacer",
+        "1.2 Elaborer un schéma directeur cyclable (AVELO 2)"
+      ],
+      "numero": "D",
+      "titre": "Créer du stationnement vélo sécurisé au niveau des pôles générateurs de déplacements et cœurs de bourg"
+    },
+    {
+      "axe": "1 Garantir le droit à se déplacer",
+      "cheminAxes": [
+        "1 Garantir le droit à se déplacer",
+        "1.2 Elaborer un schéma directeur cyclable (AVELO 2)"
+      ],
+      "numero": "E",
+      "titre": "Entretenir les aménagements cyclables existants ou futurs"
+    },
+    {
+      "axe": "1 Garantir le droit à se déplacer",
+      "cheminAxes": [
+        "1 Garantir le droit à se déplacer",
+        "1.2 Elaborer un schéma directeur cyclable (AVELO 2)"
+      ],
+      "numero": "F",
+      "titre": "Mettre en place du jalonnement vélo sur les axes cyclables et voyettes"
+    },
+    {
+      "axe": "1 Garantir le droit à se déplacer",
+      "cheminAxes": [
+        "1 Garantir le droit à se déplacer",
+        "1.3 Répondre aux besoins de déplacements des plus vulnérables"
+      ],
+      "numero": "A",
+      "titre": "Améliorer la communication sur les aides à la mobilité"
+    },
+    {
+      "axe": "1 Garantir le droit à se déplacer",
+      "cheminAxes": [
+        "1 Garantir le droit à se déplacer",
+        "1.3 Répondre aux besoins de déplacements des plus vulnérables"
+      ],
+      "numero": "B",
+      "titre": "Former et accompagner les publics dans l’usage du numérique (en faire une action tout public sur l’accès au numérique, nécessitant ainsi un poste à temps plein. La plateforme mobilité centre bretagne ne prévoit pas d’action dédiée)"
+    },
+    {
+      "axe": "1 Garantir le droit à se déplacer",
+      "cheminAxes": [
+        "1 Garantir le droit à se déplacer",
+        "1.3 Répondre aux besoins de déplacements des plus vulnérables"
+      ],
+      "numero": "C",
+      "titre": "Proposer des diagnostics de mobilité"
+    },
+    {
+      "axe": "1 Garantir le droit à se déplacer",
+      "cheminAxes": [
+        "1 Garantir le droit à se déplacer",
+        "1.3 Répondre aux besoins de déplacements des plus vulnérables"
+      ],
+      "numero": "D",
+      "titre": "Proposer des prêts ou locations à bas prix"
+    },
+    {
+      "axe": "1 Garantir le droit à se déplacer",
+      "cheminAxes": [
+        "1 Garantir le droit à se déplacer",
+        "1.3 Répondre aux besoins de déplacements des plus vulnérables"
+      ],
+      "numero": "E",
+      "titre": "Créer un garage solidaire en rapprochant les ateliers d'insertion et garages locaux pour développer les métiers de la mécanique"
+    },
+    {
+      "axe": "1 Garantir le droit à se déplacer",
+      "cheminAxes": [
+        "1 Garantir le droit à se déplacer",
+        "1.3 Répondre aux besoins de déplacements des plus vulnérables"
+      ],
+      "numero": "F",
+      "titre": "Développer un service de transport d’utilité sociale (TUS)"
+    },
+    {
+      "axe": "1 Garantir le droit à se déplacer",
+      "cheminAxes": [
+        "1 Garantir le droit à se déplacer",
+        "1.4 Développer un dispositif de covoiturage pour tous et pour tous les motifs"
+      ],
+      "numero": "A",
+      "titre": "Déterminer les cibles et les motifs pour déployer un dispositif commun sous une « marque » unique"
+    },
+    {
+      "axe": "1 Garantir le droit à se déplacer",
+      "cheminAxes": [
+        "1 Garantir le droit à se déplacer",
+        "1.4 Développer un dispositif de covoiturage pour tous et pour tous les motifs"
+      ],
+      "numero": "B",
+      "titre": "Communiquer, animer et sensibilisation"
+    },
+    {
+      "axe": "1 Garantir le droit à se déplacer",
+      "cheminAxes": [
+        "1 Garantir le droit à se déplacer",
+        "1.4 Développer un dispositif de covoiturage pour tous et pour tous les motifs"
+      ],
+      "numero": "C",
+      "titre": "Développer et rendre visible les aires de covoiturage accessibles par tous les modes"
+    },
+    {
+      "axe": "1 Garantir le droit à se déplacer",
+      "cheminAxes": [
+        "1 Garantir le droit à se déplacer",
+        "1.4 Développer un dispositif de covoiturage pour tous et pour tous les motifs"
+      ],
+      "numero": "D",
+      "titre": "Aménager les aires de covoiturage"
+    },
+    {
+      "axe": "1 Garantir le droit à se déplacer",
+      "cheminAxes": [
+        "1 Garantir le droit à se déplacer",
+        "1.4 Développer un dispositif de covoiturage pour tous et pour tous les motifs"
+      ],
+      "numero": "E",
+      "titre": "Créer des lignes de covoiturage"
+    },
+    {
+      "axe": "1 Garantir le droit à se déplacer",
+      "cheminAxes": [
+        "1 Garantir le droit à se déplacer",
+        "1.5 Investir dans un service public de transport collectif"
+      ],
+      "numero": "A",
+      "titre": "Créer un à deux arrêt(s) supplémentaire(s) sur le tracé actuel de la ligne BreizhGo 3"
+    },
+    {
+      "axe": "1 Garantir le droit à se déplacer",
+      "cheminAxes": [
+        "1 Garantir le droit à se déplacer",
+        "1.5 Investir dans un service public de transport collectif"
+      ],
+      "numero": "B",
+      "titre": "Créer de nouveaux arrêts pour la ligne BreizhGo 11 ou un service de bus complémentaire opéré par CMC"
+    },
+    {
+      "axe": "1 Garantir le droit à se déplacer",
+      "cheminAxes": [
+        "1 Garantir le droit à se déplacer",
+        "1.5 Investir dans un service public de transport collectif"
+      ],
+      "numero": "C",
+      "titre": "Créer une nouvelle ligne de bus régulier desservant l’axe ouest-est du territoire – Baud Ploërmel"
+    },
+    {
+      "axe": "1 Garantir le droit à se déplacer",
+      "cheminAxes": [
+        "1 Garantir le droit à se déplacer",
+        "1.5 Investir dans un service public de transport collectif"
+      ],
+      "numero": "D",
+      "titre": "Créer un service de transport collectif à la demande pour les communes non desservies par les offres de transport collectif - une ligne avec un trajet, des arrêts et des horaires prédéfinis en connexion direct avec les arrêts des transports en commun"
+    },
+    {
+      "axe": "1 Garantir le droit à se déplacer",
+      "cheminAxes": [
+        "1 Garantir le droit à se déplacer",
+        "1.5 Investir dans un service public de transport collectif"
+      ],
+      "numero": "E",
+      "titre": "Ouverture au public des transports scolaires du territoire"
+    },
+    {
+      "axe": "1 Garantir le droit à se déplacer",
+      "cheminAxes": [
+        "1 Garantir le droit à se déplacer",
+        "1.6 Améliorer les déplacements domicile-travail"
+      ],
+      "numero": "A",
+      "titre": "Encourager les employeurs publics et privés à la mise en place d’un plan de mobilité employeur (PDME)"
+    },
+    {
+      "axe": "1 Garantir le droit à se déplacer",
+      "cheminAxes": [
+        "1 Garantir le droit à se déplacer",
+        "1.6 Améliorer les déplacements domicile-travail"
+      ],
+      "numero": "B",
+      "titre": "Favoriser l’accès à l’emploi en sensibilisant les employeurs du territoire aux avantage du recrutement « sans voiture »"
+    },
+    {
+      "axe": "1 Garantir le droit à se déplacer",
+      "cheminAxes": [
+        "1 Garantir le droit à se déplacer",
+        "1.6 Améliorer les déplacements domicile-travail"
+      ],
+      "numero": "C",
+      "titre": "Créer des partenariats publics / privés de navettes d’entreprises ou interentreprises pour les déplacements domicile-travail : A adapter en fonction des besoins des entreprises"
+    },
+    {
+      "axe": "2 Accompagner vers de nouveaux usages moins impactants",
+      "cheminAxes": [
+        "2 Accompagner vers de nouveaux usages moins impactants",
+        "2.1 Sensibiliser et accompagner à l’usage des modes alternatifs"
+      ],
+      "numero": "A",
+      "titre": "Communiquer en faveur des modes alternatifs"
+    },
+    {
+      "axe": "2 Accompagner vers de nouveaux usages moins impactants",
+      "cheminAxes": [
+        "2 Accompagner vers de nouveaux usages moins impactants",
+        "2.1 Sensibiliser et accompagner à l’usage des modes alternatifs"
+      ],
+      "numero": "B",
+      "titre": "Créer des évènements pour animer le territoire autour des modes alternatifs"
+    },
+    {
+      "axe": "2 Accompagner vers de nouveaux usages moins impactants",
+      "cheminAxes": [
+        "2 Accompagner vers de nouveaux usages moins impactants",
+        "2.1 Sensibiliser et accompagner à l’usage des modes alternatifs"
+      ],
+      "numero": "C",
+      "titre": "Sensibiliser les jeunes à la mobilité durable dans les écoles et collèges"
+    },
+    {
+      "axe": "2 Accompagner vers de nouveaux usages moins impactants",
+      "cheminAxes": [
+        "2 Accompagner vers de nouveaux usages moins impactants",
+        "2.1 Sensibiliser et accompagner à l’usage des modes alternatifs"
+      ],
+      "numero": "D",
+      "titre": "Expérimenter des pédibus pour les élèves du primaire"
+    },
+    {
+      "axe": "2 Accompagner vers de nouveaux usages moins impactants",
+      "cheminAxes": [
+        "2 Accompagner vers de nouveaux usages moins impactants",
+        "2.1 Sensibiliser et accompagner à l’usage des modes alternatifs"
+      ],
+      "numero": "E",
+      "titre": "Mettre en place des vélobus associés au déploiement d’itinéraires sécurisés pour les collégiens"
+    },
+    {
+      "axe": "2 Accompagner vers de nouveaux usages moins impactants",
+      "cheminAxes": [
+        "2 Accompagner vers de nouveaux usages moins impactants",
+        "2.2 Accompagner vers une moindre dépendance à la voiture"
+      ],
+      "numero": "A",
+      "titre": "Communiquer vers les nouveaux habitants"
+    },
+    {
+      "axe": "2 Accompagner vers de nouveaux usages moins impactants",
+      "cheminAxes": [
+        "2 Accompagner vers de nouveaux usages moins impactants",
+        "2.2 Accompagner vers une moindre dépendance à la voiture"
+      ],
+      "numero": "B",
+      "titre": "Communiquer sur les possibilités de déplacement vers les commerces et services auprès des habitants/visiteurs"
+    },
+    {
+      "axe": "2 Accompagner vers de nouveaux usages moins impactants",
+      "cheminAxes": [
+        "2 Accompagner vers de nouveaux usages moins impactants",
+        "2.2 Accompagner vers une moindre dépendance à la voiture"
+      ],
+      "numero": "C",
+      "titre": "Créer une offre de conseil et accompagnement à une mobilité pour encourager l’apprentissage et l’ « aller vers » en matière de mobilité"
+    },
+    {
+      "axe": "2 Accompagner vers de nouveaux usages moins impactants",
+      "cheminAxes": [
+        "2 Accompagner vers de nouveaux usages moins impactants",
+        "2.2 Accompagner vers une moindre dépendance à la voiture"
+      ],
+      "numero": "D",
+      "titre": "Créer un numéro unique pour des conseils dans ses déplacements"
+    },
+    {
+      "axe": "2 Accompagner vers de nouveaux usages moins impactants",
+      "cheminAxes": [
+        "2 Accompagner vers de nouveaux usages moins impactants",
+        "2.2 Accompagner vers une moindre dépendance à la voiture"
+      ],
+      "numero": "E",
+      "titre": "Accompagner le déploiement d’offres itinérantes"
+    },
+    {
+      "axe": "2 Accompagner vers de nouveaux usages moins impactants",
+      "cheminAxes": [
+        "2 Accompagner vers de nouveaux usages moins impactants",
+        "2.2 Accompagner vers une moindre dépendance à la voiture"
+      ],
+      "numero": "F",
+      "titre": "Encourager la mutualisation de services itinérants"
+    },
+    {
+      "axe": "2 Accompagner vers de nouveaux usages moins impactants",
+      "cheminAxes": [
+        "2 Accompagner vers de nouveaux usages moins impactants",
+        "2.3 Favoriser une mobilité touristique soutenable"
+      ],
+      "numero": "A",
+      "titre": "Raccorder les circuits de randonnée et cyclables locaux aux itinéraires régionaux et valoriser leur connexion au patrimoine et lieux remarquables"
+    },
+    {
+      "axe": "3 Réduire notre dépendance aux transports carbonés",
+      "cheminAxes": [
+        "3 Réduire notre dépendance aux transports carbonés",
+        "3.1 Inciter aux transports décarbonés et développer le potentiel des carburants alternatifs"
+      ],
+      "numero": "A",
+      "titre": "Faire un diagnostic de l’offre actuelle d’infrastructures de recharge pour véhicules électriques et de leur utilisation"
+    },
+    {
+      "axe": "3 Réduire notre dépendance aux transports carbonés",
+      "cheminAxes": [
+        "3 Réduire notre dépendance aux transports carbonés",
+        "3.1 Inciter aux transports décarbonés et développer le potentiel des carburants alternatifs"
+      ],
+      "numero": "B",
+      "titre": "Développer le potentiel des carburants alternatifs et leur accessibilité (valoriser stations biogaz du territoire pour un potentiel usage grand public, étude des possibilités offertes par l'hydrogène)"
+    },
+    {
+      "axe": "3 Réduire notre dépendance aux transports carbonés",
+      "cheminAxes": [
+        "3 Réduire notre dépendance aux transports carbonés",
+        "3.2 Moduler l’usage des infrastructures"
+      ],
+      "numero": "A",
+      "titre": "Intégrer au PLUi la création de voiries partagées, itinéraires piétons et cyclables"
+    },
+    {
+      "axe": "3 Réduire notre dépendance aux transports carbonés",
+      "cheminAxes": [
+        "3 Réduire notre dépendance aux transports carbonés",
+        "3.2 Moduler l’usage des infrastructures"
+      ],
+      "numero": "B",
+      "titre": "Déployer des zones 30 et des zones de rencontres"
+    }
+  ]
+}

@@ -1,0 +1,99 @@
+{
+  "manual": true,
+  "fichier": "plpdma/projet-plpdma-capg-v20032023-2_in6h53.pdf",
+  "document": "Projet de Programme local de prévention des déchets ménagers et assimilés (PLPDMA) 2023-2028 de la Communauté d'agglomération du Pays de Grasse (CAPG), version du 20/03/2023 ; structure relevée dans la partie « 4.2 Les fiches actions » (p. 24-49, bandeau de thème en capitales posé au-dessus de chaque fiche + cartouche « Action N. ») et croisée avec la synthèse p. 3, la liste p. 16 et le planning p. 20 : 10 axes, 0 sous-axe, 14 fiches, 0 étape.",
+  "remarques": [
+    "Axes = bandeaux en capitales posés au-dessus de chaque fiche dans le corps (le modèle p. 22 les nomme « Flux concerné par l'action »), recopiés tels quels : chaque fiche en porte un, et les fiches qui partagent le même bandeau se suivent. Il y en a 10 distincts, dont 4 variantes « BIODECHETS (…) » (restes alimentaires et végétaux / végétaux / restes alimentaires / restes alimentaires et surplus de production) et 2 variantes « DECHETS ASSIMILES … ».",
+    "Les regroupements hors corps sont d'une autre graphie et d'un autre découpage : synthèse p. 3 en 6 thèmes (BIODÉCHETS : RESTES ALIMENTAIRES ET VÉGÉTAUX pour 1-5 ; ORDURES MÉNAGÈRES ET ASSIMILÉS : OMR ET COLLECTES SÉLECTIVES pour 6 ; DÉCHETS ASSIMILÉS - DÉCHETS DES ACTIVITÉS ÉCONOMIQUES pour 7-8 ; DÉCHETS OCCASIONNELS DES MÉNAGES pour 9 ; DÉCHETS EN MER pour 10 ; ACTIONS TRANSVERSALES - TOUS FLUX pour 11-14) ; liste p. 16 (image) en 5 thèmes (6-8 sous « AUTRES DÉCHETS MÉNAGERS ET ASSIMILÉS ») ; planning p. 20 avec les mêmes 6 thèmes que p. 3 mais 11-14 placées par erreur sous « DECHETS OCCASIONNELS DES MENAGES ». Non retenus comme axes : la consigne veut le corps des fiches. Un banc qui regrouperait les 4 bandeaux BIODECHETS en un seul axe (et 7/8 sous un seul axe déchets assimilés) retrouverait les 6 thèmes de la p. 3.",
+    "Fiche 8 : le bandeau du corps est « DECHETS ASSIMILES PRIS EN CHARGE PAR LE SERVICE PUBLIC », différent de celui de la fiche 7 (« DECHETS ASSIMILES - DECHETS DES ACTIVITES ECONOMIQUES ») alors que la p. 3 range 7 et 8 ensemble : axe distinct conservé.",
+    "Fiche 10 : le titre du corps court sur deux lignes et se termine par « … et en particulier contre les dépôts sauvages » ; la synthèse p. 3 et le planning l'abrègent (« … contre les déchets en mer »), la p. 16 écrit « … en particulier lutte contre les dépôts sauvages ». Titre du corps retenu.",
+    "Titres du corps retenus contre les variantes des récapitulatifs : 1-2 « Organiser » (p. 16 et planning : « Proposer »), 2 « collectif, partagé ou pédagogique » (p. 16 : « collectif et partagé »), 5 « Développer ou renforcer la démarche de don alimentaire » (p. 16 : « Renforcer la démarche de dons alimentaires »), 8 « Initier une démarche d'EIT - Synergies Interentreprises » (p. 16 : « Accompagner les synergies inter-entreprises dans les zones d'activités »), 13 « … sur les thématiques du PLPDMA » (p. 16 et planning : « … sur la réduction des déchets »). Fiche 12 recomposée sur deux lignes (« … communes / membres »).",
+    "Numéros : le corps écrit « Action N. » (1 à 14) ; numero = N. Les fiches renvoient parfois entre elles en « A3 », « A15 » (coquille), sans incidence sur la structure. Le tableau p. 19 (croisement avec les 10 axes du guide ADEME, où la fiche 9 est notée « 19. RRR ») est une grille de correspondance, pas la structure du plan.",
+    "Graphie : bandeaux en capitales remis en casse de phrase avec accents rétablis (sigle OMR conservé, partie « OMR et Collecte sélective » déjà en casse mixte gardée telle quelle) ; titres de fiches recopiés tels qu'écrits (apostrophes typographiques des fiches 1-2, droites ailleurs ; « Elaborer » sans accent).",
+    "Pas d'étapes : la rubrique « Descriptif de l'action et sous actions » liste des lignes non numérotées (parfois une amorce en gras, ex. « Maintenir l'accompagnement méthodologique pour les communes : »), malgré le modèle p. 22 qui montre « 1. Sous action 1. » ; aucune fiche ne numérote ni ne titre ses sous-actions."
+  ],
+  "axes": [
+    "Biodéchets (restes alimentaires et végétaux)",
+    "Biodéchets (végétaux)",
+    "Biodéchets (restes alimentaires)",
+    "Biodéchets (restes alimentaires et surplus de production)",
+    "Ordures ménagères et assimilés - OMR et Collecte sélective",
+    "Déchets assimilés - déchets des activités économiques",
+    "Déchets assimilés pris en charge par le service public",
+    "Déchets occasionnels des ménages",
+    "Réduction des déchets en mer",
+    "Actions transversales - tous flux"
+  ],
+  "actions": [
+    {
+      "axe": "Biodéchets (restes alimentaires et végétaux)",
+      "numero": "1",
+      "titre": "Organiser un service d’accompagnement au compostage individuel"
+    },
+    {
+      "axe": "Biodéchets (restes alimentaires et végétaux)",
+      "numero": "2",
+      "titre": "Organiser un service d’accompagnement au compostage collectif, partagé ou pédagogique"
+    },
+    {
+      "axe": "Biodéchets (végétaux)",
+      "numero": "3",
+      "titre": "Promouvoir et mettre en place des opérations de broyage des végétaux"
+    },
+    {
+      "axe": "Biodéchets (restes alimentaires)",
+      "numero": "4",
+      "titre": "Lutter contre le gaspillage alimentaire"
+    },
+    {
+      "axe": "Biodéchets (restes alimentaires et surplus de production)",
+      "numero": "5",
+      "titre": "Développer ou renforcer la démarche de don alimentaire"
+    },
+    {
+      "axe": "Ordures ménagères et assimilés - OMR et Collecte sélective",
+      "numero": "6",
+      "titre": "Lancer une réflexion sur la tarification incitative"
+    },
+    {
+      "axe": "Déchets assimilés - déchets des activités économiques",
+      "numero": "7",
+      "titre": "Redéfinir les contours du service public"
+    },
+    {
+      "axe": "Déchets assimilés pris en charge par le service public",
+      "numero": "8",
+      "titre": "Initier une démarche d'EIT - Synergies Interentreprises"
+    },
+    {
+      "axe": "Déchets occasionnels des ménages",
+      "numero": "9",
+      "titre": "Promouvoir le troc, la réparation et le réemploi"
+    },
+    {
+      "axe": "Réduction des déchets en mer",
+      "numero": "10",
+      "titre": "Soutenir des actions en lien avec la lutte contre les déchets en mer et en particulier contre les dépôts sauvages"
+    },
+    {
+      "axe": "Actions transversales - tous flux",
+      "numero": "11",
+      "titre": "Structurer une commande publique responsable"
+    },
+    {
+      "axe": "Actions transversales - tous flux",
+      "numero": "12",
+      "titre": "Créer une dynamique prévention au sein de l'Agglomération et de ses communes membres"
+    },
+    {
+      "axe": "Actions transversales - tous flux",
+      "numero": "13",
+      "titre": "Encourager la démarche de sensibilisation sur les thématiques du PLPDMA"
+    },
+    {
+      "axe": "Actions transversales - tous flux",
+      "numero": "14",
+      "titre": "Elaborer et diffuser un plan de communication PLPDMA sur les 6 ans du programme"
+    }
+  ]
+}

@@ -15,6 +15,7 @@ import {
   EvalMetrics,
   EvalRun,
   isManualReference,
+  referenceAtActionLevel,
   ManualReferenceDiff,
 } from './eval-metrics';
 import type { GenericEvalInput } from './read-eval-input';
@@ -161,7 +162,13 @@ export const buildEvalOutput = ({
     reference === null
       ? null
       : isManualReference(reference)
-      ? compareWithManualReference({ draft: plan, metrics }, reference)
+      ? compareWithManualReference(
+          { draft: plan, metrics },
+          referenceAtActionLevel(
+            reference,
+            input.options.actionLevel ?? 'fiche'
+          )
+        )
       : compareWithReference({ draft, metrics }, reference);
   return {
     file: basename(input.file),

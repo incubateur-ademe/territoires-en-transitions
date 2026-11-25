@@ -1,0 +1,484 @@
+{
+  "manual": true,
+  "fichier": "biodiversité/planintercommunalbiodiversited_z828ms.pdf",
+  "document": "Plan Intercommunal pour la Biodiversité de la Communauté d’Agglomération du Pays de Grasse (CAPG), réalisé en décembre 2025, programmation 2026-2031 ; structure relevée dans la partie « VII. Place à l’action ! » : tableau du plan d’actions p. 48-49 (axes stratégiques > orientations stratégiques > actions) croisé avec les 24 fiches-actions p. 51-101 ; 6 axes, 14 sous-axes, 51 fiches, 0 étape.",
+  "remarques": [
+    "Le plan compte 51 actions numérotées 1 à 51 (« Action à poursuivre N » et « Action à engager N ») ; seules les 24 actions à engager (3, 5, 7-11, 21, 22, 24, 25, 31-34, 37-43, 49, 51) ont une fiche-action détaillée p. 51-101. Les 27 actions à poursuivre sont aussi relevées comme fiches, car elles font partie du plan d’actions au même titre (numérotation continue, même tableau) ; leur titre vient du tableau p. 48-49, seule source. Pour les 24 actions à engager, le titre vient du corps de la fiche.",
+    "Le diagnostic, l’état des lieux (parties I à VI, dont le « Panorama de toutes les actions engagées par la CAPG » p. 25-42 et la synthèse des actions des communes p. 43-44) et la gouvernance (VIII) ne sont pas relevés.",
+    "Sous-axes = « Orientations stratégiques ». La colonne « Objectifs » du tableau contient une seule phrase par axe (description de l’axe), pas un niveau de regroupement : non relevée.",
+    "Numérotation des orientations : le tableau saute le n° 7 (1 à 6 puis 8 à 15) ; les fiches 24 et 25 nomment « Orientation stratégique 7 : Renaturer les espaces urbains et restaurer les sols comme support de biodiversité » ce que le tableau numérote 6. Retenu le numéro du tableau (6), qui couvre aussi l’action 23 sans fiche.",
+    "Rattachement aux orientations lu dans les cellules fusionnées du tableau (vérifié sur l’image) : l’action 29 relève de l’orientation 8 (et non 9), l’action 49 de l’orientation 14 (confirmé par sa fiche), l’action 50 de l’orientation 15.",
+    "Libellés d’axes repris du tableau : axe 6 « Faire connaitre » (les fiches écrivent « Faire connaître »), axe 5 « où l’homme » (les fiches 38 et 39 écrivent « ou l’homme »).",
+    "Titre de l’action 21 pris dans la fiche, qui ajoute « (PGSZH) » absent du tableau ; titre de l’action 39 recomposé (« d’ » en fin de ligne + « Orientation… ») ; action 29 libellée « Actions à poursuivre 29 » dans le tableau. Point final de l’action 30 retiré.",
+    "Aucune fiche ne liste d’étapes ou sous-actions titrées (descriptifs en simples puces) : pas d’étapes."
+  ],
+  "axes": [
+    "1 Renforcer la connaissance pour développer la capacité d’agir",
+    "2 Gestion patrimoniale des espèces et des habitats emblématiques",
+    "3 Lutter contre la fragmentation des habitats naturels pour préserver le vivant",
+    "4 Vers une gestion durable des espaces verts et de nature",
+    "5 Vers des villes et des villages plus durables où l’homme cohabite avec la nature",
+    "6 Faire connaitre et reconnaitre le rôle et l’importance de la biodiversité sur l’ensemble du territoire"
+  ],
+  "actions": [
+    {
+      "axe": "1 Renforcer la connaissance pour développer la capacité d’agir",
+      "cheminAxes": [
+        "1 Renforcer la connaissance pour développer la capacité d’agir",
+        "1 Poursuivre la collecte et la valorisation des données naturalistes"
+      ],
+      "numero": "1",
+      "titre": "Soutenir la mise en œuvre des Plans Nationaux et Plans Régionaux d'Actions (PNA et PRA) et de la stratégie de conservation de la flore vasculaire en région méditerranéenne pour renforcer la préservation des espèces et des habitats menacés"
+    },
+    {
+      "axe": "1 Renforcer la connaissance pour développer la capacité d’agir",
+      "cheminAxes": [
+        "1 Renforcer la connaissance pour développer la capacité d’agir",
+        "1 Poursuivre la collecte et la valorisation des données naturalistes"
+      ],
+      "numero": "2",
+      "titre": "Initier ou accompagner financièrement des inventaires naturalistes pour renforcer la connaissance et la préservation de la faune, de la flore et des habitats naturels du territoire notamment via des inventaires participatifs, un appui aux actions des animateurs Natura 2000 ou le déploiement des Refuges LPO pour les collectivités"
+    },
+    {
+      "axe": "1 Renforcer la connaissance pour développer la capacité d’agir",
+      "cheminAxes": [
+        "1 Renforcer la connaissance pour développer la capacité d’agir",
+        "1 Poursuivre la collecte et la valorisation des données naturalistes"
+      ],
+      "numero": "3",
+      "titre": "Capitaliser les connaissances sur la faune du bâti et évaluer l’efficacité des actions de protection grâce au suivi des hirondelles"
+    },
+    {
+      "axe": "1 Renforcer la connaissance pour développer la capacité d’agir",
+      "cheminAxes": [
+        "1 Renforcer la connaissance pour développer la capacité d’agir",
+        "1 Poursuivre la collecte et la valorisation des données naturalistes"
+      ],
+      "numero": "4",
+      "titre": "Accompagner les communes dans l’élaboration de leur dossier de candidature aux Atlas de la Biodiversité Communale (ABC), outils pour mieux connaître et protéger la biodiversité locale"
+    },
+    {
+      "axe": "1 Renforcer la connaissance pour développer la capacité d’agir",
+      "cheminAxes": [
+        "1 Renforcer la connaissance pour développer la capacité d’agir",
+        "1 Poursuivre la collecte et la valorisation des données naturalistes"
+      ],
+      "numero": "5",
+      "titre": "Evaluer les enjeux écologiques des bâtiments et terrains propriétés de la CAPG, dans une perspective de préservation et de restauration de la biodiversité"
+    },
+    {
+      "axe": "1 Renforcer la connaissance pour développer la capacité d’agir",
+      "cheminAxes": [
+        "1 Renforcer la connaissance pour développer la capacité d’agir",
+        "2 Améliorer l’accès des acteurs locaux aux données et connaissances sur la biodiversité afin de favoriser le partage des enjeux"
+      ],
+      "numero": "6",
+      "titre": "Alimenter les bases de données naturalistes régionales (SILENE, FAUNE PACA) avec les données issues des inventaires et études, afin de favoriser la prise en compte des enjeux de biodiversité dans les projets d’aménagement"
+    },
+    {
+      "axe": "1 Renforcer la connaissance pour développer la capacité d’agir",
+      "cheminAxes": [
+        "1 Renforcer la connaissance pour développer la capacité d’agir",
+        "2 Améliorer l’accès des acteurs locaux aux données et connaissances sur la biodiversité afin de favoriser le partage des enjeux"
+      ],
+      "numero": "7",
+      "titre": "Intégrer le réseau RESEDA-Flore pour capitaliser et valoriser les actions du territoire en faveur de la biodiversité"
+    },
+    {
+      "axe": "1 Renforcer la connaissance pour développer la capacité d’agir",
+      "cheminAxes": [
+        "1 Renforcer la connaissance pour développer la capacité d’agir",
+        "2 Améliorer l’accès des acteurs locaux aux données et connaissances sur la biodiversité afin de favoriser le partage des enjeux"
+      ],
+      "numero": "8",
+      "titre": "Elaborer un guide sur les espèces exotiques envahissantes de la CAPG en cohérence avec les stratégies régionales de la région PACA"
+    },
+    {
+      "axe": "1 Renforcer la connaissance pour développer la capacité d’agir",
+      "cheminAxes": [
+        "1 Renforcer la connaissance pour développer la capacité d’agir",
+        "2 Améliorer l’accès des acteurs locaux aux données et connaissances sur la biodiversité afin de favoriser le partage des enjeux"
+      ],
+      "numero": "9",
+      "titre": "Élaborer des porters à connaissance communaux sur les enjeux de biodiversité à destination des élus"
+    },
+    {
+      "axe": "2 Gestion patrimoniale des espèces et des habitats emblématiques",
+      "cheminAxes": [
+        "2 Gestion patrimoniale des espèces et des habitats emblématiques",
+        "3 Garantir la conservation des habitats naturels et des espèces patrimoniales"
+      ],
+      "numero": "10",
+      "titre": "Accompagner les démarches Natura 2000 en cours et en devenir et le renforcement du réseau d’aires protégées dans une vision de développement local"
+    },
+    {
+      "axe": "2 Gestion patrimoniale des espèces et des habitats emblématiques",
+      "cheminAxes": [
+        "2 Gestion patrimoniale des espèces et des habitats emblématiques",
+        "3 Garantir la conservation des habitats naturels et des espèces patrimoniales"
+      ],
+      "numero": "11",
+      "titre": "Élaborer des baux à clauses environnementales sur les terrains agricoles de la CAPG pour concilier activité agricole et préservation de la biodiversité"
+    },
+    {
+      "axe": "2 Gestion patrimoniale des espèces et des habitats emblématiques",
+      "cheminAxes": [
+        "2 Gestion patrimoniale des espèces et des habitats emblématiques",
+        "3 Garantir la conservation des habitats naturels et des espèces patrimoniales"
+      ],
+      "numero": "12",
+      "titre": "Maintenir et renforcer une gestion durable et multifonctionnelle de la ressource forestière, conciliant valorisation économique, préservation de la biodiversité et adaptation aux effets du changement climatique"
+    },
+    {
+      "axe": "2 Gestion patrimoniale des espèces et des habitats emblématiques",
+      "cheminAxes": [
+        "2 Gestion patrimoniale des espèces et des habitats emblématiques",
+        "3 Garantir la conservation des habitats naturels et des espèces patrimoniales"
+      ],
+      "numero": "13",
+      "titre": "Soutenir le Centre de Soin de la Faune Sauvage"
+    },
+    {
+      "axe": "2 Gestion patrimoniale des espèces et des habitats emblématiques",
+      "cheminAxes": [
+        "2 Gestion patrimoniale des espèces et des habitats emblématiques",
+        "3 Garantir la conservation des habitats naturels et des espèces patrimoniales"
+      ],
+      "numero": "14",
+      "titre": "Assurer une surveillance et mettre en œuvre des actions de lutte contre les espèces exotiques envahissantes (Berce du Caucase, Jussie rampante…)"
+    },
+    {
+      "axe": "2 Gestion patrimoniale des espèces et des habitats emblématiques",
+      "cheminAxes": [
+        "2 Gestion patrimoniale des espèces et des habitats emblématiques",
+        "4 Intégrer les enjeux de biodiversité dans l’aménagement du territoire"
+      ],
+      "numero": "15",
+      "titre": "Accompagner les collectivités et les services de la CAPG pour favoriser une meilleure compréhension et l’intégration des enjeux liés à la biodiversité dans les projets d’aménagement ou de valorisation (ex : Domaine des Sources)"
+    },
+    {
+      "axe": "2 Gestion patrimoniale des espèces et des habitats emblématiques",
+      "cheminAxes": [
+        "2 Gestion patrimoniale des espèces et des habitats emblématiques",
+        "4 Intégrer les enjeux de biodiversité dans l’aménagement du territoire"
+      ],
+      "numero": "16",
+      "titre": "Intégrer la préservation et la valorisation des espèces patrimoniales dans les stratégies territoriales portées par la CAPG (PCAET, PAT, PLH) ou les communes"
+    },
+    {
+      "axe": "3 Lutter contre la fragmentation des habitats naturels pour préserver le vivant",
+      "cheminAxes": [
+        "3 Lutter contre la fragmentation des habitats naturels pour préserver le vivant",
+        "5 Préserver et restaurer les trames écologiques du territoire"
+      ],
+      "numero": "17",
+      "titre": "Mettre en œuvre les orientations définies dans le SCOT de l’Ouest des Alpes-Maritimes et les Plans Locaux d’Urbanisme (PLU) pour préserver les Trames Verte, Bleue et Turquoise"
+    },
+    {
+      "axe": "3 Lutter contre la fragmentation des habitats naturels pour préserver le vivant",
+      "cheminAxes": [
+        "3 Lutter contre la fragmentation des habitats naturels pour préserver le vivant",
+        "5 Préserver et restaurer les trames écologiques du territoire"
+      ],
+      "numero": "18",
+      "titre": "Préserver les espaces agricoles dans le cadre du déploiement de la stratégie foncière agricole de la CAPG en faveur des agriculteurs en agriculture biologique (AB) et poursuivre la mise à disposition de parcelles, propriétés de la CAPG, à des apiculteurs professionnels et amateurs"
+    },
+    {
+      "axe": "3 Lutter contre la fragmentation des habitats naturels pour préserver le vivant",
+      "cheminAxes": [
+        "3 Lutter contre la fragmentation des habitats naturels pour préserver le vivant",
+        "5 Préserver et restaurer les trames écologiques du territoire"
+      ],
+      "numero": "19",
+      "titre": "Préserver et restaurer la Trame Bleue et Turquoise dans le cadre de la compétence Gestion de l’Eau et des Milieux Aquatiques (GEMA)"
+    },
+    {
+      "axe": "3 Lutter contre la fragmentation des habitats naturels pour préserver le vivant",
+      "cheminAxes": [
+        "3 Lutter contre la fragmentation des habitats naturels pour préserver le vivant",
+        "5 Préserver et restaurer les trames écologiques du territoire"
+      ],
+      "numero": "20",
+      "titre": "Accompagner les projets de protection, restauration et/ou valorisation des zones humides (ex : Lac des Mimosas/Lacs des Iscles, Lac Saint-Joseph, Domaine des Sources)"
+    },
+    {
+      "axe": "3 Lutter contre la fragmentation des habitats naturels pour préserver le vivant",
+      "cheminAxes": [
+        "3 Lutter contre la fragmentation des habitats naturels pour préserver le vivant",
+        "5 Préserver et restaurer les trames écologiques du territoire"
+      ],
+      "numero": "21",
+      "titre": "Décliner de manière opérationnelle les Plans de Gestion Stratégique des Zones Humides (PGSZH) pour préserver et restaurer la Trame Turquoise"
+    },
+    {
+      "axe": "3 Lutter contre la fragmentation des habitats naturels pour préserver le vivant",
+      "cheminAxes": [
+        "3 Lutter contre la fragmentation des habitats naturels pour préserver le vivant",
+        "5 Préserver et restaurer les trames écologiques du territoire"
+      ],
+      "numero": "22",
+      "titre": "Améliorer la fonctionnalité et la connectivité écologique des paysages nocturnes"
+    },
+    {
+      "axe": "3 Lutter contre la fragmentation des habitats naturels pour préserver le vivant",
+      "cheminAxes": [
+        "3 Lutter contre la fragmentation des habitats naturels pour préserver le vivant",
+        "6 Renaturer les espaces urbains et restaurer les sols comme support de biodiversité"
+      ],
+      "numero": "23",
+      "titre": "Renforcer la Trame Verte en milieu urbain via des projets exemplaires (Jardins du Musée International de la Parfumerie (JMIP), Jardin Roure, les jardins partagés, le Jardin de Pluie ou les Refuges LPO) pour favoriser la connectivité écologique"
+    },
+    {
+      "axe": "3 Lutter contre la fragmentation des habitats naturels pour préserver le vivant",
+      "cheminAxes": [
+        "3 Lutter contre la fragmentation des habitats naturels pour préserver le vivant",
+        "6 Renaturer les espaces urbains et restaurer les sols comme support de biodiversité"
+      ],
+      "numero": "24",
+      "titre": "Partager des initiatives inspirantes de désimperméabilisation et de renaturation auprès des élus locaux et les accompagner dans la mise en œuvre de leurs projets"
+    },
+    {
+      "axe": "3 Lutter contre la fragmentation des habitats naturels pour préserver le vivant",
+      "cheminAxes": [
+        "3 Lutter contre la fragmentation des habitats naturels pour préserver le vivant",
+        "6 Renaturer les espaces urbains et restaurer les sols comme support de biodiversité"
+      ],
+      "numero": "25",
+      "titre": "Promouvoir l’utilisation de végétaux locaux dans les projets de végétalisation et de renaturation"
+    },
+    {
+      "axe": "4 Vers une gestion durable des espaces verts et de nature",
+      "cheminAxes": [
+        "4 Vers une gestion durable des espaces verts et de nature",
+        "8 Renforcer la gestion écologique des espaces verts"
+      ],
+      "numero": "26",
+      "titre": "Poursuivre la mise en œuvre des plans de gestion élaborés dans le cadre de la démarche « Refuge LPO collectivités »"
+    },
+    {
+      "axe": "4 Vers une gestion durable des espaces verts et de nature",
+      "cheminAxes": [
+        "4 Vers une gestion durable des espaces verts et de nature",
+        "8 Renforcer la gestion écologique des espaces verts"
+      ],
+      "numero": "27",
+      "titre": "Valoriser la prairie aux papillons des Jardins du Musée International de la Parfumerie (JMIP)"
+    },
+    {
+      "axe": "4 Vers une gestion durable des espaces verts et de nature",
+      "cheminAxes": [
+        "4 Vers une gestion durable des espaces verts et de nature",
+        "8 Renforcer la gestion écologique des espaces verts"
+      ],
+      "numero": "28",
+      "titre": "Réactualiser le guide sur les plantations mellifères pour favoriser les pollinisateurs"
+    },
+    {
+      "axe": "4 Vers une gestion durable des espaces verts et de nature",
+      "cheminAxes": [
+        "4 Vers une gestion durable des espaces verts et de nature",
+        "8 Renforcer la gestion écologique des espaces verts"
+      ],
+      "numero": "29",
+      "titre": "Déployer de nouvelles formations à destination des agents et des élus sur la gestion des espaces en faveur de la biodiversité"
+    },
+    {
+      "axe": "4 Vers une gestion durable des espaces verts et de nature",
+      "cheminAxes": [
+        "4 Vers une gestion durable des espaces verts et de nature",
+        "9 Améliorer la capacité d’accueil des espaces verts pour la biodiversité"
+      ],
+      "numero": "30",
+      "titre": "Intégrer la préservation des gîtes naturels de la faune comme priorité dans les projets de la CAPG, tout en renforçant la fonctionnalité écologique des milieux urbains et péri-urbains par des aménagements favorisant la nidification des oiseaux et le maintien des pollinisateurs (installation et suivi de nichoirs, de gîtes à abeilles sauvages et d’abris à papillons)"
+    },
+    {
+      "axe": "4 Vers une gestion durable des espaces verts et de nature",
+      "cheminAxes": [
+        "4 Vers une gestion durable des espaces verts et de nature",
+        "9 Améliorer la capacité d’accueil des espaces verts pour la biodiversité"
+      ],
+      "numero": "31",
+      "titre": "Favoriser la petite faune par des aménagements adaptés"
+    },
+    {
+      "axe": "4 Vers une gestion durable des espaces verts et de nature",
+      "cheminAxes": [
+        "4 Vers une gestion durable des espaces verts et de nature",
+        "10 Soutenir les communes dans la mise en œuvre de démarches favorables à la biodiversité et diffuser les bonnes pratiques à l’échelle du territoire"
+      ],
+      "numero": "32",
+      "titre": "Accompagner les communes pour intégrer les enjeux de biodiversité dans la mise en œuvre des obligations légales de débroussaillement"
+    },
+    {
+      "axe": "4 Vers une gestion durable des espaces verts et de nature",
+      "cheminAxes": [
+        "4 Vers une gestion durable des espaces verts et de nature",
+        "10 Soutenir les communes dans la mise en œuvre de démarches favorables à la biodiversité et diffuser les bonnes pratiques à l’échelle du territoire"
+      ],
+      "numero": "33",
+      "titre": "Relayer aux communes et aux particuliers les bonnes pratiques sur la gestion écologique des espaces verts"
+    },
+    {
+      "axe": "4 Vers une gestion durable des espaces verts et de nature",
+      "cheminAxes": [
+        "4 Vers une gestion durable des espaces verts et de nature",
+        "10 Soutenir les communes dans la mise en œuvre de démarches favorables à la biodiversité et diffuser les bonnes pratiques à l’échelle du territoire"
+      ],
+      "numero": "34",
+      "titre": "Accompagner les communes pour une gestion raisonnée des populations de pigeons en milieu urbain"
+    },
+    {
+      "axe": "5 Vers des villes et des villages plus durables où l’homme cohabite avec la nature",
+      "cheminAxes": [
+        "5 Vers des villes et des villages plus durables où l’homme cohabite avec la nature",
+        "11 S’appuyer sur les Solutions fondées sur la Nature (SfN) et les Solutions d’adaptation fondées sur la Nature (SafN) comme réponse au changement climatique et aux enjeux de biodiversité"
+      ],
+      "numero": "35",
+      "titre": "Développer les actions en faveur de la nature en milieu urbanisé (jardins partagés, permis de végétaliser, installation de nichoirs…)"
+    },
+    {
+      "axe": "5 Vers des villes et des villages plus durables où l’homme cohabite avec la nature",
+      "cheminAxes": [
+        "5 Vers des villes et des villages plus durables où l’homme cohabite avec la nature",
+        "11 S’appuyer sur les Solutions fondées sur la Nature (SfN) et les Solutions d’adaptation fondées sur la Nature (SafN) comme réponse au changement climatique et aux enjeux de biodiversité"
+      ],
+      "numero": "36",
+      "titre": "Informer et sensibiliser les porteurs de projets lors de leurs démarches d’urbanisme sur la prise en compte de la biodiversité via la diffusion du guide « Biodiversité et bâti, comment mieux accueillir les hirondelles et martinets » et l’intégration d’un rappel dans les arrêtés d’urbanisme sur la présence possible d’hirondelles"
+    },
+    {
+      "axe": "5 Vers des villes et des villages plus durables où l’homme cohabite avec la nature",
+      "cheminAxes": [
+        "5 Vers des villes et des villages plus durables où l’homme cohabite avec la nature",
+        "11 S’appuyer sur les Solutions fondées sur la Nature (SfN) et les Solutions d’adaptation fondées sur la Nature (SafN) comme réponse au changement climatique et aux enjeux de biodiversité"
+      ],
+      "numero": "37",
+      "titre": "Assurer la cohérence entre les dispositions du Programme Local de l’Habitat du Pays de Grasse et les recommandations visant à préserver la biodiversité dans les projets de construction et de rénovation de l’habitat"
+    },
+    {
+      "axe": "5 Vers des villes et des villages plus durables où l’homme cohabite avec la nature",
+      "cheminAxes": [
+        "5 Vers des villes et des villages plus durables où l’homme cohabite avec la nature",
+        "12 Mieux intégrer la biodiversité dans le volet réglementaire des documents d’urbanisme"
+      ],
+      "numero": "38",
+      "titre": "Intégrer un atelier thématique sur la biodiversité et les Solutions fondées sur la Nature (SfN) dans les phases amont de l’élaboration ou de la révision des PLU pour permettre une prise en compte anticipée des enjeux écologiques"
+    },
+    {
+      "axe": "5 Vers des villes et des villages plus durables où l’homme cohabite avec la nature",
+      "cheminAxes": [
+        "5 Vers des villes et des villages plus durables où l’homme cohabite avec la nature",
+        "12 Mieux intégrer la biodiversité dans le volet réglementaire des documents d’urbanisme"
+      ],
+      "numero": "39",
+      "titre": "Accompagner les communes dans l’élaboration d’Orientation d’Aménagement et de Programmation « biodiversité » et l’intégration de dispositions favorables à la biodiversité dans les PLU"
+    },
+    {
+      "axe": "6 Faire connaitre et reconnaitre le rôle et l’importance de la biodiversité sur l’ensemble du territoire",
+      "cheminAxes": [
+        "6 Faire connaitre et reconnaitre le rôle et l’importance de la biodiversité sur l’ensemble du territoire",
+        "13 Mettre en place des outils pour faciliter l’adhésion de tous les publics aux enjeux de biodiversité"
+      ],
+      "numero": "40",
+      "titre": "Mettre à disposition un outil pédagogique pour encourager les animateurs de centres de loisirs à la réalisation d’animations sur la biodiversité"
+    },
+    {
+      "axe": "6 Faire connaitre et reconnaitre le rôle et l’importance de la biodiversité sur l’ensemble du territoire",
+      "cheminAxes": [
+        "6 Faire connaitre et reconnaitre le rôle et l’importance de la biodiversité sur l’ensemble du territoire",
+        "13 Mettre en place des outils pour faciliter l’adhésion de tous les publics aux enjeux de biodiversité"
+      ],
+      "numero": "41",
+      "titre": "Créer des supports pédagogiques pour sensibiliser aux espèces et habitats emblématiques du territoire"
+    },
+    {
+      "axe": "6 Faire connaitre et reconnaitre le rôle et l’importance de la biodiversité sur l’ensemble du territoire",
+      "cheminAxes": [
+        "6 Faire connaitre et reconnaitre le rôle et l’importance de la biodiversité sur l’ensemble du territoire",
+        "13 Mettre en place des outils pour faciliter l’adhésion de tous les publics aux enjeux de biodiversité"
+      ],
+      "numero": "42",
+      "titre": "Promouvoir les actions de conservation de la biodiversité auprès des élus, des partenaires et des habitants par la création d’outils de communication dédiés"
+    },
+    {
+      "axe": "6 Faire connaitre et reconnaitre le rôle et l’importance de la biodiversité sur l’ensemble du territoire",
+      "cheminAxes": [
+        "6 Faire connaitre et reconnaitre le rôle et l’importance de la biodiversité sur l’ensemble du territoire",
+        "13 Mettre en place des outils pour faciliter l’adhésion de tous les publics aux enjeux de biodiversité"
+      ],
+      "numero": "43",
+      "titre": "Nommer et former un élu référent biodiversité dans chaque commune pour porter les enjeux biodiversité à l’échelle locale"
+    },
+    {
+      "axe": "6 Faire connaitre et reconnaitre le rôle et l’importance de la biodiversité sur l’ensemble du territoire",
+      "cheminAxes": [
+        "6 Faire connaitre et reconnaitre le rôle et l’importance de la biodiversité sur l’ensemble du territoire",
+        "14 Sensibiliser et impliquer tous les publics autour des enjeux de biodiversité"
+      ],
+      "numero": "44",
+      "titre": "Diffuser l’exposition « Entre terre et eau, les zones humides du Pays de Grasse » sur les communes du Pays de Grasse et aux partenaires"
+    },
+    {
+      "axe": "6 Faire connaitre et reconnaitre le rôle et l’importance de la biodiversité sur l’ensemble du territoire",
+      "cheminAxes": [
+        "6 Faire connaitre et reconnaitre le rôle et l’importance de la biodiversité sur l’ensemble du territoire",
+        "14 Sensibiliser et impliquer tous les publics autour des enjeux de biodiversité"
+      ],
+      "numero": "45",
+      "titre": "Poursuivre et enrichir le cycle de conférences sur les enjeux environnementaux"
+    },
+    {
+      "axe": "6 Faire connaitre et reconnaitre le rôle et l’importance de la biodiversité sur l’ensemble du territoire",
+      "cheminAxes": [
+        "6 Faire connaitre et reconnaitre le rôle et l’importance de la biodiversité sur l’ensemble du territoire",
+        "14 Sensibiliser et impliquer tous les publics autour des enjeux de biodiversité"
+      ],
+      "numero": "46",
+      "titre": "Mettre en œuvre le programme annuel d'éducation au développement durable (incluant des parcours pédagogiques, des animations thématiques, des outils pédagogiques et des appels à projets) dans toutes les écoles du territoire"
+    },
+    {
+      "axe": "6 Faire connaitre et reconnaitre le rôle et l’importance de la biodiversité sur l’ensemble du territoire",
+      "cheminAxes": [
+        "6 Faire connaitre et reconnaitre le rôle et l’importance de la biodiversité sur l’ensemble du territoire",
+        "14 Sensibiliser et impliquer tous les publics autour des enjeux de biodiversité"
+      ],
+      "numero": "47",
+      "titre": "Déployer chaque année un nouveau programme ambitieux de sensibilisation grand public (Fête de la Nature, « Nocturnes du Pays de Grasse » et « Rendez-Vous Nature »)"
+    },
+    {
+      "axe": "6 Faire connaitre et reconnaitre le rôle et l’importance de la biodiversité sur l’ensemble du territoire",
+      "cheminAxes": [
+        "6 Faire connaitre et reconnaitre le rôle et l’importance de la biodiversité sur l’ensemble du territoire",
+        "14 Sensibiliser et impliquer tous les publics autour des enjeux de biodiversité"
+      ],
+      "numero": "48",
+      "titre": "Concevoir et diffuser régulièrement des outils pédagogiques et de sensibilisation (au minimum création d’une fiche outil par an)"
+    },
+    {
+      "axe": "6 Faire connaitre et reconnaitre le rôle et l’importance de la biodiversité sur l’ensemble du territoire",
+      "cheminAxes": [
+        "6 Faire connaitre et reconnaitre le rôle et l’importance de la biodiversité sur l’ensemble du territoire",
+        "14 Sensibiliser et impliquer tous les publics autour des enjeux de biodiversité"
+      ],
+      "numero": "49",
+      "titre": "Mobiliser les entreprises et les zones d’activité pour la préservation et la restauration de la biodiversité"
+    },
+    {
+      "axe": "6 Faire connaitre et reconnaitre le rôle et l’importance de la biodiversité sur l’ensemble du territoire",
+      "cheminAxes": [
+        "6 Faire connaitre et reconnaitre le rôle et l’importance de la biodiversité sur l’ensemble du territoire",
+        "15 Valoriser et faire reconnaitre les actions portées par la CAPG en faveur de la biodiversité"
+      ],
+      "numero": "50",
+      "titre": "Poursuivre la mise en œuvre du plan d’actions associé à la labellisation « Territoire Engagé pour la Nature » pour la période 2024-2027, afin de consolider la reconnaissance des engagements de la CAPG"
+    },
+    {
+      "axe": "6 Faire connaitre et reconnaitre le rôle et l’importance de la biodiversité sur l’ensemble du territoire",
+      "cheminAxes": [
+        "6 Faire connaitre et reconnaitre le rôle et l’importance de la biodiversité sur l’ensemble du territoire",
+        "15 Valoriser et faire reconnaitre les actions portées par la CAPG en faveur de la biodiversité"
+      ],
+      "numero": "51",
+      "titre": "Mobiliser et fédérer les acteurs du territoire autour de la lutte contre la pollution lumineuse via les labellisations «Territoire de Villes et Villages Étoilés » et «Villes et Villages Étoilés »"
+    }
+  ]
+}

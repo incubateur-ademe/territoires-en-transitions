@@ -1,0 +1,750 @@
+{
+  "manual": true,
+  "fichier": "pat/feuille-de-routepat-niveau-2_mc53k6.pdf",
+  "document": "Feuille de route opérationnelle niveau 2 du Projet Alimentaire de Territoire (PAT) du Pays de Fayence (communauté de communes du Pays de Fayence), 2024-2028, structure relevée dans les tableaux par brique des pages 4 à 17 et croisée avec le sommaire p. 2 : 5 axes, 21 sous-axes, 79 fiches, 2 étapes.",
+  "remarques": [
+    "Le document ne contient que la partie 1 (tableaux des actions, p. 4 à 17) ; la partie 2 « Référentiel d’évaluation » annoncée au sommaire est absente du PDF.",
+    "Hiérarchie retenue : brique (axe) > enjeu stratégique numéroté (sous-axe) > action. La colonne « Objectifs stratégiques » n’est pas retenue comme niveau : non numérotée, elle regroupe parfois plusieurs objectifs dans une seule cellule pour tout un enjeu (enjeu 1 de la brique 1) et ne porte souvent qu’une action.",
+    "Le mot « BRIQUE » est retiré des titres d’axe ; les briques ne sont pas numérotées. Titres en capitales remis en casse de phrase, sigles conservés (EGALIM, PAT).",
+    "Les enjeux stratégiques sont numérotés de nouveau à partir de 1 dans chaque brique ; le numéro est gardé dans le titre du sous-axe.",
+    "Numéros relevés tels qu’écrits, avec l’espace : « A 1 » … « A 80 ».",
+    "L’action A 4 n’existe pas : la numérotation saute de A 3 à A 5 (p. 4). La brique 1 compte donc 31 actions et non 32 comme annoncé au sommaire, et le total est de 79 actions et non 80.",
+    "La 5e brique s’intitule « GOUVERNANCE / COMMUNICATION / COOPERATION » dans le corps (p. 16) mais « GOUVERNANCE / COMMUNICATION » au sommaire : le titre du corps est retenu.",
+    "Enjeu 1 de la brique 1 : guillemet fermant orphelin « CLIMATIQUES » » supprimé.",
+    "A 5 : « Volet 1 : Etude de faisabilité économique » et « Volet 2 : Acceptation sociale » relevés comme étapes titrées 1 et 2.",
+    "A 15 : les deux puces « Prise en charge à hauteur de 50 % … / 40 % … » sont du contenu, non des étapes titrées ; non relevées.",
+    "A 23 : la phrase « Format A5 de type annuaire répertoriant producteurs/marchés/… » qui suit le titre est une description ; exclue du titre.",
+    "A 29 : la parenthèse en petits caractères italiques « ( tenue de potagers, recettes de cuisine locales, variétés locales …) » est une précision descriptive ; exclue du titre. Les parenthèses de même corps que le titre (A 11, A 39, A 45, A 55, A 58 à A 60, A 72, A 76 à A 80) sont gardées.",
+    "Coquilles et graphies du document conservées (« conception à d'un réseau » A 6, « Experimentation » A 25, « EPHAD » A 43, minuscule initiale de A 22, A 44, A 45, A 55, parenthèse non refermée de A 76, A 80 écrit sans deux-points)."
+  ],
+  "axes": [
+    "Reconquête / dynamisation durable vivrière",
+    "Accompagnement à la mise en œuvre de la loi EGALIM et éducation alimentaire",
+    "Précarité alimentaire",
+    "Santé / nutrition",
+    "Gouvernance / communication / coopération"
+  ],
+  "actions": [
+    {
+      "axe": "Reconquête / dynamisation durable vivrière",
+      "cheminAxes": [
+        "Reconquête / dynamisation durable vivrière",
+        "1 Gestion de la ressource et adaptation des pratiques agricoles aux changements climatiques"
+      ],
+      "numero": "A 1",
+      "titre": "Réalisation de diagnostics individuels de l’usage de l’eau auprès des exploitants du territoire"
+    },
+    {
+      "axe": "Reconquête / dynamisation durable vivrière",
+      "cheminAxes": [
+        "Reconquête / dynamisation durable vivrière",
+        "1 Gestion de la ressource et adaptation des pratiques agricoles aux changements climatiques"
+      ],
+      "numero": "A 2",
+      "titre": "Réalisation de formations sur les retenues collinaires et autres dispositifs de stockage de l’eau"
+    },
+    {
+      "axe": "Reconquête / dynamisation durable vivrière",
+      "cheminAxes": [
+        "Reconquête / dynamisation durable vivrière",
+        "1 Gestion de la ressource et adaptation des pratiques agricoles aux changements climatiques"
+      ],
+      "numero": "A 3",
+      "titre": "Accompagnement à la mise en place d’un groupe d’exploitants agricoles visant à travailler sur les économies d’eau (GIEE)"
+    },
+    {
+      "axe": "Reconquête / dynamisation durable vivrière",
+      "cheminAxes": [
+        "Reconquête / dynamisation durable vivrière",
+        "1 Gestion de la ressource et adaptation des pratiques agricoles aux changements climatiques"
+      ],
+      "numero": "A 5",
+      "titre": "Poursuite de l’étude « Expérimentation REUSE autour de la station d’épuration de Fayence »",
+      "etapes": [
+        {
+          "numero": "1",
+          "titre": "Etude de faisabilité économique"
+        },
+        {
+          "numero": "2",
+          "titre": "Acceptation sociale"
+        }
+      ]
+    },
+    {
+      "axe": "Reconquête / dynamisation durable vivrière",
+      "cheminAxes": [
+        "Reconquête / dynamisation durable vivrière",
+        "1 Gestion de la ressource et adaptation des pratiques agricoles aux changements climatiques"
+      ],
+      "numero": "A 6",
+      "titre": "Etude de faisabilité en vue de la conception à d'un réseau hydraulique naturel \" Trame Turquoise\" (maillage de retenues d’eau collinaires) en Pays de Fayence"
+    },
+    {
+      "axe": "Reconquête / dynamisation durable vivrière",
+      "cheminAxes": [
+        "Reconquête / dynamisation durable vivrière",
+        "1 Gestion de la ressource et adaptation des pratiques agricoles aux changements climatiques"
+      ],
+      "numero": "A 7",
+      "titre": "Harmonisation intercommunale des tarifs de l’eau agricole"
+    },
+    {
+      "axe": "Reconquête / dynamisation durable vivrière",
+      "cheminAxes": [
+        "Reconquête / dynamisation durable vivrière",
+        "2 Redynamisation vivrière et agroécologique de l’agriculture en Pays de Fayence"
+      ],
+      "numero": "A 8",
+      "titre": "Réalisation de diagnostics individuels agroécologiques auprès des exploitants du territoire"
+    },
+    {
+      "axe": "Reconquête / dynamisation durable vivrière",
+      "cheminAxes": [
+        "Reconquête / dynamisation durable vivrière",
+        "2 Redynamisation vivrière et agroécologique de l’agriculture en Pays de Fayence"
+      ],
+      "numero": "A 9",
+      "titre": "Création d’un espace test permanent en maraicher pour former les porteurs de projet aux orientations du territoire"
+    },
+    {
+      "axe": "Reconquête / dynamisation durable vivrière",
+      "cheminAxes": [
+        "Reconquête / dynamisation durable vivrière",
+        "2 Redynamisation vivrière et agroécologique de l’agriculture en Pays de Fayence"
+      ],
+      "numero": "A 10",
+      "titre": "Conception/diffusion d’une brochure de sensibilisation des propriétaires en ZAP sur le dispositif et les contrats en agriculture"
+    },
+    {
+      "axe": "Reconquête / dynamisation durable vivrière",
+      "cheminAxes": [
+        "Reconquête / dynamisation durable vivrière",
+        "2 Redynamisation vivrière et agroécologique de l’agriculture en Pays de Fayence"
+      ],
+      "numero": "A 11",
+      "titre": "Animation des friches vivrières en Zones Agricoles Protégées par l’organisation de « Friches dating » ( propriétaires / porteurs de projets)"
+    },
+    {
+      "axe": "Reconquête / dynamisation durable vivrière",
+      "cheminAxes": [
+        "Reconquête / dynamisation durable vivrière",
+        "2 Redynamisation vivrière et agroécologique de l’agriculture en Pays de Fayence"
+      ],
+      "numero": "A 12",
+      "titre": "Animation foncière renforcée et spécifique sur les bassins prioritaires assurée par la SAFER"
+    },
+    {
+      "axe": "Reconquête / dynamisation durable vivrière",
+      "cheminAxes": [
+        "Reconquête / dynamisation durable vivrière",
+        "2 Redynamisation vivrière et agroécologique de l’agriculture en Pays de Fayence"
+      ],
+      "numero": "A 13",
+      "titre": "Création d’un Fond Revolving SAFER d’Intervention foncier doté à hauteur de 200 000 €"
+    },
+    {
+      "axe": "Reconquête / dynamisation durable vivrière",
+      "cheminAxes": [
+        "Reconquête / dynamisation durable vivrière",
+        "2 Redynamisation vivrière et agroécologique de l’agriculture en Pays de Fayence"
+      ],
+      "numero": "A 14",
+      "titre": "En lien avec l’installation de parcs photovoltaïques : Structuration sous la forme Contrat de fiducie « Caisse des dépôts et consignations (CDC) » d'un fond d'accompagnement aux projets de redynamisation vivrière"
+    },
+    {
+      "axe": "Reconquête / dynamisation durable vivrière",
+      "cheminAxes": [
+        "Reconquête / dynamisation durable vivrière",
+        "3 Soutien à l’installation / consolidation des projets en filières alimentaires"
+      ],
+      "numero": "A 15",
+      "titre": "Animation d’un programme de mesures d’aides financières à l’installation"
+    },
+    {
+      "axe": "Reconquête / dynamisation durable vivrière",
+      "cheminAxes": [
+        "Reconquête / dynamisation durable vivrière",
+        "3 Soutien à l’installation / consolidation des projets en filières alimentaires"
+      ],
+      "numero": "A 16",
+      "titre": "Conception d’un support cartographique identifiant la localisation des « Zones Agricoles Alimentaires Prioritaires* »"
+    },
+    {
+      "axe": "Reconquête / dynamisation durable vivrière",
+      "cheminAxes": [
+        "Reconquête / dynamisation durable vivrière",
+        "3 Soutien à l’installation / consolidation des projets en filières alimentaires"
+      ],
+      "numero": "A 17",
+      "titre": "Animation d’une permanence locale : installation/Juridique/foncier dans les locaux de la CCPF"
+    },
+    {
+      "axe": "Reconquête / dynamisation durable vivrière",
+      "cheminAxes": [
+        "Reconquête / dynamisation durable vivrière",
+        "3 Soutien à l’installation / consolidation des projets en filières alimentaires"
+      ],
+      "numero": "A 18",
+      "titre": "Animation de sessions de formation « modèle économique en filières alimentaires » en partenariat avec les organismes bancaires"
+    },
+    {
+      "axe": "Reconquête / dynamisation durable vivrière",
+      "cheminAxes": [
+        "Reconquête / dynamisation durable vivrière",
+        "4 Organisation locale d'une gouvernance en matière de pilotage du foncier à intérêt alimentaire"
+      ],
+      "numero": "A 19",
+      "titre": "Animation d’un groupe de progrès maraichage"
+    },
+    {
+      "axe": "Reconquête / dynamisation durable vivrière",
+      "cheminAxes": [
+        "Reconquête / dynamisation durable vivrière",
+        "4 Organisation locale d'une gouvernance en matière de pilotage du foncier à intérêt alimentaire"
+      ],
+      "numero": "A 20",
+      "titre": "Animation d’une session de formation à la lutte contre le dévoiement agricole à destinations techniciens urbanisme des communes et de la CCPF"
+    },
+    {
+      "axe": "Reconquête / dynamisation durable vivrière",
+      "cheminAxes": [
+        "Reconquête / dynamisation durable vivrière",
+        "4 Organisation locale d'une gouvernance en matière de pilotage du foncier à intérêt alimentaire"
+      ],
+      "numero": "A 21",
+      "titre": "Création d’une Commission Foncière au regard des dossiers fonciers traités dans la CAR"
+    },
+    {
+      "axe": "Reconquête / dynamisation durable vivrière",
+      "cheminAxes": [
+        "Reconquête / dynamisation durable vivrière",
+        "4 Organisation locale d'une gouvernance en matière de pilotage du foncier à intérêt alimentaire"
+      ],
+      "numero": "A 22",
+      "titre": "intervention régulière en commission agriculture de l’accompagnement SAFER réalisé dans le cadre de la CAR"
+    },
+    {
+      "axe": "Reconquête / dynamisation durable vivrière",
+      "cheminAxes": [
+        "Reconquête / dynamisation durable vivrière",
+        "5 Structuration et développement des réseaux de circuits courts locaux existants"
+      ],
+      "numero": "A 23",
+      "titre": "Conception d'un support de communication grand public sur les producteurs vivriers locaux"
+    },
+    {
+      "axe": "Reconquête / dynamisation durable vivrière",
+      "cheminAxes": [
+        "Reconquête / dynamisation durable vivrière",
+        "5 Structuration et développement des réseaux de circuits courts locaux existants"
+      ],
+      "numero": "A 24",
+      "titre": "Intégration de la ferme du laquet, du marché de producteurs de Fayence au sein de la plateforme locale Happy KDO"
+    },
+    {
+      "axe": "Reconquête / dynamisation durable vivrière",
+      "cheminAxes": [
+        "Reconquête / dynamisation durable vivrière",
+        "5 Structuration et développement des réseaux de circuits courts locaux existants"
+      ],
+      "numero": "A 25",
+      "titre": "Experimentation locale autour des applications « Food Tech » : Too good to go, Solaal"
+    },
+    {
+      "axe": "Reconquête / dynamisation durable vivrière",
+      "cheminAxes": [
+        "Reconquête / dynamisation durable vivrière",
+        "6 Accompagnement au développement local des cultures alimentaires domestiques et non professionnelles"
+      ],
+      "numero": "A 26",
+      "titre": "Accompagnement à la création de jardins collectifs"
+    },
+    {
+      "axe": "Reconquête / dynamisation durable vivrière",
+      "cheminAxes": [
+        "Reconquête / dynamisation durable vivrière",
+        "6 Accompagnement au développement local des cultures alimentaires domestiques et non professionnelles"
+      ],
+      "numero": "A 27",
+      "titre": "Co-construction d’un projet de tiers lieu nourricier en partenariat avec les membres du Conseil Local de l’Alimentation en Pays de Fayence"
+    },
+    {
+      "axe": "Reconquête / dynamisation durable vivrière",
+      "cheminAxes": [
+        "Reconquête / dynamisation durable vivrière",
+        "6 Accompagnement au développement local des cultures alimentaires domestiques et non professionnelles"
+      ],
+      "numero": "A 28",
+      "titre": "Accompagner à la structuration et la filière oléicole du Pays de Fayence"
+    },
+    {
+      "axe": "Reconquête / dynamisation durable vivrière",
+      "cheminAxes": [
+        "Reconquête / dynamisation durable vivrière",
+        "6 Accompagnement au développement local des cultures alimentaires domestiques et non professionnelles"
+      ],
+      "numero": "A 29",
+      "titre": "Animation d’un programme mensuel de sensibilisation co-porté par les acteurs du Conseil Local de l’Alimentation à destination du grand public"
+    },
+    {
+      "axe": "Reconquête / dynamisation durable vivrière",
+      "cheminAxes": [
+        "Reconquête / dynamisation durable vivrière",
+        "7 Innovation territoriale et développement de partenariat avec le secteur de la recherche"
+      ],
+      "numero": "A 30",
+      "titre": "Lancement d’une étude résilience"
+    },
+    {
+      "axe": "Reconquête / dynamisation durable vivrière",
+      "cheminAxes": [
+        "Reconquête / dynamisation durable vivrière",
+        "7 Innovation territoriale et développement de partenariat avec le secteur de la recherche"
+      ],
+      "numero": "A 31",
+      "titre": "Poursuite du partenariat engagé avec les Greniers d’Abondance"
+    },
+    {
+      "axe": "Reconquête / dynamisation durable vivrière",
+      "cheminAxes": [
+        "Reconquête / dynamisation durable vivrière",
+        "7 Innovation territoriale et développement de partenariat avec le secteur de la recherche"
+      ],
+      "numero": "A 32",
+      "titre": "Intégration du PAT au sein du projet de territoire « Stratégie et désign de l’anthropocène », suites de la démarche écoute territoriale"
+    },
+    {
+      "axe": "Accompagnement à la mise en œuvre de la loi EGALIM et éducation alimentaire",
+      "cheminAxes": [
+        "Accompagnement à la mise en œuvre de la loi EGALIM et éducation alimentaire",
+        "1 Incitation à la mise en œuvre de la loi EGALIM au sein des cantines scolaires"
+      ],
+      "numero": "A 33",
+      "titre": "Poursuite et suivi des campagnes de télédéclaration des cantines"
+    },
+    {
+      "axe": "Accompagnement à la mise en œuvre de la loi EGALIM et éducation alimentaire",
+      "cheminAxes": [
+        "Accompagnement à la mise en œuvre de la loi EGALIM et éducation alimentaire",
+        "1 Incitation à la mise en œuvre de la loi EGALIM au sein des cantines scolaires"
+      ],
+      "numero": "A 34",
+      "titre": "Poursuite de l’animation du réseau des cantines en Pays de Fayence"
+    },
+    {
+      "axe": "Accompagnement à la mise en œuvre de la loi EGALIM et éducation alimentaire",
+      "cheminAxes": [
+        "Accompagnement à la mise en œuvre de la loi EGALIM et éducation alimentaire",
+        "1 Incitation à la mise en œuvre de la loi EGALIM au sein des cantines scolaires"
+      ],
+      "numero": "A 35",
+      "titre": "Accompagnement au développement des retours d’expériences entre les personnels de cantines"
+    },
+    {
+      "axe": "Accompagnement à la mise en œuvre de la loi EGALIM et éducation alimentaire",
+      "cheminAxes": [
+        "Accompagnement à la mise en œuvre de la loi EGALIM et éducation alimentaire",
+        "1 Incitation à la mise en œuvre de la loi EGALIM au sein des cantines scolaires"
+      ],
+      "numero": "A 36",
+      "titre": "Intégration progressive au sein du réseau des cantiniers des autres secteurs de la restauration collective"
+    },
+    {
+      "axe": "Accompagnement à la mise en œuvre de la loi EGALIM et éducation alimentaire",
+      "cheminAxes": [
+        "Accompagnement à la mise en œuvre de la loi EGALIM et éducation alimentaire",
+        "1 Incitation à la mise en œuvre de la loi EGALIM au sein des cantines scolaires"
+      ],
+      "numero": "A 37",
+      "titre": "Poursuite et essaimage du scénario d’approvisionnement collectif des cantines scolaires auprès de la SCIC AGRIBIO PROVENCE"
+    },
+    {
+      "axe": "Accompagnement à la mise en œuvre de la loi EGALIM et éducation alimentaire",
+      "cheminAxes": [
+        "Accompagnement à la mise en œuvre de la loi EGALIM et éducation alimentaire",
+        "1 Incitation à la mise en œuvre de la loi EGALIM au sein des cantines scolaires"
+      ],
+      "numero": "A 38",
+      "titre": "Intégration progressive au sein du catalogue d’approvisionnement collectif de producteurs du Pays de Fayence"
+    },
+    {
+      "axe": "Accompagnement à la mise en œuvre de la loi EGALIM et éducation alimentaire",
+      "cheminAxes": [
+        "Accompagnement à la mise en œuvre de la loi EGALIM et éducation alimentaire",
+        "2 Accompagnement à l’animation d’une politique intercommunale de lutte contre le gaspillage alimentaire"
+      ],
+      "numero": "A 39",
+      "titre": "Poursuite et essaimage de l’opération diagnostic quantitatif dans le cadre du dispositif « Pas de Gaspi dans ma cantine » ( à hauteur de 2 écoles diagnostiquées par an)"
+    },
+    {
+      "axe": "Accompagnement à la mise en œuvre de la loi EGALIM et éducation alimentaire",
+      "cheminAxes": [
+        "Accompagnement à la mise en œuvre de la loi EGALIM et éducation alimentaire",
+        "2 Accompagnement à l’animation d’une politique intercommunale de lutte contre le gaspillage alimentaire"
+      ],
+      "numero": "A 40",
+      "titre": "Poursuite et essaimage de l’opération diagnostic qualitatif dans le cadre du dispositif « Pas de Gaspi dans ma cantine »"
+    },
+    {
+      "axe": "Accompagnement à la mise en œuvre de la loi EGALIM et éducation alimentaire",
+      "cheminAxes": [
+        "Accompagnement à la mise en œuvre de la loi EGALIM et éducation alimentaire",
+        "2 Accompagnement à l’animation d’une politique intercommunale de lutte contre le gaspillage alimentaire"
+      ],
+      "numero": "A 41",
+      "titre": "Financement des équipements facilitant la transition des pratiques : table de tri, composteurs, porte serviette"
+    },
+    {
+      "axe": "Accompagnement à la mise en œuvre de la loi EGALIM et éducation alimentaire",
+      "cheminAxes": [
+        "Accompagnement à la mise en œuvre de la loi EGALIM et éducation alimentaire",
+        "2 Accompagnement à l’animation d’une politique intercommunale de lutte contre le gaspillage alimentaire"
+      ],
+      "numero": "A 42",
+      "titre": "Réalisation chaque année de pesées évaluatives de suivi auprès des cantines scolaires auditées"
+    },
+    {
+      "axe": "Accompagnement à la mise en œuvre de la loi EGALIM et éducation alimentaire",
+      "cheminAxes": [
+        "Accompagnement à la mise en œuvre de la loi EGALIM et éducation alimentaire",
+        "2 Accompagnement à l’animation d’une politique intercommunale de lutte contre le gaspillage alimentaire"
+      ],
+      "numero": "A 43",
+      "titre": "Essaimage de l’opération « Pas de Gaspi » aux EPHAD du Territoire"
+    },
+    {
+      "axe": "Accompagnement à la mise en œuvre de la loi EGALIM et éducation alimentaire",
+      "cheminAxes": [
+        "Accompagnement à la mise en œuvre de la loi EGALIM et éducation alimentaire",
+        "2 Accompagnement à l’animation d’une politique intercommunale de lutte contre le gaspillage alimentaire"
+      ],
+      "numero": "A 44",
+      "titre": "formation annuelle des personnels de cantine"
+    },
+    {
+      "axe": "Accompagnement à la mise en œuvre de la loi EGALIM et éducation alimentaire",
+      "cheminAxes": [
+        "Accompagnement à la mise en œuvre de la loi EGALIM et éducation alimentaire",
+        "2 Accompagnement à l’animation d’une politique intercommunale de lutte contre le gaspillage alimentaire"
+      ],
+      "numero": "A 45",
+      "titre": "accompagnement des communes à la mise d’outils de pérennisation ( intégration des missions lutte contre le gaspillage alimentaire au sein des fiches de poste)"
+    },
+    {
+      "axe": "Accompagnement à la mise en œuvre de la loi EGALIM et éducation alimentaire",
+      "cheminAxes": [
+        "Accompagnement à la mise en œuvre de la loi EGALIM et éducation alimentaire",
+        "3 Animation d’une politique intercommunale d’éducation à l’alimentation durable"
+      ],
+      "numero": "A 46",
+      "titre": "Poursuite et essaimage du dispositif « Passeport Alimentation Durable en Pays de Fayence »"
+    },
+    {
+      "axe": "Accompagnement à la mise en œuvre de la loi EGALIM et éducation alimentaire",
+      "cheminAxes": [
+        "Accompagnement à la mise en œuvre de la loi EGALIM et éducation alimentaire",
+        "3 Animation d’une politique intercommunale d’éducation à l’alimentation durable"
+      ],
+      "numero": "A 47",
+      "titre": "Structuration du dispositif vers le lancement d’appel à projet auprès des écoles"
+    },
+    {
+      "axe": "Accompagnement à la mise en œuvre de la loi EGALIM et éducation alimentaire",
+      "cheminAxes": [
+        "Accompagnement à la mise en œuvre de la loi EGALIM et éducation alimentaire",
+        "3 Animation d’une politique intercommunale d’éducation à l’alimentation durable"
+      ],
+      "numero": "A 48",
+      "titre": "Développement des classes pilotes du goût"
+    },
+    {
+      "axe": "Accompagnement à la mise en œuvre de la loi EGALIM et éducation alimentaire",
+      "cheminAxes": [
+        "Accompagnement à la mise en œuvre de la loi EGALIM et éducation alimentaire",
+        "3 Animation d’une politique intercommunale d’éducation à l’alimentation durable"
+      ],
+      "numero": "A 49",
+      "titre": "Poursuite et animation opérationnelle du dispositif APASEN"
+    },
+    {
+      "axe": "Accompagnement à la mise en œuvre de la loi EGALIM et éducation alimentaire",
+      "cheminAxes": [
+        "Accompagnement à la mise en œuvre de la loi EGALIM et éducation alimentaire",
+        "3 Animation d’une politique intercommunale d’éducation à l’alimentation durable"
+      ],
+      "numero": "A 50",
+      "titre": "Poursuite et animation opérationnelle du dispositif EDUCAGOUT"
+    },
+    {
+      "axe": "Accompagnement à la mise en œuvre de la loi EGALIM et éducation alimentaire",
+      "cheminAxes": [
+        "Accompagnement à la mise en œuvre de la loi EGALIM et éducation alimentaire",
+        "4 Mise en réseau des initiatives locales d’éducation à l’alimentation durable"
+      ],
+      "numero": "A 51",
+      "titre": "Identification des initiatives et coordination avec le Passeport Alimentation Durable"
+    },
+    {
+      "axe": "Accompagnement à la mise en œuvre de la loi EGALIM et éducation alimentaire",
+      "cheminAxes": [
+        "Accompagnement à la mise en œuvre de la loi EGALIM et éducation alimentaire",
+        "4 Mise en réseau des initiatives locales d’éducation à l’alimentation durable"
+      ],
+      "numero": "A 52",
+      "titre": "Création d’un réseau local « d’éducation à l’alimentation durable »"
+    },
+    {
+      "axe": "Accompagnement à la mise en œuvre de la loi EGALIM et éducation alimentaire",
+      "cheminAxes": [
+        "Accompagnement à la mise en œuvre de la loi EGALIM et éducation alimentaire",
+        "5 Accompagnement au développement de micro projets alimentaires"
+      ],
+      "numero": "A 53",
+      "titre": "Identification par Groupes scolaires de référents « Alimentation durable » au sein des publics enseignants"
+    },
+    {
+      "axe": "Accompagnement à la mise en œuvre de la loi EGALIM et éducation alimentaire",
+      "cheminAxes": [
+        "Accompagnement à la mise en œuvre de la loi EGALIM et éducation alimentaire",
+        "5 Accompagnement au développement de micro projets alimentaires"
+      ],
+      "numero": "A 54",
+      "titre": "Accompagnement des microprojets alimentaires"
+    },
+    {
+      "axe": "Accompagnement à la mise en œuvre de la loi EGALIM et éducation alimentaire",
+      "cheminAxes": [
+        "Accompagnement à la mise en œuvre de la loi EGALIM et éducation alimentaire",
+        "5 Accompagnement au développement de micro projets alimentaires"
+      ],
+      "numero": "A 55",
+      "titre": "actions de tuilage des réseaux « Cantines scolaires » (élus et cantiniers) et « référents alimentation durable » ( enseignants)"
+    },
+    {
+      "axe": "Précarité alimentaire",
+      "cheminAxes": [
+        "Précarité alimentaire",
+        "1 Animation d'une gouvernance multi-acteurs sur le secteur de la précarité alimentaire en Pays de Fayence"
+      ],
+      "numero": "A 56",
+      "titre": "Poursuite et pérennisation de l’animation du « Groupe Local de Lutte contre la Précarité alimentaire du Pays de Fayence »"
+    },
+    {
+      "axe": "Précarité alimentaire",
+      "cheminAxes": [
+        "Précarité alimentaire",
+        "2 Amélioration de l’offre locale d’accompagnement des publics en situation de précarité"
+      ],
+      "numero": "A 57",
+      "titre": "Expérimentation Droit/ Santé / Sport Santé auprès des publics de la précarité alimentaire en partenariat avec la CPAM et le GAPS"
+    },
+    {
+      "axe": "Précarité alimentaire",
+      "cheminAxes": [
+        "Précarité alimentaire",
+        "2 Amélioration de l’offre locale d’accompagnement des publics en situation de précarité"
+      ],
+      "numero": "A 58",
+      "titre": "Expérimentation « Développer les approvisionnements locaux et qualitatifs » en partenariat avec le syndicat des agriculteurs du Pays de Fayence et la Ferme du Laquet ( Marché Paysan ) et marché de producteurs"
+    },
+    {
+      "axe": "Précarité alimentaire",
+      "cheminAxes": [
+        "Précarité alimentaire",
+        "2 Amélioration de l’offre locale d’accompagnement des publics en situation de précarité"
+      ],
+      "numero": "A 59",
+      "titre": "Expérimentation Mobilité-Couverture des zones blanches : Partenariat avec Agilauto Partage ( Crédit Agricole)"
+    },
+    {
+      "axe": "Précarité alimentaire",
+      "cheminAxes": [
+        "Précarité alimentaire",
+        "2 Amélioration de l’offre locale d’accompagnement des publics en situation de précarité"
+      ],
+      "numero": "A 60",
+      "titre": "Expérimentation Autonomisation des publics : projet de groupe d’essai avec le Conseil Départemental du Var ( jardin collectifs / travailleurs sociaux/ meilleure connaissance des attentes des bénéficiaires …)"
+    },
+    {
+      "axe": "Précarité alimentaire",
+      "cheminAxes": [
+        "Précarité alimentaire",
+        "3 Promotion de l’offre locale d’accompagnement"
+      ],
+      "numero": "A 61",
+      "titre": "Animation d’une campagne de promotion autour du don lors des périodes de collecte"
+    },
+    {
+      "axe": "Précarité alimentaire",
+      "cheminAxes": [
+        "Précarité alimentaire",
+        "3 Promotion de l’offre locale d’accompagnement"
+      ],
+      "numero": "A 62",
+      "titre": "Animation d’une campagne de promotion des activités des têtes de réseau à destination des élus"
+    },
+    {
+      "axe": "Précarité alimentaire",
+      "cheminAxes": [
+        "Précarité alimentaire",
+        "3 Promotion de l’offre locale d’accompagnement"
+      ],
+      "numero": "A 63",
+      "titre": "Animation d’une campagne de « recrutement » de bénévoles"
+    },
+    {
+      "axe": "Santé / nutrition",
+      "cheminAxes": [
+        "Santé / nutrition",
+        "1 Animation d'une gouvernance multi-acteurs sur le secteur de la santé - sport / santé - nutrition en Pays de Fayence"
+      ],
+      "numero": "A 64",
+      "titre": "En partenariat avec le GAPS : Constitution/animation d’un Groupe Local Santé-Sport Santé-Nutrition"
+    },
+    {
+      "axe": "Santé / nutrition",
+      "cheminAxes": [
+        "Santé / nutrition",
+        "2 Ingénierie d’un dispositif et d’une politique publique locale en matière de santé - sport / santé - nutrition en Pays de Fayence"
+      ],
+      "numero": "A 65",
+      "titre": "En partenariat avec le GAPS : rédaction d’un CLS et accompagnement à l’adoption de la CCPF"
+    },
+    {
+      "axe": "Santé / nutrition",
+      "cheminAxes": [
+        "Santé / nutrition",
+        "3 Animation d’un programme d’action décloisonné"
+      ],
+      "numero": "A 66",
+      "titre": "Accompagnement des écoles à la mise en place de la loi 30’ d’activités Physiques Adaptées"
+    },
+    {
+      "axe": "Santé / nutrition",
+      "cheminAxes": [
+        "Santé / nutrition",
+        "3 Animation d’un programme d’action décloisonné"
+      ],
+      "numero": "A 67",
+      "titre": "Animation du dispositif accès au sport pour tous à destination des publics de la précarité alimentaire"
+    },
+    {
+      "axe": "Santé / nutrition",
+      "cheminAxes": [
+        "Santé / nutrition",
+        "3 Animation d’un programme d’action décloisonné"
+      ],
+      "numero": "A 68",
+      "titre": "Mise en lien et animation du programme « Arca Sud » ( santé mentale) auprès des publics de la précarité alimentaire"
+    },
+    {
+      "axe": "Gouvernance / communication / coopération",
+      "cheminAxes": [
+        "Gouvernance / communication / coopération",
+        "1 Structuration d’une gouvernance élargie autour du PAT"
+      ],
+      "numero": "A 69",
+      "titre": "Poursuite de l’organisation d’un COPIL restreint d’évaluation des avancées et de validations des actions à hauteur de 1 fois par an"
+    },
+    {
+      "axe": "Gouvernance / communication / coopération",
+      "cheminAxes": [
+        "Gouvernance / communication / coopération",
+        "1 Structuration d’une gouvernance élargie autour du PAT"
+      ],
+      "numero": "A 70",
+      "titre": "Identification par commune d’un élu référent dédié à l’alimentation durable, en charge du suivi quotidien des actions du PAT"
+    },
+    {
+      "axe": "Gouvernance / communication / coopération",
+      "cheminAxes": [
+        "Gouvernance / communication / coopération",
+        "1 Structuration d’une gouvernance élargie autour du PAT"
+      ],
+      "numero": "A 71",
+      "titre": "Poursuite de l’animation du Conseil Local de l’Alimentation à hauteur de 3 fois par an"
+    },
+    {
+      "axe": "Gouvernance / communication / coopération",
+      "cheminAxes": [
+        "Gouvernance / communication / coopération",
+        "1 Structuration d’une gouvernance élargie autour du PAT"
+      ],
+      "numero": "A 72",
+      "titre": "Accompagnement des projets issus ( ex : Tiers lieu nourricier)"
+    },
+    {
+      "axe": "Gouvernance / communication / coopération",
+      "cheminAxes": [
+        "Gouvernance / communication / coopération",
+        "2 Promotion du PAT auprès du grand public"
+      ],
+      "numero": "A 73",
+      "titre": "Poursuite et enrichissement de l’animation annuelle des « rencontres locales de l’alimentation durable »"
+    },
+    {
+      "axe": "Gouvernance / communication / coopération",
+      "cheminAxes": [
+        "Gouvernance / communication / coopération",
+        "2 Promotion du PAT auprès du grand public"
+      ],
+      "numero": "A 74",
+      "titre": "Poursuite de la réalisation de la série documentaire « Le Pays de Fayence au défi de la résilience Alimentaire »"
+    },
+    {
+      "axe": "Gouvernance / communication / coopération",
+      "cheminAxes": [
+        "Gouvernance / communication / coopération",
+        "2 Promotion du PAT auprès du grand public"
+      ],
+      "numero": "A 75",
+      "titre": "Organisation d’une opération défi « Repas local » avec les cantiniers des écoles du Pays de Fayence"
+    },
+    {
+      "axe": "Gouvernance / communication / coopération",
+      "cheminAxes": [
+        "Gouvernance / communication / coopération",
+        "2 Promotion du PAT auprès du grand public"
+      ],
+      "numero": "A 76",
+      "titre": "Création d’un onglet PAT en action sur le site internet de la CCPF ( passeport alimentation durable, accompagnement des porteurs de projet"
+    },
+    {
+      "axe": "Gouvernance / communication / coopération",
+      "cheminAxes": [
+        "Gouvernance / communication / coopération",
+        "2 Promotion du PAT auprès du grand public"
+      ],
+      "numero": "A 77",
+      "titre": "Participation à la semaine du goût en partenariat avec les cantines ( semaine 0 gaspi, repas végé, repas des restes)"
+    },
+    {
+      "axe": "Gouvernance / communication / coopération",
+      "cheminAxes": [
+        "Gouvernance / communication / coopération",
+        "3 Développement de projets de coopération inter PAT"
+      ],
+      "numero": "A 78",
+      "titre": "Animation du Partenariat évènement « Graine d’Avenir 2024 » en partenariat avec le PAT Dracénie Provence Verdon Agglomération"
+    },
+    {
+      "axe": "Gouvernance / communication / coopération",
+      "cheminAxes": [
+        "Gouvernance / communication / coopération",
+        "3 Développement de projets de coopération inter PAT"
+      ],
+      "numero": "A 79",
+      "titre": "Développement de projets renvois en partenariat avec le PAT Provence Verte ( exportation du Conseil Local Alimentation et importation de la SCIC Agribio Provence)"
+    },
+    {
+      "axe": "Gouvernance / communication / coopération",
+      "cheminAxes": [
+        "Gouvernance / communication / coopération",
+        "3 Développement de projets de coopération inter PAT"
+      ],
+      "numero": "A 80",
+      "titre": "Initiation de projets de coopération autour de l’alimentation durable INTERGAL ( Dracénie Pays de Fayence / Provence Verdon )"
+    }
+  ]
+}
