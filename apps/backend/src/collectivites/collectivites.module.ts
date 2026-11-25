@@ -29,6 +29,7 @@ import { ImportCollectiviteRelationsService } from '@tet/backend/collectivites/i
 import { ImportPerimetresEpciRouter } from '@tet/backend/collectivites/import-perimetres-epci/import-perimetres-epci.router';
 import { ImportPerimetresEpciService } from '@tet/backend/collectivites/import-perimetres-epci/import-perimetres-epci.service';
 import { ExportConnectService } from '@tet/backend/collectivites/membres/sync-membres-with-crm-connect/export-connect.service';
+import { RecherchesRepository } from '@tet/backend/collectivites/recherches/recherches.repository';
 import { RecherchesRouter } from '@tet/backend/collectivites/recherches/recherches.router';
 import RecherchesService from '@tet/backend/collectivites/recherches/recherches.service';
 import { ListTagsRepository } from '@tet/backend/collectivites/tags/list-tags/list-tags.repository';
@@ -152,6 +153,7 @@ import { SiteRouter } from './site/site.router';
     CollectiviteCrudService,
     CollectiviteCrudRouter,
     ExportConnectService,
+    RecherchesRepository,
     RecherchesService,
     RecherchesRouter,
     ImportCollectiviteRelationsService,
