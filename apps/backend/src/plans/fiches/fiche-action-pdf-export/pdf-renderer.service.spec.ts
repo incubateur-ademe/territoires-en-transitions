@@ -13,6 +13,7 @@ const fiche = {
   chemins: [],
   indicateursListe: [],
   fichesLiees: [],
+  sousActions: [],
   actionsLiees: [],
   annexes: undefined,
   notes: undefined,

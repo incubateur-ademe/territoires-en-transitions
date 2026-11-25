@@ -108,6 +108,33 @@ describe('PDF Node rendering', () => {
     expect(buffer.subarray(0, 5).toString('ascii')).toBe('%PDF-');
   }, 60_000);
 
+  // Les descriptions des sous-actions sont exportées en entier : une ligne
+  // plus haute qu'une page doit être coupée, pas faire boucler le rendu.
+  it('renders a sous-action whose description is longer than a page', async () => {
+    const [sousAction] = ficheActionFixture.sousActions;
+    const element = (
+      <DocumentToExport
+        imageSources={nodeImageSources}
+        content={
+          <FicheActionPdf
+            {...ficheActionFixture}
+            sections={['sousActions']}
+            sousActions={[
+              {
+                ...sousAction,
+                description: 'Description très longue. '.repeat(1_500),
+              },
+            ]}
+          />
+        }
+      />
+    );
+
+    const buffer = await renderToBuffer(element);
+
+    expect(buffer.subarray(0, 5).toString('ascii')).toBe('%PDF-');
+  }, 60_000);
+
   it('visual regression: server PDF matches golden baseline structure', async () => {
     const goldenPath = path.join(__dirname, '__fixtures__/golden-baseline-fiche-81152.pdf');
     const candidatePath = path.join(OUTPUT_DIR, 'fiche-81152-server.pdf');

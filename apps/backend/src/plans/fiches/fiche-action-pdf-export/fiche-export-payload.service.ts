@@ -72,14 +72,21 @@ export class FicheExportPayloadService {
 
       const fiche = ficheResult.data;
 
-      const [chemins, fichesLiees, indicateursResult, actionsLiees, annexes] =
-        await Promise.all([
-          this.loadChemins({ fiche, user }),
-          this.loadFichesLiees({ fiche, user }),
-          this.loadIndicateurs({ fiche }),
-          this.loadActionsLiees({ fiche }),
-          this.loadAnnexes({ fiche, user }),
-        ]);
+      const [
+        chemins,
+        fichesLiees,
+        sousActions,
+        indicateursResult,
+        actionsLiees,
+        annexes,
+      ] = await Promise.all([
+        this.loadChemins({ fiche, user }),
+        this.loadFichesLiees({ fiche, user }),
+        this.loadSousActions({ fiche, user }),
+        this.loadIndicateurs({ fiche }),
+        this.loadActionsLiees({ fiche }),
+        this.loadAnnexes({ fiche, user }),
+      ]);
       if (!indicateursResult.success) return indicateursResult;
 
       return success({
@@ -87,6 +94,7 @@ export class FicheExportPayloadService {
         chemins,
         indicateursListe: indicateursResult.data,
         fichesLiees,
+        sousActions,
         actionsLiees,
         annexes: annexes.length > 0 ? annexes : undefined,
         notes: fiche.notes ?? undefined,
@@ -134,10 +142,42 @@ export class FicheExportPayloadService {
           filters: { linkedFicheIds: [fiche.id] },
         })
       );
-      return this.filterReadableFiches(data, user);
+      return await this.filterReadableFiches(data, user);
     } catch (error) {
       this.logger.warn(
         `Impossible de charger les fiches liées pour la fiche ${fiche.id} : ${error}`
+      );
+      return [];
+    }
+  }
+
+  /** Même tri que l'onglet « Sous-actions » de la fiche (`use-fiche-sous-actions.ts`). */
+  private async loadSousActions({
+    fiche,
+    user,
+  }: {
+    fiche: FicheWithRelations;
+    user: AuthenticatedUser;
+  }): Promise<FicheWithRelations[]> {
+    const result = await this.listFichesService.listFichesQuery({
+      collectiviteId: fiche.collectiviteId,
+      filters: { parentsId: [fiche.id] },
+      queryOptions: {
+        limit: 'all',
+        sort: [{ field: 'created_at', direction: 'asc' }],
+      },
+    });
+    if (!result.success) {
+      this.logger.warn(
+        `Sous-actions ignorées pour la fiche ${fiche.id} : ${result.error}`
+      );
+      return [];
+    }
+    try {
+      return await this.filterReadableFiches(result.data.data, user);
+    } catch (error) {
+      this.logger.warn(
+        `Impossible de filtrer les sous-actions pour la fiche ${fiche.id} : ${error}`
       );
       return [];
     }

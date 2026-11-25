@@ -297,6 +297,7 @@ const sections: PdfSectionKey[] = [
   'intro',
   'acteurs',
   'indicateurs',
+  'sousActions',
   'notes',
   'moyens',
   'fiches',
@@ -850,12 +851,82 @@ const budgets: FicheBudget[] = [
   },
 ];
 
+const pilote = (nom: string, tagId: number) => ({
+  nom,
+  tagId,
+  userId: null,
+  collectiviteId: 1,
+  prenom: null,
+  nomFamille: null,
+  email: null,
+  telephone: null,
+});
+
+const sousAction = (
+  id: number,
+  fields: Pick<
+    FicheWithRelations,
+    'titre' | 'description' | 'statut' | 'dateFin' | 'pilotes'
+  > &
+    Partial<FicheWithRelations>
+): FicheWithRelations => ({
+  ...fichesLiees[0],
+  id,
+  parentId: fiche.id,
+  plans: null,
+  ...fields,
+});
+
+// Sous-actions de la maquette (export-action.pdf, page 2) : réalisées à date
+// passée (pas en rouge), à venir en retard (en rouge), plusieurs pilotes,
+// description longue, action répétée tous les ans et sous-action sans pilote.
+const sousActions: FicheWithRelations[] = [
+  sousAction(81201, {
+    titre: 'Organiser la réunion de lancement',
+    description: 'Envoyer une proposition de créneaux et réserver la salle',
+    statut: 'Réalisé',
+    dateFin: '2026-02-22T00:00:00.000Z',
+    pilotes: [pilote('Manon Bouvier', 11)],
+  }),
+  sousAction(81202, {
+    titre: 'Valider une première version',
+    description: 'Envoyer la V1 modifiée',
+    statut: 'Réalisé',
+    dateFin: '2026-03-02T00:00:00.000Z',
+    pilotes: [pilote('Manon Bouvier', 11)],
+  }),
+  sousAction(81203, {
+    titre: 'Etape 4 : Publier le document',
+    description:
+      'En lien avec le service communication, prévoir publication sur le site internet de la collectivité et post réseaux sociaux.',
+    statut: 'Réalisé',
+    dateFin: '2026-09-01T00:00:00.000Z',
+    pilotes: [pilote('Benjamin Goullard', 4), pilote('Sophie Boiché', 1)],
+  }),
+  sousAction(81204, {
+    titre: 'Etape 5 : Rdv service',
+    description: 'A anticiper post-publication',
+    statut: 'À venir',
+    dateFin: '2026-09-20T00:00:00.000Z',
+    pilotes: [pilote('Sophie Boiché', 1)],
+  }),
+  sousAction(81205, {
+    titre: 'Bilan annuel avec les partenaires',
+    description: null,
+    statut: 'En cours',
+    dateFin: null,
+    ameliorationContinue: true,
+    pilotes: null,
+  }),
+];
+
 export const ficheActionFixture: FicheActionPdfExtendedProps = {
   fiche,
   chemins,
   sections,
   indicateursListe,
   fichesLiees,
+  sousActions,
   actionsLiees,
   annexes,
   notes,

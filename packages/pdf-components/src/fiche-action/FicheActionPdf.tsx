@@ -13,6 +13,7 @@ import FichesLiees from './FichesLiees';
 import Indicateurs from './Indicateurs';
 import { Moyens } from './Moyens';
 import { Notes } from './Notes';
+import { SousActions } from './SousActions';
 import Acteurs from './components/acteurs';
 import { Chemins, Infos, Statuts } from './components/header';
 import { PdfIndicateur, PdfLinkedAction } from './external-types';
@@ -24,6 +25,7 @@ export type FicheActionPdfExtendedProps = {
   sections?: PdfSectionKey[];
   indicateursListe: PdfIndicateur[] | undefined | null;
   fichesLiees: FicheWithRelations[];
+  sousActions: FicheWithRelations[];
   actionsLiees: PdfLinkedAction[];
   annexes: AnnexeDocument[] | undefined;
   notes: FicheNote[] | undefined;
@@ -37,6 +39,7 @@ const FicheActionPdf = ({
   chemins,
   indicateursListe,
   fichesLiees,
+  sousActions,
   actionsLiees,
   annexes,
   notes,
@@ -74,6 +77,8 @@ const FicheActionPdf = ({
       {enabled.has('indicateurs') && (
         <Indicateurs fiche={fiche} indicateursListe={indicateursListe} />
       )}
+
+      {enabled.has('sousActions') && <SousActions sousActions={sousActions} />}
 
       {enabled.has('notes') && <Notes notes={notes} years={notesYears} />}
 

@@ -2,6 +2,7 @@ export const allSectionKeys = [
   'intro',
   'acteurs',
   'indicateurs',
+  'sousActions',
   'notes',
   'moyens',
   'fiches',
