@@ -1,6 +1,10 @@
-import { getDataOrThrow } from '@tet/backend/utils/result.type';
-import { Injectable, Logger, PayloadTooLargeException } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import {
+  catchDatabaseFailure,
+  toDatabaseFailure,
+} from '@tet/backend/utils/database/catch-database-failure';
+import { Result, success } from '@tet/backend/utils/result.type';
 import { ListIndicateursInputFilters } from '@tet/domain/indicateurs';
 import { ResourceType } from '@tet/domain/users';
 import { format } from 'date-fns';
@@ -10,10 +14,20 @@ import { AuthenticatedUser } from '../../../users/models/auth.models';
 import IndicateurSourcesService from '../../sources/indicateur-sources.service';
 import { TrajectoireSnbc3FeatureFlagService } from '../../trajectoires/trajectoire-snbc3-feature-flag.service';
 import ManageIndicateurValeursService from '../../valeurs/manage-indicateur-valeurs/manage-indicateur-valeurs.service';
-import { getListIndicateursDataOrThrow } from '../list-indicateurs/list-indicateurs.errors';
 import { ListIndicateursService } from '../list-indicateurs/list-indicateurs.service';
 import { buildConsolidatedSheet } from './export-indicateurs.builder';
+import {
+  ExportIndicateursError,
+  toExportTooLargeFailure,
+} from './export-indicateurs.errors';
 import { ExportIndicateursRequestType } from './export-indicateurs.request';
+
+type XlsxBuffer = Awaited<ReturnType<Workbook['xlsx']['writeBuffer']>>;
+
+type ExportedXlsx = {
+  buffer: XlsxBuffer;
+  filename: string;
+};
 
 @Injectable()
 export default class ExportIndicateursService {
@@ -35,10 +49,17 @@ export default class ExportIndicateursService {
     private readonly trajectoireSnbc3FeatureFlag: TrajectoireSnbc3FeatureFlagService
   ) {}
 
-  async exportXLSX(
+  exportXLSX(
     options: ExportIndicateursRequestType,
     tokenInfo: AuthenticatedUser
-  ) {
+  ): Promise<Result<ExportedXlsx | null, ExportIndicateursError>> {
+    return catchDatabaseFailure(() => this.buildExport(options, tokenInfo));
+  }
+
+  private async buildExport(
+    options: ExportIndicateursRequestType,
+    tokenInfo: AuthenticatedUser
+  ): Promise<Result<ExportedXlsx | null, ExportIndicateursError>> {
     this.logger.log("Vérification des droits avant l'export xlsx");
 
     // Gate confidentiel appliqué aux deux modes : on ne bloque pas l'export
@@ -70,26 +91,24 @@ export default class ExportIndicateursService {
     // unique du filtrage et du tri, qui vérifie aussi les droits de lecture de
     // l'utilisateur et borne la résolution à sa collectivité (protection IDOR).
     const sort = options.mode === 'all' ? options.sort : undefined;
-    const listResult = getListIndicateursDataOrThrow(
-      await this.listIndicateursService.listIndicateurs(
-        {
-          collectiviteId: options.collectiviteId,
-          filters,
-          queryOptions: { page: 1, limit: this.MAX_EXPORT_COUNT, sort },
-        },
-        tokenInfo
-      )
+    const listResult = await this.listIndicateursService.listIndicateurs(
+      {
+        collectiviteId: options.collectiviteId,
+        filters,
+        queryOptions: { page: 1, limit: this.MAX_EXPORT_COUNT, sort },
+      },
+      tokenInfo
     );
+    if (!listResult.success) return listResult;
+    const { count, data: listedIndicateurs } = listResult.data;
 
     // Garde-fou technique invisible : au-delà du plafond, on renvoie une erreur
     // plutôt qu'une troncature silencieuse (qui réintroduirait le bug d'origine).
-    if (listResult.count > this.MAX_EXPORT_COUNT) {
-      throw new PayloadTooLargeException(
-        `L'export dépasse la limite technique de ${this.MAX_EXPORT_COUNT} indicateurs`
-      );
+    if (count > this.MAX_EXPORT_COUNT) {
+      return toExportTooLargeFailure(this.MAX_EXPORT_COUNT);
     }
 
-    let resolvedIds = listResult.data.map((d) => d.id);
+    let resolvedIds = listedIndicateurs.map((d) => d.id);
 
     // En mode selection, on conserve l'ordre des identifiants fournis (et on
     // ignore ceux qui n'appartiennent pas à la collectivité / aux droits).
@@ -98,7 +117,7 @@ export default class ExportIndicateursService {
       resolvedIds = options.indicateurIds.filter((id) => allowed.has(id));
     }
 
-    if (!resolvedIds.length) return null;
+    if (!resolvedIds.length) return success(null);
 
     this.logger.log(
       `Export de ${resolvedIds.length} indicateur(s) de la collectivité ${options.collectiviteId}`
@@ -107,7 +126,7 @@ export default class ExportIndicateursService {
     // Ordonne les parents selon resolvedIds (cohérence avec le tri de la liste
     // en mode `all`, et avec l'ordre fourni par l'appelant en mode `selection`).
     const orderById = new Map(resolvedIds.map((id, idx) => [id, idx]));
-    const parents = [...listResult.data].sort(
+    const parents = [...listedIndicateurs].sort(
       (a, b) => (orderById.get(a.id) ?? 0) - (orderById.get(b.id) ?? 0)
     );
 
@@ -133,17 +152,18 @@ export default class ExportIndicateursService {
         enfantsFilters.estConfidentiel = false;
         enfantsFilters.sansAncetreConfidentiel = true;
       }
-      const enfantsResult = getListIndicateursDataOrThrow(
-        await this.listIndicateursService.listIndicateurs(
-          {
-            collectiviteId: options.collectiviteId,
-            filters: enfantsFilters,
-            queryOptions: { page: 1, limit: this.MAX_EXPORT_COUNT },
-          },
-          tokenInfo
-        )
+      const enfantsResult = await this.listIndicateursService.listIndicateurs(
+        {
+          collectiviteId: options.collectiviteId,
+          filters: enfantsFilters,
+          queryOptions: { page: 1, limit: this.MAX_EXPORT_COUNT },
+        },
+        tokenInfo
       );
-      const allowedEnfantIds = new Set(enfantsResult.data.map((d) => d.id));
+      if (!enfantsResult.success) return enfantsResult;
+      const allowedEnfantIds = new Set(
+        enfantsResult.data.data.map((d) => d.id)
+      );
       for (const parent of parents) {
         parent.enfants = (parent.enfants ?? []).filter((e) =>
           allowedEnfantIds.has(e.id)
@@ -152,12 +172,14 @@ export default class ExportIndicateursService {
     }
 
     // Charge la collectivité
-    const { collectivite } = getDataOrThrow(
-      await this.collectiviteService.getCollectivite(options.collectiviteId)
+    const collectiviteResult = await this.collectiviteService.getCollectivite(
+      options.collectiviteId
     );
+    if (!collectiviteResult.success) return collectiviteResult;
+    const { collectivite } = collectiviteResult.data;
 
     const filename = this.getFilename(parents, collectivite.nom ?? '');
-    if (!filename) return null;
+    if (!filename) return success(null);
 
     // Charge les valeurs pour tous les indicateurs (parents + enfants).
     const allIndicateurIds = parents.flatMap((p) => [
@@ -167,14 +189,17 @@ export default class ExportIndicateursService {
 
     // Lecture interne non filtrée : la SNBC 3 en est retirée sans le flag,
     // comme sur les fiches indicateurs.
+    const valeursResult = await this.valeursService.getIndicateursValeurs({
+      collectiviteId: options.collectiviteId,
+      indicateurIds: allIndicateurIds,
+    });
+    if (!valeursResult.success) {
+      return toDatabaseFailure(valeursResult);
+    }
+
     const indicateursValeurs =
       await this.trajectoireSnbc3FeatureFlag.filterSourcesSnbc3(
-        getDataOrThrow(
-          await this.valeursService.getIndicateursValeurs({
-            collectiviteId: options.collectiviteId,
-            indicateurIds: allIndicateurIds,
-          })
-        ),
+        valeursResult.data,
         (v) => v.indicateurSourceMetadonnee?.sourceId,
         tokenInfo,
         options.collectiviteId
@@ -191,7 +216,7 @@ export default class ExportIndicateursService {
     buildConsolidatedSheet(workbook, parents, indicateursValeurs, sourceLabels);
 
     const buffer = await workbook.xlsx.writeBuffer();
-    return { buffer, filename };
+    return success({ buffer, filename });
   }
 
   getFilename(

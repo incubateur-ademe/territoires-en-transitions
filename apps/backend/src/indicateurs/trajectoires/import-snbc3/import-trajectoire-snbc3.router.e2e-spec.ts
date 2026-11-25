@@ -30,7 +30,7 @@ import { backupSnbc3Release } from './snbc3-bucket.test-fixture';
 import { SNBC3_FIXTURE_METHODOLOGIE } from './snbc3-release.test-fixture';
 import SupabaseService from '@tet/backend/utils/database/supabase.service';
 import { getQueueToken } from '@nestjs/bullmq';
-import { failure } from '@tet/backend/utils/result.type';
+import { failure, getDataOrThrow } from '@tet/backend/utils/result.type';
 import { Job, Queue } from 'bullmq';
 import {
   ImportTrajectoireSnbc3Report,
@@ -791,13 +791,15 @@ describe("Route d'import de la trajectoire SNBC 3", () => {
           eq(indicateurDefinitionTable.identifiantReferentiel, 'cae_1.ca')
         );
       const listExportedTexts = async () => {
-        const exported = await app.get(ExportIndicateursService).exportXLSX(
-          {
-            mode: 'selection',
-            collectiviteId: hexagoneEpci.id,
-            indicateurIds: [ca.id],
-          },
-          getAuthUserFromUserCredentials(user)
+        const exported = getDataOrThrow(
+          await app.get(ExportIndicateursService).exportXLSX(
+            {
+              mode: 'selection',
+              collectiviteId: hexagoneEpci.id,
+              indicateurIds: [ca.id],
+            },
+            getAuthUserFromUserCredentials(user)
+          )
         );
         const workbook = new Workbook();
         await workbook.xlsx.load(exported?.buffer as ArrayBuffer);
