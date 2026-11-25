@@ -70,6 +70,11 @@ export const electrificationFichesErrors = {
     message:
       "La périodicité renseignée ne correspond pas à celle de l'indicateur.",
   },
+  INCOMPATIBLE_INDICATEUR_VALUES_IGNORED: {
+    kind: 'warning',
+    message:
+      "Les résultats et objectifs du document n'ont pas été importés car leur périodicité diffère de celle de l'indicateur. L'indicateur reste lié à l'action et ses valeurs existantes sont conservées.",
+  },
   MISSING_INDICATEUR_YEAR: {
     kind: 'document-error',
     message:
@@ -119,6 +124,21 @@ export class ElectrificationFichesErrors {
     return {
       ...this.issue('INVALID_INDICATEUR_PERIODICITY', location),
       message: `La périodicité de cet indicateur est ${expected}, mais le document fournit une valeur de périodicité ${supplied}. Contactez le support TeT avec votre document pour vérifier la définition à utiliser. Ne répartissez pas une valeur annuelle entre plusieurs périodes.`,
+    };
+  }
+
+  static ignoredIncompatibleValues(
+    expected: IndicateurPeriodicite,
+    supplied: IndicateurPeriodicite,
+    location: string
+  ): ElectrificationIssue {
+    const issue = this.issue(
+      'INCOMPATIBLE_INDICATEUR_VALUES_IGNORED',
+      location
+    );
+    return {
+      ...issue,
+      message: `Périodicité de l'indicateur : ${expected}. Périodicité du document : ${supplied}. ${issue.message}`,
     };
   }
 }

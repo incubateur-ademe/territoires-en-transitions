@@ -80,7 +80,15 @@ Les sources originales et les interprétations retenues sont conservées dans
 et les extraits justificatifs. Les valeurs sont lues dans les occurrences
 désignées, sans reformater la réponse en texte ni la reparcourir par une
 grammaire française. Les rapprochements d'engagements sont conservés dans
-`checkpoint.engagementInterpretations`.
+`checkpoint.engagementInterpretations`, avec la classification `equivalent`
+ou `scope-difference`. Les libellés non reconnus passent par ce rapprochement
+limité aux candidats du même axe. Chaque rapprochement accepté est signalé
+dans le compte rendu avec les deux libellés. La tolérance des différences de
+périmètre est contrôlée par `electrificationEngagementMatching.allowScopeDifferences`
+dans la [configuration documentaire](../../plans/electrification/config/electrification-engagements-document.config.ts).
+Une reprise réapplique cette politique et reconstruit les avertissements sans
+nouvel appel IA. Les contradictions et les correspondances ambiguës doivent
+être refusées par le modèle ; les contrôles des valeurs restent inchangés.
 `provider`, `model` et `metrics` rendent compte du fournisseur, des tentatives
 d'appel et des tokens consommés, y compris en cas d'échec. Un document déjà
 compris termine sans aucun appel.

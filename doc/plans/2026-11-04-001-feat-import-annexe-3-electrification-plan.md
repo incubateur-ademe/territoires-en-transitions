@@ -7,7 +7,7 @@ date: 2026-11-04
 
 # Import du plan Électrification
 
-Dernière mise à jour : 2026-11-24.
+Dernière mise à jour : 2026-11-25.
 
 Ce plan applique l'[ADR 0022](../adr/0022-initialiser-plan-electrification-depuis-annexe-3.md)
 et l'[ADR 0024](../adr/0024-publier-donnees-electrification-sans-deploiement.md)
@@ -29,7 +29,60 @@ Les [retours de recette TT-67 du 11 novembre][retours-tt67] sont intégrés au
 périmètre de B. Leur validation locale est décrite ci-dessous ; la recette
 de la version déployée reste à effectuer.
 
+## Retours de recette TT-67 - 25 novembre 2026
+
+Les [décisions du point produit](../adr/0022-initialiser-plan-electrification-depuis-annexe-3.md#décisions-de-recette-du-25-novembre-2026)
+remplacent les blocages du 24 novembre sur les formulations E05 et les
+périodicités. Les cases de code ne valent pas validation en environnement déployé.
+
+- [x] Conserver les liens d'indicateurs catalogue malgré une périodicité du
+      document différente, sans écrire leurs résultats et objectifs.
+- [x] Afficher un avertissement localisé avec les deux périodicités et les
+      conséquences de l'omission. Préserver les valeurs existantes et importer
+      normalement les autres indicateurs ; conserver les contrôles de validité
+      des périodes, unités, références et de la définition publiée.
+- [x] Remplacer la règle spécifique E05 par le rapprochement IA existant pour
+      les libellés non reconnus, y compris les variantes E05 gaz/fioul non
+      identiques au catalogue après normalisation. Classer les reformulations,
+      écarts de périmètre et cas non résolus ; appliquer `allowScopeDifferences`,
+      activé pour cette recette, sans liste de codes ou de variantes métier dans
+      le lecteur.
+- [x] Signaler chaque rapprochement IA accepté avec les deux libellés. Conserver
+      la classification en checkpoint et réappliquer la politique à la reprise,
+      sans nouvel appel IA ni conversion des valeurs.
+- [x] Valider les suites e2e existantes : création réelle du plan et des liens,
+      absence d'écriture incompatible, valeurs existantes préservées, variantes
+      officielles avec avertissement, tolérance désactivée et reprise.
+- [x] Exclure les sources propres aux plans et démarches du badge et du filtre
+      open data, en réutilisant leur catégorie commune existante.
+- [ ] Auditer les huit objectifs signalés sur la collectivité 5556 : retrouver
+      leurs plans et jobs, distinguer plusieurs imports de nouveaux plans d'un
+      éventuel doublon dans le même plan. Le stockage par plan et la conservation
+      après suppression restent inchangés ; aucune déduplication automatique.
+- [ ] Déployer puis rejouer les quatre indicateurs trimestriels, le document 03
+      et les Word E05 déjà diffusés. Vérifier les avertissements et l'absence
+      d'objectifs annuels enregistrés sur les indicateurs trimestriels.
+      Tester aussi les reformulations d'autres engagements et les refus de
+      contradictions ou d'ambiguïtés avec le modèle réel.
+- [ ] Clarifier avec Émeline la fréquence de mise à jour et la période mesurée.
+      Cette clarification ne bloque plus l'import ; aucune conversion ou reprise
+      automatique des valeurs ignorées n'est prévue.
+
+Validation locale de la tolérance : 241 tests passent dans les deux suites e2e
+existantes (29 s), avec le vrai lecteur DOCX, PostgreSQL local et un faux LLM.
+Le compte rendu persistant, la reprise et le refus lorsque la tolérance est
+désactivée sont vérifiés. Typage backend/specs, ESLint et Prettier ciblés passent.
+Aucun nouveau fichier de tests ni appel à un modèle réel. La recette déployée
+et l'évaluation sémantique du modèle restent ouvertes.
+
+Validation du badge : régression reproduite avant correction, puis 64 tests
+passants dans les suites e2e existantes de sources de plans et de liste
+d'indicateurs (17 s). Les valeurs de production n'ont pas été auditées.
+
 ## Retours de recette TT-67 - 24 novembre 2026
+
+Historique : les décisions sur les formulations et les périodicités sont
+remplacées par celles du 25 novembre ci-dessus.
 
 Les décisions et limites sont détaillées dans l'[ADR 0022](../adr/0022-initialiser-plan-electrification-depuis-annexe-3.md#corrections-de-la-recette-du-24-novembre-2026).
 Les corrections ci-dessous concernent le code ; leur déploiement et leur
@@ -59,11 +112,15 @@ recette restent à faire.
       Prévoir les définitions annuelles et mappings ou une migration dédiée,
       après inventaire des valeurs existantes ; ne pas changer leur périodicité
       par le seul import du Sheets.
+      Cette ancienne condition de déblocage est remplacée par l'omission
+      explicite des valeurs incompatibles décidée le 25 novembre.
 - [ ] Compléter les URL d'aides dans Grist. Aucun changement de l'import attendu.
 - [x] Relever la validation produit du plan maximal en production :
       109 actions + 58 sous-actions + 2 actions d'engagement = 169 fiches.
 - [ ] Déployer ces corrections puis rejouer V1, V4 avec E07, les erreurs 02a/02b/02c
       et le cas sans sous-axe. Rejouer 03 après correction des périodicités.
+      Le rejeu courant de 03 attend désormais un succès avec avertissements,
+      conformément à la décision du 25 novembre.
 
 Validation locale : 276 tests des trois suites e2e existantes de fiches,
 engagements et références passent en 25 s. Les nouveaux cas réutilisent le

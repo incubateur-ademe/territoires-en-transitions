@@ -2,7 +2,7 @@
 
 Date : 2026-11-03
 
-Dernière mise à jour : 2026-11-24
+Dernière mise à jour : 2026-11-25
 
 **Décision du 11 novembre :** la publication du catalogue et des lauréats
 sans déploiement est isolée dans la [PR C dédiée — #5815](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5815), basée sur B
@@ -78,7 +78,112 @@ Les anciennes références aux lots 1B à 7A décrivent l'historique de concepti
 pas l'ordre de livraison courant. Leur traçabilité est conservée dans
 [l'historique](#historique-des-décisions-et-des-prs).
 
+## Décisions de recette du 25 novembre 2026
+
+Les commentaires de Clément après le point du 25 novembre remplacent deux
+décisions du 24 novembre. Ils ne modifient ni les définitions partagées des
+indicateurs ni les droits d'import.
+
+- [Conflit de périodicité non bloquant](https://app.notion.com/p/4156523d57d780a9bf20ec12b9bae893?d=4226523d57d7811c8a1c001cdf46d305&c=4236523d57d78071ad04001d134dfeb8) :
+  conserver le lien vers l'indicateur du catalogue et ignorer les résultats
+  et objectifs du document dont la périodicité est incompatible. Un avertissement
+  localisé dans le compte rendu indique les deux périodicités, les données non
+  importées et la conservation des valeurs existantes. Les autres indicateurs
+  sont importés normalement. Une unité incorrecte, une année absente ou une
+  période invalide restent bloquantes ; aucune conversion n'est effectuée.
+  Une référence sans valeur ne produit pas d'avertissement de données ignorées.
+  La définition est toujours revérifiée lors de la transaction de création.
+- [Formulations E05 des documents diffusés](https://app.notion.com/p/4156523d57d780a9bf20ec12b9bae893?d=4236523d57d780398323001cb6371391&c=4236523d57d78086a4f5001d37e9f3c9) :
+  accepter les différences gaz/fioul entre le Word et Grist. La première
+  implémentation utilisait une règle documentaire spécifique ; elle est
+  remplacée par la tolérance commune ci-dessous, demandée en revue le même jour.
+
+**Précision de revue du 25 novembre : tolérance commune des libellés.**
+Les codes et libellés normalisés identiques restent reconnus sans IA.
+Les variantes E05 gaz/fioul non identiques suivent le rapprochement IA commun,
+avec avertissement si elles sont acceptées ; leur reconnaissance sans IA
+n'est plus un objectif de cette livraison.
+Pour les autres libellés, le rapprochement IA existant choisit exclusivement
+parmi les engagements du même axe et distingue `equivalent`, `scope-difference`
+et `unresolved`. Une différence de périmètre concerne les biens, populations
+ou catégories auxquels s'applique la même action. Une action contraire, une
+échéance ou un objectif contradictoire, une condition ou plusieurs candidats
+plausibles doivent conduire à un refus, même si la tolérance est active.
+
+Le réglage `electrificationEngagementMatching.allowScopeDifferences`, dans
+`electrification-engagements-document.config.ts`, vaut `true` pour cette recette.
+Il autorise ces écarts pour tous les engagements ; aucune règle gaz/fioul,
+liste de codes ou copie du catalogue n'est conservée dans le lecteur. À `false`,
+les reformulations équivalentes restent acceptées, les écarts de périmètre
+sont refusés. Ce réglage est une configuration du backend, sans nouveau
+feature flag ni paramètre fourni par le document ou l'utilisateur final.
+
+Tout rapprochement IA accepté produit un avertissement localisé avec les
+libellés du document et du catalogue, le code retenu et, le cas échéant,
+la différence de périmètre tolérée. Les cibles sont rattachées à la définition
+publiée sans conversion ; leurs valeurs, unités et dates restent contrôlées.
+La classification est conservée dans le checkpoint. À la reprise, la politique
+est réappliquée et le compte rendu reconstruit sans nouvel appel IA. Un
+checkpoint sans classification ne satisfait plus le contrat courant, selon
+la décision de ne pas reprendre les anciens imports de recette.
+
+Le modèle évalue le sens et le périmètre ; le code vérifie la citation exacte,
+le candidat autorisé et la politique applicable. Ces vérifications ne prouvent
+pas l'équivalence sémantique. La recette humaine doit donc couvrir les faux
+rapprochements, les contradictions et les écarts acceptés, au-delà des tests
+avec un faux LLM. L'avertissement demande de vérifier le rattachement retenu.
+
+Cette décision permet l'import sans attendre un passage à l'annuel des quatre
+indicateurs trimestriels. Leur besoin métier reste à préciser avec Émeline ;
+les valeurs omises ne seront pas restaurées automatiquement. La règle commune
+de périodicité de l'[ADR 0018](0018-periodicite-des-indicateurs.md) est conservée.
+La correction et la rediffusion du Word restent utiles, mais les documents
+déjà distribués doivent fonctionner. La recette déployée de ces changements
+reste à effectuer avec un lancement humain.
+
+**Preuve historique de la première approche, remplacée le 25 novembre :**
+les deux suites e2e existantes de fiches et de parcours complet avaient passé
+238 tests en 26 s, avec le lecteur DOCX et PostgreSQL réels et un LLM simulé.
+Elles couvraient les liens, l'absence d'écriture incompatible, les valeurs
+existantes inchangées et la règle E05 alors spécifique, sans appel au LLM.
+Cette dernière règle a été supprimée : ce résultat ne valide pas la
+reconnaissance actuelle des variantes E05. Typage backend/specs, ESLint et
+Prettier ciblés avaient aussi été vérifiés.
+
+Validation de la tolérance commune : les mêmes suites passent avec 241 tests
+en 29 s. Elles couvrent les reformulations avec avertissement, les différences
+de périmètre autorisées ou refusées par configuration, la conservation du
+diagnostic en compte rendu et sa reconstruction à la reprise sans nouvel appel.
+Les refus de candidat hors axe, de citation inventée et de réponse non résolue
+sont conservés. Typage backend/specs, ESLint et Prettier ciblés vérifiés.
+Le faux LLM valide le contrat et la politique ; la qualité du rapprochement
+avec le modèle réel reste à qualifier en recette.
+
+**Retour complémentaire du 25 novembre : badge open data et objectifs répétés.**
+Le filtre `hasOpenData` excluait les trajectoires, mais pas les sources propres
+aux plans et démarches. Une cible Électrification suffisait donc à afficher le
+badge. La correction réutilise `INDICATEUR_SOURCES_WITH_DEDICATED_METADATA`,
+déjà exclu de la moyenne nationale, sans règle spécifique dans le frontend.
+Les sources externes restent éligibles au badge ; il ne s'agit pas d'exclure
+tous les objectifs. Cette correction ne modifie aucune valeur stockée.
+
+Les huit objectifs signalés sur la collectivité 5556 restent à auditer en
+production. Le stockage accepté ci-dessous isole les cibles par plan : un
+nouvel import créant un nouveau plan crée une autre métadonnée, tandis qu'une
+reprise du même plan réutilise la sienne. Supprimer le plan conserve ses valeurs.
+L'égalité des objectifs ne suffit donc pas à conclure à un doublon technique.
+Vérifier leurs rattachements aux plans et jobs avant toute déduplication ;
+aucun regroupement entre plans ni nettoyage de production n'est réalisé ici.
+Le test de source par plan reproduit le badge erroné avant correction. Après
+correction, les deux suites e2e de sources et de liste d'indicateurs passent
+(64 tests, 17 s), dont les filtres open data et la réutilisation d'une même
+métadonnée au retry. Typage backend/specs, ESLint et formatage ciblés vérifiés.
+
 ## Corrections de la recette du 24 novembre 2026
+
+Les décisions sur les formulations et le blocage de périodicité ci-dessous
+sont conservées comme historique et remplacées par celles du
+[25 novembre](#décisions-de-recette-du-25-novembre-2026).
 
 La [recette de Clément en production][retours-tt67] signale encore une lecture
 variable de la cible E07, le rejet du modèle vierge V1 et celui d'une action
@@ -2189,10 +2294,10 @@ Aucun test automatisé ni agent ne déclenche un appel réel au modèle.
    Pour la recharge, [quelle référence couvre le seuil ≥150 kW de `6-b` ?][question-recharge]
    La confirmation des références d'engagement E07 ne suffit pas à établir
    l'équivalence de périmètre des indicateurs Grist.
-3. **Phrases des engagements.** Corriger le Word pour reprendre les formulations
-   de Grist, selon la décision du 24 novembre. L'écart "gaz" / "gaz ou au fioul"
-   reste suivi dans [TT-67][retours-tt67] ; ce changement de périmètre ne doit
-   pas être compensé par un alias dans le code.
+3. **Phrases des engagements.** Rejouer les formulations E05 des Word diffusés
+   et de Grist selon la [décision du 25 novembre](#décisions-de-recette-du-25-novembre-2026).
+   L'alignement du Word reste suivi côté métier, sans conditionner l'import
+   des versions déjà distribuées.
 4. **Lauréats.** La source est l'annuaire Grist partagé dans
    [TET-8065](https://app.notion.com/p/3e96523d57d780beb6cffcd9e04b01a9).
    Depuis la décision du 13 novembre, C utilise exclusivement ses identifiants
@@ -2204,11 +2309,12 @@ Aucun test automatisé ni agent ne déclenche un appel réel au modèle.
    à confirmer auprès du métier. Les droits de lecture et le workflow réel
    restent à qualifier ; détail et historique dans
    l'[ADR 0024](0024-publier-donnees-electrification-sans-deploiement.md#couverture-des-lauréats--décision-du-13-novembre-2026).
-5. **Indicateurs trimestriels.** Confirmer avec Émeline la proposition annuelle
-   de Clément pour les quatre références listées dans les
-   [corrections du 24 novembre](#corrections-de-la-recette-du-24-novembre-2026),
-   puis publier les définitions et correspondances adaptées. La périodicité
-   existante ne peut pas être changée par le seul import du Sheets.
+5. **Indicateurs trimestriels.** Vérifier en recette que les quatre références
+   listées dans les [corrections du 24 novembre](#corrections-de-la-recette-du-24-novembre-2026)
+   conservent leur lien sans importer les valeurs annuelles, avec avertissement.
+   Clarifier avec Émeline le besoin de suivi annuel ou trimestriel reste utile,
+   sans bloquer l'import. Un éventuel changement de périodicité publiée exige
+   un traitement dédié, pas le seul import du Sheets.
 
 La décision produit du 19 novembre remplace la [réponse du 11 novembre][decision-aides] :
 les aides sans URL sont omises sans avertissement, sans bloquer l'action. La réponse d'Émeline du 12 novembre

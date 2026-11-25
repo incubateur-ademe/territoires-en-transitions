@@ -1,3 +1,9 @@
+/** Politique commune aux engagements, appliquée aussi à la reprise d'un import. */
+export const electrificationEngagementMatching = {
+  // Une différence acceptée est toujours signalée ; aucune cible n'est convertie.
+  allowScopeDifferences: true,
+};
+
 /** En-têtes et ligne de socle commun des canevas Word officiels. */
 export const electrificationEngagementsDocument = {
   socleCommun: {

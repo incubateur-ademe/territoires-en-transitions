@@ -19,6 +19,7 @@ import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicate
 import { axeIndicateurTable } from '@tet/backend/plans/fiches/shared/models/axe-indicateur.table';
 import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
 import { ficheActionAxeTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-axe.table';
+import { ficheActionIndicateurTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-indicateur.table';
 import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
 import { planActionTypeTable } from '@tet/backend/plans/fiches/shared/models/plan-action-type.table';
 import { ImportPlanService } from '@tet/backend/plans/plans/import-plan-aggregate/import-plan.service';
@@ -33,6 +34,7 @@ import { addAndEnableUserSuperAdminMode } from '@tet/backend/users/users/users.t
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import SupabaseService from '@tet/backend/utils/database/supabase.service';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
+import { emptyTokenUsage } from '@tet/backend/utils/llm/token-usage';
 import { FakeLlmRepository } from '@tet/backend/utils/llm/repositories/fake/fake-llm.repository';
 import { failure, success } from '@tet/backend/utils/result.type';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
@@ -356,6 +358,9 @@ describe(
       await db.db
         .delete(indicateurValeurTable)
         .where(eq(indicateurValeurTable.collectiviteId, collectiviteId()));
+      await db.db
+        .delete(indicateurDefinitionTable)
+        .where(eq(indicateurDefinitionTable.collectiviteId, collectiviteId()));
       if (metadataIds.length)
         await db.db
           .delete(indicateurSourceMetadonneeTable)
@@ -461,8 +466,28 @@ describe(
       }
     });
 
-    test('importe les engagements sans cible et les compléments disponibles du catalogue malgré les autres correspondances en attente', async () => {
+    test('importe les engagements sans cible et leurs compléments en conservant le diagnostic de périmètre dans le compte rendu', async () => {
       Object.assign(catalogue, structuredClone(electrificationConfig));
+      const engagement = catalogue.engagements.find(
+        ({ code }) => code === EngagementCode.DECOMMISSIONNEMENT_RESEAU_GAZ
+      );
+      assert(engagement);
+      engagement.libelleSource = engagement.libelleSource.replace(
+        'certaines portions',
+        'la totalité'
+      );
+      vi.mocked(llm.complete).mockResolvedValueOnce({
+        success: true,
+        data: {
+          completed: true,
+          text: JSON.stringify({
+            match: 'scope-difference',
+            code: engagement.code,
+            quote: qualitativeEngagements[0].libelle,
+          }),
+          usage: emptyTokenUsage(),
+        },
+      });
       const jobId = await enqueue({
         engagements: qualitativeEngagements,
         fields: {
@@ -477,6 +502,15 @@ describe(
       expect(await status(jobId)).toMatchObject({
         status: 'done',
         createdPlanId: expect.any(Number),
+        report: {
+          issues: expect.arrayContaining([
+            expect.objectContaining({
+              code: 'TOLERATED_ELECTRIFICATION_ENGAGEMENT_SCOPE',
+              kind: 'warning',
+              message: expect.stringContaining(engagement.libelleSource),
+            }),
+          ]),
+        },
       });
       const fiches = await readFiches();
       expect(fiches).toHaveLength(6);
@@ -510,7 +544,7 @@ describe(
         ])
       );
       expect(await readValeurs()).toEqual([]);
-      expect(llm.complete).not.toHaveBeenCalled();
+      expect(llm.complete).toHaveBeenCalledOnce();
       expect(llm.chat).not.toHaveBeenCalled();
     });
 
@@ -861,6 +895,104 @@ describe(
       expect(await notifications()).toHaveLength(1);
       expect(await readAxes()).toEqual([]);
       expect(await readFiches()).toEqual([]);
+      expect(llm.complete).not.toHaveBeenCalled();
+      expect(llm.chat).not.toHaveBeenCalled();
+    });
+
+    test('crée le plan et le lien trimestriel sans importer les valeurs annuelles ni modifier les données existantes', async () => {
+      const [definition] = await db.db
+        .insert(indicateurDefinitionTable)
+        .values({
+          identifiantReferentiel: `full-flow-trimestriel-${randomUUID()}`,
+          titre: 'Ménages accompagnés',
+          unite: 'nb',
+          periodicite: 'trimestrielle',
+        })
+        .returning();
+      definitions.push(definition.id);
+      catalogue.fiches.indicateurs = [
+        {
+          code: 'test-trimestriel',
+          type: 'quantitatif',
+          validation: 'validated',
+          identifiantReferentiel: definition.identifiantReferentiel,
+          unite: definition.unite,
+          periodicite: definition.periodicite,
+        },
+      ];
+      const [existing] = await db.db
+        .insert(indicateurValeurTable)
+        .values({
+          collectiviteId: collectiviteId(),
+          indicateurId: definition.id,
+          periodicite: 'trimestrielle',
+          dateValeur: '2026-01-01',
+          resultat: 7,
+          objectif: 9,
+        })
+        .returning();
+      const jobId = await enqueue({
+        engagements: [],
+        indicateurs: [
+          {
+            reference: 'test-trimestriel',
+            titre: 'Ménages accompagnés (nb)',
+            resultat: '120 (2026)',
+            objectif: '200 (2030)',
+          },
+          {
+            titre: 'Bâtiments rénovés (nb)',
+            resultat: '3 (2026)',
+            objectif: '5 (2030)',
+          },
+        ],
+      });
+
+      await worker.generate(jobId);
+
+      expect(await status(jobId)).toMatchObject({
+        status: 'done',
+        createdPlanId: expect.any(Number),
+        report: {
+          issues: expect.arrayContaining([
+            expect.objectContaining({
+              code: 'INCOMPATIBLE_INDICATEUR_VALUES_IGNORED',
+              kind: 'warning',
+              location: expect.stringContaining('Ménages accompagnés'),
+              message: expect.stringMatching(
+                /trimestrielle.*annuelle.*n'ont pas été importés/
+              ),
+            }),
+          ]),
+        },
+      });
+      const [fiche] = await readFiches();
+      const links = await db.db
+        .select()
+        .from(ficheActionIndicateurTable)
+        .where(eq(ficheActionIndicateurTable.ficheId, fiche.id));
+      expect(links).toHaveLength(2);
+      expect(links).toContainEqual(
+        expect.objectContaining({ indicateurId: definition.id })
+      );
+      const values = await readValeurs();
+      expect(
+        values.filter(({ indicateurId }) => indicateurId === definition.id)
+      ).toEqual([existing]);
+      expect(
+        values.filter(({ indicateurId }) => indicateurId !== definition.id)
+      ).toEqual([
+        expect.objectContaining({
+          resultat: 3,
+          objectif: null,
+          dateValeur: '2026-01-01',
+        }),
+        expect.objectContaining({
+          resultat: null,
+          objectif: 5,
+          dateValeur: '2030-01-01',
+        }),
+      ]);
       expect(llm.complete).not.toHaveBeenCalled();
       expect(llm.chat).not.toHaveBeenCalled();
     });
