@@ -27,6 +27,7 @@ type IndicateurShape = Readonly<{
   parent: IndicateurInGroup | null;
   estConfidentiel: boolean;
   datesToMove: readonly string[];
+  titreSecondSousIndicateur: string | undefined;
 }>;
 
 @Injectable()
@@ -78,8 +79,14 @@ export default class CreateIndicateurService {
       if (!shapeResult.success) {
         return failure(shapeResult.error);
       }
-      const { unite, periodicite, parent, estConfidentiel, datesToMove } =
-        shapeResult.data;
+      const {
+        unite,
+        periodicite,
+        parent,
+        estConfidentiel,
+        datesToMove,
+        titreSecondSousIndicateur,
+      } = shapeResult.data;
 
       const createdResult = await this.repository.createIndicateurPerso(
         {
@@ -129,6 +136,31 @@ export default class CreateIndicateurService {
           },
           transaction
         );
+
+        if (titreSecondSousIndicateur !== undefined) {
+          const secondResult = await this.repository.createIndicateurPerso(
+            {
+              collectiviteId,
+              titre: titreSecondSousIndicateur,
+              unite,
+              periodicite,
+              thematiqueIds: input.thematiques.map(({ id }) => id),
+              commentaire: undefined,
+              estFavori: input.estFavori,
+              estConfidentiel,
+              isApplicable: input.isApplicable,
+              modifiedBy: user.id,
+            },
+            transaction
+          );
+          if (!secondResult.success) {
+            return failure(secondResult.error, secondResult.cause);
+          }
+          await this.repository.attachSousIndicateur(
+            { parentId: parent.id, enfantId: secondResult.data },
+            transaction
+          );
+        }
       }
 
       if (input.ficheId !== undefined) {
@@ -173,6 +205,7 @@ export default class CreateIndicateurService {
         parent: null,
         estConfidentiel: input.estConfidentiel ?? false,
         datesToMove: [],
+        titreSecondSousIndicateur: undefined,
       });
     }
 
@@ -204,6 +237,7 @@ export default class CreateIndicateurService {
       parent,
       estConfidentiel,
       datesToMove,
+      titreSecondSousIndicateur: input.titreSecondSousIndicateur,
     });
   }
 

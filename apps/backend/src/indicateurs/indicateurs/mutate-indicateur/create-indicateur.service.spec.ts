@@ -272,4 +272,93 @@ describe('CreateIndicateurService', () => {
     expect(indicateurValeurLockRepository.lock).not.toHaveBeenCalled();
     expect(repository.moveValeursSaisies).not.toHaveBeenCalled();
   });
+
+  it('crée un second sous-indicateur vide dans la même transaction et lui laisse aucune valeur du parent', async () => {
+    const events: string[] = [];
+    const tx = { name: 'tx' };
+    const parent = {
+      id: 7,
+      collectiviteId: 1,
+      unite: 't',
+      periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+      parentId: null,
+      hasChildren: false,
+    };
+    const createdIds = [42, 43];
+    const repository = {
+      getIndicateurInGroup: vi.fn().mockResolvedValue(parent),
+      listDatesValeursSaisies: vi.fn().mockResolvedValue(['2022-01-01']),
+      isConfidentiel: vi.fn().mockResolvedValue(true),
+      createIndicateurPerso: vi.fn(
+        async ({ titre }: { titre: string }) => {
+          events.push(`insert:${titre}`);
+          return success(createdIds.shift());
+        }
+      ),
+      attachSousIndicateur: vi.fn(
+        async ({ enfantId }: { enfantId: number }) => {
+          events.push(`attach:${enfantId}`);
+        }
+      ),
+      moveValeursSaisies: vi.fn(
+        async ({ toIndicateurId }: { toIndicateurId: number }) => {
+          events.push(`move-valeurs:${toIndicateurId}`);
+        }
+      ),
+    };
+    const service = new CreateIndicateurService(
+      {
+        executeSingle: vi.fn(
+          (operation: (transaction: typeof tx) => Promise<unknown>) =>
+            operation(tx)
+        ),
+      } as never,
+      repository as never,
+      {
+        isAllowed: vi
+          .fn()
+          .mockResolvedValue({ success: true, data: undefined }),
+      } as never,
+      { lockForIndicateurMutation: vi.fn() } as never,
+      { upsertIndicateurFiches: vi.fn() } as never,
+      { lock: vi.fn() } as never
+    );
+
+    await expect(
+      service.createIndicateurPerso(
+        {
+          collectiviteId: 1,
+          titre: 'Sous-indicateur 1',
+          titreSecondSousIndicateur: 'Sous-indicateur 2',
+          parentId: 7,
+          thematiques: [],
+          estFavori: false,
+          isApplicable: true,
+        },
+        {
+          user: {
+            id: '00000000-0000-0000-0000-000000000001',
+            role: AuthRole.AUTHENTICATED,
+          },
+        } as never
+      )
+    ).resolves.toEqual({ success: true, data: 42 });
+
+    expect(events).toEqual([
+      'insert:Sous-indicateur 1',
+      'attach:42',
+      'move-valeurs:42',
+      'insert:Sous-indicateur 2',
+      'attach:43',
+    ]);
+    expect(repository.createIndicateurPerso).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        titre: 'Sous-indicateur 2',
+        unite: 't',
+        periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+        estConfidentiel: true,
+      }),
+      tx
+    );
+  });
 });

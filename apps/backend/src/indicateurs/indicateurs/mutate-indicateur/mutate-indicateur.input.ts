@@ -70,6 +70,11 @@ const createSousIndicateurPersoInputSchema =
       .describe(
         "Si absent, le sous-indicateur qui reprend les valeurs de son parent reprend aussi sa confidentialité ; sinon il n'est pas confidentiel."
       ),
+    titreSecondSousIndicateur: z
+      .optional(indicateurCommonSchema.shape.titre)
+      .describe(
+        'Si présent, un second sous-indicateur vide est créé dans la même transaction. Les valeurs du parent vont au premier.'
+      ),
     unite: z.never().optional(),
     periodicite: z.never().optional(),
   });
