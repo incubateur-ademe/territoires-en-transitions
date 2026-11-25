@@ -35,6 +35,12 @@ export const CreateSousIndicateurButton = ({
             titre: appLabels.indicateurSousIndicateurNomProvisoire({
               numero: childCount + 1,
             }),
+            ...(childCount === 0 && {
+              titreSecondSousIndicateur:
+                appLabels.indicateurSousIndicateurNomProvisoire({
+                  numero: childCount + 2,
+                }),
+            }),
           },
           onCreated ? { onCreated } : undefined
         )

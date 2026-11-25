@@ -191,7 +191,7 @@ describe('IndicateurPersoDonnees : tableau des valeurs', () => {
     ).toBeDefined();
   });
 
-  it("propose de créer le premier sous-indicateur sous le tableau d'un perso sans enfant, nommé Sous-indicateur 1", () => {
+  it("propose de créer les deux premiers sous-indicateurs sous le tableau d'un perso sans enfant, nommés Sous-indicateur 1 et Sous-indicateur 2", () => {
     const { createSousIndicateur } = renderDonnees(
       toIndicateur({ collectiviteId: 1, enfants: [] })
     );
@@ -203,7 +203,11 @@ describe('IndicateurPersoDonnees : tableau des valeurs', () => {
     );
 
     expect(createSousIndicateur).toHaveBeenCalledWith(
-      { parentId: 10, titre: 'Sous-indicateur 1' },
+      {
+        parentId: 10,
+        titre: 'Sous-indicateur 1',
+        titreSecondSousIndicateur: 'Sous-indicateur 2',
+      },
       expect.anything()
     );
   });
