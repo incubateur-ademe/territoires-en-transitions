@@ -10,7 +10,11 @@ import { ListIndicateursError } from '../../indicateurs/indicateurs/list-indicat
 import { ListIndicateursService } from '../../indicateurs/indicateurs/list-indicateurs/list-indicateurs.service';
 import { LabellisationRecord } from '../../referentiels/labellisations/list-labellisations.api-response';
 import { catchDatabaseFailure } from '@tet/backend/utils/database/catch-database-failure';
-import { Result, success } from '@tet/backend/utils/result.type';
+import {
+  getDataOrThrow,
+  Result,
+  success,
+} from '@tet/backend/utils/result.type';
 import { checkMetricsReadAllowed } from '../check-metrics-read-allowed';
 
 @Injectable()
@@ -95,7 +99,7 @@ export class CollectivitesMetricsService {
 
     promises.push(
       this.listFichesService.count(collectiviteId).then((count) => {
-        response.plans.fiches = count;
+        response.plans.fiches = getDataOrThrow(count);
         return;
       })
     );

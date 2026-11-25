@@ -558,13 +558,18 @@ export class NotifyPiloteService {
 
     // charge toutes les fiches
     const fiches: FicheWithRelations[] = [];
-    const result = await this.listFichesService.listFichesQuery(
-      null,
-      { ficheIds, withChildren: true },
-      { limit: 'all' }
-    );
+    const result = await this.listFichesService.listFichesQuery({
+      collectiviteId: null,
+      filters: { ficheIds, withChildren: true },
+      queryOptions: { limit: 'all' },
+    });
+    if (!result.success) {
+      const error = `Echec de chargement des fiches ${ficheIds} pour notifier le pilote ${piloteId}`;
+      this.logger.error(error, result.cause);
+      return { success: false, error };
+    }
     for (const ficheId of ficheIds) {
-      const fiche = result.data.find((f) => f.id === ficheId);
+      const fiche = result.data.data.find((f) => f.id === ficheId);
       if (!fiche) {
         this.logger.error(`Action ${ficheId} non trouvée`);
       } else if (
@@ -615,9 +620,9 @@ export class NotifyPiloteService {
       const fiche = fiches[0];
       let ficheParente;
       if (fiche.parentId) {
-        const getParentResult = await this.listFichesService.getFicheById(
-          fiche.parentId
-        );
+        const getParentResult = await this.listFichesService.getFicheById({
+          ficheId: fiche.parentId,
+        });
         if (!getParentResult.success) {
           const error = `Action parente ${fiche.parentId} non trouvée pour la fiche ${fiche.id}`;
           this.logger.error(error);
@@ -653,12 +658,17 @@ export class NotifyPiloteService {
     });
     let parentFiches: FicheWithRelations[] = [];
     if (parentFicheIds.size) {
-      const getParentsResult = await this.listFichesService.listFichesQuery(
-        null,
-        { ficheIds: Array.from(parentFicheIds) },
-        { limit: 'all' }
-      );
-      parentFiches = getParentsResult.data;
+      const getParentsResult = await this.listFichesService.listFichesQuery({
+        collectiviteId: null,
+        filters: { ficheIds: Array.from(parentFicheIds) },
+        queryOptions: { limit: 'all' },
+      });
+      if (!getParentsResult.success) {
+        const error = `Echec de chargement des actions parentes des fiches ${ficheIds} pour notifier le pilote ${piloteId}`;
+        this.logger.error(error, getParentsResult.cause);
+        return { success: false, error };
+      }
+      parentFiches = getParentsResult.data.data;
     }
     // et utilise le format multi-fiches
     const assignedActions = fiches.map((fiche) => {

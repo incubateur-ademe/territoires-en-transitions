@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { FicheCreateAuthorization } from '@tet/backend/plans/fiches/create-fiche/fiche-create-authorization';
 import { FicheDuplicationService } from '@tet/backend/plans/fiches/fiche-duplication/fiche-duplication.service';
+import { ListFichesQueryError } from '@tet/backend/plans/fiches/list-fiches/list-fiches.errors';
 import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
@@ -90,11 +91,13 @@ export class DuplicatePlanService {
       if (!authorizationResult.success) return authorizationResult;
       const authorization = authorizationResult.data;
 
-      const planFiches = await this.loadPlanFiches(
+      const planFichesResult = await this.loadPlanFiches(
         planId,
         collectiviteId,
         transaction
       );
+      if (!planFichesResult.success) return planFichesResult;
+      const planFiches = planFichesResult.data;
 
       const newPlanResult = await this.upsertPlanService.upsertPlan(
         {
@@ -154,31 +157,33 @@ export class DuplicatePlanService {
     planId: number,
     collectiviteId: number,
     tx: Transaction
-  ): Promise<PlanFichesToDuplicate> {
-    const { data: matchedActions } =
-      await this.listFichesService.listFichesQuery(
-        collectiviteId,
-        { planActionIds: [planId] },
-        undefined,
-        tx
-      );
-    const actions = ownedByCollectivite(matchedActions, collectiviteId);
+  ): Promise<Result<PlanFichesToDuplicate, ListFichesQueryError>> {
+    const matchedActionsResult = await this.listFichesService.listFichesQuery(
+      { collectiviteId, filters: { planActionIds: [planId] } },
+      { tx }
+    );
+    if (!matchedActionsResult.success) return matchedActionsResult;
+    const actions = ownedByCollectivite(
+      matchedActionsResult.data.data,
+      collectiviteId
+    );
 
     const actionIds = actions.map((fiche) => fiche.id);
-    if (actionIds.length === 0) return { actions, sousActions: [] };
+    if (actionIds.length === 0) return success({ actions, sousActions: [] });
 
-    const { data: matchedChildren } =
-      await this.listFichesService.listFichesQuery(
-        collectiviteId,
-        { parentsId: actionIds },
-        undefined,
-        tx
-      );
+    const matchedChildrenResult = await this.listFichesService.listFichesQuery(
+      { collectiviteId, filters: { parentsId: actionIds } },
+      { tx }
+    );
+    if (!matchedChildrenResult.success) return matchedChildrenResult;
 
-    return {
+    return success({
       actions,
-      sousActions: ownedByCollectivite(matchedChildren, collectiviteId),
-    };
+      sousActions: ownedByCollectivite(
+        matchedChildrenResult.data.data,
+        collectiviteId
+      ),
+    });
   }
 
   private async buildWriteAuthorization(

@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
-import { Result, success } from '@tet/backend/utils/result.type';
+import {
+  combineResults,
+  Result,
+  success,
+} from '@tet/backend/utils/result.type';
 import {
   FicheWithRelations,
   ListFichesRequestFilters,
@@ -32,14 +36,19 @@ export class ListSuiviPlanFichesService {
     }
     const { plan, filters } = contextResult.data;
 
-    const { data: fiches } = await this.listFichesService.listFichesQuery(
-      plan.collectiviteId,
-      filters,
-      { limit: 'all' },
-      tx
+    const fichesResult = await this.listFichesService.listFichesQuery(
+      {
+        collectiviteId: plan.collectiviteId,
+        filters,
+        queryOptions: { limit: 'all' },
+      },
+      { tx }
     );
+    if (!fichesResult.success) {
+      return fichesResult;
+    }
 
-    return success({ plan, fiches });
+    return success({ plan, fiches: fichesResult.data.data });
   }
 
   async countFiches<Key extends string>(
@@ -53,19 +62,29 @@ export class ListSuiviPlanFichesService {
     }
     const { plan, filters } = contextResult.data;
 
-    const counts = await Promise.all(
-      (Object.keys(filtersByKey) as Key[]).map(async (key) => {
-        const { count } = await this.listFichesService.listFichesQuery(
-          plan.collectiviteId,
-          { ...filtersByKey[key], ...filters },
-          { page: 1, limit: 1 },
-          tx
-        );
-        return [key, count] as const;
-      })
+    const keys = Object.keys(filtersByKey) as Key[];
+    const countResults = await Promise.all(
+      keys.map((key) =>
+        this.listFichesService.listFichesQuery(
+          {
+            collectiviteId: plan.collectiviteId,
+            filters: { ...filtersByKey[key], ...filters },
+            queryOptions: { page: 1, limit: 1 },
+          },
+          { tx }
+        )
+      )
     );
+    const countsResult = combineResults(countResults);
+    if (!countsResult.success) {
+      return countsResult;
+    }
 
-    return success(Object.fromEntries(counts) as Record<Key, number>);
+    return success(
+      Object.fromEntries(
+        keys.map((key, index) => [key, countsResult.data[index].count])
+      ) as Record<Key, number>
+    );
   }
 
   private async getPlanAndFilters(

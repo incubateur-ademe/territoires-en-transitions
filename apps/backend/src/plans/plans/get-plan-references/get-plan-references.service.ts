@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import FicheActionPermissionsService from '@tet/backend/plans/fiches/fiche-action-permissions.service';
+import { ListFichesQueryError } from '@tet/backend/plans/fiches/list-fiches/list-fiches.errors';
 import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches.service';
 import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
 import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
@@ -77,7 +78,12 @@ export class GetPlanReferencesService {
         )
       );
 
-    const readableIds = await this.listReadableFicheIds(planId, { user, tx });
+    const readableIdsResult = await this.listReadableFicheIds(planId, {
+      user,
+      tx,
+    });
+    if (!readableIdsResult.success) return readableIdsResult;
+    const readableIds = readableIdsResult.data;
     const ficheReferences = readableIds.length
       ? await tx
           .select({
@@ -120,15 +126,18 @@ export class GetPlanReferencesService {
   private async listReadableFicheIds(
     planId: number,
     { user, tx }: { user: AuthenticatedUser; tx: Transaction }
-  ): Promise<number[]> {
-    const { data: racines } = await this.listFichesService.listFichesQuery(
-      null,
-      { planActionIds: [planId] },
-      { limit: 'all' },
-      tx
+  ): Promise<Result<number[], ListFichesQueryError>> {
+    const racinesResult = await this.listFichesService.listFichesQuery(
+      {
+        collectiviteId: null,
+        filters: { planActionIds: [planId] },
+        queryOptions: { limit: 'all' },
+      },
+      { tx }
     );
+    if (!racinesResult.success) return racinesResult;
     const readableIds: number[] = [];
-    let fiches = racines;
+    let fiches = racinesResult.data.data;
     while (fiches.length) {
       const parentIds: number[] = [];
       for (const fiche of fiches) {
@@ -142,14 +151,17 @@ export class GetPlanReferencesService {
       if (parentIds.length === 0) break;
       // Une sous-action suit sa parente actuelle, même sans lien d'axe propre.
       // Une parente supprimée, détachée ou non lisible exclut ses descendants.
-      const children = await this.listFichesService.listFichesQuery(
-        null,
-        { parentsId: parentIds },
-        { limit: 'all' },
-        tx
+      const childrenResult = await this.listFichesService.listFichesQuery(
+        {
+          collectiviteId: null,
+          filters: { parentsId: parentIds },
+          queryOptions: { limit: 'all' },
+        },
+        { tx }
       );
-      fiches = children.data;
+      if (!childrenResult.success) return childrenResult;
+      fiches = childrenResult.data.data;
     }
-    return readableIds;
+    return success(readableIds);
   }
 }

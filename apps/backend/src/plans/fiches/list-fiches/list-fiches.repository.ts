@@ -14,7 +14,9 @@ import { sqlAuthorOrNull } from '@tet/backend/users/models/author.utils';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { sqlToDateTimeISO } from '@tet/backend/utils/column.utils';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { catchDatabaseFailure } from '@tet/backend/utils/database/catch-database-failure';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { Tag } from '@tet/domain/collectivites';
 import {
   FicheWithRelations,
@@ -40,6 +42,11 @@ import { PgColumn } from 'drizzle-orm/pg-core';
 import { ficheActionPiloteTable } from '../shared/models/fiche-action-pilote.table';
 import { checkCompletion } from './completion';
 import { DescriptionSearchScope } from './fiches-restreintes.rules';
+import {
+  CountPiloteFichesError,
+  ListFichesErrorEnum,
+  ListFichesQueryError,
+} from './list-fiches.errors';
 import { ListFichesBudgetRepository } from './list-fiches-budget.repository';
 import {
   formatFiltersForLogs,
@@ -48,6 +55,22 @@ import {
 import { ListFichesRelationsRepository } from './list-fiches-relations.repository';
 
 type FicheWithoutCompletion = Omit<FicheWithRelations, 'completion'>;
+
+type ListFichesWithDescriptionSearchArgs = {
+  collectiviteId: number | null;
+  filters?: ListFichesRequestFilters;
+  queryOptions?: QueryOptionsSchema;
+  tx?: Transaction;
+  descriptionSearch: DescriptionSearchScope;
+};
+
+const toUserIdRequiredFailure = (): Result<never, CountPiloteFichesError> =>
+  failure(
+    ListFichesErrorEnum.USER_ID_REQUIRED,
+    new BadRequestException(
+      'Seulement supporté pour les utilisateurs authentifiés'
+    )
+  );
 
 const sortColumn: Record<ListFichesSortValue, PgColumn> = {
   modified_at: ficheActionTable.modifiedAt,
@@ -71,78 +94,75 @@ export class ListFichesRepository {
     collectiviteId: number,
     user: AuthUser,
     subFiches = false
-  ) {
-    if (!user.id) {
-      throw new BadRequestException(
-        `Seulement supporté pour les utilisateurs authentifiés`
-      );
+  ): Promise<Result<number, CountPiloteFichesError>> {
+    const userId = user.id;
+    if (!userId) {
+      return toUserIdRequiredFailure();
     }
 
-    const query = this.databaseService.db
-      .select({
-        count: count(),
-      })
-      .from(ficheActionTable)
-      .leftJoin(
-        ficheActionPiloteTable,
-        eq(ficheActionPiloteTable.ficheId, ficheActionTable.id)
-      )
-      .where(
-        and(
-          eq(ficheActionTable.collectiviteId, collectiviteId),
-          eq(ficheActionPiloteTable.userId, user.id),
-          eq(ficheActionTable.deleted, false),
-          subFiches
-            ? isNotNull(ficheActionTable.parentId)
-            : isNull(ficheActionTable.parentId)
+    return catchDatabaseFailure(async () => {
+      const queryResult = await this.databaseService.db
+        .select({
+          count: count(),
+        })
+        .from(ficheActionTable)
+        .leftJoin(
+          ficheActionPiloteTable,
+          eq(ficheActionPiloteTable.ficheId, ficheActionTable.id)
         )
-      );
+        .where(
+          and(
+            eq(ficheActionTable.collectiviteId, collectiviteId),
+            eq(ficheActionPiloteTable.userId, userId),
+            eq(ficheActionTable.deleted, false),
+            subFiches
+              ? isNotNull(ficheActionTable.parentId)
+              : isNull(ficheActionTable.parentId)
+          )
+        );
 
-    const queryResult = await query;
-
-    return queryResult[0]?.count ?? 0;
+      return success(queryResult[0]?.count ?? 0);
+    });
   }
 
-  async countPiloteSubFiches(collectiviteId: number, user: AuthUser) {
-    return this.countPiloteFiches(collectiviteId, user, true);
-  }
-
-  async countPiloteFichesIndicateurs(collectiviteId: number, user: AuthUser) {
-    if (!user.id) {
-      throw new BadRequestException(
-        `Seulement supporté pour les utilisateurs authentifiés`
-      );
+  async countPiloteFichesIndicateurs(
+    collectiviteId: number,
+    user: AuthUser
+  ): Promise<Result<number, CountPiloteFichesError>> {
+    const userId = user.id;
+    if (!userId) {
+      return toUserIdRequiredFailure();
     }
 
-    const query = this.databaseService.db
-      .select({
-        count:
-          sql<number>`count(distinct ${ficheActionIndicateurTable.indicateurId})`.mapWith(
-            Number
-          ),
-      })
-      .from(ficheActionTable)
-      .leftJoin(
-        ficheActionPiloteTable,
-        eq(ficheActionPiloteTable.ficheId, ficheActionTable.id)
-      )
-      .leftJoin(
-        ficheActionIndicateurTable,
-        eq(ficheActionIndicateurTable.ficheId, ficheActionTable.id)
-      )
-      .where(
-        and(
-          eq(ficheActionTable.collectiviteId, collectiviteId),
-          eq(ficheActionPiloteTable.userId, user.id),
-          eq(ficheActionTable.deleted, false),
-          isNotNull(ficheActionIndicateurTable.indicateurId),
-          isNull(ficheActionTable.parentId)
+    return catchDatabaseFailure(async () => {
+      const queryResult = await this.databaseService.db
+        .select({
+          count:
+            sql<number>`count(distinct ${ficheActionIndicateurTable.indicateurId})`.mapWith(
+              Number
+            ),
+        })
+        .from(ficheActionTable)
+        .leftJoin(
+          ficheActionPiloteTable,
+          eq(ficheActionPiloteTable.ficheId, ficheActionTable.id)
         )
-      );
+        .leftJoin(
+          ficheActionIndicateurTable,
+          eq(ficheActionIndicateurTable.ficheId, ficheActionTable.id)
+        )
+        .where(
+          and(
+            eq(ficheActionTable.collectiviteId, collectiviteId),
+            eq(ficheActionPiloteTable.userId, userId),
+            eq(ficheActionTable.deleted, false),
+            isNotNull(ficheActionIndicateurTable.indicateurId),
+            isNull(ficheActionTable.parentId)
+          )
+        );
 
-    const queryResult = await query;
-
-    return queryResult[0]?.count ?? 0;
+      return success(queryResult[0]?.count ?? 0);
+    });
   }
 
   private getFicheIdsQuery({
@@ -223,19 +243,23 @@ export class ListFichesRepository {
     return ficheIdsQuery;
   }
 
-  async listFichesWithDescriptionSearch({
+  async listFichesWithDescriptionSearch(
+    args: ListFichesWithDescriptionSearchArgs
+  ): Promise<
+    Result<{ data: FicheWithRelations[]; count: number }, ListFichesQueryError>
+  > {
+    return catchDatabaseFailure(async () =>
+      success(await this.selectFichesWithDescriptionSearch(args))
+    );
+  }
+
+  private async selectFichesWithDescriptionSearch({
     collectiviteId,
     filters,
     queryOptions,
     tx,
     descriptionSearch,
-  }: {
-    collectiviteId: number | null;
-    filters?: ListFichesRequestFilters;
-    queryOptions?: QueryOptionsSchema;
-    tx?: Transaction;
-    descriptionSearch: DescriptionSearchScope;
-  }): Promise<{
+  }: ListFichesWithDescriptionSearchArgs): Promise<{
     data: FicheWithRelations[];
     count: number;
   }> {
@@ -541,19 +565,23 @@ export class ListFichesRepository {
     return { data: fichesWithCompletion, count };
   }
 
-  async count(collectiviteId: number): Promise<number> {
-    const result = await this.databaseService.db
-      .select({
-        count: count(),
-      })
-      .from(ficheActionTable)
-      .where(
-        and(
-          eq(ficheActionTable.collectiviteId, collectiviteId),
-          eq(ficheActionTable.deleted, false),
-          isNull(ficheActionTable.parentId)
-        )
-      );
-    return result[0]?.count ?? 0;
+  async count(
+    collectiviteId: number
+  ): Promise<Result<number, ListFichesQueryError>> {
+    return catchDatabaseFailure(async () => {
+      const result = await this.databaseService.db
+        .select({
+          count: count(),
+        })
+        .from(ficheActionTable)
+        .where(
+          and(
+            eq(ficheActionTable.collectiviteId, collectiviteId),
+            eq(ficheActionTable.deleted, false),
+            isNull(ficheActionTable.parentId)
+          )
+        );
+      return success(result[0]?.count ?? 0);
+    });
   }
 }

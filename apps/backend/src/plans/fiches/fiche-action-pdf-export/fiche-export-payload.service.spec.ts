@@ -34,7 +34,7 @@ const toPayloadService = ({
 }) => {
   const listFichesService = {
     getFicheById,
-    listFichesQuery: vi.fn().mockResolvedValue({ data: [] }),
+    listFichesQuery: vi.fn().mockResolvedValue(success({ data: [], count: 0 })),
   } as unknown as ListFichesService;
   const getAxeService = {} as unknown as GetAxeService;
   const actionDefinitionsRepository = {
@@ -90,9 +90,21 @@ describe('FicheExportPayloadService.buildFicheExportPayload', () => {
     expect(result).toEqual(failure('DATABASE_ERROR', cause));
   });
 
+  it('retourne le DATABASE_ERROR de la lecture de la fiche avec sa cause', async () => {
+    const cause = new Error('requête de la fiche en échec');
+
+    const result = await toPayloadService({
+      getFicheById: vi.fn().mockResolvedValue(failure('DATABASE_ERROR', cause)),
+    }).buildFicheExportPayload({ ficheId, user });
+
+    expect(result).toEqual(failure('DATABASE_ERROR', cause));
+  });
+
   it('retourne FICHE_UNAVAILABLE quand la lecture de la fiche est refusée', async () => {
     const result = await toPayloadService({
-      getFicheById: vi.fn().mockRejectedValue(new ForbiddenException()),
+      getFicheById: vi
+        .fn()
+        .mockResolvedValue(failure('UNAUTHORIZED', new ForbiddenException())),
     }).buildFicheExportPayload({ ficheId, user });
 
     expect(result).toEqual(
@@ -108,7 +120,10 @@ describe('FicheExportPayloadService.buildFicheExportPayload', () => {
       getFicheById: vi
         .fn()
         .mockResolvedValue(
-          failure(`Aucune action trouvée avec l'id ${ficheId}`)
+          failure(
+            'FICHE_NOT_FOUND',
+            new NotFoundException(`Aucune action trouvée avec l'id ${ficheId}`)
+          )
         ),
     }).buildFicheExportPayload({ ficheId, user });
 

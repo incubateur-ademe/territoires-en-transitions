@@ -679,17 +679,21 @@ export class PptBuilderService {
           plan.data.collectiviteId
         );
 
-      const fiches = await this.fichesService.listFichesQuery(
-        plan.data.collectiviteId,
-        {
+      const fichesResult = await this.fichesService.listFichesQuery({
+        collectiviteId: plan.data.collectiviteId,
+        filters: {
           planActionIds: [planId],
           withChildren: true,
           withAxesAncestors: true,
         },
-        {
+        queryOptions: {
           limit: 'all',
-        }
-      );
+        },
+      });
+      if (!fichesResult.success) {
+        return failure(fichesResult.error, fichesResult.cause);
+      }
+      const fiches = fichesResult.data;
 
       this.logger.log(`Found ${fiches.count} fiches for plan ${planId}`);
 

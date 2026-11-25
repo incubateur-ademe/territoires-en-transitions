@@ -20,7 +20,11 @@ import { eq, or } from 'drizzle-orm';
 import { isNil } from 'es-toolkit';
 import FicheActionPermissionsService from '../fiche-action-permissions.service';
 import { NotifyPiloteService } from '../notify-pilote/notify-pilote.service';
-import { UpdateFicheError, UpdateFicheErrorEnum } from './update-fiche.errors';
+import {
+  toUpdateFicheFailure,
+  UpdateFicheError,
+  UpdateFicheErrorEnum,
+} from './update-fiche.errors';
 import { UpdateFicheInput } from './update-fiche.input';
 import { UpdateFicheResult } from './update-fiche.result';
 
@@ -93,13 +97,11 @@ export default class UpdateFicheService {
     }
 
     const existingFiche = await this.ficheActionListService.getFicheById(
-      ficheId,
-      false,
-      user,
-      tx
+      { ficheId },
+      { user, tx }
     );
     if (!existingFiche.success) {
-      return failure(UpdateFicheErrorEnum.FICHE_NOT_FOUND);
+      return toUpdateFicheFailure(existingFiche, 'FICHE_NOT_FOUND');
     }
 
     const oldActionIds = new Set(
@@ -169,14 +171,12 @@ export default class UpdateFicheService {
 
       const resultGetParentFiche =
         await this.ficheActionListService.getFicheById(
-          ficheFields.parentId,
-          false,
-          user,
-          tx
+          { ficheId: ficheFields.parentId },
+          { user, tx }
         );
       if (!resultGetParentFiche.success) {
         this.logger.error(resultGetParentFiche.error);
-        return failure(UpdateFicheErrorEnum.PARENT_NOT_FOUND);
+        return toUpdateFicheFailure(resultGetParentFiche, 'PARENT_NOT_FOUND');
       }
 
       // Anti-escalade : la sous-action doit appartenir à la même collectivité
@@ -205,14 +205,15 @@ export default class UpdateFicheService {
       ): Promise<Result<FicheWithRelations, UpdateFicheError>> => {
         const resultGetExistingFiche =
           await this.ficheActionListService.getFicheById(
-            ficheId,
-            false,
-            user,
-            transaction
+            { ficheId },
+            { user, tx: transaction }
           );
         if (!resultGetExistingFiche.success) {
           this.logger.error(resultGetExistingFiche.error);
-          return failure(UpdateFicheErrorEnum.FICHE_NOT_FOUND);
+          return toUpdateFicheFailure(
+            resultGetExistingFiche,
+            'FICHE_NOT_FOUND'
+          );
         }
         const existingFicheAction = resultGetExistingFiche.data;
 
@@ -258,18 +259,11 @@ export default class UpdateFicheService {
         }
 
         const updatedFiche = await this.ficheActionListService.getFicheById(
-          ficheId,
-          true,
-          user,
-          transaction
+          { ficheId, addCollectiviteData: true },
+          { user, tx: transaction }
         );
         if (!updatedFiche.success) {
-          return failure(
-            updatedFiche.error === UpdateFicheErrorEnum.DATABASE_ERROR
-              ? UpdateFicheErrorEnum.DATABASE_ERROR
-              : UpdateFicheErrorEnum.FICHE_NOT_FOUND,
-            updatedFiche.cause
-          );
+          return toUpdateFicheFailure(updatedFiche, 'FICHE_NOT_FOUND');
         }
 
         if (isNotificationEnabled ?? true) {

@@ -210,18 +210,19 @@ export class FicheActionPdfExportService {
     filters?: ListFichesRequestFilters;
     sort?: QueryOptionsSchema['sort'];
   }): Promise<number[]> {
-    try {
-      const { data } = await this.listFichesService.listFichesQuery(
-        collectiviteId,
-        filters,
-        { limit: 'all' as const, sort },
-      );
-      return data.map((fiche) => fiche.id);
-    } catch (error) {
+    const result = await this.listFichesService.listFichesQuery({
+      collectiviteId,
+      filters,
+      queryOptions: { limit: 'all', sort },
+    });
+    if (!result.success) {
       this.logger.error(
-        `Impossible de résoudre les IDs des fiches pour la collectivité ${collectiviteId} : ${error}`
+        `Impossible de résoudre les IDs des fiches pour la collectivité ${collectiviteId} : ${
+          result.cause ?? result.error
+        }`
       );
       return [];
     }
+    return result.data.data.map((fiche) => fiche.id);
   }
 }

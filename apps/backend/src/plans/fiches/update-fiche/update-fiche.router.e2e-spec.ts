@@ -1015,6 +1015,42 @@ describe('UpdateFicheService', () => {
       );
     });
 
+    test('should reject parentId pointing to a restreint fiche the user cannot read, with FORBIDDEN and the read permission message', async () => {
+      const { collectivite: otherCollectivite } = await addTestCollectivite(db);
+      const [restreintFiche] = await db.db
+        .insert(ficheActionTable)
+        .values({
+          titre: 'Fiche parente restreinte dans autre collectivité',
+          collectiviteId: otherCollectivite.id,
+          restreint: true,
+        })
+        .returning();
+
+      onTestFinished(async () => {
+        await db.db
+          .delete(ficheActionTable)
+          .where(eq(ficheActionTable.id, restreintFiche.id));
+      });
+
+      const caller = fichesRouter.createCaller({ user: testUser });
+
+      const error = await caller
+        .update({ ficheId, ficheFields: { parentId: restreintFiche.id } })
+        .then(
+          () => {
+            throw new Error('L’appel aurait dû échouer');
+          },
+          (e: unknown) => e as { code?: string; message?: string }
+        );
+
+      expect(error.code).toBe('FORBIDDEN');
+      expect(error.message).toMatch(
+        new RegExp(
+          `^Droits insuffisants, l'utilisateur ${testUser.id} n'a pas l'autorisation plans\\.fiches\\.read_confidentiel`
+        )
+      );
+    });
+
     test('should reject linking a fiche the user cannot write', async () => {
       const { collectivite: otherCollectivite } = await addTestCollectivite(db);
       const [otherFiche] = await db.db
