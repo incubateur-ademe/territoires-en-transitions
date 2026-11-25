@@ -7,6 +7,7 @@ import type { IndicateurPeriodicite } from '@tet/domain/indicateurs';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { match } from 'ts-pattern';
 import type { ListIndicateursError } from '../indicateurs/list-indicateurs/list-indicateurs.errors';
+import type { IndicateurValeursReadDenial } from './indicateur-valeurs-read-access.service';
 import { UserIndicateurValeurNotAllowedException } from './write-indicateur-valeurs/user-indicateur-valeur.errors';
 
 const indicateurValeursErrors = [
@@ -103,6 +104,45 @@ export const toMutatePermissionDeniedFailure = ({
         ? `Droits insuffisants, la clé d'api n'a pas l'autorisation ${mutateOperation}.`
         : `Droits insuffisants, l'utilisateur ${userId} n'a pas l'autorisation ${mutateOperation} sur la ressource ${ResourceType.COLLECTIVITE} ${collectiviteId}`
     )
+  );
+
+export const toReadValeursDeniedFailure = ({
+  userId,
+  collectiviteId,
+  denial,
+}: {
+  userId: string | null;
+  collectiviteId: number;
+  denial: IndicateurValeursReadDenial;
+}): Result<never, 'UNAUTHORIZED'> =>
+  failure(
+    'UNAUTHORIZED',
+    new Error(
+      `Droits insuffisants, l'utilisateur ${userId} n'a pas l'autorisation ${
+        denial === 'READ_CONFIDENTIEL_DENIED'
+          ? PermissionOperationEnum['INDICATEURS.VALEURS.READ_CONFIDENTIEL']
+          : PermissionOperationEnum['INDICATEURS.VALEURS.READ']
+      } sur la ressource ${ResourceType.COLLECTIVITE} ${collectiviteId}`
+    )
+  );
+
+export const toReadContextRequiredFailure = (
+  collectiviteId: number
+): Result<never, 'UNAUTHORIZED'> =>
+  failure(
+    'UNAUTHORIZED',
+    new Error(
+      `Un contexte utilisateur ou une capacité interne explicite est requis pour lire les valeurs de la collectivité ${collectiviteId}`
+    )
+  );
+
+export const toMissingIndicateurSelectionFailure = (): Result<
+  never,
+  'INVALID_VALUE'
+> =>
+  failure(
+    'INVALID_VALUE',
+    new Error('indicateurIds or identifiantsReferentiel required')
   );
 
 const indicateurValeursErrorByListError: Record<

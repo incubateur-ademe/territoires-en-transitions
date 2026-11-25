@@ -9,7 +9,10 @@ import {
   IndicateurValeursError,
   indicateurValeursErrorConfig,
   toCommonError,
+  toMissingIndicateurSelectionFailure,
   toNonCanonicalDateValeurFailure,
+  toReadContextRequiredFailure,
+  toReadValeursDeniedFailure,
 } from './indicateur-valeurs.errors';
 
 const toThrownValue = (operation: () => unknown): unknown => {
@@ -143,5 +146,47 @@ describe('toCommonError', () => {
     { error: 'USER_VALUE_NOT_ALLOWED', expected: 'SERVER_ERROR' },
   ] as const)('convertit $error en $expected', ({ error, expected }) => {
     expect(toCommonError(error)).toBe(expected);
+  });
+});
+
+describe('constructeurs d’échec de lecture des valeurs', () => {
+  it.each([
+    ['READ_DENIED', 'indicateurs.valeurs.read'],
+    ['READ_CONFIDENTIEL_DENIED', 'indicateurs.valeurs.read_confidentiel'],
+  ] as const)('cite l’autorisation %s dans le refus', (denial, permission) => {
+    expect(
+      toReadValeursDeniedFailure({
+        userId: 'user-1',
+        collectiviteId: 3,
+        denial,
+      })
+    ).toEqual(
+      failure(
+        'UNAUTHORIZED',
+        new Error(
+          `Droits insuffisants, l'utilisateur user-1 n'a pas l'autorisation ${permission} sur la ressource Collectivité 3`
+        )
+      )
+    );
+  });
+
+  it('demande un contexte quand il n’y a ni utilisateur ni capacité interne', () => {
+    expect(toReadContextRequiredFailure(3)).toEqual(
+      failure(
+        'UNAUTHORIZED',
+        new Error(
+          'Un contexte utilisateur ou une capacité interne explicite est requis pour lire les valeurs de la collectivité 3'
+        )
+      )
+    );
+  });
+
+  it('exige une sélection d’indicateurs', () => {
+    expect(toMissingIndicateurSelectionFailure()).toEqual(
+      failure(
+        'INVALID_VALUE',
+        new Error('indicateurIds or identifiantsReferentiel required')
+      )
+    );
   });
 });
