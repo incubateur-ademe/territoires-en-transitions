@@ -10,11 +10,12 @@ import {
 } from '@nestjs/swagger';
 import { ApiUsageEnum } from '@tet/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@tet/backend/utils/api/api-usage.decorator';
+import { createControllerErrorHandler } from '@tet/backend/utils/nest/controller-error-handler';
 import { createZodDto } from 'nestjs-zod';
+import { estimateLevierGesErrorConfig } from './estimate-levier-ges.errors';
 import { estimateLevierGesRequestSchema } from './estimate-levier-ges.request';
 import { estimateLevierGesResponseSchema } from './estimate-levier-ges.response';
 import { EstimateLevierGesService } from './estimate-levier-ges.service';
-import { toLeviersGesHttpException } from './to-leviers-ges-http-exception';
 
 export class EstimateLevierGesRequestClass extends createZodDto(
   estimateLevierGesRequestSchema
@@ -28,6 +29,10 @@ export class EstimateLevierGesResponseClass extends createZodDto(
 @ApiBearerAuth()
 @Controller('planet')
 export class EstimateLevierGesController {
+  private readonly getResultDataOrThrow = createControllerErrorHandler(
+    estimateLevierGesErrorConfig
+  );
+
   constructor(
     private readonly estimateLevierGesService: EstimateLevierGesService
   ) {}
@@ -44,7 +49,7 @@ export class EstimateLevierGesController {
   @ApiOkResponse({ type: EstimateLevierGesResponseClass })
   @ApiBadRequestResponse({
     description:
-      "Corps de requête invalide (format de validation commun à l'API), ou levier inconnu / paramètres du levier invalides (détail dans `issues`)",
+      "Corps de requête invalide (format de validation commun à l'API), ou levier inconnu / paramètres du levier invalides (paramètres fautifs listés dans `message`)",
   })
   @ApiNotFoundResponse({ description: 'Territoire inconnu' })
   @ApiUnprocessableEntityResponse({
@@ -54,10 +59,8 @@ export class EstimateLevierGesController {
   estimate(
     @Body() request: EstimateLevierGesRequestClass
   ): EstimateLevierGesResponseClass {
-    const estimation = this.estimateLevierGesService.estimate(request);
-    if (!estimation.success) {
-      throw toLeviersGesHttpException(estimation.error);
-    }
-    return estimation.data;
+    return this.getResultDataOrThrow(
+      this.estimateLevierGesService.estimate(request)
+    );
   }
 }

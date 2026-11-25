@@ -61,15 +61,14 @@ describe('POST /planet/estimations', () => {
     }).expect(400);
   });
 
-  it('renvoie 400 avec le détail des issues pour un levier inconnu', async () => {
+  it('renvoie 400 pour un levier inconnu', async () => {
     const response = await estimate({
       id: 'levier-inexistant',
       parameters: {},
     }).expect(400);
 
     expect(response.body).toMatchObject({
-      message: 'Requête invalide',
-      issues: expect.any(Array),
+      message: expect.stringContaining('Requête invalide'),
     });
   });
 
@@ -114,13 +113,10 @@ describe('POST /planet/estimations', () => {
 
     expect(response.status).toBe(400);
     expect(response.body).toEqual({
-      message: 'Requête invalide',
-      issues: [
-        {
-          parameter: 'parameters.hedgeKmCreatedPerYear',
-          message: 'Invalid input',
-        },
-      ],
+      statusCode: 400,
+      error: 'Bad Request',
+      message:
+        'Requête invalide : parameters.hedgeKmCreatedPerYear (Invalid input)',
     });
   });
 });

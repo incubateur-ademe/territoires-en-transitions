@@ -1,6 +1,10 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import type { EstimateUntrustedRequest, EstimationError } from 'leviers-ges';
-import { failure, Result, success } from '@tet/backend/utils/result.type';
+import { success, Result } from '@tet/backend/utils/result.type';
+import type { EstimateUntrustedRequest } from 'leviers-ges';
+import {
+  EstimateLevierGesError,
+  toEstimateLevierGesFailure,
+} from './estimate-levier-ges.errors';
 import type { EstimateLevierGesRequest } from './estimate-levier-ges.request';
 import type { EstimateLevierGesResponse } from './estimate-levier-ges.response';
 import { LEVIERS_GES_ESTIMATOR } from './leviers-ges-estimator.provider';
@@ -17,9 +21,9 @@ export class EstimateLevierGesService {
 
   estimate(
     request: EstimateLevierGesRequest
-  ): Result<EstimateLevierGesResponse, EstimationError> {
+  ): Result<EstimateLevierGesResponse, EstimateLevierGesError> {
     return this.estimator(request).match<
-      Result<EstimateLevierGesResponse, EstimationError>
+      Result<EstimateLevierGesResponse, EstimateLevierGesError>
     >(
       (estimate) => success(toEstimateLevierGesResponse(estimate)),
       (error) => {
@@ -28,7 +32,7 @@ export class EstimateLevierGesService {
             `Jeu de données invalide ${error.dataset} (${error.reason}): ${error.detail}`
           );
         }
-        return failure(error);
+        return toEstimateLevierGesFailure(error);
       }
     );
   }
