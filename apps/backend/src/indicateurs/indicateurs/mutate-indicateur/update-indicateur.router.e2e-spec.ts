@@ -336,6 +336,107 @@ describe('UpdateIndicateurRouter', () => {
     });
   });
 
+  describe('cumul d’un groupe de sous-indicateurs', () => {
+    const createParentWithChild = async () => {
+      const caller = router.createCaller({ user: authenticatedUser });
+      const parentId = await caller.indicateurs.indicateurs.create({
+        collectiviteId: collectivite.id,
+        titre: 'Déchets ménagers',
+        unite: 't',
+      });
+      const childId = await caller.indicateurs.indicateurs.create({
+        collectiviteId: collectivite.id,
+        titre: 'Ordures ménagères',
+        parentId,
+      });
+      return { caller, parentId, childId };
+    };
+
+    const createGrandChild = (
+      caller: ReturnType<TrpcRouter['createCaller']>,
+      childId: number
+    ) =>
+      caller.indicateurs.indicateurs.create({
+        collectiviteId: collectivite.id,
+        titre: 'Verre',
+        parentId: childId,
+      });
+
+    const setCumul = (
+      caller: ReturnType<TrpcRouter['createCaller']>,
+      indicateurId: number,
+      totalEstCumulDesSousIndicateurs: boolean
+    ) =>
+      caller.indicateurs.indicateurs.update({
+        collectiviteId: collectivite.id,
+        indicateurId,
+        indicateurFields: { totalEstCumulDesSousIndicateurs },
+      });
+
+    const readCumuls = async (indicateurIds: number[]) =>
+      Promise.all(
+        indicateurIds.map(async (indicateurId) => {
+          const [indicateur] = await databaseService.db
+            .select({
+              totalEstCumulDesSousIndicateurs:
+                indicateurDefinitionTable.totalEstCumulDesSousIndicateurs,
+            })
+            .from(indicateurDefinitionTable)
+            .where(eq(indicateurDefinitionTable.id, indicateurId));
+          return indicateur.totalEstCumulDesSousIndicateurs;
+        })
+      );
+
+    test('propage le cumul coché de la racine jusqu’au petit-enfant, sans toucher un autre groupe', async () => {
+      const { caller, parentId, childId } = await createParentWithChild();
+      const grandChildId = await createGrandChild(caller, childId);
+      const { parentId: unrelatedParentId, childId: unrelatedChildId } =
+        await createParentWithChild();
+      await setCumul(caller, parentId, false);
+      await setCumul(caller, unrelatedParentId, false);
+
+      await setCumul(caller, parentId, true);
+
+      expect(await readCumuls([parentId, childId, grandChildId])).toEqual([
+        true,
+        true,
+        true,
+      ]);
+      expect(await readCumuls([unrelatedParentId, unrelatedChildId])).toEqual([
+        false,
+        false,
+      ]);
+    });
+
+    test('propage le cumul décoché de la racine jusqu’au petit-enfant', async () => {
+      const { caller, parentId, childId } = await createParentWithChild();
+      const grandChildId = await createGrandChild(caller, childId);
+      await setCumul(caller, parentId, true);
+
+      await setCumul(caller, parentId, false);
+
+      expect(await readCumuls([parentId, childId, grandChildId])).toEqual([
+        false,
+        false,
+        false,
+      ]);
+    });
+
+    test('ne remonte pas au parent le cumul changé sur un sous-indicateur, et le propage à ses propres sous-indicateurs', async () => {
+      const { caller, parentId, childId } = await createParentWithChild();
+      const grandChildId = await createGrandChild(caller, childId);
+      await setCumul(caller, parentId, true);
+
+      await setCumul(caller, childId, false);
+
+      expect(await readCumuls([parentId, childId, grandChildId])).toEqual([
+        true,
+        false,
+        false,
+      ]);
+    });
+  });
+
   describe('indicateur perso', () => {
     test('refuse une clé API sans permission de modification malgré le rôle administrateur', async () => {
       const caller = router.createCaller({ user: authenticatedUser });

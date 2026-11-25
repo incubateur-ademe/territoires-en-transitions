@@ -549,6 +549,34 @@ describe('createIndicateurPerso', () => {
       expect(created).toHaveLength(0);
     });
 
+    test.each([true, false])(
+      'reprend le cumul du parent (%s) pour le nouveau sous-indicateur',
+      async (totalEstCumulDesSousIndicateurs) => {
+        const caller = router.createCaller({ user: authenticatedUser });
+        const parentId = await createParentMensuel();
+        await caller.indicateurs.indicateurs.update({
+          collectiviteId: collectivite.id,
+          indicateurId: parentId,
+          indicateurFields: { totalEstCumulDesSousIndicateurs },
+        });
+
+        const childId = await caller.indicateurs.indicateurs.create({
+          collectiviteId: collectivite.id,
+          titre: 'Ordures ménagères',
+          parentId,
+        });
+
+        const [child] = await databaseService.db
+          .select({
+            totalEstCumulDesSousIndicateurs:
+              indicateurDefinitionTable.totalEstCumulDesSousIndicateurs,
+          })
+          .from(indicateurDefinitionTable)
+          .where(eq(indicateurDefinitionTable.id, childId));
+        expect(child).toEqual({ totalEstCumulDesSousIndicateurs });
+      }
+    );
+
     test('accepte un sous-indicateur sous un sous-indicateur, avec l’unité et la périodicité du parent', async () => {
       const caller = router.createCaller({ user: authenticatedUser });
       const parentId = await createParentMensuel();
