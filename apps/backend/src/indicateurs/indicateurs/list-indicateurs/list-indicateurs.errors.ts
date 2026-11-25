@@ -1,8 +1,3 @@
-import {
-  BadRequestException,
-  ForbiddenException,
-  InternalServerErrorException,
-} from '@nestjs/common';
 import { failure, Result } from '@tet/backend/utils/result.type';
 import { TrpcErrorHandlerConfig } from '@tet/backend/utils/trpc/trpc-error-handler';
 import { PermissionOperation, ResourceType } from '@tet/domain/users';
@@ -55,14 +50,3 @@ export const toIndicateurNotFoundFailure = (
     'INDICATEUR_NOT_FOUND',
     new Error(`Indicateur not found for ${designation}`)
   );
-
-export const getListIndicateursDataOrThrow = <Data>(
-  result: Result<Data, ListIndicateursError>
-): Data => {
-  if (result.success) return result.data;
-  const message = result.cause?.message ?? result.error;
-  if (result.error === 'UNAUTHORIZED') throw new ForbiddenException(message);
-  if (result.error === 'INDICATEUR_NOT_FOUND')
-    throw new BadRequestException(message);
-  throw new InternalServerErrorException(message, { cause: result.cause });
-};
