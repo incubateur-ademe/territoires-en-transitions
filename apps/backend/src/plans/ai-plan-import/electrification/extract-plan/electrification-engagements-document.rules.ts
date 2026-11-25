@@ -224,10 +224,6 @@ export class ElectrificationEngagementsDocumentRules {
     label: string,
     context?: ElectrificationValueContext
   ): Result<Engagement['cibles'], ElectrificationIssue[]> {
-    const invalid = () =>
-      failure([
-        Errors.issue('INVALID_ELECTRIFICATION_TARGET', source.location),
-      ]);
     if (!definition.cibles.length)
       return source.text.trim()
         ? failure([
@@ -263,7 +259,8 @@ export class ElectrificationEngagementsDocumentRules {
       keys: targets.map(({ key }) => key),
     };
     const values = Interpretation.read(request, context);
-    if (values === null) return invalid();
+    if (values === null)
+      return failure([Errors.invalidTarget(source, definition.cibles)]);
     return success(
       targets.map(({ key, unit, year }) => ({
         key,

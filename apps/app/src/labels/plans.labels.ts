@@ -393,6 +393,10 @@ export const plansLabels = {
   importPlanIaDocumentErreur: 'Erreur',
   importPlanIaConfigurationErreur: 'Erreur',
   importPlanIaAvertissementRapport: 'Avertissement',
+  importPlanIaAvertissementsAConsulter: plural({
+    one: 'avertissement à vérifier',
+    other: 'avertissements à vérifier',
+  }),
   importPlanIaRemarquePosition: ({
     position,
     total,

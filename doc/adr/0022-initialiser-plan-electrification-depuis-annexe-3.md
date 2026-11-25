@@ -98,7 +98,8 @@ indicateurs ni les droits d'import.
   implémentation utilisait une règle documentaire spécifique ; elle est
   remplacée par la tolérance commune ci-dessous, demandée en revue le même jour.
 
-**Précision de revue du 25 novembre : tolérance commune des libellés.**
+**Historique de #6036 : tolérance commune des libellés (25 novembre).**
+Cette politique est remplacée par la [décision de signalement systématique](#rapprochements-ia-à-vérifier) ci-dessous.
 Les codes et libellés normalisés identiques restent reconnus sans IA.
 Les variantes E05 gaz/fioul non identiques suivent le rapprochement IA commun,
 avec avertissement si elles sont acceptées ; leur reconnaissance sans IA
@@ -157,7 +158,7 @@ E01 et E02 ont reçu des classifications différentes malgré le même écart
 le code d'erreur regroupait alors refus sémantique, citation modifiée et code
 non autorisé. Sa cause exacte n'est donc pas confirmée.
 
-Le modèle compare désormais séparément le résultat attendu de l'action, les
+Dans #6045, le modèle comparait séparément le résultat attendu de l'action, les
 objectifs et le périmètre. Des moyens différents peuvent viser explicitement
 le même résultat ; une description de moyens sans résultat explicite ne suffit
 pas. Une catégorie générale et une sous-catégorie doivent rester des périmètres
@@ -174,6 +175,117 @@ ne prouvent pas que le modèle réel classera correctement les formulations.
 Le V1 et le document 03 doivent être rejoués après déploiement, avec lancement
 humain, avant de clôturer ces deux écarts.
 
+**Contre-recette de #6045 et diagnostic du 25 novembre.** Le
+[V1 a été refusé sur E05](https://app.territoiresentransitions.fr/collectivite/5460/plans/imports?importJobId=9eb11594-00fa-4270-ac33-4e9e8ccc2bb6)
+et le [document 03 sur E02](https://app.territoiresentransitions.fr/collectivite/5460/plans/imports?importJobId=6abbd5d1-bc07-4d83-a6ae-0185e407e8fa),
+sans création de plan. Un lancement humain de la CLI avec le catalogue exporté
+de production et Albert `gpt-oss-120b` reproduit E05 : le modèle retourne
+`action: uncertain`, `objectives: uncertain`, `scope: different` et aucun code.
+Il ne s'agit donc pas, dans cette reproduction, d'une erreur technique de réponse.
+
+Les essais locaux suivants n'ont pas permis de qualifier une classification
+fine des périmètres : réponses tronquées à 2 048 puis 8 192 tokens, ou
+classements erronés de "bâtiments" et "logements" comme équivalents. Exiger des
+extraits de périmètre n'a pas résolu ce problème : E01 est resté classé
+équivalent ; E02 a été refusé car le modèle avait ajouté un article absent
+des citations. Ces variantes n'ont pas été publiées.
+
+### Rapprochements IA à vérifier
+
+**Décision acceptée le 25 novembre après ces essais.** Chaque engagement
+rapproché par IA affiche "Rapprochement à vérifier", avec les deux libellés et
+le code retenu. Le modèle ne classe plus les périmètres. Aucune équivalence
+n'est affirmée et aucun écart précis n'est présenté comme établi.
+
+L'IA choisit exclusivement un candidat du même axe et compare le résultat de
+l'action et les objectifs chiffrés. Le schéma de génération limite le code
+aux candidats proposés (ou `null`) et la citation au texte exact fourni.
+Ces contraintes restent aussi vérifiées côté applicatif. Le contexte du
+programme permet de
+rapprocher une sortie d'usage fossile de son électrification, mais ne permet
+pas d'ignorer une solution explicitement non électrique, le maintien de cet
+usage, une contradiction, une condition ou plusieurs candidats aussi plausibles.
+Les blancs à compléter ne sont pas des valeurs contradictoires. Les valeurs,
+unités et dates restent contrôlées par le lecteur et le résolveur, sans conversion.
+Aucun alias ni code métier n'est ajouté au lecteur.
+
+La configuration `electrificationEngagementMatching.allowInterpretedEngagements`
+remplace `allowScopeDifferences` et vaut `true` pour la recette. À `false`,
+tout rapprochement IA est refusé ; une reconnaissance déterministe par code
+ou libellé normalisé reste possible. Il ne s'agit pas d'un nouveau feature flag.
+
+Le checkpoint conserve le rapprochement avec le statut `review-required`.
+Les anciennes classifications restent lisibles, mais ne dispensent jamais
+du contrôle de tolérance ni de l'avertissement à la reprise. Le compte rendu
+est reconstruit sans nouvel appel IA. Un retour à une ancienne version du
+backend ne comprend pas le nouveau statut ; ces reprises échoueraient avec
+le message de checkpoint incompatible, sans création de plan.
+
+La CLI conserve les requêtes et réponses structurées dans une trace locale,
+y compris en cas d'échec. La qualification suit le signalement systématique
+retenu, sans chercher à valider une classification fine des périmètres.
+
+**Qualification humaine réussie le 25 novembre, avant publication.** Sept
+évaluations avec Albert `gpt-oss-120b` et le catalogue exporté de production
+(`sha256-e8b113b1949939e5eb1a89f4227b786d64a33f4e59eb363ab1d17c5f42640a8d`)
+ont satisfait les contrôles :
+
+- V1 original et document 03 adapté : deux extractions réussies chacun,
+  avec des réponses documentaires et rapprochements identiques entre les deux
+  passages. Les codes attendus, dont E05 et E10, et les cibles sont conservés ;
+  chaque rapprochement porte le statut `review-required`.
+- Maintien du gaz, remplacement par des chaudières à bois et échéance 2040
+  au lieu de 2030 : trois refus documentaires explicites, sans checkpoint.
+
+Les 43 appels n'ont produit aucune erreur technique ni limitation de débit.
+La CLI n'a créé aucun plan : elle qualifie l'extraction, sans résoudre les
+références TeT. Les e2e à faux LLM couvrent séparément la création, le compte
+rendu et les reprises : 249 tests passent en 29,57 s sur le code qualifié.
+Les 33 tests existants de validation LLM et d'adaptation Albert passent en
+1,81 s avec un fournisseur simulé ; typage, lint et formatage ciblés vérifiés.
+La confirmation dans l'application après déploiement
+reste à faire ; cette série ne garantit pas toutes les formulations possibles.
+
+### Complément de recette de Clément du 25 novembre au soir
+
+La [recette TT-67](https://app.notion.com/p/4156523d57d780a9bf20ec12b9bae893)
+rapporte quatre imports réussis et un échec attendu : plans complet, maximal,
+codes Grist et indicateurs de périodicités différentes. Les quatre indicateurs
+trimestriels restent liés, sans importer leurs valeurs annuelles, avec
+avertissement. Clément rapporte également trois reconnaissances d'E05 ; ces
+résultats précèdent la qualification et le déploiement de #6047 et ne prouvent
+pas sa stabilité en production.
+
+Les neuf à douze avertissements de rapprochement par import rendent le compte
+rendu répétitif. Dès qu'il contient plusieurs avertissements, l'affichage les
+regroupe dans une section dépliable avec leur nombre. Chaque emplacement et
+message, dont les deux libellés rapprochés, reste consultable. Un avertissement
+isolé, les erreurs et les données existantes conservées restent visibles.
+Cette présentation commune à tous les profils ne modifie ni les signalements
+persistés ni la politique de tolérance ; les valeurs ignorées pour périodicité
+incompatible restent explicitement décrites dans le détail.
+
+Les erreurs génériques de cible rappellent désormais le texte saisi et les
+cibles attendues (libellé, unité et année) provenant de la publication du
+catalogue. Elles demandent des valeurs en chiffres, sans alternative, sans
+déduire un motif sémantique non établi. Aucun changement de prompt, de
+reconnaissance ou de conversion ; les cas rares B8/B9 restent hors de ce
+complément selon la décision produit.
+
+La question sur les deux recensements dits "ponctuels" a déjà une réponse :
+la [décision du 12 novembre][question-mapping] retient l'annuel pour
+`9.1.1-a` et `11.1.1-a`. Le catalogue exporté de production pour la qualification
+du 25 novembre les définit tous deux en annuel. Leur import avec valeurs
+annuelles est cohérent ; ce cas ne justifie ni leur omission ni une conversion
+générale des indicateurs ponctuels. L'écart de vocabulaire dans Grist reste à
+clarifier avec l'équipe métier.
+
+Restent la recette de #6047 après déploiement, les droits hors mode super-admin,
+les documents réellement remplis et le nettoyage des 21 plans TEST signalés
+sur 5556. Ce complément ne modifie pas les autorisations et ne supprime aucune
+donnée de production. Le contrôle des huit objectifs signalés reste distinct
+de ce nettoyage et ouvert.
+
 **Preuve historique de la première approche, remplacée le 25 novembre :**
 les deux suites e2e existantes de fiches et de parcours complet avaient passé
 238 tests en 26 s, avec le lecteur DOCX et PostgreSQL réels et un LLM simulé.
@@ -183,7 +295,7 @@ Cette dernière règle a été supprimée : ce résultat ne valide pas la
 reconnaissance actuelle des variantes E05. Typage backend/specs, ESLint et
 Prettier ciblés avaient aussi été vérifiés.
 
-Validation de la tolérance commune : les mêmes suites passent avec 241 tests
+Validation historique de la tolérance commune de #6036 : les mêmes suites passaient avec 241 tests
 en 29 s. Elles couvrent les reformulations avec avertissement, les différences
 de périmètre autorisées ou refusées par configuration, la conservation du
 diagnostic en compte rendu et sa reconstruction à la reprise sans nouvel appel.

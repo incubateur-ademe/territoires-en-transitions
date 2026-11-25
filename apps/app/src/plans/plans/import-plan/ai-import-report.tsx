@@ -1,6 +1,7 @@
 import { appLabels } from '@/app/labels/catalog';
 import type { RouterOutput } from '@tet/api';
-import { Alert, Badge, Button, Card, Icon } from '@tet/ui';
+import { Accordion, Alert, Badge, Button, Card, Icon } from '@tet/ui';
+import { useId } from 'react';
 import { importIssueHintLabels, importIssueLabels } from './ai-import.labels';
 import { SupportChatLink } from './support-chat.link';
 
@@ -41,6 +42,20 @@ const ImportIssueCard = ({
   </Card>
 );
 
+const ImportIssuesList = ({ issues }: { issues: ImportIssue[] }) => (
+  <ol className="flex flex-col gap-4 m-0 p-0 list-none">
+    {issues.map((issue, index) => (
+      <li key={`${issue.code}:${index}`} className="p-0 min-w-0 break-words">
+        <ImportIssueCard
+          issue={issue}
+          position={index + 1}
+          total={issues.length}
+        />
+      </li>
+    ))}
+  </ol>
+);
+
 export const AiImportReport = ({
   status,
   onRetry,
@@ -52,8 +67,14 @@ export const AiImportReport = ({
   onResume?: () => void;
   isResuming?: boolean;
 }) => {
+  const warningsId = useId();
   const failed = status.status === 'failed';
   const { issues, qualitativeReview } = status.report;
+  const warnings = issues.filter(({ kind }) => kind === 'warning');
+  const visibleIssues =
+    warnings.length > 1
+      ? issues.filter(({ kind }) => kind !== 'warning')
+      : issues;
   const errorCount = issues.filter(({ kind }) =>
     ['document-error', 'configuration-error', 'processing-error'].includes(kind)
   ).length;
@@ -107,21 +128,21 @@ export const AiImportReport = ({
         />
       </div>
       <h3 className="mb-0 text-lg">{appLabels.importPlanIaRapport}</h3>
-      {issues.length > 0 && (
-        <ol className="flex flex-col gap-4 m-0 p-0 list-none">
-          {issues.map((issue, index) => (
-            <li
-              key={`${issue.code}:${index}`}
-              className="p-0 min-w-0 break-words"
-            >
-              <ImportIssueCard
-                issue={issue}
-                position={index + 1}
-                total={issues.length}
-              />
-            </li>
-          ))}
-        </ol>
+      {visibleIssues.length > 0 && <ImportIssuesList issues={visibleIssues} />}
+      {warnings.length > 1 && (
+        <Accordion
+          id={warningsId}
+          dataTest="plans.import-ia.avertissements"
+          title={appLabels.importPlanIaAvertissementsAConsulter({
+            count: warnings.length,
+          })}
+          icon="error-warning-line"
+          content={
+            <div id={warningsId} className="pb-6">
+              <ImportIssuesList issues={warnings} />
+            </div>
+          }
+        />
       )}
       {qualitativeReview ? (
         <p className="mb-0 whitespace-pre-wrap">{qualitativeReview}</p>

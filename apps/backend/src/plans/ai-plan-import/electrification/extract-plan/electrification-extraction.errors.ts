@@ -1,4 +1,4 @@
-import { StatutEnum } from '@tet/domain/plans';
+import { ElectrificationConfig, StatutEnum } from '@tet/domain/plans';
 import { electrificationEngagementsDocument } from '@tet/backend/plans/plans/electrification/config/electrification-engagements-document.config';
 import type { ElectrificationDocumentSource } from './electrification-extraction.schema';
 import type { ElectrificationValueRejection } from './electrification-value-interpretation.schema';
@@ -146,17 +146,12 @@ export const electrificationExtractionErrors = {
   INTERPRETED_ELECTRIFICATION_ENGAGEMENT: {
     kind: 'warning',
     message:
-      "Le libellé du document a été rapproché d'un engagement du catalogue. Vérifiez que ce rattachement correspond à votre intention.",
+      "Rapprochement à vérifier. Le libellé du document a été rapproché par IA d'un engagement du catalogue, sans garantie d'équivalence de périmètre. Les cibles renseignées sont rattachées sans conversion. Vérifiez que ce rattachement correspond à votre intention.",
   },
-  TOLERATED_ELECTRIFICATION_ENGAGEMENT_SCOPE: {
-    kind: 'warning',
-    message:
-      "Une différence de périmètre a été tolérée. Les cibles renseignées sont rattachées à l'engagement du catalogue sans conversion. Vérifiez que ce rattachement correspond à votre intention.",
-  },
-  UNTOLERATED_ELECTRIFICATION_ENGAGEMENT_SCOPE: {
+  UNTOLERATED_ELECTRIFICATION_ENGAGEMENT: {
     kind: 'document-error',
     message:
-      'Le périmètre de cet engagement diffère du catalogue et la tolérance est désactivée. Vérifiez le libellé du document.',
+      "Ce libellé nécessite un rapprochement par IA, dont la tolérance est désactivée. Utilisez le code ou le libellé de l'engagement du catalogue.",
   },
   INVALID_ELECTRIFICATION_SELECTION: {
     kind: 'document-error',
@@ -166,7 +161,7 @@ export const electrificationExtractionErrors = {
   INVALID_ELECTRIFICATION_TARGET: {
     kind: 'document-error',
     message:
-      'La cible renseignée est ambiguë. Vérifiez sa valeur et distinguez chaque cible lorsque plusieurs sont attendues.',
+      "La cible renseignée ne peut pas être importée. Saisissez une valeur en chiffres par cible renseignée, sans alternative, en respectant l'unité et l'échéance attendues.",
   },
   INCOMPATIBLE_ELECTRIFICATION_CHECKPOINT: {
     kind: 'processing-error',
@@ -218,11 +213,25 @@ export const electrificationExtractionErrors = {
 export class ElectrificationExtractionErrors {
   static issue = createIssueFactory(electrificationExtractionErrors);
 
+  static invalidTarget(
+    source: ElectrificationDocumentSource,
+    targets: ElectrificationConfig['engagements'][number]['cibles']
+  ): ElectrificationIssue {
+    const issue = this.valueIssue('INVALID_ELECTRIFICATION_TARGET', source);
+    const expected = targets.map(
+      ({ libelleSource, uniteImport, reglesImport }) =>
+        `- "${libelleSource}" : unité ${uniteImport}, année ${reglesImport.annee}.`
+    );
+    return {
+      ...issue,
+      message: `${issue.message}\nCibles attendues :\n${expected.join('\n')}`,
+    };
+  }
+
   static engagementMatch(
     code:
       | 'INTERPRETED_ELECTRIFICATION_ENGAGEMENT'
-      | 'TOLERATED_ELECTRIFICATION_ENGAGEMENT_SCOPE'
-      | 'UNTOLERATED_ELECTRIFICATION_ENGAGEMENT_SCOPE',
+      | 'UNTOLERATED_ELECTRIFICATION_ENGAGEMENT',
     source: Pick<ElectrificationDocumentSource, 'text' | 'location'>,
     engagement: { code: string; libelleSource: string }
   ): ElectrificationIssue {

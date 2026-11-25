@@ -1154,7 +1154,7 @@ test('reprend un job depuis son compte rendu et attend done avant de proposer le
   );
 });
 
-test('masque le plan incomplet depuis le détail d’un import en échec sur mobile', async ({
+test('garde les erreurs visibles et regroupe les avertissements du compte rendu sur mobile', async ({
   page,
   collectivites,
   plans,
@@ -1183,6 +1183,18 @@ test('masque le plan incomplet depuis le détail d’un import en échec sur mob
             'Engagement "Le territoire accompagne la rénovation énergétique des logements sociaux" > Valeur chiffrée de l\'engagement',
           message: 'Renseignez une année de référence pour ce résultat.',
         },
+        ...['Logements privés', 'Bâtiments publics'].map((engagement) => ({
+          kind: 'warning' as const,
+          code: 'INTERPRETED_ELECTRIFICATION_ENGAGEMENT',
+          location: `Engagement "${engagement}"`,
+          message: `Rapprochement à vérifier. Document : "${engagement} dans le document". Catalogue : "${engagement} dans le catalogue".`,
+        })),
+        {
+          kind: 'warning',
+          code: 'INCOMPATIBLE_INDICATEUR_VALUES_IGNORED',
+          message:
+            "Les valeurs annuelles n'ont pas été importées. L'indicateur trimestriel reste lié à l'action.",
+        },
       ],
       qualitativeReview: null,
     },
@@ -1204,6 +1216,26 @@ test('masque le plan incomplet depuis le détail d’un import en échec sur mob
   await expect(
     page.getByRole('group', { name: 'Extraction des données', exact: true })
   ).toHaveCount(0);
+  const report = page.getByTestId('plans.import-ia.rapport');
+  const warnings = report.getByRole('button', {
+    name: '3 avertissements à vérifier',
+  });
+  await expect(warnings).toHaveAttribute('aria-expanded', 'false');
+  await expect(
+    report.getByText(/Logements privés dans le document/)
+  ).toHaveCount(0);
+  await warnings.click();
+  await expect(warnings).toHaveAttribute('aria-expanded', 'true');
+  await expect(
+    report.getByText(/Logements privés dans le document/)
+  ).toBeVisible();
+  await expect(
+    report.getByText(/Bâtiments publics dans le catalogue/)
+  ).toBeVisible();
+  await expect(
+    report.getByText(/Les valeurs annuelles n'ont pas été importées/)
+  ).toBeVisible();
+  await expect(report.getByRole('listitem')).toHaveCount(4);
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= window.innerWidth

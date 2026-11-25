@@ -2,8 +2,8 @@
 
 Évalue l'extraction d'un document local selon son profil. Le profil générique
 utilise le fournisseur configuré dans `apps/backend/.env` (`LLM_PROVIDER`,
-`ALBERT_MODEL`, `GEMINI_MODEL`…). Le profil Électrification lit le canevas
-DOCX V4 de façon déterministe, puis sollicite automatiquement une aide IA
+`ALBERT_MODEL`, `GEMINI_MODEL`...). Le profil Électrification lit les canevas
+DOCX V1 et V4 de façon déterministe, puis sollicite automatiquement une aide IA
 ciblée si certaines valeurs restent incomprises.
 
 **Un appel réel au modèle reste réservé à un lancement humain**, jamais par
@@ -49,7 +49,14 @@ Un autre format ou une structure non reconnue est refusé explicitement ;
 aucun fallback IA ou générique n'est lancé pour ces erreurs.
 
 Le JSON contient `checkpoint` (extraction typée, sources, versions et tokens),
-`report.issues` (erreurs documentaires ou de traitement) et la durée.
+`report.issues` (erreurs documentaires ou de traitement) et la durée. Lorsque
+l'extraction réussit, `report.issues` est vide : la CLI ne construit pas les
+avertissements de rapprochement du compte rendu de l'application.
+`trace.interpretations` conserve les requêtes et réponses structurées de l'aide
+IA, y compris celles précédant un refus. Elle permet de distinguer le critère
+refusé (action ou objectifs) d'une réponse technique invalide. Cette
+trace locale contient des extraits du document ; conserve le fichier de sortie
+dans un répertoire d'évaluation ignoré par git.
 Quand aucun appel n'est nécessaire, `provider: "deterministic"`,
 `metrics.calls: 0` et les tokens à zéro identifient une extraction sans modèle.
 Le checkpoint utilise uniquement la version définie dans le champ `schemaVersion`
@@ -59,8 +66,12 @@ pas une seconde version technique dans le checkpoint. `catalogueVersion`
 identifie les correspondances métier.
 `stage: "extraction"` et `referencesResolved: false` indiquent que les codes,
 URL, correspondances du catalogue et permissions restent à vérifier par le
-résolveur. Un statut `done` signifie seulement que l'extraction a réussi ;
-il ne qualifie pas un import ni les correspondances métier encore en attente.
+résolveur. Un statut `done` (code de sortie 0) signifie seulement que
+l'extraction a réussi. Il ne valide pas la politique de rapprochement
+`allowInterpretedEngagements` : la CLI peut terminer avec `done` alors que
+l'application refuserait les rapprochements IA si cette politique était
+désactivée. Il ne qualifie pas non plus la création du plan ni les
+correspondances métier encore en attente.
 
 L'aide IA rapproche les libellés inconnus des engagements publiés et interprète
 les cellules numériques rédigées. Les nombres seuls, avec une unité déclarée
@@ -80,22 +91,32 @@ Les sources originales et les interprétations retenues sont conservées dans
 et les extraits justificatifs. Les valeurs sont lues dans les occurrences
 désignées, sans reformater la réponse en texte ni la reparcourir par une
 grammaire française. Les rapprochements d'engagements sont conservés dans
-`checkpoint.engagementInterpretations`, avec la classification `equivalent`
-ou `scope-difference`. Les libellés non reconnus passent par ce rapprochement
-limité aux candidats du même axe. Chaque rapprochement accepté est signalé
-dans le compte rendu avec les deux libellés. Le modèle compare séparément le
-résultat attendu de l'action, les objectifs et le périmètre ; le code déduit
-la classification. Des moyens différents ne changent pas nécessairement un
-résultat explicitement recherché. Une catégorie générale et une sous-catégorie
-ne doivent pas être considérées comme un même périmètre. Une réponse IA hors
-contrat, une citation modifiée ou un code hors des candidats provoquent une
-erreur de traitement, distincte d'un engagement non reconnu.
-La tolérance des différences de périmètre est contrôlée par
-`electrificationEngagementMatching.allowScopeDifferences`
-dans la [configuration documentaire](../../plans/electrification/config/electrification-engagements-document.config.ts).
-Une reprise réapplique cette politique et reconstruit les avertissements sans
-nouvel appel IA. Les contradictions et les correspondances ambiguës doivent
-être refusées par le modèle ; les contrôles des valeurs restent inchangés.
+`checkpoint.engagementInterpretations`, avec le statut `review-required`.
+Les libellés non reconnus passent par un rapprochement limité aux candidats
+du même axe. Dans l'application, chaque rapprochement accepté affiche
+"Rapprochement à vérifier" dans le compte rendu, avec les deux libellés et le
+code retenu. La CLI conserve ces rapprochements dans le checkpoint pour
+inspection, sans cet avertissement. Aucune équivalence de périmètre n'est
+affirmée.
+
+Le modèle compare l'action et les objectifs chiffrés dans le contexte du
+programme Électrification : la sortie d'un usage fossile peut désigner sa
+transition vers l'électricité. Une solution explicitement non électrique,
+un maintien de l'usage fossile, une contradiction, une condition ou un choix
+ambigu entre plusieurs candidats restent bloquants. Un périmètre plus large
+ou plus restreint ne suffit pas à rejeter le rapprochement. Les valeurs,
+unités et dates restent contrôlées, sans conversion.
+
+Dans l'application, la [préparation de l'import](../electrification/extract-plan/prepare-electrification-import.service.ts)
+applique la configuration `electrificationEngagementMatching.allowInterpretedEngagements`
+définie dans la [configuration documentaire](../../plans/electrification/config/electrification-engagements-document.config.ts).
+Elle autorise ces rapprochements avec avertissement. Désactivée, elle les
+refuse tous ; les codes et libellés identiques après normalisation restent
+reconnus sans IA. Une reprise réapplique cette politique et reconstruit le
+compte rendu, sans nouvel appel IA, quelle que soit la classification du
+checkpoint. La CLI s'arrête à l'extraction et n'exécute pas cette préparation.
+Une réponse IA hors contrat, une citation modifiée ou un code non proposé
+produisent une erreur de traitement, distincte d'un refus documentaire.
 `provider`, `model` et `metrics` rendent compte du fournisseur, des tentatives
 d'appel et des tokens consommés, y compris en cas d'échec. Un document déjà
 compris termine sans aucun appel.
