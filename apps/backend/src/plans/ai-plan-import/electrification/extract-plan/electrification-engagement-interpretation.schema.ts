@@ -1,15 +1,21 @@
 import { z } from 'zod';
 import type { ElectrificationDocumentSource } from './electrification-extraction.schema';
 
-export const electrificationEngagementMatchSchema = z.strictObject({
+/** Comparaison du modèle ; la classification persistée est déduite par le code. */
+export const electrificationEngagementComparisonSchema = z.strictObject({
+  code: z.string().min(1).nullable(),
+  quote: z.string().min(1),
+  action: z.enum(['same-outcome', 'different', 'uncertain']),
+  objectives: z.enum(['compatible', 'different', 'uncertain']),
+  scope: z.enum(['same', 'different', 'uncertain']),
+});
+
+export const electrificationEngagementInterpretationSchema = z.strictObject({
+  sourceId: z.string().min(1),
   match: z.enum(['equivalent', 'scope-difference', 'unresolved']),
   code: z.string().min(1).nullable(),
   quote: z.string().min(1),
 });
-export const electrificationEngagementInterpretationSchema =
-  electrificationEngagementMatchSchema.extend({
-    sourceId: z.string().min(1),
-  });
 export type ElectrificationEngagementInterpretation = z.infer<
   typeof electrificationEngagementInterpretationSchema
 >;

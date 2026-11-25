@@ -481,7 +481,9 @@ describe(
         data: {
           completed: true,
           text: JSON.stringify({
-            match: 'scope-difference',
+            action: 'same-outcome',
+            objectives: 'compatible',
+            scope: 'different',
             code: engagement.code,
             quote: qualitativeEngagements[0].libelle,
           }),

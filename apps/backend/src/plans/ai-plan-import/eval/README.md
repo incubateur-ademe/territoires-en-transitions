@@ -83,8 +83,15 @@ grammaire française. Les rapprochements d'engagements sont conservés dans
 `checkpoint.engagementInterpretations`, avec la classification `equivalent`
 ou `scope-difference`. Les libellés non reconnus passent par ce rapprochement
 limité aux candidats du même axe. Chaque rapprochement accepté est signalé
-dans le compte rendu avec les deux libellés. La tolérance des différences de
-périmètre est contrôlée par `electrificationEngagementMatching.allowScopeDifferences`
+dans le compte rendu avec les deux libellés. Le modèle compare séparément le
+résultat attendu de l'action, les objectifs et le périmètre ; le code déduit
+la classification. Des moyens différents ne changent pas nécessairement un
+résultat explicitement recherché. Une catégorie générale et une sous-catégorie
+ne doivent pas être considérées comme un même périmètre. Une réponse IA hors
+contrat, une citation modifiée ou un code hors des candidats provoquent une
+erreur de traitement, distincte d'un engagement non reconnu.
+La tolérance des différences de périmètre est contrôlée par
+`electrificationEngagementMatching.allowScopeDifferences`
 dans la [configuration documentaire](../../plans/electrification/config/electrification-engagements-document.config.ts).
 Une reprise réapplique cette politique et reconstruit les avertissements sans
 nouvel appel IA. Les contradictions et les correspondances ambiguës doivent

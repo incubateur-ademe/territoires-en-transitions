@@ -1644,7 +1644,9 @@ describe('Résolution des fiches actions Électrification', () => {
       generate.mockResolvedValue(
         success({
           data: {
-            match: 'equivalent',
+            action: 'same-outcome',
+            objectives: 'compatible',
+            scope: 'same',
             code: config.engagements[0].code,
             quote: engagements[1][1].text,
           },
@@ -1674,7 +1676,9 @@ describe('Résolution des fiches actions Électrification', () => {
             ? failure({ kind: 'api_error', httpStatus: 503 })
             : success({
                 data: {
-                  match: 'equivalent',
+                  action: 'same-outcome',
+                  objectives: 'compatible',
+                  scope: 'same',
                   code: 'INVENTE',
                   quote: engagements[5][1].text,
                 },
@@ -1686,10 +1690,7 @@ describe('Résolution des fiches actions Électrification', () => {
         );
         expect(issues).toContainEqual(
           expect.objectContaining({
-            code:
-              failureKind === 'provider'
-                ? 'AI_ENGAGEMENT_INTERPRETATION_FAILED'
-                : 'INVALID_ELECTRIFICATION_ENGAGEMENT',
+            code: 'AI_ENGAGEMENT_INTERPRETATION_FAILED',
           })
         );
         expect(issues).toHaveLength(2);
@@ -2399,30 +2400,57 @@ describe('Résolution des fiches actions Électrification', () => {
     });
 
     test.each([
-      { code: 'E05', identity: 'code', axe: 3, value: '25 %', expected: [25] },
+      {
+        code: 'E05',
+        identity: 'code',
+        axe: 3,
+        value: '25 %',
+        expected: [25],
+        scope: 'same',
+      },
       {
         code: 'E05',
         identity: 'libellé courant',
+        scope: 'same',
         axe: 3,
         value: '25 %',
         expected: [25],
       },
       ...[
-        template.sections[0].rows[4][1].text,
-        template.sections[0].rows[4][1].text.replaceAll('gaz', 'fioul'),
-        template.sections[0].rows[4][1].text
-          .replace('du gaz', 'du gaz ou du fioul')
-          .replace('au gaz', 'au gaz ou au fioul'),
-      ].map((identity) => ({
+        { identity: template.sections[0].rows[4][1].text, scope: 'different' },
+        {
+          identity: template.sections[0].rows[4][1].text.replaceAll(
+            'gaz',
+            'fioul'
+          ),
+          scope: 'different',
+        },
+        {
+          identity: template.sections[0].rows[4][1].text
+            .replace('du gaz', 'du gaz ou du fioul')
+            .replace('au gaz', 'au gaz ou au fioul'),
+          scope: 'same',
+        },
+      ].map(({ identity, scope }) => ({
         code: 'E05',
         identity,
+        scope,
         axe: 3,
         value: '25 %',
         expected: [25],
       })),
       {
+        code: 'E01',
+        identity: template.sections[0].rows[1][1].text,
+        scope: 'different',
+        axe: 1,
+        value: '25 %',
+        expected: [25],
+      },
+      {
         code: 'E02',
         identity: template.sections[0].rows[2][0].text,
+        scope: 'different',
         axe: 1,
         value: '25 %',
         expected: [25],
@@ -2430,6 +2458,7 @@ describe('Résolution des fiches actions Électrification', () => {
       {
         code: 'E07',
         identity: template.sections[0].rows[7][1].text,
+        scope: 'same',
         axe: 6,
         value: '100 bornes dont 20 rapides',
         expected: [100, 20],
@@ -2437,13 +2466,22 @@ describe('Résolution des fiches actions Électrification', () => {
       {
         code: 'E12',
         identity: template.sections[0].rows[8][1].text,
+        scope: 'same',
         axe: 7,
         value: '',
         expected: [],
       },
+      {
+        code: 'E10',
+        identity: template.sections[0].rows[11][1].text,
+        scope: 'same',
+        axe: 10,
+        value: '200 MWh',
+        expected: [200],
+      },
     ])(
       'prépare un document avec les définitions Grist courantes : $code / $identity',
-      async ({ code, identity, axe, value, expected }) => {
+      async ({ code, identity, axe, value, expected, scope }) => {
         Object.assign(
           config,
           ElectrificationGristAdapter.build({
@@ -2478,7 +2516,9 @@ describe('Résolution des fiches actions Électrification', () => {
           generate.mockResolvedValueOnce(
             success({
               data: {
-                match: code === 'E05' ? 'scope-difference' : 'equivalent',
+                action: 'same-outcome',
+                objectives: 'compatible',
+                scope,
                 code,
                 quote: label,
               },
@@ -2500,7 +2540,8 @@ describe('Résolution des fiches actions Électrification', () => {
             ? [
                 {
                   sourceId: expect.any(String),
-                  match: code === 'E05' ? 'scope-difference' : 'equivalent',
+                  match:
+                    scope === 'different' ? 'scope-difference' : 'equivalent',
                   code,
                   quote: label,
                 },
@@ -2516,7 +2557,7 @@ describe('Résolution des fiches actions Électrification', () => {
                 expect.objectContaining({
                   kind: 'warning',
                   code:
-                    code === 'E05'
+                    scope === 'different'
                       ? 'TOLERATED_ELECTRIFICATION_ENGAGEMENT_SCOPE'
                       : 'INTERPRETED_ELECTRIFICATION_ENGAGEMENT',
                   message: expect.stringContaining(definition.libelleSource),
@@ -2528,23 +2569,43 @@ describe('Résolution des fiches actions Électrification', () => {
     );
 
     test.each([
-      ['autre échéance', (label: string) => label.replace('2030', '2040'), 3],
+      [
+        'autre échéance',
+        (label: string) => label.replace('2030', '2040'),
+        3,
+        'same-outcome',
+        'different',
+      ],
       [
         'action contraire',
         (label: string) => label.replace('sortie du gaz', 'maintien du gaz'),
         3,
+        'different',
+        'compatible',
       ],
-      ['mauvais axe', (label: string) => label, 2],
+      [
+        'mauvais axe',
+        (label: string) => label,
+        2,
+        'same-outcome',
+        'compatible',
+      ],
     ] as const)(
       'ne rapproche pas automatiquement E05 avec %s',
-      async (_name, changeLabel, axe) => {
+      async (_name, changeLabel, axe, action, objectives) => {
         const label = changeLabel(template.sections[0].rows[4][1].text);
         await useEngagement(label, '25 %', axe);
         if (axe === 3) {
           expectedInterpretationCalls = 1;
           generate.mockResolvedValueOnce(
             success({
-              data: { match: 'unresolved', code: null, quote: label },
+              data: {
+                action,
+                objectives,
+                scope: 'different',
+                code: 'E05',
+                quote: label,
+              },
               tokens: emptyTokenUsage(),
             })
           );
@@ -2627,7 +2688,9 @@ describe('Résolution des fiches actions Électrification', () => {
         generate.mockResolvedValue(
           success({
             data: {
-              match: 'scope-difference',
+              action: 'same-outcome',
+              objectives: 'compatible',
+              scope: 'different',
               code: 'RENOVATION',
               quote: documentLabel,
             },
@@ -3001,7 +3064,13 @@ describe('Résolution des fiches actions Électrification', () => {
         expectedInterpretationCalls = 2;
         generate.mockResolvedValueOnce(
           success({
-            data: { match: 'equivalent', code: 'E07', quote: label },
+            data: {
+              action: 'same-outcome',
+              objectives: 'compatible',
+              scope: 'same',
+              code: 'E07',
+              quote: label,
+            },
             tokens: emptyTokenUsage(),
           })
         );
@@ -3730,29 +3799,56 @@ describe('Résolution des fiches actions Électrification', () => {
 
     test.each([
       {
-        match: 'unresolved',
-        code: null,
-        quote: 'Un nouvel engagement inconnu',
+        name: 'aucun candidat unique',
+        response: { code: null },
+        issue: 'INVALID_ELECTRIFICATION_ENGAGEMENT',
+        kind: 'document-error',
       },
       {
-        match: 'unresolved',
-        code: 'E03',
-        quote: 'Un nouvel engagement inconnu',
+        name: 'action incertaine',
+        response: { action: 'uncertain' },
+        issue: 'INVALID_ELECTRIFICATION_ENGAGEMENT',
+        kind: 'document-error',
       },
       {
-        match: 'scope-difference',
-        code: 'E01',
-        quote: 'Un nouvel engagement inconnu',
+        name: 'objectifs incertains',
+        response: { objectives: 'uncertain' },
+        issue: 'INVALID_ELECTRIFICATION_ENGAGEMENT',
+        kind: 'document-error',
       },
       {
-        match: 'equivalent',
-        code: 'INVENTE',
-        quote: 'Un nouvel engagement inconnu',
+        name: 'périmètre incertain',
+        response: { scope: 'uncertain' },
+        issue: 'INVALID_ELECTRIFICATION_ENGAGEMENT',
+        kind: 'document-error',
       },
-      { match: 'equivalent', code: 'E03', quote: 'Citation inventée' },
+      {
+        name: 'candidat hors axe',
+        response: { code: 'E01' },
+        issue: 'AI_ENGAGEMENT_INTERPRETATION_FAILED',
+        kind: 'processing-error',
+      },
+      {
+        name: 'candidat inventé',
+        response: { code: 'INVENTE' },
+        issue: 'AI_ENGAGEMENT_INTERPRETATION_FAILED',
+        kind: 'processing-error',
+      },
+      {
+        name: 'citation modifiée',
+        response: { quote: 'Citation inventée' },
+        issue: 'AI_ENGAGEMENT_INTERPRETATION_FAILED',
+        kind: 'processing-error',
+      },
+      {
+        name: 'réponse hors contrat',
+        response: { scope: null },
+        issue: 'AI_ENGAGEMENT_INTERPRETATION_FAILED',
+        kind: 'processing-error',
+      },
     ])(
-      'refuse un rapprochement non justifié : $code / $quote',
-      async (response) => {
+      'distingue les refus documentaires des réponses IA invalides : $name',
+      async ({ response, issue, kind }) => {
         const engagements = structuredClone(template.sections[0].rows);
         engagements[5][1].text = 'Un nouvel engagement inconnu';
         engagements[5][2].text = 'Oui';
@@ -3760,11 +3856,20 @@ describe('Résolution des fiches actions Électrification', () => {
         expectedInterpretationCalls = 1;
         generate.mockResolvedValueOnce(
           success({
-            data: response,
+            data: {
+              code: 'E03',
+              quote: 'Un nouvel engagement inconnu',
+              action: 'same-outcome',
+              objectives: 'compatible',
+              scope: 'different',
+              ...response,
+            },
             tokens: emptyTokenUsage(),
           })
         );
-        await expectExtractionIssue('INVALID_ELECTRIFICATION_ENGAGEMENT');
+        expect(await expectExtractionIssue(issue)).toContainEqual(
+          expect.objectContaining({ code: issue, kind })
+        );
       }
     );
 
