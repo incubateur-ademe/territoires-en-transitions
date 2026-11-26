@@ -216,7 +216,10 @@ const evaluateGenericImport = async (
           units,
           allUnits,
           titlesByStep,
-          question,
+          questions: doubts.map((doubt) => ({
+            doubt,
+            choice: choices.find(({ kind }) => kind === doubt.kind) ?? null,
+          })),
         });
       },
       onStepStatesChange: async (stepStates) => {

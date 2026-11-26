@@ -18,6 +18,7 @@ import {
 import { titleIncludes, titlesMatch } from '../extract-actions/similar-titles';
 import { DocumentUnit } from '../segment-document/document-unit';
 import { isFicheTitleField } from '../segment-document/heading-patterns';
+import { keepCodeAxes } from './keep-code-axes';
 import { splitGroupedThemes } from './split-grouped-themes';
 
 // Les extraits de structure sont rarement longs ; au-delà, le sommaire suffit.
@@ -35,6 +36,8 @@ export type ExtractSkeletonResult = {
   skeleton: PlanSkeleton | null;
   /** Ce que le modèle dit ne pas pouvoir lire, à vérifier avant d'y croire. */
   modelDoubt: ModelDoubt | null;
+  /** Le modèle avait pris une autre grille : les axes viennent du code. */
+  axesFromCode: boolean;
   tokens: TokenUsage;
 };
 
@@ -81,6 +84,7 @@ export const extractSkeleton = async (
     return success({
       skeleton: null,
       modelDoubt: null,
+      axesFromCode: false,
       tokens: emptyTokenUsage(),
     });
   }
@@ -109,14 +113,15 @@ export const extractSkeleton = async (
     return completion;
   }
   const { doute, ...answer } = completion.data.data;
-  const withoutFiches = withoutFicheSousAxes(answer, actionTitles);
+  const coded = keepCodeAxes(withoutFicheSousAxes(answer, actionTitles), units);
   const skeleton =
     separateThemes && themeGrouping
-      ? splitGroupedThemes(withoutFiches, themeGrouping.groups)
-      : withoutFiches;
+      ? splitGroupedThemes(coded.skeleton, themeGrouping.groups)
+      : coded.skeleton;
   return success({
     skeleton: skeleton.axes.length > 0 ? skeleton : null,
     modelDoubt: doute ?? null,
+    axesFromCode: coded.fromCode,
     tokens: completion.data.tokens,
   });
 };

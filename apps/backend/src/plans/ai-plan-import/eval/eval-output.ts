@@ -10,7 +10,8 @@ import {
   type PipelineOutcome,
 } from '../pipeline/run-import-pipeline';
 import type {
-  ActionLevelDoubt,
+  ImportChoice,
+  ImportDoubt,
   ReadingChoices,
 } from '../models/import-question';
 import type { DocumentUnit } from '../pipeline/segment-document/document-unit';
@@ -69,8 +70,11 @@ export type EvalTrace = {
    * seulement reformulée.
    */
   titlesDroppedAfterExtraction: string[];
-  /** La question qu'aurait posée l'import, que `--action-level` tranche. */
-  question: ActionLevelDoubt | null;
+  /**
+   * Les questions qu'aurait posées l'import, avec le choix retenu pour
+   * chacune : le choix proposé, sauf réponse imposée (`--action-level`).
+   */
+  questions: { doubt: ImportDoubt; choice: ImportChoice | null }[];
 };
 
 const START_CHARS = 100;
@@ -89,7 +93,7 @@ export const buildEvalTrace = ({
   units,
   allUnits,
   titlesByStep,
-  question,
+  questions,
 }: {
   skeleton: PlanSkeleton | null;
   units: UnitToTrace[] | null;
@@ -97,7 +101,7 @@ export const buildEvalTrace = ({
   allUnits: UnitToTrace[] | null;
   /** Les titres des actions après chaque étape terminée. */
   titlesByStep: Partial<Record<StepName, string[]>>;
-  question: ActionLevelDoubt | null;
+  questions: EvalTrace['questions'];
 }): EvalTrace => {
   const kept = new Set((units ?? []).map((unit) => unit.id));
   const lastTitles = new Set(Object.values(titlesByStep).at(-1) ?? []);
@@ -116,7 +120,7 @@ export const buildEvalTrace = ({
     titlesDroppedAfterExtraction: (titlesByStep.extraction ?? []).filter(
       (title) => !lastTitles.has(title)
     ),
-    question,
+    questions,
   };
 };
 

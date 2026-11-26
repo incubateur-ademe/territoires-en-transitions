@@ -139,7 +139,11 @@ export const scoutUnits = async (
       ...skeletonWarnings,
       ...(judgement?.warning ? [judgement.warning] : []),
     ],
-    details: judgement?.details ?? {},
+    details: {
+      ...judgement?.details,
+      ...(skeleton.success &&
+        skeleton.data.axesFromCode && { skeletonAxesFromCode: 1 }),
+    },
   });
 };
 
