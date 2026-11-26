@@ -79,6 +79,7 @@ import { ValidateAuditRouter } from './labellisations/validate-audit/validate-au
 import { CloseDossierLabellisationService } from './labellisations/dossiers-labellisation/close-dossier-labellisation.service';
 import { DossiersLabellisationRouter } from './labellisations/dossiers-labellisation/dossiers-labellisation.router';
 import { HandleCotService } from './labellisations/dossiers-labellisation/handle-cot.service';
+import { ListDossiersLabellisationRepository } from './labellisations/dossiers-labellisation/list-dossiers-labellisation.repository';
 import { ListDossiersLabellisationService } from './labellisations/dossiers-labellisation/list-dossiers-labellisation.service';
 import { UpdateDossierLabellisationService } from './labellisations/dossiers-labellisation/update-dossier-labellisation.service';
 import { ValidateAuditService } from './labellisations/validate-audit/validate-audit.service';
@@ -235,6 +236,7 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     AddAuditDocumentRouter,
     ValidateAuditService,
     ValidateAuditRouter,
+    ListDossiersLabellisationRepository,
     ListDossiersLabellisationService,
     UpdateDossierLabellisationService,
     CloseDossierLabellisationService,
