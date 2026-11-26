@@ -11,12 +11,17 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { getErrorMessage } from '@tet/domain/utils';
 import { and, eq, inArray, sql } from 'drizzle-orm';
 import { UpdateUserRoleService } from '../../../users/authorizations/update-user-role/update-user-role.service';
 import { utilisateurCollectiviteAccessTable } from '../../../users/authorizations/utilisateur-collectivite-access.table';
 import { invitationTable } from '../invitation.table';
 import { CreateInvitationInput } from './create-invitation.input';
+import {
+  CreateInvitationError,
+  CreateInvitationErrorEnum,
+} from './create-invitation.errors';
 import { invitationPersonneTagTable } from './invitation-personne-tag.table';
 
 @Injectable()
@@ -33,32 +38,41 @@ export class InvitationService {
   async createInvitation(
     invitation: CreateInvitationInput,
     user: AuthenticatedUser
-  ): Promise<{
-    id: string;
-    acceptanceToken: string;
-  } | null> {
-    // Vérifie si l'utilisateur invité existe déjà à partir de son adresse mail
-    const [invitedUser] = await this.databaseService.db
-      .select()
-      .from(dcpTable)
-      // Comparaison insensible à la casse : l'email d'entrée est normalisé,
-      // pas forcément celui que `dcp` a hérité de `auth.users`.
-      .where(eq(sql`lower(${dcpTable.email})`, invitation.email))
-      .limit(1);
+  ): Promise<
+    Result<
+      {
+        id: string;
+        acceptanceToken: string;
+      } | null,
+      CreateInvitationError
+    >
+  > {
+    try {
+      // Vérifie si l'utilisateur invité existe déjà à partir de son adresse mail
+      const [invitedUser] = await this.databaseService.db
+        .select()
+        .from(dcpTable)
+        // Comparaison insensible à la casse : l'email d'entrée est normalisé,
+        // pas forcément celui que `dcp` a hérité de `auth.users`.
+        .where(eq(sql`lower(${dcpTable.email})`, invitation.email))
+        .limit(1);
 
-    if (invitedUser) {
-      // Si l'utilisateur existe déjà, vérifie s'il est déjà attaché à la collectivité
-      const isMember = await this.listMembresService.isActiveMember({
-        userId: invitedUser.id,
-        collectiviteId: invitation.collectiviteId,
-      });
-      // S'il est déjà attaché, erreur, sinon, on le rattache ou le réactive
-      if (isMember) {
-        throw new Error(
-          `L'utilisateur ${invitation.email} est déjà associé à la collectivité ${invitation.collectiviteId}`
-        );
-      } else {
-        return await this.databaseService.db.transaction(async (trx) => {
+      if (invitedUser) {
+        // Si l'utilisateur existe déjà, vérifie s'il est déjà attaché à la collectivité
+        const isMember = await this.listMembresService.isActiveMember({
+          userId: invitedUser.id,
+          collectiviteId: invitation.collectiviteId,
+        });
+        // S'il est déjà attaché, erreur, sinon, on le rattache ou le réactive
+        if (isMember) {
+          return failure(
+            CreateInvitationErrorEnum.USER_ALREADY_MEMBER,
+            new Error(
+              `L'utilisateur ${invitation.email} est déjà associé à la collectivité ${invitation.collectiviteId}`
+            )
+          );
+        }
+        await this.databaseService.db.transaction(async (trx) => {
           // Ajoute ou met à jour l'utilisateur dans la collectivité
           await trx
             .insert(utilisateurCollectiviteAccessTable)
@@ -93,77 +107,95 @@ export class InvitationService {
               trx
             );
           }
-          return null;
         });
+        return success(null);
       }
-    } else {
-      return await this.databaseService.db.transaction(async (trx) => {
-        // Vérifie si les tags demandés ne sont pas déjà utilisés par d'autres invitations en attente
-        if (invitation.tagIds && invitation.tagIds.length > 0) {
-          const existingInvitationTags = await trx
-            .select({
-              tagId: invitationPersonneTagTable.tagId,
-              tagNom: invitationPersonneTagTable.tagNom,
-            })
-            .from(invitationPersonneTagTable)
-            .innerJoin(
-              invitationTable,
-              eq(invitationTable.id, invitationPersonneTagTable.invitationId)
-            )
-            .where(
-              and(
-                inArray(invitationPersonneTagTable.tagId, invitation.tagIds),
-                eq(invitationTable.collectiviteId, invitation.collectiviteId),
-                eq(invitationTable.pending, true),
-                eq(invitationTable.active, true)
-              )
-            );
 
-          if (existingInvitationTags.length > 0) {
-            const conflictingTags = existingInvitationTags
-              .map((tag) => tag.tagNom)
-              .join(', ');
-            throw new Error(
-              `Les tags suivants sont déjà utilisés par d'autres invitations en attente : ${conflictingTags}`
+      const invitationAdded = await this.databaseService.db.transaction(
+        async (trx) => {
+          // Vérifie si les tags demandés ne sont pas déjà utilisés par d'autres invitations en attente
+          if (invitation.tagIds && invitation.tagIds.length > 0) {
+            const existingInvitationTags = await trx
+              .select({
+                tagId: invitationPersonneTagTable.tagId,
+                tagNom: invitationPersonneTagTable.tagNom,
+              })
+              .from(invitationPersonneTagTable)
+              .innerJoin(
+                invitationTable,
+                eq(invitationTable.id, invitationPersonneTagTable.invitationId)
+              )
+              .where(
+                and(
+                  inArray(invitationPersonneTagTable.tagId, invitation.tagIds),
+                  eq(invitationTable.collectiviteId, invitation.collectiviteId),
+                  eq(invitationTable.pending, true),
+                  eq(invitationTable.active, true)
+                )
+              );
+
+            if (existingInvitationTags.length > 0) {
+              const conflictingTags = existingInvitationTags
+                .map((tag) => tag.tagNom)
+                .join(', ');
+              return failure(
+                CreateInvitationErrorEnum.PENDING_TAG_CONFLICT,
+                new Error(
+                  `Les tags suivants sont déjà utilisés par d'autres invitations en attente : ${conflictingTags}`
+                )
+              );
+            }
+          }
+
+          // Si l'utilisateur n'existe pas, on crée l'invitation
+          const [createdInvitation] = await trx
+            .insert(invitationTable)
+            .values({
+              role: invitation.role,
+              email: invitation.email,
+              collectiviteId: invitation.collectiviteId,
+              createdBy: user.id,
+            })
+            .returning({
+              id: invitationTable.id,
+              acceptanceToken: invitationTable.acceptanceToken,
+            });
+
+          this.logger.log(
+            `Crée l'invitation ${createdInvitation.id} pour l'email ${invitation.email}`
+          );
+
+          // On associe les tags à l'invitation s'ils existent
+          if (invitation.tagIds && invitation.tagIds.length > 0) {
+            const tagsToAdd = await trx
+              .select()
+              .from(personneTagTable)
+              .where(inArray(personneTagTable.id, invitation.tagIds));
+
+            await trx.insert(invitationPersonneTagTable).values(
+              tagsToAdd.map((tag) => ({
+                tagId: tag.id,
+                invitationId: createdInvitation.id,
+                tagNom: tag.nom,
+              }))
             );
           }
+
+          return success(createdInvitation);
         }
-
-        // Si l'utilisateur n'existe pas, on crée l'invitation
-        const [invitationAdded] = await trx
-          .insert(invitationTable)
-          .values({
-            role: invitation.role,
-            email: invitation.email,
-            collectiviteId: invitation.collectiviteId,
-            createdBy: user.id,
-          })
-          .returning({
-            id: invitationTable.id,
-            acceptanceToken: invitationTable.acceptanceToken,
-          });
-
-        this.logger.log(
-          `Crée l'invitation ${invitationAdded.id} pour l'email ${invitation.email}`
-        );
-
-        // On associe les tags à l'invitation s'ils existent
-        if (invitation.tagIds && invitation.tagIds.length > 0) {
-          const tagsToAdd = await trx
-            .select()
-            .from(personneTagTable)
-            .where(inArray(personneTagTable.id, invitation.tagIds));
-
-          await trx.insert(invitationPersonneTagTable).values(
-            tagsToAdd.map((tag) => ({
-              tagId: tag.id,
-              invitationId: invitationAdded.id,
-              tagNom: tag.nom,
-            }))
-          );
-        }
+      );
+      if (!invitationAdded.success) {
         return invitationAdded;
-      });
+      }
+      return success(invitationAdded.data);
+    } catch (error) {
+      this.logger.error(
+        `Erreur lors de la création de l'invitation: ${getErrorMessage(error)}`
+      );
+      return failure(
+        CreateInvitationErrorEnum.DATABASE_ERROR,
+        error instanceof Error ? error : new Error(String(error))
+      );
     }
   }
 

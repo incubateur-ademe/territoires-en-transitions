@@ -60,12 +60,11 @@ describe('Test les invitations', () => {
 
     // Sans normalisation, l'adresse en majuscules ne retrouvait pas le compte
     // et créait une invitation pour quelqu'un qui en avait déjà un.
-    const invitation =
-      await caller.collectivites.membres.invitations.create({
-        collectiviteId: collectivite.id,
-        email: invite.email.toUpperCase(),
-        role: CollectiviteRole.EDITION,
-      });
+    const invitation = await caller.collectivites.membres.invitations.create({
+      collectiviteId: collectivite.id,
+      email: invite.email.toUpperCase(),
+      role: CollectiviteRole.EDITION,
+    });
 
     expect(invitation).toBeNull();
 
@@ -94,12 +93,11 @@ describe('Test les invitations', () => {
       .set({ email: invite.email.toUpperCase() })
       .where(eq(dcpTable.id, invite.id));
 
-    const invitation =
-      await caller.collectivites.membres.invitations.create({
-        collectiviteId: collectivite.id,
-        email: invite.email,
-        role: CollectiviteRole.EDITION,
-      });
+    const invitation = await caller.collectivites.membres.invitations.create({
+      collectiviteId: collectivite.id,
+      email: invite.email,
+      role: CollectiviteRole.EDITION,
+    });
 
     expect(invitation).toBeNull();
   });
@@ -125,9 +123,10 @@ describe('Test les invitations', () => {
         role: CollectiviteRole.EDITION,
         tagIds: [],
       })
-    ).rejects.toThrowError(
-      `L'utilisateur ${adminEmail} est déjà associé à la collectivité ${collectivite.id}`
-    );
+    ).rejects.toMatchObject({
+      code: 'BAD_REQUEST',
+      message: `L'utilisateur ${adminEmail} est déjà associé à la collectivité ${collectivite.id}`,
+    });
   });
 
   test(`Invite un utilisateur déjà existant mais pas rattaché à la collectivité`, async () => {
@@ -596,9 +595,10 @@ describe('Test les invitations', () => {
         role: CollectiviteRole.EDITION,
         tagIds: [conflictTag.id],
       })
-    ).rejects.toThrowError(
-      `Les tags suivants sont déjà utilisés par d'autres invitations en attente : ${conflictTag.nom}`
-    );
+    ).rejects.toMatchObject({
+      code: 'BAD_REQUEST',
+      message: `Les tags suivants sont déjà utilisés par d'autres invitations en attente : ${conflictTag.nom}`,
+    });
   });
 
   test(`Peut inviter avec un tag après suppression de l'invitation qui l'utilisait`, async () => {

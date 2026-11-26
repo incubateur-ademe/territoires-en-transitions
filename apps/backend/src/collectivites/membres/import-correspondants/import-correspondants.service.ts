@@ -129,10 +129,10 @@ export class ImportCorrespondantsService {
     contenu: string
   ): Promise<Result<LigneCsvBrute[], ImportCorrespondantsError>> {
     try {
-      const { data } = await this.csvService.getDataFromCsvContent<LigneCsvBrute>(
-        contenu,
-        { parseOptions: { ...CORRESPONDANT_CSV_PARSE_OPTIONS } }
-      );
+      const { data } =
+        await this.csvService.getDataFromCsvContent<LigneCsvBrute>(contenu, {
+          parseOptions: { ...CORRESPONDANT_CSV_PARSE_OPTIONS },
+        });
       return success(data);
     } catch (error) {
       this.logger.error(`CSV illisible : ${getErrorMessage(error)}`);
@@ -260,15 +260,18 @@ export class ImportCorrespondantsService {
         },
         buildRequesterUser(initiateurId)
       );
+      if (!invitation.success) {
+        throw invitation.cause ?? new Error(invitation.error);
+      }
 
       const envoi = await this.sendInvitationCorrespondantService.send({
         to: email,
         service,
         role: decision.role,
-        cible: invitation
+        cible: invitation.data
           ? {
               urlType: 'invitation',
-              acceptanceToken: invitation.acceptanceToken,
+              acceptanceToken: invitation.data.acceptanceToken,
             }
           : { urlType: 'rattachement' },
       });
@@ -285,15 +288,15 @@ export class ImportCorrespondantsService {
 
       return {
         ...this.enResultat(decision),
-        statut: invitation ? 'invite' : 'rattache',
+        statut: invitation.data ? 'invite' : 'rattache',
       };
     } catch (error) {
       // La ligne sort en erreur, les suivantes sont traitées quand même et le
       // rapport arrive à l'opérateur.
       this.logger.error(
-        `Import impossible sur le service ${service.collectiviteId} : ${getErrorMessage(
-          error
-        )}`
+        `Import impossible sur le service ${
+          service.collectiviteId
+        } : ${getErrorMessage(error)}`
       );
       return {
         ...this.enResultat(decision),
@@ -416,7 +419,13 @@ export class ImportCorrespondantsService {
           ? `le fichier annonce « ${correspondant.nom} », la base porte « ${service.nom} »`
           : undefined;
 
-      analysees.push({ ligne, email: correspondant.email, role, service, motif });
+      analysees.push({
+        ligne,
+        email: correspondant.email,
+        role,
+        service,
+        motif,
+      });
     }
 
     return analysees;
