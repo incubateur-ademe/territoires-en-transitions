@@ -72,6 +72,7 @@ import { CollectiviteMembresRouter } from './membres/membres.router';
 import { ConsumePendingInvitationsService } from './membres/consume-pending-invitations/consume-pending-invitations.service';
 import { InvitationService } from './membres/mutate-invitations/invitation.service';
 import { InvitationsRouter } from './membres/mutate-invitations/invitations.router';
+import { MutateMembresRepository } from './membres/mutate-membres/mutate-membres.repository';
 import { MutateMembresService } from './membres/mutate-membres/mutate-membres.service';
 import { PersonnalisationsModule } from './personnalisations/personnalisations.module';
 import { PersonnesRouter } from './personnes.router';
@@ -112,6 +113,7 @@ import { SiteRouter } from './site/site.router';
     ImportCorrespondantsService,
     ImportCorrespondantsRouter,
 
+    MutateMembresRepository,
     MutateMembresService,
     CollectiviteMembresRouter,
     GroupementsService,

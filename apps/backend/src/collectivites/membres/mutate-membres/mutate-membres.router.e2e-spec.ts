@@ -2,7 +2,8 @@ import { INestApplication } from '@nestjs/common';
 import { MembreFonctionEnum } from '@tet/domain/collectivites';
 import { CollectiviteRole, ResourceType } from '@tet/domain/users';
 import { inferProcedureInput } from '@trpc/server';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, sql } from 'drizzle-orm';
+import { onTestFinished, vi } from 'vitest';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
@@ -24,6 +25,7 @@ import { DatabaseService } from '../../../utils/database/database.service';
 import { AppRouter, TrpcRouter } from '../../../utils/trpc/trpc.router';
 import { utilisateurCollectiviteAccessTable } from '../../../users/authorizations/utilisateur-collectivite-access.table';
 import { membreTable } from '../membre.table';
+import { collectiviteTable } from '../../shared/models/collectivite.table';
 
 type ListInput = inferProcedureInput<
   AppRouter['collectivites']['membres']['list']
@@ -175,6 +177,113 @@ describe('CollectiviteMembresRouter mutate', () => {
 
       await userCleanup();
       await collCleanup();
+    });
+
+    test('un seul premier membre devient admin lors de deux rattachements concurrents', async () => {
+      const { collectivite, cleanup } = await addTestCollectivite(db);
+      onTestFinished(async () => {
+        await db.db
+          .delete(membreTable)
+          .where(eq(membreTable.collectiviteId, collectivite.id));
+        await db.db
+          .delete(utilisateurCollectiviteAccessTable)
+          .where(
+            eq(
+              utilisateurCollectiviteAccessTable.collectiviteId,
+              collectivite.id
+            )
+          );
+        await cleanup();
+      });
+      const users = [adminUser, editionUser];
+      let attempts: Promise<PromiseSettledResult<unknown>[]> = Promise.resolve(
+        []
+      );
+
+      try {
+        await db.db.transaction(async (tx) => {
+          await tx
+            .select({ id: collectiviteTable.id })
+            .from(collectiviteTable)
+            .where(eq(collectiviteTable.id, collectivite.id))
+            .for('update');
+          const { rows } = await tx.execute<{ pid: number }>(
+            sql`SELECT pg_backend_pid() AS pid`
+          );
+
+          attempts = Promise.allSettled(
+            users.map((user) =>
+              router.createCaller({ user }).collectivites.membres.join({
+                collectiviteId: collectivite.id,
+                fonction: MembreFonctionEnum.TECHNIQUE,
+              })
+            )
+          );
+
+          // Attend les deux requêtes dans la file du verrou avant de le libérer.
+          // Sans le verrou de join, elles attendent la clé étrangère après avoir
+          // toutes deux lu zéro membre actif, ce que les assertions détectent.
+          await vi.waitFor(
+            async () => {
+              const { rows: blocked } = await db.db.execute<{
+                count: number;
+              }>(sql`
+              WITH RECURSIVE waiting AS (
+                SELECT pid FROM pg_stat_activity
+                WHERE ${rows[0].pid} = ANY(pg_blocking_pids(pid))
+                UNION
+                SELECT activity.pid FROM pg_stat_activity activity
+                JOIN waiting ON waiting.pid = ANY(pg_blocking_pids(activity.pid))
+              )
+              SELECT count(*)::integer AS count FROM waiting
+            `);
+              expect(blocked[0].count).toBe(2);
+            },
+            { timeout: 5000, interval: 20 }
+          );
+        });
+      } finally {
+        // La transaction libère le verrou même si l'attente échoue.
+        await attempts;
+      }
+
+      const outcomes = await attempts;
+      expect(
+        outcomes.filter((outcome) => outcome.status === 'fulfilled')
+      ).toHaveLength(1);
+      expect(
+        outcomes.filter((outcome) => outcome.status === 'rejected')
+      ).toMatchObject([
+        {
+          reason: {
+            code: 'CONFLICT',
+            message: expect.stringContaining('inviter'),
+          },
+        },
+      ]);
+      const winner =
+        users[outcomes.findIndex((outcome) => outcome.status === 'fulfilled')];
+
+      const accesses = await db.db
+        .select({
+          userId: utilisateurCollectiviteAccessTable.userId,
+          role: utilisateurCollectiviteAccessTable.role,
+          isActive: utilisateurCollectiviteAccessTable.isActive,
+        })
+        .from(utilisateurCollectiviteAccessTable)
+        .where(
+          eq(utilisateurCollectiviteAccessTable.collectiviteId, collectivite.id)
+        );
+      expect(accesses).toEqual([
+        { userId: winner.id, role: CollectiviteRole.ADMIN, isActive: true },
+      ]);
+      const membres = await db.db
+        .select({ userId: membreTable.userId, fonction: membreTable.fonction })
+        .from(membreTable)
+        .where(eq(membreTable.collectiviteId, collectivite.id));
+      expect(membres).toEqual([
+        { userId: winner.id, fonction: MembreFonctionEnum.TECHNIQUE },
+      ]);
     });
 
     test('refuse une collectivité de service déconcentré, même sans membre', async () => {

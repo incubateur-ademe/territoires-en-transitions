@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/utilisateur-collectivite-access.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import {
@@ -13,11 +11,9 @@ import {
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { CommonError } from '@tet/backend/utils/trpc/common-errors';
 import { isServiceDeconcentre } from '@tet/domain/collectivites';
-import { CollectiviteRole, ResourceType } from '@tet/domain/users';
-import { and, count, eq, inArray, notInArray, sql } from 'drizzle-orm';
+import { ResourceType } from '@tet/domain/users';
 import { AuthenticatedUser } from '../../../users/models/auth.models';
 import { ListMembresService } from '../list-membres/list-membres.service';
-import { membreTable } from '../membre.table';
 import {
   MutateMembresErrorEnum,
   type MutateMembresError,
@@ -28,11 +24,13 @@ import {
   UpdateConseillersReferentsInput,
   UpdateMembreInput,
 } from './mutate-membres.input';
+import { MutateMembresRepository } from './mutate-membres.repository';
 
 @Injectable()
 export class MutateMembresService {
   constructor(
     private readonly databaseService: DatabaseService,
+    private readonly repository: MutateMembresRepository,
     private readonly permissionsService: PermissionService,
     private readonly listMembresService: ListMembresService,
     private readonly transactionManager: TransactionManager
@@ -79,32 +77,19 @@ export class MutateMembresService {
             }
           }
 
-          await this.databaseService.db
-            .insert(membreTable)
-            .values({
-              userId,
-              collectiviteId,
-              ...other,
-            })
-            .onConflictDoUpdate({
-              target: [membreTable.collectiviteId, membreTable.userId],
-              set: other,
-            });
+          await this.repository.upsertMembreDetails({
+            collectiviteId,
+            userId,
+            ...other,
+          });
         }
 
         if (role !== undefined) {
-          await this.databaseService.db
-            .update(utilisateurCollectiviteAccessTable)
-            .set({ role })
-            .where(
-              and(
-                eq(utilisateurCollectiviteAccessTable.userId, userId),
-                eq(
-                  utilisateurCollectiviteAccessTable.collectiviteId,
-                  collectiviteId
-                )
-              )
-            );
+          await this.repository.updateMembreRole({
+            collectiviteId,
+            userId,
+            role,
+          });
         }
 
         return success(undefined);
@@ -139,45 +124,15 @@ export class MutateMembresService {
     }
 
     const referentIds = [...new Set(userIds)];
-    const isConseiller = and(
-      eq(membreTable.collectiviteId, collectiviteId),
-      eq(membreTable.fonction, 'conseiller')
-    );
 
     return this.transactionManager.executeSingle(async (tx) => {
-      // Sérialise les désignations d'une même collectivité : sans ce verrou,
-      // deux enregistrements concurrents peuvent laisser les deux listes
-      // désignées, chaque remise à zéro ne voyant pas l'autre écriture.
-      await tx.execute(
-        sql`select pg_advisory_xact_lock(hashtext('conseillers_referents'), ${collectiviteId})`
-      );
+      await this.repository.lockConseillersReferents(collectiviteId, tx);
 
       if (referentIds.length > 0) {
-        const designes = await tx
-          .update(membreTable)
-          .set({ estReferent: true })
-          .where(
-            and(
-              isConseiller,
-              inArray(membreTable.userId, referentIds),
-              inArray(
-                membreTable.userId,
-                tx
-                  .select({ userId: utilisateurCollectiviteAccessTable.userId })
-                  .from(utilisateurCollectiviteAccessTable)
-                  .where(
-                    and(
-                      eq(
-                        utilisateurCollectiviteAccessTable.collectiviteId,
-                        collectiviteId
-                      ),
-                      eq(utilisateurCollectiviteAccessTable.isActive, true)
-                    )
-                  )
-              )
-            )
-          )
-          .returning({ userId: membreTable.userId });
+        const designes = await this.repository.setConseillersReferents(
+          { collectiviteId, userIds: referentIds },
+          tx
+        );
 
         // Une cible refusée annule toute la transaction
         if (designes.length !== referentIds.length) {
@@ -185,18 +140,10 @@ export class MutateMembresService {
         }
       }
 
-      await tx
-        .update(membreTable)
-        .set({ estReferent: false })
-        .where(
-          and(
-            isConseiller,
-            eq(membreTable.estReferent, true),
-            referentIds.length > 0
-              ? notInArray(membreTable.userId, referentIds)
-              : undefined
-          )
-        );
+      await this.repository.clearOtherConseillersReferents(
+        { collectiviteId, userIds: referentIds },
+        tx
+      );
 
       return success(undefined);
     }, tx);
@@ -211,11 +158,9 @@ export class MutateMembresService {
     input: JoinAsMembreInput,
     user: AuthenticatedUser
   ): Promise<Result<void, MutateMembresError>> {
-    const [collectivite] = await this.databaseService.db
-      .select({ id: collectiviteTable.id, type: collectiviteTable.type })
-      .from(collectiviteTable)
-      .where(eq(collectiviteTable.id, input.collectiviteId))
-      .limit(1);
+    const collectivite = await this.repository.getCollectivite(
+      input.collectiviteId
+    );
 
     if (!collectivite) {
       return failure(MutateMembresErrorEnum.COLLECTIVITE_NOT_FOUND);
@@ -239,73 +184,24 @@ export class MutateMembresService {
     let collectiviteHasActiveMembers = false;
 
     await this.databaseService.db.transaction(async (tx) => {
-      await tx.execute(sql`
-        select 1
-        from ${collectiviteTable}
-        where ${collectiviteTable.id} = ${input.collectiviteId}
-        for update
-      `);
-
-      const [{ activeCount }] = await tx
-        .select({ activeCount: count() })
-        .from(utilisateurCollectiviteAccessTable)
-        .where(
-          and(
-            eq(
-              utilisateurCollectiviteAccessTable.collectiviteId,
-              input.collectiviteId
-            ),
-            eq(utilisateurCollectiviteAccessTable.isActive, true)
-          )
-        );
+      const activeCount = await this.repository.countActiveMembresForUpdate(
+        input.collectiviteId,
+        tx
+      );
 
       if (activeCount > 0) {
         collectiviteHasActiveMembers = true;
         return;
       }
 
-      await tx
-        .insert(utilisateurCollectiviteAccessTable)
-        .values({
-          userId: user.id,
-          collectiviteId: input.collectiviteId,
-          isActive: true,
-          role: CollectiviteRole.ADMIN,
-          invitationId: null,
-        })
-        .onConflictDoUpdate({
-          target: [
-            utilisateurCollectiviteAccessTable.userId,
-            utilisateurCollectiviteAccessTable.collectiviteId,
-          ],
-          set: {
-            isActive: true,
-            role: CollectiviteRole.ADMIN,
-            invitationId: null,
-            modifiedAt: sql`now()`,
-          },
-        });
-
-      await tx
-        .insert(membreTable)
-        .values({
-          userId: user.id,
-          collectiviteId: input.collectiviteId,
-          fonction: input.fonction,
-          detailsFonction: input.detailsFonction || '',
-          champIntervention: input.champIntervention,
-          estReferent: input.estReferent,
-        })
-        .onConflictDoUpdate({
-          target: [membreTable.collectiviteId, membreTable.userId],
-          set: {
-            fonction: input.fonction,
-            detailsFonction: input.detailsFonction || '',
-            champIntervention: input.champIntervention,
-            estReferent: input.estReferent,
-            modifiedAt: sql`now()`,
-          },
-        });
+      await this.repository.upsertAdminAccess(
+        { collectiviteId: input.collectiviteId, userId: user.id },
+        tx
+      );
+      await this.repository.upsertJoinedMembre(
+        { ...input, userId: user.id },
+        tx
+      );
     });
 
     if (collectiviteHasActiveMembers) {
@@ -329,43 +225,21 @@ export class MutateMembresService {
       );
     }
 
-    const [existing] = await this.databaseService.db
-      .select()
-      .from(utilisateurCollectiviteAccessTable)
-      .where(
-        and(
-          eq(utilisateurCollectiviteAccessTable.userId, userId),
-          eq(utilisateurCollectiviteAccessTable.collectiviteId, collectiviteId)
-        )
-      )
-      .limit(1);
+    const existing = await this.repository.getMembreAccess({
+      collectiviteId,
+      userId,
+    });
 
     if (!existing) {
       return failure(MutateMembresErrorEnum.MEMBER_NOT_FOUND);
     }
 
     await this.databaseService.db.transaction(async (tx) => {
-      await tx
-        .update(utilisateurCollectiviteAccessTable)
-        .set({ isActive: false })
-        .where(
-          and(
-            eq(utilisateurCollectiviteAccessTable.userId, userId),
-            eq(
-              utilisateurCollectiviteAccessTable.collectiviteId,
-              collectiviteId
-            )
-          )
-        );
-
-      await tx
-        .delete(membreTable)
-        .where(
-          and(
-            eq(membreTable.userId, userId),
-            eq(membreTable.collectiviteId, collectiviteId)
-          )
-        );
+      await this.repository.deactivateMembreAccess(
+        { collectiviteId, userId },
+        tx
+      );
+      await this.repository.deleteMembre({ collectiviteId, userId }, tx);
     });
 
     return success(undefined);
