@@ -417,6 +417,10 @@ describe('computeAvancementObjectif, résultats de la même année', () => {
         cible: { annee: 2030, valeur: 80 },
         anneeCourante: 2026,
       })
+    ).toBeNull();
+  });
+});
+
 describe('buildDepot', () => {
   it('part du résultat de l’année de référence et reprend les objectifs du dépôt', () => {
     expect(
