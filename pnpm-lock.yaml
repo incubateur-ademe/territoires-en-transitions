@@ -352,6 +352,9 @@ importers:
       '@zxcvbn-ts/language-fr':
         specifier: 3.0.2
         version: 3.0.2
+      ademe-planet:
+        specifier: 0.2.1
+        version: 0.2.1
       archiver:
         specifier: ^7.0.1
         version: 7.0.1
@@ -7307,6 +7310,10 @@ packages:
     resolution: {integrity: sha512-XNAb/a6TCqou+TufU8/u11HCu9x1gYvOoxLwtlXgIqmkrYQADVv6ljyW2zwiPhHz9R1gItAWpuDrdJMmrOBFEA==}
     engines: {node: '>= 16.0.0'}
 
+  ademe-planet@0.2.1:
+    resolution: {integrity: sha512-8jCQMGmFnktZ2qISDneCaSOvXD8ZMwJmOIptHauHgTYZ2Rv0KPl9ZHgJ4G+IojhSf7zvb6NLB5w0MZfMXoo3IA==}
+    engines: {node: '>=24'}
+
   agent-base@6.0.2:
     resolution: {integrity: sha512-RZNwNclF7+MS/8bDg70amg32dyeZGZxiDuQmZxKLAlQjr3jGyLx+4Kkk58UO7D2QdgFIQCovuSuZESne6RG6XQ==}
     engines: {node: '>= 6.0.0'}
@@ -7675,6 +7682,9 @@ packages:
   big-integer@1.6.52:
     resolution: {integrity: sha512-QxD8cf2eVqJOOz63z6JIN9BzvVs/dlySa5HGSBH5xtR8dPteIRQnBxxKqkNTiT6jbDTF6jAfrd4oMcND9RGbQg==}
     engines: {node: '>=0.6'}
+
+  bignumber.js@11.1.5:
+    resolution: {integrity: sha512-6WmzCNtUnfKpbozq+hOgWaZMMzORmYBwF1xZScyoIX3QRYWeKTtxxwDOW5tIz7C9BdjkIYHGTcelCLkXg0mndw==}
 
   bignumber.js@9.3.1:
     resolution: {integrity: sha512-Ko0uX15oIUS7wJ3Rb30Fs6SkVbLmPBAKdlm7q9+ak9bbIeFf0MwuBsQV6z7+X768/cHsfg+WlysDWJcmthjsjQ==}
@@ -11339,6 +11349,10 @@ packages:
     peerDependenciesMeta:
       '@nestjs/swagger':
         optional: true
+
+  neverthrow@8.2.0:
+    resolution: {integrity: sha512-kOCT/1MCPAxY5iUV3wytNFUMUolzuwd/VF/1KCx7kf6CutrOsTie+84zTGTpgQycjvfLdBBdvBvFLqFD2c0wkQ==}
+    engines: {node: '>=18'}
 
   next@16.4.6:
     resolution: {integrity: sha512-QZJiYhaZLJMo2KpkQGQIwvmd79WVsAWeYIU554a8d7zArS3si/IRy3lBNV/rtYhE70oLwdLYhPAXLPx8HwcwtA==}
@@ -21348,6 +21362,15 @@ snapshots:
 
   address@2.0.3: {}
 
+  ademe-planet@0.2.1:
+    dependencies:
+      bignumber.js: 11.1.5
+      csv-parse: 7.0.3
+      es-toolkit: 1.52.0
+      neverthrow: 8.2.0
+      ts-pattern: 5.9.0
+      zod: 4.6.6
+
   agent-base@6.0.2(supports-color@7.2.0):
     dependencies:
       debug: 4.4.3(supports-color@7.2.0)
@@ -21807,6 +21830,8 @@ snapshots:
       require-from-string: 2.0.2
 
   big-integer@1.6.52: {}
+
+  bignumber.js@11.1.5: {}
 
   bignumber.js@9.3.1: {}
 
@@ -26276,6 +26301,10 @@ snapshots:
       zod: 4.6.6
     optionalDependencies:
       '@nestjs/swagger': 11.2.0(@nestjs/common@11.2.10(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/core@11.2.10)(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)
+
+  neverthrow@8.2.0:
+    optionalDependencies:
+      '@rollup/rollup-linux-x64-gnu': 4.63.5
 
   next@16.4.6(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(@playwright/test@1.64.1)(@types/node@24.1.0)(babel-plugin-macros@3.1.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(sass@1.105.0):
     dependencies:
