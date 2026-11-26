@@ -55,27 +55,25 @@ describe('POST /planet/solutions', () => {
       .post('/planet/solutions')
       .send({
         id: 'haies',
-        parameter: 'hedgeKmCreatedPerYear',
-        targetReduction: '117',
+        solveFor: 'hedgeKmCreatedPerYear',
+        targetReductionTco2e: '117',
       })
       .expect(401);
   });
 
   it('refuse un corps sans paramètre cherché', async () => {
-    await solve({ id: 'haies', targetReduction: '117' }).expect(400);
+    await solve({ id: 'haies', targetReductionTco2e: '117' }).expect(400);
   });
 
   it('refuse un corps sans réduction cible', async () => {
-    await solve({ id: 'haies', parameter: 'hedgeKmCreatedPerYear' }).expect(
-      400
-    );
+    await solve({ id: 'haies', solveFor: 'hedgeKmCreatedPerYear' }).expect(400);
   });
 
   it('renvoie 400 quand le paquet juge la requête invalide', async () => {
     const response = await solve({
       id: 'haies',
-      parameter: 'parametre-inexistant',
-      targetReduction: '117',
+      solveFor: 'parametre-inexistant',
+      targetReductionTco2e: '117',
     });
 
     expect({ status: response.status, body: response.body }).toEqual(
@@ -92,8 +90,8 @@ describe('POST /planet/solutions', () => {
         petroleumProductsReductionFraction: '0.1',
         heatReductionFraction: '0.1',
       },
-      parameter: 'electricityReductionFraction',
-      targetReduction: '999999999',
+      solveFor: 'electricityReductionFraction',
+      targetReductionTco2e: '999999999',
     });
 
     expect({ status: response.status, body: response.body }).toEqual(
@@ -104,14 +102,14 @@ describe('POST /planet/solutions', () => {
   it('renvoie le paramètre trouvé et l’estimation correspondante', async () => {
     const response = await solve({
       id: 'haies',
-      parameter: 'hedgeKmCreatedPerYear',
-      targetReduction: '117',
+      solveFor: 'hedgeKmCreatedPerYear',
+      targetReductionTco2e: '117',
     });
 
     expect({ status: response.status, body: response.body }).toEqual({
       status: 200,
       body: {
-        parameter: 'hedgeKmCreatedPerYear',
+        solveFor: 'hedgeKmCreatedPerYear',
         value: expect.any(String),
         estimate: {
           reduction: expect.any(String),

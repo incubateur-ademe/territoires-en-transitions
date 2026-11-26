@@ -3,13 +3,13 @@ import { estimateLevierGesRequestSchema } from './estimate-levier-ges.request';
 
 export const solveLevierGesRequestSchema =
   estimateLevierGesRequestSchema.extend({
-    parameter: z
+    solveFor: z
       .string()
       .min(1)
       .describe(
         'Paramètre du levier à chercher, parmi ceux que le levier permet de chercher. Un paramètre imbriqué s’écrit en chemin pointé (`animals.dairyCows.headcountReductionFraction`). La valeur déjà saisie dans `parameters` est ignorée.'
       ),
-    targetReduction: z
+    targetReductionTco2e: z
       .string()
       .min(1)
       .describe(

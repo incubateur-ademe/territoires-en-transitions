@@ -21,11 +21,11 @@ export class SolveLevierGesService {
   ) {}
 
   solve({
-    parameter,
-    targetReduction,
+    solveFor,
+    targetReductionTco2e,
     ...request
   }: SolveLevierGesRequest): Result<SolveLevierGesResponse, LevierGesError> {
-    return this.solver(request, parameter, targetReduction).match<
+    return this.solver({ request, solveFor, targetReductionTco2e }).match<
       Result<SolveLevierGesResponse, LevierGesError>
     >(
       (solution) => success(toSolveLevierGesResponse(solution)),

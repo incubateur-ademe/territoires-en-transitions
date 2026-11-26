@@ -3,11 +3,11 @@ import type { SolveLevierGesResponse } from './solve-levier-ges.response';
 import { toEstimateLevierGesResponse } from './to-estimate-levier-ges-response';
 
 export const toSolveLevierGesResponse = ({
-  parameter,
+  solveFor,
   value,
   estimate,
 }: Solution): SolveLevierGesResponse => ({
-  parameter,
+  solveFor,
   value,
   estimate: toEstimateLevierGesResponse(estimate),
 });

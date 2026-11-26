@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { estimateLevierGesResponseSchema } from './estimate-levier-ges.response';
 
 export const solveLevierGesResponseSchema = z.object({
-  parameter: z.string().describe('Paramètre cherché'),
+  solveFor: z.string().describe('Paramètre cherché'),
   value: z
     .string()
     .describe(

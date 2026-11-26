@@ -353,8 +353,8 @@ importers:
         specifier: 3.0.2
         version: 3.0.2
       ademe-planet:
-        specifier: 0.2.0
-        version: 0.2.0
+        specifier: 0.2.1
+        version: 0.2.1
       archiver:
         specifier: ^7.0.1
         version: 7.0.1
@@ -7310,8 +7310,8 @@ packages:
     resolution: {integrity: sha512-XNAb/a6TCqou+TufU8/u11HCu9x1gYvOoxLwtlXgIqmkrYQADVv6ljyW2zwiPhHz9R1gItAWpuDrdJMmrOBFEA==}
     engines: {node: '>= 16.0.0'}
 
-  ademe-planet@0.2.0:
-    resolution: {integrity: sha512-IZbuVitAsY9siy8Ap3ptiuJ8D4fTikHmJYHc6tCmYqnnbES6WFTehUTzAZXYT/3eFvgAoXPatxevcVQmSea3pg==}
+  ademe-planet@0.2.1:
+    resolution: {integrity: sha512-8jCQMGmFnktZ2qISDneCaSOvXD8ZMwJmOIptHauHgTYZ2Rv0KPl9ZHgJ4G+IojhSf7zvb6NLB5w0MZfMXoo3IA==}
     engines: {node: '>=24'}
 
   agent-base@6.0.2:
@@ -21362,7 +21362,7 @@ snapshots:
 
   address@2.0.3: {}
 
-  ademe-planet@0.2.0:
+  ademe-planet@0.2.1:
     dependencies:
       bignumber.js: 11.1.5
       csv-parse: 7.0.3
