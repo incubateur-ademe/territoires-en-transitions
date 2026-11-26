@@ -615,7 +615,7 @@ describe('DossiersLabellisationRouter', () => {
     });
   });
 
-  test("liste l'historique des audits de la collectivité sur la fiche dossier", async () => {
+  test("liste l'historique des audits et les labellisations du référentiel de la collectivité", async () => {
     const { collectivite } = await addTestCollectivite(db);
     const ancien = await addDossier({
       collectiviteId: collectivite.id,
@@ -629,6 +629,37 @@ describe('DossiersLabellisationRouter', () => {
       decision: 'clore',
     });
     const courant = await addDossier({ collectiviteId: collectivite.id });
+    const { collectivite: autre } = await addTestCollectivite(db);
+    const [avecAudit, sansAudit] = await db.db
+      .insert(labellisationTable)
+      .values([
+        {
+          collectiviteId: collectivite.id,
+          referentiel: ReferentielIdEnum.CAE,
+          auditId: ancien.id,
+          obtenueLe: '2022-06-10',
+          etoiles: 2,
+        },
+        {
+          collectiviteId: collectivite.id,
+          referentiel: ReferentielIdEnum.CAE,
+          obtenueLe: '2024-06-10',
+          etoiles: 3,
+        },
+        {
+          collectiviteId: collectivite.id,
+          referentiel: ReferentielIdEnum.ECI,
+          obtenueLe: '2024-06-10',
+          etoiles: 1,
+        },
+        {
+          collectiviteId: autre.id,
+          referentiel: ReferentielIdEnum.CAE,
+          obtenueLe: '2024-06-10',
+          etoiles: 1,
+        },
+      ])
+      .returning({ id: labellisationTable.id });
 
     const dossier = await caller().referentiels.labellisations.admin.getDossier(
       {
@@ -641,6 +672,16 @@ describe('DossiersLabellisationRouter', () => {
         auditId: ancien.id,
         sujet: 'cot',
         statut: 'clos',
+      }),
+    ]);
+    // Inclut les labellisations hors audit, du plus récent au plus ancien,
+    // sans celles d'un autre référentiel ou d'une autre collectivité.
+    expect(dossier.labellisations).toEqual([
+      expect.objectContaining({ id: sansAudit.id, auditId: null, etoiles: 3 }),
+      expect.objectContaining({
+        id: avecAudit.id,
+        auditId: ancien.id,
+        etoiles: 2,
       }),
     ]);
   });
