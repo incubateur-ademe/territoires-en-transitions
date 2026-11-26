@@ -83,6 +83,24 @@ const FIELD_VALUE = /^(?:axe|orientation|objectif)\s*[:：]/iu;
 export type HeadingContext = {
   /** Police nettement plus grande que le corps du texte. */
   isLarge?: boolean;
+  /** Le texte d'un titre Markdown : la marque dit déjà « titre ». */
+  inMarkdown?: boolean;
+};
+
+/**
+ * « Axe 2 — … », « Action 3 : … » : un titre qui dit son niveau, au contraire
+ * d'une partie, d'une ligne en capitales ou d'un dièse.
+ */
+export const matchExplicitHeading = (
+  text: string,
+  context: HeadingContext = {}
+): HeadingMatch | null => {
+  const match = matchHeading(text, context);
+  return match?.confidence === 1 &&
+    match.kind !== 'section' &&
+    match.kind !== 'markdown'
+    ? match
+    : null;
 };
 
 export const isFicheLabel = (text: string): boolean =>
@@ -98,12 +116,14 @@ export const isTitleField = (text: string): boolean =>
 
 export const matchHeading = (
   text: string,
-  { isLarge = false }: HeadingContext = {}
+  { isLarge = false, inMarkdown = false }: HeadingContext = {}
 ): HeadingMatch | null => {
   const line = text.trim().replace(AXE_FIELD, '');
+  // Une marque de titre vient de la structure (style Word, cellule de
+  // tableau) : la longueur n'y prouve rien.
   if (
     line.length === 0 ||
-    line.length > MAX_TITLE_LENGTH ||
+    (line.length > MAX_TITLE_LENGTH && !MARKDOWN.test(line) && !inMarkdown) ||
     isSentence(line) ||
     FIELD_VALUE.test(line) ||
     isFicheLabel(line)
@@ -114,27 +134,24 @@ export const matchHeading = (
   const markdown = line.match(MARKDOWN);
   if (markdown) {
     // Une page transcrite met en titre tout ce qui est en gras : un libellé
-    // de champ (« ## Objectifs », « ## Cibles : les ménages ») n'en est pas un,
-    // et « # Fiche Action n°1.3 » reste une fiche.
+    // de champ (« ## Objectifs », « ## Cibles : les ménages ») n'en est pas un.
+    // Le dièse dit « titre », le motif dit lequel : « # Axe 2 — … » reste un
+    // axe, « # Fiche Action n°1.3 » une fiche.
     const text = markdown[2].trim();
-    if (isFicheLabel(text) || isFicheLabel(text.split(/[:：]/u)[0])) {
+    if (isFicheLabel(text.split(/[:：]/u)[0])) {
       return null;
     }
-    const fiche = text.match(FICHE);
-    if (fiche && !CHECK_MARKS.test(fiche[2].trim())) {
-      return {
-        kind: 'fiche',
-        level: FICHE_LEVEL,
-        number: fiche[1].trim(),
-        title: fiche[2].trim(),
-        confidence: 1,
-      };
+    const named = matchExplicitHeading(text, { inMarkdown: true });
+    if (named) {
+      // « # Enjeu 1 » puis « ## Objectif 1 » : le style Word garde son rang.
+      return named.kind === 'axe' || named.kind === 'orientation'
+        ? { ...named, level: Math.min(named.level, markdown[1].length) }
+        : named;
     }
-    const level = markdown[1].length;
     return {
       kind: 'markdown',
-      level,
-      ...splitNumber(markdown[2]),
+      level: markdown[1].length,
+      ...splitNumber(text),
       confidence: 1,
     };
   }
@@ -175,7 +192,8 @@ export const matchHeading = (
     };
   }
   const fiche = line.match(FICHE);
-  if (fiche && CHECK_MARKS.test(fiche[2].trim())) {
+  // « mesure 1.5). Navette… » : en minuscule, un renvoi dans la phrase.
+  if (fiche && (CHECK_MARKS.test(fiche[2].trim()) || /^\p{Ll}/u.test(line))) {
     return null;
   }
   if (fiche) {
@@ -257,13 +275,16 @@ export const isUppercaseTitle = (line: string): boolean => {
   return upper / letters.length >= 0.8 && !line.endsWith('.');
 };
 
-// « ## 2.3 Rénover » : le numéro reste exploitable derrière le dièse.
+// « ## 2.3 Rénover » : le numéro reste exploitable derrière le dièse, même
+// précédé d'un court libellé (« Groupe d'actions 1.1 — … »), comme « Axe 2 — ».
 const splitNumber = (
   text: string
 ): { number: string | null; title: string } => {
   const match = text
     .trim()
-    .match(/^(\d{1,2}(?:\.\d{1,2}){0,3})\s*[.)\-–—:]?\s+(.+)$/u);
+    .match(
+      /^(?:(?:\p{L}[\p{L}'’]*\s+){1,3}(?=\d{1,2}(?:\.\d{1,2})+\s*[.)\-–—:]))?(\d{1,2}(?:\.\d{1,2}){0,3})\s*[.)\-–—:]?\s+(.+)$/u
+    );
   return match
     ? { number: match[1], title: match[2].trim() }
     : { number: null, title: text.trim() };

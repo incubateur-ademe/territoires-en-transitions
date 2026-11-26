@@ -643,6 +643,433 @@ describe('detectHeadings sur un PCAET à fiches tabulaires', () => {
   });
 });
 
+describe('actions énumérées sous le titre qui les regroupe', () => {
+  const fiches = (pages: ReturnType<typeof buildPage>[], format = 'pdf') =>
+    segmentDocument(buildDocument(format as 'pdf' | 'docx', pages), {
+      minTokens: 0,
+      maxTokens: 1000,
+      overlapTokens: 0,
+    })
+      .filter((unit) => unit.kind === 'fiche')
+      .map((unit) => [unit.title, unit.headingPath.join(' > '), unit.section]);
+
+  it('lit les puces d’un plan Word qui ne titre pas ses actions comme ses actions, après son sommaire', () => {
+    expect(
+      fiches(
+        [
+          buildPage(0, [
+            { text: 'Sommaire' },
+            { text: 'Axe 1 — Un territoire sobre' },
+          ]),
+          buildPage(1, [
+            { text: '# Axe 1 — Un territoire sobre' },
+            { text: '## Objectifs de l’axe 1 :' },
+            { text: '## Réduire les consommations' },
+            { text: "### Groupe d'actions 1.1 — Bâtiments publics" },
+            { text: '- Rénover les écoles [Structurante]' },
+            { text: 'Coût : ……' },
+            { text: 'Calendrier : 2027' },
+            { text: '- Former les agents' },
+            { text: "### Groupe d'actions 1.2 — Éclairage" },
+            { text: '- Éteindre la nuit' },
+          ]),
+        ],
+        'docx'
+      )
+    ).toEqual([
+      [
+        'Rénover les écoles [Structurante]',
+        '1 Un territoire sobre > 1.1 Bâtiments publics',
+        undefined,
+      ],
+      [
+        'Former les agents',
+        '1 Un territoire sobre > 1.1 Bâtiments publics',
+        undefined,
+      ],
+      ['Éteindre la nuit', '1 Un territoire sobre > 1.2 Éclairage', undefined],
+    ]);
+  });
+
+  it('laisse dans le texte les puces d’un document qui titre ses fiches', () => {
+    expect(
+      fiches([
+        buildPage(0, [
+          { text: '# Axe 1 — Un territoire sobre' },
+          { text: '## Fiche action 1 : Rénover les écoles' },
+          { text: '- Isoler les combles' },
+          { text: '- Changer les fenêtres' },
+          { text: '## Fiche action 2 : Éclairer moins' },
+          { text: '- Éteindre la nuit' },
+        ]),
+      ]).map(([title]) => title)
+    ).toEqual(['1 Rénover les écoles', '2 Éclairer moins']);
+  });
+
+  it('ne lit pas de puces comme actions quand peu de titres de leur niveau s’ouvrent sur une liste', () => {
+    expect(
+      fiches([
+        buildPage(0, [
+          { text: '## 1- GESTION DE LA RESSOURCE' },
+          { text: '### A 1 : Réaliser des diagnostics' },
+          { text: 'Portage : Service eau' },
+          { text: '### A 2 : Aider l’installation' },
+          { text: '- Prise en charge à 50 %' },
+          { text: '### A 3 : Animer un réseau' },
+          { text: 'Portage : Service eau' },
+        ]),
+      ]).map(([title]) => title)
+    ).toEqual([
+      'A 1 : Réaliser des diagnostics',
+      'A 2 : Aider l’installation',
+      'A 3 : Animer un réseau',
+    ]);
+  });
+
+  const action = (lettre: string, titre: string, cartouche: boolean) => [
+    { text: `${lettre} – ${titre}`, fontSize: 9 },
+    { text: 'Court terme Moyen terme Long terme', fontSize: 9 },
+    ...(cartouche ? [{ text: 'Partenaire(s)', fontSize: 10.5 }] : []),
+    ...body(3).map((line) => ({ ...line, fontSize: 9 })),
+  ];
+  const mesure = (
+    numero: string,
+    titre: string,
+    lettres: string[],
+    cartouche = true
+  ) => [
+    { text: `Mesure ${numero} : ${titre}`, fontSize: 14 },
+    ...lettres.flatMap((lettre) =>
+      action(lettre, `Action ${lettre} de la mesure ${numero}`, cartouche)
+    ),
+  ];
+  const axe = { text: 'Axe 1 – Garantir le droit à se déplacer', fontSize: 16 };
+
+  it('fait des items lettrés qui portent chacun leur cartouche les fiches, sous leur mesure et ses rappels', () => {
+    expect(
+      fiches([
+        buildPage(0, [axe, ...mesure('1.1', 'Développer le vélo', ['A'])]),
+        // La mesure rappelée en haut de page ne coupe pas son énumération.
+        buildPage(1, mesure('1.1', 'Développer le vélo', ['B'])),
+        buildPage(2, mesure('1.2', 'Élaborer un schéma cyclable', ['A', 'B'])),
+      ]).map(([title, path]) => [title, path])
+    ).toEqual([
+      [
+        'A Action A de la mesure 1.1',
+        '1 Garantir le droit à se déplacer > 1.1 Développer le vélo',
+      ],
+      [
+        'B Action B de la mesure 1.1',
+        '1 Garantir le droit à se déplacer > 1.1 Développer le vélo',
+      ],
+      [
+        'A Action A de la mesure 1.2',
+        '1 Garantir le droit à se déplacer > 1.2 Élaborer un schéma cyclable',
+      ],
+      [
+        'B Action B de la mesure 1.2',
+        '1 Garantir le droit à se déplacer > 1.2 Élaborer un schéma cyclable',
+      ],
+    ]);
+  });
+
+  it('laisse dans sa fiche une énumération sans cartouche', () => {
+    expect(
+      fiches([
+        buildPage(0, [
+          axe,
+          ...mesure('1.1', 'Développer le vélo', ['A', 'B'], false),
+        ]),
+        buildPage(
+          1,
+          mesure('1.2', 'Élaborer un schéma cyclable', ['A', 'B'], false)
+        ),
+      ]).map(([title]) => title)
+    ).toEqual(['1.1 Développer le vélo', '1.2 Élaborer un schéma cyclable']);
+  });
+
+  it('garde la fiche qui ne donne qu’un cartouche, même après sa seule puce', () => {
+    expect(
+      fiches([
+        buildPage(0, [axe, ...mesure('1.1', 'Développer le vélo', ['A'])]),
+        buildPage(1, mesure('1.2', 'Élaborer un schéma cyclable', ['A'])),
+      ]).map(([title]) => title)
+    ).toEqual(['1.1 Développer le vélo', '1.2 Élaborer un schéma cyclable']);
+  });
+
+  it('ne prend pas pour des actions les champs d’un cartouche écrits en puces', () => {
+    const fiche = (numero: string, titre: string) => [
+      { text: `### ${numero} ${titre}` },
+      { text: '- Pilote : Service patrimoine' },
+      { text: '- Partenaires : ADEME, SDE' },
+      { text: '- Calendrier : 2025-2030' },
+      { text: 'La collectivité engage un programme pluriannuel.' },
+    ];
+    expect(
+      fiches(
+        [
+          buildPage(0, [
+            { text: '# Axe 1 — Un territoire sobre' },
+            { text: '## 1. Bâtiments' },
+            ...fiche('1.1', 'Rénover les bâtiments publics'),
+            ...fiche('1.2', 'Éteindre l’éclairage la nuit'),
+            ...fiche('1.3', 'Former les agents'),
+          ]),
+        ],
+        'docx'
+      ).map(([title]) => title)
+    ).toEqual([
+      '1.1 Rénover les bâtiments publics',
+      '1.2 Éteindre l’éclairage la nuit',
+      '1.3 Former les agents',
+    ]);
+  });
+
+  it('garde ses étapes pilotées dans la fiche qui se nomme action', () => {
+    const fiche = (index: number, numero: number, titre: string) =>
+      buildPage(index, [
+        ...(index === 0 ? [{ text: 'Axe 1 : Bâtiments', fontSize: 16 }] : []),
+        { text: `Action ${numero} : ${titre}`, fontSize: 14 },
+        { text: 'Sous-actions', fontSize: 10 },
+        { text: '- Réaliser un diagnostic', fontSize: 10 },
+        { text: 'Pilote : Communauté de communes', fontSize: 10 },
+        { text: '- Lancer les travaux', fontSize: 10 },
+        { text: 'Pilote : Communes', fontSize: 10 },
+      ]);
+    expect(
+      fiches([
+        fiche(0, 1, 'Rénover les écoles'),
+        fiche(1, 2, 'Rénover les gymnases'),
+        fiche(2, 3, 'Rénover les mairies'),
+      ]).map(([title, path]) => [title, path])
+    ).toEqual([
+      ['1 Rénover les écoles', '1 Bâtiments'],
+      ['2 Rénover les gymnases', '1 Bâtiments'],
+      ['3 Rénover les mairies', '1 Bâtiments'],
+    ]);
+  });
+
+  it('ne compte pas la valeur en puce d’un libellé nu comme le cartouche de la puce d’avant', () => {
+    const fiche = (index: number, numero: number, titre: string) =>
+      buildPage(index, [
+        ...(index === 0 ? [{ text: 'Axe 1 : Habitat', fontSize: 16 }] : []),
+        { text: `Mesure ${numero} : ${titre}`, fontSize: 14 },
+        { text: 'Description :', fontSize: 10 },
+        { text: '• Accompagner les ménages', fontSize: 10 },
+        { text: 'Pilote :', fontSize: 10 },
+        { text: '• Service habitat', fontSize: 10 },
+        { text: 'Porteur :', fontSize: 10 },
+        { text: '• Communauté de communes', fontSize: 10 },
+        { text: 'Partenaires :', fontSize: 10 },
+        { text: '• ADEME, ANAH', fontSize: 10 },
+      ]);
+    expect(
+      fiches([
+        fiche(0, 1, 'Rénover les logements'),
+        fiche(1, 2, 'Lutter contre la vacance'),
+        fiche(2, 3, 'Adapter les logements'),
+      ]).map(([title]) => title)
+    ).toEqual([
+      '1 Rénover les logements',
+      '2 Lutter contre la vacance',
+      '3 Adapter les logements',
+    ]);
+  });
+
+  it('arrête la liste d’ouverture au libellé nu qui ouvre la suivante', () => {
+    const groupe = (numero: string, titre: string, actions: string[]) => [
+      { text: `### Groupe d'actions ${numero} — ${titre}` },
+      ...actions.map((action) => ({ text: `- ${action}` })),
+      { text: 'Indicateurs de suivi :' },
+      { text: '- Nombre de bâtiments rénovés' },
+    ];
+    expect(
+      fiches(
+        [
+          buildPage(0, [
+            { text: '# Axe 1 — Un territoire sobre' },
+            ...groupe('1.1', 'Bâtiments publics', [
+              'Rénover les écoles',
+              'Former les agents',
+            ]),
+            ...groupe('1.2', 'Éclairage', ['Éteindre la nuit']),
+          ]),
+        ],
+        'docx'
+      ).map(([title]) => title)
+    ).toEqual(['Rénover les écoles', 'Former les agents', 'Éteindre la nuit']);
+  });
+
+  it('ne prend pas les objectifs chiffrés d’un axe pour ses actions', () => {
+    const axeChiffre = (numero: number, titre: string) => [
+      { text: `# Axe ${numero} — ${titre}` },
+      { text: '- Réduire de 30 % les consommations d’ici 2030' },
+      { text: '- Couvrir 40 % des besoins par les EnR' },
+      { text: `## ${numero}.1 Bâtiments` },
+      { text: 'Le patrimoine compte 80 bâtiments.' },
+      { text: `### ${numero}.1.1 Rénover les écoles` },
+      { text: 'La collectivité engage des travaux.' },
+      { text: `### ${numero}.1.2 Former les agents` },
+      { text: 'Des sessions annuelles.' },
+    ];
+    expect(
+      fiches(
+        [
+          buildPage(0, axeChiffre(1, 'Sobriété')),
+          buildPage(1, axeChiffre(2, 'Énergies renouvelables')),
+        ],
+        'docx'
+      ).map(([title, path]) => [title, path])
+    ).toEqual([
+      ['1.1.1 Rénover les écoles', '1 Sobriété > 1.1 Bâtiments'],
+      ['1.1.2 Former les agents', '1 Sobriété > 1.1 Bâtiments'],
+      ['2.1.1 Rénover les écoles', '2 Énergies renouvelables > 2.1 Bâtiments'],
+      ['2.1.2 Former les agents', '2 Énergies renouvelables > 2.1 Bâtiments'],
+    ]);
+  });
+
+  it('ne double pas les fiches qu’une orientation annonce en puces ou en lettres', () => {
+    expect(
+      fiches(
+        [
+          buildPage(0, [
+            { text: '# Programme d’actions' },
+            { text: '## Orientation 1 : Produire localement' },
+            { text: '- Installer des maraîchers' },
+            { text: '- Préserver le foncier agricole' },
+            { text: '### 1.1 Installer des maraîchers' },
+            { text: 'Pilote : Chambre d’agriculture' },
+            { text: '### 1.2 Préserver le foncier agricole' },
+            { text: 'Pilote : SAFER' },
+            { text: '## Orientation 2 : Bien manger' },
+            { text: 'A. Approvisionner la restauration collective' },
+            { text: 'B. Lutter contre le gaspillage' },
+            { text: '### 2.1 Approvisionner la restauration collective' },
+            { text: 'Pilote : Service restauration' },
+            { text: '### 2.2 Lutter contre le gaspillage' },
+            { text: 'Pilote : Service déchets' },
+          ]),
+        ],
+        'docx'
+      ).map(([title]) => title)
+    ).toEqual([
+      '1.1 Installer des maraîchers',
+      '1.2 Préserver le foncier agricole',
+      '2.1 Approvisionner la restauration collective',
+      '2.2 Lutter contre le gaspillage',
+    ]);
+  });
+
+  it('ne prend pas la suite d’une phrase sur « partenaires… » pour un cartouche', () => {
+    const intertitre = (numero: string, titre: string, puces: string[][]) => [
+      { text: `## ${numero} ${titre}` },
+      { text: 'Le territoire compte encore peu d’équipements.' },
+      ...puces.flatMap(([debut, suite]) => [
+        { text: `- ${debut}` },
+        { text: suite },
+      ]),
+    ];
+    expect(
+      fiches(
+        [
+          buildPage(0, [
+            { text: '# Axe 1 — Mobilités' },
+            ...intertitre('1.1', 'Covoiturage', [
+              [
+                'Recenser les aires existantes avec les',
+                'partenaires du territoire.',
+              ],
+              [
+                'Ouvrir deux aires nouvelles avec les',
+                'partenaires institutionnels.',
+              ],
+            ]),
+            ...intertitre('1.2', 'Vélo', [
+              ['Cartographier les pistes avec les', 'partenaires associatifs.'],
+              ['Équiper les gares avec les', 'partenaires ferroviaires.'],
+            ]),
+          ]),
+        ],
+        'docx'
+      ).map(([title]) => title)
+    ).toEqual([]);
+  });
+
+  it('rétrograde les rappels de la mesure porteuse jusque dans un récapitulatif', () => {
+    expect(
+      fiches([
+        buildPage(0, [axe, ...mesure('1.1', 'Développer le vélo', ['A', 'B'])]),
+        buildPage(1, mesure('1.2', 'Élaborer un schéma cyclable', ['A', 'B'])),
+        // Le récapitulatif redit la mesure 1.1, loin d'elle.
+        buildPage(2, [
+          { text: 'Mesure 1.1 : Développer le vélo', fontSize: 14 },
+          ...body(2).map((line) => ({ ...line, fontSize: 9 })),
+        ]),
+      ]).map(([title]) => title)
+    ).toEqual([
+      'A Action A de la mesure 1.1',
+      'B Action B de la mesure 1.1',
+      'A Action A de la mesure 1.2',
+      'B Action B de la mesure 1.2',
+    ]);
+  });
+});
+
+describe('Word : le rang du style garde la hiérarchie des titres nommés', () => {
+  const corps = (n: string) => [
+    { text: `Contenu de ${n} sur plusieurs mots.` },
+    { text: 'Pilote : service' },
+    { text: 'Partenaires : ADEME' },
+  ];
+  const fiches = (lines: { text: string }[]) =>
+    segmentDocument(buildDocument('docx', [buildPage(0, lines)]), {
+      minTokens: 0,
+      maxTokens: 1000,
+      overlapTokens: 0,
+    })
+      .filter((unit) => unit.kind === 'fiche')
+      .map((unit) => [unit.title, unit.headingPath.join(' > ')]);
+
+  it('ne prend pas un « ## Objectif 1 » pour le rappel d’un « # Enjeu 1 »', () => {
+    expect(
+      fiches([
+        { text: '# Enjeu 1 : Sobriété énergétique' },
+        { text: '## Objectif 1 : Rénover les logements' },
+        { text: '### Action 1 : Guichet unique' },
+        ...corps('a1'),
+        { text: '# Enjeu 2 : Mobilité' },
+        { text: '## Objectif 1 : Vélo' },
+        { text: '### Action 2 : Pistes' },
+        ...corps('a2'),
+        { text: '## Objectif 2 : Covoiturage' },
+        { text: '### Action 3 : Aires' },
+        ...corps('a3'),
+      ])
+    ).toEqual([
+      ['1 Guichet unique', '1 Sobriété énergétique > 1 Rénover les logements'],
+      ['2 Pistes', '2 Mobilité > 1 Vélo'],
+      ['3 Aires', '2 Mobilité > 2 Covoiturage'],
+    ]);
+  });
+
+  it('garde en fiche une « Fiche action » au titre long', () => {
+    const long =
+      'Accompagner les ménages modestes et les copropriétés dans la rénovation énergétique performante de leurs logements anciens du territoire';
+    expect(
+      fiches([
+        { text: '# Axe 1 : Habitat' },
+        { text: `## Fiche action 1.1 : ${long}` },
+        ...corps('a1'),
+        { text: '## Fiche action 1.2 : Créer un guichet unique' },
+        ...corps('a2'),
+      ])
+    ).toEqual([
+      [`1.1 ${long}`, '1 Habitat'],
+      ['1.2 Créer un guichet unique', '1 Habitat'],
+    ]);
+  });
+});
+
 describe('fiches données dans un cartouche « Titre de l’action »', () => {
   const fiche = (index: number, numero: string, titre: string[]) =>
     buildPage(index, [

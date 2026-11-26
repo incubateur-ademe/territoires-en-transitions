@@ -68,6 +68,8 @@ export const cutUnits = (
   let section: string | undefined;
   let open: OpenUnit = { lines: [], headingPath: [], kind: 'unknown' };
   let labelsInWindow: number[] = [];
+  const tocEntries = new Set<string>();
+  let tocTopLevel = Infinity;
 
   const close = () => {
     if (open.lines.some((line) => line.text.trim().length > 0)) {
@@ -102,6 +104,22 @@ export const cutUnits = (
     page.lines.forEach((line, lineIndex) => {
       const unitLine: UnitLine = { ...line, pageIndex: page.index };
       const heading = headingAt.get(`${page.index}:${lineIndex}`);
+      // Un sommaire s'arrête où l'une de ses entrées de plus haut niveau
+      // revient en titre : les actions renumérotées à chaque axe s'y répètent.
+      if (
+        heading &&
+        heading.level > SECTION_LEVEL &&
+        section &&
+        TABLE_OF_CONTENTS.test(section)
+      ) {
+        const entry = `${heading.level}:${heading.number ?? heading.title}`;
+        tocTopLevel = Math.min(tocTopLevel, heading.level);
+        if (tocEntries.has(entry) && heading.level === tocTopLevel) {
+          section = undefined;
+          stack.length = 0;
+        }
+        tocEntries.add(entry);
+      }
       if (heading && heading.level === SECTION_LEVEL) {
         // Le nom de la partie repris en bandeau n'ouvre rien.
         if (labelOf(heading) === section) {
@@ -359,6 +377,8 @@ const contradictsFicheNumber = (
     Number(first) !== Number(heading.number)
   );
 };
+
+const TABLE_OF_CONTENTS = /^(?:sommaire|table des mati[èe]res)$/iu;
 
 const popTo = (stack: StackEntry[], level: number) => {
   while (stack.length > 0 && stack[stack.length - 1].level >= level) {
