@@ -11,6 +11,7 @@ import { listPendingInvitationsInputSchema } from '../list-pending-invitations/l
 import { ListPendingInvitationsService } from '../list-pending-invitations/list-pending-invitations.service';
 import { consumePendingInvitationsErrorConfig } from '../consume-pending-invitations/consume-pending-invitations.errors';
 import { ConsumePendingInvitationsService } from '../consume-pending-invitations/consume-pending-invitations.service';
+import { createInvitationErrorConfig } from './create-invitation.errors';
 import { createInvitationInputSchema } from './create-invitation.input';
 import { InvitationService } from './invitation.service';
 
@@ -31,6 +32,9 @@ export class InvitationsRouter {
 
   private readonly getConsumePendingsDataOrThrowError = createTrpcErrorHandler(
     consumePendingInvitationsErrorConfig
+  );
+  private readonly getCreateInvitationDataOrThrowError = createTrpcErrorHandler(
+    createInvitationErrorConfig
   );
 
   router = this.trpc.router({
@@ -59,7 +63,8 @@ export class InvitationsRouter {
           { collectiviteId: input.collectiviteId }
         );
 
-        const invitation = await this.service.createInvitation(input, ctx.user);
+        const result = await this.service.createInvitation(input, ctx.user);
+        const invitation = this.getCreateInvitationDataOrThrowError(result);
         return invitation?.id ?? null;
       }),
 
