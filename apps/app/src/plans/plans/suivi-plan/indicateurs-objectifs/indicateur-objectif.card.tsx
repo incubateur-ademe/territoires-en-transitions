@@ -6,6 +6,7 @@ import { RouterOutput } from '@tet/api';
 import { IndicateurPeriodes } from '@tet/domain/indicateurs';
 import {
   computeAvancementObjectif,
+  computeEvolutionObjectif,
   pickDepart,
   pickDernier,
   pickObjectifAHorizon,
@@ -61,12 +62,14 @@ export const IndicateurObjectifCard = ({
   const isOpenData = resultats?.source.type === 'open-data';
   const objectifsAHorizon = objectifs.filter(({ annee }) => annee <= horizon);
   const cible = pickObjectifAHorizon(objectifs, horizon);
+  const depart = pickDepart(points);
   const avancement = computeAvancementObjectif({
-    depart: pickDepart(points),
+    depart,
     dernier: pickDernier(points),
     cible,
     anneeCourante: new Date().getFullYear(),
   });
+  const evolutionObjectif = computeEvolutionObjectif(depart, cible);
 
   return (
     <article
@@ -150,11 +153,11 @@ export const IndicateurObjectifCard = ({
               <span className="text-primary-9">
                 {appLabels.indicateursObjectifsObjectifAnnee(cible.annee)}{' '}
                 <b>{formatValeur(cible.valeur)}</b>
-                {avancement && avancement.evolutionObjectif !== null && (
+                {depart && evolutionObjectif !== null && (
                   <span className="block text-xs text-grey-8">
                     {appLabels.indicateursObjectifsEvolutionObjectif(
-                      formatEvolution(avancement.evolutionObjectif),
-                      avancement.depart.annee
+                      formatEvolution(evolutionObjectif),
+                      depart.annee
                     )}
                   </span>
                 )}
