@@ -195,7 +195,7 @@ export class GetIndicateursObjectifsRepository {
           demarcheTable,
           eq(demarcheTable.id, demarchePlanActionTable.demarcheId)
         )
-        .innerJoin(
+        .leftJoin(
           demarchePcaetSourceMetadonneeTable,
           and(
             eq(
@@ -214,19 +214,21 @@ export class GetIndicateursObjectifsRepository {
             eq(demarcheTable.type, DemarcheTypeEnum.PCAET)
           )
         );
+      // la démarche en cours l'emporte sur le dernier dépôt publié, même sans métadonnée
       const [depot] = rows.toSorted(
         (a, b) =>
           Number(isDemarchePcaetEnCours(b.status)) -
             Number(isDemarchePcaetEnCours(a.status)) ||
           (b.publishedAt ?? '').localeCompare(a.publishedAt ?? '')
       );
-      return depot
-        ? {
-            demarcheId: depot.demarcheId,
-            metadonneeId: depot.metadonneeId,
-            isPublie: isDemarchePcaetPublic(depot.status),
-          }
-        : null;
+      if (!depot || depot.metadonneeId === null) {
+        return null;
+      }
+      return {
+        demarcheId: depot.demarcheId,
+        metadonneeId: depot.metadonneeId,
+        isPublie: isDemarchePcaetPublic(depot.status),
+      };
     });
   }
 

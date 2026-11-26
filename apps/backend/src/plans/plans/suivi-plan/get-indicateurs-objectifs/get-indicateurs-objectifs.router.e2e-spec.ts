@@ -539,5 +539,70 @@ describe('Suivi du plan : indicateurs et objectifs', () => {
       expect(ges?.objectifs).toEqual([{ annee: 2030, valeur: 90 }]);
       expect(ges?.departDepot).toEqual({ annee: 2018, valeur: 152 });
     });
+
+    it('ne retombe pas sur le dépôt publié quand la démarche en cours n’a pas encore de métadonnée', async () => {
+      const { collectiviteId, demarche } = await createDemarche(db, router);
+      const plan = await attachTestPlanToDemarchePcaet(db, {
+        collectiviteId,
+        demarcheId: demarche.id,
+      });
+      const { user: lecteurUser } = await addTestUser(db, {
+        collectiviteId,
+        role: CollectiviteRole.LECTURE,
+      });
+      const lecteur = getAuthUserFromUserCredentials(lecteurUser);
+      const ids = await getIndicateurIds(['cae_1.a']);
+
+      // même séquence que le test précédent : le plan passe d'abord par un
+      // dépôt publié, puis la démarche en cours reprend le rattachement
+      const setStatus = (demarcheId: number, status: DemarchePcaetStatus) =>
+        db.db
+          .update(demarcheTable)
+          .set({ status })
+          .where(eq(demarcheTable.id, demarcheId));
+      await setStatus(demarche.id, DemarchePcaetStatusEnum.PUBLIE);
+      const [precedent] = await db.db
+        .insert(demarcheTable)
+        .values({
+          collectiviteId,
+          type: DemarcheTypeEnum.PCAET,
+          titre: 'PCAET précédent',
+          status: DemarchePcaetStatusEnum.PUBLIE,
+          publishedAt: '2020-06-01T00:00:00Z',
+        })
+        .returning({ id: demarcheTable.id });
+      await db.db
+        .insert(demarchePlanActionTable)
+        .values({ demarcheId: precedent.id, planActionId: plan.id });
+      await setStatus(demarche.id, DemarchePcaetStatusEnum.EN_ELABORATION);
+      const metadonneePrecedent = await ensureTestPcaetMetadonneeId(db, {
+        collectiviteId,
+        demarcheId: precedent.id,
+      });
+      await insertValeursDepot({
+        collectiviteId,
+        metadonneeId: metadonneePrecedent,
+        valeurs: [
+          {
+            indicateurId: ids['cae_1.a'],
+            dateValeur: '2012-01-01',
+            resultat: 170,
+          },
+          {
+            indicateurId: ids['cae_1.a'],
+            dateValeur: '2030-01-01',
+            objectif: 120,
+          },
+        ],
+      });
+
+      // la démarche en cours n'a aucune métadonnée : le dépôt publié ne doit
+      // pas la remplacer dans la lecture
+      const ges = (await getIndicateursObjectifs(lecteur, plan.id)).find(
+        ({ id }) => id === ids['cae_1.a']
+      );
+      expect(ges?.departDepot ?? null).toBeNull();
+      expect(ges?.objectifs ?? []).toEqual([]);
+    });
   });
 });
