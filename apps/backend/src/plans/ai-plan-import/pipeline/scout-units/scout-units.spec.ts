@@ -92,7 +92,12 @@ describe('extractSkeleton', () => {
     });
 
     expect(result).toEqual(
-      success({ skeleton: null, modelDoubt: null, tokens: expect.anything() })
+      success({
+        skeleton: null,
+        modelDoubt: null,
+        axesFromCode: false,
+        tokens: expect.anything(),
+      })
     );
     expect(llm.generateStructured).not.toHaveBeenCalled();
   });
