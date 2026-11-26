@@ -24,11 +24,11 @@ describe('toLevierGesFailure', () => {
     { kind: 'missing_data', dataset: 'd', key: 'k' },
     {
       kind: 'unreachable_target',
-      parameter: 'hedgeKmCreatedPerYear',
+      solveFor: 'hedgeKmCreatedPerYear',
       minReduction: '0',
       maxReduction: '100',
     },
-    { kind: 'non_monotonic_parameter', parameter: 'hedgeKmCreatedPerYear' },
+    { kind: 'non_monotonic_parameter', solveFor: 'hedgeKmCreatedPerYear' },
   ];
 
   test.each(readableErrors)(
