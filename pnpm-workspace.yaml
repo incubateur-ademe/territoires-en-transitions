@@ -53,3 +53,5 @@ overrides:
 permissions:
   '@tanstack/react-table':
     skills: false
+minimumReleaseAgeExclude:
+  - ademe-planet@0.2.0

@@ -352,6 +352,9 @@ importers:
       '@zxcvbn-ts/language-fr':
         specifier: 3.0.2
         version: 3.0.2
+      ademe-planet:
+        specifier: 0.2.0
+        version: 0.2.0
       archiver:
         specifier: ^7.0.1
         version: 7.0.1
@@ -472,9 +475,6 @@ importers:
       leaflet-defaulticon-compatibility:
         specifier: 0.1.2
         version: 0.1.2
-      leviers-ges:
-        specifier: 0.1.0
-        version: 0.1.0
       luxon:
         specifier: 3.7.1
         version: 3.7.1
@@ -7310,6 +7310,10 @@ packages:
     resolution: {integrity: sha512-XNAb/a6TCqou+TufU8/u11HCu9x1gYvOoxLwtlXgIqmkrYQADVv6ljyW2zwiPhHz9R1gItAWpuDrdJMmrOBFEA==}
     engines: {node: '>= 16.0.0'}
 
+  ademe-planet@0.2.0:
+    resolution: {integrity: sha512-IZbuVitAsY9siy8Ap3ptiuJ8D4fTikHmJYHc6tCmYqnnbES6WFTehUTzAZXYT/3eFvgAoXPatxevcVQmSea3pg==}
+    engines: {node: '>=24'}
+
   agent-base@6.0.2:
     resolution: {integrity: sha512-RZNwNclF7+MS/8bDg70amg32dyeZGZxiDuQmZxKLAlQjr3jGyLx+4Kkk58UO7D2QdgFIQCovuSuZESne6RG6XQ==}
     engines: {node: '>= 6.0.0'}
@@ -10617,10 +10621,6 @@ packages:
   leven@3.1.0:
     resolution: {integrity: sha512-qsda+H8jTaUaN/x5vzW2rzc+8Rw4TAQ/4KjB46IwK5VH+IlVeeeje/EoZRpiXvIqjFgK84QffqPztGI3VBLG1A==}
     engines: {node: '>=6'}
-
-  leviers-ges@0.1.0:
-    resolution: {integrity: sha512-8+a+736eNOERFQlNRhxHqaJFbBQv1tJsiLuA0Ws9tAzIfTh4R+XjXlFeFVMe3d+My9oZ+Da4Rda5NhHkY0jIng==}
-    engines: {node: '>=24'}
 
   levn@0.4.1:
     resolution: {integrity: sha512-+bT2uH4E5LGE7h/n3evcS/sQlJXCpIp6ym8OWJ5eV6+67Dsql/LaaT7qJBAt2rzfoa/5QBGBhxDix1dMt2kQKQ==}
@@ -21362,6 +21362,15 @@ snapshots:
 
   address@2.0.3: {}
 
+  ademe-planet@0.2.0:
+    dependencies:
+      bignumber.js: 11.1.5
+      csv-parse: 7.0.3
+      es-toolkit: 1.52.0
+      neverthrow: 8.2.0
+      ts-pattern: 5.9.0
+      zod: 4.6.6
+
   agent-base@6.0.2(supports-color@7.2.0):
     dependencies:
       debug: 4.4.3(supports-color@7.2.0)
@@ -25430,15 +25439,6 @@ snapshots:
     optional: true
 
   leven@3.1.0: {}
-
-  leviers-ges@0.1.0:
-    dependencies:
-      bignumber.js: 11.1.5
-      csv-parse: 7.0.3
-      es-toolkit: 1.52.0
-      neverthrow: 8.2.0
-      ts-pattern: 5.9.0
-      zod: 4.6.6
 
   levn@0.4.1:
     dependencies:
