@@ -1,6 +1,7 @@
 import { prioriteToColorKey } from '@/app/plans/fiches/show-fiche/components/fiche-priorite.badge';
 import { statutFicheActionToColor } from '@/app/plans/fiches/utils';
 import { EChartsOption } from '@/app/ui/charts/echarts';
+import { CHART_FONT_FAMILY } from '@/app/ui/charts/echarts/constants';
 import { remToPx } from '@/app/ui/charts/echarts/remToPx';
 import { RouterOutput } from '@tet/api';
 import {
@@ -136,6 +137,7 @@ export const getChartOption = ({
   series.push(pieChartSeries);
 
   return {
+    textStyle: { fontFamily: CHART_FONT_FAMILY },
     tooltip: {
       position: 'bottom',
       trigger: 'item',
@@ -164,9 +166,9 @@ export const getChartOption = ({
         fontSize: `${remToPx(fontSize['2xl'])}px`, // Better to set px instead of rem for SSR
       },
       subtextStyle: {
-        color: colors.grey['6'],
+        color: colors.grey['8'],
         fontWeight: parseInt(fontWeight['normal']),
-        fontSize: `${remToPx(fontSize['lg'])}px`, // Better to set px instead of rem for SSR
+        fontSize: `${remToPx(fontSize['xs'])}px`, // Better to set px instead of rem for SSR
       },
     },
     series: series,
