@@ -131,6 +131,11 @@ jobs:
           BACKEND_URL: ${{ vars.BACKEND_URL }}
           APP_URL: ${{ vars.APP_URL }}
           CRISP_WEBSITE_ID: ${{ vars.CRISP_WEBSITE_ID }}
+          # Optionnelles, à poser ensemble : appels navigateur → backend par
+          # l'origine de l'app (proxy /api), et cookie de session `__Host-…`
+          # limité à cet hôte. Vides : comportement inchangé.
+          BACKEND_BROWSER_URL: ${{ vars.BACKEND_BROWSER_URL }}
+          SUPABASE_AUTH_COOKIE_NAME: ${{ vars.SUPABASE_AUTH_COOKIE_NAME }}
         run: >
           koyeb services update $ENV_NAME-app/front
           --docker "$IMAGE"
@@ -145,6 +150,8 @@ jobs:
           --env BACKEND_URL=$BACKEND_URL
           --env APP_URL=$APP_URL
           --env CRISP_WEBSITE_ID=$CRISP_WEBSITE_ID
+          --env BACKEND_BROWSER_URL=$BACKEND_BROWSER_URL
+          --env SUPABASE_AUTH_COOKIE_NAME=$SUPABASE_AUTH_COOKIE_NAME
 
       - id: deployment-url
         uses: ./.github/actions/providers/koyeb/get-app-url

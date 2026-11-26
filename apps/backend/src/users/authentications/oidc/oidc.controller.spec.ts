@@ -555,6 +555,15 @@ describe("Contrôleur OIDC (déclinaison ProConnect) — jamais d'erreur 500 nue
         .expect(302);
 
       expect(response.headers.location).toBe(APP_URL);
+
+      // purge sur l'hôte et sur le domaine racine (cookie d'avant le passage
+      // du flux sur l'origine de l'app)
+      const purged = (
+        response.headers['set-cookie'] as unknown as string[]
+      ).filter((cookie) => cookie.startsWith('oidc-id-token='));
+      expect(
+        purged.map((cookie) => /Domain=([^;]+)/.exec(cookie)?.[1])
+      ).toEqual([undefined, 'territoiresentransitions.fr']);
     });
 
     test('avec id_token en cookie → redirection session/end avec id_token_hint, state et post_logout_redirect_uri', async () => {

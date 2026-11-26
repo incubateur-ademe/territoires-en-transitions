@@ -7,6 +7,7 @@ import { supabaseUrlToAuthCookieName } from '@tet/domain/utils';
 import { Request } from 'express';
 
 const BASE64_PREFIX = 'base64-';
+const HOST_ONLY_PREFIX = '__Host-';
 
 /**
  * Extracts the Supabase access_token from the request cookies.
@@ -24,10 +25,19 @@ export async function extractAccessTokenFromSupabaseCookie(
   const supabaseAuthCookieName =
     cookieName ?? supabaseUrlToAuthCookieName(supabaseUrl);
 
-  const base64CookieValue = await combineChunks(
-    supabaseAuthCookieName,
-    (name) => cookies.find((cookie) => cookie.name === name)?.value
-  );
+  const readCookie = (cookieNameToRead: string) =>
+    combineChunks(
+      cookieNameToRead,
+      (name) => cookies.find((cookie) => cookie.name === name)?.value
+    );
+
+  // Repli sur le nom d'avant `__Host-` : onglets ouverts avant la migration
+  // faite par l'app (cf. `migrateLegacyRootDomainCookies`, packages/api).
+  const base64CookieValue =
+    (await readCookie(supabaseAuthCookieName)) ??
+    (supabaseAuthCookieName.startsWith(HOST_ONLY_PREFIX)
+      ? await readCookie(supabaseAuthCookieName.slice(HOST_ONLY_PREFIX.length))
+      : null);
 
   if (!base64CookieValue) {
     return null;
