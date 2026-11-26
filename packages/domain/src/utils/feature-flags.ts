@@ -1,6 +1,6 @@
 import { createEnumObject } from '@tet/domain/utils';
 
-const FEATURE_FLAGS = [
+export const FEATURE_FLAGS = [
   'is-share-fiche-enabled',
   'is-action-default-table-view-enabled',
   'is-demarche-pcaet-enabled',

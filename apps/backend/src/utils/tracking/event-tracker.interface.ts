@@ -25,6 +25,19 @@ export type FeatureFlagEvaluationOptions = {
   requireExplicitActivation?: boolean;
 };
 
+export type ListFeatureFlagsParams = {
+  userId: string;
+  /**
+   * Transmis à PostHog comme propriété de personne : sans lui, un ciblage par
+   * email échoue pour un utilisateur dont le `posthog.identify` navigateur a
+   * été bloqué (adblocker, pare-feu), PostHog ne connaissant pas son email.
+   */
+  email?: string;
+  collectiviteId?: number;
+};
+
+export type FeatureFlags = Record<FeatureFlagKey, boolean>;
+
 export interface EventTracker {
   capture(params: TrackedEvent): void;
 
@@ -36,6 +49,8 @@ export interface EventTracker {
     collectiviteId?: number,
     options?: FeatureFlagEvaluationOptions
   ): Promise<boolean>;
+
+  listFeatureFlags(params: ListFeatureFlagsParams): Promise<FeatureFlags>;
 
   shutdown(): Promise<void>;
 }

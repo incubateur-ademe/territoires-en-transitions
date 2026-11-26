@@ -1,8 +1,10 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
+import type { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { FeatureFlagKey } from '@tet/domain/utils';
 import type {
   EventTracker,
   FeatureFlagEvaluationOptions,
+  FeatureFlags,
   TrackedEvent,
 } from './event-tracker.interface';
 
@@ -47,6 +49,17 @@ export class TrackingService {
           options
         )
       : Promise.resolve(false);
+  }
+
+  listFeatureFlags(
+    { collectiviteId }: { collectiviteId?: number },
+    { user }: { user: AuthenticatedUser }
+  ): Promise<FeatureFlags> {
+    return this.eventTracker.listFeatureFlags({
+      userId: user.id,
+      email: user.jwtPayload.email,
+      collectiviteId,
+    });
   }
 
   async shutdown(): Promise<void> {

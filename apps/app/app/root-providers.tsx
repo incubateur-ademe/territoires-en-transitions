@@ -25,7 +25,6 @@ export default async function RootProviders({
           config={{
             host: process.env.POSTHOG_HOST,
             key: process.env.POSTHOG_KEY,
-            environment: process.env.ENV_NAME,
           }}
         >
           <TrackLoginUserWithOidc />

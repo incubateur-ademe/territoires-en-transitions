@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ApiTrackingInterceptor } from './api-tracking.interceptor';
+import { ListFeatureFlagsRouter } from './list-feature-flags.router';
 import { PostHogEventTracker } from './posthog-event-tracker';
 import { TrackingService } from './tracking.service';
 
@@ -11,7 +12,8 @@ import { TrackingService } from './tracking.service';
     },
     TrackingService,
     ApiTrackingInterceptor,
+    ListFeatureFlagsRouter,
   ],
-  exports: [TrackingService, ApiTrackingInterceptor],
+  exports: [TrackingService, ApiTrackingInterceptor, ListFeatureFlagsRouter],
 })
 export class TrackingModule {}
