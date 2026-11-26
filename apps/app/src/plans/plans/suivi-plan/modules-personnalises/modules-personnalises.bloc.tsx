@@ -41,7 +41,7 @@ export const ModulesPersonnalisesBloc = ({ planId }: { planId: number }) => {
         <SpinnerLoader className="m-auto" />
       ) : isEmpty ? (
         <EmptyCard
-          variant="grey"
+          variant="transparent"
           size="xs"
           title={appLabels.suiviPlanModulesPersonnalisesVide}
           subTitle={appLabels.suiviPlanModulesPersonnalisesVideDescription}
