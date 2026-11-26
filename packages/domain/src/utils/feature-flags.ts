@@ -13,6 +13,7 @@ const FEATURE_FLAGS = [
   'is-trajectoire-snbc3-enabled',
   'is-pcaet-supra-enabled',
   'is-plan-suivi-enabled',
+  'is-plan-suivi-indicateurs-objectifs-enabled',
 ] as const;
 
 export const FeatureFlagEnum = createEnumObject(FEATURE_FLAGS);
