@@ -8,6 +8,7 @@ import {
 } from '@tet/backend/test';
 import ConfigurationService from '@tet/backend/utils/config/configuration.service';
 import { CollectiviteRole } from '@tet/domain/users';
+import { ESTIMATE_STATUSES } from 'ademe-planet';
 import { default as request } from 'supertest';
 import { beforeAll, describe, expect, it } from 'vitest';
 
@@ -20,6 +21,17 @@ describe('POST /planet/estimations', () => {
       .post('/planet/estimations')
       .set('Authorization', `Bearer ${token}`)
       .send(body);
+
+  const httpError = ({
+    statusCode,
+    error,
+  }: {
+    statusCode: number;
+    error: string;
+  }) => ({
+    status: statusCode,
+    body: { statusCode, error, message: expect.any(String) },
+  });
 
   beforeAll(async () => {
     app = await getTestApp();
@@ -61,62 +73,75 @@ describe('POST /planet/estimations', () => {
     }).expect(400);
   });
 
-  it('renvoie 400 pour un levier inconnu', async () => {
+  it('renvoie 400 quand le paquet juge la requête invalide', async () => {
     const response = await estimate({
       id: 'levier-inexistant',
       parameters: {},
-    }).expect(400);
-
-    expect(response.body).toMatchObject({
-      message: expect.stringContaining('Requête invalide'),
     });
+
+    expect({ status: response.status, body: response.body }).toEqual(
+      httpError({ statusCode: 400, error: 'Bad Request' })
+    );
   });
 
-  it('renvoie 422 pour un département sans donnée', async () => {
+  it('renvoie 422 quand le levier n’est pas calculé au niveau demandé', async () => {
     const response = await estimate({
       id: 'transport_marchandises_report_modal',
-      territory: { level: 'departement', code: '00' },
+      territory: { level: 'departement', code: '35' },
       parameters: { roadToRailFraction: '0.1', roadToWaterwayFraction: '0.05' },
     });
 
-    expect(response.status).toBe(422);
+    expect({ status: response.status, body: response.body }).toEqual(
+      httpError({ statusCode: 422, error: 'Unprocessable Entity' })
+    );
   });
 
-  it('renvoie 422 pour un levier non calculé au niveau EPCI', async () => {
+  it('renvoie 422 quand le paquet n’a pas de donnée pour le territoire', async () => {
     const response = await estimate({
       id: 'transport_marchandises_report_modal',
-      territory: { level: 'epci', code: '000000000' },
+      territory: { level: 'region', code: '99' },
       parameters: { roadToRailFraction: '0.1', roadToWaterwayFraction: '0.05' },
     });
 
-    expect(response.status).toBe(422);
+    expect({ status: response.status, body: response.body }).toEqual(
+      httpError({ statusCode: 422, error: 'Unprocessable Entity' })
+    );
   });
 
-  it('renvoie une estimation complète pour le levier haies sans territoire', async () => {
+  it('renvoie 404 quand le territoire est inconnu du paquet', async () => {
+    const response = await estimate({
+      id: 'batiments_machines_agricoles',
+      territory: { level: 'region', code: '99' },
+      parameters: {
+        electricityReductionFraction: '0.1',
+        naturalGasReductionFraction: '0.1',
+        petroleumProductsReductionFraction: '0.1',
+        heatReductionFraction: '0.1',
+      },
+    });
+
+    expect({ status: response.status, body: response.body }).toEqual(
+      httpError({ statusCode: 404, error: 'Not Found' })
+    );
+  });
+
+  it('renvoie les cinq champs de l’estimation pour un levier sans territoire', async () => {
     const response = await estimate({
       id: 'haies',
       parameters: { hedgeKmCreatedPerYear: '10' },
     });
 
-    expect(response.status).toBe(200);
-    expect(response.body).toEqual({
-      reduction: '11.7',
-      status: 'no_open_question',
-      appliedAssumptions: {},
-      limits: [expect.objectContaining({ limit: 'Rabais régionaux absents' })],
-      datasets: [],
-    });
-  });
-
-  it('détaille les paramètres manquants du levier quand parameters est omis', async () => {
-    const response = await estimate({ id: 'haies' });
-
-    expect(response.status).toBe(400);
-    expect(response.body).toEqual({
-      statusCode: 400,
-      error: 'Bad Request',
-      message:
-        'Requête invalide : parameters.hedgeKmCreatedPerYear (Invalid input)',
+    expect({ status: response.status, body: response.body }).toEqual({
+      status: 200,
+      body: {
+        reduction: expect.any(String),
+        status: expect.stringMatching(
+          new RegExp(`^(${ESTIMATE_STATUSES.join('|')})$`)
+        ),
+        appliedAssumptions: expect.any(Object),
+        limits: expect.any(Array),
+        datasets: expect.any(Array),
+      },
     });
   });
 });

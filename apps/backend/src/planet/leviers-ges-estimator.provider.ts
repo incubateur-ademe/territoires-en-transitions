@@ -1,5 +1,5 @@
 import type { Provider } from '@nestjs/common';
-import { createDefaultEstimator } from 'leviers-ges';
+import { createDefaultEstimator } from 'ademe-planet';
 
 export const LEVIERS_GES_ESTIMATOR = Symbol('LEVIERS_GES_ESTIMATOR');
 

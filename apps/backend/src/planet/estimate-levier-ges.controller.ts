@@ -12,16 +12,16 @@ import { ApiUsageEnum } from '@tet/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@tet/backend/utils/api/api-usage.decorator';
 import { createControllerErrorHandler } from '@tet/backend/utils/nest/controller-error-handler';
 import { createZodDto } from 'nestjs-zod';
-import { estimateLevierGesErrorConfig } from './estimate-levier-ges.errors';
 import { estimateLevierGesRequestSchema } from './estimate-levier-ges.request';
 import { estimateLevierGesResponseSchema } from './estimate-levier-ges.response';
 import { EstimateLevierGesService } from './estimate-levier-ges.service';
+import { levierGesErrorConfig } from './levier-ges.errors';
 
-export class EstimateLevierGesRequestClass extends createZodDto(
+class EstimateLevierGesRequestClass extends createZodDto(
   estimateLevierGesRequestSchema
 ) {}
 
-export class EstimateLevierGesResponseClass extends createZodDto(
+class EstimateLevierGesResponseClass extends createZodDto(
   estimateLevierGesResponseSchema
 ) {}
 
@@ -29,9 +29,8 @@ export class EstimateLevierGesResponseClass extends createZodDto(
 @ApiBearerAuth()
 @Controller('planet')
 export class EstimateLevierGesController {
-  private readonly getResultDataOrThrow = createControllerErrorHandler(
-    estimateLevierGesErrorConfig
-  );
+  private readonly getResultDataOrThrow =
+    createControllerErrorHandler(levierGesErrorConfig);
 
   constructor(
     private readonly estimateLevierGesService: EstimateLevierGesService

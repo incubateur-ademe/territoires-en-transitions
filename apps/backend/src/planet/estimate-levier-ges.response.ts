@@ -4,7 +4,7 @@ export const estimateLevierGesResponseSchema = z.object({
   reduction: z
     .string()
     .describe(
-      'Tonnes de CO2e évitées par an, texte décimal arrondi à deux décimales'
+      'Tonnes de CO2e évitées par an, texte décimal arrondi à deux décimales (demi supérieur), sans zéro final'
     ),
   status: z
     .enum(['no_open_question', 'workaround'])
