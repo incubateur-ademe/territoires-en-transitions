@@ -9,7 +9,7 @@ import {
   isDemarchePcaetSuppressionForcee,
 } from '@tet/domain/demarches';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
-import { DemarchePcaetExportsStorageService } from '../generate-exports/demarche-pcaet-exports-storage.service';
+import { DemarchePcaetExportsStorageService } from '../exports/demarche-pcaet-exports-storage.service';
 import { DemarchePcaetDemoService } from '../demo/demarche-pcaet-demo.service';
 import {
   DemarchePcaetRefRepository,

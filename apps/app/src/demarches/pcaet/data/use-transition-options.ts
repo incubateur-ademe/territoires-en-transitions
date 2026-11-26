@@ -7,7 +7,9 @@ import { useMemo } from 'react';
 
 /**
  * Options communes aux six opérations de transition : toutes renvoient la
- * démarche à jour, donc toutes rafraîchissent le cache de la même façon.
+ * démarche à jour, donc toutes rafraîchissent le cache de la même façon. Les
+ * classeurs proposés au téléchargement suivent : la transmission et la
+ * publication en figent de nouveaux.
  *
  * Les mutations elles-mêmes s'appellent directement là où elles servent
  * (`trpc.demarches.pcaet.publier`…) : il n'y a rien à mutualiser de plus.
@@ -27,9 +29,14 @@ export const useDemarchePcaetTransitionOptions = () => {
           }),
           updated
         );
-        await queryClient.invalidateQueries({
-          queryKey: trpc.demarches.pcaet.list.queryKey({ collectiviteId }),
-        });
+        await Promise.all([
+          queryClient.invalidateQueries({
+            queryKey: trpc.demarches.pcaet.list.queryKey({ collectiviteId }),
+          }),
+          queryClient.invalidateQueries({
+            queryKey: trpc.demarches.pcaet.exports.list.queryKey(),
+          }),
+        ]);
       },
     }),
     [collectiviteId, queryClient, trpc]

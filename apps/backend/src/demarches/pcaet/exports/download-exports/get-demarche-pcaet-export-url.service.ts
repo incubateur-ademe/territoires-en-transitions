@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
-import { DEMARCHE_PCAET_EXPORTS_BUCKET } from '../generate-exports/demarche-pcaet-exports-storage.service';
-import { DemarchePcaetEventEnum } from '../shared/tracking/demarche-pcaet-tracking.constants';
-import { DemarchePcaetTrackingService } from '../shared/tracking/demarche-pcaet-tracking.service';
+import { DEMARCHE_PCAET_EXPORTS_BUCKET } from '../demarche-pcaet-exports-storage.service';
+import { DemarchePcaetEventEnum } from '../../shared/tracking/demarche-pcaet-tracking.constants';
+import { DemarchePcaetTrackingService } from '../../shared/tracking/demarche-pcaet-tracking.service';
 import {
   DemarchePcaetExportsError,
   DemarchePcaetExportsErrorEnum,
@@ -19,8 +19,8 @@ import { ResolveDemarchePcaetExportsService } from './resolve-demarche-pcaet-exp
 const DOWNLOAD_URL_TTL_SECONDS = 60;
 
 /**
- * Le lien signé d'un classeur figé. Réservé aux photos : l'export du jour se
- * télécharge par le contrôleur, qui le construit à la demande.
+ * Le lien signé d'un classeur figé. Réservé aux exports figés : l'export du
+ * jour se télécharge par le contrôleur, qui le construit à la demande.
  */
 @Injectable()
 export class GetDemarchePcaetExportUrlService {

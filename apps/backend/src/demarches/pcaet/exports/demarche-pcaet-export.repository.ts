@@ -29,7 +29,7 @@ export class DemarchePcaetExportRepository {
     return rows.map(({ storagePath }) => storagePath);
   }
 
-  /** Toutes les photos d'un dépôt, toutes transitions confondues. */
+  /** Tous les exports figés d'un dépôt, toutes transitions confondues. */
   async listByDemarcheId(
     demarcheId: number,
     tx?: Transaction

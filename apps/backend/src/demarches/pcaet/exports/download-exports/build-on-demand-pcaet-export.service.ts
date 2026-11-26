@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import { BuildDemarchePcaetWorkbooksService } from '../generate-exports/build-demarche-pcaet-workbooks.service';
-import { buildDemarchePcaetExportFilename } from '../generate-exports/demarche-pcaet-export.rules';
-import { DemarchePcaetEventEnum } from '../shared/tracking/demarche-pcaet-tracking.constants';
-import { DemarchePcaetTrackingService } from '../shared/tracking/demarche-pcaet-tracking.service';
+import { BuildDemarchePcaetWorkbooksService } from '../build-workbooks/build-demarche-pcaet-workbooks.service';
+import { buildDemarchePcaetExportFilename } from '../demarche-pcaet-export-filename.rules';
+import { DemarchePcaetEventEnum } from '../../shared/tracking/demarche-pcaet-tracking.constants';
+import { DemarchePcaetTrackingService } from '../../shared/tracking/demarche-pcaet-tracking.service';
 import {
   DemarchePcaetExportsError,
   DemarchePcaetExportsErrorEnum,
@@ -17,10 +17,10 @@ import { ResolveDemarchePcaetExportsService } from './resolve-demarche-pcaet-exp
 export type OnDemandPcaetExportFile = { buffer: Buffer; filename: string };
 
 /**
- * L'export du jour d'un dépôt soumis sans photo (dépôts antérieurs à la
+ * L'export du jour d'un dépôt soumis sans export figé (dépôts antérieurs à la
  * génération à la soumission) : le classeur est construit à la demande, sur
- * l'état lu à l'instant. Refusé dès qu'une photo existe — c'est elle qui fait
- * foi — et pour un dépôt en élaboration, où rien n'est encore déposé.
+ * l'état lu à l'instant. Refusé dès qu'un export figé existe — c'est lui qui
+ * fait foi — et pour un dépôt en élaboration, où rien n'est encore déposé.
  */
 @Injectable()
 export class BuildOnDemandPcaetExportService {

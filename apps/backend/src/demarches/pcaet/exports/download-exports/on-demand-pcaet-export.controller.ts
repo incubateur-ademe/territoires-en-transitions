@@ -32,8 +32,8 @@ const XLSX_CONTENT_TYPE =
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
 /**
- * L'export du jour d'un dépôt PCAET sans photo. En REST et non en tRPC : la
- * réponse est un fichier.
+ * L'export du jour d'un dépôt PCAET sans export figé. En REST et non en tRPC :
+ * la réponse est un fichier.
  */
 @ApiExcludeController()
 @Controller('demarches/pcaet/exports')

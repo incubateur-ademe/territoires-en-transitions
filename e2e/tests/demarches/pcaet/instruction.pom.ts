@@ -33,6 +33,24 @@ export class InstructionPom {
   }
 
   /**
+   * Un dossier ouvert directement sur une étape, sans passer par la liste :
+   * l'URL est celle de la collectivité instruite.
+   */
+  async gotoDossier({
+    collectiviteInstruiteId,
+    demandeAvisId,
+    etape,
+  }: {
+    collectiviteInstruiteId: number;
+    demandeAvisId: number;
+    etape: 'plan' | 'diagnostic';
+  }) {
+    await this.page.goto(
+      `/collectivite/${collectiviteInstruiteId}/instruction/${demandeAvisId}?etape=${etape}`
+    );
+  }
+
+  /**
    * Une ligne de la liste, désignée par la saisine qu'elle porte.
    *
    * La clé va du plus précis au plus général : une collectivité sans dépôt n'a

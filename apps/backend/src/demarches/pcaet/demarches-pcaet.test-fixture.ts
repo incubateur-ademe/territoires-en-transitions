@@ -35,7 +35,7 @@ import { and, eq, inArray, sql } from 'drizzle-orm';
 import { Workbook } from 'exceljs';
 import { getAuthUserFromUserCredentials } from '../../../test/get-auth-user-from-credentials';
 import { CloreInstructionService } from './clore-instruction/clore-instruction.service';
-import { DEMARCHE_PCAET_EXPORTS_BUCKET } from './generate-exports/demarche-pcaet-exports-storage.service';
+import { DEMARCHE_PCAET_EXPORTS_BUCKET } from './exports/demarche-pcaet-exports-storage.service';
 import {
   DEMARCHE_PCAET_EXPORT_TRANSITIONS,
   DEMARCHE_PCAET_EXPORT_TYPES,

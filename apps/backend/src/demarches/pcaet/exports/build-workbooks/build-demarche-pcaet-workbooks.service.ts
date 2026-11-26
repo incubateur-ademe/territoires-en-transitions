@@ -8,13 +8,13 @@ import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { getErrorMessage } from '@tet/domain/utils';
-import { DemarchePcaetDiagnosticService } from '../shared/demarche-pcaet-diagnostic.service';
-import { hasPcaetDiagnosticData } from './demarche-pcaet-export.rules';
+import { DemarchePcaetDiagnosticService } from '../../shared/demarche-pcaet-diagnostic.service';
+import { hasPcaetDiagnosticData } from './build-demarche-pcaet-workbooks.rules';
 import { exportDiagnosticXLSX } from './export-diagnostic.xlsx';
 import {
   DemarchePcaetExportErrorEnum,
   type DemarchePcaetExportError,
-} from './generate-demarche-pcaet-exports.errors';
+} from '../generate-exports/generate-demarche-pcaet-exports.errors';
 
 /** Un classeur par type d'export, `null` quand il n'y a rien à figer. */
 export type DemarchePcaetWorkbooks = {
@@ -136,7 +136,7 @@ export class BuildDemarchePcaetWorkbooksService {
     tx?: Transaction
   ): Promise<Result<Buffer | null, DemarchePcaetExportError>> {
     try {
-      // Plans aboutis seulement, comme la lecture publique : une photo n'a
+      // Plans aboutis seulement, comme la lecture publique : un export figé n'a
       // pas ce cas, la transmission exige des plans vérifiés.
       const snapshots = await this.loadPlanSnapshots(
         { demarcheId, collectiviteId, activePlansOnly: true },

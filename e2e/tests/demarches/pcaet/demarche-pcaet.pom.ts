@@ -57,6 +57,24 @@ export class DemarchePcaetPom {
     await this.page.goto(`/collectivite/${collectiviteId}/demarche-pcaet`);
   }
 
+  /**
+   * Une étape d'une démarche existante, par son URL : sans passer par le volet
+   * d'avancée, ni attendre qu'il soit ouvert.
+   */
+  async gotoEtape({
+    collectiviteId,
+    demarcheId,
+    etape,
+  }: {
+    collectiviteId: number;
+    demarcheId: number;
+    etape: 'plan' | 'indicateurs';
+  }) {
+    await this.page.goto(
+      `/collectivite/${collectiviteId}/demarche-pcaet/${demarcheId}/${etape}`
+    );
+  }
+
   /** Sans démarche, la liste redirige d'elle-même vers la création. */
   async gotoCreatePage(collectiviteId: number) {
     await this.goto(collectiviteId);

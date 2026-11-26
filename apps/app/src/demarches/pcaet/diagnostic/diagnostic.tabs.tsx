@@ -12,6 +12,7 @@ import {
   TabsList,
   TabsPanel,
 } from '@tet/ui/design-system/TabsNext/index';
+import type { ReactNode } from 'react';
 import { DemarcheSection } from '../../components/section';
 import type { PcaetDiagnostic as DiagnosticPayload } from './data/use-get-pcaet-diagnostic';
 import { DiagnosticTabContent } from './diagnostic.tab-content';
@@ -37,6 +38,8 @@ type Props = {
    */
   title: string;
   description: string;
+  /** Téléchargement du classeur des données, à hauteur du titre. */
+  action?: ReactNode;
 };
 
 export const DiagnosticTabs = ({
@@ -49,6 +52,7 @@ export const DiagnosticTabs = ({
   showCompletion,
   title,
   description,
+  action,
 }: Props) => {
   const [selectedTab, setSelectedTab] = usePcaetDiagnosticTabQueryState();
   const tabs = diagnostic ? listDiagnosticTabs(diagnostic) : [];
@@ -71,7 +75,7 @@ export const DiagnosticTabs = ({
     isVulnerabiliteTab(activeTab, diagnostic.vulnerabilite.code);
 
   return (
-    <DemarcheSection title={title} description={description}>
+    <DemarcheSection title={title} description={description} action={action}>
       {isError ? (
         <ErrorCard
           title={appLabels.demarcheDiagnosticErreurChargement}

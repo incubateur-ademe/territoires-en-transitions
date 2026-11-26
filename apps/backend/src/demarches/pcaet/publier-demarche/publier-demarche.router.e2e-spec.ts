@@ -14,8 +14,8 @@ import { desc, eq } from 'drizzle-orm';
 import { onTestFinished, vi } from 'vitest';
 import { failure } from '@tet/backend/utils/result.type';
 import { ArchiverDemarchePcaetService } from '../archiver-demarche/archiver-demarche.service';
-import { DEMARCHE_PCAET_EXPORTS_BUCKET } from '../generate-exports/demarche-pcaet-exports-storage.service';
-import { GenerateDemarchePcaetExportsService } from '../generate-exports/generate-demarche-pcaet-exports.service';
+import { DEMARCHE_PCAET_EXPORTS_BUCKET } from '../exports/demarche-pcaet-exports-storage.service';
+import { GenerateDemarchePcaetExportsService } from '../exports/generate-exports/generate-demarche-pcaet-exports.service';
 import { demarcheStatusHistoryTable } from '@tet/backend/demarches/shared/models/demarche-status-history.table';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
@@ -260,7 +260,7 @@ describe('Publication d’une démarche PCAET', () => {
       /^PCAET_.+_Plan_publie_\d{4}-\d{2}-\d{2}\.xlsx$/
     );
 
-    // Chaque photo garde l'état de son moment.
+    // Chaque export figé garde l'état de son moment.
     const transmis = await loadTestDemarchePcaetExportWorkbook(
       app,
       planTransmis
@@ -318,7 +318,7 @@ describe('Publication d’une démarche PCAET', () => {
       })
     ).rejects.toThrow('EXPORT_GENERATION_ERROR');
 
-    // Rien n'est publié, et la photo de la transmission reste intacte.
+    // Rien n'est publié, et l'export figé de la transmission reste intact.
     const apres = await caller.demarches.pcaet.get({
       collectiviteId: collectivite.id,
       demarcheId: created.id,
@@ -450,7 +450,7 @@ describe('Publication d’une démarche PCAET', () => {
     );
   });
 
-  test('Un dépôt hors plateforme n’a que la photo de sa publication', async () => {
+  test('Un dépôt hors plateforme n’a que l’export figé de sa publication', async () => {
     const { caller, collectivite } = await freshEditor();
     const created = await caller.demarches.pcaet.create({
       collectiviteId: collectivite.id,

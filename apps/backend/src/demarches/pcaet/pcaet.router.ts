@@ -9,7 +9,7 @@ import { DeleteAvisRouter } from './delete-avis/delete-avis.router';
 import { DeleteDemarchePcaetRouter } from './delete-demarche-pcaet/delete-demarche-pcaet.router';
 import { PcaetDiagnosticRouter } from './diagnostic/pcaet-diagnostic.router';
 import { PcaetDocumentsRouter } from './documents/pcaet-documents.router';
-import { DemarchePcaetExportsRouter } from './exports/demarche-pcaet-exports.router';
+import { DemarchePcaetExportsRouter } from './exports/download-exports/demarche-pcaet-exports.router';
 import { GetAvisFileUrlRouter } from './get-avis-file-url/get-avis-file-url.router';
 import { GetContexteInstructionRouter } from './get-contexte-instruction/get-contexte-instruction.router';
 import { GetDepotContextRouter } from './get-depot-context/get-depot-context.router';
