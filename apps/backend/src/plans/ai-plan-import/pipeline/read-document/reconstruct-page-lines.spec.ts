@@ -109,6 +109,28 @@ describe('reconstructPageLines', () => {
     expect(lines.map((line) => line.text)).toEqual(['ÉTAT ÉTAT']);
   });
 
+  it('lit à part une étiquette écrite de bas en haut, sans la coller au titre voisin', () => {
+    const lines = reconstructPageLines(
+      [
+        {
+          str: 'Mise en œuvre',
+          transform: [0, 9, -9, 0, 12, PAGE_HEIGHT - 202],
+          width: 60,
+          height: 9,
+        },
+        item('B – Communiquer et sensibiliser', 40, 200, 9),
+        item('Court terme', 400, 200, 9, 45),
+      ],
+      PAGE_HEIGHT
+    );
+
+    expect(lines.map((line) => line.text)).toEqual([
+      'B – Communiquer et sensibiliser',
+      'Court terme',
+      'Mise en œuvre',
+    ]);
+  });
+
   it('ignore les fragments vides', () => {
     expect(reconstructPageLines([item('', 40, 100)], PAGE_HEIGHT)).toEqual([]);
   });

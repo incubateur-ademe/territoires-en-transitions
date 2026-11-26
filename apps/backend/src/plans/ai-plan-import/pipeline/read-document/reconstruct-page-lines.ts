@@ -18,6 +18,8 @@ export type PositionedItem = {
   y: number;
   fontSize: number;
   links?: DocumentLink[];
+  /** Écrit de bas en haut (étiquette verticale d'un tableau) : une ligne à part. */
+  rotated?: boolean;
 };
 
 // Deux fragments sont sur la même ligne si leurs ordonnées diffèrent de moins
@@ -65,7 +67,9 @@ export const positionItems = (
 export const groupRows = (positioned: PositionedItem[]): PositionedItem[][] => {
   const rows: PositionedItem[][] = [];
   for (const item of positioned) {
-    const current = rows.at(-1);
+    const current = item.rotated
+      ? undefined
+      : rows.findLast((row) => !row[0].rotated);
     const anchor = current?.[0];
     if (
       anchor &&
@@ -113,10 +117,11 @@ export const locateLines = (
 const toPositionedItem =
   (pageHeight: number) =>
   (item: TextItemLike): PositionedItem => {
-    const [, , , d, x, y] = item.transform;
+    const [a, b, , d, x, y] = item.transform;
     const fontSize = Math.abs(d) || item.height || 1;
     return {
       text: item.str,
+      ...(Math.abs(b) > Math.abs(a) ? { rotated: true } : {}),
       x,
       right: x + item.width,
       y: pageHeight - y,

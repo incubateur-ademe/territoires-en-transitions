@@ -1,3 +1,4 @@
+import { sumBy } from 'es-toolkit';
 import type {
   ActionLevel,
   ActionLevelDoubt,
@@ -9,6 +10,7 @@ import {
   HeadingMatch,
   isFicheLabel,
   isTitleField,
+  matchExplicitHeading,
   matchHeading,
   SECTION_LEVEL,
 } from './heading-patterns';
@@ -58,6 +60,8 @@ const MAX_PREFIX_LENGTH = 80;
 // « Fiche Action n°1.1 » seul sur sa ligne : le titre est dessous.
 const MAX_TITLE_BELOW_LINES = 3;
 const BULLET = /^(?:[o•●▪◦■□*\-–—]|\d{1,2}[.)])\s/u;
+// La puce d'une énumération : « 1. … » est un titre numéroté, pas un élément.
+const SYMBOL_BULLET = /^[o•●▪◦■□*\-–—]\s/u;
 // En dessous, « Action 1 » et « Fiche action 1 » sont deux façons de titrer
 // une fiche, pas deux niveaux.
 const MIN_NAMED_FICHES = 3;
@@ -73,6 +77,12 @@ const DETAILED_FICHES_SHARE = 0.25;
 const PILOTES_PER_ETAPE_RATIO = 1.5;
 const PILOTE_LABEL =
   /^(?:pilotes?|porteur|structure porteuse|porteurs? de l['’]action|ma[iî]tr(?:e|ise) d['’]ouvrage)/iu;
+// « A – Organiser… », « B. Soutenir… » : l'élément d'une énumération lettrée.
+const LETTERED_ITEM = /^([A-Z])\s*[.)\-–—]\s+(?=\p{Lu})/u;
+// En moyenne, plus d'un élément et demi à cartouche par titre qui les porte.
+const MIN_CARTOUCHES_PER_ENUMERATION = 1.5;
+// « Fiche action n°1 », « Action 2 » : un titre qui se dit lui-même l'action.
+const NAMES_ITSELF_ACTION = /^(?:fiche|action)(?!\p{L})/iu;
 
 export type DetectHeadingsOptions = {
   /**
@@ -101,7 +111,9 @@ export const detectHeadings = (
       dropIntertitleSections(
         demoteCapitalsBelowExplicitAxes(
           dropSummaryRows(
-            demoteBannersAboveFiches(addThemesAboveFiches(kept, pages)),
+            demoteBannersAboveFiches(
+              addThemesAboveFiches(addEnumeratedActions(kept, pages), pages)
+            ),
             pages
           )
         ),
@@ -112,7 +124,7 @@ export const detectHeadings = (
     isLargeLine
   );
   return byEtape
-    ? demoteNamedFiches(headings, [...named.stepsByFiche.keys()])
+    ? demoteToSousAxe(headings, [...named.stepsByFiche.keys()])
     : headings;
 };
 
@@ -411,22 +423,235 @@ const classifyNamedFicheActions = (
 };
 
 /**
- * Lue à l'étape, la fiche qui se nomme devient le sous-axe de ses étapes.
- * Elle garde sa nature de fiche : son numéro dit encore son axe.
+ * Le titre qui porte des actions (fiche lue à l'étape, titre d'une
+ * énumération) devient leur sous-axe. Il garde sa nature : le numéro d'une
+ * fiche dit encore son axe.
  */
-const demoteNamedFiches = (
+const demoteToSousAxe = (
   headings: DetectedHeading[],
-  fiches: DetectedHeading[]
+  carriers: DetectedHeading[]
 ): DetectedHeading[] => {
   const keyOf = ({ pageIndex, lineIndex }: DetectedHeading) =>
     `${pageIndex}:${lineIndex}`;
-  const ficheKeys = new Set(fiches.map(keyOf));
+  const carrierKeys = new Set(carriers.map(keyOf));
   return headings.map((heading) =>
-    ficheKeys.has(keyOf(heading))
+    carrierKeys.has(keyOf(heading))
       ? { ...heading, match: { ...heading.match, level: SOUS_AXE_LEVEL } }
       : heading
   );
 };
+
+/**
+ * Des actions énumérées sous le titre qui les regroupe : « - … » sous un
+ * intertitre, « A – … », « B – … » sous une mesure. Chaque élément ouvre une
+ * fiche, et le titre qui les porte (avec ses rappels) devient leur sous-axe.
+ * Une énumération n'est faite d'actions que si ses éléments portent, pour la
+ * plupart, leur propre cartouche (porteur, partenaires), et que le document
+ * en donne bien plus que de titres qui les regroupent : l'action est ce qui
+ * porte son cartouche, une liste d'étapes ou d'objectifs ne l'a pas. Ou bien
+ * le document ne titre aucune fiche, et la plupart des titres de ce niveau
+ * s'ouvrent sur leur liste : c'est elle qui donne les actions. Jamais sous un
+ * axe, ni quand les éléments annoncent les titres qui suivent.
+ */
+const addEnumeratedActions = (
+  headings: DetectedHeading[],
+  pages: DocumentPage[]
+): DetectedHeading[] => {
+  const enumerations = textUnderHeadings(headings, pages)
+    .filter(({ parent }) => parent.match.level > SECTION_LEVEL)
+    .map(({ parent, body }) => ({ parent, ...enumerationIn(body) }));
+
+  const withCartouches = enumerations.filter(
+    ({ items, carrying }) =>
+      items.length > 0 && isMajority(carrying, items.length)
+  );
+  const byCartouche =
+    sumBy(withCartouches, ({ carrying }) => carrying) >
+    withCartouches.length * MIN_CARTOUCHES_PER_ENUMERATION;
+  const namesNoFiche = !headings.some(({ match }) =>
+    isExplicit(match, 'fiche')
+  );
+  const opensOnList = (level: number) => {
+    const peers = enumerations.filter(
+      ({ parent }) => parent.match.level === level
+    );
+    return isMajority(
+      peers.filter(({ opensBody }) => opensBody).length,
+      peers.length
+    );
+  };
+  // « Fiche action n°1 » garde ses étapes pilotées : en faire des fiches, ce
+  // serait lire le document à l'étape, ce que la lecture par défaut ne fait pas.
+  const namesItselfAction = (heading: DetectedHeading) =>
+    NAMES_ITSELF_ACTION.test(sourceTextOf(heading, pages));
+  // Une orientation qui annonce ses fiches en puces : elles suivent, titrées.
+  const titles = new Set(headings.map(({ match }) => sameTitle(match.title)));
+  const announcesHeadings = ({ items }: (typeof enumerations)[number]) =>
+    isMajority(
+      items.filter(({ title }) => titles.has(sameTitle(title))).length,
+      items.length
+    );
+  const kept = enumerations.filter(
+    (enumeration) =>
+      // Les puces d'un axe sont ses objectifs chiffrés, pas ses actions.
+      enumeration.parent.match.kind !== 'axe' &&
+      !announcesHeadings(enumeration) &&
+      ((byCartouche &&
+        withCartouches.includes(enumeration) &&
+        !namesItselfAction(enumeration.parent)) ||
+        (namesNoFiche &&
+          enumeration.opensBody &&
+          opensOnList(enumeration.parent.match.level)))
+  );
+  if (kept.length === 0) {
+    return headings;
+  }
+
+  // Ses rappels dans tout le document, pas seulement ceux qui le suivent : la
+  // ligne « 1.1 Développer des » d'un récapitulatif deviendrait une fiche.
+  const parents = kept.map(({ parent }) => parent);
+  const demoted = demoteToSousAxe(
+    headings,
+    headings.filter((heading) =>
+      parents.some(
+        (parent) => heading === parent || isRecallOf(parent, heading)
+      )
+    )
+  );
+  const actions: DetectedHeading[] = kept.flatMap(({ items }) =>
+    items.map(({ letter, title, line }) => ({
+      pageIndex: line.pageIndex,
+      lineIndex: line.lineIndex,
+      lastLineIndex: line.lineIndex,
+      isLarge: false,
+      match: {
+        kind: 'fiche' as const,
+        level: FICHE_LEVEL,
+        number: letter,
+        title,
+        confidence: 1,
+      },
+    }))
+  );
+  return [...demoted, ...actions].sort(
+    (a, b) => a.pageIndex - b.pageIndex || a.lineIndex - b.lineIndex
+  );
+};
+
+type BodyLine = { pageIndex: number; lineIndex: number; text: string };
+
+/** « Mesure 3 » répétée en haut de page : le même titre, pas un nouveau. */
+const isRecallOf = (parent: DetectedHeading, heading: DetectedHeading) =>
+  heading.match.number !== null &&
+  heading.match.kind === parent.match.kind &&
+  heading.match.number === parent.match.number;
+
+/** Les lignes non vides sous chaque titre, celles sous ses rappels comprises. */
+const textUnderHeadings = (
+  headings: DetectedHeading[],
+  pages: DocumentPage[]
+): { parent: DetectedHeading; body: BodyLine[] }[] => {
+  const lines: BodyLine[] = pages.flatMap((page) =>
+    page.lines.map((line, lineIndex) => ({
+      pageIndex: page.index,
+      lineIndex,
+      text: line.text.trim(),
+    }))
+  );
+  const positionOf = new Map(
+    lines.map(({ pageIndex, lineIndex }, position) => [
+      `${pageIndex}:${lineIndex}`,
+      position,
+    ])
+  );
+  const at = (heading: DetectedHeading, lineIndex: number) =>
+    positionOf.get(`${heading.pageIndex}:${lineIndex}`) ?? 0;
+  const groups: { parent: DetectedHeading; body: BodyLine[] }[] = [];
+  headings.forEach((heading, index) => {
+    const next = headings[index + 1];
+    const body = lines
+      .slice(
+        at(heading, heading.lastLineIndex) + 1,
+        next ? at(next, next.lineIndex) : lines.length
+      )
+      .filter(({ text }) => text !== '');
+    const group = groups.at(-1);
+    if (group && isRecallOf(group.parent, heading)) {
+      group.body.push(...body);
+    } else {
+      groups.push({ parent: heading, body });
+    }
+  });
+  return groups;
+};
+
+/**
+ * Les éléments d'une seule énumération (des puces, ou des lettres), ceux qui
+ * portent un cartouche, et si elle ouvre le texte de son titre.
+ */
+const enumerationIn = (whole: BodyLine[]) => {
+  // Une liste de puces s'arrête au libellé nu qui ouvre la suivante
+  // (« Indicateurs : » puis ses puces, « Pilote : » puis sa valeur en puce).
+  // Une énumération lettrée garde ses puces : elles détaillent l'élément.
+  const bulleted =
+    whole.map(({ text }) => itemOf(text)).find(Boolean)?.letter === null;
+  const stop = bulleted
+    ? whole.findIndex(
+        ({ text }, index) =>
+          isFicheLabel(text.replace(/^[^\p{L}]+/u, '')) &&
+          itemOf(whole[index + 1]?.text ?? '')?.letter === null
+      )
+    : -1;
+  const body = stop === -1 ? whole : whole.slice(0, stop);
+  const starts = body.flatMap((line, index) => {
+    const item = itemOf(line.text);
+    return item ? [{ ...item, index, line }] : [];
+  });
+  const items = starts.filter(
+    (item) => (item.letter === null) === (starts[0]?.letter === null)
+  );
+  const carrying = items.filter((item, rank) =>
+    body
+      .slice(item.index + 1, items[rank + 1]?.index ?? body.length)
+      .some(({ text }) => opensCartouche(text))
+  ).length;
+  return { items, carrying, opensBody: items[0]?.index === 0 };
+};
+
+const itemOf = (text: string) => {
+  const item = text.match(SYMBOL_BULLET) ?? text.match(LETTERED_ITEM);
+  if (!item) {
+    return null;
+  }
+  const title = text.slice(item[0].length).trim();
+  // « - Pilote : Service patrimoine » : un champ du cartouche, en puce.
+  return isFieldLine(title) ? null : { letter: item[1] ?? null, title };
+};
+
+const opensCartouche = (text: string): boolean => {
+  const label = text.replace(/^[^\p{L}]+/u, '');
+  // « partenaires, avec des ateliers… » : la suite d'une phrase, pas un champ.
+  if (startsLowercase(label) && !isFieldLine(label)) {
+    return false;
+  }
+  return PILOTE_LABEL.test(label) || /^partenaire/iu.test(label);
+};
+
+/** « Pilote : Service patrimoine », « Indicateurs : » : un champ de fiche. */
+const isFieldLine = (text: string): boolean =>
+  isFicheLabel(text.split(/[:：]/u)[0]);
+
+const isMajority = (count: number, total: number): boolean => count * 2 > total;
+
+const sameTitle = (title: string): string =>
+  title.toLowerCase().replace(/\s+/gu, ' ').trim();
+
+/** La ligne du titre telle qu'écrite, sans dièse. */
+const sourceTextOf = (heading: DetectedHeading, pages: DocumentPage[]) =>
+  pages
+    .find((page) => page.index === heading.pageIndex)
+    ?.lines[heading.lineIndex]?.text.trim()
+    .replace(MARKDOWN_MARK, '') ?? '';
 
 /** Les numéros qui suivent une fiche : « 3 » donne « 4 », « 1.3 » donne « 1.4 » et « 2.1 ». */
 const nextNumbers = (last: string | null): string[] => {
@@ -861,15 +1086,8 @@ const isSameRow = (a: PageLine, b: PageLine): boolean =>
 const isKeyFigure = (text: string): boolean =>
   /^\d/u.test(text) || text.replace(/[^\p{L}]/gu, '').length < 3;
 
-const startsExplicitHeading = (text: string): boolean => {
-  const match = matchHeading(text);
-  return (
-    match !== null &&
-    match.confidence === 1 &&
-    match.kind !== 'markdown' &&
-    match.kind !== 'section'
-  );
-};
+const startsExplicitHeading = (text: string): boolean =>
+  matchExplicitHeading(text) !== null;
 
 const hasNoLowercase = (text: string): boolean => {
   const letters = text.replace(/[^\p{L}]/gu, '');

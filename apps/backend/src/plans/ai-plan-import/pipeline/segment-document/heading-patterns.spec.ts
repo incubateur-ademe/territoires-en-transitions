@@ -76,6 +76,15 @@ describe('matchHeading', () => {
     ['## Fiche action 3', 'fiche', 3, '3', ''],
     ['## Rénover la piscine', 'markdown', 2, null, 'Rénover la piscine'],
     ['### 2.3 Rénover', 'markdown', 3, '2.3', 'Rénover'],
+    ['# Axe 2 — Mobilités', 'axe', 1, '2', 'Mobilités'],
+    [
+      "### Groupe d'actions 1.1 — Sobriété foncière",
+      'markdown',
+      3,
+      '1.1',
+      'Sobriété foncière',
+    ],
+    ['## Les 10 actions phares', 'markdown', 2, null, 'Les 10 actions phares'],
     ['PROGRAMME D’ACTIONS', 'section', 0, null, 'PROGRAMME D’ACTIONS'],
     ['Feuille de route', 'section', 0, null, 'Feuille de route'],
     ['FICHES PROJETS', 'section', 0, null, 'FICHES PROJETS'],
@@ -221,6 +230,11 @@ describe('matchHeading', () => {
       matchHeading('Orientation d’Aménagement et de Programmation « nature »')
     ).toBeNull();
     expect(matchHeading('Orientation B – Rénover l’habitat')?.number).toBe('B');
+    // Un renvoi dans la phrase : « (voir la mesure 1.5). Navette… ».
+    expect(matchHeading('mesure 1.5). Navette inter-entreprise –')).toBeNull();
+    expect(matchHeading('Mesure 1.5 : Navette inter-entreprise')?.number).toBe(
+      '1.5'
+    );
   });
 
   it('prend une ligne en majuscules pour un titre, plus sûrement en grande police', () => {
@@ -274,6 +288,37 @@ describe('matchHeading', () => {
 
   it('refuse un titre trop long', () => {
     expect(matchHeading(`Axe 1 : ${'x'.repeat(130)}`)).toBeNull();
+  });
+
+  it('garde un titre marqué, quelle que soit sa longueur', () => {
+    expect(matchHeading(`### A 3 : ${'x'.repeat(130)}`)?.level).toBe(3);
+  });
+
+  it('garde un titre nommé et marqué, quelle que soit sa longueur', () => {
+    const long =
+      'Accompagner les ménages modestes et les copropriétés dans la rénovation énergétique performante de leurs logements anciens du territoire';
+    expect(matchHeading(`# Fiche action 1.2 : ${long}`)).toMatchObject({
+      kind: 'fiche',
+      number: '1.2',
+    });
+    expect(matchHeading(`# Axe 2 — ${long}`)).toMatchObject({
+      kind: 'axe',
+      level: 1,
+      number: '2',
+    });
+  });
+
+  it('garde à un axe ou une orientation marqués le rang de leur style', () => {
+    expect(matchHeading('# Objectif 2 — Réduire les émissions')).toMatchObject({
+      kind: 'orientation',
+      level: 1,
+      number: '2',
+    });
+    expect(matchHeading('## Objectif 1 : Rénover')).toMatchObject({
+      kind: 'orientation',
+      level: 2,
+    });
+    expect(matchHeading('## Axe 2 — Mobilités')?.level).toBe(1);
   });
 });
 

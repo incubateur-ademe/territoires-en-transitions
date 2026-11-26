@@ -21,13 +21,16 @@ export type ColumnTableContext = {
   numbered: boolean;
 };
 
+/** Une ligne de cellule, avec son étendue : où elle s'arrête dit si elle passe à la ligne. */
+type CellLine = PageLine & { left: number; right: number };
+
 type Cell = {
   text: string;
   top: number;
   bottom: number;
   fontSize: number;
   lineCount: number;
-  lines: PageLine[];
+  lines: CellLine[];
 };
 
 type Column = {
@@ -70,8 +73,11 @@ const MAX_PAGE_BANNER_ROWS = 2;
 // cellule jusqu'à une rangée voisine qui n'en a pas.
 const UNASSIGNED_ROW_PITCH_SHARE = 0.35;
 const DEFAULT_ROW_PITCH = 30;
-const MAX_HEADING_LENGTH = 120;
 const ROW_ALIGNMENT_RATIO = 0.5;
+// Une ligne passe à la ligne quand son mot suivant n'y tient plus : la
+// largeur d'un caractère, rapportée à la ligne, est approximative, et le bord
+// connu de la colonne n'est pas celui de sa cellule.
+const WRAP_TOLERANCE_RATIO = 2;
 const CARD_MIN_CELLS = 2;
 const CARD_MAX_CELL_GAP = 3;
 // Un texte centré n'occupe pas toute la largeur de sa carte.
@@ -92,9 +98,10 @@ const CENTERED_SHARE = 0.8;
  *
  * Un tableau à en-tête (« Enjeux | Objectifs | Actions | Portage ») sort
  * rangée par rangée : le regroupement de gauche en titre, la cellule de la
- * colonne principale sur une ligne, puis « Libellé : valeur » pour chaque
- * colonne de droite. Sans en-tête reconnu, chaque colonne est lue en entier,
- * l'une après l'autre. `null` : la page n'a pas cette forme.
+ * colonne principale sur une ligne (en titre de fiche si les rangées sont
+ * numérotées), puis « Libellé : valeur » pour chaque colonne de droite. Sans
+ * en-tête reconnu, chaque colonne est lue en entier, l'une après l'autre.
+ * `null` : la page n'a pas cette forme.
  */
 export const readColumnTable = (
   positioned: PositionedItem[],
@@ -134,7 +141,13 @@ export const readColumnTable = (
     );
     return {
       ...range,
-      cells: toCells(lines.map((row) => toPageLine(row))),
+      cells: toCells(
+        lines.map((row) => ({
+          ...toPageLine(row),
+          left: row[0].x,
+          right: Math.max(...row.map((item) => item.right)),
+        }))
+      ),
       centered: areCentered(lines),
     };
   });
@@ -188,7 +201,7 @@ export const readColumnTable = (
       labels,
       mainIndex,
       groupTexts: table.groupTexts,
-      numbered: areNumbered(table.rows),
+      numbered: table.numbered,
     },
   };
 };
@@ -450,7 +463,7 @@ const areNumbered = (cells: Cell[]): boolean => {
   return numbered > 0 && numbered >= cells.length / 2;
 };
 
-const cellOf = (lines: PageLine[]): Cell => ({
+const cellOf = (lines: CellLine[]): Cell => ({
   text: lines.map((line) => line.text).join(' '),
   top: lines[0].y ?? 0,
   bottom: lines[lines.length - 1].y ?? 0,
@@ -464,11 +477,11 @@ const cellOf = (lines: PageLine[]): Cell => ({
  * colonne dont les cellules sont numérotées (« A 30 : », « A 31 : ») en ouvre
  * une à chaque numéro, même sans blanc au-dessus.
  */
-const toCells = (lines: PageLine[]): Cell[] => {
+const toCells = (lines: CellLine[]): Cell[] => {
   const numbered =
     lines.filter((line) => ROW_NUMBER.test(line.text)).length >=
     MIN_NUMBERED_ROWS;
-  const groups: PageLine[][] = [];
+  const groups: CellLine[][] = [];
   for (const line of lines.filter(({ text }) => text.length > 0)) {
     const current = groups.at(-1);
     const previous = current?.at(-1);
@@ -505,7 +518,7 @@ const splitAcrossRows = (cells: Cell[], rows: Cell[]): Cell[] =>
             : best,
         0
       );
-    const parts: { row: number; lines: PageLine[] }[] = [];
+    const parts: { row: number; lines: CellLine[] }[] = [];
     for (const line of cell.lines) {
       const row = nearestRow(line);
       const current = parts.at(-1);
@@ -700,7 +713,7 @@ const readRowByRow = ({
   labels: string[];
   mainIndex: number;
   groupTexts: string[];
-}): { lines: PageLine[]; groupTexts: string[]; rows: Cell[] } => {
+}): { lines: PageLine[]; groupTexts: string[]; numbered: boolean } => {
   const rows = splitAtRowStarts(
     columns[mainIndex].cells,
     columns.slice(mainIndex + 1)
@@ -718,29 +731,50 @@ const readRowByRow = ({
   const lines: PageLine[] = [];
   const labelled = (index: number, text: string) =>
     labels[index] ? `${labels[index]} : ${text}` : text;
+  // Des rangées numérotées (« A 12 : », « 3.2 ») sont les actions du plan :
+  // chacune ouvre sa fiche, titrée par le premier paragraphe de sa cellule.
+  const numbered = areNumbered(rows);
+  const edge = Math.max(
+    ...rows.flatMap((row) => row.lines.map((line) => line.right))
+  );
 
   rows.forEach((row, rowIndex) => {
+    // Une rangée sans numéro (suite d'une cellule coupée par la page, « À
+    // définir ») reste dans la fiche d'au-dessus.
+    const opensFiche = numbered && ROW_NUMBER.test(row.text);
+    const groups: PageLine[] = [];
     for (let index = 0; index < mainIndex; index++) {
       const { text, links } = textOf(
         cellsOf(index),
         cellsOfRow[index][rowIndex]
       );
-      if (text === '' || text === groupTexts[index]) {
+      // Sous des fiches, un regroupement intermédiaire se redit à chacune :
+      // dit une seule fois, il manquerait aux fiches suivantes.
+      const repeated = text === groupTexts[index] && !(opensFiche && index > 0);
+      if (text === '' || repeated) {
         continue;
       }
       groupTexts[index] = text;
       // Le regroupement le plus à gauche est le niveau au-dessus des rangées.
-      lines.push(
-        toLine(
-          row,
-          index === 0 && text.length <= MAX_HEADING_LENGTH
-            ? `## ${text}`
-            : labelled(index, text),
-          links
-        )
+      // Les autres précèdent leur première rangée ; sous une fiche, ils la
+      // suivent, sans quoi ils finiraient la fiche d'avant.
+      const line = toLine(
+        row,
+        index === 0 ? `## ${text}` : labelled(index, text),
+        links
       );
+      (index > 0 && numbered ? groups : lines).push(line);
     }
-    lines.push(toLine(row));
+    if (opensFiche) {
+      const [title, rest] = splitTitle(row, edge);
+      lines.push(toLine(row, `### ${title.text}`, linksOf([title])));
+      if (rest) {
+        lines.push(toLine(row, rest.text, linksOf([rest])));
+      }
+    } else {
+      lines.push(toLine(row));
+    }
+    lines.push(...groups);
     for (let index = mainIndex + 1; index < columns.length; index++) {
       const { text, links } = textOf(
         cellsOf(index),
@@ -751,7 +785,33 @@ const readRowByRow = ({
       }
     }
   });
-  return { lines, groupTexts, rows };
+  return { lines, groupTexts, numbered };
+};
+
+/**
+ * Le titre d'une cellule s'arrête à la fin de son premier paragraphe : la
+ * dernière ligne d'un paragraphe s'arrête avant le bord, assez tôt pour que
+ * le premier mot de la ligne suivante y ait tenu (« …de Fayence » » puis
+ * « Volet 1 : … », ou une puce). Un guillemet ou une parenthèse ouvrante
+ * passe à la ligne avec son mot.
+ */
+const splitTitle = (cell: Cell, edge: number): [Cell, Cell | null] => {
+  const end = cell.lines.findIndex((line, index) => {
+    const next = cell.lines[index + 1];
+    if (next === undefined) {
+      return false;
+    }
+    const charWidth = (line.right - line.left) / Math.max(1, line.text.length);
+    const nextWord = next.text.trim().match(/^[«“"(]?\s*\S+/u)?.[0] ?? '';
+    return (
+      edge - line.right >
+      (nextWord.length + 1) * charWidth +
+        WRAP_TOLERANCE_RATIO * (line.fontSize ?? 0)
+    );
+  });
+  return end === -1
+    ? [cell, null]
+    : [cellOf(cell.lines.slice(0, end + 1)), cellOf(cell.lines.slice(end + 1))];
 };
 
 const textOf = (
@@ -787,7 +847,7 @@ const splitAtRowStarts = (cells: Cell[], others: Column[]): Cell[] => {
     if (cell.lines.length < 2 || markers.length === 0) {
       return [cell];
     }
-    const parts: PageLine[][] = [];
+    const parts: CellLine[][] = [];
     cell.lines.forEach((line, index) => {
       if (index === 0 || markers.every((column) => opensAt(column, line))) {
         parts.push([line]);

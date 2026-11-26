@@ -53,14 +53,16 @@ describe('readColumnTable', () => {
     expect(textsOf(items)).toEqual([
       'AXE 1 – EAU ET AGRICULTURE DURABLE POUR TOUS LES HABITANTS',
       '## 1- GESTION DE LA RESSOURCE',
+      "### A 1 : Diagnostiquer l'usage de l'eau",
       "Objectifs : - Limiter les usages - Adapter l'offre",
-      "A 1 : Diagnostiquer l'usage de l'eau",
       'Portage : Chambre',
       'Réalisation : 2024-2027',
-      'A 2 : Former les exploitants',
+      '### A 2 : Former les exploitants',
+      "Objectifs : - Limiter les usages - Adapter l'offre",
       'Portage : Chambre',
       'Réalisation : 2024-2027',
-      'A 3 : Harmoniser les tarifs',
+      '### A 3 : Harmoniser les tarifs',
+      "Objectifs : - Limiter les usages - Adapter l'offre",
       'Portage : CCPF',
       'Réalisation : 2024',
     ]);
@@ -106,8 +108,8 @@ describe('readColumnTable', () => {
 
     expect(next?.lines.map((line) => line.text).slice(0, 5)).toEqual([
       '## 2- GOUVERNANCE FONCIERE',
+      '### A 4 : Animer un groupe',
       'Objectifs : - Structurer',
-      'A 4 : Animer un groupe',
       'Portage : SAFER',
       'Réalisation : 2027',
     ]);
@@ -134,14 +136,16 @@ describe('readColumnTable', () => {
 
     expect(textsOf(items)).toEqual([
       '## 1- GESTION',
+      '### A 1 : Diagnostiquer',
       'Objectifs : - Limiter',
-      'A 1 : Diagnostiquer',
       'Portage : CCPF',
       'Réalisation : 2024 et années suivantes',
-      'A 2 Former les exploitants',
+      '### A 2 Former les exploitants',
+      'Objectifs : - Limiter',
       'Portage : SAFER',
       'Réalisation : 2025 et années suivantes',
-      'A 3 : Harmoniser',
+      '### A 3 : Harmoniser',
+      'Objectifs : - Limiter',
       'Portage : CDA',
       'Réalisation : 2026',
     ]);
@@ -326,7 +330,7 @@ describe('readColumnTable', () => {
           numberedTable()
         )
       ).toEqual([
-        'A 4 : Animer un groupe',
+        '### A 4 : Animer un groupe',
         'Portage : SAFER',
         'Réalisation : 2027',
       ]);
@@ -421,8 +425,100 @@ describe('readColumnTable', () => {
     ];
 
     expect(textsOf(items)?.slice(1, 3)).toEqual([
-      "A 40 : Poursuivre l'opération",
+      "### A 40 : Poursuivre l'opération",
       'Portage : SERVICE DÉCHETS',
+    ]);
+  });
+
+  it('titre une rangée numérotée par le premier paragraphe de sa cellule, sans couper la phrase qui passe à la ligne', () => {
+    const items = [
+      ...header,
+      at(390, 140, 'A 1 : Poursuivre l’étude sur la'),
+      at(390, 152, 'station d’épuration'),
+      at(390, 164, 'Volet 1 : faisabilité'),
+      at(390, 176, 'Volet 2 : acceptation sociale'),
+      at(620, 140, 'CCPF'),
+      at(390, 220, 'A 2 : Créer un réseau local'),
+      at(390, 232, '« d’éducation »'),
+      at(620, 220, 'SAFER'),
+      at(390, 270, 'A 3 : Installer'),
+      at(410, 282, '- Prise en charge des frais'),
+      at(620, 270, 'CDA'),
+      at(50, 220, '1- GESTION'),
+    ];
+
+    expect(textsOf(items)).toEqual([
+      '## 1- GESTION',
+      '### A 1 : Poursuivre l’étude sur la station d’épuration',
+      'Volet 1 : faisabilité Volet 2 : acceptation sociale',
+      'Portage : CCPF',
+      '### A 2 : Créer un réseau local « d’éducation »',
+      'Portage : SAFER',
+      '### A 3 : Installer',
+      '- Prise en charge des frais',
+      'Portage : CDA',
+    ]);
+  });
+
+  it('laisse dans la fiche d’au-dessus une rangée sans numéro, suite de page comprise', () => {
+    const first = readColumnTable(
+      [
+        ...header,
+        at(390, 140, 'A 1 : Diagnostiquer'),
+        at(620, 140, 'CCPF'),
+        at(390, 180, 'Actions à définir avec les partenaires'),
+        at(620, 180, 'CCPF'),
+        at(390, 220, 'A 2 : Développer le vélo sur tout le'),
+        at(620, 220, 'CCPF'),
+        at(50, 180, '1- MOBILITE'),
+      ],
+      null
+    );
+    const next = readColumnTable(
+      [
+        at(390, 60, 'territoire intercommunal'),
+        at(390, 72, '- Volet 2 : communication'),
+        at(390, 120, 'A 3 : Animer un groupe'),
+        at(620, 120, 'SAFER'),
+      ],
+      first?.context ?? null
+    );
+
+    expect(
+      [...(first?.lines ?? []), ...(next?.lines ?? [])].map((line) => line.text)
+    ).toEqual([
+      '## 1- MOBILITE',
+      '### A 1 : Diagnostiquer',
+      'Portage : CCPF',
+      'Actions à définir avec les partenaires',
+      'Portage : CCPF',
+      '### A 2 : Développer le vélo sur tout le',
+      'Portage : CCPF',
+      'territoire intercommunal - Volet 2 : communication',
+      '### A 3 : Animer un groupe',
+      'Portage : SAFER',
+    ]);
+  });
+
+  it('redit sous chaque fiche le regroupement intermédiaire qui les couvre', () => {
+    const items = [
+      ...header,
+      at(390, 140, 'A 1 : Diagnostiquer'),
+      at(620, 140, 'CCPF'),
+      at(390, 180, 'A 2 : Former'),
+      at(620, 180, 'CCPF'),
+      at(390, 220, 'A 3 : Harmoniser'),
+      at(620, 220, 'CCPF'),
+      at(50, 180, '1- GESTION'),
+      at(200, 180, '- Limiter les usages'),
+    ];
+
+    expect(
+      textsOf(items)?.filter((text) => text.startsWith('Objectifs'))
+    ).toEqual([
+      'Objectifs : - Limiter les usages',
+      'Objectifs : - Limiter les usages',
+      'Objectifs : - Limiter les usages',
     ]);
   });
 
@@ -471,14 +567,16 @@ describe('readColumnTable', () => {
 
     expect(textsOf(items)).toEqual([
       '## 1- GESTION',
+      '### A 1 : Diagnostiquer',
       'Objectifs : - Limiter',
-      'A 1 : Diagnostiquer',
       'CCPF',
       'Réalisation : 2024',
-      'A 2 : Former',
+      '### A 2 : Former',
+      'Objectifs : - Limiter',
       'CCPF',
       'Réalisation : 2025',
-      'A 3 : Harmoniser',
+      '### A 3 : Harmoniser',
+      'Objectifs : - Limiter',
       'SAFER',
       'Réalisation : 2026',
     ]);
@@ -516,7 +614,7 @@ describe('readColumnTable', () => {
         ?.links?.map((found) => found.text);
 
     expect(linksOf('## 1- GESTION')).toEqual(['1- GESTION']);
-    expect(linksOf('A 1 : Diagnostiquer')).toEqual(['A 1 : Diagnostiquer']);
+    expect(linksOf('### A 1 : Diagnostiquer')).toEqual(['A 1 : Diagnostiquer']);
     expect(linksOf('Portage : CCPF')).toEqual(['CCPF']);
     expect(linksOf('Réalisation : 2024')).toBeUndefined();
   });

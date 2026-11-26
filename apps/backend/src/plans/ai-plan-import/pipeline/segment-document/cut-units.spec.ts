@@ -422,6 +422,60 @@ describe('cutUnits', () => {
     expect(units[1].text).toContain('Suite de la fiche.');
   });
 
+  it('referme le sommaire où l’une de ses entrées revient en titre, pas une autre partie', () => {
+    const units = cut([
+      page(0, 'Sommaire', 'Axe 1 : Mobilité', 'Axe 2 : Habitat'),
+      page(1, 'Axe 1 : Mobilité', 'Action 1.1 : Covoiturage', 'Texte.'),
+      page(2, 'Plan d’actions', 'Action 2.1 : Isoler', 'Texte.'),
+      page(3, 'Action 2.1 : Isoler', 'Suite de la fiche.'),
+    ]);
+
+    expect(
+      units
+        .filter((unit) => unit.kind === 'fiche')
+        .map((unit) => [unit.title, unit.section])
+    ).toEqual([
+      ['1.1 Covoiturage', undefined],
+      ['2.1 Isoler', 'Plan d’actions'],
+    ]);
+  });
+
+  it('garde entier un sommaire dont les actions repartent à 1 à chaque axe', () => {
+    const fiche = (titre: string) => [titre, 'Pilote : service'];
+    const units = cut([
+      page(
+        0,
+        'Sommaire',
+        'Axe 1 : Habitat',
+        'Action 1 : Guichet unique',
+        'Action 2 : Aides',
+        'Axe 2 : Mobilité',
+        'Action 1 : Pistes cyclables'
+      ),
+      page(
+        1,
+        'Axe 1 : Habitat',
+        ...fiche('Action 1 : Guichet unique'),
+        ...fiche('Action 2 : Aides'),
+        'Axe 2 : Mobilité',
+        ...fiche('Action 1 : Pistes cyclables')
+      ),
+    ]);
+
+    expect(
+      units
+        .filter((unit) => unit.kind === 'fiche')
+        .map((unit) => [unit.title, unit.section, unit.headingPath.join(' > ')])
+    ).toEqual([
+      ['1 Guichet unique', 'Sommaire', '1 Habitat'],
+      ['2 Aides', 'Sommaire', '1 Habitat'],
+      ['1 Pistes cyclables', 'Sommaire', '2 Mobilité'],
+      ['1 Guichet unique', undefined, '1 Habitat'],
+      ['2 Aides', undefined, '1 Habitat'],
+      ['1 Pistes cyclables', undefined, '2 Mobilité'],
+    ]);
+  });
+
   it('ne fusionne jamais deux parties du document', () => {
     const units = cut(
       [page(0, 'DIAGNOSTIC', 'Court.', 'PLAN D’ACTIONS', 'Court aussi.')],
