@@ -1,13 +1,24 @@
 import { describeLlmError, LlmError } from '@tet/backend/utils/llm/llm.errors';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { sumTokenUsage, TokenUsage } from '@tet/backend/utils/llm/token-usage';
-import { Result, success } from '@tet/backend/utils/result.type';
+import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { stripTitleNumber } from '../../adapters/normalize-plan-labels';
+import type { ReadingChoices } from '../../models/import-question';
+import type {
+  AnalysisAbandonedError,
+  ReadingStats,
+} from '../../models/model-doubt';
 import { PlanSkeleton } from '../../models/plan-skeleton';
 import { titlesMatch } from '../extract-actions/similar-titles';
 import { DocumentUnit } from '../segment-document/document-unit';
+import {
+  isActionsSummary,
+  listActionsWithoutFiche,
+  selectActionPlanUnits,
+} from '../segment-document/list-actions-without-fiche';
 import { classifyUnits, UnitCategory } from './classify-units';
 import { extractSkeleton } from './extract-skeleton';
+import { judgeModelDoubt } from './verify-model-doubt';
 
 export type ScoutUnitsResult = {
   keptUnits: DocumentUnit[];
@@ -15,31 +26,11 @@ export type ScoutUnitsResult = {
   discardedCount: number;
   tokens: TokenUsage;
   warnings: string[];
+  /** Le doute du modèle, vérifié ou non, pour caler les seuils. */
+  details: Record<string, number>;
 };
 
-// Les engagements des partenaires décrivent ce que d'autres feront, pas le
-// plan de la collectivité : une partie ainsi titrée n'est pas lue.
-const PARTNER_SECTION = /partenaire/i;
-// Un plan range ses fiches dans une partie à part (programme d'actions,
-// fiches actions), après le diagnostic et la stratégie : quand cette partie
-// est titrée et contient des fiches, le reste du document n'a pas d'action à
-// donner. Il ne sert plus qu'au squelette.
-const ACTION_PLAN_SECTION =
-  /(?:plan|programme) d['’]actions?|fiches?[\s-]actions?|catalogue des actions|plan op[ée]rationnel/i;
-// « Feuille de route mobilité », « Fiches projets » : une partie d'un plan
-// plus large, qui n'en réunit pas toujours toutes les fiches. Seule la prose
-// hors de cette partie est écartée ; ses autres fiches passent au tri.
-const PARTIAL_ACTION_PLAN_SECTION =
-  /fiches?[\s-]projets?|programme op[ée]rationnel|feuille de route/i;
-const MIN_FICHES_IN_ACTION_PLAN = 3;
-// « Action à engager 31 : … », « Mesure 4.2 – … » : une ligne d'un tableau
-// récapitulatif, avec son numéro.
-const NUMBERED_ACTION =
-  /^(?:actions?|mesures?|op[ée]rations?|projets?)\b[^:\n]{0,30}?(\d+(?:\.\d+)*)\s*[:.–—-]/iu;
-// Un récapitulatif qui numérote nettement plus d'actions qu'il n'y a de
-// fiches en porte que nulle fiche ne détaille.
-const MIN_ACTIONS_WITHOUT_FICHE = 3;
-const ACTIONS_WITHOUT_FICHE_RATIO = 1.25;
+export type ScoutUnitsError = LlmError | AnalysisAbandonedError;
 
 /**
  * Écarte ce qui ne contient pas d'action (diagnostic, éditorial, engagements
@@ -51,27 +42,27 @@ export const scoutUnits = async (
   llm: Pick<LlmService, 'generateStructured'>,
   {
     units: allUnits,
+    themeGrouping,
+    actionsWithoutFiche = 'all',
+    readingStats,
+    actionsReadByCode = 0,
     planTypeLabel,
     signal,
-  }: { units: DocumentUnit[]; planTypeLabel?: string; signal?: AbortSignal }
-): Promise<Result<ScoutUnitsResult, LlmError>> => {
-  const readable = allUnits.filter(
-    (unit) => !unit.section || !PARTNER_SECTION.test(unit.section)
-  );
-  const inPart = (pattern: RegExp) =>
-    readable.filter((unit) => unit.section && pattern.test(unit.section));
-  const holdsFiches = (part: DocumentUnit[]) =>
-    part.filter((unit) => unit.kind === 'fiche').length >=
-    MIN_FICHES_IN_ACTION_PLAN;
-  const actionPlan = inPart(ACTION_PLAN_SECTION);
-  const partialPlan = inPart(PARTIAL_ACTION_PLAN_SECTION);
-  const units = holdsFiches(actionPlan)
-    ? actionPlan
-    : holdsFiches(partialPlan)
-    ? readable.filter(
-        (unit) => partialPlan.includes(unit) || unit.kind === 'fiche'
-      )
-    : readable;
+  }: {
+    units: DocumentUnit[];
+    /** La réponse sur les thèmes que la synthèse réunit, quand elle est donnée. */
+    themeGrouping?: ReadingChoices['themeGrouping'];
+    /** La réponse sur les actions listées sans fiche ; toutes par défaut. */
+    actionsWithoutFiche?: ReadingChoices['actionsWithoutFiche'];
+    /** Absent d'un tableur et des points de reprise antérieurs. */
+    readingStats?: ReadingStats;
+    /** Les actions d'un tableur que le code a déjà lues. */
+    actionsReadByCode?: number;
+    planTypeLabel?: string;
+    signal?: AbortSignal;
+  }
+): Promise<Result<ScoutUnitsResult, ScoutUnitsError>> => {
+  const { readable, units } = selectActionPlanUnits(allUnits);
   const setAsideCount = allUnits.length - units.length;
   const classified = await classifyUnits(llm, {
     units,
@@ -85,14 +76,20 @@ export const scoutUnits = async (
   // Avec des fiches, le sommaire et les tableaux récapitulatifs redisent ce
   // qu'elles détaillent : ils servent au squelette, pas à l'extraction.
   const withFiches = units.some((unit) => unit.kind === 'fiche');
+  // Sans les actions qu'aucune fiche ne détaille, leurs récapitulatifs ne
+  // servent plus qu'au squelette, même classés `fiche_action` par le tri.
+  const setAsideSummary = (unit: DocumentUnit) =>
+    actionsWithoutFiche === 'with-fiche' && isActionsSummary(unit);
   const structureUnits = units.filter(
-    (_, index) => categories.get(index) === 'structure'
+    (unit, index) =>
+      categories.get(index) === 'structure' || setAsideSummary(unit)
   );
   const listsActionsWithoutFiche = listActionsWithoutFiche(units);
   const keptUnits = units.filter(
     (unit, index) =>
-      isKept(unit, categories.get(index), withFiches) ||
-      listsActionsWithoutFiche(unit)
+      !setAsideSummary(unit) &&
+      (isKept(unit, categories.get(index), withFiches) ||
+        listsActionsWithoutFiche(unit))
   );
 
   // Sans squelette, la mise en cohérence est sautée : l'import y perd en
@@ -104,11 +101,27 @@ export const scoutUnits = async (
   const skeleton = await extractSkeleton(llm, {
     units,
     structureUnits: [...setAsideSummaries, ...structureUnits],
+    themeGrouping,
     signal,
   });
   const skeletonWarnings = skeleton.success
     ? []
     : [`Squelette du plan non relevé : ${describeLlmError(skeleton.error)}`];
+  const judgement =
+    skeleton.success && skeleton.data.modelDoubt
+      ? judgeModelDoubt(skeleton.data.modelDoubt, {
+          units: allUnits,
+          sortedAsFiche: [...categories.values()].includes('fiche_action'),
+          sortingFailed: classified.data.warnings.length > 0,
+          readingStats,
+          themeGroupingAnswered: themeGrouping !== undefined,
+          actionsReadByCode,
+        })
+      : null;
+  // Seuls le tri et le squelette ont été payés : s'arrêter ici coûte peu.
+  if (judgement?.abandon) {
+    return failure(judgement.abandon);
+  }
 
   return success({
     // Tout écarter serait louche : on lit alors tout, comme sans repérage.
@@ -121,39 +134,13 @@ export const scoutUnits = async (
       classified.data.tokens,
       ...(skeleton.success ? [skeleton.data.tokens] : []),
     ]),
-    warnings: [...classified.data.warnings, ...skeletonWarnings],
+    warnings: [
+      ...classified.data.warnings,
+      ...skeletonWarnings,
+      ...(judgement?.warning ? [judgement.warning] : []),
+    ],
+    details: judgement?.details ?? {},
   });
-};
-
-const numberedActionsOf = (unit: DocumentUnit): string[] =>
-  unit.text
-    .split('\n')
-    .flatMap((line) => line.trim().match(NUMBERED_ACTION)?.[1] ?? []);
-
-/**
- * Les tableaux à garder malgré les fiches, quoi qu'en dise le tri : ensemble,
- * ils numérotent plus d'actions que le document n'a de fiches (51 actions au
- * tableau, 24 fiches pour les seules actions nouvelles). Le tri ne voit que
- * le début et la fin d'un extrait ; le compte, lui, porte sur toutes ses
- * lignes. Un récapitulatif qui redit les fiches, à peu près autant qu'elles,
- * reste écarté.
- */
-const listActionsWithoutFiche = (
-  units: DocumentUnit[]
-): ((unit: DocumentUnit) => boolean) => {
-  // Une fiche découpée en fenêtres reste une fiche.
-  const ficheCount = units.filter(
-    (unit) => unit.kind === 'fiche' && !unit.continued
-  ).length;
-  const listed = new Set(
-    units.filter((unit) => unit.kind !== 'fiche').flatMap(numberedActionsOf)
-  ).size;
-  const hasMore =
-    ficheCount > 0 &&
-    listed - ficheCount >= MIN_ACTIONS_WITHOUT_FICHE &&
-    listed >= ACTIONS_WITHOUT_FICHE_RATIO * ficheCount;
-  return (unit) =>
-    hasMore && numberedActionsOf(unit).length >= MIN_ACTIONS_WITHOUT_FICHE;
 };
 
 /**

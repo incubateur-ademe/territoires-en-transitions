@@ -40,7 +40,7 @@ import { z, ZodType } from 'zod';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { CollectiviteRole } from '@tet/domain/users';
-import { and, asc, count, eq, inArray } from 'drizzle-orm';
+import { and, asc, count, eq, inArray, sql } from 'drizzle-orm';
 import ExcelJS from 'exceljs';
 import request from 'supertest';
 import {
@@ -949,6 +949,49 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
 
     const retried = await enqueue(fields, { source });
     await app.get(GenerateImportDraftService).generate(retried.jobId);
+  });
+
+  test("explique le dernier import abandonné d'un fichier, jusqu'au prochain import de ce fichier", async () => {
+    const source = csvSource('abandon');
+    const fields = {
+      planName: 'Plan import IA abandonné',
+      withVerifications: 'false',
+      withSousActions: 'false',
+    };
+    const findAbandoned = ({ asOther = false } = {}) =>
+      router
+        .createCaller({ user: asOther ? otherUser : user })
+        .plans.aiImport.findAbandonedAiImport({
+          collectiviteId: asOther ? otherCollectiviteId : collectiviteId,
+          hash: calculateDocumentHash(source),
+        });
+    const { jobId } = await enqueue(fields, { source });
+    await app
+      .get(GenerateImportDraftService)
+      .recordTerminalFailure(jobId, 'Échec simulé');
+    expect(await findAbandoned()).toBeNull();
+
+    const abandon = {
+      motif: 'aucune-action' as const,
+      evidence: [{ citation: 'Synthèse des enjeux', page: 2 }],
+      explanation: 'Un diagnostic.',
+    };
+    const report = { issues: [], qualitativeReview: null, abandon };
+    await db.db
+      .update(aiPlanImportJobTable)
+      .set({
+        draft: sql`jsonb_build_object('report', ${JSON.stringify(
+          report
+        )}::jsonb)`,
+      })
+      .where(eq(aiPlanImportJobTable.id, jobId));
+
+    expect(await findAbandoned()).toMatchObject({ jobId, abandon });
+    expect(await findAbandoned({ asOther: true })).toBeNull();
+
+    const again = await enqueue(fields, { source });
+    expect(await findAbandoned()).toBeNull();
+    await app.get(GenerateImportDraftService).generate(again.jobId);
   });
 
   test('ne demande plus confirmation une fois le plan importé supprimé', async () => {

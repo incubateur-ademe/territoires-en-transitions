@@ -7,11 +7,18 @@ import {
   TokenUsage,
 } from '@tet/backend/utils/llm/token-usage';
 import { Result, success } from '@tet/backend/utils/result.type';
+import type { ReadingChoices } from '../../models/import-question';
+import { type ModelDoubt, modelDoubtSchema } from '../../models/model-doubt';
 import { PlanSkeleton, planSkeletonSchema } from '../../models/plan-skeleton';
-import { SQUELETTE_PROMPT } from '../../prompts/squelette.prompt';
+import {
+  SEPARATE_THEMES_RULE,
+  SQUELETTE_PROMPT,
+  THEMES_RULE,
+} from '../../prompts/squelette.prompt';
 import { titleIncludes, titlesMatch } from '../extract-actions/similar-titles';
 import { DocumentUnit } from '../segment-document/document-unit';
 import { isFicheTitleField } from '../segment-document/heading-patterns';
+import { splitGroupedThemes } from './split-grouped-themes';
 
 // Les extraits de structure sont rarement longs ; au-delà, le sommaire suffit.
 const STRUCTURE_MAX_TOKENS = 15_000;
@@ -19,8 +26,15 @@ const STRUCTURE_MAX_TOKENS = 15_000;
 // raisonnement de gpt-oss, qui se prend sur ce budget sans être déclaré.
 const SKELETON_MAX_OUTPUT_TOKENS = 16_000;
 
+// Un doute mal formé ne coûte que le doute : le squelette reste.
+export const skeletonResponseSchema = planSkeletonSchema.extend({
+  doute: modelDoubtSchema.nullable().catch(null).default(null),
+});
+
 export type ExtractSkeletonResult = {
   skeleton: PlanSkeleton | null;
+  /** Ce que le modèle dit ne pas pouvoir lire, à vérifier avant d'y croire. */
+  modelDoubt: ModelDoubt | null;
   tokens: TokenUsage;
 };
 
@@ -33,10 +47,12 @@ export const extractSkeleton = async (
   {
     units,
     structureUnits,
+    themeGrouping,
     signal,
   }: {
     units: DocumentUnit[];
     structureUnits: DocumentUnit[];
+    themeGrouping?: ReadingChoices['themeGrouping'];
     signal?: AbortSignal;
   }
 ): Promise<Result<ExtractSkeletonResult, LlmError>> => {
@@ -62,9 +78,14 @@ export const extractSkeleton = async (
     .map((unit) => unit.title as string);
   const extraits = capByTokens(structureUnits, STRUCTURE_MAX_TOKENS);
   if (titles.length === 0 && extraits.length === 0) {
-    return success({ skeleton: null, tokens: emptyTokenUsage() });
+    return success({
+      skeleton: null,
+      modelDoubt: null,
+      tokens: emptyTokenUsage(),
+    });
   }
 
+  const separateThemes = themeGrouping?.grouping === 'separate';
   const completion = await llm.generateStructured({
     tier: 'strong',
     prompt: generatePrompt(SQUELETTE_PROMPT, {
@@ -77,8 +98,9 @@ export const extractSkeleton = async (
         extraits.length > 0
           ? extraits.join('\n\n')
           : '(aucun extrait de structure)',
+      variantes: separateThemes ? SEPARATE_THEMES_RULE : THEMES_RULE,
     }),
-    schema: planSkeletonSchema,
+    schema: skeletonResponseSchema,
     maxOutputTokens: SKELETON_MAX_OUTPUT_TOKENS,
     reasoningEffort: 'low',
     signal,
@@ -86,9 +108,15 @@ export const extractSkeleton = async (
   if (!completion.success) {
     return completion;
   }
-  const skeleton = withoutFicheSousAxes(completion.data.data, actionTitles);
+  const { doute, ...answer } = completion.data.data;
+  const withoutFiches = withoutFicheSousAxes(answer, actionTitles);
+  const skeleton =
+    separateThemes && themeGrouping
+      ? splitGroupedThemes(withoutFiches, themeGrouping.groups)
+      : withoutFiches;
   return success({
     skeleton: skeleton.axes.length > 0 ? skeleton : null,
+    modelDoubt: doute ?? null,
     tokens: completion.data.tokens,
   });
 };

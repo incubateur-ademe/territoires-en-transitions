@@ -87,9 +87,10 @@ const NAMES_ITSELF_ACTION = /^(?:fiche|action)(?!\p{L})/iu;
 export type DetectHeadingsOptions = {
   /**
    * `fiche` (par défaut) : « Fiche action n°1.2 » est la fiche, ses
-   * « Action 1 – … » restent dans son texte. `etape` : chaque « Action 1 – … »
-   * est une fiche, et la fiche qui les porte devient un sous-axe ; une fiche
-   * sans étape reste une fiche.
+   * « Action 1 – … » restent dans son texte, comme les éléments « A – … » ou
+   * en puces qu'une mesure énumère. `etape` : chaque « Action 1 – … » et
+   * chaque élément énuméré est une fiche, et le titre qui les porte devient un
+   * sous-axe ; une fiche sans étape reste une fiche.
    */
   actionLevel?: ActionLevel;
 };
@@ -105,15 +106,15 @@ export const detectHeadings = (
     (heading) =>
       !named.dropped.has(heading) || (byEtape && named.nested.has(heading))
   );
+  const withActions =
+    actionLevel === 'etape' ? addEnumeratedActions(kept, pages) : kept;
 
   const headings = attachNumberPrefixes(
     keepNumberSequence(
       dropIntertitleSections(
         demoteCapitalsBelowExplicitAxes(
           dropSummaryRows(
-            demoteBannersAboveFiches(
-              addThemesAboveFiches(addEnumeratedActions(kept, pages), pages)
-            ),
+            demoteBannersAboveFiches(addThemesAboveFiches(withActions, pages)),
             pages
           )
         ),
@@ -129,16 +130,32 @@ export const detectHeadings = (
 };
 
 /**
- * Le doute que tranche aujourd'hui la lecture par défaut : un document dont la
- * plupart des fiches nommées (« Fiche action n°1.2 ») détaillent plusieurs
- * étapes titrées « Action 1 – … ». Selon la collectivité, l'action suivie est
- * la fiche ou l'étape. `null` quand le document ne laisse pas ce choix.
+ * Le doute que tranche la lecture par défaut : un document dont la plupart des
+ * fiches nommées (« Fiche action n°1.2 ») détaillent plusieurs étapes titrées
+ * « Action 1 – … », ou dont les mesures énumèrent leurs actions (« A – … »,
+ * puces). Selon la collectivité, l'action suivie est la fiche ou l'étape, la
+ * mesure ou chacun de ses éléments. `null` quand le document ne laisse pas ce
+ * choix.
  */
 export const detectActionLevelDoubt = (
   pages: DocumentPage[]
 ): ActionLevelDoubt | null => {
   const { detected } = scanHeadings(pages);
   const named = classifyNamedFicheActions(detected, pages);
+  return (
+    namedFicheDoubt(detected, named, pages) ??
+    enumerationDoubt(
+      detected.filter((heading) => !named.dropped.has(heading)),
+      pages
+    )
+  );
+};
+
+const namedFicheDoubt = (
+  detected: DetectedHeading[],
+  named: NamedFicheActions,
+  pages: DocumentPage[]
+): ActionLevelDoubt | null => {
   const detailed = named.fiches.filter(
     (fiche) =>
       (named.stepsByFiche.get(fiche)?.length ?? 0) >= MIN_STEPS_PER_FICHE
@@ -178,6 +195,40 @@ export const detectActionLevelDoubt = (
       countPiloteLabels(pages) > named.fiches.length * PILOTES_PER_ETAPE_RATIO
         ? 'etape'
         : 'fiche',
+  };
+};
+
+/**
+ * Les éléments qu'énumèrent les mesures, quand ils ont tout d'actions (voir
+ * `findActionEnumerations`) : chacun est proposé comme action, la mesure
+ * restant l'autre lecture.
+ */
+const enumerationDoubt = (
+  headings: DetectedHeading[],
+  pages: DocumentPage[]
+): ActionLevelDoubt | null => {
+  const enumerations = findActionEnumerations(headings, pages);
+  const [first] = enumerations;
+  if (!first) {
+    return null;
+  }
+  const axes = uniqueByLabel(
+    headings.filter(({ match }) => match.kind === 'axe')
+  );
+  const exampleAxe = headings
+    .slice(0, headings.indexOf(first.parent))
+    .findLast(({ match }) => match.kind === 'axe');
+  return {
+    kind: 'action-level',
+    etapesFrom: 'enumeration',
+    axes: exampleAxe ? describeLevel(exampleAxe, axes.length) : null,
+    fiches: describeLevel(first.parent, enumerations.length),
+    fichesWithEtapes: enumerations.length,
+    etapes: describeLevel(
+      first.items[0],
+      sumBy(enumerations, ({ items }) => items.length)
+    ),
+    proposed: 'etape',
   };
 };
 
@@ -442,10 +493,45 @@ const demoteToSousAxe = (
 };
 
 /**
+ * Lu à l'élément, chaque action énumérée (voir `findActionEnumerations`) ouvre
+ * une fiche, et le titre qui les porte (avec ses rappels) devient leur
+ * sous-axe.
+ */
+const addEnumeratedActions = (
+  headings: DetectedHeading[],
+  pages: DocumentPage[]
+): DetectedHeading[] => {
+  const kept = findActionEnumerations(headings, pages);
+  if (kept.length === 0) {
+    return headings;
+  }
+
+  // Ses rappels dans tout le document, pas seulement ceux qui le suivent : la
+  // ligne « 1.1 Développer des » d'un récapitulatif deviendrait une fiche.
+  const parents = kept.map(({ parent }) => parent);
+  const demoted = demoteToSousAxe(
+    headings,
+    headings.filter((heading) =>
+      parents.some(
+        (parent) => heading === parent || isRecallOf(parent, heading)
+      )
+    )
+  );
+  return [...demoted, ...kept.flatMap(({ items }) => items)].sort(
+    (a, b) => a.pageIndex - b.pageIndex || a.lineIndex - b.lineIndex
+  );
+};
+
+type ActionEnumeration = {
+  /** Le titre qui énumère : une mesure, un groupe d'actions. */
+  parent: DetectedHeading;
+  /** Chaque élément, en titre de fiche. */
+  items: DetectedHeading[];
+};
+
+/**
  * Des actions énumérées sous le titre qui les regroupe : « - … » sous un
- * intertitre, « A – … », « B – … » sous une mesure. Chaque élément ouvre une
- * fiche, et le titre qui les porte (avec ses rappels) devient leur sous-axe.
- * Une énumération n'est faite d'actions que si ses éléments portent, pour la
+ * intertitre, « A – … », « B – … » sous une mesure. Une énumération n'est faite d'actions que si ses éléments portent, pour la
  * plupart, leur propre cartouche (porteur, partenaires), et que le document
  * en donne bien plus que de titres qui les regroupent : l'action est ce qui
  * porte son cartouche, une liste d'étapes ou d'objectifs ne l'a pas. Ou bien
@@ -453,10 +539,10 @@ const demoteToSousAxe = (
  * s'ouvrent sur leur liste : c'est elle qui donne les actions. Jamais sous un
  * axe, ni quand les éléments annoncent les titres qui suivent.
  */
-const addEnumeratedActions = (
+const findActionEnumerations = (
   headings: DetectedHeading[],
   pages: DocumentPage[]
-): DetectedHeading[] => {
+): ActionEnumeration[] => {
   const enumerations = textUnderHeadings(headings, pages)
     .filter(({ parent }) => parent.match.level > SECTION_LEVEL)
     .map(({ parent, body }) => ({ parent, ...enumerationIn(body) }));
@@ -480,8 +566,8 @@ const addEnumeratedActions = (
       peers.length
     );
   };
-  // « Fiche action n°1 » garde ses étapes pilotées : en faire des fiches, ce
-  // serait lire le document à l'étape, ce que la lecture par défaut ne fait pas.
+  // « Fiche action n°1 » se dit déjà l'action : ses étapes pilotées restent
+  // les siennes, même lues à l'élément.
   const namesItselfAction = (heading: DetectedHeading) =>
     NAMES_ITSELF_ACTION.test(sourceTextOf(heading, pages));
   // Une orientation qui annonce ses fiches en puces : elles suivent, titrées.
@@ -503,23 +589,9 @@ const addEnumeratedActions = (
           enumeration.opensBody &&
           opensOnList(enumeration.parent.match.level)))
   );
-  if (kept.length === 0) {
-    return headings;
-  }
-
-  // Ses rappels dans tout le document, pas seulement ceux qui le suivent : la
-  // ligne « 1.1 Développer des » d'un récapitulatif deviendrait une fiche.
-  const parents = kept.map(({ parent }) => parent);
-  const demoted = demoteToSousAxe(
-    headings,
-    headings.filter((heading) =>
-      parents.some(
-        (parent) => heading === parent || isRecallOf(parent, heading)
-      )
-    )
-  );
-  const actions: DetectedHeading[] = kept.flatMap(({ items }) =>
-    items.map(({ letter, title, line }) => ({
+  return kept.map(({ parent, items }) => ({
+    parent,
+    items: items.map(({ letter, title, line }) => ({
       pageIndex: line.pageIndex,
       lineIndex: line.lineIndex,
       lastLineIndex: line.lineIndex,
@@ -531,11 +603,8 @@ const addEnumeratedActions = (
         title,
         confidence: 1,
       },
-    }))
-  );
-  return [...demoted, ...actions].sort(
-    (a, b) => a.pageIndex - b.pageIndex || a.lineIndex - b.lineIndex
-  );
+    })),
+  }));
 };
 
 type BodyLine = { pageIndex: number; lineIndex: number; text: string };

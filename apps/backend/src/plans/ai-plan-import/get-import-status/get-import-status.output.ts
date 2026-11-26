@@ -7,13 +7,14 @@ import {
 import { aiPlanImportProfileSchema } from '../models/import-profile';
 import { importReportSchema } from '../models/import-report';
 import {
-  actionLevelDoubtSchema,
-  actionLevelSchema,
+  importChoiceSchema,
+  importDoubtSchema,
 } from '../models/import-question';
 
-/** La question telle que l'écran la pose ; la réponse sans qui l'a donnée. */
-const importQuestionOutputSchema = actionLevelDoubtSchema.extend({
-  answer: z.object({ actionLevel: actionLevelSchema }).nullable(),
+/** Les doutes tels que l'écran les pose ; la réponse sans qui l'a donnée. */
+const importQuestionOutputSchema = z.object({
+  doubts: z.array(importDoubtSchema),
+  answer: z.object({ choices: z.array(importChoiceSchema) }).nullable(),
 });
 
 const importContentOutputSchema = z.object({
@@ -43,7 +44,7 @@ export const getImportStatusOutputSchema = z.object({
   report: importReportSchema,
   /** Disponible sur le détail uniquement, pas dans la liste des imports. */
   retryDefaults: importRetryDefaultsSchema.nullable().optional(),
-  /** La précision demandée après la lecture, et le choix fait. */
+  /** Les précisions demandées après la lecture, et les choix faits. */
   question: importQuestionOutputSchema.nullable(),
   /** Le plan créé, compté : absent des imports antérieurs et d'Électrification. */
   content: importContentOutputSchema.nullable(),

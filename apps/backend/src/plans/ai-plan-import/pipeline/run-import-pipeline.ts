@@ -1,6 +1,11 @@
 import { DisableableField } from '../models/disableable-field';
-import type { ActionLevel, ActionLevelDoubt } from '../models/import-question';
-import { withActionLevelInstruction } from '../prompts/action-level-instruction';
+import {
+  type ActionLevel,
+  type ImportDoubt,
+  proposedReadingChoices,
+  type ReadingChoices,
+} from '../models/import-question';
+import { withReadingChoicesInstructions } from '../prompts/reading-choices-instructions';
 import {
   AiPlanImportProfileEnum,
   GENERIC_IMPORT_CONTRACT_VERSION,
@@ -25,12 +30,21 @@ import {
   detectDocumentTome,
   WrongTome,
 } from './detect-document-tome/detect-document-tome';
+import type {
+  AnalysisAbandonedError,
+  ReadingStats,
+} from '../models/model-doubt';
+import {
+  isMostlyUnreadable,
+  measureReadingStats,
+} from './document/reading-stats';
 import { scoutUnits } from './scout-units/scout-units';
+import { applyReadingChoices } from './apply-reading-choices';
 import { DocumentUnit } from './segment-document/document-unit';
 import { hasMergedRowGroups } from './segment-document/cut-tabular-units';
 import {
   DEFAULT_SEGMENT_OPTIONS,
-  detectDocumentActionLevelDoubt,
+  detectReadingDoubts,
   segmentDocument,
 } from './segment-document/segment-document';
 import { coalesceChunks } from './source-chunks/coalesce-chunks';
@@ -86,12 +100,20 @@ export type ReadingError =
       evidence: string;
     };
 
-export type PipelineError = ExtractActionsError | ReadingError;
+export type PipelineError =
+  | ExtractActionsError
+  | ReadingError
+  | AnalysisAbandonedError;
 
-/** L'erreur en une ligne : le statut HTTP ou la règle violée quand il y en a. */
+/**
+ * L'erreur en une ligne : le statut HTTP, la règle violée ou le motif d'un
+ * abandon, jamais un mot du document.
+ */
 export const describePipelineError = (error: PipelineError): string =>
   error.kind === 'api_error' || error.kind === 'invalid_json'
     ? describeLlmError(error)
+    : error.kind === 'analysis_abandoned'
+    ? `${error.kind}:${error.motif}`
     : error.kind;
 
 export type PipelineLlm = Pick<
@@ -134,12 +156,12 @@ export type RunImportPipelineInput = {
   onStepRun?: (run: ImportStepRun) => Promise<void>;
   /** Après chaque étape terminée : de quoi reprendre l'import à cet endroit. */
   onCheckpoint?: (checkpoint: PipelineCheckpoint) => Promise<void>;
-  /** Le niveau de l'action choisi par l'utilisateur, quand le document laissait le choix. */
-  actionLevel?: ActionLevel;
+  /** La réponse de l'utilisateur aux doutes que le document laissait. */
+  readingChoices?: ReadingChoices;
   /**
-   * S'arrêter après la lecture quand le document laisse un doute sur le
-   * niveau de l'action, pour le demander. Sans cela, la lecture par fiche
-   * s'applique, comme avant la question.
+   * S'arrêter après la lecture quand le document laisse des doutes, pour les
+   * demander ensemble. Sans cela, les choix proposés s'appliquent comme une
+   * réponse : ce qu'obtient l'utilisateur qui clique « Continuer ».
    */
   pauseOnQuestion?: boolean;
 } & (
@@ -160,7 +182,7 @@ export type PipelineOutcome =
   | {
       /** Lecture faite, rien d'autre : le point de reprise attend la réponse. */
       status: 'awaiting_answer';
-      question: ActionLevelDoubt;
+      doubts: ImportDoubt[];
       warnings: string[];
       stepStates: StepStates;
       tokens: TokenUsage;
@@ -242,9 +264,24 @@ export const runImportPipeline = async (
   if (input.resumeFrom) {
     // Les actions lues par le code sont dans `progress.actions` : la reprise
     // les retrouve sans relire le classeur.
-    const { progress, chunks, units, skeleton, source, pendingQuestion } =
-      input.resumeFrom;
-    state = { progress, chunks, units, skeleton, source, pendingQuestion };
+    const {
+      progress,
+      chunks,
+      units,
+      skeleton,
+      source,
+      pendingQuestion,
+      readingStats,
+    } = input.resumeFrom;
+    state = {
+      progress,
+      chunks,
+      units,
+      skeleton,
+      source,
+      pendingQuestion,
+      readingStats,
+    };
     tabularRowGroups = input.resumeFrom.tabularRowGroups;
   } else {
     const readingStartedAt = new Date();
@@ -252,7 +289,7 @@ export const runImportPipeline = async (
       llm,
       input.document,
       input.disabledFields,
-      input.actionLevel
+      input.readingChoices
     );
     await reportStepRun({
       step: 'reading',
@@ -281,6 +318,7 @@ export const runImportPipeline = async (
         ? coalesceChunks(analysis.source, VERIFICATION_WINDOW_TOKENS)
         : { chunks: read.data.chunks, chunkIndexByAction: [] },
       pendingQuestion: read.data.pendingQuestion,
+      readingStats: read.data.readingStats,
     };
     tabularRowGroups = read.data.tabularRowGroups;
   }
@@ -315,8 +353,8 @@ export const runImportPipeline = async (
       ...state,
       units: state.units?.map(toTextUnit) ?? null,
       pendingQuestion: state.pendingQuestion && {
-        question: state.pendingQuestion.question,
-        unitsByLevel: {
+        doubts: state.pendingQuestion.doubts,
+        unitsByLevel: state.pendingQuestion.unitsByLevel && {
           fiche: state.pendingQuestion.unitsByLevel.fiche.map(toTextUnit),
           etape: state.pendingQuestion.unitsByLevel.etape.map(toTextUnit),
         },
@@ -330,22 +368,27 @@ export const runImportPipeline = async (
   await reportProgress(state.progress.stepStates);
 
   // La question se pose avant le premier appel au modèle : la lecture est
-  // tout ce que l'utilisateur attend.
+  // tout ce que l'utilisateur attend. Sans pause, les choix proposés valent
+  // réponse pour tout le reste du passage, comme le clic sur « Continuer » :
+  // tri, squelette, jugement du doute et consignes.
+  let readingChoices = input.readingChoices;
   if (state.pendingQuestion) {
-    if (input.actionLevel) {
-      state.units = state.pendingQuestion.unitsByLevel[input.actionLevel];
-      state.pendingQuestion = null;
-    } else if (input.pauseOnQuestion) {
+    if (!readingChoices && input.pauseOnQuestion) {
       return {
         status: 'awaiting_answer',
-        question: state.pendingQuestion.question,
+        doubts: state.pendingQuestion.doubts,
         warnings: state.progress.warnings,
         stepStates: state.progress.stepStates,
         tokens: state.progress.tokens,
       };
-    } else {
-      state.pendingQuestion = null;
     }
+    readingChoices ??= proposedReadingChoices(state.pendingQuestion.doubts);
+    state.units = applyReadingChoices(
+      state.units,
+      state.pendingQuestion,
+      readingChoices
+    );
+    state.pendingQuestion = null;
   }
 
   const sequentialSteps: PipelineStep[] = [
@@ -354,9 +397,13 @@ export const runImportPipeline = async (
     {
       name: 'scouting',
       skipWhen: () => state.units === null || state.units.length === 0,
-      run: async () => {
+      run: async (actions) => {
         const result = await scoutUnits(llm, {
           units: state.units as DocumentUnit[],
+          themeGrouping: readingChoices?.themeGrouping,
+          actionsWithoutFiche: readingChoices?.actionsWithoutFiche,
+          readingStats: state.readingStats,
+          actionsReadByCode: actions.length,
           planTypeLabel: input.planTypeLabel,
           signal: input.signal,
         });
@@ -371,6 +418,7 @@ export const runImportPipeline = async (
           details: {
             keptUnits: result.data.keptUnits.length,
             discardedUnits: result.data.discardedCount,
+            ...result.data.details,
           },
         });
       },
@@ -388,9 +436,9 @@ export const runImportPipeline = async (
             : failure({ kind: 'no_actions_extracted' as const });
         }
         const extraction = {
-          instructions: withActionLevelInstruction(
+          instructions: withReadingChoicesInstructions(
             input.instructions,
-            input.actionLevel
+            readingChoices
           ),
           disabledFields: input.disabledFields,
           currentDate: input.currentDate,
@@ -785,6 +833,7 @@ type ReadSource = {
   chunks: string[];
   units: DocumentUnit[] | null;
   pendingQuestion: PendingQuestion | null;
+  readingStats: ReadingStats | undefined;
   /** Un tableur : ce que le code en a lu, le reste allant au modèle. */
   analysis: WorkbookAnalysis | null;
   tabularRowGroups: boolean;
@@ -799,7 +848,7 @@ const readSource = (
   llm: PipelineLlm,
   document: ReadDocument,
   disabledFields: DisableableField[],
-  actionLevel: ActionLevel | undefined
+  readingChoices: ReadingChoices | undefined
 ): Result<ReadSource, ReadingError> => {
   const tome = detectDocumentTome(document);
   if (tome.verdict === 'wrong_tome') {
@@ -822,6 +871,7 @@ const readSource = (
       maxChunks: MAX_DOCUMENT_UNITS,
     });
   }
+  const readingStats = measureReadingStats(document);
   const modelDocument: ReadDocument = analysis
     ? { ...document, pages: analysis.modelPages }
     : document;
@@ -854,28 +904,50 @@ const readSource = (
             chunks: [],
             units,
             pendingQuestion,
+            readingStats,
             analysis,
             tabularRowGroups,
           });
 
-    // Le niveau déjà choisi se lit tel quel, que le document pose ou non la question.
-    if (actionLevel) {
-      return read(unitsAt(actionLevel));
+    // Le niveau déjà choisi se lit tel quel, que le document pose ou non la
+    // question ; les autres choix s'appliquent aussitôt.
+    if (readingChoices?.actionLevel) {
+      return read(
+        applyReadingChoices(
+          unitsAt(readingChoices.actionLevel),
+          null,
+          readingChoices
+        ) ?? []
+      );
     }
-    const question = detectDocumentActionLevelDoubt(modelDocument);
-    if (!question) {
-      return read(unitsAt('fiche'));
+    const ficheUnits = unitsAt('fiche');
+    // Un texte en grande partie illisible ne se questionne pas : le modèle
+    // pourra le dire et s'arrêter.
+    const doubts = isMostlyUnreadable(readingStats)
+      ? []
+      : detectReadingDoubts(modelDocument, ficheUnits);
+    const pendingOf = (
+      pending: ImportDoubt[],
+      unitsByLevel: PendingQuestion['unitsByLevel'] = null
+    ): PendingQuestion | null =>
+      pending.length > 0 ? { doubts: pending, unitsByLevel } : null;
+    const actionLevelDoubt = doubts.find(({ kind }) => kind === 'action-level');
+    if (!actionLevelDoubt) {
+      return read(ficheUnits, pendingOf(doubts));
     }
     // Les deux lectures, faute de quoi la réponse ferait relire le document.
     // Une lecture au-delà de la limite échouerait à la reprise : seule celle
-    // qui tient reste, sans question.
-    const unitsByLevel = { fiche: unitsAt('fiche'), etape: unitsAt('etape') };
+    // qui tient reste, sans ce doute.
+    const unitsByLevel = { fiche: ficheUnits, etape: unitsAt('etape') };
     const fits = (level: ActionLevel) =>
       totalOf(unitsByLevel[level]) <= MAX_DOCUMENT_UNITS;
     if (fits('fiche') && fits('etape')) {
-      return read(unitsByLevel.fiche, { question, unitsByLevel });
+      return read(unitsByLevel.fiche, pendingOf(doubts, unitsByLevel));
     }
-    return read(fits('etape') ? unitsByLevel.etape : unitsByLevel.fiche);
+    return read(
+      fits('etape') ? unitsByLevel.etape : unitsByLevel.fiche,
+      pendingOf(doubts.filter((doubt) => doubt !== actionLevelDoubt))
+    );
   }
   const text = joinPages(modelDocument);
   const chunks =
@@ -902,6 +974,7 @@ const readSource = (
     chunks,
     units: null,
     pendingQuestion: null,
+    readingStats,
     analysis,
     tabularRowGroups,
   });

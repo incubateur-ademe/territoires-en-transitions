@@ -37,24 +37,60 @@ export const importStatus: ImportStatus = {
 
 /** La question d'un document qui titre ses fiches et détaille leurs étapes. */
 export const actionLevelQuestion: NonNullable<ImportStatus['question']> = {
-  kind: 'action-level',
-  axes: {
-    exampleTitle: 'Limiter les déchets verts',
-    examplePage: 31,
-    count: 5,
-  },
-  fiches: {
-    exampleTitle: 'Accompagner les habitants vers le jardinage au naturel',
-    examplePage: 37,
-    count: 16,
-  },
-  fichesWithEtapes: 16,
-  etapes: {
-    exampleTitle: 'Diagnostiquer et orienter',
-    examplePage: 37,
-    count: 54,
-  },
-  proposed: 'fiche',
+  doubts: [
+    {
+      kind: 'action-level',
+      axes: {
+        exampleTitle: 'Limiter les déchets verts',
+        examplePage: 31,
+        count: 5,
+      },
+      fiches: {
+        exampleTitle: 'Accompagner les habitants vers le jardinage au naturel',
+        examplePage: 37,
+        count: 16,
+      },
+      fichesWithEtapes: 16,
+      etapes: {
+        exampleTitle: 'Diagnostiquer et orienter',
+        examplePage: 37,
+        count: 54,
+      },
+      proposed: 'fiche',
+    },
+  ],
+  answer: null,
+};
+
+/** Deux précisions demandées ensemble : le niveau de l'action et les thèmes. */
+export const twoDoubtsQuestion: NonNullable<ImportStatus['question']> = {
+  doubts: [
+    ...actionLevelQuestion.doubts,
+    {
+      kind: 'theme-grouping',
+      groups: [
+        {
+          label: 'BIODÉCHETS : RESTES ALIMENTAIRES ET VÉGÉTAUX',
+          labelPage: 3,
+          variants: [
+            {
+              theme: 'BIODECHETS (végétaux)',
+              fiches: 3,
+              exampleTitle: 'Promouvoir le broyage des végétaux',
+              page: 28,
+            },
+            {
+              theme: 'BIODECHETS (alimentaires)',
+              fiches: 2,
+              exampleTitle: 'Développer le compostage partagé',
+              page: 31,
+            },
+          ],
+        },
+      ],
+      proposed: 'grouped',
+    },
+  ],
   answer: null,
 };
 
@@ -174,14 +210,14 @@ export class AiImportFixture {
           break;
         case 'answerAiImportQuestion': {
           const body = route.request().postDataJSON();
-          const answer = (body?.['0']?.json ?? body?.json ?? body)?.answer;
-          this.answers.push(answer);
+          const choices = (body?.['0']?.json ?? body?.json ?? body)?.choices;
+          this.answers.push(...(choices ?? []));
           this.status = {
             ...this.status,
             status: 'running',
             question: this.status.question && {
               ...this.status.question,
-              answer: { actionLevel: answer?.actionLevel },
+              answer: { choices },
             },
           };
           this.current = this.status;

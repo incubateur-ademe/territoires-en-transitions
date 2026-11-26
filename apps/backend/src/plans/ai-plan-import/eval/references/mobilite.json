@@ -1,6 +1,7 @@
 {
   "manual": true,
   "fichier": "mobilité/PDMS_CMC_Phase 3_Feuilles de route.pdf",
+  "questionsAttendues": [{ "kind": "action-level", "actionLevel": "etape" }],
   "document": "Plan de mobilité simplifié de Centre Morbihan Communauté (CMC), phase 3 « Définition du programme d’actions », version finale de novembre 2023 (diaporama de 33 pages, sans période d'application explicite) ; structure relevée dans le sommaire (p. 2), les pages de synthèse par axe (p. 3-4, 22, 30) et le corps des fiches (p. 5-33) : 3 axes, 11 sous-axes (mesures), 44 fiches (actions lettrées), 0 étape.",
   "remarques": [
     "Hiérarchie retenue : Axe → Mesure (sous-axe, numérotée 1.1…3.2) → Action lettrée A, B, C… (fiche). Chaque action a son propre cartouche (échéance, porteurs, partenaires, territoires, publics, budget) : c'est elle la fiche, la mesure ne fait que les regrouper. Aucune étape titrée sous les actions (seulement des puces de description).",

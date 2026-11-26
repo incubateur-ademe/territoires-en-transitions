@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { buildHorizontalHierarchyWorkbook } from '../__fixtures__/build-test-workbook';
 import { buildDocument, buildPage } from '../document/document-page';
 import { readDocument } from '../read-document/read-document';
+import type { ActionLevel } from '../../models/import-question';
 import { detectActionLevelDoubt, detectHeadings } from './detect-headings';
 import { segmentDocument } from './segment-document';
 import { renderUnit } from './render-unit';
@@ -643,12 +644,18 @@ describe('detectHeadings sur un PCAET à fiches tabulaires', () => {
   });
 });
 
+// Lues à l'élément : la lecture que propose la question du niveau de l'action.
 describe('actions énumérées sous le titre qui les regroupe', () => {
-  const fiches = (pages: ReturnType<typeof buildPage>[], format = 'pdf') =>
+  const fiches = (
+    pages: ReturnType<typeof buildPage>[],
+    format = 'pdf',
+    actionLevel: ActionLevel = 'etape'
+  ) =>
     segmentDocument(buildDocument(format as 'pdf' | 'docx', pages), {
       minTokens: 0,
       maxTokens: 1000,
       overlapTokens: 0,
+      actionLevel,
     })
       .filter((unit) => unit.kind === 'fiche')
       .map((unit) => [unit.title, unit.headingPath.join(' > '), unit.section]);
@@ -993,6 +1000,105 @@ describe('actions énumérées sous le titre qui les regroupe', () => {
         'docx'
       ).map(([title]) => title)
     ).toEqual([]);
+  });
+
+  it('lit par défaut la mesure comme l’action, ses éléments restant dans son texte', () => {
+    const pages = [
+      buildPage(0, [axe, ...mesure('1.1', 'Développer le vélo', ['A', 'B'])]),
+      buildPage(1, mesure('1.2', 'Élaborer un schéma cyclable', ['A', 'B'])),
+    ];
+
+    expect(fiches(pages, 'pdf', 'fiche').map(([title]) => title)).toEqual([
+      '1.1 Développer le vélo',
+      '1.2 Élaborer un schéma cyclable',
+    ]);
+    expect(
+      segmentDocument(buildDocument('pdf', pages), {
+        minTokens: 0,
+        maxTokens: 1000,
+        overlapTokens: 0,
+      })[1].text
+    ).toContain('A – Action A de la mesure 1.1');
+  });
+
+  it('demande si l’action est la mesure ou chacun de ses éléments, en proposant les éléments', () => {
+    const pages = [
+      buildPage(0, [axe, ...mesure('1.1', 'Développer le vélo', ['A', 'B'])]),
+      buildPage(1, mesure('1.2', 'Élaborer un schéma cyclable', ['A', 'B'])),
+    ];
+
+    expect(detectActionLevelDoubt(pages)).toEqual({
+      kind: 'action-level',
+      etapesFrom: 'enumeration',
+      axes: {
+        exampleTitle: 'Garantir le droit à se déplacer',
+        examplePage: 1,
+        count: 1,
+      },
+      fiches: {
+        exampleTitle: 'Développer le vélo',
+        examplePage: 1,
+        count: 2,
+      },
+      fichesWithEtapes: 2,
+      etapes: {
+        exampleTitle: 'Action A de la mesure 1.1',
+        examplePage: 1,
+        count: 4,
+      },
+      proposed: 'etape',
+    });
+  });
+
+  it('demande aussi pour les puces d’un plan Word qui ne titre pas ses actions', () => {
+    expect(
+      detectActionLevelDoubt([
+        buildPage(0, [
+          { text: '# Axe 1 — Un territoire sobre' },
+          { text: "### Groupe d'actions 1.1 — Bâtiments publics" },
+          { text: '- Rénover les écoles' },
+          { text: '- Former les agents' },
+          { text: "### Groupe d'actions 1.2 — Éclairage" },
+          { text: '- Éteindre la nuit' },
+        ]),
+      ])
+    ).toMatchObject({
+      etapesFrom: 'enumeration',
+      fiches: { exampleTitle: 'Bâtiments publics', count: 2 },
+      etapes: { exampleTitle: 'Rénover les écoles', count: 3 },
+      proposed: 'etape',
+    });
+  });
+
+  it.each([
+    [
+      'sans cartouche',
+      [
+        buildPage(0, [
+          axe,
+          ...mesure('1.1', 'Développer le vélo', ['A', 'B'], false),
+        ]),
+        buildPage(
+          1,
+          mesure('1.2', 'Élaborer un schéma cyclable', ['A', 'B'], false)
+        ),
+      ],
+    ],
+    [
+      'quand le document titre ses fiches',
+      [
+        buildPage(0, [
+          { text: '# Axe 1 — Un territoire sobre' },
+          { text: '## Fiche action 1 : Rénover les écoles' },
+          { text: '- Isoler les combles' },
+          { text: '- Changer les fenêtres' },
+          { text: '## Fiche action 2 : Éclairer moins' },
+          { text: '- Éteindre la nuit' },
+        ]),
+      ],
+    ],
+  ])('ne demande rien pour une énumération %s', (_cas, pages) => {
+    expect(detectActionLevelDoubt(pages)).toBeNull();
   });
 
   it('rétrograde les rappels de la mesure porteuse jusque dans un récapitulatif', () => {

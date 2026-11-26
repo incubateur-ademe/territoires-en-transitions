@@ -6,8 +6,8 @@ import { DisableableField } from './disableable-field';
 import { ImportJobStats } from './import-job-stats';
 import { AiPlanImportProfile, AiPlanImportProfileEnum } from './import-profile';
 import { PlanDraft } from './plan-draft';
-import { ImportReport } from './import-report';
-import type { ImportQuestion } from './import-question';
+import { ImportAbandon, ImportReport } from './import-report';
+import type { ImportQuestion, StoredImportQuestion } from './import-question';
 import type { ElectrificationImportOptions } from '../electrification/electrification-import-options';
 
 export const aiPlanImportJobStatusValues = [
@@ -103,12 +103,22 @@ export type AiPlanImportJob = {
   startedAt: string | null;
   finishedAt: string | null;
   stats: ImportJobStats | null;
-  /** La précision demandée, et la réponse une fois donnée. */
-  question: ImportQuestion | null;
+  /**
+   * Les précisions demandées, et la réponse une fois donnée. Telle qu'en base :
+   * se lit par `readImportQuestion`, qui accepte l'ancienne forme.
+   */
+  question: StoredImportQuestion | null;
   /** Passage en cours : 0 au premier, un de plus à chaque reprise. */
   attempt: number;
   createdAt: string;
   modifiedAt: string;
+};
+
+/** Le dernier import d'un fichier, que l'IA a préféré abandonner. */
+export type AbandonedAiImport = {
+  jobId: string;
+  importedAt: string;
+  abandon: ImportAbandon;
 };
 
 /** Plan encore présent issu d'un import antérieur du même fichier. */

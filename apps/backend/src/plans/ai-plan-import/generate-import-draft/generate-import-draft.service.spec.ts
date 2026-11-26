@@ -42,6 +42,7 @@ import {
   sumLlmCallMetrics,
 } from '../pipeline/compute-import-metrics';
 import { ExpireImportQuestionsService } from '../expire-import-questions/expire-import-questions.service';
+import { buildTestPdf } from '../pipeline/__fixtures__/build-test-pdf';
 
 /** Les événements du cycle de vie d'un import, sans le détail des étapes. */
 const lifecycleEvents = (capture: ReturnType<typeof vi.fn>): string[] =>
@@ -107,8 +108,11 @@ const extractionAction = {
 type MockOverrides = {
   options?: AiPlanImportJob['options'];
   sourceContent?: string;
+  /** Un autre fichier que le CSV par défaut. */
+  source?: { buffer: Buffer; mimeType: string };
+  strategy?: 'whole-document' | 'segmented';
   maxInputTokens?: number;
-  generateStructured?: () => Promise<unknown>;
+  generateStructured?: (args: { prompt: string }) => Promise<unknown>;
   save?: () => Promise<Result<ImportPlanOutput, never>>;
   markDone?: () => Promise<Result<AiPlanImportJob, string>>;
   markFailed?: () => Promise<Result<AiPlanImportJob, string>>;
@@ -158,13 +162,15 @@ const buildMocks = (overrides: MockOverrides = {}) => {
     downloadDocument: vi.fn(async () =>
       overrides.sourceAvailable === false
         ? failure('READ_DOCUMENT_ERROR')
-        : success({
-            buffer: Buffer.from(
-              overrides.sourceContent ?? 'axe,titre\n1,Action',
-              'utf-8'
-            ),
-            mimeType: 'text/csv',
-          })
+        : success(
+            overrides.source ?? {
+              buffer: Buffer.from(
+                overrides.sourceContent ?? 'axe,titre\n1,Action',
+                'utf-8'
+              ),
+              mimeType: 'text/csv',
+            }
+          )
     ),
     removeDocument,
   } as unknown as DocumentStorageService;
@@ -177,7 +183,10 @@ const buildMocks = (overrides: MockOverrides = {}) => {
     );
   const llm = {
     maxInputTokens: overrides.maxInputTokens ?? 900_000,
-    capabilities: { ocr: false, strategy: 'whole-document' },
+    capabilities: {
+      ocr: false,
+      strategy: overrides.strategy ?? 'whole-document',
+    },
     maxInputTokensFor: () => overrides.maxInputTokens ?? 900_000,
     generateStructured: overrides.generateStructured
       ? vi.fn(overrides.generateStructured)
@@ -198,10 +207,12 @@ const buildMocks = (overrides: MockOverrides = {}) => {
   const markAsImportedByAi = vi.fn(async () => success(undefined));
   const markAsImporting = vi.fn(async () => success(undefined));
   const markAsImportFailed = vi.fn(async () => success(undefined));
+  const deleteImportingPlan = vi.fn(async () => success(undefined));
   const planVerificationRepository = {
     markAsImportedByAi,
     markAsImporting,
     markAsImportFailed,
+    deleteImportingPlan,
   } as unknown as PlanVerificationRepository;
 
   const notifyPlanImported = vi.fn(async () => success(undefined));
@@ -253,6 +264,7 @@ const buildMocks = (overrides: MockOverrides = {}) => {
     markAsImportedByAi,
     markAsImporting,
     markAsImportFailed,
+    deleteImportingPlan,
     notifyPlanImported,
     removeDocument,
   };
@@ -328,16 +340,38 @@ describe('GenerateImportDraftService', () => {
     }
   );
 
-  it('garde la source tant que l’import attend une réponse', async () => {
+  it('garde la source tant que l’import attend une réponse, et suit les doutes posés', async () => {
     const mocks = buildMocks();
     const awaitingAnswer = {
-      generate: async () => success({ awaitingAnswer: true }),
+      generate: async () =>
+        success({
+          awaitingAnswer: true,
+          doubts: [
+            {
+              kind: 'action-level',
+              axes: null,
+              fiches: { exampleTitle: 'Fiche', examplePage: 3, count: 16 },
+              fichesWithEtapes: 16,
+              etapes: { exampleTitle: 'Étape', examplePage: 3, count: 54 },
+              proposed: 'fiche',
+            },
+          ],
+        }),
     } as unknown as GenerateGenericImportService;
 
     expect(await buildService(mocks, awaitingAnswer).generate('job-1')).toEqual(
       success(undefined)
     );
     expect(mocks.removeDocument).not.toHaveBeenCalled();
+    expect(mocks.capture).toHaveBeenCalledWith(
+      expect.objectContaining({
+        properties: expect.objectContaining({
+          questionKinds: ['action-level'],
+          questionCount: 1,
+          proposed: 'fiche',
+        }),
+      })
+    );
   });
 
   it('conserve la source en cas d’échec terminal d’un contrat non pris en charge', async () => {
@@ -673,6 +707,94 @@ describe('GenerateImportDraftService', () => {
         properties: expect.objectContaining({ reason: 'api_error' }),
       })
     );
+  });
+
+  it("s'arrête sur un abandon motivé : message composé, une remarque par citation, sans point de reprise ni texte du modèle dans PostHog", async () => {
+    const explication = 'Ce document est le diagnostic du territoire.';
+    const mocks = buildMocks({
+      strategy: 'segmented',
+      source: {
+        buffer: buildTestPdf([
+          {
+            kind: 'text',
+            blocks: [
+              { text: 'Synthèse des enjeux du territoire', size: 16, y: 760 },
+              {
+                text: 'Le territoire compte 12 000 habitants et émet 80 ktCO2 par an.',
+                y: 700,
+              },
+            ],
+          },
+        ]),
+        mimeType: 'application/pdf',
+      },
+      generateStructured: async ({ prompt }) => {
+        if (prompt.includes('agent de tri documentaire')) {
+          return success({ data: [{ index: 0, type: 'structure' }], tokens });
+        }
+        if (prompt.includes('squelette du plan')) {
+          return success({
+            data: {
+              axes: [],
+              doute: {
+                motif: 'aucune-action',
+                citations: ['Synthèse des enjeux du territoire'],
+                explication,
+              },
+            },
+            tokens,
+          });
+        }
+        throw new Error('appel au modèle après l’abandon');
+      },
+    });
+
+    await buildService(mocks).generate('job-1');
+
+    const failed = vi.mocked(mocks.jobRepository.markFailed).mock.calls[0][0];
+    expect(failed).toMatchObject({
+      error: [
+        "L'IA n'a trouvé aucune action dans ce document et préfère s'arrêter plutôt que d'en inventer.",
+        "Ce qu'elle a relevé : « Synthèse des enjeux du territoire » (p. 1).",
+        `Elle précise : « ${explication} »`,
+        "Déposez le document qui contient le plan d'actions (fiches actions ou tableau des actions) ou, si c'est bien celui-ci, contactez-nous.",
+      ].join('\n'),
+      dropCheckpoint: true,
+      report: {
+        issues: [
+          {
+            kind: 'document-error',
+            code: 'abandon:aucune-action',
+            message:
+              "Passage relevé par l'IA : « Synthèse des enjeux du territoire »",
+            location: 'p. 1',
+          },
+        ],
+        qualitativeReview: null,
+        abandon: {
+          motif: 'aucune-action',
+          evidence: [
+            { citation: 'Synthèse des enjeux du territoire', page: 1 },
+          ],
+          explanation: explication,
+        },
+      },
+    });
+    const failedEvent = mocks.capture.mock.calls
+      .map(([params]) => params)
+      .find(({ event }) => event === 'plans:import-ia:failed');
+    expect(failedEvent?.properties).toMatchObject({
+      failedStep: 'scouting',
+      reason: 'analysis_abandoned:aucune-action',
+      issueKinds: 'document-error',
+    });
+    expect(JSON.stringify(mocks.capture.mock.calls)).not.toContain(
+      'diagnostic du territoire'
+    );
+    expect(mocks.removeDocument).toHaveBeenCalled();
+    // Le plan provisoire, vide, disparaît : « aucun plan n'a été créé ».
+    expect(mocks.deleteImportingPlan).toHaveBeenCalledWith(7, {});
+    expect(mocks.markAsImportFailed).not.toHaveBeenCalled();
   });
 
   it('marque le job failed et supprime la source quand la pipeline lève une exception', async () => {

@@ -13,8 +13,10 @@ import {
 } from '../models/import-profile';
 import {
   actionLevelDoubtSchema,
-  type ActionLevelDoubt,
+  importDoubtsSchema,
+  type ImportDoubt,
 } from '../models/import-question';
+import { readingStatsSchema, type ReadingStats } from '../models/model-doubt';
 import { planSkeletonSchema, type PlanSkeleton } from '../models/plan-skeleton';
 import type { DocumentKind } from './document/document-page';
 import type { PipelineLlm } from './run-import-pipeline';
@@ -35,12 +37,13 @@ export type PipelineProgress = {
 };
 
 /**
- * Le doute relevé à la lecture, et les unités de chacune des deux lectures :
- * la réponse choisit les siennes sans relire le document, déjà supprimé.
+ * Les doutes relevés à la lecture, posés ensemble. Avec un doute sur le niveau
+ * de l'action, les unités de chacune des deux lectures : la réponse choisit
+ * les siennes sans relire le document, déjà supprimé.
  */
 export type PendingQuestion = {
-  question: ActionLevelDoubt;
-  unitsByLevel: { fiche: DocumentUnit[]; etape: DocumentUnit[] };
+  doubts: ImportDoubt[];
+  unitsByLevel: { fiche: DocumentUnit[]; etape: DocumentUnit[] } | null;
 };
 
 /** Ce que les étapes se transmettent, actions comprises. */
@@ -52,6 +55,8 @@ export type PipelineState = {
   source: SourceChunks;
   /** Absent des points de reprise antérieurs à la question. */
   pendingQuestion?: PendingQuestion | null;
+  /** Pages illisibles du PDF ou du Word lu ; absent d'un tableur et des points de reprise antérieurs. */
+  readingStats?: ReadingStats;
 };
 
 export const PIPELINE_CHECKPOINT_SCHEMA_VERSION = 1;
@@ -113,6 +118,33 @@ const documentUnitSchema = z.object({
   continued: z.boolean().optional(),
 });
 
+const unitsByLevelSchema = z.object({
+  fiche: z.array(documentUnitSchema),
+  etape: z.array(documentUnitSchema),
+});
+
+// Les imports mis en attente avant les questions multiples gardent un seul
+// doute : ils reprennent sans relire le document.
+const legacyPendingQuestionSchema = z
+  .object({
+    question: actionLevelDoubtSchema,
+    unitsByLevel: unitsByLevelSchema,
+  })
+  .transform(
+    ({ question, unitsByLevel }): PendingQuestion => ({
+      doubts: [question],
+      unitsByLevel,
+    })
+  );
+
+const pendingQuestionSchema = z.union([
+  z.object({
+    doubts: importDoubtsSchema,
+    unitsByLevel: unitsByLevelSchema.nullable(),
+  }),
+  legacyPendingQuestionSchema,
+]);
+
 export const pipelineCheckpointSchema = genericImportContractSchema.extend({
   schemaVersion: z.literal(PIPELINE_CHECKPOINT_SCHEMA_VERSION),
   completedStep: stepStatesSchema.keyof(),
@@ -136,16 +168,8 @@ export const pipelineCheckpointSchema = genericImportContractSchema.extend({
   chunks: z.array(z.string()),
   units: z.array(documentUnitSchema).nullable(),
   skeleton: planSkeletonSchema.nullable(),
-  pendingQuestion: z
-    .object({
-      question: actionLevelDoubtSchema,
-      unitsByLevel: z.object({
-        fiche: z.array(documentUnitSchema),
-        etape: z.array(documentUnitSchema),
-      }),
-    })
-    .nullable()
-    .optional(),
+  pendingQuestion: pendingQuestionSchema.nullable().optional(),
+  readingStats: readingStatsSchema.optional(),
   source: z.object({
     chunks: z.array(z.string()),
     chunkIndexByAction: z.array(countSchema),

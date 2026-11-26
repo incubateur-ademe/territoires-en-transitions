@@ -26,6 +26,7 @@ import { sumLlmCallMetrics } from '../pipeline/compute-import-metrics';
 import { ImportJobTelemetry } from './import-job-telemetry';
 import {
   jobTrackingProperties,
+  questionTrackingProperties,
   statsTrackingProperties,
   stepRunTrackingProperties,
 } from './import-job-tracking';
@@ -242,6 +243,7 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
             ...jobTrackingProperties(job),
             collectiviteId: job.collectiviteId,
             jobId: job.id,
+            ...questionTrackingProperties(imported.data.doubts),
           },
           groups: { collectivite: String(job.collectiviteId) },
         });
@@ -293,11 +295,17 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
       );
       if (!job.success || job.data.createdPlanId === null) return job;
 
-      const planFailed =
-        await this.planVerificationRepository.markAsImportFailed(
-          job.data.createdPlanId,
-          tx
-        );
+      // Un abandon motivé a lieu au repérage, avant toute écriture : le plan
+      // provisoire est vide et disparaît, plutôt que de rester en échec.
+      const planFailed = report?.abandon
+        ? await this.planVerificationRepository.deleteImportingPlan(
+            job.data.createdPlanId,
+            tx
+          )
+        : await this.planVerificationRepository.markAsImportFailed(
+            job.data.createdPlanId,
+            tx
+          );
       return planFailed.success
         ? job
         : failure(AiPlanImportErrorEnum.UPDATE_JOB_ERROR);

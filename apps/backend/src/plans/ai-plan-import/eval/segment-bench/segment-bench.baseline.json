@@ -12,7 +12,7 @@
     "axesTrouves": 6,
     "axesComplets": 6
   },
-  "cot-ccvn · fiche": {
+  "cot-ccvn · etape": {
     "attendues": 66,
     "trouvees": 66,
     "titresComplets": 66,
@@ -25,7 +25,7 @@
     "axesTrouves": 4,
     "axesComplets": 4
   },
-  "mobilite · fiche": {
+  "mobilite · etape": {
     "attendues": 44,
     "trouvees": 42,
     "titresComplets": 24,
@@ -90,7 +90,20 @@
     "axesTrouves": 7,
     "axesComplets": 7
   },
-  "plpdma-capg · fiche": {
+  "plpdma-capg · fiche · grouped": {
+    "attendues": 14,
+    "trouvees": 14,
+    "titresComplets": 14,
+    "numerosAttendus": 14,
+    "numeros": 14,
+    "bonAxe": 14,
+    "bonChemin": 14,
+    "enTrop": 6,
+    "axesAttendus": 6,
+    "axesTrouves": 6,
+    "axesComplets": 6
+  },
+  "plpdma-capg · fiche · separate": {
     "attendues": 14,
     "trouvees": 14,
     "titresComplets": 14,

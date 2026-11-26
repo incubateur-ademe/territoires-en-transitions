@@ -3,6 +3,12 @@ import { resolveImportProfile } from '../models/import-profile';
 import type { AiPlanImportJob } from '../models/ai-plan-import-job';
 import type { ImportJobStats } from '../models/import-job-stats';
 import type { ImportStepRun } from '../models/import-step-run';
+import {
+  type ActionLevelDoubt,
+  changedKindsOf,
+  type ImportChoice,
+  type ImportDoubt,
+} from '../models/import-question';
 
 type Properties = Record<string, TrackedEventPropertyValue>;
 
@@ -75,3 +81,29 @@ export const stepRunTrackingProperties = (run: ImportStepRun): Properties => ({
   ),
   models: [...new Set(run.calls.map(({ model }) => model))].sort().join(','),
 });
+
+/**
+ * Les doutes posés, et la réponse si elle est donnée. `actionLevel` et
+ * `proposed` restent pour les tableaux de bord d'avant les questions multiples.
+ */
+export const questionTrackingProperties = (
+  doubts: ImportDoubt[],
+  choices?: ImportChoice[]
+): Properties => {
+  const actionLevelDoubt = doubts.find(
+    (doubt): doubt is ActionLevelDoubt => doubt.kind === 'action-level'
+  );
+  const actionLevelChoice = choices?.find(
+    (choice): choice is Extract<ImportChoice, { kind: 'action-level' }> =>
+      choice.kind === 'action-level'
+  );
+  return {
+    questionKinds: doubts.map(({ kind }) => kind),
+    questionCount: doubts.length,
+    proposed: actionLevelDoubt?.proposed,
+    ...(choices && {
+      actionLevel: actionLevelChoice?.actionLevel,
+      changedKinds: changedKindsOf(doubts, choices),
+    }),
+  };
+};

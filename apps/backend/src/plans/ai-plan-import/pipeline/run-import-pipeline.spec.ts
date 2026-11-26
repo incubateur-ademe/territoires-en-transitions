@@ -8,11 +8,16 @@ import { axisPathOf, ExtractedAction } from '../models/extracted-action';
 import { parseImportCheckpoint } from '../models/import-checkpoint';
 import { ImportStepRun } from '../models/import-step-run';
 import {
+  proposedReadingChoices,
+  toReadingChoices,
+} from '../models/import-question';
+import {
   buildDocument,
   buildPage,
   type ReadDocument,
 } from './document/document-page';
 import { SPREADSHEET_RULE } from '../prompts/field-rules';
+import { SEPARATE_THEMES_RULE, THEMES_RULE } from '../prompts/squelette.prompt';
 import {
   buildHorizontalHierarchyWorkbook,
   buildMixedWorkbook,
@@ -207,6 +212,42 @@ const input = (overrides: Partial<FreshInput> = {}): FreshInput => ({
   effetsAttendus: [],
   ...overrides,
 });
+
+/** Les prompts envoyés, triés : les branches parallèles n'ont pas d'ordre. */
+const sentPrompts = (llm: PipelineLlm): string[] =>
+  vi
+    .mocked(llm.generateStructured)
+    .mock.calls.map(([args]) => (args as { prompt: string }).prompt)
+    .sort();
+
+/** Le clic sur « Continuer » : la pause, puis la reprise avec les choix proposés. */
+const continueWithProposed = async (
+  makeLlm: () => PipelineLlm,
+  document: ReadDocument
+) => {
+  const checkpoints: PipelineCheckpoint[] = [];
+  const paused = await runImportPipeline(
+    makeLlm(),
+    input({
+      document,
+      pauseOnQuestion: true,
+      onCheckpoint: async (checkpoint) => {
+        checkpoints.push(roundTripCheckpoint(checkpoint));
+      },
+    })
+  );
+  expect(paused.status).toBe('awaiting_answer');
+  const doubts = checkpoints[0].pendingQuestion?.doubts ?? [];
+  const llm = makeLlm();
+  const { document: _document, ...base } = input();
+  const outcome = await runImportPipeline(llm, {
+    ...base,
+    pauseOnQuestion: true,
+    readingChoices: proposedReadingChoices(doubts),
+    resumeFrom: checkpoints[0],
+  });
+  return { llm, outcome };
+};
 
 describe('runImportPipeline', () => {
   it('exécute les 5 étapes et renvoie un brouillon', async () => {
@@ -1746,22 +1787,25 @@ describe('runImportPipeline : la question du niveau de l’action', () => {
     expect(llm.generateStructured).not.toHaveBeenCalled();
     expect(outcome).toMatchObject({
       status: 'awaiting_answer',
-      question: {
-        kind: 'action-level',
-        fiches: { count: 3 },
-        etapes: { count: 6 },
-        proposed: 'fiche',
-      },
+      doubts: [
+        {
+          kind: 'action-level',
+          fiches: { count: 3 },
+          etapes: { count: 6 },
+          proposed: 'fiche',
+        },
+      ],
     });
     expect(checkpoints.map(({ completedStep }) => completedStep)).toEqual([
       'reading',
     ]);
     const pending = checkpoints[0].pendingQuestion;
+    expect(pending?.doubts.map(({ kind }) => kind)).toEqual(['action-level']);
     expect(
-      pending?.unitsByLevel.fiche.filter(({ kind }) => kind === 'fiche')
+      pending?.unitsByLevel?.fiche.filter(({ kind }) => kind === 'fiche')
     ).toHaveLength(3);
     expect(
-      pending?.unitsByLevel.etape.filter(({ kind }) => kind === 'fiche')
+      pending?.unitsByLevel?.etape.filter(({ kind }) => kind === 'fiche')
     ).toHaveLength(6);
   });
 
@@ -1794,7 +1838,7 @@ describe('runImportPipeline : la question du niveau de l’action', () => {
       const outcome = await runImportPipeline(llm, {
         ...base,
         pauseOnQuestion: true,
-        actionLevel,
+        readingChoices: { actionLevel },
         resumeFrom: checkpoints[0],
         onCheckpoint: async (checkpoint) => {
           later.push(roundTripCheckpoint(checkpoint));
@@ -1820,17 +1864,85 @@ describe('runImportPipeline : la question du niveau de l’action', () => {
     }
   );
 
-  it('sans pause demandée, lit par fiche comme avant, prompts inchangés', async () => {
-    const llm = segmentedLlm();
+  it('reprend un import mis en attente sous l’ancienne forme, à un seul doute', async () => {
+    const { checkpoints } = await pause();
+    const { pendingQuestion, ...rest } = JSON.parse(
+      JSON.stringify(checkpoints[0])
+    );
+    const legacy = parseImportCheckpoint({
+      ...rest,
+      documentStats: null,
+      pendingQuestion: {
+        question: pendingQuestion.doubts[0],
+        unitsByLevel: pendingQuestion.unitsByLevel,
+      },
+    });
+    expect(legacy.success).toBe(true);
+    if (!legacy.success) throw legacy.error;
+    expect(legacy.data.pendingQuestion?.doubts).toEqual(pendingQuestion.doubts);
+    const { document: _document, ...base } = input();
 
-    const outcome = await runImportPipeline(llm, input({ document }));
+    const unanswered = await runImportPipeline(segmentedLlm(), {
+      ...base,
+      pauseOnQuestion: true,
+      resumeFrom: legacy.data,
+    });
+    const llm = segmentedLlm();
+    const answered = await runImportPipeline(llm, {
+      ...base,
+      pauseOnQuestion: true,
+      readingChoices: { actionLevel: 'etape' },
+      resumeFrom: legacy.data,
+    });
+
+    expect(unanswered).toMatchObject({
+      status: 'awaiting_answer',
+      doubts: pendingQuestion.doubts,
+    });
+    expect(answered.status).toBe('done');
+    expect(
+      structurationPrompts(llm).every((prompt) =>
+        prompt.includes('est une action distincte')
+      )
+    ).toBe(true);
+  });
+
+  it('reprend sans consigne ni changement de lecture quand la réponse ne tranche pas le niveau', async () => {
+    const { checkpoints } = await pause();
+    const llm = segmentedLlm();
+    const { document: _document, ...base } = input();
+
+    const outcome = await runImportPipeline(llm, {
+      ...base,
+      pauseOnQuestion: true,
+      readingChoices: {},
+      resumeFrom: checkpoints[0],
+    });
 
     expect(outcome.status).toBe('done');
     expect(
-      structurationPrompts(llm).some((prompt) =>
-        prompt.includes('sont ses sous-actions')
+      structurationPrompts(llm).some(
+        (prompt) =>
+          prompt.includes('sont ses sous-actions') ||
+          prompt.includes('est une action distincte')
       )
     ).toBe(false);
+  });
+
+  it('sans pause demandée, fait ce que fait « Continuer » : la consigne du choix proposé, mêmes prompts', async () => {
+    const llm = segmentedLlm();
+
+    const outcome = await runImportPipeline(llm, input({ document }));
+    const continued = await continueWithProposed(segmentedLlm, document);
+
+    expect(outcome.status).toBe('done');
+    expect(continued.outcome.status).toBe('done');
+    const prompts = structurationPrompts(llm);
+    expect(prompts.length).toBeGreaterThan(0);
+    expect(
+      prompts.every((prompt) => prompt.includes('sont ses sous-actions'))
+    ).toBe(true);
+    expect(sentPrompts(llm)).toEqual(sentPrompts(continued.llm));
   });
 
   it('lit par fiche, sans question, quand la lecture à l’étape dépasserait la limite', async () => {
@@ -1876,6 +1988,130 @@ describe('runImportPipeline : la question du niveau de l’action', () => {
     );
   });
 
+  describe('mesures qui énumèrent leurs actions', () => {
+    const element = (lettre: string, titre: string) => [
+      { text: `${lettre} – ${titre}`, fontSize: 9 },
+      { text: 'Partenaire(s)', fontSize: 10.5 },
+      { text: 'Un paragraphe de corps de texte normal.', fontSize: 9 },
+      { text: 'Un autre paragraphe de corps de texte.', fontSize: 9 },
+    ];
+    const mesure = (numero: string, titre: string) => [
+      { text: `Mesure ${numero} : ${titre}`, fontSize: 14 },
+      ...element('A', `Organiser la mesure ${numero}`),
+      ...element('B', `Financer la mesure ${numero}`),
+    ];
+    const enumerated = buildDocument('pdf', [
+      buildPage(0, [
+        { text: 'Axe 1 – Garantir le droit à se déplacer', fontSize: 16 },
+        ...mesure('1.1', 'Développer le vélo'),
+      ]),
+      buildPage(1, mesure('1.2', 'Élaborer un schéma cyclable')),
+    ]);
+    const skeletonPrompt = (llm: PipelineLlm) =>
+      vi
+        .mocked(llm.generateStructured)
+        .mock.calls.map(([args]) => (args as { prompt: string }).prompt)
+        .find((prompt) => prompt.includes('squelette du plan'));
+
+    it('demande si l’action est la mesure ou chacun de ses éléments, en proposant les éléments', async () => {
+      const checkpoints: PipelineCheckpoint[] = [];
+      const outcome = await runImportPipeline(
+        segmentedLlm(),
+        input({
+          document: enumerated,
+          pauseOnQuestion: true,
+          onCheckpoint: async (checkpoint) => {
+            checkpoints.push(roundTripCheckpoint(checkpoint));
+          },
+        })
+      );
+
+      expect(outcome).toMatchObject({
+        status: 'awaiting_answer',
+        doubts: [
+          {
+            kind: 'action-level',
+            etapesFrom: 'enumeration',
+            fiches: { exampleTitle: 'Développer le vélo', count: 2 },
+            etapes: { exampleTitle: 'Organiser la mesure 1.1', count: 4 },
+            proposed: 'etape',
+          },
+        ],
+      });
+      const pending = checkpoints[0].pendingQuestion;
+      expect(
+        pending?.unitsByLevel?.fiche.filter(({ kind }) => kind === 'fiche')
+      ).toHaveLength(2);
+      expect(
+        pending?.unitsByLevel?.etape.filter(({ kind }) => kind === 'fiche')
+      ).toHaveLength(4);
+    });
+
+    it('sans pause demandée, lit chaque élément comme une action, comme après « Continuer »', async () => {
+      const llm = segmentedLlm();
+
+      const outcome = await runImportPipeline(
+        llm,
+        input({ document: enumerated })
+      );
+      const continued = await continueWithProposed(segmentedLlm, enumerated);
+
+      expect(outcome.status).toBe('done');
+      expect(skeletonPrompt(llm)).toContain('A Organiser la mesure 1.1');
+      expect(
+        structurationPrompts(llm).some((prompt) =>
+          prompt.includes('énumère des actions')
+        )
+      ).toBe(false);
+      expect(sentPrompts(llm)).toEqual(sentPrompts(continued.llm));
+    });
+
+    it.each([
+      ['fiche', true, false],
+      ['etape', false, true],
+    ] as const)(
+      'reprend avec la réponse « %s » : ses unités, et la consigne d’une énumération',
+      async (actionLevel, consigne, elementsEnFiches) => {
+        const checkpoints: PipelineCheckpoint[] = [];
+        await runImportPipeline(
+          segmentedLlm(),
+          input({
+            document: enumerated,
+            pauseOnQuestion: true,
+            onCheckpoint: async (checkpoint) => {
+              checkpoints.push(roundTripCheckpoint(checkpoint));
+            },
+          })
+        );
+        const llm = segmentedLlm();
+        const { document: _document, ...base } = input();
+        const doubts = checkpoints[0].pendingQuestion?.doubts ?? [];
+
+        const outcome = await runImportPipeline(llm, {
+          ...base,
+          pauseOnQuestion: true,
+          readingChoices: toReadingChoices(doubts, [
+            { kind: 'action-level', actionLevel },
+          ]),
+          resumeFrom: checkpoints[0],
+        });
+
+        expect(outcome.status).toBe('done');
+        const prompts = structurationPrompts(llm);
+        expect(prompts.length).toBeGreaterThan(0);
+        expect(
+          prompts.every((prompt) => prompt.includes('énumère des actions'))
+        ).toBe(consigne);
+        expect(
+          prompts.some((prompt) => prompt.includes('« Action 1 – … »'))
+        ).toBe(false);
+        expect(skeletonPrompt(llm)?.includes('A Organiser la mesure 1.1')).toBe(
+          elementsEnFiches
+        );
+      }
+    );
+  });
+
   it('ne pose pas la question à un document qui ne laisse pas le choix', async () => {
     const llm = segmentedLlm();
 
@@ -1888,5 +2124,713 @@ describe('runImportPipeline : la question du niveau de l’action', () => {
     );
 
     expect(outcome.status).not.toBe('awaiting_answer');
+  });
+});
+
+describe('runImportPipeline : la question des thèmes que la synthèse réunit', () => {
+  const segmentedLlm = (): PipelineLlm => {
+    const llm = routedLlm();
+    (llm as { capabilities: unknown }).capabilities = {
+      ocr: false,
+      strategy: 'segmented',
+    };
+    return llm;
+  };
+  const LABEL = 'BIODÉCHETS : RESTES ALIMENTAIRES ET VÉGÉTAUX';
+  const synthese = buildPage(0, [
+    { text: 'Synthèse du programme', fontSize: 10 },
+    { text: LABEL, fontSize: 10 },
+    { text: '1. Organiser le compostage individuel des foyers', fontSize: 10 },
+    { text: '2. Promouvoir le broyage des végétaux du jardin', fontSize: 10 },
+    { text: 'DÉCHETS EN MER', fontSize: 10 },
+    {
+      text: '3. Lutter contre les dépôts sauvages en bord de mer',
+      fontSize: 10,
+    },
+  ]);
+  const ficheSousTheme = (
+    pageIndex: number,
+    theme: string,
+    numero: number,
+    titre: string,
+    etapes: string[] = []
+  ) =>
+    buildPage(pageIndex, [
+      { text: theme, fontSize: 16 },
+      { text: `Action ${numero}. ${titre}`, fontSize: 14 },
+      { text: 'Pilote : Service déchets', fontSize: 10 },
+      ...etapes.flatMap((etape) => [
+        { text: etape, fontSize: 10 },
+        { text: 'Un paragraphe de corps de texte normal.', fontSize: 10 },
+      ]),
+      { text: 'Un paragraphe de corps de texte normal.', fontSize: 10 },
+    ]);
+  const themes = buildDocument('pdf', [
+    synthese,
+    ficheSousTheme(
+      1,
+      'BIODECHETS (restes alimentaires)',
+      1,
+      'Organiser le compostage individuel des foyers'
+    ),
+    ficheSousTheme(
+      2,
+      'BIODECHETS (végétaux)',
+      2,
+      'Promouvoir le broyage des végétaux du jardin'
+    ),
+    ficheSousTheme(
+      3,
+      'DECHETS EN MER',
+      3,
+      'Lutter contre les dépôts sauvages en bord de mer'
+    ),
+  ]);
+  const skeletonPrompt = (llm: PipelineLlm) =>
+    vi
+      .mocked(llm.generateStructured)
+      .mock.calls.map(([args]) => (args as { prompt: string }).prompt)
+      .find((prompt) => prompt.includes('squelette du plan')) ?? '';
+  /** Les seuls titres relevés : les règles du prompt citent aussi des thèmes. */
+  const skeletonTitles = (llm: PipelineLlm): string[] =>
+    (skeletonPrompt(llm).split("dans l'ordre :\n")[1] ?? '')
+      .split('\n\n')[0]
+      .split('\n')
+      .map((line) => line.trim());
+
+  const pause = async (document: ReadDocument = themes) => {
+    const llm = segmentedLlm();
+    const checkpoints: PipelineCheckpoint[] = [];
+    const outcome = await runImportPipeline(
+      llm,
+      input({
+        document,
+        pauseOnQuestion: true,
+        onCheckpoint: async (checkpoint) => {
+          checkpoints.push(roundTripCheckpoint(checkpoint));
+        },
+      })
+    );
+    return { llm, outcome, checkpoints };
+  };
+
+  it('s’arrête après la lecture, sans appeler le modèle, avec les thèmes et leur preuve', async () => {
+    const { llm, outcome, checkpoints } = await pause();
+
+    expect(llm.generateStructured).not.toHaveBeenCalled();
+    expect(outcome).toMatchObject({
+      status: 'awaiting_answer',
+      doubts: [
+        {
+          kind: 'theme-grouping',
+          groups: [
+            {
+              label: LABEL,
+              labelPage: 1,
+              variants: [
+                { theme: 'BIODECHETS (restes alimentaires)', page: 2 },
+                { theme: 'BIODECHETS (végétaux)', page: 3 },
+              ],
+            },
+          ],
+          proposed: 'grouped',
+        },
+      ],
+    });
+    expect(checkpoints[0].pendingQuestion).toMatchObject({
+      unitsByLevel: null,
+    });
+  });
+
+  it.each([
+    ['grouped', [LABEL], THEMES_RULE],
+    [
+      'separate',
+      ['BIODECHETS (restes alimentaires)', 'BIODECHETS (végétaux)'],
+      SEPARATE_THEMES_RULE,
+    ],
+  ] as const)(
+    'reprend avec la réponse « %s » : le squelette voit ses thèmes, avec sa règle',
+    async (grouping, expectedThemes, rule) => {
+      const { checkpoints } = await pause();
+      const llm = segmentedLlm();
+      const { document: _document, ...base } = input();
+      const doubts = checkpoints[0].pendingQuestion?.doubts ?? [];
+
+      const outcome = await runImportPipeline(llm, {
+        ...base,
+        pauseOnQuestion: true,
+        readingChoices: toReadingChoices(doubts, [
+          { kind: 'theme-grouping', grouping },
+        ]),
+        resumeFrom: checkpoints[0],
+      });
+
+      expect(outcome.status).toBe('done');
+      const titles = skeletonTitles(llm);
+      expect(
+        titles.filter(
+          (title) => title.includes('BIODECHETS') || title === LABEL
+        )
+      ).toEqual(expectedThemes);
+      expect(titles).toContain('DECHETS EN MER');
+      expect(skeletonPrompt(llm)).toContain(rule);
+    }
+  );
+
+  it('sans pause demandée, réunit les thèmes comme après « Continuer », mêmes prompts', async () => {
+    const llm = segmentedLlm();
+
+    const outcome = await runImportPipeline(llm, input({ document: themes }));
+    const continued = await continueWithProposed(segmentedLlm, themes);
+
+    expect(outcome.status).toBe('done');
+    expect(skeletonTitles(llm)).toContain(LABEL);
+    expect(skeletonTitles(llm)).not.toContain('BIODECHETS (végétaux)');
+    expect(skeletonPrompt(llm)).toContain(THEMES_RULE);
+    expect(sentPrompts(llm)).toEqual(sentPrompts(continued.llm));
+  });
+
+  it('sans pause demandée, n’abandonne pas pour « grilles concurrentes » : la question des thèmes vaut réponse, comme après « Continuer »', async () => {
+    // Le squelette doute de la grille en citant la synthèse ; la question des
+    // thèmes, posée et répondue, a tranché.
+    const doubtingLlm = (): PipelineLlm => {
+      const llm = segmentedLlm();
+      const answer = llm.generateStructured;
+      (llm as { generateStructured: unknown }).generateStructured = vi.fn(
+        async (call: { prompt: string }) =>
+          call.prompt.includes('squelette du plan')
+            ? success({
+                data: {
+                  axes: [{ numero: '1', titre: LABEL, sousAxes: [] }],
+                  doute: {
+                    motif: 'grilles-concurrentes',
+                    citations: [LABEL],
+                    explication: 'Deux grilles de thèmes.',
+                  },
+                },
+                tokens,
+              })
+            : answer(call as Parameters<typeof answer>[0])
+      );
+      return llm;
+    };
+
+    const outcome = await runImportPipeline(
+      doubtingLlm(),
+      input({ document: themes })
+    );
+    const continued = await continueWithProposed(doubtingLlm, themes);
+
+    expect(continued.outcome.status).toBe('done');
+    expect(outcome.status).toBe('done');
+    expect(outcome.warnings).toEqual(continued.outcome.warnings);
+    expect(outcome.warnings).toContain(
+      'Doute du modèle « grilles-concurrentes » non confirmé par le document'
+    );
+  });
+
+  it('pose ensemble les deux questions, et applique les deux réponses à la reprise', async () => {
+    const etapes = [
+      'Action 1 - Diagnostiquer et orienter',
+      'Action 2 – Accompagner et former',
+    ];
+    const fiche = (
+      pageIndex: number,
+      theme: string,
+      numero: string,
+      titre: string
+    ) =>
+      buildPage(pageIndex, [
+        { text: theme, fontSize: 16 },
+        { text: `Fiche Action n°${numero}`, fontSize: 14 },
+        { text: titre, fontSize: 14 },
+        { text: 'Pilote : Direction Prévention', fontSize: 10 },
+        ...etapes.flatMap((etape) => [
+          { text: etape, fontSize: 10 },
+          { text: 'Un paragraphe de corps de texte normal.', fontSize: 10 },
+        ]),
+      ]);
+    const both = buildDocument('pdf', [
+      buildPage(0, [
+        { text: 'Synthèse du programme', fontSize: 10 },
+        { text: LABEL, fontSize: 10 },
+        { text: '1.1 Développer une culture du compost partagé', fontSize: 10 },
+        {
+          text: '1.2 Promouvoir le broyage des végétaux du jardin',
+          fontSize: 10,
+        },
+        {
+          text: '1.3 Poursuivre le tri des déchets alimentaires',
+          fontSize: 10,
+        },
+      ]),
+      fiche(
+        1,
+        'BIODECHETS (restes alimentaires)',
+        '1.1',
+        'Développer une culture du compost partagé'
+      ),
+      fiche(
+        2,
+        'BIODECHETS (végétaux)',
+        '1.2',
+        'Promouvoir le broyage des végétaux du jardin'
+      ),
+      fiche(
+        3,
+        'BIODECHETS (végétaux)',
+        '1.3',
+        'Poursuivre le tri des déchets alimentaires'
+      ),
+    ]);
+
+    const { outcome, checkpoints } = await pause(both);
+
+    expect(outcome.status).toBe('awaiting_answer');
+    const doubts = checkpoints[0].pendingQuestion?.doubts ?? [];
+    expect(doubts.map(({ kind }) => kind)).toEqual([
+      'action-level',
+      'theme-grouping',
+    ]);
+
+    const llm = segmentedLlm();
+    const { document: _document, ...base } = input();
+    const resumed = await runImportPipeline(llm, {
+      ...base,
+      pauseOnQuestion: true,
+      readingChoices: toReadingChoices(doubts, [
+        { kind: 'action-level', actionLevel: 'fiche' },
+        { kind: 'theme-grouping', grouping: 'grouped' },
+      ]),
+      resumeFrom: checkpoints[0],
+    });
+
+    expect(resumed.status).toBe('done');
+    const titles = skeletonTitles(llm);
+    expect(titles).toContain(LABEL);
+    expect(titles.some((title) => title.includes('BIODECHETS'))).toBe(false);
+    const structuration = vi
+      .mocked(llm.generateStructured)
+      .mock.calls.map(([args]) => (args as { prompt: string }).prompt)
+      .filter((prompt) => stepOf(prompt) === 'extraction');
+    expect(structuration.length).toBeGreaterThan(0);
+    expect(
+      structuration.every((prompt) => prompt.includes('sont ses sous-actions'))
+    ).toBe(true);
+  });
+});
+
+describe('runImportPipeline : la question des actions listées sans fiche', () => {
+  const segmentedLlm = (): PipelineLlm => {
+    const llm = routedLlm();
+    (llm as { capabilities: unknown }).capabilities = {
+      ocr: false,
+      strategy: 'segmented',
+    };
+    return llm;
+  };
+  const engaged = [2, 4, 6];
+  const NOT_DETAILED = 'Action à poursuivre 1 : Mener l’action numéro 1';
+  // Le tri du faux modèle classe le tableau, première unité, `fiche_action`.
+  const recapitulatif = buildDocument('pdf', [
+    buildPage(0, [
+      { text: 'Tableau du plan d’actions', fontSize: 10 },
+      ...[1, 2, 3, 4, 5, 6, 7, 8].map((numero) => ({
+        text: `Action à ${
+          engaged.includes(numero) ? 'engager' : 'poursuivre'
+        } ${numero} : Mener l’action numéro ${numero} du plan`,
+        fontSize: 10,
+      })),
+    ]),
+    ...engaged.map((numero, index) =>
+      buildPage(index + 1, [
+        { text: '1 Connaître le territoire', fontSize: 16 },
+        {
+          text: `Action ${numero}. Mener l’action numéro ${numero} du plan`,
+          fontSize: 14,
+        },
+        { text: 'Pilote : Service biodiversité', fontSize: 10 },
+        { text: 'Un paragraphe de corps de texte normal.', fontSize: 10 },
+      ])
+    ),
+  ]);
+  const promptsOf = (llm: PipelineLlm, step: StepName): string[] =>
+    vi
+      .mocked(llm.generateStructured)
+      .mock.calls.map(([args]) => (args as { prompt: string }).prompt)
+      .filter((prompt) => stepOf(prompt) === step);
+  const skeletonPrompt = (llm: PipelineLlm) =>
+    promptsOf(llm, 'scouting').find((prompt) =>
+      prompt.includes('squelette du plan')
+    ) ?? '';
+  const INSTRUCTION = 'même quand aucune fiche ne la détaille';
+
+  const pause = async () => {
+    const llm = segmentedLlm();
+    const checkpoints: PipelineCheckpoint[] = [];
+    const outcome = await runImportPipeline(
+      llm,
+      input({
+        document: recapitulatif,
+        pauseOnQuestion: true,
+        onCheckpoint: async (checkpoint) => {
+          checkpoints.push(roundTripCheckpoint(checkpoint));
+        },
+      })
+    );
+    return { llm, outcome, checkpoints };
+  };
+
+  it('s’arrête après la lecture, sans appeler le modèle, avec les comptes et un exemple', async () => {
+    const { llm, outcome, checkpoints } = await pause();
+
+    expect(llm.generateStructured).not.toHaveBeenCalled();
+    expect(outcome).toMatchObject({
+      status: 'awaiting_answer',
+      doubts: [
+        {
+          kind: 'actions-without-fiche',
+          listed: 8,
+          withFiche: 3,
+          withoutFiche: 5,
+          example: { title: `${NOT_DETAILED} du plan`, page: 1 },
+          tablePages: [1],
+          proposed: 'all',
+        },
+      ],
+    });
+    expect(checkpoints[0].pendingQuestion).toMatchObject({
+      unitsByLevel: null,
+    });
+  });
+
+  it.each([
+    ['all', true],
+    ['with-fiche', false],
+  ] as const)(
+    'reprend avec la réponse « %s »',
+    async (actions, extractsSummary) => {
+      const { checkpoints } = await pause();
+      const llm = segmentedLlm();
+      const { document: _document, ...base } = input();
+      const doubts = checkpoints[0].pendingQuestion?.doubts ?? [];
+
+      const outcome = await runImportPipeline(llm, {
+        ...base,
+        pauseOnQuestion: true,
+        readingChoices: toReadingChoices(doubts, [
+          { kind: 'actions-without-fiche', actions },
+        ]),
+        resumeFrom: checkpoints[0],
+      });
+
+      expect(outcome.status).toBe('done');
+      const extraction = promptsOf(llm, 'extraction');
+      expect(extraction.length).toBeGreaterThan(0);
+      expect(extraction.some((prompt) => prompt.includes(NOT_DETAILED))).toBe(
+        extractsSummary
+      );
+      expect(extraction.every((prompt) => prompt.includes(INSTRUCTION))).toBe(
+        extractsSummary
+      );
+      // Écarté de l'extraction, le tableau donne encore ses orientations.
+      expect(skeletonPrompt(llm).includes(NOT_DETAILED)).toBe(!extractsSummary);
+    }
+  );
+
+  it('sans pause demandée, garde le tableau avec la consigne du choix proposé, comme après « Continuer »', async () => {
+    const llm = segmentedLlm();
+
+    const outcome = await runImportPipeline(
+      llm,
+      input({ document: recapitulatif })
+    );
+    const continued = await continueWithProposed(segmentedLlm, recapitulatif);
+
+    expect(outcome.status).toBe('done');
+    const extraction = promptsOf(llm, 'extraction');
+    expect(extraction.some((prompt) => prompt.includes(NOT_DETAILED))).toBe(
+      true
+    );
+    expect(extraction.every((prompt) => prompt.includes(INSTRUCTION))).toBe(
+      true
+    );
+    expect(sentPrompts(llm)).toEqual(sentPrompts(continued.llm));
+  });
+});
+
+describe('runImportPipeline : l’abandon motivé par le modèle', () => {
+  type Doute = { motif: string; citations: string[]; explication: string };
+  // Le faux modèle du squelette rend un doute ; le tri ne voit que de la
+  // structure, jamais une fiche.
+  const doubtingLlm = (doute: Doute | null): PipelineLlm => {
+    const llm = routedLlm();
+    const answer = llm.generateStructured;
+    (llm as { capabilities: unknown }).capabilities = {
+      ocr: false,
+      strategy: 'segmented',
+    };
+    (llm as { generateStructured: unknown }).generateStructured = vi.fn(
+      async (call: { prompt: string }) => {
+        if (call.prompt.includes('agent de tri documentaire')) {
+          const indexes = [...call.prompt.matchAll(/^#(\d+) \|/gm)];
+          return success({
+            data: indexes.map(([, index]) => ({
+              index: Number(index),
+              type: 'structure',
+            })),
+            tokens,
+          });
+        }
+        if (call.prompt.includes('squelette du plan')) {
+          return success({
+            data: {
+              axes: [{ numero: '1', titre: 'Bâtiments', sousAxes: [] }],
+              doute,
+            },
+            tokens,
+          });
+        }
+        return answer(call as Parameters<typeof answer>[0]);
+      }
+    );
+    return llm;
+  };
+  const promptsOf = (llm: PipelineLlm, step: StepName): string[] =>
+    vi
+      .mocked(llm.generateStructured)
+      .mock.calls.map(([args]) => (args as { prompt: string }).prompt)
+      .filter((prompt) => stepOf(prompt) === step);
+
+  const diagnostic = buildDocument('pdf', [
+    buildPage(0, [
+      { text: '1 Synthèse des enjeux', fontSize: 16 },
+      {
+        text: 'Le territoire compte 12 000 habitants et émet 80 ktCO2 par an.',
+        fontSize: 10,
+      },
+    ]),
+    buildPage(1, [
+      { text: '2 Émissions du territoire', fontSize: 16 },
+      {
+        text: 'Les émissions du secteur résidentiel représentent 38 % du total.',
+        fontSize: 10,
+      },
+    ]),
+  ]);
+  const NO_ACTION: Doute = {
+    motif: 'aucune-action',
+    citations: ['Synthèse des enjeux'],
+    explication: 'Ce document est un diagnostic.',
+  };
+
+  it('s’arrête après le tri et le squelette quand « aucune action » est vérifié et confirmé', async () => {
+    const llm = doubtingLlm(NO_ACTION);
+    const runs: ImportStepRun[] = [];
+    const checkpoints: PipelineCheckpoint[] = [];
+
+    const outcome = await runImportPipeline(
+      llm,
+      input({
+        document: diagnostic,
+        onStepRun: async (run) => {
+          runs.push(run);
+        },
+        onCheckpoint: async (checkpoint) => {
+          checkpoints.push(roundTripCheckpoint(checkpoint));
+        },
+      })
+    );
+
+    expect(outcome).toMatchObject({
+      status: 'failed',
+      failedStep: 'scouting',
+      error: {
+        kind: 'analysis_abandoned',
+        motif: 'aucune-action',
+        evidence: [{ citation: 'Synthèse des enjeux', page: 1 }],
+        explanation: 'Ce document est un diagnostic.',
+      },
+    });
+    expect(promptsOf(llm, 'extraction')).toEqual([]);
+    expect(runs.find(({ step }) => step === 'scouting')).toMatchObject({
+      status: 'failed',
+      error: 'analysis_abandoned:aucune-action',
+    });
+    expect(checkpoints.map(({ completedStep }) => completedStep)).toEqual([
+      'reading',
+    ]);
+    expect(checkpoints[0].readingStats).toEqual({
+      pageCount: 2,
+      unreadablePages: 0,
+    });
+  });
+
+  it('ignore un doute aux citations introuvables : l’import continue, le doute est noté', async () => {
+    const llm = doubtingLlm({
+      ...NO_ACTION,
+      citations: ['Synthèse des enjeux', 'Un passage que le document ignore'],
+    });
+    const runs: ImportStepRun[] = [];
+
+    const outcome = await runImportPipeline(
+      llm,
+      input({
+        document: diagnostic,
+        onStepRun: async (run) => {
+          runs.push(run);
+        },
+      })
+    );
+
+    expect(outcome.status).toBe('done');
+    expect(promptsOf(llm, 'extraction').length).toBeGreaterThan(0);
+    expect(outcome.warnings).toContain(
+      'Doute du modèle « aucune-action » écarté : citation introuvable dans le document'
+    );
+    expect(runs.find(({ step }) => step === 'scouting')?.details).toMatchObject(
+      {
+        'modelDoubt:aucune-action': 1,
+        modelDoubtVerified: 0,
+        modelDoubtConfirmed: 0,
+      }
+    );
+  });
+
+  it('continue sans doute du modèle, comme avant', async () => {
+    const outcome = await runImportPipeline(
+      doubtingLlm(null),
+      input({ document: diagnostic })
+    );
+
+    expect(outcome.status).toBe('done');
+    expect(outcome.warnings).toEqual([]);
+  });
+
+  // Trois fiches et un tableau récapitulatif : la question des actions sans
+  // fiche se pose.
+  const engaged = [2, 4, 6];
+  const recapitulatifPages = [
+    buildPage(0, [
+      { text: 'Tableau du plan d’actions', fontSize: 10 },
+      ...[1, 2, 3, 4, 5, 6, 7, 8].map((numero) => ({
+        text: `Action à ${
+          engaged.includes(numero) ? 'engager' : 'poursuivre'
+        } ${numero} : Mener l’action numéro ${numero} du plan`,
+        fontSize: 10,
+      })),
+    ]),
+    ...engaged.map((numero, index) =>
+      buildPage(index + 1, [
+        { text: '1 Connaître le territoire', fontSize: 16 },
+        {
+          text: `Action ${numero}. Mener l’action numéro ${numero} du plan`,
+          fontSize: 14,
+        },
+        { text: 'Pilote : Service biodiversité', fontSize: 10 },
+        { text: 'Un paragraphe de corps de texte normal.', fontSize: 10 },
+      ])
+    ),
+  ];
+  const GARBLED = 'Pl@n d4ct1ons c0mmun@ut3';
+  const UNREADABLE: Doute = {
+    motif: 'texte-illisible',
+    citations: [GARBLED],
+    explication: 'Les pages scannées sont illisibles.',
+  };
+
+  it('ne pose aucune question à un document en grande partie illisible, et s’arrête si le modèle le dit, y compris à la reprise', async () => {
+    const mostlyEmpty = buildDocument('pdf', [
+      ...recapitulatifPages,
+      buildPage(4, [], { source: 'empty' }),
+      buildPage(5, [], { source: 'empty' }),
+      buildPage(6, [{ text: `${GARBLED} ~~ l3s m3sur#s`, fontSize: 10 }], {
+        source: 'ocr',
+      }),
+    ]);
+    const checkpoints: PipelineCheckpoint[] = [];
+
+    const outcome = await runImportPipeline(
+      doubtingLlm(UNREADABLE),
+      input({
+        document: mostlyEmpty,
+        pauseOnQuestion: true,
+        onCheckpoint: async (checkpoint) => {
+          checkpoints.push(roundTripCheckpoint(checkpoint));
+        },
+      })
+    );
+
+    const abandoned = {
+      status: 'failed',
+      failedStep: 'scouting',
+      error: {
+        kind: 'analysis_abandoned',
+        motif: 'texte-illisible',
+        readingStats: { pageCount: 7, unreadablePages: 3 },
+      },
+    };
+    expect(outcome).toMatchObject(abandoned);
+    expect(checkpoints[0].pendingQuestion).toBeNull();
+
+    const { document: _document, ...base } = input();
+    expect(
+      await runImportPipeline(doubtingLlm(UNREADABLE), {
+        ...base,
+        resumeFrom: checkpoints[0],
+      })
+    ).toMatchObject(abandoned);
+  });
+
+  it('ne confirme pas un texte illisible quand l’essentiel des pages est lu', async () => {
+    const outcome = await runImportPipeline(
+      doubtingLlm(UNREADABLE),
+      input({
+        document: buildDocument('pdf', [
+          ...recapitulatifPages,
+          buildPage(4, [{ text: GARBLED, fontSize: 10 }], { source: 'ocr' }),
+        ]),
+      })
+    );
+
+    expect(outcome.status).toBe('done');
+    expect(outcome.warnings).toContain(
+      'Doute du modèle « texte-illisible » non confirmé par le document'
+    );
+  });
+
+  it('une question posée ne précède jamais un abandon « aucune action » : elle suppose des fiches ou des actions numérotées', async () => {
+    const checkpoints: PipelineCheckpoint[] = [];
+    const paused = await runImportPipeline(
+      doubtingLlm(null),
+      input({
+        document: buildDocument('pdf', recapitulatifPages),
+        pauseOnQuestion: true,
+        onCheckpoint: async (checkpoint) => {
+          checkpoints.push(roundTripCheckpoint(checkpoint));
+        },
+      })
+    );
+    expect(paused.status).toBe('awaiting_answer');
+    const { document: _document, ...base } = input();
+    const doubts = checkpoints[0].pendingQuestion?.doubts ?? [];
+
+    const outcome = await runImportPipeline(
+      doubtingLlm({ ...NO_ACTION, citations: ['Tableau du plan d’actions'] }),
+      {
+        ...base,
+        pauseOnQuestion: true,
+        readingChoices: toReadingChoices(doubts, [
+          { kind: 'actions-without-fiche', actions: 'all' },
+        ]),
+        resumeFrom: checkpoints[0],
+      }
+    );
+
+    expect(outcome.status).toBe('done');
+    expect(outcome.warnings).toContain(
+      'Doute du modèle « aucune-action » non confirmé par le document'
+    );
   });
 });

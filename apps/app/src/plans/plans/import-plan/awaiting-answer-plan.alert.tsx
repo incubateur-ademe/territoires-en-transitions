@@ -8,8 +8,8 @@ import { ReactNode } from 'react';
 import { useGetOngoingAiImport } from './data/use-get-ongoing-ai-import';
 
 /**
- * Un plan en cours d'import dont l'import attend une précision : on y renvoie,
- * la question se pose sur la page d'import. Sinon, l'alerte habituelle.
+ * Un plan en cours d'import dont l'import attend des précisions : on y renvoie,
+ * les questions se posent sur la page d'import. Sinon, l'alerte habituelle.
  */
 export const AwaitingAnswerPlanAlert = ({
   planId,

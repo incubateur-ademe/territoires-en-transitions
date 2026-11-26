@@ -4,8 +4,15 @@ import type { LlmCallEvent } from '@tet/backend/utils/llm/llm-observer';
 import { normalizeExtractedActions } from '../adapters/extracted-action-to-import-action';
 import type { PlanSkeleton } from '../models/plan-skeleton';
 import type { StepName } from '../pipeline/pipeline-step-states';
-import type { PipelineOutcome } from '../pipeline/run-import-pipeline';
-import type { ActionLevelDoubt } from '../models/import-question';
+import { ImportGenerationErrors } from '../generate-import-draft/generate-import.errors';
+import {
+  describePipelineError,
+  type PipelineOutcome,
+} from '../pipeline/run-import-pipeline';
+import type {
+  ActionLevelDoubt,
+  ReadingChoices,
+} from '../models/import-question';
 import type { DocumentUnit } from '../pipeline/segment-document/document-unit';
 import {
   compareWithManualReference,
@@ -16,6 +23,8 @@ import {
   EvalRun,
   isManualReference,
   referenceAtActionLevel,
+  referenceAtActionsWithoutFiche,
+  referenceAtThemeGrouping,
   ManualReferenceDiff,
 } from './eval-metrics';
 import type { GenericEvalInput } from './read-eval-input';
@@ -128,6 +137,7 @@ export type EvalOutput = EvalRun & {
 
 export const buildEvalOutput = ({
   input,
+  readingChoices,
   outcome,
   trace,
   events,
@@ -136,6 +146,8 @@ export const buildEvalOutput = ({
   model,
 }: {
   input: GenericEvalInput;
+  /** Les choix appliqués, imposés ou proposés : la référence se lit à leur aune. */
+  readingChoices: ReadingChoices;
   outcome: PipelineOutcome;
   trace: EvalTrace | null;
   events: LlmCallEvent[];
@@ -164,9 +176,15 @@ export const buildEvalOutput = ({
       : isManualReference(reference)
       ? compareWithManualReference(
           { draft: plan, metrics },
-          referenceAtActionLevel(
-            reference,
-            input.options.actionLevel ?? 'fiche'
+          referenceAtActionsWithoutFiche(
+            referenceAtThemeGrouping(
+              referenceAtActionLevel(
+                reference,
+                readingChoices.actionLevel ?? 'fiche'
+              ),
+              readingChoices.themeGrouping?.grouping
+            ),
+            readingChoices.actionsWithoutFiche
           )
         )
       : compareWithReference({ draft, metrics }, reference);
@@ -179,7 +197,12 @@ export const buildEvalOutput = ({
     status: outcome.status,
     error:
       outcome.status === 'failed'
-        ? `${outcome.failedStep}: ${outcome.error.kind}`
+        ? outcome.error.kind === 'analysis_abandoned'
+          ? // L'abandon tel que l'utilisateur le lirait : de quoi le juger.
+            `${outcome.failedStep}: ${describePipelineError(
+              outcome.error
+            )}\n${ImportGenerationErrors.abandoned(outcome.error)}`
+          : `${outcome.failedStep}: ${outcome.error.kind}`
         : null,
     stepStates: outcome.stepStates,
     trace,

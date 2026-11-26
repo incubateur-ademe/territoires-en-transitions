@@ -1,9 +1,10 @@
 import { z } from 'zod';
-import { importAnswerSchema } from '../models/import-question';
+import { importChoicesSchema } from '../models/import-question';
 
+/** Un choix par doute posé, envoyés ensemble. */
 export const answerImportQuestionInputSchema = z.object({
   jobId: z.string().uuid(),
-  answer: importAnswerSchema,
+  choices: importChoicesSchema,
 });
 
 export type AnswerImportQuestionInput = z.infer<

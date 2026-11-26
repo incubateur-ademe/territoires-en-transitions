@@ -6,6 +6,8 @@ import {
   makeProgrammeActionsPlanName,
 } from '@/app/demarches/pcaet/constants';
 import { useQueryStates } from 'nuqs';
+import { useRouter } from 'next/navigation';
+import { makeCollectivitePlanImportsUrl } from '@/app/app/paths';
 import { aiImportQueryState } from '@/app/plans/plans/import-plan/ai-import.query-state';
 import { useDemarcheId } from '@/app/demarches/use-demarche-id';
 import { appLabels } from '@/app/labels/catalog';
@@ -15,6 +17,7 @@ import { useGetOngoingAiImport } from '@/app/plans/plans/import-plan/data/use-ge
 import { useAiImportAccess } from '@/app/plans/plans/import-plan/data/use-ai-import-access';
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
 import { useToastContext } from '@/app/utils/toast/toast-context';
+import { makeAbandonToast } from './import-programme-abandon.toast';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { RouterOutput, useTRPC, useTRPCClient } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
@@ -84,7 +87,8 @@ export const ImportProgrammeProvider = ({ children }: PropsWithChildren) => {
   const { mutateAsync: enqueue } = useEnqueueAiImport();
   const [isStarting, setIsStarting] = useState(false);
   const queryClient = useQueryClient();
-  const { setToast } = useToastContext();
+  const { setToast, setToastWithAction } = useToastContext();
+  const router = useRouter();
   const demarcheQueryOptions = useMemo(
     () => trpc.demarches.pcaet.get.queryOptions({ collectiviteId, demarcheId }),
     [trpc, collectiviteId, demarcheId]
@@ -170,11 +174,31 @@ export const ImportProgrammeProvider = ({ children }: PropsWithChildren) => {
       }
     } else if (ongoingStatus?.status === 'failed') {
       handledOutcome.current = outcome;
-      queryClient.invalidateQueries({
-        queryKey: trpc.plans.plans.list.queryKey({ collectiviteId }),
-      });
+      // Abandonné, le plan provisoire disparaît, et son rattachement avec.
+      for (const queryKey of [
+        trpc.plans.plans.list.queryKey({ collectiviteId }),
+        trpc.plans.aiImport.findAbandonedAiImport.queryKey(),
+        demarcheQueryOptions.queryKey,
+        trpc.demarches.listPlanLinks.queryKey({ collectiviteId }),
+      ]) {
+        queryClient.invalidateQueries({ queryKey });
+      }
       if (startedHere && !isProgressDisplayed.current) {
-        setToast('error', appLabels.importPlanIaErreur);
+        // Un abandon motivé n'est pas une panne : il s'explique au compte rendu.
+        if (ongoingStatus.report.abandon) {
+          setToastWithAction(
+            makeAbandonToast(ongoingStatus.report.abandon, () =>
+              router.push(
+                makeCollectivitePlanImportsUrl({
+                  collectiviteId,
+                  importJobId: ongoingJobId,
+                })
+              )
+            )
+          );
+        } else {
+          setToast('error', appLabels.importPlanIaErreur);
+        }
       }
     } else if (ongoingStatus?.status === 'awaiting_answer') {
       handledOutcome.current = outcome;
@@ -194,6 +218,9 @@ export const ImportProgrammeProvider = ({ children }: PropsWithChildren) => {
     trpc,
     collectiviteId,
     setToast,
+    setToastWithAction,
+    router,
+    demarcheQueryOptions,
   ]);
 
   const trackImport = useCallback(

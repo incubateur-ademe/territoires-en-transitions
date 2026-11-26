@@ -119,15 +119,8 @@ const toOutput = (view: AiPlanImportJobStatusView): GetImportStatusOutput => ({
   withSecteurs: view.withSecteurs,
   withSousActions: view.withSousActions,
   question: view.question && {
-    kind: view.question.kind,
-    axes: view.question.axes,
-    fiches: view.question.fiches,
-    fichesWithEtapes: view.question.fichesWithEtapes,
-    etapes: view.question.etapes,
-    proposed: view.question.proposed,
-    answer: view.question.answer && {
-      actionLevel: view.question.answer.actionLevel,
-    },
+    doubts: view.question.doubts,
+    answer: view.question.answer && { choices: view.question.answer.choices },
   },
   content: view.content,
   report: view.report ?? {

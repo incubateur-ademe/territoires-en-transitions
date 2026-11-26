@@ -10,6 +10,7 @@ import { makeCollectivitePlanImportsUrl } from '@/app/app/paths';
 import { Alert, Button, Event, useEventTracker } from '@tet/ui';
 import { useQueryStates } from 'nuqs';
 import { ReactElement, useEffect, useRef } from 'react';
+import { AiImportAbandonAlert } from './ai-import-abandon.alert';
 import { AiImportStatusView } from './ai-import-status.view';
 import { aiImportQueryState } from './ai-import.query-state';
 import { AiImportForm } from './ai-import.form';
@@ -147,47 +148,63 @@ export const AiImportFlow = ({
         statusQuery={statusQuery}
         renderStagesProgress={renderStagesProgress}
         onPlanCreated={onPlanCreated}
-        renderOutcome={(status) => (
-          <div role={status.status === 'failed' ? 'alert' : 'status'}>
-            <Alert
-              state={status.status === 'failed' ? 'error' : 'success'}
-              title={
-                status.status === 'failed'
-                  ? appLabels.importPlanIaErreur
-                  : appLabels.importPlanIaTermine
-              }
-              description={
-                canReadImport
-                  ? appLabels.importPlanIaConsulterRapport
-                  : undefined
-              }
-              footer={
-                canReadImport ? (
-                  <Button
-                    size="sm"
-                    variant="outlined"
-                    href={makeCollectivitePlanImportsUrl({
-                      collectiviteId,
-                      importJobId: jobId,
-                    })}
-                    onClick={() =>
-                      tracker(Event.plans.importIa.details, {
-                        origine,
-                        demarcheId,
-                        jobId,
-                        profile: status.profile,
-                        status: status.status,
-                      })
-                    }
-                    dataTest="plans.import-ia.voir-rapport"
-                  >
-                    {appLabels.importPlanIaVoirRapport}
-                  </Button>
-                ) : undefined
-              }
+        renderOutcome={(status) =>
+          status.status === 'failed' && status.report.abandon ? (
+            <AiImportAbandonAlert
+              abandon={status.report.abandon}
+              onRetry={() => {
+                tracker(Event.plans.importIa.reessayer, {
+                  origine,
+                  demarcheId,
+                  jobId,
+                  profile: status.profile,
+                  motif: status.report.abandon?.motif,
+                });
+                void setImportQuery({ importJobId: null, retryJobId: jobId });
+              }}
             />
-          </div>
-        )}
+          ) : (
+            <div role={status.status === 'failed' ? 'alert' : 'status'}>
+              <Alert
+                state={status.status === 'failed' ? 'error' : 'success'}
+                title={
+                  status.status === 'failed'
+                    ? appLabels.importPlanIaErreur
+                    : appLabels.importPlanIaTermine
+                }
+                description={
+                  canReadImport
+                    ? appLabels.importPlanIaConsulterRapport
+                    : undefined
+                }
+                footer={
+                  canReadImport ? (
+                    <Button
+                      size="sm"
+                      variant="outlined"
+                      href={makeCollectivitePlanImportsUrl({
+                        collectiviteId,
+                        importJobId: jobId,
+                      })}
+                      onClick={() =>
+                        tracker(Event.plans.importIa.details, {
+                          origine,
+                          demarcheId,
+                          jobId,
+                          profile: status.profile,
+                          status: status.status,
+                        })
+                      }
+                      dataTest="plans.import-ia.voir-rapport"
+                    >
+                      {appLabels.importPlanIaVoirRapport}
+                    </Button>
+                  ) : undefined
+                }
+              />
+            </div>
+          )
+        }
       />
     );
   }

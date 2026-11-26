@@ -2,6 +2,7 @@ import { Result } from '@tet/backend/utils/result.type';
 import { AiPlanImportJob } from '../models/ai-plan-import-job';
 import { StoredImportCheckpoint } from '../models/import-checkpoint';
 import { ImportJobStats } from '../models/import-job-stats';
+import type { ImportDoubt } from '../models/import-question';
 import { ImportReport } from '../models/import-report';
 import { PlanDraft } from '../models/plan-draft';
 import { PlanRecap } from '../notify-plan-import/plan-recap';
@@ -31,8 +32,8 @@ export type GeneratedImport = {
   stats: ImportJobStats;
 };
 
-/** La lecture est faite ; l'import attend la réponse à sa question. */
-export type AwaitingAnswer = { awaitingAnswer: true };
+/** La lecture est faite ; l'import attend la réponse à ses doutes. */
+export type AwaitingAnswer = { awaitingAnswer: true; doubts: ImportDoubt[] };
 
 export interface ImportGenerator<Checkpoint = StoredImportCheckpoint> {
   generate(

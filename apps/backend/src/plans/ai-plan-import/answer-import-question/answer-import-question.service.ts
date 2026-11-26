@@ -20,14 +20,19 @@ import {
   GENERATE_IMPORT_DRAFT_JOB_NAME,
   type AiPlanImportJobData,
 } from '../ai-plan-import.queue';
-import { jobTrackingProperties } from '../generate-import-draft/import-job-tracking';
+import {
+  jobTrackingProperties,
+  questionTrackingProperties,
+} from '../generate-import-draft/import-job-tracking';
 import { AiPlanImportJob } from '../models/ai-plan-import-job';
+import { readImportQuestion } from '../models/import-question';
 import { ExpireImportQuestionsService } from '../expire-import-questions/expire-import-questions.service';
 import { AnswerImportQuestionInput } from './answer-import-question.input';
 
 /**
- * La réponse à la précision demandée après la lecture : l'import reprend de
- * son point de reprise avec la lecture choisie, sans relire le document.
+ * La réponse aux précisions demandées après la lecture, toutes ensemble :
+ * l'import reprend de son point de reprise avec les choix faits, sans relire
+ * le document.
  */
 @Injectable()
 export class AnswerImportQuestionService {
@@ -44,7 +49,7 @@ export class AnswerImportQuestionService {
   ) {}
 
   async answer(
-    { jobId, answer }: AnswerImportQuestionInput,
+    { jobId, choices }: AnswerImportQuestionInput,
     { user }: { user: AuthenticatedUser }
   ): Promise<Result<{ jobId: string }, AiPlanImportError>> {
     const job = await this.jobRepository.getById(jobId);
@@ -70,7 +75,7 @@ export class AnswerImportQuestionService {
       AiPlanImportError
     >((tx) =>
       this.jobRepository.answerQuestion(
-        { id: jobId, answer, answeredBy: user.id },
+        { id: jobId, choices, answeredBy: user.id },
         tx
       )
     );
@@ -112,8 +117,10 @@ export class AnswerImportQuestionService {
       event: EVENT_AI_PLAN_IMPORT_QUESTION_ANSWERED,
       properties: {
         ...jobTrackingProperties(job.data),
-        actionLevel: answer.actionLevel,
-        proposed: job.data.question?.proposed,
+        ...questionTrackingProperties(
+          readImportQuestion(job.data.question)?.doubts ?? [],
+          choices
+        ),
       },
       groups: { collectivite: String(job.data.collectiviteId) },
     });

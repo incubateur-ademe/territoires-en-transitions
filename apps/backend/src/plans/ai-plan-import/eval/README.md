@@ -27,14 +27,29 @@ l'application à partir du type choisi dans le formulaire :
 make ai-import-eval f=plan-mobilite.pdf args='--type-plan "Plan Mobilité"'
 ```
 
-Quand le document laisse le choix du niveau de l'action (fiches nommées qui
-détaillent des étapes « Action 1 – … »), l'éval affiche la question que
-poserait l'application et lit par fiche. `--action-level` rejoue une réponse,
-et segmente au niveau demandé même sans question (hors Électrification) :
+### Questions à l'utilisateur
+
+L'éval détecte les doutes du document comme l'application (stratégie
+`segmented` seulement), affiche chaque question avec son choix proposé et
+celui retenu (« Question : … »), puis lit le document avec le choix proposé :
+ce qu'obtient l'utilisateur qui continue sans rien changer. Une option rejoue
+une autre réponse, avec la consigne qu'elle ajouterait pour l'utilisateur :
+
+| Option | Question |
+|---|---|
+| `--action-level fiche\|etape` | le niveau de l'action ; segmente à ce niveau même sans question (hors Électrification) |
+| `--theme-grouping grouped\|separate` | les thèmes que la synthèse réunit |
+| `--actions-without-fiche all\|with-fiche` | les actions qu'un récapitulatif liste sans fiche |
 
 ```sh
 make ai-import-eval f=plpdma.pdf args='--action-level etape'
+make ai-import-eval f=capg.pdf ref=apps/backend/src/plans/ai-plan-import/eval/references/plpdma-capg.json args='--theme-grouping separate'
 ```
+
+La référence manuelle se juge avec les choix appliqués : au niveau de
+l'action retenu ; avec `grouped`, les axes de `axesReunis` remplacent les
+thèmes qu'ils réunissent ; avec `with-fiche`, les actions de
+`actionsSansFiche` ne sont plus attendues.
 
 ## Profil Électrification
 
@@ -184,6 +199,12 @@ coût, d'essayer les heuristiques sur un nouveau classeur réel.
   l'action a pu être fondue dans un doublon ou seulement reformulée. Une
   action manquante absente de cette liste n'a jamais été extraite.
 - `draft` : le brouillon complet, tel qu'il serait enregistré.
+- `error` : l'étape en échec et son motif. Pour un abandon motivé
+  (`scouting: analysis_abandoned:<motif>`), suivi du message que lirait
+  l'utilisateur : passages relevés, pages, explication du modèle. Un doute du
+  modèle ignoré ou non confirmé apparaît dans `warnings` (« Doute du modèle
+  … »). C'est ce qu'il faut relire pour caler l'abandon (voir le README de
+  l'import, section « Abandon motivé »).
 - `diff` (avec `ref=`) : écarts de métriques, titres de la référence
   introuvables dans le résultat, titres en trop. Les titres sont comparés sans
   numérotation, casse ni accents, et deux reformulations qui partagent
@@ -257,7 +278,28 @@ AI_IMPORT_CORPUS=/chemin/du/corpus npx vitest run src/plans/ai-plan-import/eval/
 ```
 
 Sans `AI_IMPORT_CORPUS`, la spec est sautée ; un document absent du corpus
-aussi. Pour chaque document et chaque niveau de lecture (`niveaux`), le
+aussi.
+
+Avant de compter, le banc vérifie les questions : chaque référence mesurée
+doit déclarer `questionsAttendues` (`[]` pour un document clair), et la
+lecture doit poser exactement ces questions, avec exactement ces choix
+proposés. Une question superflue sur un document clair, une question
+perdue ou un autre choix proposé font échouer le banc. Il vérifie aussi
+qu'aucun document n'est tenu pour illisible (30 % de pages sans texte
+exploitable), ce qui suffirait à confirmer un abandon `texte-illisible`.
+
+| Référence | Questions attendues (choix proposé) |
+|---|---|
+| `plpdma-2026` | `action-level` (`fiche`) |
+| `cot-ccvn`, `mobilite` | `action-level` par énumération (`etape`) |
+| `plpdma-capg` | `theme-grouping` (`grouped`) |
+| `biodiversite` | `actions-without-fiche` (`all`) |
+| `pat`, `tourisme-dracenie`, `plpdma-actions`, `plpdma-ccbv` | aucune |
+
+Le découpage se mesure ensuite avec les choix proposés appliqués : ce
+qu'obtient l'utilisateur qui clique « Continuer ». `niveaux` et
+`regroupements` font mesurer aussi les autres réponses. Pour chaque
+document, chaque niveau de lecture et chaque regroupement des thèmes, le
 tableau donne, sur les actions attendues :
 
 | Colonne | Ce qui est compté |
@@ -268,7 +310,7 @@ tableau donne, sur les actions attendues :
 | `axe`, `chemin` | … sous le bon axe, puis sous le chemin attendu en entier |
 | `enTrop` | unités de fiche qui ne répondent à aucune action attendue |
 | `axes`, `libellesAxes` | axes attendus en tête d'un chemin, puis avec leur libellé entier |
-| `question` | le document pose la question du niveau de l'action |
+| `questions` | les questions que pose le document, avec leur choix proposé |
 
 Le détail (actions manquantes, titres écourtés, numéros perdus, fiches mal
 rangées, unités en trop) est écrit dans `apps/backend/eval-out/segment-bench.json`.
@@ -283,6 +325,12 @@ un tableau ou une liste à puces n'ouvre aucune unité et compte comme
 manquante, même si le modèle sait l'en extraire. Ce manque dit que le code
 ne transmet pas la structure, et que le modèle doit la deviner.
 
+Quand la question des actions sans fiche se pose, le banc vérifie aussi ses
+comptes : autant d'actions listées que la référence en attend, et autant
+sans fiche que `actionsSansFiche` en déclare. La réponse ne change pas le
+découpage (les tableaux se gardent ou non au tri) : le banc la mesure au
+choix proposé seulement.
+
 ### Ajouter un document au corpus
 
 Relever sa structure à la main dans `references/` : `fichier` (chemin dans le
@@ -290,8 +338,76 @@ corpus), `axes`, puis chaque fiche avec son `axe`, son `cheminAxes` s'il y a
 des sous-axes, son `numero` tel qu'écrit et son `titre` complet relevé dans le
 corps de la fiche. `etapes` donne les étapes titrées d'une fiche, et
 `niveaux: ["fiche", "etape"]` les fait mesurer aussi en lecture à l'étape.
-`remarques` garde les ambiguïtés tranchées pendant le relevé. Lancer le banc
-avec `UPDATE_BASELINE=1` pour fixer son premier seuil.
+`remarques` garde les ambiguïtés tranchées pendant le relevé.
+
+Déclarer aussi `questionsAttendues`, chaque question par son choix proposé
+(`[{ "kind": "action-level", "actionLevel": "fiche" }]`, `[]` sans
+question) : c'est ce qui empêche une question superflue de passer
+inaperçue. Selon les questions :
+
+- `theme-grouping` : `axes` donne les thèmes tels qu'écrits au-dessus des
+  fiches (réponse `separate`), `axesReunis` chaque axe de la synthèse avec
+  les thèmes qu'il réunit (réponse `grouped`), et
+  `regroupements: ["grouped", "separate"]` fait mesurer les deux ;
+- `actions-without-fiche` : `actionsSansFiche` donne les numéros des actions
+  listées sans fiche ; le banc compare leur nombre à celui du doute.
+
+Lancer le banc avec `UPDATE_BASELINE=1` pour fixer son premier seuil.
+
+## Calibrer l'abandon
+
+L'abandon motivé (README de l'import, section « Abandon motivé ») dépend de ce
+qu'Albert écrit dans le champ `doute` du squelette, que le banc ne peut pas
+mesurer. Il se calibre par un lot réel, **lancé à la main** (appels payants),
+avant de toucher aux motifs ou aux seuils, puis après chaque changement du
+prompt du squelette ou du modèle :
+
+1. **Les plans du corpus** : cible, aucun abandon, aucun « Doute du modèle »
+   dans `warnings`, et un `diff` qui ne régresse pas.
+2. **Un extrait de diagnostic sans fiche** (biodiversité, p. 1-47) : cible,
+   `error` commence par `scouting: analysis_abandoned:aucune-action`, et le
+   message qui suit cite des passages réels du document. Vérifié sans
+   modèle : l'extrait passe le garde-fou de tome, ne pose aucune question,
+   n'a ni fiche, ni tableau, ni action numérotée, et va bien au squelette.
+3. **Les autres réponses** aux questions de `plpdma-capg` et `biodiversite`,
+   pour vérifier qu'elles ne déclenchent pas d'abandon (une réponse aux
+   thèmes écarte les grilles concurrentes).
+
+`make` coupe les chemins aux espaces : le lot copie d'abord chaque document
+sous le nom de sa référence. La cible recompile le backend à chaque document :
+ne modifiez pas le code pendant le lot. Depuis la racine du dépôt :
+
+```sh
+C=/chemin/du/corpus
+R=$PWD/apps/backend/src/plans/ai-plan-import/eval/references
+D=$PWD/apps/backend/eval-out/calibrage
+mkdir -p $D
+for ref in biodiversite cot-ccvn mobilite pat plpdma-2026 plpdma-actions plpdma-capg plpdma-ccbv tourisme-dracenie; do
+  f=$(node -p "require('$R/$ref.json').fichier")
+  cp "$C/$f" "$D/$ref.${f##*.}"
+  make ai-import-eval f=$D/$ref.${f##*.} ref=$R/$ref.json out=$D/$ref.json
+done
+
+qpdf "$C/biodiversité/planintercommunalbiodiversited_z828ms.pdf" --pages . 1-47 -- $D/biodiversite-diagnostic.pdf
+make ai-import-eval f=$D/biodiversite-diagnostic.pdf out=$D/biodiversite-diagnostic.json
+
+make ai-import-eval f=$D/plpdma-capg.pdf ref=$R/plpdma-capg.json out=$D/plpdma-capg-separate.json args='--theme-grouping separate'
+make ai-import-eval f=$D/biodiversite.pdf ref=$R/biodiversite.json out=$D/biodiversite-with-fiche.json args='--actions-without-fiche with-fiche'
+```
+
+Hors PCAET, ajoutez à `args` le `--type-plan` que l'application enverrait
+pour ce document. Puis relire, document par document :
+
+```sh
+for f in $D/*.json; do echo "$f"; node -e 'const r=require(process.argv[1]); console.log(r.error ?? "ok", (r.warnings ?? []).filter((w) => w.startsWith("Doute du modèle")))' "$f"; done
+```
+
+Albert varie d'un lancement à l'autre : un doute isolé sur un plan du corpus
+se rejoue avant de conclure. Les motifs `plusieurs-plans` et
+`grilles-concurrentes`, confirmés par leurs seules citations, sont les
+premiers à surveiller ; un faux abandon répété sur un plan du corpus se
+corrige dans le prompt du squelette (définition du motif), pas par un
+interrupteur.
 
 ## Méthode conseillée
 

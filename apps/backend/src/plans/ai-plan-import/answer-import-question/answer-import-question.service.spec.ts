@@ -48,12 +48,16 @@ const awaitingJob: AiPlanImportJob = {
   finishedAt: null,
   stats: null,
   question: {
-    kind: 'action-level',
-    axes: level('Limiter les déchets verts', 5),
-    fiches: level('Accompagner les habitants', 16),
-    fichesWithEtapes: 16,
-    etapes: level('Diagnostiquer et orienter', 54),
-    proposed: 'fiche',
+    doubts: [
+      {
+        kind: 'action-level',
+        axes: level('Limiter les déchets verts', 5),
+        fiches: level('Accompagner les habitants', 16),
+        fichesWithEtapes: 16,
+        etapes: level('Diagnostiquer et orienter', 54),
+        proposed: 'fiche',
+      },
+    ],
     answer: null,
   },
   attempt: 0,
@@ -61,7 +65,8 @@ const awaitingJob: AiPlanImportJob = {
   modifiedAt: '2026-11-20T09:01:00Z',
 };
 
-const answer = { kind: 'action-level', actionLevel: 'etape' } as const;
+const choices = [{ kind: 'action-level', actionLevel: 'etape' }] as const;
+const answer = { jobId: 'job-1', choices: [...choices] };
 
 const buildService = ({
   allowed = true,
@@ -71,14 +76,16 @@ const buildService = ({
     attempt: 1,
   }),
   add = vi.fn(async () => ({ id: 'bull-job' })),
+  job = awaitingJob,
 }: {
   allowed?: boolean;
   answered?: Awaited<ReturnType<AiPlanImportJobRepository['answerQuestion']>>;
   add?: ReturnType<typeof vi.fn>;
+  job?: AiPlanImportJob;
 } = {}) => {
   const jobRepository = {
     isSupportedImport: isSupportedGenericImport,
-    getById: vi.fn(async () => success(awaitingJob)),
+    getById: vi.fn(async () => success(job)),
     answerQuestion: vi.fn(async () => answered),
     reopenQuestion: vi.fn(async () => success(awaitingJob)),
   };
@@ -92,22 +99,23 @@ const buildService = ({
   };
   const expire = vi.fn(async () => undefined);
   const queue = { add };
+  const tracking = { capture: vi.fn() };
   const service = new AnswerImportQuestionService(
     permissions as unknown as PermissionService,
     jobRepository as unknown as AiPlanImportJobRepository,
     transactionManager as unknown as TransactionManager,
-    { capture: vi.fn() } as unknown as TrackingService,
+    tracking as unknown as TrackingService,
     { expire } as unknown as ExpireImportQuestionsService,
     queue as unknown as Queue
   );
-  return { service, jobRepository, permissions, queue, expire };
+  return { service, jobRepository, permissions, queue, expire, tracking };
 };
 
 describe('AnswerImportQuestionService', () => {
   it('enregistre la réponse et remet l’import en file sous un identifiant neuf', async () => {
     const { service, jobRepository, queue, permissions } = buildService();
 
-    const result = await service.answer({ jobId: 'job-1', answer }, { user });
+    const result = await service.answer(answer, { user });
 
     expect(result).toEqual(success({ jobId: 'job-1' }));
     expect(permissions.isAllowed).toHaveBeenCalledWith(
@@ -117,7 +125,7 @@ describe('AnswerImportQuestionService', () => {
       { collectiviteId: 10 }
     );
     expect(jobRepository.answerQuestion).toHaveBeenCalledWith(
-      { id: 'job-1', answer, answeredBy: 'membre-1' },
+      { id: 'job-1', choices, answeredBy: 'membre-1' },
       expect.anything()
     );
     expect(queue.add).toHaveBeenCalledWith(
@@ -130,7 +138,7 @@ describe('AnswerImportQuestionService', () => {
   it('cache l’import d’une collectivité où l’on ne peut pas importer', async () => {
     const { service, jobRepository } = buildService({ allowed: false });
 
-    const result = await service.answer({ jobId: 'job-1', answer }, { user });
+    const result = await service.answer(answer, { user });
 
     expect(result).toEqual(failure(AiPlanImportErrorEnum.JOB_NOT_FOUND));
     expect(jobRepository.answerQuestion).not.toHaveBeenCalled();
@@ -141,7 +149,7 @@ describe('AnswerImportQuestionService', () => {
       answered: failure(AiPlanImportErrorEnum.IMPORT_NOT_AWAITING_ANSWER),
     });
 
-    const result = await service.answer({ jobId: 'job-1', answer }, { user });
+    const result = await service.answer(answer, { user });
 
     expect(result).toEqual(
       failure(AiPlanImportErrorEnum.IMPORT_NOT_AWAITING_ANSWER)
@@ -150,6 +158,57 @@ describe('AnswerImportQuestionService', () => {
     expect(expire).toHaveBeenCalled();
   });
 
+  it('refuse une réponse qui ne tranche pas exactement les doutes posés, sans rien faire expirer', async () => {
+    const { service, queue, expire, tracking } = buildService({
+      answered: failure(AiPlanImportErrorEnum.ANSWER_MISMATCH),
+    });
+
+    const result = await service.answer(answer, { user });
+
+    expect(result).toEqual(failure(AiPlanImportErrorEnum.ANSWER_MISMATCH));
+    expect(queue.add).not.toHaveBeenCalled();
+    expect(expire).not.toHaveBeenCalled();
+    expect(tracking.capture).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ['la forme actuelle', awaitingJob],
+    [
+      'l’ancienne forme, à un seul doute',
+      {
+        ...awaitingJob,
+        question: {
+          kind: 'action-level',
+          axes: level('Limiter les déchets verts', 5),
+          fiches: level('Accompagner les habitants', 16),
+          fichesWithEtapes: 16,
+          etapes: level('Diagnostiquer et orienter', 54),
+          proposed: 'fiche',
+          answer: null,
+        },
+      } satisfies AiPlanImportJob,
+    ],
+  ])(
+    'suit les sortes posées et celles changées, question sous %s',
+    async (_forme, job) => {
+      const { service, tracking } = buildService({ job });
+
+      await service.answer(answer, { user });
+
+      expect(tracking.capture).toHaveBeenCalledWith(
+        expect.objectContaining({
+          properties: expect.objectContaining({
+            questionKinds: ['action-level'],
+            questionCount: 1,
+            changedKinds: ['action-level'],
+            actionLevel: 'etape',
+            proposed: 'fiche',
+          }),
+        })
+      );
+    }
+  );
+
   it('repose la question quand la file refuse le nouveau passage', async () => {
     const { service, jobRepository } = buildService({
       add: vi.fn(async () => {
@@ -157,7 +216,7 @@ describe('AnswerImportQuestionService', () => {
       }),
     });
 
-    const result = await service.answer({ jobId: 'job-1', answer }, { user });
+    const result = await service.answer(answer, { user });
 
     expect(result).toEqual(failure(AiPlanImportErrorEnum.CREATE_JOB_ERROR));
     expect(jobRepository.reopenQuestion).toHaveBeenCalledWith({

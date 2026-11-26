@@ -3,7 +3,10 @@ import { createTrpcErrorHandler } from '@tet/backend/utils/trpc/trpc-error-handl
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { aiPlanImportErrorConfig } from '../ai-plan-import.trpc-errors';
 import { findPreviousImportInputSchema } from './find-previous-import.input';
-import { findPreviousImportOutputSchema } from './find-previous-import.output';
+import {
+  findAbandonedImportOutputSchema,
+  findPreviousImportOutputSchema,
+} from './find-previous-import.output';
 import { FindPreviousImportService } from './find-previous-import.service';
 
 @Injectable()
@@ -23,6 +26,16 @@ export class FindPreviousImportRouter {
       .output(findPreviousImportOutputSchema)
       .query(async ({ input, ctx: { user } }) => {
         const result = await this.findPreviousImportService.findPreviousImport(
+          input,
+          { user }
+        );
+        return this.getResultDataOrThrowError(result);
+      }),
+    findAbandonedAiImport: this.trpc.authedProcedure
+      .input(findPreviousImportInputSchema)
+      .output(findAbandonedImportOutputSchema)
+      .query(async ({ input, ctx: { user } }) => {
+        const result = await this.findPreviousImportService.findAbandonedImport(
           input,
           { user }
         );
