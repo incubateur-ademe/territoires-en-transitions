@@ -17,6 +17,7 @@ export const faireAvancerLePlanFilters = {
   },
   aDecider: {
     statuts: [StatutEnum.EN_RETARD, StatutEnum.BLOQUE, StatutEnum.A_DISCUTER],
+    noStatut: true,
   },
   sansPilote: { noPilote: true },
 } satisfies Record<string, ListFichesRequestFilters>;

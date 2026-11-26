@@ -562,7 +562,7 @@ export const plansLabels = {
   faireAvancerLePlanADecider: (count: number): string =>
     `${count > 1 ? 'actions' : 'action'} en retard, ${
       count > 1 ? 'bloquées' : 'bloquée'
-    } ou à discuter`,
+    }, à discuter ou sans statut`,
   faireAvancerLePlanADeciderInfo:
     'Elles attendent une décision : trancher, replanifier ou débloquer.',
   faireAvancerLePlanSansPilote: (count: number): string =>
