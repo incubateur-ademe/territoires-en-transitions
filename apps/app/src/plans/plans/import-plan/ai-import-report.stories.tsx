@@ -146,3 +146,36 @@ export const SuccesAvecAvertissements: Story = {
     );
   },
 };
+
+/** L'IA s'arrête plutôt que d'inventer : alerte orange, passages et conseils. */
+export const AbandonMotive: Story = {
+  args: {
+    status: {
+      ...meta.args.status,
+      createdPlanId: 1,
+      report: {
+        issues: [
+          {
+            kind: 'document-error',
+            code: 'abandon:aucune-action',
+            message: "Passage relevé par l'IA : « Synthèse des enjeux »",
+            location: 'p. 40',
+          },
+        ],
+        qualitativeReview: null,
+        abandon: {
+          motif: 'aucune-action',
+          evidence: [
+            { citation: 'Synthèse des enjeux', page: 40 },
+            {
+              citation: 'Diagnostic des émissions de gaz à effet de serre',
+              page: 12,
+            },
+          ],
+          explanation:
+            "Ce document présente le diagnostic du territoire : il ne contient ni fiche action ni tableau d'actions.",
+        },
+      },
+    },
+  },
+};

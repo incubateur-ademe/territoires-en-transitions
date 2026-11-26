@@ -2,7 +2,7 @@ import { appLabels } from '@/app/labels/catalog';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 
-/** La réponse à la précision demandée : l'import reprend avec le niveau choisi. */
+/** Les réponses aux précisions demandées : l'import reprend avec les choix faits. */
 export const useAnswerAiImportQuestion = () => {
   const trpc = useTRPC();
   const queryClient = useQueryClient();

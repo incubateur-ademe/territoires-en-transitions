@@ -405,7 +405,11 @@ Ce que la mise en page trompe, et comment la segmentation s'en garde :
   plus d'actions qu'il n'a de fiches (51 lignes « Action à engager 31 : … »
   pour 24 fiches) : ils portent alors des actions que nulle fiche ne
   détaille, et restent lus quoi qu'en dise le tri, qui n'en voit que le début
-  et la fin.
+  et la fin. Quand l'utilisateur ne garde que les actions qui ont une fiche
+  (voir la question plus bas), ces tableaux ne vont qu'au squelette. Le
+  périmètre lu et ce compte sont partagés avec la question
+  (`segment-document/list-actions-without-fiche.ts`) : les deux ne divergent
+  jamais.
 - Après la structuration, les actions de même titre (à la casse, aux accents,
   à la ponctuation et à la numérotation près : « ACTION 3 - » et « 2.1.3 »)
   sont fondues sur tout le document, sur la version la plus complète. Deux
@@ -677,43 +681,237 @@ terminée.
 Un échec métier (document trop long, modèle en erreur) reste définitif
 (`attempts: 1`) : seule l'équipe peut le reprendre.
 
-## Question à l'utilisateur : le niveau de l'action
+## Questions à l'utilisateur
+
+Certains documents laissent plusieurs lectures, toutes défendables, qui
+relèvent d'une convention de la collectivité et non du document. L'import les
+demande au lieu de les deviner. La règle première est la fiabilité : un
+document clair ne reçoit aucune question. Chaque question repose sur une
+détection déterministe, sans modèle, qui exige une preuve tirée du document,
+et le banc vérifie sur le corpus qu'elle ne se pose que là où elle est
+attendue.
+
+| Sorte (`kind`) | Ce qui est demandé | Proposé | Détecteur |
+|---|---|---|---|
+| `action-level` | la fiche (ou la mesure) est-elle l'action, ou chacune de ses étapes (ou de ses éléments) ? | selon le document | `segment-document/detect-headings.ts` |
+| `theme-grouping` | un axe par thème de la synthèse, ou un par thème écrit sur les fiches ? | `grouped` | `segment-document/detect-theme-grouping.ts` |
+| `actions-without-fiche` | créer aussi les actions qu'un récapitulatif liste sans fiche ? | `all` | `segment-document/list-actions-without-fiche.ts` |
+
+Le fonctionnement est commun aux trois :
+
+- **Pause** : après la lecture, avant le premier appel au modèle. Tous les
+  doutes du document (`detectReadingDoubts`, `segment-document.ts`) partent
+  dans la même pause. Ni tableur ni stratégie `whole-document` : pas de
+  question. Un document en grande partie illisible n'en reçoit pas non plus
+  (voir « Abandon motivé »).
+- **Stockage** : la colonne `question` (jsonb) porte
+  `{ doubts, answer: { choices, answeredBy, answeredAt } | null }`, une union
+  discriminée par `kind` (`models/import-question.ts`). Une question écrite
+  sous l'ancienne forme à plat (un seul doute du niveau de l'action) se relit
+  et se convertit, en base comme dans le point de reprise : un import en
+  attente pendant un déploiement reprend sans relire son document.
+- **Point de reprise** : le point `reading` garde les doutes et, quand le
+  niveau de l'action est en doute, les unités des deux lectures
+  (`pendingQuestion`). Le document reste jusqu'à l'issue de l'import : un point
+  de reprise périmé d'ici la réponse (autre modèle, autre format) le fait
+  relire.
+- **Écran** (`apps/app/.../import-plan/ai-import-questions.form.tsx`) : les
+  doutes d'une même pause s'affichent ensemble, une question par doute, la
+  réponse proposée cochée, un seul bouton « Continuer l'import ». Page
+  d'import, historique, démarche PCAET ; la page du plan renvoie vers la page
+  d'import. Les exemples affichés (titres, pages, comptes) viennent du
+  document.
+- **Réponse** (`answer-import-question/`, `plans.fiches.import` sur la
+  collectivité) : un choix par doute, ni plus ni moins, sinon refus
+  (`ANSWER_MISMATCH`, 400). Le job repasse `pending` sous un nouveau passage.
+  Une seconde réponse est refusée (`IMPORT_NOT_AWAITING_ANSWER`, 409).
+- **Application** : sans modèle autant que possible
+  (`pipeline/apply-reading-choices.ts`), sinon par une phrase ajoutée aux
+  consignes de la structuration (`prompts/reading-choices-instructions.ts`,
+  une entrée par sorte) ou au prompt du squelette. Le détail est donné par
+  question ci-dessous.
+- **Sans réponse** : l'import occupe sa collectivité et son auteur (un import
+  en vol à la fois) mais pas le plafond global. Après sept jours, il échoue,
+  son plan passe en échec dans la même transaction et sa source est supprimée,
+  au démarrage du backend, au prochain import ou à une réponse tardive
+  (`expire-import-questions/`).
+- **Sans pause** (`pauseOnQuestion` absent : évals, specs) : les choix
+  proposés valent réponse pour tout le passage (lecture, tri, squelette,
+  jugement du doute du modèle, consignes), exactement comme le clic sur
+  « Continuer l'import » : mêmes prompts, même abandon possible. L'éval peut
+  imposer une autre réponse (`eval/README.md`).
+- **Suivi** : `question_asked` et `question_answered` portent `questionKinds`,
+  `questionCount` et, à la réponse, `changedKinds` (les sortes où
+  l'utilisateur a quitté le choix proposé). `actionLevel` et `proposed`
+  restent pour les graphiques existants du niveau de l'action.
+- **Banc** : chaque référence déclare `questionsAttendues`, les questions que
+  sa lecture doit poser avec leur choix proposé, ni plus ni moins ; le
+  découpage se mesure avec ces choix appliqués.
+
+### Le niveau de l'action
 
 Un document qui titre ses fiches « Fiche action n°1.2 » et y détaille
 plusieurs étapes « Action 1 – … » laisse deux lectures : la fiche est
 l'action et ses étapes des sous-actions, ou chaque étape est une action et la
-fiche un sous-axe. C'est une convention de la collectivité, pas du document :
-l'import la demande au lieu de la deviner.
+fiche un sous-axe. De même, une mesure ou un groupe d'actions qui énumère ses
+actions (« A – … », « B – … », ou des puces) : la mesure est l'action, ou
+chacun de ses éléments, la mesure devenant un sous-axe.
 
-- **Détection** (`detectActionLevelDoubt`, `segment-document/detect-headings.ts`),
-  déterministe : au moins trois fiches nommées, et la moitié d'entre elles au
-  moins portent deux étapes ou plus. Une étape suit sa fiche sans titre d'axe
-  entre les deux, et son numéro n'est celui d'aucune fiche (« Action 1.2 » du
-  récapitulatif renvoie à la fiche 1.2), sauf quand elle prolonge la suite
-  des étapes de sa fiche (« Action 2 » après « Action 1 », même s'il existe
-  une fiche 2). Le choix proposé est l'étape quand le
-  document donne plus d'un pilote et demi par fiche, la fiche sinon. Ni
-  tableur ni stratégie `whole-document` : pas de question.
-- **Pause** : après la lecture, avant le premier appel au modèle. Le point de
-  reprise `reading` garde les unités des deux lectures (`pendingQuestion`).
-  Le document reste jusqu'à l'issue de l'import : un point de reprise périmé
-  d'ici la réponse (autre modèle, autre format) le fait relire. Une lecture
-  qui dépasserait la limite d'unités n'est pas proposée : l'import lit
-  l'autre sans poser la question. Le job passe
-  `awaiting_answer` et sa colonne `question` porte les exemples et les comptes
-  affichés à l'utilisateur.
-- **Réponse** (`answer-import-question/`, `plans.fiches.import` sur la
-  collectivité) : le job repasse `pending` sous un nouveau passage, la reprise
-  prend les unités de la lecture choisie et ajoute une phrase au bloc des
-  consignes de la structuration. Une seconde réponse est refusée (409).
-- **Sans réponse** : l'import occupe sa collectivité et son auteur (un import
-  en vol à la fois) mais pas le plafond global. Après sept jours, il échoue,
-  son plan passe en échec dans la même transaction et sa source est supprimée,
-  au démarrage du backend, au prochain import ou à
-  une réponse tardive (`expire-import-questions/`).
-- Sans `pauseOnQuestion` (évals, specs), la lecture par fiche s'applique
-  comme avant, prompts inchangés. Un niveau donné d'avance (`--action-level`
-  de l'éval) segmente le document à ce niveau, question ou pas.
+- **Fiches nommées** (`detectActionLevelDoubt`) : au moins trois fiches
+  nommées, et un quart d'entre elles au moins (trois au minimum) portent deux
+  étapes ou plus. Une étape suit sa fiche sans titre d'axe entre les deux, et
+  son numéro n'est celui d'aucune fiche (« Action 1.2 » du récapitulatif
+  renvoie à la fiche 1.2), sauf quand elle prolonge la suite des étapes de sa
+  fiche (« Action 2 » après « Action 1 », même s'il existe une fiche 2). Le
+  choix proposé est l'étape quand le document donne plus d'un pilote et demi
+  par fiche, la fiche sinon.
+- **Énumérations** (`findActionEnumerations`), sans fiche nommée en doute :
+  une énumération dont les éléments portent pour la plupart leur cartouche
+  (porteur, partenaires), ou un document sans fiche nommée dont la plupart
+  des titres s'ouvrent sur leur liste ; jamais sous un axe, ni quand le titre
+  annonce les titres suivants. Le doute porte `etapesFrom: 'enumeration'`,
+  ses exemples sont une mesure, un de ses éléments et l'axe qui précède, et
+  l'élément est proposé.
+- **Lecture par défaut** (`fiche`, aussi sans question) : la mesure est
+  l'action et ses éléments restent dans son texte. Les tableaux à rangées
+  numérotées restent lus rangée par rangée, sans question.
+- **Application** : la reprise prend les unités de la lecture choisie. Une
+  phrase de consigne accompagne chaque réponse, sauf des éléments énumérés
+  lus comme actions, déjà découpés ainsi avant la question.
+- Une lecture qui dépasserait la limite d'unités (`MAX_DOCUMENT_UNITS`)
+  n'est pas proposée : l'import lit l'autre sans poser cette question. Les
+  autres questions restent posées.
+
+### Les thèmes que la synthèse réunit
+
+Un plan qui pose un thème au-dessus de chaque fiche (« BIODECHETS (végétaux) »,
+« BIODECHETS (restes alimentaires) ») peut les réunir ailleurs sous un seul
+libellé (« BIODÉCHETS : RESTES ALIMENTAIRES ET VÉGÉTAUX » de la synthèse) :
+un axe par thème de la synthèse, ou un par thème écrit sur les fiches.
+
+- **Détection** (`segment-document/detect-theme-grouping.ts`), sur la lecture
+  par fiche : deux thèmes non numérotés ont la même tête avant une
+  parenthèse, ou au moins deux mots porteurs en commun en tête. La preuve est
+  exigée : hors des fiches, une page cite cette tête moins de fois qu'il n'y a
+  de thèmes, et des fiches (cinq premiers mots du titre) d'au moins deux
+  d'entre eux. Un sommaire qui liste chaque thème ne prouve rien. Le doute
+  porte, par groupe, le libellé de la synthèse et sa page, puis chaque thème
+  avec ses fiches, un titre d'exemple et sa page.
+- **Proposé : `grouped`** (décision produit). Appliqué sans modèle
+  (`apply-reading-choices.ts`) : chaque thème du groupe, en tête du chemin des
+  unités, prend le libellé de la synthèse, aux deux niveaux de lecture. Le
+  squelette ne voit plus qu'un axe.
+- **`separate`** : les unités ne changent pas ; la règle des thèmes du prompt
+  du squelette (`{variantes}`) demande un axe par thème, et un axe qui les
+  réunit quand même est redécoupé par le code, dans l'ordre du document
+  (`scout-units/split-grouped-themes.ts`). Aucune consigne d'extraction.
+- Une réponse à cette question écarte l'abandon pour grilles concurrentes :
+  l'utilisateur a tranché.
+- **Limite** : lues à l'étape, les fiches nommées perdent le thème posé
+  au-dessus d'elles ; le regroupement n'y change alors rien.
+
+### Les actions listées sans fiche
+
+Un tableau récapitulatif peut numéroter plus d'actions que le document n'a de
+fiches (51 « Action à poursuivre N » et « Action à engager N » pour 24 fiches) :
+faut-il créer aussi les actions sans fiche, avec leur seul titre ?
+
+- **Détection** (`detectActionsWithoutFicheDoubt`,
+  `segment-document/list-actions-without-fiche.ts`), sur la lecture par
+  fiche et dans le périmètre du tri : les seuils qui font garder les tableaux
+  (au moins trois actions de plus que de fiches, et 1,25 fois plus), plus deux
+  gardes. La moitié au moins des numéros de fiches se retrouvent au tableau,
+  sans quoi rien ne dit quelles actions n'ont pas de fiche ; et trois numéros
+  listés au moins n'ont pas de fiche. Le doute porte les comptes (listées,
+  avec fiche, sans fiche), une action sans fiche telle qu'écrite avec sa page,
+  et les pages du tableau.
+- **Proposé : `all`** (décision produit), le comportement d'avant la
+  question : les tableaux restent lus, et une phrase des consignes demande de
+  relever chaque action numérotée du tableau, même sans fiche.
+- **`with-fiche`** : le tri retire de l'extraction les extraits hors fiche qui
+  numérotent au moins trois actions, même classés `fiche_action`, et les
+  donne au squelette pour leurs orientations. Aucune consigne.
+- Sans pause (évals, specs), le choix proposé `all` s'applique avec sa
+  consigne, comme après « Continuer ».
+
+## Abandon motivé
+
+Le modèle peut dire qu'il ne sait pas reconstituer un plan fiable. Ce n'est ni
+une étape ni un appel de plus : la réponse du squelette porte un champ
+`doute` (`{ motif, citations, explication }`, null sinon). Le modèle propose,
+le code dispose (`scout-units/verify-model-doubt.ts`).
+
+Quatre motifs : `aucune-action` (le document n'est pas un plan d'actions),
+`texte-illisible`, `plusieurs-plans` (plusieurs plans distincts dans un même
+document ; des tomes ou volets d'un même plan n'en sont pas) et
+`grilles-concurrentes` (les mêmes actions rangées selon deux grilles d'axes
+incompatibles, sans que rien dise laquelle suivre ; un sommaire ou une
+correspondance avec un guide national n'en sont pas). Les
+deux premiers ne mènent à l'abandon que confirmés par un fait du code, les
+deux autres dès que leurs citations sont vérifiées. Aucun interrupteur de
+configuration : l'abandon est actif, et se calibre par un lot d'évals réel
+(voir plus bas).
+
+- **Schéma** (`models/model-doubt.ts`, `skeletonResponseSchema`) : un doute
+  mal formé vaut null, le squelette reste. Le point de reprise ne garde que
+  le squelette.
+- **Vérification** : chaque citation (4 au plus, 8 caractères au moins) doit
+  se retrouver dans une unité du document, à la casse, aux accents et à la
+  ponctuation près, en mots entiers. Elle donne sa page. Une seule citation
+  introuvable et le doute est ignoré.
+- **Confirmation**, selon le motif :
+  - `aucune-action` : au plus 2 fiches, aucun tableau, au plus 2 lignes
+    « Action N : … », aucune action lue par le code d'un tableur, aucun lot
+    du tri en échec et aucune unité classée `fiche_action`. Une question
+    posée suppose des fiches ou des actions numérotées : elle ne précède
+    jamais cet abandon.
+  - `texte-illisible` : au moins 30 % des pages sans texte exploitable
+    (vides, en échec d'OCR, sans mot de trois lettres ou brouillées : moins
+    de 60 % de vrais mots), compté à la lecture
+    (`pipeline/document/reading-stats.ts`, `readingStats` du point de
+    reprise), et au moins une citation elle-même brouillée : des citations
+    toutes bien lues montrent un texte lisible. Une couverture, un
+    intercalaire « AXE 1 : … » ou « Merci de votre attention », courts mais
+    bien formés, sont lisibles. Un document en grande partie illisible ne
+    reçoit aucune question.
+  - `plusieurs-plans` : les citations suffisent.
+  - `grilles-concurrentes` : les citations suffisent, sauf quand
+    l'utilisateur a répondu à la question des thèmes.
+- **Sortie** : à la fin du tri et du squelette, seuls appels payés, la
+  pipeline échoue en `analysis_abandoned` à l'étape `scouting`. Le service
+  enregistre un message composé par le code (le problème, les passages
+  relevés et leurs pages, l'explication du modèle donnée pour telle, quoi
+  faire), une remarque `document-error` par citation (`abandon:<motif>`,
+  `p. N`), et supprime le point de reprise : relancer referait le même
+  abandon. Le plan provisoire, créé au lancement et encore vide, est
+  supprimé dans la même transaction (au lieu de passer en échec) : aucun plan
+  ne reste à supprimer à la main. PostHog reçoit
+  `reason = analysis_abandoned:<motif>`, jamais l'explication.
+- **Écran** : le compte rendu porte aussi `report.abandon` (motif, passages
+  et pages, explication, pages illisibles). L'app en tire une alerte orange
+  « L'IA a préféré ne pas créer ce plan », avec ses conseils par motif et un
+  bouton pour relancer avec un autre document, au lieu de l'erreur rouge.
+  L'historique des imports le marque d'un badge orange « Arrêté par l'IA ».
+  Dans la démarche PCAET, `findAbandonedAiImport` (dernier import du fichier,
+  s'il a été abandonné) remplace la proposition de créer le plan par la même
+  alerte : le même document n'est pas reproposé ; modale fermée, un toast
+  dit le problème et mène au compte rendu.
+- Un doute ignoré ou non confirmé n'arrête rien : il est noté dans les
+  avertissements et dans les détails de l'étape `scouting`
+  (`modelDoubt:<motif>`, `modelDoubtVerified`, `modelDoubtConfirmed`).
+- Sans squelette (Gemini en lecture entière, document sans titre ni extrait
+  de structure), pas d'abandon possible.
+- **Calibrage** : le banc sans modèle garantit qu'aucun plan du corpus n'est
+  tenu pour illisible, mais ne mesure pas le taux auquel Albert remplit
+  `doute`, ni l'effet du champ sur le squelette. Il faut un lot
+  `make ai-import-eval`, lancé à la main (jamais par un agent), sur les plans
+  du corpus (cible : aucun abandon, aucun doute écarté dans `warnings`,
+  squelettes inchangés) et sur un extrait de diagnostic sans fiche (cible :
+  abandon `aucune-action`). Les commandes sont dans
+  [`eval/README.md`](eval/README.md#calibrer-labandon) ; l'éval affiche
+  l'abandon tel que l'utilisateur le lirait. Les motifs `plusieurs-plans` et
+  `grilles-concurrentes`, sans fait du code pour les confirmer, sont les
+  premiers à surveiller.
 
 ## Statistiques des imports
 
@@ -772,6 +970,8 @@ ORDER BY j.created_at DESC;
 | Lecture, OCR, normalisation | `pipeline/read-document/`, `pipeline/normalize-text/` |
 | Segmentation (Albert) | `pipeline/segment-document/` |
 | Tri et squelette (Albert) | `pipeline/scout-units/` |
+| Questions à l'utilisateur | `models/import-question.ts`, `pipeline/segment-document/` (détecteurs), `pipeline/apply-reading-choices.ts`, `answer-import-question/`, `expire-import-questions/` |
+| Abandon motivé | `models/model-doubt.ts`, `pipeline/scout-units/verify-model-doubt.ts`, `generate-import-draft/generate-import.errors.ts` |
 | Extraction | `pipeline/extract-actions/` (`extract-actions.ts` Gemini, `structure-units.ts` Albert) |
 | Mise en cohérence (Albert) | `pipeline/consolidate-hierarchy/` |
 | Vérifications | `pipeline/score-actions/`, `pipeline/consolidate-actions/`, `pipeline/enrich-sous-actions/`, `pipeline/qualitative-review/` |

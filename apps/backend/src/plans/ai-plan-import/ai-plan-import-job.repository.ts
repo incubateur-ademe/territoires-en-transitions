@@ -34,12 +34,15 @@ import { ImportReport, importReportSchema } from './models/import-report';
 import { ImportJobStats } from './models/import-job-stats';
 import { PlanDraft } from './models/plan-draft';
 import {
-  type ActionLevelDoubt,
-  type ImportAnswer,
-  importQuestionSchema,
+  answersEveryDoubt,
+  type ImportChoice,
+  type ImportDoubt,
+  type ImportQuestion,
+  readImportQuestion,
 } from './models/import-question';
 import { z } from 'zod';
 import {
+  AbandonedAiImport,
   AiPlanImportJob,
   aiPlanImportJobInFlightStatuses,
   aiPlanImportJobProcessingStatuses,
@@ -182,11 +185,10 @@ export class AiPlanImportJobRepository {
   }: StoredStatusView): AiPlanImportJobStatusView {
     const parsedReport = importReportSchema.safeParse(report);
     const retryDefaults = importRetryDefaultsSchema.safeParse(options);
-    const parsedQuestion = importQuestionSchema.safeParse(question);
     const parsedContent = contentCountsSchema.safeParse(content);
     return {
       ...view,
-      question: parsedQuestion.success ? parsedQuestion.data : null,
+      question: readImportQuestion(question),
       content: parsedContent.success
         ? (parsedContent.data satisfies ImportContentCounts)
         : null,
@@ -351,6 +353,58 @@ export class AiPlanImportJobRepository {
     } catch (error) {
       this.logger.error(
         `Recherche d'un import antérieur pour la collectivité ${
+          ref.collectiviteId
+        }: ${getErrorMessage(error)}`
+      );
+      return failure(AiPlanImportErrorEnum.GET_JOB_ERROR, toError(error));
+    }
+  }
+
+  /**
+   * Le dernier import du même fichier dans la collectivité, quand l'IA l'a
+   * abandonné : relancer le même document referait le même abandon.
+   */
+  async findLastAbandonedImport(
+    ref: ImportedFichierRef
+  ): Promise<Result<AbandonedAiImport | null, AiPlanImportError>> {
+    try {
+      const [row] = await this.db
+        .select({
+          jobId: aiPlanImportJobTable.id,
+          status: aiPlanImportJobTable.status,
+          importedAt: aiPlanImportJobTable.createdAt,
+          report: sql<unknown>`${aiPlanImportJobTable.draft} -> 'report'`,
+        })
+        .from(aiPlanImportJobTable)
+        .innerJoin(
+          bibliothequeFichierTable,
+          eq(bibliothequeFichierTable.id, aiPlanImportJobTable.fichierId)
+        )
+        .where(
+          and(
+            eq(aiPlanImportJobTable.collectiviteId, ref.collectiviteId),
+            eq(bibliothequeFichierTable.collectiviteId, ref.collectiviteId),
+            'fichierId' in ref
+              ? eq(bibliothequeFichierTable.id, ref.fichierId)
+              : eq(bibliothequeFichierTable.hash, ref.hash)
+          )
+        )
+        .orderBy(desc(aiPlanImportJobTable.createdAt))
+        .limit(1);
+
+      if (row?.status !== AiPlanImportJobStatusEnum.FAILED) {
+        return success(null);
+      }
+      const report = importReportSchema.safeParse(row.report);
+      const abandon = report.success ? report.data.abandon : undefined;
+      return success(
+        abandon
+          ? { jobId: row.jobId, importedAt: row.importedAt, abandon }
+          : null
+      );
+    } catch (error) {
+      this.logger.error(
+        `Recherche d'un import abandonné pour la collectivité ${
           ref.collectiviteId
         }: ${getErrorMessage(error)}`
       );
@@ -540,13 +594,13 @@ export class AiPlanImportJobRepository {
   }
 
   /**
-   * La lecture est faite et le document laisse un doute : le passage s'arrête
-   * là, le point de reprise attend la réponse.
+   * La lecture est faite et le document laisse des doutes : le passage
+   * s'arrête là, le point de reprise attend la réponse à tous.
    */
   async pauseForQuestion(input: {
     id: string;
     attempt: number;
-    question: ActionLevelDoubt;
+    doubts: ImportDoubt[];
     stepStates: StepStates;
   }): Promise<Result<AiPlanImportJob, AiPlanImportError>> {
     return this.updateAndReturn({
@@ -554,7 +608,10 @@ export class AiPlanImportJobRepository {
       attempt: input.attempt,
       patch: {
         status: AiPlanImportJobStatusEnum.AWAITING_ANSWER,
-        question: { ...input.question, answer: null },
+        question: {
+          doubts: input.doubts,
+          answer: null,
+        } satisfies ImportQuestion,
         stepStates: input.stepStates,
         modifiedAt: new Date().toISOString(),
       },
@@ -565,9 +622,10 @@ export class AiPlanImportJobRepository {
   /**
    * Enregistre la réponse et remet l'import en file pour un nouveau passage.
    * Une seule réponse passe : la seconde ne trouve plus d'import en attente.
+   * Elle tranche chaque doute posé, et lui seul : pas de réponse partielle.
    */
   async answerQuestion(
-    input: { id: string; answer: ImportAnswer; answeredBy: string },
+    input: { id: string; choices: ImportChoice[]; answeredBy: string },
     tx: Transaction
   ): Promise<Result<AiPlanImportJob, AiPlanImportError>> {
     try {
@@ -582,26 +640,25 @@ export class AiPlanImportJobRepository {
           )
         )
         .for('update');
-      const question = importQuestionSchema.safeParse(candidate?.question);
-      if (
-        !candidate ||
-        !question.success ||
-        question.data.kind !== input.answer.kind
-      ) {
+      const question = candidate && readImportQuestion(candidate.question);
+      if (!question) {
         return failure(AiPlanImportErrorEnum.IMPORT_NOT_AWAITING_ANSWER);
+      }
+      if (!answersEveryDoubt(question.doubts, input.choices)) {
+        return failure(AiPlanImportErrorEnum.ANSWER_MISMATCH);
       }
       const [row] = await tx
         .update(aiPlanImportJobTable)
         .set({
           status: AiPlanImportJobStatusEnum.PENDING,
           question: {
-            ...question.data,
+            doubts: question.doubts,
             answer: {
-              actionLevel: input.answer.actionLevel,
+              choices: input.choices,
               answeredBy: input.answeredBy,
               answeredAt: new Date().toISOString(),
             },
-          },
+          } satisfies ImportQuestion,
           error: null,
           attempt: sql`${aiPlanImportJobTable.attempt} + 1`,
           modifiedAt: new Date().toISOString(),
@@ -626,12 +683,13 @@ export class AiPlanImportJobRepository {
   }): Promise<Result<AiPlanImportJob, AiPlanImportError>> {
     const job = await this.getById(input.id);
     if (!job.success) return job;
+    const question = readImportQuestion(job.data.question);
     return this.updateAndReturn({
       id: input.id,
       attempt: input.attempt,
       patch: {
         status: AiPlanImportJobStatusEnum.AWAITING_ANSWER,
-        question: job.data.question && { ...job.data.question, answer: null },
+        question: question && { doubts: question.doubts, answer: null },
         modifiedAt: new Date().toISOString(),
       },
       allowedFromStatuses: [AiPlanImportJobStatusEnum.PENDING],

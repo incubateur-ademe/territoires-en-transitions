@@ -1,6 +1,7 @@
 {
   "manual": true,
   "fichier": "plpdma/plpdma-2026-2031_1nsft40.pdf",
+  "questionsAttendues": [{ "kind": "action-level", "actionLevel": "fiche" }],
   "niveaux": [
     "fiche",
     "etape"

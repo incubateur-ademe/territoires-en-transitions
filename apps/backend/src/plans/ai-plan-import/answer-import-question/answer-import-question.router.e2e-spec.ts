@@ -15,7 +15,11 @@ import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { AI_PLAN_IMPORT_QUEUE_NAME } from '../ai-plan-import.queue';
 import { GenerateImportDraftWorker } from '../generate-import-draft/generate-import-draft.worker';
 import { aiPlanImportJobTable } from '../models/ai-plan-import-job.table';
-import { ImportQuestion } from '../models/import-question';
+import {
+  type ActionLevelDoubt,
+  type ImportQuestion,
+  type StoredImportQuestion,
+} from '../models/import-question';
 import { initialStepStates } from '../pipeline/run-import-pipeline';
 
 const level = (exampleTitle: string, count: number) => ({
@@ -24,15 +28,19 @@ const level = (exampleTitle: string, count: number) => ({
   count,
 });
 
-const question: ImportQuestion = {
+const doubt: ActionLevelDoubt = {
   kind: 'action-level',
   axes: level('Limiter les déchets verts', 5),
   fiches: level('Accompagner les habitants', 16),
   fichesWithEtapes: 16,
   etapes: level('Diagnostiquer et orienter', 54),
   proposed: 'fiche',
-  answer: null,
 };
+
+const question: ImportQuestion = { doubts: [doubt], answer: null };
+
+/** Un import mis en attente avant les questions multiples. */
+const legacyQuestion: StoredImportQuestion = { ...doubt, answer: null };
 
 describe("Réponse à la question d'un import IA", () => {
   let app: INestApplication;
@@ -113,7 +121,7 @@ describe("Réponse à la question d'un import IA", () => {
     const status = await context.api.getAiImportStatus({ jobId: job.id });
     expect(status).toMatchObject({
       status: 'awaiting_answer',
-      question: { ...question, answer: null },
+      question: { doubts: [doubt], answer: null },
       content: null,
     });
     const current = await context.api.getCurrentAiImport({
@@ -124,7 +132,7 @@ describe("Réponse à la question d'un import IA", () => {
     await expect(
       context.api.answerAiImportQuestion({
         jobId: job.id,
-        answer: { kind: 'action-level', actionLevel: 'etape' },
+        choices: [{ kind: 'action-level', actionLevel: 'etape' }],
       })
     ).resolves.toEqual({ jobId: job.id });
 
@@ -133,23 +141,66 @@ describe("Réponse à la question d'un import IA", () => {
       .from(aiPlanImportJobTable)
       .where(eq(aiPlanImportJobTable.id, job.id));
     expect(answered).toMatchObject({ status: 'pending', attempt: 1 });
-    expect(answered.question?.answer).toMatchObject({
-      actionLevel: 'etape',
-      answeredBy: context.user.id,
+    expect(answered.question).toMatchObject({
+      doubts: [doubt],
+      answer: {
+        choices: [{ kind: 'action-level', actionLevel: 'etape' }],
+        answeredBy: context.user.id,
+      },
     });
     expect(queued.at(-1)).toMatchObject({
       data: { jobId: job.id, executionAttempt: 1 },
       opts: { jobId: expect.stringMatching(new RegExp(`^${job.id}-reponse-`)) },
     });
     const after = await context.api.getAiImportStatus({ jobId: job.id });
-    expect(after.question?.answer).toEqual({ actionLevel: 'etape' });
+    expect(after.question?.answer).toEqual({
+      choices: [{ kind: 'action-level', actionLevel: 'etape' }],
+    });
 
     await expect(
       context.api.answerAiImportQuestion({
         jobId: job.id,
-        answer: { kind: 'action-level', actionLevel: 'fiche' },
+        choices: [{ kind: 'action-level', actionLevel: 'fiche' }],
       })
     ).rejects.toMatchObject({ code: 'CONFLICT' });
+  });
+
+  test('lit et tranche un import mis en attente sous l’ancienne forme', async () => {
+    const context = await createContext();
+    const job = await insertAwaitingJob(context, { question: legacyQuestion });
+
+    const status = await context.api.getAiImportStatus({ jobId: job.id });
+    expect(status.question).toEqual({ doubts: [doubt], answer: null });
+
+    await expect(
+      context.api.answerAiImportQuestion({
+        jobId: job.id,
+        choices: [{ kind: 'action-level', actionLevel: 'etape' }],
+      })
+    ).resolves.toEqual({ jobId: job.id });
+    const [answered] = await db.db
+      .select()
+      .from(aiPlanImportJobTable)
+      .where(eq(aiPlanImportJobTable.id, job.id));
+    expect(answered.question).toMatchObject({
+      doubts: [doubt],
+      answer: { choices: [{ kind: 'action-level', actionLevel: 'etape' }] },
+    });
+  });
+
+  test('refuse une réponse vide, sans toucher à l’import', async () => {
+    const context = await createContext();
+    const job = await insertAwaitingJob(context);
+
+    await expect(
+      context.api.answerAiImportQuestion({ jobId: job.id, choices: [] })
+    ).rejects.toMatchObject({ code: 'BAD_REQUEST' });
+
+    const status = await context.api.getAiImportStatus({ jobId: job.id });
+    expect(status).toMatchObject({
+      status: 'awaiting_answer',
+      question: { answer: null },
+    });
   });
 
   test('cache l’import aux membres des autres collectivités', async () => {
@@ -160,7 +211,7 @@ describe("Réponse à la question d'un import IA", () => {
     await expect(
       other.api.answerAiImportQuestion({
         jobId: job.id,
-        answer: { kind: 'action-level', actionLevel: 'fiche' },
+        choices: [{ kind: 'action-level', actionLevel: 'fiche' }],
       })
     ).rejects.toMatchObject({ code: 'NOT_FOUND' });
   });
@@ -183,7 +234,7 @@ describe("Réponse à la question d'un import IA", () => {
     await expect(
       context.api.answerAiImportQuestion({
         jobId: job.id,
-        answer: { kind: 'action-level', actionLevel: 'fiche' },
+        choices: [{ kind: 'action-level', actionLevel: 'fiche' }],
       })
     ).rejects.toMatchObject({ code: 'CONFLICT' });
 

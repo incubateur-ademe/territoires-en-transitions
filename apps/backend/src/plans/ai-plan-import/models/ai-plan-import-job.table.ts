@@ -25,7 +25,7 @@ import {
 } from './ai-plan-import-job';
 import { StoredImportCheckpoint } from './import-checkpoint';
 import { ImportJobStats } from './import-job-stats';
-import type { ImportQuestion } from './import-question';
+import type { StoredImportQuestion } from './import-question';
 
 export const aiPlanImportJobTable = pgTable(
   'ai_plan_import_job',
@@ -54,7 +54,7 @@ export const aiPlanImportJobTable = pgTable(
     finishedAt: timestamp('finished_at', TIMESTAMP_OPTIONS),
     stats: jsonb('stats').$type<ImportJobStats>(),
     checkpoint: jsonb('checkpoint').$type<StoredImportCheckpoint>(),
-    question: jsonb('question').$type<ImportQuestion>(),
+    question: jsonb('question').$type<StoredImportQuestion>(),
     attempt: integer('attempt').notNull().default(0),
     createdAt,
     modifiedAt,

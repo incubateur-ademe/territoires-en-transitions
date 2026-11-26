@@ -1,9 +1,15 @@
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { failure, success } from '@tet/backend/utils/result.type';
 import { describe, expect, it, vi } from 'vitest';
+import type { ThemeGroup } from '../../models/import-question';
+import {
+  SEPARATE_THEMES_RULE,
+  THEMES_RULE,
+} from '../../prompts/squelette.prompt';
 import { buildUnit, numberUnits } from '../segment-document/document-unit';
 import { classifyUnits } from './classify-units';
-import { extractSkeleton } from './extract-skeleton';
+import { parseStructuredResponse } from '@tet/backend/utils/llm/parse-json-response';
+import { extractSkeleton, skeletonResponseSchema } from './extract-skeleton';
 import { scoutUnits } from './scout-units';
 
 const tokens = {
@@ -86,7 +92,7 @@ describe('extractSkeleton', () => {
     });
 
     expect(result).toEqual(
-      success({ skeleton: null, tokens: expect.anything() })
+      success({ skeleton: null, modelDoubt: null, tokens: expect.anything() })
     );
     expect(llm.generateStructured).not.toHaveBeenCalled();
   });
@@ -149,6 +155,90 @@ describe('extractSkeleton, avec des fiches', () => {
     if (result.success) {
       expect(result.data.skeleton?.axes[0].sousAxes).toEqual([
         { numero: 'I.A', titre: 'Mobiliser les acteurs publics' },
+      ]);
+    }
+  });
+});
+
+describe('extractSkeleton, avec des thèmes que la synthèse réunit', () => {
+  const groups: ThemeGroup[] = [
+    {
+      label: 'BIODÉCHETS : RESTES ALIMENTAIRES ET VÉGÉTAUX',
+      labelPage: 3,
+      variants: [
+        {
+          theme: 'BIODECHETS (végétaux)',
+          fiches: 1,
+          exampleTitle: '3 Broyer',
+          page: 28,
+        },
+        {
+          theme: 'BIODECHETS (restes alimentaires)',
+          fiches: 1,
+          exampleTitle: '4 Lutter',
+          page: 31,
+        },
+      ],
+    },
+  ];
+  const fiches = [
+    {
+      ...unit('Broyer', 'fiche', ['BIODECHETS (végétaux)']),
+      title: '3 Broyer',
+    },
+    {
+      ...unit('Lutter', 'fiche', ['BIODECHETS (restes alimentaires)']),
+      title: '4 Lutter',
+    },
+  ];
+  // Le modèle réunit les thèmes, quelle que soit la consigne.
+  const merged = () => ({
+    axes: [
+      {
+        numero: '1',
+        titre: 'Biodéchets : restes alimentaires et végétaux',
+        sousAxes: [],
+      },
+    ],
+  });
+
+  it('garde la règle des thèmes et l’axe réuni sans réponse ou pour les réunir', async () => {
+    for (const themeGrouping of [
+      undefined,
+      { grouping: 'grouped' as const, groups },
+    ]) {
+      const { llm, calls } = llmRouting(() => [], merged);
+
+      const result = await extractSkeleton(llm, {
+        units: fiches,
+        structureUnits: [],
+        themeGrouping,
+      });
+
+      expect(calls[0].prompt).toContain(THEMES_RULE);
+      expect(calls[0].prompt).not.toContain(SEPARATE_THEMES_RULE);
+      expect(result.success && result.data.skeleton?.axes).toHaveLength(1);
+    }
+  });
+
+  it('demande un axe par thème des fiches, et redécoupe l’axe que le modèle réunit quand même', async () => {
+    const { llm, calls } = llmRouting(() => [], merged);
+
+    const result = await extractSkeleton(llm, {
+      units: fiches,
+      structureUnits: [],
+      themeGrouping: { grouping: 'separate', groups },
+    });
+
+    expect(calls[0].prompt).toContain(SEPARATE_THEMES_RULE);
+    expect(calls[0].prompt).not.toContain(THEMES_RULE);
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(
+        result.data.skeleton?.axes.map(({ numero, titre }) => [numero, titre])
+      ).toEqual([
+        ['1', 'BIODECHETS (végétaux)'],
+        ['2', 'BIODECHETS (restes alimentaires)'],
       ]);
     }
   });
@@ -430,6 +520,61 @@ describe('scoutUnits', () => {
     expect(same.success && same.data.keptUnits[0].id).toBe('u0002-1');
   });
 
+  it('sans les actions dépourvues de fiche, donne leur récapitulatif au squelette seul, même trié fiche_action', async () => {
+    const recap = buildUnit(
+      [1, 2, 3, 4, 5, 6].map((number) => ({
+        text: `Action à engager ${number} : Mener l'action ${number}`,
+        pageIndex: 0,
+      })),
+      [],
+      'table'
+    );
+    const fiches = [
+      unit('Action 5 : Mener l’action 5. Pilote : Service', 'fiche', ['1 Axe']),
+      unit('Action 6 : Mener l’action 6. Pilote : Service', 'fiche', ['1 Axe']),
+    ];
+    const allFicheAction = (call: Call) =>
+      [...call.prompt.matchAll(/#(\d+) \|/g)].map((m) => ({
+        index: Number(m[1]),
+        type: 'fiche_action',
+      }));
+    const scout = (actionsWithoutFiche?: 'all' | 'with-fiche') => {
+      const routing = llmRouting(allFicheAction);
+      return scoutUnits(routing.llm, {
+        units: numberUnits([recap, ...fiches]),
+        actionsWithoutFiche,
+      }).then((result) => ({ result, calls: routing.calls }));
+    };
+    const skeletonPromptOf = (calls: Call[]) =>
+      calls.find((call) => !call.prompt.includes('agent de tri documentaire'))
+        ?.prompt ?? '';
+
+    const withFiche = await scout('with-fiche');
+    const all = await scout('all');
+    const byDefault = await scout();
+
+    expect(
+      withFiche.result.success &&
+        withFiche.result.data.keptUnits.map((u) => u.id)
+    ).toEqual(['u0002', 'u0003']);
+    expect(
+      withFiche.result.success && withFiche.result.data.discardedCount
+    ).toBe(1);
+    expect(skeletonPromptOf(withFiche.calls)).toContain(
+      "Action à engager 1 : Mener l'action 1"
+    );
+    for (const { result, calls } of [all, byDefault]) {
+      expect(result.success && result.data.keptUnits.map((u) => u.id)).toEqual([
+        'u0001',
+        'u0002',
+        'u0003',
+      ]);
+      expect(skeletonPromptOf(calls)).not.toContain(
+        "Action à engager 1 : Mener l'action 1"
+      );
+    }
+  });
+
   it.each([
     [
       'PLAN D’ACTIONS À 2030',
@@ -591,5 +736,136 @@ describe('scoutUnits', () => {
       expect(result.data.discardedCount).toBe(1);
       expect(result.data.warnings).toEqual([]);
     }
+  });
+});
+
+describe('le doute du modèle, rendu avec le squelette', () => {
+  const diagnostic = numberUnits([
+    unit('SYNTHÈSE DES ENJEUX', 'section'),
+    unit('Le territoire compte 12 000 habitants et émet 80 ktCO2.', 'section', [
+      'Synthèse des enjeux',
+    ]),
+  ]);
+  const AXES = [{ numero: '1', titre: 'Enjeux', sousAxes: [] }];
+  // Comme le service : la réponse brute passe par le schéma demandé.
+  const parsingLlm = (skeletonAnswer: unknown) =>
+    llmRouting(
+      () => [
+        { index: 0, type: 'diagnostic' },
+        { index: 1, type: 'diagnostic' },
+      ],
+      (call) => {
+        const parsed = parseStructuredResponse({
+          completed: true,
+          text: JSON.stringify(skeletonAnswer),
+          schema: call.schema as typeof skeletonResponseSchema,
+        });
+        if (!parsed.success) throw new Error(parsed.error.kind);
+        return parsed.data;
+      }
+    );
+
+  it.each([
+    ['un motif inconnu', { motif: 'autre', citations: [], explication: '' }],
+    ['sans citations', { motif: 'aucune-action', explication: 'x' }],
+    ['du texte', 'je doute'],
+  ])(
+    'un doute mal formé (%s) ne fait jamais échouer le squelette',
+    async (_label, doute) => {
+      const { llm } = parsingLlm({ axes: AXES, doute });
+
+      const result = await extractSkeleton(llm, {
+        units: diagnostic,
+        structureUnits: [],
+      });
+
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.skeleton?.axes).toEqual(AXES);
+        expect(result.data.modelDoubt).toBeNull();
+      }
+    }
+  );
+
+  it('demande le doute au modèle, null quand il n’y en a pas', async () => {
+    const { llm, calls } = parsingLlm({ axes: AXES });
+
+    const result = await extractSkeleton(llm, {
+      units: diagnostic,
+      structureUnits: [],
+    });
+
+    expect(calls[0].prompt).toContain('"doute": null');
+    expect(result.success && result.data.modelDoubt).toBeNull();
+  });
+
+  it('s’arrête après le squelette quand le doute est vérifié et confirmé', async () => {
+    const { llm } = parsingLlm({
+      axes: AXES,
+      doute: {
+        motif: 'aucune-action',
+        citations: ['« Synthèse des enjeux »'],
+        explication: 'Un diagnostic, sans action.',
+      },
+    });
+
+    const result = await scoutUnits(llm, { units: diagnostic });
+
+    expect(result).toEqual(
+      failure({
+        kind: 'analysis_abandoned',
+        motif: 'aucune-action',
+        evidence: [{ citation: 'Synthèse des enjeux', page: 1 }],
+        explanation: 'Un diagnostic, sans action.',
+      })
+    );
+  });
+
+  it('continue, en le notant, quand une citation est introuvable', async () => {
+    const { llm } = parsingLlm({
+      axes: AXES,
+      doute: {
+        motif: 'aucune-action',
+        citations: [
+          'Synthèse des enjeux',
+          'Un passage inventé de toutes pièces',
+        ],
+        explication: 'Un diagnostic.',
+      },
+    });
+
+    const result = await scoutUnits(llm, { units: diagnostic });
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.skeleton?.axes).toEqual(AXES);
+      expect(result.data.warnings).toEqual([
+        'Doute du modèle « aucune-action » écarté : citation introuvable dans le document',
+      ]);
+      expect(result.data.details).toEqual({
+        'modelDoubt:aucune-action': 1,
+        modelDoubtVerified: 0,
+        modelDoubtConfirmed: 0,
+      });
+    }
+  });
+
+  it('ne s’arrête pas sur des grilles concurrentes quand l’utilisateur a tranché les thèmes', async () => {
+    const doute = {
+      motif: 'grilles-concurrentes',
+      citations: ['Synthèse des enjeux'],
+      explication: 'Deux grilles.',
+    };
+
+    const unanswered = await scoutUnits(parsingLlm({ axes: AXES, doute }).llm, {
+      units: diagnostic,
+    });
+    const answered = await scoutUnits(parsingLlm({ axes: AXES, doute }).llm, {
+      units: diagnostic,
+      themeGrouping: { grouping: 'grouped', groups: [] },
+    });
+
+    expect(unanswered.success).toBe(false);
+    expect(answered.success).toBe(true);
   });
 });

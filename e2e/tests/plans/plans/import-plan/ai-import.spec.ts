@@ -13,6 +13,7 @@ import {
   AiImportFixture,
   importStatus,
   submitImport,
+  twoDoubtsQuestion,
 } from './ai-import.fixture';
 
 const supportUser = {
@@ -1557,9 +1558,9 @@ test("pose la question du niveau de l'action, envoie le choix et reprend le suiv
   );
   await expect(question).toContainText('Diagnostiquer et orienter');
   await expect(
-    page.getByTestId('plans.import-ia.question.fiche')
+    page.getByTestId('plans.import-ia.question.action-level.fiche')
   ).toBeChecked();
-  await page.getByTestId('plans.import-ia.question.etape').check();
+  await page.getByTestId('plans.import-ia.question.action-level.etape').check();
   await expect(question).toContainText(
     'environ 5 axes, 16 sous-axes et 54 actions'
   );
@@ -1570,4 +1571,99 @@ test("pose la question du niveau de l'action, envoie le choix et reprend le suiv
     .toEqual([{ kind: 'action-level', actionLevel: 'etape' }]);
   await expect(page.getByTestId('plans.import-ia.etapes')).toBeVisible();
   await expect(question).toHaveCount(0);
+});
+
+test('pose deux précisions ensemble et envoie une réponse pour chacune', async ({
+  page,
+  collectivites,
+}) => {
+  const mock = new AiImportFixture();
+  await mock.install(page);
+  const { collectivite } = await collectivites.addCollectiviteAndUser({
+    userArgs: { autoLogin: true },
+  });
+  mock.status = {
+    ...mock.status,
+    status: 'awaiting_answer',
+    question: twoDoubtsQuestion,
+  };
+  mock.current = mock.status;
+  await page.goto(
+    `/collectivite/${collectivite.data.id}/plans/importer-ia?importJobId=${mock.status.jobId}`
+  );
+
+  const question = page.getByTestId('plans.import-ia.question');
+  await expect(question).toContainText('2 précisions avant de créer le plan');
+  await expect(question).toContainText(
+    'BIODÉCHETS : RESTES ALIMENTAIRES ET VÉGÉTAUX'
+  );
+  await expect(
+    page.getByTestId('plans.import-ia.question.theme-grouping.grouped')
+  ).toBeChecked();
+  await page
+    .getByTestId('plans.import-ia.question.theme-grouping.separate')
+    .check();
+  await expect(
+    page.getByTestId('plans.import-ia.question.action-level.fiche')
+  ).toBeChecked();
+  await page.getByTestId('plans.import-ia.question.continuer').click();
+
+  await expect
+    .poll(() => mock.answers)
+    .toEqual([
+      { kind: 'action-level', actionLevel: 'fiche' },
+      { kind: 'theme-grouping', grouping: 'separate' },
+    ]);
+  await expect(question).toHaveCount(0);
+});
+
+test("explique un abandon de l'IA avec ses passages et propose un autre document", async ({
+  page,
+  collectivites,
+}) => {
+  const mock = new AiImportFixture();
+  mock.status = {
+    ...mock.status,
+    status: 'failed',
+    error: 'Message composé par le serveur',
+    report: {
+      issues: [
+        {
+          kind: 'document-error',
+          code: 'abandon:aucune-action',
+          message: "Passage relevé par l'IA : « Synthèse des enjeux »",
+          location: 'p. 40',
+        },
+      ],
+      qualitativeReview: null,
+      abandon: {
+        motif: 'aucune-action',
+        evidence: [{ citation: 'Synthèse des enjeux', page: 40 }],
+        explanation: 'Ce document est le diagnostic du territoire.',
+      },
+    },
+  };
+  mock.recent = [mock.status];
+  await mock.install(page);
+  const { collectivite } = await collectivites.addCollectiviteAndUser({
+    userArgs: { autoLogin: true },
+  });
+  await page.goto(`/collectivite/${collectivite.data.id}/plans/imports`);
+  await page.getByRole('button', { name: 'Plan de test', exact: true }).click();
+
+  const abandon = page.getByTestId('plans.import-ia.abandon');
+  await expect(abandon).toContainText("L'IA a préféré ne pas créer ce plan");
+  await expect(abandon).toContainText(
+    'Ce document est le diagnostic du territoire.'
+  );
+  await expect(
+    page.getByTestId('plans.import-ia.abandon.preuves')
+  ).toContainText('Synthèse des enjeux');
+  await expect(abandon).toContainText('Page 40');
+  await expect(
+    page.getByTestId('plans.import-ia.abandon.relancer')
+  ).toBeVisible();
+  await expect(
+    page.getByTestId('plans.import-ia.reessayer-button')
+  ).toHaveCount(0);
 });

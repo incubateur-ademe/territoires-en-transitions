@@ -112,6 +112,41 @@ describe('GetImportStatusService', () => {
     });
   });
 
+  it('expose les doutes et les choix faits, sans qui les a faits', async () => {
+    const doubt = {
+      kind: 'action-level' as const,
+      axes: null,
+      fiches: { exampleTitle: 'Accompagner', examplePage: 3, count: 16 },
+      fichesWithEtapes: 16,
+      etapes: { exampleTitle: 'Diagnostiquer', examplePage: 3, count: 54 },
+      proposed: 'fiche' as const,
+    };
+    const choices = [
+      { kind: 'action-level' as const, actionLevel: 'etape' as const },
+    ];
+    const service = buildService({
+      view: toView({
+        status: AiPlanImportJobStatusEnum.PENDING,
+        question: {
+          doubts: [doubt],
+          answer: {
+            choices,
+            answeredBy: 'membre-1',
+            answeredAt: '2026-11-20T09:05:00Z',
+          },
+        },
+      }),
+      isAllowed: true,
+    });
+
+    const result = await service.getStatus({ jobId: 'job-1', user });
+
+    expect(result.success && result.data.question).toEqual({
+      doubts: [doubt],
+      answer: { choices },
+    });
+  });
+
   it('renvoie JOB_NOT_FOUND quand le job est introuvable', async () => {
     const service = buildService({ view: null, isAllowed: true });
 

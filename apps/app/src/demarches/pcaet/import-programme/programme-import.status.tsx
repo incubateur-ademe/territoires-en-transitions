@@ -12,12 +12,13 @@ import {
   getImportStageLabel,
 } from '@/app/plans/plans/import-plan/ai-import-stages';
 import { useFindPreviousAiImport } from '@/app/plans/plans/import-plan/data/use-find-previous-ai-import';
-import { AiImportQuestion } from '@/app/plans/plans/import-plan/ai-import-question';
-import { useAnswerAiImportQuestion } from '@/app/plans/plans/import-plan/data/use-answer-ai-import-question';
+import { useFindAbandonedAiImport } from '@/app/plans/plans/import-plan/data/use-find-abandoned-ai-import';
+import { AiImportAbandonAlert } from '@/app/plans/plans/import-plan/ai-import-abandon.alert';
+import { AiImportQuestionsView } from '@/app/plans/plans/import-plan/ai-import-questions.view';
 import { PlanStatusEnum } from '@tet/domain/plans';
 import type { DemarcheDocumentFichier } from '@tet/domain/demarches';
 import { useDemarcheTracker } from '@/app/demarches/use-demarche-tracker';
-import { Alert, Button, Event, useEventTracker } from '@tet/ui';
+import { Alert, Button, Event } from '@tet/ui';
 import useLocalStorage from 'react-use/lib/useLocalStorage';
 import { useImportProgramme } from './import-programme.context';
 
@@ -50,37 +51,21 @@ const ImportProgressCard = () => {
   );
 };
 
-/** L'import lancé ici attend le niveau de l'action : la question se pose ici. */
+/** L'import lancé ici attend des précisions : elles se demandent ici. */
 const ImportQuestionCard = ({ demarcheId }: { demarcheId: number }) => {
   const { ongoingJobId, ongoingStatus } = useImportProgramme();
-  const answer = useAnswerAiImportQuestion();
-  const tracker = useEventTracker();
-  const question = ongoingStatus?.question;
-  if (!ongoingJobId || !ongoingStatus || !question) return null;
+  if (!ongoingJobId || !ongoingStatus?.question?.doubts.length) return null;
 
   return (
     <div
       className="rounded-lg border border-primary-3 bg-white p-4"
       data-test="demarches.pcaet.documents.import-question"
     >
-      <AiImportQuestion
-        key={ongoingJobId}
-        question={question}
+      <AiImportQuestionsView
+        jobId={ongoingJobId}
+        question={ongoingStatus.question}
         withSousActions={ongoingStatus.withSousActions}
-        isAnswering={answer.isPending}
-        onAnswer={(actionLevel) => {
-          tracker(Event.plans.importIa.repondreQuestion, {
-            origine: 'etape_documents',
-            demarcheId,
-            jobId: ongoingJobId,
-            actionLevel,
-            proposed: question.proposed,
-          });
-          answer.mutate({
-            jobId: ongoingJobId,
-            answer: { kind: 'action-level', actionLevel },
-          });
-        }}
+        trackingProperties={{ origine: 'etape_documents', demarcheId }}
       />
     </div>
   );
@@ -132,7 +117,8 @@ const ProposeImportCard = ({
 
 /**
  * Où en est le plan créé à partir du programme d'actions déposé : proposé,
- * en cours de création, ou créé et à relire à l'étape suivante.
+ * en cours de création, créé et à relire à l'étape suivante, ou abandonné
+ * par l'IA, avec pourquoi.
  */
 export const ProgrammeImportStatus = ({
   demarcheId,
@@ -154,6 +140,8 @@ export const ProgrammeImportStatus = ({
   const { previousImport, isLoading } = useFindPreviousAiImport({
     fichierId: programmeFichier?.id,
   });
+  const { abandonedImport, isLoading: isLoadingAbandon } =
+    useFindAbandonedAiImport({ fichierId: programmeFichier?.id });
   // Le statut de la démarche n'est pas connu ici : l'identifiant suffit à
   // croiser le choix avec les autres événements de la démarche.
   const track = useDemarcheTracker({ id: demarcheId });
@@ -190,6 +178,16 @@ export const ProgrammeImportStatus = ({
     );
   }
 
+  // L'IA a préféré ne pas créer de plan à partir de ce fichier : relancer le
+  // même document referait le même abandon. On l'explique à la place.
+  if (abandonedImport && previousImport === null) {
+    return (
+      <div data-test="demarches.pcaet.documents.import-abandonne">
+        <AiImportAbandonAlert abandon={abandonedImport.abandon} />
+      </div>
+    );
+  }
+
   const canPropose =
     programmeFichier !== undefined &&
     isAmontModifiable &&
@@ -198,6 +196,7 @@ export const ProgrammeImportStatus = ({
     // suivi, la proposition ne doit pas clignoter.
     !isStarting &&
     !isLoading &&
+    !isLoadingAbandon &&
     previousImport === null &&
     isAiImportAcceptedFilename(programmeFichier.filename) &&
     dismissedFichierId !== String(programmeFichier.id);

@@ -1,10 +1,17 @@
 {
   "manual": true,
   "fichier": "plpdma/projet-plpdma-capg-v20032023-2_in6h53.pdf",
+  "questionsAttendues": [
+    {
+      "kind": "theme-grouping",
+      "grouping": "grouped"
+    }
+  ],
+  "regroupements": ["grouped", "separate"],
   "document": "Projet de Programme local de prévention des déchets ménagers et assimilés (PLPDMA) 2023-2028 de la Communauté d'agglomération du Pays de Grasse (CAPG), version du 20/03/2023 ; structure relevée dans la partie « 4.2 Les fiches actions » (p. 24-49, bandeau de thème en capitales posé au-dessus de chaque fiche + cartouche « Action N. ») et croisée avec la synthèse p. 3, la liste p. 16 et le planning p. 20 : 10 axes, 0 sous-axe, 14 fiches, 0 étape.",
   "remarques": [
-    "Axes = bandeaux en capitales posés au-dessus de chaque fiche dans le corps (le modèle p. 22 les nomme « Flux concerné par l'action »), recopiés tels quels : chaque fiche en porte un, et les fiches qui partagent le même bandeau se suivent. Il y en a 10 distincts, dont 4 variantes « BIODECHETS (…) » (restes alimentaires et végétaux / végétaux / restes alimentaires / restes alimentaires et surplus de production) et 2 variantes « DECHETS ASSIMILES … ».",
-    "Les regroupements hors corps sont d'une autre graphie et d'un autre découpage : synthèse p. 3 en 6 thèmes (BIODÉCHETS : RESTES ALIMENTAIRES ET VÉGÉTAUX pour 1-5 ; ORDURES MÉNAGÈRES ET ASSIMILÉS : OMR ET COLLECTES SÉLECTIVES pour 6 ; DÉCHETS ASSIMILÉS - DÉCHETS DES ACTIVITÉS ÉCONOMIQUES pour 7-8 ; DÉCHETS OCCASIONNELS DES MÉNAGES pour 9 ; DÉCHETS EN MER pour 10 ; ACTIONS TRANSVERSALES - TOUS FLUX pour 11-14) ; liste p. 16 (image) en 5 thèmes (6-8 sous « AUTRES DÉCHETS MÉNAGERS ET ASSIMILÉS ») ; planning p. 20 avec les mêmes 6 thèmes que p. 3 mais 11-14 placées par erreur sous « DECHETS OCCASIONNELS DES MENAGES ». Non retenus comme axes : la consigne veut le corps des fiches. Un banc qui regrouperait les 4 bandeaux BIODECHETS en un seul axe (et 7/8 sous un seul axe déchets assimilés) retrouverait les 6 thèmes de la p. 3.",
+    "Axes (lecture `separate`) = bandeaux en capitales posés au-dessus de chaque fiche dans le corps (le modèle p. 22 les nomme « Flux concerné par l'action »), recopiés tels quels : chaque fiche en porte un, et les fiches qui partagent le même bandeau se suivent. Il y en a 10 distincts, dont 4 variantes « BIODECHETS (…) » (restes alimentaires et végétaux / végétaux / restes alimentaires / restes alimentaires et surplus de production) et 2 variantes « DECHETS ASSIMILES … ».",
+    "Les regroupements hors corps sont d'une autre graphie et d'un autre découpage : synthèse p. 3 en 6 thèmes (BIODÉCHETS : RESTES ALIMENTAIRES ET VÉGÉTAUX pour 1-5 ; ORDURES MÉNAGÈRES ET ASSIMILÉS : OMR ET COLLECTES SÉLECTIVES pour 6 ; DÉCHETS ASSIMILÉS - DÉCHETS DES ACTIVITÉS ÉCONOMIQUES pour 7-8 ; DÉCHETS OCCASIONNELS DES MÉNAGES pour 9 ; DÉCHETS EN MER pour 10 ; ACTIONS TRANSVERSALES - TOUS FLUX pour 11-14) ; liste p. 16 (image) en 5 thèmes (6-8 sous « AUTRES DÉCHETS MÉNAGERS ET ASSIMILÉS ») ; planning p. 20 avec les mêmes 6 thèmes que p. 3 mais 11-14 placées par erreur sous « DECHETS OCCASIONNELS DES MENAGES ». La lecture prouve les regroupements de la p. 3 (une ligne de synthèse pour plusieurs bandeaux, avec leurs fiches) : la question des thèmes se pose et propose de réunir (`grouped`, décision de Leny) les 4 bandeaux BIODECHETS sous « Biodéchets : restes alimentaires et végétaux » et 7/8 sous « Déchets assimilés - déchets des activités économiques », soit les 6 thèmes de la p. 3 (`axesReunis`). `axes` garde les 10 bandeaux du corps, attendus avec la réponse `separate`.",
     "Fiche 8 : le bandeau du corps est « DECHETS ASSIMILES PRIS EN CHARGE PAR LE SERVICE PUBLIC », différent de celui de la fiche 7 (« DECHETS ASSIMILES - DECHETS DES ACTIVITES ECONOMIQUES ») alors que la p. 3 range 7 et 8 ensemble : axe distinct conservé.",
     "Fiche 10 : le titre du corps court sur deux lignes et se termine par « … et en particulier contre les dépôts sauvages » ; la synthèse p. 3 et le planning l'abrègent (« … contre les déchets en mer »), la p. 16 écrit « … en particulier lutte contre les dépôts sauvages ». Titre du corps retenu.",
     "Titres du corps retenus contre les variantes des récapitulatifs : 1-2 « Organiser » (p. 16 et planning : « Proposer »), 2 « collectif, partagé ou pédagogique » (p. 16 : « collectif et partagé »), 5 « Développer ou renforcer la démarche de don alimentaire » (p. 16 : « Renforcer la démarche de dons alimentaires »), 8 « Initier une démarche d'EIT - Synergies Interentreprises » (p. 16 : « Accompagner les synergies inter-entreprises dans les zones d'activités »), 13 « … sur les thématiques du PLPDMA » (p. 16 et planning : « … sur la réduction des déchets »). Fiche 12 recomposée sur deux lignes (« … communes / membres »).",
@@ -23,6 +30,24 @@
     "Déchets occasionnels des ménages",
     "Réduction des déchets en mer",
     "Actions transversales - tous flux"
+  ],
+  "axesReunis": [
+    {
+      "axe": "Biodéchets : restes alimentaires et végétaux",
+      "variantes": [
+        "Biodéchets (restes alimentaires et végétaux)",
+        "Biodéchets (végétaux)",
+        "Biodéchets (restes alimentaires)",
+        "Biodéchets (restes alimentaires et surplus de production)"
+      ]
+    },
+    {
+      "axe": "Déchets assimilés - déchets des activités économiques",
+      "variantes": [
+        "Déchets assimilés - déchets des activités économiques",
+        "Déchets assimilés pris en charge par le service public"
+      ]
+    }
   ],
   "actions": [
     {

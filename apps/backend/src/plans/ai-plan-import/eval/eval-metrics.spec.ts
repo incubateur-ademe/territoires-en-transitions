@@ -8,6 +8,8 @@ import {
 import {
   compareWithManualReference,
   compareWithReference,
+  referenceAtActionsWithoutFiche,
+  referenceAtThemeGrouping,
   computeEvalMetrics,
   ManualReference,
 } from './eval-metrics';
@@ -297,5 +299,88 @@ describe('compareWithManualReference', () => {
         },
       ]);
     });
+  });
+});
+
+describe('referenceAtThemeGrouping', () => {
+  const reference: ManualReference = {
+    manual: true,
+    document: 'test',
+    axes: [
+      'Biodéchets (végétaux)',
+      'Biodéchets (restes alimentaires)',
+      'Déchets en mer',
+    ],
+    axesReunis: [
+      {
+        axe: 'Biodéchets : restes alimentaires et végétaux',
+        variantes: [
+          'Biodéchets (végétaux)',
+          'Biodéchets (restes alimentaires)',
+        ],
+      },
+    ],
+    actions: [
+      { axe: 'Biodéchets (végétaux)', titre: '3 Broyer' },
+      {
+        axe: 'Biodéchets (restes alimentaires)',
+        cheminAxes: ['Biodéchets (restes alimentaires)', 'Gaspillage'],
+        titre: '4 Lutter',
+      },
+      { axe: 'Déchets en mer', titre: '10 Ramasser' },
+    ],
+  };
+
+  it('attend les axes de la synthèse quand les thèmes sont réunis', () => {
+    const grouped = referenceAtThemeGrouping(reference, 'grouped');
+
+    expect(grouped.axes).toEqual([
+      'Biodéchets : restes alimentaires et végétaux',
+      'Déchets en mer',
+    ]);
+    expect(
+      grouped.actions.map(({ axe, cheminAxes }) => [axe, cheminAxes])
+    ).toEqual([
+      ['Biodéchets : restes alimentaires et végétaux', undefined],
+      [
+        'Biodéchets : restes alimentaires et végétaux',
+        ['Biodéchets : restes alimentaires et végétaux', 'Gaspillage'],
+      ],
+      ['Déchets en mer', undefined],
+    ]);
+  });
+
+  it('garde les thèmes des fiches sinon', () => {
+    expect(referenceAtThemeGrouping(reference, 'separate')).toBe(reference);
+    expect(referenceAtThemeGrouping(reference, undefined)).toBe(reference);
+  });
+});
+
+describe('referenceAtActionsWithoutFiche', () => {
+  const reference: ManualReference = {
+    manual: true,
+    document: 'test',
+    axes: ['1 Connaître'],
+    actionsSansFiche: ['1', '2'],
+    actions: [
+      { axe: '1 Connaître', numero: '1', titre: 'Soutenir les PNA' },
+      { axe: '1 Connaître', numero: '2', titre: 'Initier des inventaires' },
+      { axe: '1 Connaître', numero: '3', titre: 'Suivre les hirondelles' },
+    ],
+  };
+
+  it('garde toutes les actions quand toutes sont créées, ou sans réponse', () => {
+    expect(referenceAtActionsWithoutFiche(reference, 'all')).toBe(reference);
+    expect(referenceAtActionsWithoutFiche(reference, undefined)).toBe(
+      reference
+    );
+  });
+
+  it('ne garde que les actions qui ont une fiche', () => {
+    expect(
+      referenceAtActionsWithoutFiche(reference, 'with-fiche').actions.map(
+        ({ numero }) => numero
+      )
+    ).toEqual(['3']);
   });
 });

@@ -41,3 +41,44 @@ export const importIssueHintLabels = {
   ImportStatus['report']['issues'][number]['kind'],
   string | undefined
 >;
+
+type ImportAbandonMotif = NonNullable<
+  ImportStatus['report']['abandon']
+>['motif'];
+
+/** Ce qui a arrêté l'IA, en une phrase, selon le motif de l'abandon. */
+export const importAbandonProblemLabels: Record<ImportAbandonMotif, string> =
+  appLabels.importPlanIaAbandonProbleme;
+
+/** Quoi faire après un abandon, selon son motif. */
+export const importAbandonAdviceLabels: Record<
+  ImportAbandonMotif,
+  readonly string[]
+> = appLabels.importPlanIaAbandonConseils;
+
+/**
+ * Le badge d'un import dans la liste : un abandon motivé n'est pas une
+ * panne, il se lit en orange comme son compte rendu.
+ */
+export const importStatusBadgeOf = ({
+  status,
+  report,
+}: Pick<ImportStatus, 'status' | 'report'>): {
+  title: string;
+  variant: 'error' | 'success' | 'warning' | 'info';
+} => {
+  if (status === 'failed' && report.abandon) {
+    return { title: appLabels.importPlanIaAbandonCourt, variant: 'warning' };
+  }
+  return {
+    title: importStatusLabels[status],
+    variant:
+      status === 'failed'
+        ? 'error'
+        : status === 'done'
+        ? 'success'
+        : status === 'awaiting_answer'
+        ? 'warning'
+        : 'info',
+  };
+};

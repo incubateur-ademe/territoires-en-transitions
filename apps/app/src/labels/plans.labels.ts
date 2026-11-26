@@ -17,6 +17,18 @@ type ImportPlanContent = {
   sousActions: number;
 };
 
+/** « p. 48-49 », « p. 12, 15 et 20-21 » : les pages qui se suivent sont réunies. */
+const formatPages = (pages: number[]): string => {
+  const ranges: string[] = [];
+  const sorted = [...new Set(pages)].sort((a, b) => a - b);
+  for (let i = 0; i < sorted.length; i++) {
+    const start = sorted[i];
+    while (sorted[i + 1] === sorted[i] + 1) i++;
+    ranges.push(start === sorted[i] ? `${start}` : `${start}-${sorted[i]}`);
+  }
+  return `p. ${new Intl.ListFormat('fr').format(ranges)}`;
+};
+
 const importPlanNiveau = {
   axe: plural({ one: 'axe', other: 'axes' }),
   sousAxe: plural({ one: 'sous-axe', other: 'sous-axes' }),
@@ -474,9 +486,18 @@ export const plansLabels = {
   importPlanIaRelancerQuandMeme: "Relancer l'import quand même",
   importPlanIaTermineContenu: (content: ImportPlanContent): string =>
     `Votre plan compte ${formatImportPlanContent(content)}.`,
-  importPlanIaEnAttenteReponse: 'Précision attendue',
-  importPlanIaQuestionDocumentLu:
-    'Votre document est lu. Une précision avant de créer le plan.',
+  importPlanIaEnAttenteReponse: 'Réponse attendue',
+  importPlanIaQuestionDocumentLu: ({ count }: { count: number }): string =>
+    count > 1
+      ? `Votre document est lu. ${count} précisions avant de créer le plan.`
+      : 'Votre document est lu. Une précision avant de créer le plan.',
+  importPlanIaQuestionPosition: ({
+    position,
+    total,
+  }: {
+    position: number;
+    total: number;
+  }): string => `Question ${position} sur ${total}`,
   importPlanIaQuestionTitre:
     "Dans votre document, qu'est-ce qui est une action ?",
   importPlanIaQuestionIntro:
@@ -499,6 +520,8 @@ export const plansLabels = {
     'votre document présente ses actions en fiches.',
   importPlanIaQuestionRaisonEtape:
     'votre document donne un pilote à chaque étape.',
+  importPlanIaQuestionRaisonElement:
+    'votre document énumère ses actions sous le titre qui les regroupe.',
   importPlanIaQuestionConsequenceFiche: (content: ImportPlanContent): string =>
     `Votre plan aura environ ${formatImportPlanContent(
       content
@@ -507,14 +530,169 @@ export const plansLabels = {
     `Votre plan aura environ ${formatImportPlanContent(
       content
     )}. Le pilote et le calendrier que votre document donne une seule fois par fiche ne seront pas repris dans chaque action.`,
+  importPlanIaQuestionConsequenceMesure: (content: ImportPlanContent): string =>
+    `Votre plan aura environ ${formatImportPlanContent(
+      content
+    )}. Les éléments énumérés sous chaque titre en deviennent les sous-actions.`,
+  importPlanIaQuestionConsequenceElement: (
+    content: ImportPlanContent
+  ): string =>
+    `Votre plan aura environ ${formatImportPlanContent(
+      content
+    )}. Chaque élément énuméré devient une action, rangée sous le titre qui le regroupe.`,
   importPlanIaQuestionContinuer: "Continuer l'import",
   importPlanIaQuestionDelai:
     "Sans réponse sous 7 jours, l'import s'arrête et vous pourrez le relancer.",
   importPlanIaQuestionReponseEnregistree:
     "Réponse enregistrée, l'import reprend",
   importPlanIaQuestionAttenteDescription:
-    "L'import de ce plan attend une précision de votre part avant de créer les actions.",
+    "L'import de ce plan attend votre réponse avant de créer les actions.",
   importPlanIaQuestionRepondre: 'Répondre',
+  importPlanIaQuestionThemesTitre:
+    'Vos fiches sont rangées sous des thèmes proches : faut-il les réunir ?',
+  importPlanIaQuestionThemesIntro:
+    'Une page de synthèse de votre document réunit plusieurs des thèmes écrits au-dessus des fiches. Les axes de votre plan peuvent suivre la synthèse ou les fiches.',
+  importPlanIaQuestionThemesSynthese: ({
+    page,
+    count,
+  }: {
+    page: number;
+    count: number;
+  }): string => `Page ${page} · la synthèse réunit ${count} thèmes sous`,
+  importPlanIaQuestionThemesVariante: ({
+    fiches,
+    page,
+  }: {
+    fiches: number;
+    page: number;
+  }): string =>
+    `${fiches} ${fiches > 1 ? 'fiches' : 'fiche'}, par exemple page ${page} :`,
+  importPlanIaQuestionThemesRegrouper: 'Un axe par thème de la synthèse',
+  importPlanIaQuestionThemesSeparer:
+    'Un axe pour chaque thème écrit sur les fiches',
+  importPlanIaQuestionThemesRaisonRegrouper:
+    'la synthèse de votre document présente ainsi votre plan.',
+  importPlanIaQuestionThemesConsequenceRegrouper: ({
+    themes,
+    axes,
+  }: {
+    themes: number;
+    axes: number;
+  }): string =>
+    `Les ${themes} thèmes concernés deviennent ${axes} ${
+      axes > 1 ? 'axes' : 'axe'
+    }, sous les libellés de la synthèse.`,
+  importPlanIaQuestionThemesConsequenceSeparer: ({
+    themes,
+  }: {
+    themes: number;
+  }): string =>
+    `Les ${themes} thèmes concernés restent ${themes} axes distincts, sous les libellés des fiches.`,
+  importPlanIaQuestionActionsSansFicheTitre:
+    'Faut-il créer les actions listées sans fiche ?',
+  importPlanIaQuestionActionsSansFicheIntro: ({
+    pages,
+    listed,
+    withFiche,
+  }: {
+    pages: number[];
+    listed: number;
+    withFiche: number;
+  }): string =>
+    `Le tableau récapitulatif (${formatPages(
+      pages
+    )}) liste ${listed} actions, mais ${
+      withFiche > 1
+        ? `seules ${withFiche} ont une fiche détaillée`
+        : `${withFiche} seule a une fiche détaillée`
+    }.`,
+  importPlanIaQuestionActionsSansFicheExemple: ({
+    page,
+  }: {
+    page: number;
+  }): string => `Une action sans fiche, page ${page}`,
+  importPlanIaQuestionActionsSansFicheToutes: ({
+    listed,
+  }: {
+    listed: number;
+  }): string => `Oui, les ${listed} actions`,
+  importPlanIaQuestionActionsSansFicheAvecFiche: ({
+    withFiche,
+  }: {
+    withFiche: number;
+  }): string =>
+    withFiche > 1
+      ? `Non, seulement les ${withFiche} qui ont une fiche`
+      : 'Non, seulement celle qui a une fiche',
+  importPlanIaQuestionActionsSansFicheRaisonToutes:
+    'votre tableau les présente comme des actions du plan.',
+  importPlanIaQuestionActionsSansFicheConsequenceToutes: ({
+    listed,
+    withoutFiche,
+  }: {
+    listed: number;
+    withoutFiche: number;
+  }): string =>
+    `${listed} actions seront créées, dont ${withoutFiche} avec leur seul titre, à compléter.`,
+  importPlanIaQuestionActionsSansFicheConsequenceAvecFiche: ({
+    withFiche,
+    withoutFiche,
+  }: {
+    withFiche: number;
+    withoutFiche: number;
+  }): string =>
+    `${withFiche} ${
+      withFiche > 1 ? 'actions seront créées' : 'action sera créée'
+    } ; les ${withoutFiche} autres ne seront pas reprises.`,
+  importPlanIaAbandonTitre: "L'IA a préféré ne pas créer ce plan",
+  importPlanIaAbandonProbleme: {
+    'aucune-action':
+      "Elle n'a trouvé aucune action dans ce document et préfère s'arrêter plutôt que d'en inventer.",
+    'texte-illisible':
+      "Elle ne parvient pas à lire assez de texte dans ce document et préfère s'arrêter plutôt que de deviner.",
+    'plusieurs-plans':
+      "Ce document semble réunir plusieurs plans d'actions distincts : elle préfère s'arrêter plutôt que de les mélanger en un seul plan.",
+    'grilles-concurrentes':
+      "Ce document range ses actions selon plusieurs découpages en axes, sans dire lequel est celui du plan : elle préfère s'arrêter plutôt que d'en choisir un au hasard.",
+  },
+  importPlanIaAbandonPagesIllisibles: ({
+    unreadablePages,
+    pageCount,
+  }: {
+    unreadablePages: number;
+    pageCount: number;
+  }): string =>
+    `${unreadablePages} pages sur ${pageCount} n'ont pas de texte exploitable.`,
+  importPlanIaAbandonAucunPlan:
+    "Aucun plan n'a été créé : vous pouvez relancer l'import.",
+  importPlanIaAbandonExplication: "Ce que précise l'IA",
+  importPlanIaAbandonPreuves: "Ce que l'IA a relevé dans votre document",
+  importPlanIaAbandonPreuvePage: ({ page }: { page: number }): string =>
+    `Page ${page}`,
+  importPlanIaAbandonQuoiFaire: 'Que faire ?',
+  importPlanIaAbandonConseils: {
+    'aucune-action': [
+      "Vérifiez que le document contient bien le plan d'actions : des fiches actions ou un tableau qui liste les actions.",
+      'Un diagnostic, une stratégie ou une évaluation environnementale ne suffisent pas : déposez le document qui détaille les actions.',
+      "Si c'est bien ce document, contactez-nous : nous regarderons pourquoi ses actions n'ont pas été reconnues.",
+    ],
+    'texte-illisible': [
+      'Exportez le document en PDF depuis votre traitement de texte plutôt que de le scanner.',
+      'Vérifiez que le texte du PDF se sélectionne : sinon, ses pages sont des images.',
+      'À défaut, contactez-nous avec le document.',
+    ],
+    'plusieurs-plans': [
+      'Importez chaque plan séparément, dans un fichier qui ne contient que ses pages.',
+      "Si votre document ne contient en réalité qu'un seul plan, contactez-nous.",
+    ],
+    'grilles-concurrentes': [
+      'Déposez une version qui ne garde que le découpage du plan, par exemple sans le tableau de correspondance.',
+      'Si vous hésitez, contactez-nous avec le document.',
+    ],
+  },
+  importPlanIaAbandonRelancer: 'Relancer avec un autre document',
+  importPlanIaAbandonCourt: "Arrêté par l'IA",
+  importPlanIaAbandonVoirPourquoi: 'Voir pourquoi',
   planImporteSupportQuestion:
     'Le plan proposé ne vous convient pas ? Vous avez besoin d’aide ? Contactez-nous via le',
   planImporteSupportLien: 'support en ligne',

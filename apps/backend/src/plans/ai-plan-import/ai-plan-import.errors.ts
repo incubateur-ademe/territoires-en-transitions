@@ -24,6 +24,7 @@ export const AiPlanImportSpecificErrors = [
   'ALREADY_IMPORTED',
   'JOB_NOT_RESUMABLE',
   'IMPORT_NOT_AWAITING_ANSWER',
+  'ANSWER_MISMATCH',
   'UNAUTHORIZED',
 ] as const;
 
@@ -52,9 +53,9 @@ export const aiPlanImportJobErrorMessages = {
   JOB_COMPLETION_FAILED: 'Enregistrement du job terminé impossible',
   IMPORT_FAILED: 'Import impossible',
   QUESTION_EXPIRED:
-    "Sans réponse à la précision demandée, l'import a été arrêté",
+    "Sans réponse aux précisions demandées, l'import a été arrêté",
   QUESTION_UNRECORDED:
-    "La précision demandée n'a pas pu être enregistrée : relancez l'import",
+    "Les précisions demandées n'ont pas pu être enregistrées : relancez l'import",
 } as const;
 
 export const AiPlanImportErrorEnum = createErrorsEnum(

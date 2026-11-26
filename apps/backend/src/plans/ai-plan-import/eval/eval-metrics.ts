@@ -9,7 +9,12 @@ import {
   FillRateField,
 } from '../pipeline/compute-import-metrics';
 import { titlesMatch } from '../pipeline/extract-actions/similar-titles';
-import type { ActionLevel } from '../models/import-question';
+import type {
+  ActionLevel,
+  ImportChoice,
+  ActionsWithoutFiche,
+  ThemeGrouping,
+} from '../models/import-question';
 
 export type { FillRateField };
 
@@ -77,10 +82,35 @@ export type ManualReference = {
   document: string;
   /** Chemin du document dans le corpus local, pour le banc de découpage. */
   fichier?: string;
-  /** Niveaux de l'action que le banc mesure ; `fiche` seul par défaut. */
+  /**
+   * Niveaux de l'action que le banc mesure ; par défaut celui que propose la
+   * question du niveau, `fiche` sans question.
+   */
   niveaux?: ActionLevel[];
+  /**
+   * Les questions que la lecture doit poser, chacune par son choix proposé :
+   * ni plus ni moins. `[]` pour un document clair.
+   */
+  questionsAttendues?: ImportChoice[];
+  /**
+   * Regroupements des thèmes que le banc mesure, quand la question se pose ;
+   * par défaut celui qu'elle propose.
+   */
+  regroupements?: ThemeGrouping[];
   remarques?: string[];
+  /** Les axes tels qu'écrits au-dessus des fiches (regroupement `separate`). */
   axes: string[];
+  /**
+   * Les axes de la synthèse qui réunissent plusieurs thèmes des fiches :
+   * attendus à leur place avec le regroupement `grouped`.
+   */
+  axesReunis?: { axe: string; variantes: string[] }[];
+  /**
+   * Les numéros des actions qu'un tableau récapitulatif liste sans fiche qui
+   * les détaille : absentes du plan attendu quand seules les actions qui ont
+   * une fiche sont gardées.
+   */
+  actionsSansFiche?: string[];
   /**
    * `cheminAxes`, quand le plan a plus d'un niveau d'axes, donne le chemin
    * complet attendu ; il commence par `axe`. `numero` est celui que le
@@ -141,6 +171,57 @@ export const referenceAtActionLevel = (
             : [fiche]
         ),
       };
+
+/** Les actions attendues quand seules celles qui ont une fiche sont gardées. */
+export const referenceAtActionsWithoutFiche = (
+  reference: ManualReference,
+  actions: ActionsWithoutFiche | undefined
+): ManualReference => {
+  if (actions !== 'with-fiche' || !reference.actionsSansFiche) {
+    return reference;
+  }
+  const withoutFiche = new Set(reference.actionsSansFiche);
+  return {
+    ...reference,
+    actions: reference.actions.filter(
+      ({ numero }) => numero === undefined || !withoutFiche.has(numero)
+    ),
+  };
+};
+
+/**
+ * Les axes attendus selon le regroupement des thèmes : réunis, chaque thème
+ * des fiches cède la place à l'axe de la synthèse qui le contient.
+ */
+export const referenceAtThemeGrouping = (
+  reference: ManualReference,
+  grouping: ThemeGrouping | undefined
+): ManualReference => {
+  if (grouping !== 'grouped' || !reference.axesReunis) {
+    return reference;
+  }
+  const grouped = new Map(
+    reference.axesReunis.flatMap(({ axe, variantes }) =>
+      variantes.map((variante) => [variante, axe] as const)
+    )
+  );
+  const axeOf = (axe: string) => grouped.get(axe) ?? axe;
+  return {
+    ...reference,
+    axes: [...new Set(reference.axes.map(axeOf))],
+    actions: reference.actions.map((action) => ({
+      ...action,
+      axe: axeOf(action.axe),
+      ...(action.cheminAxes
+        ? {
+            cheminAxes: action.cheminAxes.map((axe, depth) =>
+              depth === 0 ? axeOf(axe) : axe
+            ),
+          }
+        : {}),
+    })),
+  };
+};
 
 export const isManualReference = (
   reference: EvalRun | ManualReference

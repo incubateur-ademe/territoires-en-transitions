@@ -14,7 +14,12 @@ import {
   aiPlanImportProfileSchema,
 } from '../models/import-profile';
 import type { EvalRun, ManualReference } from './eval-metrics';
-import { type ActionLevel, actionLevelSchema } from '../models/import-question';
+import {
+  actionLevelSchema,
+  actionsWithoutFicheSchema,
+  type ImportChoice,
+  themeGroupingSchema,
+} from '../models/import-question';
 
 const DECLARED_MIME_BY_EXTENSION: Record<string, string> = {
   '.pdf': 'application/pdf',
@@ -28,9 +33,11 @@ const USAGE = `Usage : run-ai-import-eval --file <pdf|docx|xlsx|csv> [--out <jso
   [--profile generic|pcaet|annexe-3-electrification] [--catalogue <json>]
   [--type-plan "<libellé>"]   (hors PCAET : type du plan donné au modèle, ex. "Plan Mobilité")
   [--action-level fiche|etape]   (réponse à la question du niveau de l'action ; segmente à ce niveau même sans question)
+  [--theme-grouping grouped|separate]   (réponse à la question des thèmes que la synthèse réunit, quand elle se pose)
+  [--actions-without-fiche all|with-fiche]   (réponse à la question des actions qu'un récapitulatif liste sans fiche, quand elle se pose)
        --profile annexe-3-electrification --catalogue <json> : DOCX V4, aide IA ciblée si nécessaire, références non résolues
        (appels réels possibles : lancement humain uniquement)
-       (incompatible avec --ref, --instructions, --no-verifications, --no-sous-actions, --action-level et --lecture-seule)
+       (incompatible avec --ref, --instructions, --no-verifications, --no-sous-actions, --action-level, --theme-grouping, --actions-without-fiche et --lecture-seule)
        run-ai-import-eval --file <xlsx|csv> --lecture-seule   (aucun appel au modèle)`;
 
 type EvalFile = {
@@ -52,7 +59,11 @@ export type GenericEvalInput = EvalFile & {
     instructions: string;
     withVerifications: boolean;
     withSousActions: boolean;
-    actionLevel: ActionLevel | undefined;
+    /**
+     * Les réponses imposées aux doutes de la lecture, comme les donnerait
+     * l'utilisateur ; un doute sans réponse imposée prend le choix proposé.
+     */
+    choices: ImportChoice[];
   };
 };
 
@@ -75,6 +86,8 @@ export const readEvalInput = async (): Promise<EvalInput | EvalExit> => {
       instructions: { type: 'string', default: '' },
       'type-plan': { type: 'string' },
       'action-level': { type: 'string' },
+      'theme-grouping': { type: 'string' },
+      'actions-without-fiche': { type: 'string' },
       'no-verifications': { type: 'boolean', default: false },
       'no-sous-actions': { type: 'boolean', default: false },
       'lecture-seule': { type: 'boolean', default: false },
@@ -87,7 +100,17 @@ export const readEvalInput = async (): Promise<EvalInput | EvalExit> => {
   const actionLevel = actionLevelSchema
     .optional()
     .safeParse(values['action-level']);
-  if (!actionLevel.success) {
+  const themeGrouping = themeGroupingSchema
+    .optional()
+    .safeParse(values['theme-grouping']);
+  const actionsWithoutFiche = actionsWithoutFicheSchema
+    .optional()
+    .safeParse(values['actions-without-fiche']);
+  if (
+    !actionLevel.success ||
+    !themeGrouping.success ||
+    !actionsWithoutFiche.success
+  ) {
     return { mode: 'exit', code: 1, message: USAGE };
   }
   const profile = aiPlanImportProfileSchema.safeParse(values.profile);
@@ -108,7 +131,9 @@ export const readEvalInput = async (): Promise<EvalInput | EvalExit> => {
       values['no-verifications'] ||
       values['no-sous-actions'] ||
       values['lecture-seule'] ||
-      values['action-level'] !== undefined)
+      values['action-level'] !== undefined ||
+      values['theme-grouping'] !== undefined ||
+      values['actions-without-fiche'] !== undefined)
   ) {
     return {
       mode: 'exit',
@@ -180,7 +205,22 @@ export const readEvalInput = async (): Promise<EvalInput | EvalExit> => {
       instructions: values.instructions,
       withVerifications: !values['no-verifications'],
       withSousActions: !values['no-sous-actions'],
-      actionLevel: actionLevel.data,
+      choices: [
+        ...(actionLevel.data
+          ? [{ kind: 'action-level' as const, actionLevel: actionLevel.data }]
+          : []),
+        ...(themeGrouping.data
+          ? [{ kind: 'theme-grouping' as const, grouping: themeGrouping.data }]
+          : []),
+        ...(actionsWithoutFiche.data
+          ? [
+              {
+                kind: 'actions-without-fiche' as const,
+                actions: actionsWithoutFiche.data,
+              },
+            ]
+          : []),
+      ],
     },
   };
 };

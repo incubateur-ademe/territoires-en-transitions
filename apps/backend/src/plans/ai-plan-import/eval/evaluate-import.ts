@@ -13,7 +13,13 @@ import { ReadDocument } from '../pipeline/document/document-page';
 import { buildLlmOcrPage } from '../pipeline/read-document/llm-ocr-page';
 import { readDocument } from '../pipeline/read-document/read-document';
 import { runImportPipeline } from '../pipeline/run-import-pipeline';
-import { detectDocumentActionLevelDoubt } from '../pipeline/segment-document/segment-document';
+import {
+  type ActionLevelDoubt,
+  type ImportChoice,
+  proposedChoiceOf,
+  toReadingChoices,
+} from '../models/import-question';
+import { detectReadingDoubts } from '../pipeline/segment-document/segment-document';
 import { describeWorkbookAnalysis } from './describe-workbook-analysis';
 import {
   buildEvalOutput,
@@ -118,10 +124,60 @@ const evaluateGenericImport = async (
       return null;
     }
     printDocumentStats(document.data);
-    const question =
+    const doubts =
       llm.capabilities.strategy === 'segmented'
-        ? detectDocumentActionLevelDoubt(document.data)
-        : null;
+        ? detectReadingDoubts(document.data)
+        : [];
+    const question =
+      doubts.find(
+        (doubt): doubt is ActionLevelDoubt => doubt.kind === 'action-level'
+      ) ?? null;
+    // Une réponse imposée prend la consigne de ce que dit le doute, comme
+    // celle de l'utilisateur ; les autres doutes gardent le choix proposé.
+    // Sans réponse imposée, le pipeline applique lui-même les choix proposés.
+    const { choices: imposed, ...pipelineOptions } = input.options;
+    const choices: ImportChoice[] = [
+      ...doubts.map(
+        (doubt) =>
+          imposed.find(({ kind }) => kind === doubt.kind) ??
+          proposedChoiceOf(doubt)
+      ),
+      ...imposed.filter(
+        ({ kind }) => !doubts.some((doubt) => doubt.kind === kind)
+      ),
+    ];
+    const readingChoices = toReadingChoices(doubts, choices);
+    const options = {
+      ...pipelineOptions,
+      readingChoices: imposed.length > 0 ? readingChoices : undefined,
+    };
+    const themeDoubt = doubts.find(({ kind }) => kind === 'theme-grouping');
+    if (themeDoubt?.kind === 'theme-grouping') {
+      print(
+        `Question : thèmes réunis par la synthèse, ${themeDoubt.groups
+          .map(
+            ({ label, labelPage, variants }) =>
+              `« ${label} » (p. ${labelPage}) pour ${variants.length} thèmes`
+          )
+          .join(', ')}, proposé : ${themeDoubt.proposed}, retenu : ${
+          readingChoices.themeGrouping?.grouping
+        }`
+      );
+    }
+    const withoutFicheDoubt = doubts.find(
+      ({ kind }) => kind === 'actions-without-fiche'
+    );
+    if (withoutFicheDoubt?.kind === 'actions-without-fiche') {
+      print(
+        `Question : ${
+          withoutFicheDoubt.listed
+        } actions au récapitulatif (p. ${withoutFicheDoubt.tablePages.join(
+          ', '
+        )}), ${withoutFicheDoubt.withoutFiche} sans fiche, proposé : ${
+          withoutFicheDoubt.proposed
+        }, retenu : ${readingChoices.actionsWithoutFiche}`
+      );
+    }
     if (question) {
       print(
         `Question : action = « ${question.fiches.exampleTitle} » (${
@@ -129,7 +185,9 @@ const evaluateGenericImport = async (
         }) ou « ${question.etapes.exampleTitle} » (${
           question.etapes.count
         }), proposé : ${question.proposed}, retenu : ${
-          input.options.actionLevel ?? 'fiche (par défaut)'
+          imposed.some(({ kind }) => kind === 'action-level')
+            ? readingChoices.actionLevel
+            : `${question.proposed} (proposé)`
         }`
       );
     }
@@ -141,7 +199,7 @@ const evaluateGenericImport = async (
       {};
     const outcome = await runImportPipeline(llm, {
       document: document.data,
-      ...input.options,
+      ...options,
       disabledFields: [],
       // Sans base, aucun effet attendu ; le profil PCAET conserve ses secteurs.
       effetsAttendus: [],
@@ -172,6 +230,7 @@ const evaluateGenericImport = async (
     reportStep('écriture du résultat');
     return buildEvalOutput({
       input,
+      readingChoices,
       outcome,
       trace,
       events,

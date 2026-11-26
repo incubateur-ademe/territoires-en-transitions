@@ -88,6 +88,7 @@ export const useEnqueueAiImport = (): UseMutationResult<
       for (const queryKey of [
         trpc.plans.aiImport.getCurrentAiImport.queryKey({ collectiviteId }),
         trpc.plans.aiImport.findPreviousAiImport.queryKey(),
+        trpc.plans.aiImport.findAbandonedAiImport.queryKey(),
         trpc.plans.aiImport.listRecentAiImports.pathKey(),
         trpc.plans.plans.list.queryKey({ collectiviteId }),
       ]) {

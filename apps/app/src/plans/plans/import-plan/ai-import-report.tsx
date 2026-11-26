@@ -2,6 +2,7 @@ import { appLabels } from '@/app/labels/catalog';
 import type { RouterOutput } from '@tet/api';
 import { Accordion, Alert, Badge, Button, Card, Icon } from '@tet/ui';
 import { useId } from 'react';
+import { AiImportAbandonAlert } from './ai-import-abandon.alert';
 import { importIssueHintLabels, importIssueLabels } from './ai-import.labels';
 import { SupportChatLink } from './support-chat.link';
 
@@ -72,7 +73,15 @@ export const AiImportReport = ({
 }) => {
   const warningsId = useId();
   const failed = status.status === 'failed';
-  const { issues, qualitativeReview } = status.report;
+  const { issues, qualitativeReview, abandon } = status.report;
+  // Les passages relevés sont dans l'alerte : pas de remarque en double.
+  if (failed && abandon) {
+    return (
+      <div className="flex flex-col gap-6" data-test="plans.import-ia.rapport">
+        <AiImportAbandonAlert abandon={abandon} onRetry={onRetry} />
+      </div>
+    );
+  }
   const warnings = issues.filter(({ kind }) => kind === 'warning');
   const visibleIssues =
     warnings.length > 1

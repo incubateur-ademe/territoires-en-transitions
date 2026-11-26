@@ -1,6 +1,36 @@
 {
   "manual": true,
   "fichier": "biodiversité/planintercommunalbiodiversited_z828ms.pdf",
+  "questionsAttendues": [{ "kind": "actions-without-fiche", "actions": "all" }],
+  "actionsSansFiche": [
+    "1",
+    "2",
+    "4",
+    "6",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20",
+    "23",
+    "26",
+    "27",
+    "28",
+    "29",
+    "30",
+    "35",
+    "36",
+    "44",
+    "45",
+    "46",
+    "47",
+    "48",
+    "50"
+  ],
   "document": "Plan Intercommunal pour la Biodiversité de la Communauté d’Agglomération du Pays de Grasse (CAPG), réalisé en décembre 2025, programmation 2026-2031 ; structure relevée dans la partie « VII. Place à l’action ! » : tableau du plan d’actions p. 48-49 (axes stratégiques > orientations stratégiques > actions) croisé avec les 24 fiches-actions p. 51-101 ; 6 axes, 14 sous-axes, 51 fiches, 0 étape.",
   "remarques": [
     "Le plan compte 51 actions numérotées 1 à 51 (« Action à poursuivre N » et « Action à engager N ») ; seules les 24 actions à engager (3, 5, 7-11, 21, 22, 24, 25, 31-34, 37-43, 49, 51) ont une fiche-action détaillée p. 51-101. Les 27 actions à poursuivre sont aussi relevées comme fiches, car elles font partie du plan d’actions au même titre (numérotation continue, même tableau) ; leur titre vient du tableau p. 48-49, seule source. Pour les 24 actions à engager, le titre vient du corps de la fiche.",
@@ -10,7 +40,8 @@
     "Rattachement aux orientations lu dans les cellules fusionnées du tableau (vérifié sur l’image) : l’action 29 relève de l’orientation 8 (et non 9), l’action 49 de l’orientation 14 (confirmé par sa fiche), l’action 50 de l’orientation 15.",
     "Libellés d’axes repris du tableau : axe 6 « Faire connaitre » (les fiches écrivent « Faire connaître »), axe 5 « où l’homme » (les fiches 38 et 39 écrivent « ou l’homme »).",
     "Titre de l’action 21 pris dans la fiche, qui ajoute « (PGSZH) » absent du tableau ; titre de l’action 39 recomposé (« d’ » en fin de ligne + « Orientation… ») ; action 29 libellée « Actions à poursuivre 29 » dans le tableau. Point final de l’action 30 retiré.",
-    "Aucune fiche ne liste d’étapes ou sous-actions titrées (descriptifs en simples puces) : pas d’étapes."
+    "Aucune fiche ne liste d’étapes ou sous-actions titrées (descriptifs en simples puces) : pas d’étapes.",
+    "La lecture demande s’il faut créer les 27 actions du tableau sans fiche (« actionsSansFiche ») ; « toutes » est proposé, comme cette référence. Le banc ne mesure que les 24 fiches découpées : les 27 autres ne viennent que du tableau, lu par le modèle."
   ],
   "axes": [
     "1 Renforcer la connaissance pour développer la capacité d’agir",

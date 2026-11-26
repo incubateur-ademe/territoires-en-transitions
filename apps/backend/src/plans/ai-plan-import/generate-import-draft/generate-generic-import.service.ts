@@ -39,6 +39,10 @@ import {
 } from '../models/import-checkpoint';
 import { PlanDraft } from '../models/plan-draft';
 import { AiPlanImportProfileEnum } from '../models/import-profile';
+import {
+  readImportQuestion,
+  toReadingChoices,
+} from '../models/import-question';
 import { describePlanType } from '../prompts/plan-framing';
 import { countPlanContent } from './count-plan-content';
 import { draftToImportPlanInput } from './draft-to-import-plan-input';
@@ -46,6 +50,7 @@ import { buildLlmOcrPage } from '../pipeline/read-document/llm-ocr-page';
 import { readDocument } from '../pipeline/read-document/read-document';
 import { ReadDocument } from '../pipeline/document/document-page';
 import {
+  describePipelineError,
   isCheckpointUsableBy,
   PipelineOutcome,
   runImportPipeline,
@@ -169,6 +174,7 @@ export class GenerateGenericImportService implements ImportGenerator {
     let readingSaved = usable !== null;
     const effetsAttendus = await this.effetAttenduService.getEffetAttendu();
     const planTypeLabel = await this.readPlanTypeLabel(job);
+    const question = readImportQuestion(job.question);
     const outcome = await runImportPipeline(this.llm, {
       ...start,
       profile:
@@ -181,7 +187,9 @@ export class GenerateGenericImportService implements ImportGenerator {
       withSousActions: job.options.withSousActions,
       withSecteurs: job.options.withSecteurs ?? false,
       pauseOnQuestion: true,
-      actionLevel: job.question?.answer?.actionLevel,
+      readingChoices: question?.answer
+        ? toReadingChoices(question.doubts, question.answer.choices)
+        : undefined,
       planTypeLabel,
       effetsAttendus,
       onStepStatesChange: async (stepStates) => {
@@ -213,14 +221,21 @@ export class GenerateGenericImportService implements ImportGenerator {
       return this.pauseForQuestion(job, outcome, readingSaved);
     }
     if (outcome.status === 'failed') {
+      const { error } = outcome;
+      // Un abandon motivé se refait à l'identique : rien à reprendre.
+      const abandoned = error.kind === 'analysis_abandoned' ? error : null;
       return this.failed(
-        ImportGenerationErrors.fromPipeline(outcome.failedStep, outcome.error),
-        outcome.error.kind,
+        ImportGenerationErrors.fromPipeline(outcome.failedStep, error),
+        abandoned ? describePipelineError(abandoned) : error.kind,
         {
           attempt,
           stepStates: outcome.stepStates,
           failedStep: outcome.failedStep,
           stats: telemetry.stats(),
+          ...(abandoned && {
+            report: ImportGenerationErrors.abandonReport(abandoned),
+            dropCheckpoint: true,
+          }),
         }
       );
     }
@@ -413,7 +428,7 @@ export class GenerateGenericImportService implements ImportGenerator {
     const paused = await this.jobRepository.pauseForQuestion({
       id: job.id,
       attempt: job.attempt,
-      question: outcome.question,
+      doubts: outcome.doubts,
       stepStates: outcome.stepStates,
     });
     if (!paused.success) {
@@ -422,8 +437,8 @@ export class GenerateGenericImportService implements ImportGenerator {
       );
       return failedPause();
     }
-    this.logger.log(`Import ${job.id}: en attente du niveau de l'action`);
-    return success({ awaitingAnswer: true });
+    this.logger.log(`Import ${job.id}: en attente de précisions`);
+    return success({ awaitingAnswer: true, doubts: outcome.doubts });
   }
 
   private failed(

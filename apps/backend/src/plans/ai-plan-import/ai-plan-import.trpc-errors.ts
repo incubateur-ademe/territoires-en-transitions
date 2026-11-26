@@ -43,6 +43,11 @@ export const aiPlanImportErrorConfig: TrpcErrorHandlerConfig<AiPlanImportSpecifi
         message:
           "Cet import n'attend plus de réponse : elle a déjà été donnée ou le délai est passé",
       },
+      ANSWER_MISMATCH: {
+        code: 'BAD_REQUEST',
+        message:
+          'La réponse doit trancher chacune des précisions demandées, et elles seules',
+      },
       DAILY_QUOTA_EXCEEDED: {
         code: 'TOO_MANY_REQUESTS',
         message: `La collectivité a atteint la limite de ${AI_PLAN_IMPORT_MAX_JOBS_PER_COLLECTIVITE_PER_DAY} imports sur 24 heures, veuillez réessayer plus tard`,

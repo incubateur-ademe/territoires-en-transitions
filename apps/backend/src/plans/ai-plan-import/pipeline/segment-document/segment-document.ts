@@ -6,13 +6,15 @@ import {
 } from '../document/document-page';
 import { cutTabularUnits } from './cut-tabular-units';
 import { cutUnits, CutUnitsOptions } from './cut-units';
-import type { ActionLevelDoubt } from '../../models/import-question';
+import type { ImportDoubt } from '../../models/import-question';
 import {
   detectActionLevelDoubt,
   detectHeadings,
   DetectHeadingsOptions,
 } from './detect-headings';
+import { detectThemeGroupingDoubt } from './detect-theme-grouping';
 import { DocumentUnit, numberUnits } from './document-unit';
+import { detectActionsWithoutFicheDoubt } from './list-actions-without-fiche';
 
 export type SegmentDocumentOptions = CutUnitsOptions & DetectHeadingsOptions;
 
@@ -42,15 +44,32 @@ export const segmentDocument = (
   return numberUnits(units);
 };
 
-/** Un tableur se lit par rangées : la question des titres ne s'y pose pas. */
-export const detectDocumentActionLevelDoubt = (
-  document: ReadDocument
-): ActionLevelDoubt | null =>
-  isTabularKind(document.kind)
-    ? null
-    : detectActionLevelDoubt(
-        document.pages.filter((page) => page.source !== 'empty')
-      );
+/**
+ * Les doutes que la lecture laisse, posés ensemble à l'utilisateur. Un
+ * tableur se lit par rangées : la question des titres ne s'y pose pas. Les
+ * thèmes et les actions sans fiche se lisent sur les unités lues par fiche,
+ * que l'appelant a souvent déjà.
+ */
+export const detectReadingDoubts = (
+  document: ReadDocument,
+  ficheUnits?: DocumentUnit[]
+): ImportDoubt[] => {
+  if (isTabularKind(document.kind)) {
+    return [];
+  }
+  const pages = document.pages.filter((page) => page.source !== 'empty');
+  const units =
+    ficheUnits ??
+    segmentDocument(document, {
+      ...DEFAULT_SEGMENT_OPTIONS,
+      actionLevel: 'fiche',
+    });
+  return [
+    detectActionLevelDoubt(pages),
+    detectThemeGroupingDoubt(units),
+    detectActionsWithoutFicheDoubt(units),
+  ].filter((doubt): doubt is ImportDoubt => doubt !== null);
+};
 
 /** La grille d'une page de tableur, dans le même ordre que les pages. */
 const gridOfPage = (

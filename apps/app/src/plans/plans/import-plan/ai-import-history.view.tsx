@@ -27,7 +27,7 @@ import { useRouter } from 'next/navigation';
 import { useQueryStates } from 'nuqs';
 import { AiImportStatusView } from './ai-import-status.view';
 import { AiImportReport } from './ai-import-report';
-import { importStatusLabels } from './ai-import.labels';
+import { importStatusBadgeOf } from './ai-import.labels';
 import { aiImportQueryState } from './ai-import.query-state';
 import { useAiImportAccess } from './data/use-ai-import-access';
 import {
@@ -183,6 +183,7 @@ const AiImportHistoryContent = ({ showDetails }: { showDetails: boolean }) => {
                     origine: 'detail_import',
                     jobId: importJobId,
                     profile: status.profile,
+                    motif: status.report.abandon?.motif,
                   });
                   router.push(
                     makeCollectivitePlansActionsImporterIaUrl({
@@ -258,18 +259,7 @@ const AiImportHistoryContent = ({ showDetails }: { showDetails: boolean }) => {
                       })}
                     </time>
                   </div>
-                  <Badge
-                    title={importStatusLabels[item.status]}
-                    variant={
-                      item.status === 'failed'
-                        ? 'error'
-                        : item.status === 'done'
-                        ? 'success'
-                        : item.status === 'awaiting_answer'
-                        ? 'warning'
-                        : 'info'
-                    }
-                  />
+                  <Badge {...importStatusBadgeOf(item)} />
                 </li>
               ))}
             </ul>
