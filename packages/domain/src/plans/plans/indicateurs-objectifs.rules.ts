@@ -194,7 +194,12 @@ export function compareIndicateursObjectifs(
 }
 
 /** Une valeur datée à l'année : départ ou dernier résultat d'un indicateur. */
-export type IndicateurValeurAnnee = { annee: number; valeur: number };
+export type IndicateurValeurAnnee = {
+  annee: number;
+  valeur: number;
+  /** Date complète du résultat, absente pour une valeur de dépôt sans date */
+  dateValeur?: string;
+};
 
 const getAnneeResultat = ({ dateValeur }: IndicateurResultat) =>
   Number(dateValeur.slice(0, 4));
@@ -202,7 +207,24 @@ const getAnneeResultat = ({ dateValeur }: IndicateurResultat) =>
 const toValeurAnnee = (
   point: IndicateurResultat | undefined
 ): IndicateurValeurAnnee | null =>
-  point ? { annee: getAnneeResultat(point), valeur: point.valeur } : null;
+  point
+    ? {
+        annee: getAnneeResultat(point),
+        valeur: point.valeur,
+        dateValeur: point.dateValeur,
+      }
+    : null;
+
+// deux résultats de la même année se départagent à la date complète
+const estPosterieur = (
+  valeur: IndicateurValeurAnnee,
+  reference: IndicateurValeurAnnee
+) =>
+  valeur.annee !== reference.annee
+    ? valeur.annee > reference.annee
+    : valeur.dateValeur !== undefined &&
+      reference.dateValeur !== undefined &&
+      valeur.dateValeur > reference.dateValeur;
 
 /**
  * La valeur de départ : celle du dépôt PCAET quand elle est connue (année de
@@ -248,6 +270,21 @@ export type AvancementObjectif = {
 const evolution = (depart: number, valeur: number) =>
   depart === 0 ? null : (valeur - depart) / Math.abs(depart);
 
+/**
+ * Évolution visée par l'objectif par rapport au départ. Elle ne dépend pas de
+ * la barre : `null` sans départ, sans objectif postérieur au départ, ou si le
+ * départ est nul.
+ */
+export function computeEvolutionObjectif(
+  depart: IndicateurValeurAnnee | null,
+  cible: IndicateurObjectifHorizon | null
+): number | null {
+  if (!depart || !cible || cible.annee <= depart.annee) {
+    return null;
+  }
+  return evolution(depart.valeur, cible.valeur);
+}
+
 const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
 
 /**
@@ -276,7 +313,7 @@ export function computeAvancementObjectif({
     !dernier ||
     !cible ||
     cible.annee <= depart.annee ||
-    dernier.annee <= depart.annee
+    !estPosterieur(dernier, depart)
   ) {
     return null;
   }

@@ -89,7 +89,7 @@ export const IndicateurObjectifAvancement = ({
         <div
           role="progressbar"
           aria-label={appLabels.indicateursObjectifsAvancement}
-          aria-valuenow={Math.round(chemin * 100)}
+          aria-valuenow={Math.round(largeur)}
           aria-valuetext={libelle}
           className="relative h-2 w-full rounded-full bg-grey-3"
         >

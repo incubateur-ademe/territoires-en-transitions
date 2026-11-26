@@ -3,6 +3,7 @@ import { IndicateurPeriodiciteEnum } from '../../indicateurs/indicateur/indicate
 import {
   compareIndicateursObjectifs,
   computeAvancementObjectif,
+  computeEvolutionObjectif,
   pickDepart,
   pickDernier,
   getHorizonParDefaut,
@@ -236,8 +237,16 @@ describe('pickDepart / pickDernier', () => {
   ];
 
   it('part du premier résultat et finit au dernier, à l’année', () => {
-    expect(pickDepart(points)).toEqual({ annee: 2015, valeur: 152 });
-    expect(pickDernier(points)).toEqual({ annee: 2024, valeur: 124 });
+    expect(pickDepart(points)).toEqual({
+      annee: 2015,
+      valeur: 152,
+      dateValeur: '2015-01-01',
+    });
+    expect(pickDernier(points)).toEqual({
+      annee: 2024,
+      valeur: 124,
+      dateValeur: '2024-01-01',
+    });
   });
 
   it('préfère le départ du dépôt PCAET', () => {
@@ -362,6 +371,58 @@ describe('computeAvancementObjectif', () => {
       computeAvancementObjectif({
         ...ges,
         dernier: { annee: 2015, valeur: 152 },
+      })
+    ).toBeNull();
+  });
+});
+
+describe('computeEvolutionObjectif', () => {
+  it('se calcule depuis le départ et la cible, sans résultat postérieur', () => {
+    expect(
+      computeEvolutionObjectif(
+        { annee: 2024, valeur: 100 },
+        { annee: 2030, valeur: 80 }
+      )
+    ).toBeCloseTo(-0.2);
+  });
+
+  it('reste null sans départ, sans cible postérieure ou avec un départ nul', () => {
+    expect(
+      computeEvolutionObjectif(null, { annee: 2030, valeur: 80 })
+    ).toBeNull();
+    expect(
+      computeEvolutionObjectif(
+        { annee: 2030, valeur: 100 },
+        { annee: 2024, valeur: 80 }
+      )
+    ).toBeNull();
+    expect(
+      computeEvolutionObjectif(
+        { annee: 2024, valeur: 0 },
+        { annee: 2030, valeur: 80 }
+      )
+    ).toBeNull();
+  });
+});
+
+describe('computeAvancementObjectif, résultats de la même année', () => {
+  it('départage deux résultats de la même année à la date complète', () => {
+    const avancement = computeAvancementObjectif({
+      depart: { annee: 2024, valeur: 100, dateValeur: '2024-01-01' },
+      dernier: { annee: 2024, valeur: 90, dateValeur: '2024-07-01' },
+      cible: { annee: 2030, valeur: 80 },
+      anneeCourante: 2026,
+    });
+    expect(avancement?.chemin).toBeCloseTo(0.5);
+  });
+
+  it('ne compte pas un résultat antérieur de la même année', () => {
+    expect(
+      computeAvancementObjectif({
+        depart: { annee: 2024, valeur: 100, dateValeur: '2024-07-01' },
+        dernier: { annee: 2024, valeur: 90, dateValeur: '2024-01-01' },
+        cible: { annee: 2030, valeur: 80 },
+        anneeCourante: 2026,
       })
     ).toBeNull();
   });
