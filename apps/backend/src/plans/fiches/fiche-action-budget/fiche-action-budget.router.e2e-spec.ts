@@ -1,4 +1,5 @@
 import { INestApplication } from '@nestjs/common';
+import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { ficheActionBudgetTable } from '@tet/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
 import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
 import {
@@ -8,7 +9,6 @@ import {
   getTestRouter,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
-import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { BudgetType, BudgetUnite, FicheBudgetCreate } from '@tet/domain/plans';
@@ -21,34 +21,45 @@ describe('Route CRUD des budgets des fiches actions', () => {
   let router: TrpcRouter;
   let authenticatedUser: AuthenticatedUser;
   let databaseService: DatabaseService;
+  let collectiviteId: number;
+  let fixtureCleanup: () => Promise<void>;
 
   beforeAll(async () => {
     app = await getTestApp();
     router = await getTestRouter(app);
     databaseService = await getTestDatabase(app);
 
-    const testUserResult = await addTestUser(databaseService, {
-      collectiviteId: 1,
-      role: CollectiviteRole.ADMIN,
+    const fixture = await addTestCollectiviteAndUser(databaseService, {
+      user: { role: CollectiviteRole.ADMIN },
     });
-    authenticatedUser = getAuthUserFromUserCredentials(testUserResult.user);
-  });
+    collectiviteId = fixture.collectivite.id;
+    fixtureCleanup = fixture.cleanup;
+    authenticatedUser = getAuthUserFromUserCredentials(fixture.user);
+  }, 120_000);
 
   afterAll(async () => {
-    await app.close();
+    if (fixtureCleanup) {
+      await fixtureCleanup();
+    }
+    if (app) {
+      await app.close();
+    }
   });
 
   test(`Sécurité IDOR — upsert ne peut pas hijacker un budget d'une autre fiche`, async () => {
     const caller = router.createCaller({ user: authenticatedUser });
 
-    // Fiche A appartient à la collectivité de l'utilisateur authentifié (collectiviteId=1)
+    // Fiche A appartient à la collectivité de l'utilisateur authentifié
     const [ficheA] = await databaseService.db
       .insert(ficheActionTable)
-      .values({ titre: 'fiche A', collectiviteId: 1 })
+      .values({ titre: 'fiche A', collectiviteId })
       .returning();
 
     // Fiche B appartient à une autre collectivité (la « victime »)
-    const victimCollectiviteId = 21;
+    const victimFixture = await addTestCollectiviteAndUser(databaseService, {
+      user: { role: CollectiviteRole.ADMIN },
+    });
+    const victimCollectiviteId = victimFixture.collectivite.id;
     const [ficheB] = await databaseService.db
       .insert(ficheActionTable)
       .values({ titre: 'fiche B', collectiviteId: victimCollectiviteId })
@@ -105,6 +116,7 @@ describe('Route CRUD des budgets des fiches actions', () => {
         await databaseService.db
           .delete(ficheActionTable)
           .where(eq(ficheActionTable.id, ficheB.id));
+        await victimFixture.cleanup();
       } catch (error) {
         console.error('Erreur lors de la suppression:', error);
       }
@@ -113,12 +125,15 @@ describe('Route CRUD des budgets des fiches actions', () => {
 
   test(`Test droit`, async () => {
     const caller = router.createCaller({ user: authenticatedUser });
-    const collectiviteId = 20;
+    const strangerFixture = await addTestCollectiviteAndUser(databaseService, {
+      user: { role: CollectiviteRole.ADMIN },
+    });
+    const strangerCollectiviteId = strangerFixture.collectivite.id;
 
     // Ajout fiche dans une collectivité où l'utilisateur n'est pas
     const [fiche] = await databaseService.db
       .insert(ficheActionTable)
-      .values({ titre: 'test', collectiviteId })
+      .values({ titre: 'test', collectiviteId: strangerCollectiviteId })
       .returning();
 
     const budgetToInsert: FicheBudgetCreate = {
@@ -169,7 +184,8 @@ describe('Route CRUD des budgets des fiches actions', () => {
       try {
         await databaseService.db
           .delete(ficheActionTable)
-          .where(eq(ficheActionTable.collectiviteId, collectiviteId));
+          .where(eq(ficheActionTable.collectiviteId, strangerCollectiviteId));
+        await strangerFixture.cleanup();
       } catch (error) {
         console.error('Erreur lors de la suppression:', error);
       }
@@ -178,7 +194,11 @@ describe('Route CRUD des budgets des fiches actions', () => {
   test(`Tests CRUD`, async () => {
     const caller = router.createCaller({ user: authenticatedUser });
 
-    const ficheId = 1;
+    const [fiche] = await databaseService.db
+      .insert(ficheActionTable)
+      .values({ titre: 'fiche CRUD budgets', collectiviteId })
+      .returning();
+    const ficheId = fiche.id;
     const budgetHTInvTot: FicheBudgetCreate = {
       ficheId: ficheId,
       type: 'investissement',
@@ -242,6 +262,26 @@ describe('Route CRUD des budgets des fiches actions', () => {
     });
     expect(result1Tot.length).toBe(1);
     expect(result1Tot[0].budgetPrevisionnel).toBe(5000.0);
+
+    await expect(() =>
+      caller.plans.fiches.budgets.upsert([
+        {
+          ...upsertTot,
+          budgetPrevisionnel: 7000,
+        },
+        {
+          ...budgetHTInv2020,
+          id: 999999,
+          budgetReel: 7000,
+        },
+      ])
+    ).rejects.toThrowError();
+
+    const resultRollback = await caller.plans.fiches.budgets.list({
+      ficheId,
+      total: true,
+    });
+    expect(resultRollback[0].budgetPrevisionnel).toBe(5000.0);
 
     await expect(() =>
       caller.plans.fiches.budgets.upsert([budgetHTInvTotBis])
@@ -343,13 +383,12 @@ describe('Route CRUD des budgets des fiches actions', () => {
     expect(result4.length).toBe(3);
 
     onTestFinished(async () => {
-      try {
-        await databaseService.db
-          .delete(ficheActionBudgetTable)
-          .where(eq(ficheActionBudgetTable.ficheId, ficheId));
-      } catch (error) {
-        console.error('Erreur lors de la suppression:', error);
-      }
+      await databaseService.db
+        .delete(ficheActionBudgetTable)
+        .where(eq(ficheActionBudgetTable.ficheId, ficheId));
+      await databaseService.db
+        .delete(ficheActionTable)
+        .where(eq(ficheActionTable.id, ficheId));
     });
   });
 });
