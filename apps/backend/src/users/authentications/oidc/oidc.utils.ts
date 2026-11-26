@@ -79,3 +79,35 @@ export function getRootDomainFromUrl(url: string): string | undefined {
   }
   return parts.slice(-2).join('.');
 }
+
+/**
+ * Quand le flux OIDC revient sur l'origine de l'app (redirect URI déclarée sur
+ * `APP_URL`, backend joint par le proxy `/api`), il doit aussi en partir : les
+ * cookies du flux et la session sont limités à cet hôte. Renvoie l'URL
+ * équivalente sur l'origine de l'app pour une requête arrivée par un autre
+ * hôte (`api.*`), `null` si elle est déjà au bon endroit.
+ *
+ * L'hôte d'arrivée est celui transmis par le proxy (`X-Forwarded-Host`).
+ */
+export function getOidcFlowRedirectUrl({
+  req,
+  appUrl,
+  redirectUri,
+}: {
+  req: Pick<Request, 'headers' | 'originalUrl'>;
+  appUrl: string;
+  redirectUri: string;
+}): string | null {
+  const flowUrl = new URL(redirectUri);
+  if (flowUrl.origin !== new URL(appUrl).origin) {
+    return null;
+  }
+  const forwardedHost = [req.headers['x-forwarded-host']]
+    .flat()[0]
+    ?.split(',')[0]
+    .trim();
+  const requestHost = forwardedHost || req.headers.host;
+  return requestHost === flowUrl.host
+    ? null
+    : `${flowUrl.origin}${req.originalUrl}`;
+}

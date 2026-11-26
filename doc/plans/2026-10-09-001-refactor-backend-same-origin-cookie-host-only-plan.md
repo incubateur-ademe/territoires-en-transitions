@@ -26,6 +26,18 @@ relit aussi la session depuis ce cookie, et les cookies OIDC `id_token` /
 Objectif : faire passer les appels navigateur → backend par l'origine de l'app
 (pattern BFF), puis restreindre les cookies d'auth à l'hôte de l'app.
 
+## État (2026-11-24)
+
+| Phase                               | Preprod        | Prod (Koyeb)                 |
+| ----------------------------------- | -------------- | ---------------------------- |
+| 0 — nom de cookie par environnement | fait           | sans objet (Supabase cloud)  |
+| 1 — proxy same-origin `app.…/api`   | fait (Traefik) | code prêt (route handler)    |
+| 2 — OIDC sur l'origine de l'app     | code prêt      | code prêt, variables à poser |
+| 3 — cookie `__Host-`                | code prêt      | code prêt, variables à poser |
+
+Les phases 1 à 3 s'activent par variables d'environnement, sans redéploiement
+de code : voir « Ordre de déploiement ».
+
 ## Pourquoi
 
 ### Déclencheur : collision de cookie avec GoTrue self-hosté
@@ -113,28 +125,25 @@ process Node, pas de streaming ni d'en-têtes hop-by-hop à gérer, pas de
 timeout ni de limite de body à surveiller (import IA, exports longs).
 `X-Forwarded-*` est posé par Traefik.
 
-### Alternative transitoire : route handler Next
+### Prod sur Koyeb : route handler Next
 
-Uniquement si la prod doit rester plusieurs mois sur Koyeb alors qu'on veut le
-BFF avant la bascule. Koyeb sait aussi router des chemins entre services d'une
-même app : à vérifier en premier.
+Sur Koyeb, l'app et le backend sont deux apps distinctes, sans routage par
+chemin. Le proxy y est `apps/app/app/api/[...path]/route.ts` (pas `rewrites()`,
+évalué au build et incompatible avec `BACKEND_URL` variable de déploiement ;
+timeout de 30 s et limite de body sur les rewrites externes). `proxy.ts` exclut
+déjà `/api` de son matcher.
 
-Sinon, `apps/app/app/api/[...path]/route.ts` (pas `rewrites()`, évalué au
-build et incompatible avec `BACKEND_URL` variable de déploiement ; timeout de
-30 s et limite de body sur les rewrites externes). `proxy.ts` exclut déjà
-`/api` de son matcher.
+- Relaie méthode, en-têtes et corps (en flux) vers `BACKEND_URL`, chemin
+  conservé ; redirections et `Set-Cookie` rendus tels quels.
+- Pose `X-Forwarded-Host` (hôte d'arrivée), comme Traefik : le backend s'en
+  sert pour l'OIDC (phase 2).
+- Coût : un saut de plus par le process Node de l'app pour tout le trafic API
+  du navigateur. À surveiller : charge de l'instance, requêtes longues
+  (exports), envois de fichiers.
 
-- Exporte `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, `OPTIONS` ;
-  `fetch(new URL(pathname + search, BACKEND_INTERNAL_URL), { method, headers,
-body: req.body, duplex: 'half', redirect: 'manual' })` ; réponse transmise
-  telle quelle (statut, `Location`, `Set-Cookie` multiples, body en
-  streaming) ; retire `host` et les en-têtes hop-by-hop ; ajoute
-  `X-Forwarded-For/Host/Proto`.
-- Cible l'URL **interne** du backend, pas `BACKEND_URL` public (sinon la
-  requête ressort par le proxy d'entrée puis y revient).
-
-Même chemin `/api`, même contrat : passer ensuite à Traefik se fait en
-supprimant le fichier, sans toucher au client ni à ProConnect.
+Même chemin `/api`, même contrat : à la bascule Coolify, Traefik intercepte
+`app.…/api` avant Next et le fichier se supprime sans toucher au client ni à
+ProConnect.
 
 ### Proxys de confiance
 
@@ -193,49 +202,69 @@ Points de vigilance :
   backend local et un faux LLM, ou faire valider l'upload par un humain.
 - Requêtes longues (exports) : vérifier les timeouts Traefik.
 
-## Phase 2 — OIDC sur l'origine de l'app (⚠ action humaine)
+## Phase 2 — OIDC sur l'origine de l'app (⚠ action humaine par provider)
 
-2.1. **Humain** : déclarer chez ProConnect, pour chaque environnement, les
-nouvelles URL (même chemin, hôte de l'app) : - `redirect_uri` : `https://app.…/api/v1/proconnect/callback`
-(aujourd'hui `<BACKEND_URL>/api/v1/proconnect/callback`) ; - `post_logout_redirect_uri` équivalente.
-2.2. Basculer `PRO_CONNECT_REDIRECT_URI` et
-`PRO_CONNECT_POST_LOGOUT_REDIRECT_URI` (variables de déploiement backend,
-`apps/backend/.env` en local).
-2.3. Basculer les URL OIDC du navigateur sur `ENV.backend_browser_url` :
-`login-user-with-oidc.urls.ts`, `create-user-with-oidc.urls.ts`,
-`link-oidc-identity.profile-urls.ts` et leurs appelants,
-`signup/page.tsx`, `sign-out-user.server.ts`.
-2.4. Retirer `domain` de `idTokenCookieOptions()` (`oidc.controller.ts`) ;
-supprimer `getRootDomainFromUrl` (`oidc.utils.ts`) s'il ne sert plus.
-Passant par l'origine de l'app, les `Set-Cookie` sans `Domain` deviennent
-host-only sur `app.…`.
-2.5. Mettre à jour `oidc.controller.spec.ts`.
-2.6. Migration : les cookies `id_token`/`provider` déjà posés sur le domaine
+Deux dépendances de l'OIDC au domaine racine :
+
+- la liaison de compte (`mode=link`) lit le cookie de session au départ du flux
+  et au retour du provider (`resolveAuthenticatedUserId`) : avec un cookie
+  limité à l'hôte de l'app, elle redeviendrait silencieusement une connexion
+  simple si le flux passait par `api.…` ;
+- les cookies `id_token` / `oidc-provider` sont posés par `api.…` sur le
+  domaine racine pour être lus par l'app (déconnexion).
+
+Tout se pilote par la redirect URI du provider, **provider par provider** :
+
+2.1. **Humain** : déclarer chez le provider les URL sur l'hôte de l'app (même
+chemin) — `https://app.…/api/v1/<provider>/callback` et
+`…/logout/callback`. Fait pour ProConnect. À faire pour Mon Compte ADEME.
+2.2. Basculer `<PROVIDER>_REDIRECT_URI` et
+`<PROVIDER>_POST_LOGOUT_REDIRECT_URI` (variables de déploiement backend).
+2.3. Backend (`getOidcFlowRedirectUrl`, `oidc.utils.ts`) : quand la redirect
+URI est sur l'origine de l'app, `/login` et `/logout` atteints par `api.…`
+renvoient (302) vers la même URL sur l'origine de l'app. Les URL OIDC du
+navigateur (`ENV.backend_url`) restent donc inchangées, et un provider
+resté sur `api.…` continue de fonctionner à côté.
+2.4. Backend (`idTokenCookieOptions`) : sans `Domain` quand la redirect URI est
+sur l'origine de l'app — les cookies `id_token` / `oidc-provider` deviennent
+limités à l'hôte de l'app.
+2.5. Migration : les cookies `id_token`/`provider` déjà posés sur le domaine
 racine (TTL 12 h) expirent seuls.
+
+Tant qu'un provider reste sur `api.…` avec un cookie de session `__Host-`, sa
+liaison de compte ne fonctionne pas (connexion et inscription : inchangées).
 
 ## Phase 3 — Cookie Supabase host-only `__Host-`
 
-**Calée sur la bascule GoTrue de la prod.** À ce moment, `SUPABASE_URL`
-change et donc le nom du cookie aussi : tout le monde est déconnecté une fois
-quoi qu'il arrive. Renommer en `__Host-…` ne coûte alors rien de plus, et
-supprime le besoin d'une migration de cookies (pas de collision entre ancien
-et nouveau nom).
+Prérequis dans l'environnement visé : phases 1 et 2. Preprod d'abord.
 
-Pour preprod/staging, la phase peut être appliquée dès que la phase 1 y est
-en place (une reconnexion de plus).
-
-3.1. `getCookieOptions()` : nom `__Host-sb-tet-<env>-auth-token` (via la
-variable de la phase 0), sans `domain`, `secure: true`, `path: '/'`.
-Retirer le `hostname` passé par `apps/app/app/root-providers.tsx` ;
-supprimer `getRootDomain` de `packages/api/src/utils/pathUtils.ts` s'il
-n'a plus d'autre usage (aujourd'hui aussi dans
-`content-security-policy.config.ts`). Supprimer `COOKIE_DOMAIN` des
-environnements.
-3.2. Dev local : `__Host-` impose `Secure`. Les navigateurs acceptent les
-cookies `Secure` sur `http://localhost`, mais vérifier Playwright et
-garder un nom sans préfixe en local si besoin.
-3.3. E2E : `getCookieDomain` (`e2e/tests/shared/supabase-client.utils.ts`) →
-hôte de l'app.
+3.1. `getCookieOptions()` : piloté par le nom. Si
+`SUPABASE_AUTH_COOKIE_NAME` commence par `__Host-` : pas de `domain`,
+`secure: true`, `path: '/'`. Sans la variable (local, CI), rien ne change —
+pas de question de cookie `Secure` sur `http://localhost`.
+3.2. Nom : l'ancien nom préfixé de `__Host-`
+(`__Host-sb-tet-preprod-auth-token` ; en prod
+`__Host-sb-<ref du projet Supabase>-auth-token`). L'ancien cookie se déduit
+ainsi du nouveau, côté app comme côté backend.
+3.3. Backend : même variable (le serveur Next lui relaie le cookie sous ce
+nom, `trpc-server-client.ts`). `supabase-cookie-parser.ts` lit aussi
+l'ancien nom, pour les onglets ouverts avant la migration.
+3.4. Migration (`migrateLegacyRootDomainCookies`, `proxy-client.ts`) : si
+l'ancien cookie est présent (morceaux `.0`, `.1`… compris), il est recopié
+sous le nouveau nom puis **supprimé explicitement** du domaine racine.
+Personne n'est déconnecté. La suppression est faite même sans recopie :
+l'ancien cookie vit ~3 ans et son jeton de rafraîchissement reste valide
+tant que l'utilisateur ne revient pas. Garder ce code au moins 6 mois après
+l'activation en prod ; passé ce délai, un utilisateur qui revient avec le seul
+ancien cookie se reconnecte.
+Risque accepté : tant qu'un navigateur n'est pas revenu sur l'app, il garde
+l'ancien cookie et l'envoie aux autres sous-domaines, comme aujourd'hui. Pas
+de révocation des sessions : elle déconnecterait tout le monde pour fermer une
+exposition qui existe déjà et s'éteint au fil des visites.
+3.5. Ensuite : retirer le `hostname` passé par
+`apps/app/app/root-providers.tsx`, `COOKIE_DOMAIN`, et `getRootDomain`
+de `pathUtils.ts` s'il n'a plus d'autre usage (aujourd'hui aussi dans
+`content-security-policy.config.ts`).
 
 ## Phase 4 — Nettoyage
 
@@ -246,25 +275,40 @@ cookie.
 4.2. Supprimer `apps/app/cors.config.ts` (et son appel dans `proxy.ts`) si
 plus rien ne fait d'appel cross-origin vers l'app.
 4.3. Retirer le montage `/trpc` historique si plus aucun appelant.
-4.4. Supprimer le fallback `supabaseUrlToAuthCookieName` de la phase 0.2.
+4.4. Supprimer le fallback `supabaseUrlToAuthCookieName` de la phase 0.2,
+seulement une fois `SUPABASE_AUTH_COOKIE_NAME` déclarée dans tous les
+environnements qui lisent la session (prod, local, CI, app **et** backend)
+et rendue obligatoire dans la validation de config. Passé le délai de
+conservation (3.4), supprimer aussi le repli sur l'ancien nom (3.3) et la
+migration de cookie (3.4).
+4.5. À la bascule Coolify de la prod : supprimer le route handler
+`apps/app/app/api/[...path]/route.ts`.
 
 ## Ordre de déploiement
 
-1. Phase 0 sur preprod/staging.
-2. Phases 1 et 2 sur preprod/staging, directement avec Traefik.
-3. Phase 3 sur preprod/staging.
-4. Prod : phases 1, 2 et 3 à la bascule Koyeb → Coolify.
-5. Phase 4.
+1. ~~Phases 0 et 1 sur preprod.~~
+2. Code des phases 1 (route handler), 2 et 3 : inerte tant que les variables
+   ne sont pas posées.
+3. Activation dans un environnement, dans cet ordre :
+   1. backend : `SUPABASE_AUTH_COOKIE_NAME=__Host-…` (il lit encore l'ancien
+      nom) et redirect URI OIDC sur l'hôte de l'app ;
+   2. app : `BACKEND_BROWSER_URL=<origine de l'app>` et
+      `SUPABASE_AUTH_COOKIE_NAME=__Host-…` (variables GitHub du même nom pour
+      la prod Koyeb, `env-manifest.tf` pour Coolify).
+4. Phase 4. Le retrait du repli sur l'ancien nom et de la migration de
+   cookie (4.4) attend la fin du délai de conservation (3.4).
 
-Le route handler Next n'intervient que si la prod doit obtenir le BFF avant sa
-bascule (cf. « Alternative transitoire »).
+Retour arrière : retirer `__Host-` du nom déconnecte les sessions déjà migrées
+(l'ancien cookie a été supprimé).
 
 ## Vérification
 
 - Connexion par mot de passe, magic link et ProConnect ; déconnexion
   (y compris le logout SSO amont) ; liaison d'une identité OIDC depuis le
   profil.
-- Sessions preprod et staging indépendantes dans un même navigateur.
+- Sessions preprod et prod indépendantes dans un même navigateur.
+- Le `Set-Cookie` de session ne porte plus de `Domain` et commence par
+  `__Host-` ; l'ancien cookie du domaine racine a disparu après une visite.
 - Le cookie n'apparaît plus sur `territoiresentransitions.fr` (DevTools →
   Application → Cookies).
 - Upload d'un document et d'un fichier d'import (sans lancer le LLM).
@@ -274,7 +318,8 @@ bascule (cf. « Alternative transitoire »).
 
 - Coolify : le domaine avec chemin génère-t-il bien la règle attendue, et
   le strip se désactive-t-il par l'API ?
-- Dev local (1.6) : route handler limité au dev ou `rewrites()` conditionnel ?
+- Dev local (1.6) : poser `BACKEND_BROWSER_URL=http://localhost:3000` pour
+  passer par le route handler ?
 - Les intégrations externes avec clé d'API (`apikeys.controller.ts`)
   continuent d'appeler `BACKEND_URL` directement : rien à changer, à
   confirmer.

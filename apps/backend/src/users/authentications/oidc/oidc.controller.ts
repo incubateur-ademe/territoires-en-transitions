@@ -26,6 +26,7 @@ import {
 } from './oidc.models';
 import {
   getRequestCookies,
+  getOidcFlowRedirectUrl,
   getRootDomainFromUrl,
   sanitizeNextPath,
 } from './oidc.utils';
@@ -75,6 +76,9 @@ export class OidcController {
     @Res() res: Response
   ): Promise<void> {
     const providerConfig = this.getProviderConfigOrThrow(provider);
+    if (this.redirectToFlowOrigin(req, res, providerConfig)) {
+      return;
+    }
 
     try {
       const state = this.oidcClientService.randomState();
@@ -186,13 +190,17 @@ export class OidcController {
       const { claims, idToken } = exchange.data;
 
       // id_token conservé en cookie httpOnly (domaine racine) pour le logout futur.
-      res.cookie(OIDC_COOKIES.idToken, idToken, this.idTokenCookieOptions());
+      res.cookie(
+        OIDC_COOKIES.idToken,
+        idToken,
+        this.idTokenCookieOptions(providerConfig)
+      );
       // Provider de la session (cookie LISIBLE par l'app) : la déconnexion s'en
       // sert pour fermer la session SSO amont via /:provider/logout.
       res.cookie(
         OIDC_COOKIES.provider,
         providerConfig.provider,
-        this.providerCookieOptions()
+        this.providerCookieOptions(providerConfig)
       );
 
       if (cookies.get(OIDC_COOKIES.linkMode)) {
@@ -396,14 +404,16 @@ export class OidcController {
     @Res() res: Response
   ): Promise<void> {
     const providerConfig = this.getProviderConfigOrThrow(provider);
+    if (this.redirectToFlowOrigin(req, res, providerConfig)) {
+      return;
+    }
     const appUrl = this.configurationService.get('APP_URL');
 
     try {
       const cookies = getRequestCookies(req);
       const idToken = cookies.get(OIDC_COOKIES.idToken);
 
-      res.clearCookie(OIDC_COOKIES.idToken, this.idTokenCookieOptions());
-      res.clearCookie(OIDC_COOKIES.provider, this.providerCookieOptions());
+      this.clearSessionCookies(res, providerConfig);
 
       if (!idToken) {
         res.redirect(302, appUrl);
@@ -464,8 +474,7 @@ export class OidcController {
       OIDC_COOKIES.logoutState,
       this.flowCookieOptions(providerConfig)
     );
-    res.clearCookie(OIDC_COOKIES.idToken, this.idTokenCookieOptions());
-    res.clearCookie(OIDC_COOKIES.provider, this.providerCookieOptions());
+    this.clearSessionCookies(res, providerConfig);
     res.redirect(302, appUrl);
   }
 
@@ -478,6 +487,23 @@ export class OidcController {
       throw new NotFoundException();
     }
     return providerConfig;
+  }
+
+  /** Renvoie la requête sur l'hôte où le flux reviendra (cf. `getOidcFlowRedirectUrl`). */
+  private redirectToFlowOrigin(
+    req: Request,
+    res: Response,
+    providerConfig: OidcProviderRuntimeConfig
+  ): boolean {
+    const url = getOidcFlowRedirectUrl({
+      req,
+      appUrl: this.configurationService.get('APP_URL'),
+      redirectUri: providerConfig.redirectUri,
+    });
+    if (url) {
+      res.redirect(302, url);
+    }
+    return url !== null;
   }
 
   private redirectLoginError(res: Response, code: OidcErrorCode): void {
@@ -500,15 +526,23 @@ export class OidcController {
     };
   }
 
-  /** Cookie id_token : httpOnly, domaine racine (partagé app/api), 12 h. */
-  private idTokenCookieOptions(): CookieOptions {
+  /**
+   * Cookie id_token : httpOnly, 12 h. Limité à l'hôte quand le flux OIDC passe
+   * par l'origine de l'app (redirect URI sur `APP_URL`) ; sinon posé par
+   * `api.*` sur le domaine racine pour que l'app le voie.
+   */
+  private idTokenCookieOptions(
+    providerConfig: OidcProviderRuntimeConfig
+  ): CookieOptions {
     const appUrl = this.configurationService.get('APP_URL');
+    const isServedFromAppOrigin =
+      new URL(providerConfig.redirectUri).origin === new URL(appUrl).origin;
     return {
       httpOnly: true,
       secure: appUrl.startsWith('https://'),
       sameSite: 'lax',
       path: '/',
-      domain: getRootDomainFromUrl(appUrl),
+      ...(!isServedFromAppOrigin && { domain: getRootDomainFromUrl(appUrl) }),
       maxAge: OIDC_ID_TOKEN_COOKIE_TTL_MS,
     };
   }
@@ -519,8 +553,33 @@ export class OidcController {
    * du provider pour rediriger vers `/:provider/logout`. Le nom du provider
    * n'est pas une donnée sensible.
    */
-  private providerCookieOptions(): CookieOptions {
-    return { ...this.idTokenCookieOptions(), httpOnly: false };
+  private providerCookieOptions(
+    providerConfig: OidcProviderRuntimeConfig
+  ): CookieOptions {
+    return { ...this.idTokenCookieOptions(providerConfig), httpOnly: false };
+  }
+
+  /**
+   * Purge `id_token` et `oidc-provider` sur l'hôte et sur le domaine racine :
+   * un cookie posé avant le passage du flux sur l'origine de l'app y est
+   * encore, et ne se supprime qu'avec le même `Domain`.
+   */
+  private clearSessionCookies(
+    res: Response,
+    providerConfig: OidcProviderRuntimeConfig
+  ): void {
+    const options = this.idTokenCookieOptions(providerConfig);
+    const rootDomain = getRootDomainFromUrl(
+      this.configurationService.get('APP_URL')
+    );
+    for (const domain of new Set([undefined, rootDomain])) {
+      res.clearCookie(OIDC_COOKIES.idToken, { ...options, domain });
+      res.clearCookie(OIDC_COOKIES.provider, {
+        ...options,
+        domain,
+        httpOnly: false,
+      });
+    }
   }
 
   private clearFlowCookies(
