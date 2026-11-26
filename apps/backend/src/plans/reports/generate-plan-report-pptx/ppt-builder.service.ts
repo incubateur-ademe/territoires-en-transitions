@@ -1518,7 +1518,7 @@ export class PptBuilderService {
                     if (!relation) {
                       return;
                     }
-                    ModifyImageHelper.setRelationTargetCover(
+                    return ModifyImageHelper.setRelationTargetCover(
                       ficheIndicateurChartImageFile.imageFile,
                       presentation
                     )(element, relation);
