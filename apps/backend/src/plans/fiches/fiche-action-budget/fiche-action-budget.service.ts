@@ -1,13 +1,25 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { ficheActionBudgetTable } from '@tet/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
 import { getBudgetsRequest } from '@tet/backend/plans/fiches/fiche-action-budget/get-budgets.request';
 import FicheActionPermissionsService from '@tet/backend/plans/fiches/fiche-action-permissions.service';
 import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
-import { AuthUser } from '@tet/backend/users/models/auth.models';
+import {
+  AuthenticatedUser,
+  AuthUser,
+} from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
+import {
+  FicheActionBudgetError,
+  FicheActionBudgetErrorEnum,
+} from '@tet/backend/plans/fiches/fiche-action-budget/fiche-action-budget.errors';
 import {
   assertNoDuplicateBudgets,
   FicheBudget,
@@ -15,8 +27,23 @@ import {
 } from '@tet/domain/plans';
 import { and, eq, inArray, isNotNull, isNull } from 'drizzle-orm';
 
+type UpsertBudgetTransactionFailure = {
+  reason: 'UPSERT_BUDGET_TRANSACTION_FAILURE';
+  result: Result<never, FicheActionBudgetError>;
+};
+
+const isUpsertBudgetTransactionFailure = (
+  error: unknown
+): error is UpsertBudgetTransactionFailure =>
+  typeof error === 'object' &&
+  error !== null &&
+  (error as UpsertBudgetTransactionFailure).reason ===
+    'UPSERT_BUDGET_TRANSACTION_FAILURE';
+
 @Injectable()
 export class FicheActionBudgetService {
+  private readonly logger = new Logger(FicheActionBudgetService.name);
+
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly ficheService: FicheActionPermissionsService
@@ -65,26 +92,20 @@ export class FicheActionBudgetService {
     budget: FicheBudgetCreate,
     trx: Transaction
   ): Promise<FicheBudget> {
-    try {
-      const [inserted] = await trx
-        .insert(ficheActionBudgetTable)
-        .values({ ...budget, annee: budget.annee ?? null })
-        .returning();
-      return inserted;
-    } catch (error) {
-      console.error('Error inserting budget');
-      console.error(error);
-      throw error;
-    }
+    const [inserted] = await trx
+      .insert(ficheActionBudgetTable)
+      .values({ ...budget, annee: budget.annee ?? null })
+      .returning();
+    return inserted;
   }
 
   private async upsertSingleBudget(
     budget: FicheBudgetCreate,
     trx: Transaction
-  ): Promise<FicheBudget> {
+  ): Promise<Result<FicheBudget, FicheActionBudgetError>> {
     const id = budget.id;
     if (id === undefined) {
-      return this.insertBudget(budget, trx);
+      return success(await this.insertBudget(budget, trx));
     }
     const existingBudget = await this.findExistingBudgetById(
       id,
@@ -92,13 +113,16 @@ export class FicheActionBudgetService {
       trx
     );
     if (!existingBudget) {
-      throw new Error(
-        `Budget ${id} not found on fiche ${budget.ficheId}.`
+      return failure(
+        FicheActionBudgetErrorEnum.BUDGET_NOT_FOUND,
+        new Error(`Budget ${id} not found on fiche ${budget.ficheId}.`)
       );
     }
-    return this.updateBudget(
-      { ...existingBudget, ...budget, id, ficheId: existingBudget.ficheId },
-      trx
+    return success(
+      await this.updateBudget(
+        { ...existingBudget, ...budget, id, ficheId: existingBudget.ficheId },
+        trx
+      )
     );
   }
 
@@ -119,29 +143,58 @@ export class FicheActionBudgetService {
   async upsert(
     budgets: FicheBudgetCreate[],
     { user }: ServiceSecondArg
-  ): Promise<FicheBudget[]> {
+  ): Promise<Result<FicheBudget[], FicheActionBudgetError>> {
     if (budgets.length === 0) {
-      return [];
+      return success([]);
     }
 
     const ficheId = budgets[0].ficheId;
     if (!budgets.every((budget) => budget.ficheId === ficheId)) {
-      throw new Error('Budgets from the same call must have the same ficheId.');
+      return failure(FicheActionBudgetErrorEnum.INVALID_FICHE_ID);
     }
 
-    assertNoDuplicateBudgets(budgets);
-
-    await this.ficheService.canWriteFiche(ficheId, user);
-
-    return this.databaseService.db.transaction(async (trx) => {
-      const budgetsToReturn = await Promise.all(
-        budgets.map((budget) => this.upsertSingleBudget(budget, trx))
+    try {
+      assertNoDuplicateBudgets(budgets);
+    } catch (error) {
+      return failure(
+        FicheActionBudgetErrorEnum.DUPLICATE_BUDGET,
+        error instanceof Error ? error : new Error(String(error))
       );
+    }
 
-      await this.updateFicheModifiedAt(ficheId, user.id, trx);
+    const permissionResult = await this.checkCanWriteFiche(ficheId, user);
+    if (!permissionResult.success) return permissionResult;
 
-      return budgetsToReturn;
-    });
+    try {
+      return await this.databaseService.db.transaction(async (trx) => {
+        const budgetsToReturn: FicheBudget[] = [];
+        for (const budget of budgets) {
+          const result = await this.upsertSingleBudget(budget, trx);
+          if (!result.success) {
+            throw {
+              reason: 'UPSERT_BUDGET_TRANSACTION_FAILURE',
+              result,
+            } satisfies UpsertBudgetTransactionFailure;
+          }
+          budgetsToReturn.push(result.data);
+        }
+
+        await this.updateFicheModifiedAt(ficheId, user.id, trx);
+        return success(budgetsToReturn);
+      });
+    } catch (error) {
+      if (isUpsertBudgetTransactionFailure(error)) {
+        return error.result;
+      }
+      this.logger.error(
+        `Échec de l'upsert des budgets de la fiche ${ficheId}`,
+        error
+      );
+      return failure(
+        FicheActionBudgetErrorEnum.DATABASE_ERROR,
+        error instanceof Error ? error : new Error(String(error))
+      );
+    }
   }
 
   async insertBudgets(
@@ -154,9 +207,60 @@ export class FicheActionBudgetService {
       }
       return success(undefined);
     } catch (error) {
+      this.logger.error('Échec de l’insertion des budgets', error);
       return failure(
         'SERVER_ERROR',
         error instanceof Error ? error : undefined
+      );
+    }
+  }
+
+  private async checkCanWriteFiche(
+    ficheId: number,
+    user: AuthenticatedUser
+  ): Promise<Result<undefined, FicheActionBudgetError>> {
+    try {
+      await this.ficheService.canWriteFiche(ficheId, user);
+      return success(undefined);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        return failure(FicheActionBudgetErrorEnum.FICHE_NOT_FOUND, error);
+      }
+      if (error instanceof ForbiddenException) {
+        return failure(FicheActionBudgetErrorEnum.UNAUTHORIZED, error);
+      }
+      this.logger.error(
+        `Échec du contrôle d’écriture sur la fiche ${ficheId}`,
+        error
+      );
+      return failure(
+        FicheActionBudgetErrorEnum.DATABASE_ERROR,
+        error instanceof Error ? error : new Error(String(error))
+      );
+    }
+  }
+
+  private async checkCanReadFiche(
+    ficheId: number,
+    user: AuthUser
+  ): Promise<Result<undefined, FicheActionBudgetError>> {
+    try {
+      await this.ficheService.canReadFiche(ficheId, user);
+      return success(undefined);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        return failure(FicheActionBudgetErrorEnum.FICHE_NOT_FOUND, error);
+      }
+      if (error instanceof ForbiddenException) {
+        return failure(FicheActionBudgetErrorEnum.UNAUTHORIZED, error);
+      }
+      this.logger.error(
+        `Échec du contrôle de lecture sur la fiche ${ficheId}`,
+        error
+      );
+      return failure(
+        FicheActionBudgetErrorEnum.DATABASE_ERROR,
+        error instanceof Error ? error : new Error(String(error))
       );
     }
   }
@@ -165,64 +269,96 @@ export class FicheActionBudgetService {
     ficheId: number,
     budgetsIds: number[],
     { user }: ServiceSecondArg
-  ) {
+  ): Promise<Result<undefined, FicheActionBudgetError>> {
     if (budgetsIds.length === 0) {
-      return;
+      return success(undefined);
     }
 
-    const budgets = await this.databaseService.db
-      .select()
-      .from(ficheActionBudgetTable)
-      .where(
-        and(
-          eq(ficheActionBudgetTable.ficheId, ficheId),
-          inArray(ficheActionBudgetTable.id, budgetsIds)
-        )
+    const permissionResult = await this.checkCanWriteFiche(ficheId, user);
+    if (!permissionResult.success) return permissionResult;
+
+    try {
+      const budgets = await this.databaseService.db
+        .select()
+        .from(ficheActionBudgetTable)
+        .where(
+          and(
+            eq(ficheActionBudgetTable.ficheId, ficheId),
+            inArray(ficheActionBudgetTable.id, budgetsIds)
+          )
+        );
+
+      if (budgets.length !== budgetsIds.length) {
+        return failure(FicheActionBudgetErrorEnum.BUDGET_NOT_FOUND);
+      }
+
+      return await this.databaseService.db.transaction(async (trx) => {
+        await trx
+          .delete(ficheActionBudgetTable)
+          .where(
+            and(
+              eq(ficheActionBudgetTable.ficheId, ficheId),
+              inArray(ficheActionBudgetTable.id, budgetsIds)
+            )
+          );
+        await this.updateFicheModifiedAt(ficheId, user.id, trx);
+        return success(undefined);
+      });
+    } catch (error) {
+      this.logger.error(
+        `Échec de la suppression des budgets de la fiche ${ficheId}`,
+        error
       );
-
-    if (budgets.length !== budgetsIds.length) {
-      throw new Error('Some budgets were not found.');
+      return failure(
+        FicheActionBudgetErrorEnum.DATABASE_ERROR,
+        error instanceof Error ? error : new Error(String(error))
+      );
     }
-
-    return this.databaseService.db.transaction(async (trx) => {
-      await this.ficheService.canWriteFiche(ficheId, user);
-
-      await trx
-        .delete(ficheActionBudgetTable)
-        .where(inArray(ficheActionBudgetTable.id, budgetsIds));
-      await this.updateFicheModifiedAt(ficheId, user.id, trx);
-    });
   }
 
   async listBudgets(
     params: getBudgetsRequest,
     user: AuthUser
-  ): Promise<FicheBudget[]> {
-    await this.ficheService.canReadFiche(params.ficheId, user);
-    const query = this.databaseService.db.select().from(ficheActionBudgetTable);
+  ): Promise<Result<FicheBudget[], FicheActionBudgetError>> {
+    const permissionResult = await this.checkCanReadFiche(params.ficheId, user);
+    if (!permissionResult.success) return permissionResult;
 
-    const conditions = [eq(ficheActionBudgetTable.ficheId, params.ficheId)];
-    if (params.type) {
-      conditions.push(eq(ficheActionBudgetTable.type, params.type));
+    try {
+      const query = this.databaseService.db
+        .select()
+        .from(ficheActionBudgetTable);
+
+      const conditions = [eq(ficheActionBudgetTable.ficheId, params.ficheId)];
+      if (params.type) {
+        conditions.push(eq(ficheActionBudgetTable.type, params.type));
+      }
+
+      if (params.unite) {
+        conditions.push(eq(ficheActionBudgetTable.unite, params.unite));
+      }
+
+      if (params.total === true) {
+        conditions.push(isNull(ficheActionBudgetTable.annee));
+      } else if (params.total === false) {
+        conditions.push(isNotNull(ficheActionBudgetTable.annee));
+      }
+
+      query.where(and(...conditions));
+
+      if (params.total !== true) {
+        query.orderBy(ficheActionBudgetTable.annee);
+      }
+
+      return success(await query);
+    } catch (error) {
+      this.logger.error(
+        `Échec de la lecture des budgets de la fiche ${params.ficheId}`,
+        error
+      );
+      return failure(
+        FicheActionBudgetErrorEnum.DATABASE_ERROR,
+        error instanceof Error ? error : new Error(String(error))
+      );
     }
-
-    if (params.unite) {
-      conditions.push(eq(ficheActionBudgetTable.unite, params.unite));
-    }
-
-    if (params.total === true) {
-      conditions.push(isNull(ficheActionBudgetTable.annee));
-    } else if (params.total === false) {
-      conditions.push(isNotNull(ficheActionBudgetTable.annee));
-    }
-
-    query.where(and(...conditions));
-
-    if (params.total !== true) {
-      query.orderBy(ficheActionBudgetTable.annee);
-    }
-
-    const result = await query;
-    return result;
   }
 }
