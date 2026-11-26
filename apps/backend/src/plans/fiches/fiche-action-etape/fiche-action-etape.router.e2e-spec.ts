@@ -40,10 +40,12 @@ describe('Route CRUD des étapes des fiches actions', () => {
       });
     collectivite = testCollectivite;
     authenticatedUser = getAuthUserFromUserCredentials(user);
-  });
+  }, 120_000);
 
   afterAll(async () => {
-    await app.close();
+    if (app) {
+      await app.close();
+    }
   });
 
   test(`Test la gestion de l'ordre des étapes d'une fiche action`, async () => {
@@ -136,5 +138,41 @@ describe('Route CRUD des étapes des fiches actions', () => {
     expect(ordre.length).toBe(1);
     expect(ordre[0].nom).toBe('C');
     expect(ordre[0].ordre).toBe(1);
+  });
+
+  test(`upsert renvoie NOT_FOUND quand l'étape à déplacer n'existe pas`, async () => {
+    const caller = router.createCaller({ user: authenticatedUser });
+    const ficheId = await createFiche({
+      caller,
+      ficheInput: {
+        titre: 'Fiche test étape introuvable',
+        collectiviteId: collectivite.id,
+      },
+    });
+
+    await caller.plans.fiches.etapes.upsert({
+      ficheId,
+      nom: 'A',
+      ordre: 1,
+    });
+
+    await expect(() =>
+      caller.plans.fiches.etapes.upsert({
+        id: 999999,
+        ficheId,
+        nom: 'A déplacée',
+        ordre: 2,
+      })
+    ).rejects.toMatchObject({ code: 'NOT_FOUND' });
+  });
+
+  test(`delete renvoie NOT_FOUND quand l'étape n'existe pas`, async () => {
+    const caller = router.createCaller({ user: authenticatedUser });
+
+    await expect(() =>
+      caller.plans.fiches.etapes.delete({
+        etapeId: 999999,
+      } as deleteInput)
+    ).rejects.toMatchObject({ code: 'NOT_FOUND' });
   });
 });
