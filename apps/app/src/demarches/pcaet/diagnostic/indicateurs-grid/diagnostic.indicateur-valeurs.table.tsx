@@ -67,6 +67,7 @@ export const DiagnosticIndicateurValeursTable = ({
         isReadonly={isReadonly}
         isRequired={!table.isOptional}
         maxHeight={maxHeight}
+        displayFractionDigits={1}
       />
     </DiagnosticIndicateurStickyTitle>
   );

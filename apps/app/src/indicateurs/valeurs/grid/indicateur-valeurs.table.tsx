@@ -49,6 +49,7 @@ export const IndicateurValeursTable = ({
   maxHeight = 'compact',
   updateIndicateurValeurs,
   setIndicateurApplicable,
+  displayFractionDigits,
   isRequired,
 }: Props): JSX.Element => {
   const { columns } = useListIndicateurValeursTableColumns({
@@ -65,6 +66,7 @@ export const IndicateurValeursTable = ({
     meta: {
       updateIndicateurValeurs,
       setIndicateurApplicable,
+      displayFractionDigits,
     },
   });
 

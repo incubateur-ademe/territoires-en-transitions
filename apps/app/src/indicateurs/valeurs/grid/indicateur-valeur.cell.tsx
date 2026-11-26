@@ -1,6 +1,7 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
+import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
 import { CellContext } from '@tanstack/react-table';
 import { IndicateurPeriode, IndicateurPeriodes } from '@tet/domain/indicateurs';
 import { cn, TableCell, VisibleWhen } from '@tet/ui';
@@ -90,6 +91,11 @@ export const IndicateurValeurCell = memo(
     const cellClassName =
       'relative border-b border-r border-grey-3 whitespace-nowrap';
     const displayedValue = parseCellNumber(edit.text);
+    const { displayFractionDigits } = getTableMeta(cell.table);
+    const displayedText =
+      displayFractionDigits === undefined || displayedValue === null
+        ? edit.text
+        : toLocaleFixed(displayedValue, displayFractionDigits);
 
     if (!isApplicable) {
       return (
@@ -132,7 +138,7 @@ export const IndicateurValeurCell = memo(
         {edit.status === 'saved' ? <SaveAck /> : null}
         <div className="flex flex-col ">
           <IndicateurValeurContent type={indicateurValeurType}>
-            {edit.text}
+            {displayedText}
             <VisibleWhen condition={isRequired && displayedValue === null}>
               <IndicateurValeurRequiseMarker />
             </VisibleWhen>
