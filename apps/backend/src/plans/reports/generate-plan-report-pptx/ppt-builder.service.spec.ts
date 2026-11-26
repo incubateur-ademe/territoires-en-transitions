@@ -108,6 +108,107 @@ describe('PptBuilderService', () => {
     ).toEqual(imageBuffer);
   });
 
+  it('insère le graphique propre à chaque indicateur dans les diapositives indicateurs de fiche', async () => {
+    const mediaDir = mkdtempSync(path.join(tmpdir(), 'plan-report-'));
+    onTestFinished(() => rmSync(mediaDir, { recursive: true, force: true }));
+    const indicateurImageFiles = [
+      { indicateurId: 101, imageFile: 'indicateur_chart_101.png' },
+      { indicateurId: 102, imageFile: 'indicateur_chart_102.png' },
+    ];
+    for (const { imageFile } of indicateurImageFiles) {
+      const imageBuffer = await sharp({
+        create: {
+          width: 2,
+          height: 2,
+          channels: 3,
+          background: imageFile.endsWith('101.png') ? '#000091' : '#e1000f',
+        },
+      })
+        .png()
+        .toBuffer();
+      writeFileSync(path.join(mediaDir, imageFile), imageBuffer);
+    }
+
+    const presentation = new Automizer({
+      templateDir: path.join(__dirname, 'docs'),
+      mediaDir,
+      removeExistingSlides: true,
+      autoImportSlideMasters: true,
+      cleanup: true,
+      verbosity: 0,
+    })
+      .loadRoot('template_bilan.pptx')
+      .load('template_bilan.pptx', 'bilan');
+    for (const { imageFile } of indicateurImageFiles) {
+      presentation.loadMedia(imageFile);
+    }
+
+    pptBuilderService['addFicheIndicateursSlides']({
+      presentation,
+      planGeneralInfo: {} as never,
+      ficheTextReplacementsInfo: {} as never,
+      logo: null,
+      template: {
+        key: 'bilan',
+        slides: { fiche_indicateurs_slide: 13 },
+        max_fiche_indicateurs_per_slide: 1,
+      } as never,
+      fiche: {
+        indicateurs: indicateurImageFiles.map(({ indicateurId }) => ({
+          id: indicateurId,
+        })),
+      } as never,
+      indicateurChartImageFiles: indicateurImageFiles.map((file) => ({
+        ...file,
+        totalFilledValeursCount: 1,
+      })),
+    });
+
+    const archive = await presentation.getJSZip();
+    const slides = archive.file(/^ppt\/slides\/slide\d+\.xml$/);
+    expect(slides).toHaveLength(indicateurImageFiles.length);
+
+    const slideTargets = await Promise.all(
+      slides.map(async (slideFile) => {
+        const slideXml = parseDocument(await slideFile.async('string'), {
+          xmlMode: true,
+        });
+        const image = DomUtils.findOne(
+          (element) =>
+            element.name === 'p:pic' &&
+            DomUtils.findOne(
+              (child) =>
+                child.name === 'p:cNvPr' &&
+                child.attribs.name ===
+                  `${ReportTemplateImagesEnum.IMG_FICHE_INDICATEUR_CHART_}1`,
+              element.children
+            ) !== null,
+          slideXml.children
+        );
+        const relationshipId = DomUtils.findOne(
+          (element) => element.name === 'a:blip',
+          image?.children ?? []
+        )?.attribs['r:embed'];
+        const relationships = parseDocument(
+          (await archive
+            .file(`ppt/slides/_rels/${path.basename(slideFile.name)}.rels`)
+            ?.async('string')) ?? '',
+          { xmlMode: true }
+        );
+        return DomUtils.findOne(
+          (element) =>
+            element.name === 'Relationship' &&
+            element.attribs.Id === relationshipId,
+          relationships.children
+        )?.attribs.Target;
+      })
+    );
+
+    expect([...slideTargets].sort()).toEqual(
+      indicateurImageFiles.map(({ imageFile }) => `../media/${imageFile}`)
+    );
+  });
+
   describe('sortFichesForReport', () => {
     const fiche = (
       overrides: Partial<FicheWithRelations>
