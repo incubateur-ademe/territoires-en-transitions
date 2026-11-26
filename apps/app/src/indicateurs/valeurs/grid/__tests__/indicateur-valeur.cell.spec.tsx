@@ -64,12 +64,14 @@ const buildCellContext = ({
   dateValeur,
   isApplicable = true,
   updateIndicateurValeurs = vi.fn().mockResolvedValue(true),
+  displayFractionDigits,
 }: {
   resultat: number | null;
   objectif: number | null;
   dateValeur?: string;
   isApplicable?: boolean;
   updateIndicateurValeurs?: IndicateurValeursTableMeta['updateIndicateurValeurs'];
+  displayFractionDigits?: number;
 }): {
   cell: CellContext<
     IndicateurValeursTableFeatures,
@@ -88,6 +90,7 @@ const buildCellContext = ({
   const meta: IndicateurValeursTableMeta = {
     updateIndicateurValeurs,
     setIndicateurApplicable: vi.fn().mockResolvedValue(true),
+    displayFractionDigits,
   };
 
   const cell = {
@@ -111,6 +114,7 @@ const renderCell = ({
   isRequired = true,
   isApplicable,
   updateIndicateurValeurs,
+  displayFractionDigits,
 }: {
   indicateurValeurType: 'resultat' | 'objectif';
   resultat: number | null;
@@ -120,6 +124,7 @@ const renderCell = ({
   isApplicable?: boolean;
   periode?: IndicateurPeriode | null;
   updateIndicateurValeurs?: IndicateurValeursTableMeta['updateIndicateurValeurs'];
+  displayFractionDigits?: number;
 }) => {
   const { cell, updateIndicateurValeurs: persist } = buildCellContext({
     resultat,
@@ -127,6 +132,7 @@ const renderCell = ({
     dateValeur,
     isApplicable,
     updateIndicateurValeurs,
+    displayFractionDigits,
   });
 
   return {
@@ -167,6 +173,18 @@ describe('IndicateurValeurCell', () => {
 
     expect(screen.getByText('10')).toBeDefined();
     expect(document.querySelector('[data-field="resultat"]')).not.toBeNull();
+  });
+
+  it('arrondit l’affichage hors édition quand une précision est demandée', () => {
+    renderCell({
+      indicateurValeurType: 'resultat',
+      resultat: 12.345,
+      objectif: null,
+      displayFractionDigits: 1,
+    });
+
+    expect(screen.getByText(/^12[.,]3$/)).toBeDefined();
+    expect(screen.queryByText(/12[.,]345/)).toBeNull();
   });
 
   it.each(['2026-06-15', '2026-12-31'])(

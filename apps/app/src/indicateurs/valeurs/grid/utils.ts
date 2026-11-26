@@ -21,6 +21,8 @@ export type IndicateurValeursTableMeta = {
     indicateurId: number;
     isApplicable: boolean;
   }) => Promise<boolean>;
+  /** Nombre de décimales affichées hors édition ; la saisie garde sa précision. */
+  displayFractionDigits?: number;
 };
 
 export type IndicateurValeursColumnMeta = {
