@@ -158,7 +158,7 @@ describe('Suivi du plan : faire avancer le plan', () => {
     expect(await getFaireAvancerLePlan(admin)).toEqual({
       enCoursSansAvancement: 2,
       nonModifieesDepuisPlusDUnAn: 2,
-      aDecider: 3,
+      aDecider: 4,
       sansPilote: 2,
     });
   });
