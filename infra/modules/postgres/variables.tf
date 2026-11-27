@@ -73,7 +73,7 @@ variable "database_name" {
 }
 
 variable "private_network_id" {
-  description = "ID du Private Network Scaleway à attacher à l'instance RDB, seul endpoint de l'instance. À passer depuis module.network.private_network_ids[<tier>]."
+  description = "ID du Private Network Scaleway à attacher à l'instance RDB, endpoint par défaut de l'instance. À passer depuis module.network.private_network_ids[<tier>]."
   type        = string
 }
 
@@ -87,4 +87,16 @@ variable "settings" {
   description = "GUC PostgreSQL à overrider au niveau de l'instance (équivalent postgresql.conf). Scaleway whitelist les paramètres autorisés — un terraform plan signale ceux qui ne le sont pas. Les valeurs sont des strings ; pour les durées, utiliser des entiers en millisecondes (ex: 600000 pour 10min)."
   type        = map(string)
   default     = {}
+}
+
+variable "public_allowed_cidrs" {
+  description = "CIDR autorisés sur un endpoint public, par nom (ex. { prod = \"203.0.113.10/32\" }). Vide (défaut) : pas d'endpoint public. Pour un consommateur hors du VPC, à qui aucun lien réseau n'est ouvert."
+  type        = map(string)
+  default     = {}
+  validation {
+    condition = alltrue([
+      for c in values(var.public_allowed_cidrs) : can(cidrhost(c, 0)) && !endswith(c, "/0")
+    ])
+    error_message = "public_allowed_cidrs : des CIDR valides (ex. 203.0.113.10/32), jamais /0."
+  }
 }

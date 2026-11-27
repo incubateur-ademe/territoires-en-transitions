@@ -50,13 +50,19 @@ resource "scaleway_rdb_instance" "main" {
 
   settings = var.settings
 
-  # Réseau privé seulement : les conteneurs y sont, les opérateurs y arrivent
-  # par le VPN. Pas d'endpoint public (load balancer) : sans ACL, Scaleway
-  # l'ouvrirait à 0.0.0.0/0. Retirer ce bloc ne supprime pas un endpoint
-  # existant : le supprimer à la main (scw rdb endpoint delete).
+  # Réseau privé d'abord : les conteneurs y sont, les opérateurs y arrivent
+  # par le VPN. Retirer ce bloc ne supprime pas un endpoint existant : le
+  # supprimer à la main (scw rdb endpoint delete).
   private_network {
     pn_id       = var.private_network_id
     enable_ipam = true
+  }
+
+  # Endpoint public seulement si des CIDR sont autorisés (cf. scaleway_rdb_acl
+  # plus bas) : sans ACL, Scaleway l'ouvrirait à 0.0.0.0/0.
+  dynamic "load_balancer" {
+    for_each = length(var.public_allowed_cidrs) > 0 ? [1] : []
+    content {}
   }
 
   tags = concat(
@@ -85,3 +91,21 @@ resource "scaleway_rdb_privilege" "admin" {
   permission    = "all"
 }
 
+
+# ACL de l'endpoint public : elle ne filtre que lui, pas le Private Network.
+# Scaleway pose 0.0.0.0/0 par défaut à la création de l'endpoint, cette
+# ressource le remplace dans le même apply : vérifier ensuite avec
+# `scw rdb acl list instance-id=<id>`.
+resource "scaleway_rdb_acl" "public" {
+  count = length(var.public_allowed_cidrs) > 0 ? 1 : 0
+
+  instance_id = scaleway_rdb_instance.main.id
+
+  dynamic "acl_rules" {
+    for_each = var.public_allowed_cidrs
+    content {
+      ip          = acl_rules.value
+      description = acl_rules.key
+    }
+  }
+}

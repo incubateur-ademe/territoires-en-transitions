@@ -99,7 +99,8 @@ l'agent Alloy. Pour l'instant, seule la preprod est ouverte (`application_enviro
 Deux VPC **sans aucun lien** : `tet` (projet principal, un Private Network par tier hors
 prod) et `tet-prod` (un seul Private Network avec serveur, Postgres et Redis de prod).
 `10.0.2.0/24` est le Private Network du tier data (VM data, RDB stats), sans route vers
-nonprod.
+nonprod. La RDB stats a en plus un endpoint public, fermé par ACL aux seuls serveurs
+nonprod et prod, dont les backends la lisent (cf. [Tier data](#tier-data-team--tet---data-)).
 
 - **Coolify** (instance de l'incubateur, hors de nos VPC) joint chaque serveur en SSH sur
   son **IP publique**. Le port 22 n'y est ouvert qu'aux `ssh_allowed_ips` du stack du tier :
@@ -550,6 +551,38 @@ Mise en place, une fois :
    `mcp_reader_private_connection_uri`, `metabase_private_connection_uri`) se collent dans
    les variables des ressources Coolify concernées.
 
+#### Flux entre la prod et le tier data
+
+Aucune connexion ne part du tier data vers la prod : le data analyst, autonome sur son
+serveur, ne détient aucun identifiant qui l'ouvre. Les deux flux partent de la prod.
+
+```
+ prod                                  bucket                      tier data
+ RDB ── export filtré, chaque nuit ──► tet-analytics-export ◄── tet-data-apps ──► schéma prod de stats
+ site ──► backend ── TLS vérifié, IP autorisée ──────────────► tet-stats-pg (endpoint public + ACL)
+```
+
+**Lecture de la base de stats par les backends.** `pg_public_reader_tiers`
+([`data/terraform.tfvars`](data/terraform.tfvars)) ouvre un endpoint public sur la RDB,
+dont l'ACL n'autorise que l'IP publique des serveurs listés. Le backend s'y connecte en
+`mcp_reader` (lecture seule) et vérifie le certificat avec la CA de l'instance ; le site
+ne s'y connecte pas, il demande ses chiffres au backend.
+
+```sh
+# Après l'apply : l'ACL ne doit lister que les serveurs, jamais 0.0.0.0/0.
+scw rdb acl list instance-id="$(terraform -chdir=infra/data output -raw pg_instance_id | cut -d/ -f2)"
+
+terraform -chdir=infra/data output -raw mcp_reader_public_connection_uri \
+  | infra/scripts/coolify-env-secret-set.sh preprod analytics-database-url
+terraform -chdir=infra/data output -raw pg_tls_ca \
+  | infra/scripts/coolify-env-secret-set.sh preprod analytics-database-tls-ca
+```
+
+Si le backend refuse le certificat sur l'IP de l'endpoint public, le renouveler
+(`scw rdb instance renew-certificate`) pour qu'il porte ce nouvel endpoint, puis redéposer
+la CA. Tant que le backend de prod tourne sur Koyeb, dont les IP de sortie ne sont pas
+fixes, il ne peut pas être autorisé : la base Koyeb reste sa source jusqu'à sa bascule.
+
 Reprise de la base de stats depuis Koyeb : la RDB n'a pas d'endpoint public, le dump passe
 par le serveur data, qui sort sur internet et joint la RDB en privé.
 
@@ -860,3 +893,6 @@ Coolify, reconfigure le proxy : revérifier ensuite les flags ci-dessus.
 - **Sous-domaines dédiés par service** plutôt que reverse proxy unique.
 - **Bascule DB** par `pg_dump` / `pg_restore` en fenêtre de maintenance, **pas** de
   réplication logique.
+- **Prod et tier data** : les flux partent de la prod (export filtré déposé dans un bucket,
+  lecture de la base de stats par le backend), jamais du tier data. Miroir par copie
+  complète à J-1, **pas** de réplication logique, de `postgres_fdw` ni de read replica.

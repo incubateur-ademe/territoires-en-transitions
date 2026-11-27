@@ -6,9 +6,10 @@
 #                distincte de la nôtre qui porte la prod : le data analyst y est
 #                autonome sans rien voir des autres environnements.
 #   postgres   — base de stats managée, reprise de Koyeb par pg_dump | pg_restore
-#                lancé depuis ce serveur (la RDB n'a pas d'endpoint public). Elle
-#                vit dans son propre Private Network, sans route vers nonprod ni
-#                prod.
+#                lancé depuis ce serveur. Elle vit dans son propre Private
+#                Network, sans route vers nonprod ni prod. Les backends
+#                applicatifs la lisent par un endpoint public fermé par ACL
+#                (pg_public_reader_tiers) : le flux part d'eux, jamais d'ici.
 #
 # Instance arm64 (BASIC2-*) : les images Docker déployées par Coolify doivent
 # exister en linux/arm64 (Metabase, Streamlit et les serveurs MCP usuels oui).
@@ -44,6 +45,8 @@ module "postgres" {
 
   backup_schedule_frequency = 24
   backup_schedule_retention = 7
+
+  public_allowed_cidrs = local.pg_public_allowed_cidrs
 }
 
 # Mots de passe restreints aux caractères URL-safe : injectables tels quels
@@ -58,8 +61,8 @@ resource "random_password" "mcp_reader" {
   min_special      = 1
 }
 
-# Rôle du serveur MCP : lecture seule sur la base de stats. C'est le seul rôle
-# que le MCP connaît ; l'authentification des personnes et le TLS sont portés
+# Rôle du serveur MCP et du backend applicatif (ANALYTICS_DATABASE_URL) :
+# lecture seule sur la base de stats. C'est le seul rôle que le MCP connaît ; l'authentification des personnes et le TLS sont portés
 # par le serveur MCP lui-même (ressource Coolify).
 resource "scaleway_rdb_user" "mcp_reader" {
   instance_id = module.postgres.instance_id

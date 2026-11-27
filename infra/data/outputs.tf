@@ -88,3 +88,11 @@ output "metabase_private_connection_uri" {
   module.postgres.private_endpoint_ip, module.postgres.private_endpoint_port, scaleway_rdb_database.metabase.name)
   sensitive = true
 }
+
+output "mcp_reader_public_connection_uri" {
+  description = "URI Postgres du rôle mcp_reader par l'endpoint public (ACL), pour ANALYTICS_DATABASE_URL du backend. Le TLS se vérifie avec pg_tls_ca (ANALYTICS_DATABASE_SSL_ROOT_CERT). Null sans endpoint public."
+  value = module.postgres.public_endpoint_ip == null ? null : format("postgres://%s:%s@%s:%d/%s",
+    scaleway_rdb_user.mcp_reader.name, random_password.mcp_reader.result,
+  module.postgres.public_endpoint_ip, module.postgres.public_endpoint_port, module.postgres.database_name)
+  sensitive = true
+}

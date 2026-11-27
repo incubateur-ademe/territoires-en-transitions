@@ -7,6 +7,12 @@
 
 project_id = "ddfb298c-fbcf-4b11-a133-76200482002d"
 
+# Projet de production : seule l'IP publique de son serveur y est lue.
+prod_project_id = "ab89df2d-0d28-4b5b-9ad8-74e5160e9a31"
+
+# Backends applicatifs autorisés à lire la base de stats (endpoint public + ACL).
+pg_public_reader_tiers = ["nonprod", "prod"]
+
 # Instance Coolify de l'incubateur (Team « TeT - Data »).
 coolify_endpoint = "https://ops.incubateur.ademe.fr/api/v1"
 
