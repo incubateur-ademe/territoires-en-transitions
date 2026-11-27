@@ -58,6 +58,39 @@ jobs:
           BACKUP_ENDPOINT_URL: ${{ vars.BACKUP_ENDPOINT_URL }}
         run: bash data_layer/backup/cleanup.sh
 
+  # Export filtré pour le miroir de la base de stats (tier data). Job à part :
+  # son échec ne bloque ni le backup ni les restaurations.
+  export-analytics:
+    name: Export analytique de la BDD production (miroir de la base de stats)
+    needs: [backup-production]
+    if: vars.ANALYTICS_EXPORT_BUCKET != ''
+    environment: prod
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+
+      - name: Install AWS CLI
+        uses: ./.github/actions/providers/aws/cli
+
+      - name: Run analytics export
+        env:
+          FROM_DB_URL: ${{ secrets.PROD_DB_URL }}
+          ANALYTICS_EXPORT_AWS_ACCESS_KEY_ID: ${{ vars.ANALYTICS_EXPORT_AWS_ACCESS_KEY_ID }}
+          ANALYTICS_EXPORT_AWS_SECRET_ACCESS_KEY: ${{ secrets.ANALYTICS_EXPORT_AWS_SECRET_ACCESS_KEY }}
+          ANALYTICS_EXPORT_BUCKET: ${{ vars.ANALYTICS_EXPORT_BUCKET }}
+          ANALYTICS_EXPORT_REGION: ${{ vars.BACKUP_REGION }}
+          ANALYTICS_EXPORT_ENDPOINT_URL: ${{ vars.BACKUP_ENDPOINT_URL }}
+        run: bash data_layer/backup/analytics-export.sh
+
   restore-staging:
     name: Restore de la BDD staging avec le backup le plus récent
     needs: [backup-production]

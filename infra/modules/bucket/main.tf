@@ -28,6 +28,26 @@ resource "scaleway_object_bucket" "this" {
     enabled = true
   }
 
+  # Bucket de transit (var.expiration_days) : les objets et leurs anciennes
+  # versions expirent d'eux-mêmes.
+  dynamic "lifecycle_rule" {
+    for_each = var.expiration_days == null ? [] : [var.expiration_days]
+    content {
+      id      = "expiration"
+      enabled = true
+
+      abort_incomplete_multipart_upload_days = 1
+
+      expiration {
+        days = lifecycle_rule.value
+      }
+
+      noncurrent_version_expiration {
+        noncurrent_days = lifecycle_rule.value
+      }
+    }
+  }
+
   # Supprimer le bucket perdrait tous ses fichiers.
   lifecycle {
     prevent_destroy = true
