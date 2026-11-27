@@ -5,8 +5,13 @@ import { SNAPSHOTS } from '@tet/backend/referentiels/snapshots/snapshots.constan
 import {
   getAuthUserFromUserCredentials,
   insertFixturePourScoreIndicatif,
+  signTestAuthToken,
 } from '@tet/backend/test';
-import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import {
+  AuthenticatedUser,
+  AuthRole,
+} from '@tet/backend/users/models/auth.models';
+import ConfigurationService from '@tet/backend/utils/config/configuration.service';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite } from '@tet/domain/collectivites';
@@ -72,6 +77,58 @@ describe('Referentiels scoring routes', () => {
       })
       .expect(401);
   });
+
+  test("Réserve l'export des scores en accès restreint aux utilisateurs autorisés", async () => {
+    const { collectivite: collectivitePrivee, user: membre } =
+      await addTestCollectiviteAndUser(databaseService, {
+        collectivite: { accesRestreint: true },
+        user: { role: CollectiviteRole.LECTURE },
+      });
+    const collectiviteId = collectivitePrivee.id;
+    const referentielId = 'eci';
+    const snapshot = await snapshotsService.computeAndUpsert({
+      collectiviteId,
+      referentielId,
+      jalon: SnapshotJalonEnum.COURANT,
+      nom: 'Sauvegarde privée',
+    });
+    expect(snapshot.success).toBe(true);
+    if (!snapshot.success) {
+      throw new Error('Impossible de créer le snapshot pour le test');
+    }
+
+    const jwtSecret = app.get(ConfigurationService).get('SUPABASE_JWT_SECRET');
+    const tokenFor = (userId: string) =>
+      signTestAuthToken(
+        { role: AuthRole.AUTHENTICATED, sub: userId },
+        jwtSecret
+      );
+    const exportScore = (token: string, snapshotRef: string) =>
+      request(app.getHttpServer())
+        .get(
+          `/collectivites/${collectiviteId}/referentiels/${referentielId}/score-snapshots/export-comparison`
+        )
+        .set('Authorization', `Bearer ${token}`)
+        .query({
+          exportFormat: 'csv',
+          isAudit: 'false',
+          snapshotReferences: [snapshotRef],
+        });
+
+    for (const snapshotRef of [
+      snapshot.data.ref,
+      SNAPSHOTS.SCORE_COURANT_REF,
+    ]) {
+      await exportScore(process.env.SUPABASE_ANON_KEY!, snapshotRef).expect(
+        403
+      );
+      await exportScore(tokenFor(editionUser.id), snapshotRef).expect(403);
+      await exportScore(
+        tokenFor(getAuthUserFromUserCredentials(membre).id),
+        snapshotRef
+      ).expect(200);
+    }
+  }, 30000);
 
   test(`Export du snapshot avec excludeDesactive`, async () => {
     const referentielId: ReferentielId = 'eci';
