@@ -21,6 +21,7 @@ import {
   FicheInformationsMode,
   FicheWithRelations,
   GenerateReportInput,
+  isFicheOnTime,
   Plan,
   PlanNode,
   Statut,
@@ -176,6 +177,14 @@ export class PptBuilderService {
   private readonly NOT_DEFINED_VALUE = 'N/D';
   private readonly LAST_NOTE_TITLE = 'Dernière note';
   private readonly PCAET_TYPE = 'Plan Climat Air Énergie Territorial';
+  // Longueurs qui tiennent dans les cadres de la slide « Sous-actions » :
+  // une ligne pour le titre, deux pour la description.
+  private readonly SOUS_ACTION_TITRE_MAX_LENGTH = 70;
+  private readonly SOUS_ACTION_DESCRIPTION_MAX_LENGTH = 170;
+  /** Le cadre des pilotes d'une sous-action ne tient que sur une ligne. */
+  private readonly SOUS_ACTION_PILOTES_MAX_COUNT = 2;
+  // rouge « erreur » du DSFR, comme la date de fin dépassée dans l'app
+  private readonly LATE_DATE_COLOR = 'CE0500';
   private readonly BUDGET_FORMATTER = new Intl.NumberFormat(this.LOCALE, {
     style: 'currency',
     currency: 'EUR',
@@ -369,16 +378,26 @@ export class PptBuilderService {
         slideType: 'axes_section_slide',
       });
 
-      const filteredFiches = request.ficheIds
-        ? fiches.filter((fiche) => request.ficheIds?.includes(fiche.id))
+      // Les actions choisies emmènent leurs sous-actions avec elles.
+      const selectedFicheIds = request.ficheIds
+        ? new Set(request.ficheIds)
+        : null;
+      const filteredFiches = selectedFicheIds
+        ? fiches.filter(
+            (fiche) =>
+              selectedFicheIds.has(fiche.id) ||
+              (fiche.parentId !== null && selectedFicheIds.has(fiche.parentId))
+          )
         : fiches;
       this.logger.log(
         `Fiches to be included in the report: ${filteredFiches.length}`
       );
 
+      // Seules les actions ont une slide d'indicateurs.
       const filteredFichesIndicateurs = Array.from(
         new Set(
           filteredFiches
+            .filter((fiche) => !fiche.parentId)
             .map(
               (fiche) =>
                 fiche.indicateurs?.map((indicateur) => indicateur.id) || []
@@ -454,27 +473,36 @@ export class PptBuilderService {
         const axeFiches = filteredFiches.filter((fiche) =>
           isInAxe(fiche, axe.id)
         );
-        const axeFilteredFiches = this.sortFichesForReport(axeFiches);
-        for (const fiche of axeFilteredFiches) {
+        // Une sous-action n'a pas de slide d'action : elle figure dans la
+        // slide « Sous-actions » de son action parente.
+        for (const { action, sousActions } of this.groupFichesForReport(
+          axeFiches
+        )) {
           const ficheTextReplacementsInfo = this.getFicheTextReplacementsInfos(
-            fiche,
+            action,
             request.ficheInformationsMode
           );
 
           this.addFicheInfosSlides({
             ...slideGenerationArgs,
             ficheTextReplacementsInfo,
-            fiche,
+            fiche: action,
           });
 
           if (request.includeFicheIndicateursSlides) {
             this.addFicheIndicateursSlides({
               ...slideGenerationArgs,
               ficheTextReplacementsInfo,
-              fiche,
+              fiche: action,
               indicateurChartImageFiles,
             });
           }
+
+          this.addFicheSousActionsSlides({
+            ...slideGenerationArgs,
+            ficheTextReplacementsInfo,
+            sousActions,
+          });
         }
       }
 
@@ -761,7 +789,7 @@ export class PptBuilderService {
         }).format(new Date()),
         INDICATEURS_COUNT: indicateurs.length,
         FICHES_COUNT: actions.length,
-        SOUS_FICHES_COUNT: 0,
+        SOUS_FICHES_COUNT: this.countSousActions(actions, fiches.data),
         AXES_COUNT: axes.length,
         PLAN_BUDGET_FONCTIONNEMENT: this.formatBudget(
           budget.fonctionnement.HT.budgetPrevisionnel.total
@@ -1208,16 +1236,9 @@ export class PptBuilderService {
     fiche: FicheWithRelations,
     ficheInformationsMode: FicheInformationsMode
   ): ReportFicheInfo {
-    const dateDebut = fiche.dateDebut
-      ? DateTime.fromISO(fiche.dateDebut)
-          .setLocale(this.LOCALE)
-          .toLocaleString(DateTime.DATE_SHORT)
-      : this.NOT_DEFINED_VALUE;
-    const dateFin = fiche.dateFin
-      ? DateTime.fromISO(fiche.dateFin)
-          .setLocale(this.LOCALE)
-          .toLocaleString(DateTime.DATE_SHORT)
-      : this.NOT_DEFINED_VALUE;
+    const dateDebut =
+      this.formatDate(fiche.dateDebut) ?? this.NOT_DEFINED_VALUE;
+    const dateFin = this.formatDate(fiche.dateFin) ?? this.NOT_DEFINED_VALUE;
 
     const budget = this.computeBudgetRules.computeBudget([fiche]);
 
@@ -1240,16 +1261,9 @@ export class PptBuilderService {
 
     return {
       FICHE_TITRE: fiche.titre ?? '',
-      FICHE_PILOTES:
-        fiche.pilotes
-          ?.map((pilote) => {
-            return pilote.prenom && pilote.nomFamille
-              ? `${pilote.prenom.substring(0, 1).toUpperCase()}. ${
-                  pilote.nomFamille
-                }`
-              : pilote.nom ?? '';
-          })
-          .join(', ') ?? this.NOT_DEFINED_VALUE,
+      FICHE_PILOTES: fiche.pilotes
+        ? this.formatPilotes(fiche.pilotes)
+        : this.NOT_DEFINED_VALUE,
       FICHE_PERIODE: `${dateDebut} -> ${dateFin}`,
       FICHE_DATE_DEBUT: dateDebut,
       FICHE_DATE_FIN: dateFin,
@@ -1268,6 +1282,44 @@ export class PptBuilderService {
     };
   }
 
+  private formatDate(isoDate: string | null | undefined): string | null {
+    return isoDate
+      ? DateTime.fromISO(isoDate)
+          .setLocale(this.LOCALE)
+          .toLocaleString(DateTime.DATE_SHORT)
+      : null;
+  }
+
+  /**
+   * « M. Bouvier » pour un utilisateur, le nom du tag sinon. Au-delà de
+   * `maxCount` pilotes, les suivants sont résumés en « +N ».
+   */
+  private formatPilotes(
+    pilotes: NonNullable<FicheWithRelations['pilotes']>,
+    maxCount = Infinity
+  ): string {
+    const names = pilotes
+      .slice(0, maxCount)
+      .map((pilote) =>
+        pilote.prenom && pilote.nomFamille
+          ? `${pilote.prenom.substring(0, 1).toUpperCase()}. ${
+              pilote.nomFamille
+            }`
+          : pilote.nom ?? ''
+      )
+      .join(', ');
+    const hiddenCount = pilotes.length - maxCount;
+    return hiddenCount > 0 ? `${names} +${hiddenCount}` : names;
+  }
+
+  /** Coupe un texte trop long pour son cadre, en finissant par « … ». */
+  private truncate(text: string, maxLength: number): string {
+    const singleLine = text.replace(/\s+/g, ' ').trim();
+    return singleLine.length > maxLength
+      ? `${singleLine.substring(0, maxLength - 1).trimEnd()}…`
+      : singleLine;
+  }
+
   private htmlToPlainText(html: string): string {
     return convert(html, {
       wordwrap: false,
@@ -1279,14 +1331,15 @@ export class PptBuilderService {
   }
 
   /**
-   * Trie les fiches d'un axe comme dans l'app : les actions de premier
-   * niveau par ordre alphabétique de titre, chacune suivie de ses
-   * sous-actions triées par date de création.
+   * Regroupe les fiches d'un axe comme dans l'app : les actions par ordre
+   * alphabétique de titre, chacune avec ses sous-actions triées par date de
+   * création. Une sous-action dont l'action parente n'est pas dans la liste
+   * n'est pas reprise : elle n'est affichée que sous son action parente.
    */
-  private sortFichesForReport(
+  private groupFichesForReport(
     fiches: FicheWithRelations[]
-  ): FicheWithRelations[] {
-    const topLevelFiches = fiches
+  ): { action: FicheWithRelations; sousActions: FicheWithRelations[] }[] {
+    const actions = fiches
       .filter((fiche) => !fiche.parentId)
       .sort((a, b) =>
         (a.titre ?? '').localeCompare(b.titre ?? '', this.LOCALE, {
@@ -1295,39 +1348,33 @@ export class PptBuilderService {
         })
       );
 
-    const childrenByParentId = new Map<number, FicheWithRelations[]>();
+    const sousActionsByParentId = new Map<number, FicheWithRelations[]>();
     for (const fiche of fiches) {
       if (fiche.parentId) {
-        const siblings = childrenByParentId.get(fiche.parentId) ?? [];
+        const siblings = sousActionsByParentId.get(fiche.parentId) ?? [];
         siblings.push(fiche);
-        childrenByParentId.set(fiche.parentId, siblings);
+        sousActionsByParentId.set(fiche.parentId, siblings);
       }
     }
-    for (const siblings of childrenByParentId.values()) {
-      siblings.sort(
+
+    return actions.map((action) => ({
+      action,
+      sousActions: (sousActionsByParentId.get(action.id) ?? []).sort(
         (a, b) =>
           new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-      );
-    }
+      ),
+    }));
+  }
 
-    const orderedFiches: FicheWithRelations[] = [];
-    const consumedChildIds = new Set<number>();
-    for (const fiche of topLevelFiches) {
-      orderedFiches.push(fiche);
-      for (const child of childrenByParentId.get(fiche.id) ?? []) {
-        orderedFiches.push(child);
-        consumedChildIds.add(child.id);
-      }
-    }
-
-    // Sous-actions dont la fiche parente n'apparait pas dans cette liste
-    // (ex. parent rattaché à un autre axe) : on les inclut quand même.
-    const orphanChildren = fiches.filter(
-      (fiche) => fiche.parentId && !consumedChildIds.has(fiche.id)
-    );
-    orderedFiches.push(...orphanChildren);
-
-    return orderedFiches;
+  /** Nombre de sous-actions de `fiches` rattachées à l'une des `actions`. */
+  private countSousActions(
+    actions: FicheWithRelations[],
+    fiches: FicheWithRelations[]
+  ): number {
+    const actionIds = new Set(actions.map((action) => action.id));
+    return fiches.filter(
+      (fiche) => fiche.parentId !== null && actionIds.has(fiche.parentId)
+    ).length;
   }
 
   private getAxeGeneralInfo(
@@ -1362,7 +1409,7 @@ export class PptBuilderService {
       AXE_PROGRESS: this.planProgressRules.computeProgress(axeFilteredFiches),
       INDICATEURS_COUNT: indicateursCount,
       FICHES_COUNT: axeFilteredFiches.length,
-      SOUS_FICHES_COUNT: 0,
+      SOUS_FICHES_COUNT: this.countSousActions(axeFilteredFiches, fiches),
       AXE_BUDGET_TOTAL: this.formatBudget(
         budget.total.HT.budgetPrevisionnel.total
       ),
@@ -1375,10 +1422,15 @@ export class PptBuilderService {
     };
   }
 
+  /**
+   * Le template empile un badge par statut (`<prefix><STATUT>`) : on ne garde
+   * que celui du statut de la fiche.
+   */
   private deleteNotNeededFicheStatus(
     slide: ISlide,
     allElements: ElementInfo[],
-    statut: Statut | null
+    statut: Statut | null,
+    statutElementPrefix: string = ReportTemplateTextsEnum.TXT_FICHE_STATUT_
   ) {
     const allStatuts = {
       ...StatutEnum,
@@ -1386,7 +1438,7 @@ export class PptBuilderService {
     };
     const statutElementsToDelete = [...Object.keys(allStatuts)]
       .filter((key) => allStatuts[key as keyof typeof StatutEnum] !== statut)
-      .map((key) => `${ReportTemplateTextsEnum.TXT_FICHE_STATUT_}${key}`);
+      .map((key) => `${statutElementPrefix}${key}`);
 
     statutElementsToDelete.forEach((statutElementToDelete) => {
       if (
@@ -1461,6 +1513,149 @@ export class PptBuilderService {
         }
       },
     });
+  }
+
+  /**
+   * Slides « Sous-actions » d'une action : `max_sous_actions_per_slide` lignes
+   * par slide, « (1/2) » ajouté au titre quand il en faut plusieurs. Les
+   * lignes `grp_sous_action_N` inutilisées sont retirées.
+   */
+  private addFicheSousActionsSlides(
+    args: Omit<SlideGenerationArgs, 'slideType'> & {
+      ficheTextReplacementsInfo: ReportFicheInfo;
+      sousActions: FicheWithRelations[];
+    }
+  ) {
+    const {
+      presentation,
+      planGeneralInfo,
+      ficheTextReplacementsInfo,
+      logo,
+      template,
+      sousActions,
+    } = args;
+    if (!template.slides.fiche_sous_actions_slide || !sousActions.length) {
+      return;
+    }
+
+    const rowsPerSlide = template.max_sous_actions_per_slide;
+    const sousActionsChunks = chunk(sousActions, rowsPerSlide);
+
+    sousActionsChunks.forEach((sousActionsChunk, iChunk) => {
+      const ficheTitre =
+        sousActionsChunks.length > 1
+          ? `${ficheTextReplacementsInfo.FICHE_TITRE} (${iChunk + 1}/${
+              sousActionsChunks.length
+            })`
+          : ficheTextReplacementsInfo.FICHE_TITRE;
+
+      this.addSlide({
+        presentation,
+        template,
+        planGeneralInfo,
+        logo,
+        slideType: 'fiche_sous_actions_slide',
+        extraTextReplacements: {
+          ...ficheTextReplacementsInfo,
+          FICHE_TITRE: ficheTitre,
+          ...this.getSousActionsTextReplacements(
+            sousActionsChunk,
+            rowsPerSlide
+          ),
+        },
+        callback: async (slide) => {
+          const allElements = await slide.getAllElements();
+
+          for (let row = 1; row <= rowsPerSlide; row++) {
+            const sousAction = sousActionsChunk[row - 1];
+            if (sousAction) {
+              this.deleteNotNeededFicheStatus(
+                slide,
+                allElements,
+                sousAction.statut,
+                `${ReportTemplateTextsEnum.TXT_SOUS_ACTION_}${row}_statut_`
+              );
+              if (!isFicheOnTime(sousAction)) {
+                slide.modifyElement(
+                  `${ReportTemplateTextsEnum.TXT_SOUS_ACTION_}${row}_date_fin`,
+                  this.setTextColor(this.LATE_DATE_COLOR)
+                );
+              }
+              continue;
+            }
+
+            const grpElementName = `${ReportTemplateGroupsEnum.GRP_SOUS_ACTION_}${row}`;
+            if (this.getElementByName(allElements, grpElementName)) {
+              slide.removeElement(grpElementName);
+            } else {
+              this.logger.log(
+                `Sous-action group element not found for ${grpElementName}`
+              );
+            }
+          }
+        },
+      });
+    });
+  }
+
+  /** Remplace la couleur de tous les runs d'une forme texte. */
+  private setTextColor(hexColor: string) {
+    return (element: XmlElement) => {
+      const document = element.ownerDocument;
+      for (const tagName of ['a:rPr', 'a:endParaRPr']) {
+        const runProperties = Array.from(element.getElementsByTagName(tagName));
+        for (const runProperty of runProperties) {
+          for (const fill of Array.from(
+            runProperty.getElementsByTagName('a:solidFill')
+          )) {
+            runProperty.removeChild(fill);
+          }
+          const fill = document.createElement('a:solidFill');
+          const color = document.createElement('a:srgbClr');
+          color.setAttribute('val', hexColor);
+          fill.appendChild(color);
+          // a:solidFill précède a:latin, a:ea… dans le schéma
+          runProperty.insertBefore(fill, runProperty.firstChild);
+        }
+      }
+    };
+  }
+
+  /**
+   * Textes `{{SOUS_ACTION_N_…}}` des lignes d'une slide « Sous-actions ». Les
+   * lignes sans sous-action reçoivent des textes vides (leur groupe est retiré).
+   * Titre et description sont coupés pour tenir dans leur cadre (1 et 2 lignes).
+   */
+  private getSousActionsTextReplacements(
+    sousActions: FicheWithRelations[],
+    rowsPerSlide: number
+  ): Record<string, string> {
+    const replacements: Record<string, string> = {};
+    for (let row = 1; row <= rowsPerSlide; row++) {
+      const sousAction = sousActions[row - 1];
+      const prefix = `SOUS_ACTION_${row}_`;
+      replacements[`${prefix}TITRE`] = sousAction
+        ? this.truncate(
+            sousAction.titre || 'Sans titre',
+            this.SOUS_ACTION_TITRE_MAX_LENGTH
+          )
+        : '';
+      replacements[`${prefix}DESCRIPTION`] = sousAction?.description
+        ? this.truncate(
+            this.htmlToPlainText(sousAction.description),
+            this.SOUS_ACTION_DESCRIPTION_MAX_LENGTH
+          )
+        : '';
+      replacements[`${prefix}PILOTES`] = sousAction?.pilotes
+        ? this.formatPilotes(
+            sousAction.pilotes,
+            this.SOUS_ACTION_PILOTES_MAX_COUNT
+          )
+        : '';
+      replacements[`${prefix}DATE_FIN`] =
+        this.formatDate(sousAction?.dateFin) ?? '';
+    }
+    return replacements;
   }
 
   private addFicheIndicateursSlides(

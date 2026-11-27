@@ -9,4 +9,5 @@ export interface ReportTemplateConfig {
   description?: string;
   slides: Record<ReportTemplateSlidesType, number>;
   max_fiche_indicateurs_per_slide: number;
+  max_sous_actions_per_slide: number;
 }

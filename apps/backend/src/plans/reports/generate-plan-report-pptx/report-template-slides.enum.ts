@@ -14,6 +14,7 @@ export const ReportTemplateSlides = [
   'axe_summary_slide',
   'fiche_summary_slide',
   'fiche_indicateurs_slide',
+  'fiche_sous_actions_slide',
   'ressources_slide',
 ] as const;
 

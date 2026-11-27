@@ -13,6 +13,7 @@ export const ReportTemplateTexts = [
   'txt_fiche_statut_EN_RETARD',
   'txt_fiche_statut_A_DISCUTER',
   'txt_fiche_statut_SANS_STATUT',
+  'txt_sous_action_',
 ] as const;
 
 export type ReportTemplateTextsType = (typeof ReportTemplateTexts)[number];
