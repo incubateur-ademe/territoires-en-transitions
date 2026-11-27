@@ -110,9 +110,9 @@ describe('ShareFicheService', () => {
     });
     expect(updatedFiche.titre).toBe('title update');
 
-    // Can also do a bulk edit with the fiche
+    // Bulk editing from the recipient's list preserves the fiche's owner.
     await user1Caller.plans.fiches.bulkEdit({
-      collectiviteId: 3,
+      collectiviteId: 1,
       ficheIds: [ficheId],
       statut: 'Bloqué',
     });
@@ -120,6 +120,7 @@ describe('ShareFicheService', () => {
       id: ficheId,
     });
     expect(ficheAfterBulkUpdate.statut).toEqual('Bloqué');
+    expect(ficheAfterBulkUpdate.collectiviteId).toBe(3);
 
     // Restore title & statut
     await user1Caller.plans.fiches.update({

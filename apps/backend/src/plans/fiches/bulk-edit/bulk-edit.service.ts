@@ -10,7 +10,7 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { applyJaugeStatutChange, Statut } from '@tet/domain/plans';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
-import { and, inArray, or, sql } from 'drizzle-orm';
+import { and, eq, inArray, or, sql } from 'drizzle-orm';
 import { NotifyPiloteService } from '../notify-pilote/notify-pilote.service';
 import { ficheActionPiloteTable } from '../shared/models/fiche-action-pilote.table';
 import { ficheActionReferentTable } from '../shared/models/fiche-action-referent.table';
@@ -49,8 +49,6 @@ export class BulkEditService {
       { user }
     );
     const actualFicheIds = currentFiches.data.map((fiche) => fiche.id);
-
-    const { ficheIds, ...params } = request;
 
     // Get all the distinct collectiviteIds of the fiches
     const ficheBycollectiviteIds = await this.db
@@ -103,8 +101,13 @@ export class BulkEditService {
       services,
       libreTags,
       sharedWithCollectivites,
-      ...plainValues
-    } = params;
+      statut,
+      priorite,
+      dateFin,
+      ameliorationContinue,
+    } = request;
+    // Selection context can include fiches owned by other collectivités.
+    const plainValues = { statut, priorite, dateFin, ameliorationContinue };
 
     await this.db.transaction(async (tx) => {
       // Update modified and plain values
@@ -113,17 +116,26 @@ export class BulkEditService {
         referents !== undefined ||
         services !== undefined ||
         libreTags !== undefined ||
-        Object.keys(plainValues).length > 0
+        sharedWithCollectivites !== undefined ||
+        Object.values(plainValues).some((value) => value !== undefined)
       ) {
         const updateGroups =
-          plainValues.statut === undefined
+          statut === undefined
             ? [{ ficheIds: actualFicheIds, jauge: undefined }]
             : await this.groupFichesByJaugeAfterStatutChange(
                 actualFicheIds,
-                plainValues.statut,
+                statut,
                 tx
               );
 
+        const authorizedFiches = or(
+          ...ficheBycollectiviteIds.map(({ collectiviteId, ficheIds }) =>
+            and(
+              eq(ficheActionTable.collectiviteId, collectiviteId),
+              inArray(ficheActionTable.id, ficheIds)
+            )
+          )
+        );
         for (const group of updateGroups) {
           await tx
             .update(ficheActionTable)
@@ -133,7 +145,12 @@ export class BulkEditService {
               modifiedBy: user.id,
               modifiedAt: new Date().toISOString(),
             })
-            .where(inArray(ficheActionTable.id, group.ficheIds));
+            .where(
+              and(
+                inArray(ficheActionTable.id, group.ficheIds),
+                authorizedFiches
+              )
+            );
         }
       }
 
