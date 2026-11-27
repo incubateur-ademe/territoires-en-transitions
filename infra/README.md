@@ -675,17 +675,48 @@ internet et joint la RDB en privé. Seuls les schémas `public` (stats) et `sauv
 sont repris : `prod` est reconstruit par le miroir ci-dessus. Arrêter les scripts de
 calcul le temps du transfert.
 
+Depuis un poste, avec le VPN : les deux URI dans un fichier lisible par root seul sur le
+serveur. Source en connexion directe, pas par le pooler de Neon (`-pooler` retiré de l'hôte).
+
 ```sh
-# Sur tet-data-apps (cf. Se connecter). Source : l'URI Koyeb ; cible : output
-# pg_private_connection_uri (admin).
-docker run --rm -e SRC -e DST postgres:17 sh -c \
-  'pg_dump -Fc --no-owner --no-privileges -n public -n sauvegardes "$SRC" | pg_restore --no-owner --no-privileges -d "$DST"'
+{
+  printf 'SRC=%s\n' "<URI Koyeb, sans -pooler>"
+  printf 'DST=%s\n' "$(terraform -chdir=infra/data output -raw pg_private_connection_uri)"
+} | ssh -i "$KEY" root@<server_public_ip de data> 'umask 077; cat > /root/reprise.env'
 ```
 
-La base `stats` cible doit être vide. Si le transfert échoue en route, les tables déjà
-restaurées restent remplies et une relance telle quelle dupliquerait leurs lignes :
-rejouer avec `pg_restore --clean --if-exists`, qui supprime chaque objet avant de le
-recréer.
+Sur `tet-data-apps` (cf. [Se connecter](#se-connecter)), de préférence dans un `tmux` :
+
+```sh
+pg() { docker run --rm --env-file /root/reprise.env -v /root:/w postgres:17 "$@"; }
+
+cat > /root/count.sql <<'SQL'
+select table_schema || '.' || table_name,
+       (xpath('/row/c/text()', query_to_xml(
+          format('select count(*) as c from %I.%I', table_schema, table_name), false, true, '')))[1]::text
+from information_schema.tables
+where table_schema in ('public', 'sauvegardes') and table_type = 'BASE TABLE'
+order by 1;
+SQL
+
+pg sh -c 'psql -X -At "$SRC" -f /w/count.sql' > /root/count-src.txt
+pg sh -c 'pg_dump -Fc --no-owner --no-privileges -n public -n sauvegardes -f /w/stats.dump "$SRC"'
+
+# -n public fait émettre CREATE SCHEMA public, qui existe déjà : le retirer.
+pg pg_restore -l /w/stats.dump | grep -vE '(SCHEMA - public|COMMENT - SCHEMA public)( |$)' > /root/stats.list
+
+# Une seule transaction : un échec ne laisse rien, la relance repart de zéro.
+pg sh -c 'pg_restore --no-owner --no-privileges --single-transaction --exit-on-error \
+  -L /w/stats.list -d "$DST" /w/stats.dump'
+
+pg sh -c 'psql -X -At "$DST" -f /w/count.sql' > /root/count-dst.txt
+diff /root/count-src.txt /root/count-dst.txt && echo "OK : $(wc -l < /root/count-src.txt) tables identiques"
+
+rm -f /root/reprise.env /root/count.sql /root/count-*.txt /root/stats.dump /root/stats.list
+```
+
+La base `stats` cible doit être vide. Un `diff` non vide veut dire qu'un script a écrit
+dans Koyeb pendant la copie : vider la cible et relancer.
 
 Les droits des rôles (`scaleway_rdb_privilege`) ne couvrent que les tables qui existaient
 quand Terraform les a posés : les tables restaurées, possédées par l'admin, et celles que
