@@ -42,18 +42,15 @@ locals {
   # provider ne sait pas l'écrire) sur {{pr_id}}-{{domain}} : le défaut,
   # {{pr_id}}.{{domain}}, sort du wildcard DNS *.preview.
   #
-  # Sans port : Coolify (4.7.6) retire le suffixe :<port> des domaines et le
-  # range à part (domain_port_overrides), ce que le provider prend pour un
-  # résultat incohérent. Un domaine sans port garde l'override déjà posé. Les
-  # ports d'écoute des conteneurs (sinon Coolify route sur le 80) se posent
-  # donc une fois, dans l'UI : :3000 sur web, backend et site, :8000 sur
-  # supabase (cf. README « Previews »).
+  # Le :<port> est le port d'écoute du conteneur (sinon Coolify route sur le
+  # 80). Coolify le retire du domaine et le range à part
+  # (domain_port_overrides) ; le provider garde la valeur du HCL depuis 0.1.35.
   preview_compose_domains = {
     # Caddy devant l'app : /api/* au backend, comme app.…/api en prod.
-    web      = "https://app.preview.territoiresentransitions.fr"
-    backend  = "https://api.preview.territoiresentransitions.fr"
-    site     = "https://site.preview.territoiresentransitions.fr"
-    supabase = "https://supabase-api.preview.territoiresentransitions.fr"
+    web      = "https://app.preview.territoiresentransitions.fr:3000"
+    backend  = "https://api.preview.territoiresentransitions.fr:3000"
+    site     = "https://site.preview.territoiresentransitions.fr:3000"
+    supabase = "https://supabase-api.preview.territoiresentransitions.fr:8000"
   }
 }
 
@@ -79,11 +76,9 @@ resource "coolify_application_github_app" "preview" {
   # Pas de domaine sslip généré à la création : les domaines viennent de
   # docker_compose_domains, après le premier déploiement.
   autogenerate_domain = false
-  # Écrit à la main, pas par jsonencode (clés triées) : Coolify rend name avant
-  # domain, et le provider compare les chaînes.
-  docker_compose_domains = var.preview_compose_loaded ? "[${join(",", [
-    for name, domain in local.preview_compose_domains : "{\"name\":\"${name}\",\"domain\":\"${domain}\"}"
-  ])}]" : null
+  docker_compose_domains = var.preview_compose_loaded ? jsonencode([
+    for name, domain in local.preview_compose_domains : { name = name, domain = domain }
+  ]) : null
 
   # Un push sur la branche de base ne redéploie rien : seules les previews
   # comptent.

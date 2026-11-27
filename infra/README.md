@@ -630,9 +630,7 @@ Mise en service :
 3. **Deploy** une première fois : ce déploiement charge le compose, puis échoue faute
    d'images au commit de `main` (attendu). Réappliquer ensuite avec
    les mêmes `-var` qu'à l'étape 1 (sans eux, Terraform détruit l'application) et
-   `-var preview_compose_loaded=true`, qui pose les domaines, sans port. Ajouter ensuite le
-   port d'écoute dans l'UI, une fois : `:3000` sur web, backend et site, `:8000` sur
-   supabase. Coolify le range à part et le garde aux applies suivants.
+   `-var preview_compose_loaded=true`, qui pose les domaines et leur port d'écoute.
 4. Onglet **Preview Deployments** : régler _Preview URL Template_ sur `{{pr_id}}-{{domain}}`
    (le défaut `{{pr_id}}.{{domain}}` sort du wildcard DNS `*.preview`). Laisser les previews
    désactivées : c'est la CI qui les crée.
