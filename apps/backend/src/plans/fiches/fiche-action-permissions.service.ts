@@ -238,16 +238,29 @@ export default class FicheActionPermissionsService {
     }
 
     const operation = PermissionOperationEnum['PLANS.FICHES.DELETE'];
+    const resourceId = { collectiviteId: fiche.collectiviteId };
+
+    // La liste d'opérations de la clé s'applique aussi au fallback parent-pilote.
+    if (!this.permissionService.isApiKeyAllowed(user, operation).success) {
+      if (!doNotThrow) {
+        this.permissionService.throwForbiddenException(
+          user,
+          operation,
+          ResourceType.COLLECTIVITE,
+          resourceId
+        );
+      }
+      return false;
+    }
 
     // Vérifie d'abord la permission directe de suppression au niveau
     // collectivité.
-    const directDeletePermissionResult =
-      await this.permissionService.isAllowed(
-        user,
-        operation,
-        ResourceType.COLLECTIVITE,
-        { collectiviteId: fiche.collectiviteId }
-      );
+    const directDeletePermissionResult = await this.permissionService.isAllowed(
+      user,
+      operation,
+      ResourceType.COLLECTIVITE,
+      resourceId
+    );
     if (directDeletePermissionResult.success) {
       return true;
     }
@@ -276,23 +289,15 @@ export default class FicheActionPermissionsService {
       }
     }
 
-    // Ni permission directe, ni fallback parent-pilote : on redonne la main
-    // à `permissionService.isAllowed` pour conserver le message d'erreur habituel.
-    const permissionResult = await this.permissionService.isAllowed(
-      user,
-      operation,
-      ResourceType.COLLECTIVITE,
-      { collectiviteId: fiche.collectiviteId }
-    );
-    if (!permissionResult.success && !doNotThrow) {
+    if (!doNotThrow) {
       this.permissionService.throwForbiddenException(
         user,
         operation,
         ResourceType.COLLECTIVITE,
-        { collectiviteId: fiche.collectiviteId }
+        resourceId
       );
     }
-    return permissionResult.success;
+    return false;
   }
 
   /** Détermine si un utilisateur peut modifier une fiche */
