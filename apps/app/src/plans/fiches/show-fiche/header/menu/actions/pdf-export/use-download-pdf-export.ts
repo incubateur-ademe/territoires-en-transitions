@@ -1,5 +1,10 @@
 import { useMutation } from '@tanstack/react-query';
-import { RouterInput, RouterOutput, TRPCUseMutationResult, useTRPC } from '@tet/api';
+import {
+  RouterInput,
+  RouterOutput,
+  TRPCUseMutationResult,
+  useTRPC,
+} from '@tet/api';
 import { Event, useEventTracker } from '@tet/ui';
 import { saveBlob } from '@/app/utils/save-blob';
 import { useToastContext } from '@/app/utils/toast/toast-context';
@@ -12,10 +17,14 @@ function base64ToPdfBlob(base64: string): Blob {
   return new Blob([bytes], { type: 'application/pdf' });
 }
 
-export function useDownloadPdfExport(): TRPCUseMutationResult<
-  GeneratePdfInput,
-  GeneratePdfOutput
-> {
+export type UseDownloadPdfExportOptions = {
+  /** Remplace l'événement de suivi par défaut (export unitaire ou groupé). */
+  trackSuccess?: (variables: GeneratePdfInput) => void;
+};
+
+export function useDownloadPdfExport(
+  options?: UseDownloadPdfExportOptions
+): TRPCUseMutationResult<GeneratePdfInput, GeneratePdfOutput> {
   const trpc = useTRPC();
   const tracker = useEventTracker();
   const { setToast } = useToastContext();
@@ -23,6 +32,13 @@ export function useDownloadPdfExport(): TRPCUseMutationResult<
   return useMutation(
     trpc.plans.fiches.generatePdf.mutationOptions({
       onSuccess: (data, variables) => {
+        saveBlob(base64ToPdfBlob(data.pdf), data.fileName);
+
+        if (options?.trackSuccess) {
+          options.trackSuccess(variables);
+          return;
+        }
+
         const isGrouped =
           variables.mode === 'all' ||
           (variables.mode === 'selection' && variables.ficheIds.length > 1);
@@ -32,7 +48,6 @@ export function useDownloadPdfExport(): TRPCUseMutationResult<
           : Event.fiches.exportPdf;
 
         tracker(event, { sections: variables.sections ?? [] });
-        saveBlob(base64ToPdfBlob(data.pdf), data.fileName);
       },
       onError: (error) => {
         setToast('error', error.message || "Échec de l'export PDF");

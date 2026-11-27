@@ -17,6 +17,7 @@ import {
   useEventTracker,
 } from '@tet/ui';
 import { useState } from 'react';
+import { ExportPlanFichesModal } from '@/app/plans/fiches/show-fiche/header/menu/actions/pdf-export/ExportModal/export-fa-modal';
 import { GenerateReportPlanModal } from '../../reports/generate-plan-report-pptx/generate-report.modal';
 import { useIsPendingReport } from '../../reports/generate-plan-report-pptx/use-is-pending-report';
 import { DeletePlanOrAxeModal } from './actions/delete-axe-or-plan.modal';
@@ -56,6 +57,7 @@ export const PlanMenuButton = () => {
     useState<RestreindreFicheState>('closed');
   const [isOpenDeletePlanModal, setIsOpenDeletePlanModal] = useState(false);
   const [isOpenDuplicateModal, setIsOpenDuplicateModal] = useState(false);
+  const [isOpenExportPdfModal, setIsOpenExportPdfModal] = useState(false);
 
   const [isOpenGenerateReportModal, setIsOpenGenerateReportModal] =
     useState(false);
@@ -113,6 +115,15 @@ export const PlanMenuButton = () => {
           tooltip: isPending ? appLabels.exportEnCours : undefined,
           onClick: () => {
             exportPlanAction('docx');
+          },
+        }
+      : null,
+    canExportPlan
+      ? {
+          label: appLabels.telechargerPlanPdf,
+          icon: 'file-pdf-line',
+          onClick: () => {
+            setIsOpenExportPdfModal(true);
           },
         }
       : null,
@@ -232,6 +243,15 @@ export const PlanMenuButton = () => {
           openState={{
             isOpen: isOpenDuplicateModal,
             setIsOpen: setIsOpenDuplicateModal,
+          }}
+        />
+      )}
+      {isOpenExportPdfModal && (
+        <ExportPlanFichesModal
+          planId={plan.id}
+          openState={{
+            isOpen: isOpenExportPdfModal,
+            setIsOpen: setIsOpenExportPdfModal,
           }}
         />
       )}

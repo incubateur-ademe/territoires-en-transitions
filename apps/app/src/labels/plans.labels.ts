@@ -720,4 +720,21 @@ export const plansLabels = {
   moduleCountBySupprimer: 'Supprimer le module',
   moduleCountByConfirmerSuppression: (titre: string): string =>
     `Confirmer la suppression du module : ${titre}`,
+  telechargerPlanPdf: 'Télécharger le plan (PDF)',
+  exportPdfLimiteFiches: ({
+    max,
+    count,
+  }: {
+    max: number;
+    count: number;
+  }): string =>
+    `L'export est limité à ${max} fiches. Vous en avez sélectionné ${count}.`,
+  exportPdfPlanLimiteFiches: ({
+    max,
+    count,
+  }: {
+    max: number;
+    count: number;
+  }): string =>
+    `L'export est limité à ${max} fiches. Ce plan en contient ${count}.`,
 } as const;
