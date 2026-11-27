@@ -134,12 +134,17 @@ resource "coolify_server_docker_cleanup" "app" {
   delete_unused_networks   = false
 }
 
-# Métriques (CPU/RAM par conteneur) et analytics de trafic natifs de Coolify,
-# collectés par Sentinel. Doublon partiel du Cockpit Scaleway, gardé pour la
-# vue par app directement dans l'UI Coolify. Sentinel lui-même est obligatoire
-# côté Coolify (≥ 4.4) : on ne pilote pas is_sentinel_enabled, que l'API
-# refuse en 422. IPs des visiteurs tronquées (/24, /48) : pas besoin de l'IP
-# complète pour une vue de trafic.
+# Métriques natives de Coolify (CPU/RAM par conteneur), collectées par
+# Sentinel. Doublon partiel du Cockpit Scaleway, gardé pour la vue par app
+# directement dans l'UI Coolify. Sentinel lui-même est obligatoire côté
+# Coolify (≥ 4.4) : on ne pilote pas is_sentinel_enabled, que l'API refuse en
+# 422.
+#
+# Les analytics de trafic (is_traffic_analytics_enabled) n'ont ni API ni
+# attribut dans le provider : à activer à la main dans l'UI (serveur >
+# Sentinel > Traffic analytics). Coolify réécrit alors la config Traefik et
+# redémarre le proxy. traffic_ip_mode prépare ce cas : IPs des visiteurs
+# tronquées (/24, /48), l'IP complète ne sert pas une vue de trafic.
 resource "coolify_server_sentinel" "app" {
   for_each = coolify_server.app
 
