@@ -50,13 +50,20 @@ resource "scaleway_rdb_instance" "main" {
 
   settings = var.settings
 
-  # Réseau privé seulement : les conteneurs y sont, les opérateurs y arrivent
-  # par le VPN. Pas d'endpoint public (load balancer) : sans ACL, Scaleway
-  # l'ouvrirait à 0.0.0.0/0. Retirer ce bloc ne supprime pas un endpoint
-  # existant : le supprimer à la main (scw rdb endpoint delete).
+  # Réseau privé d'abord : les conteneurs y sont, les opérateurs y arrivent
+  # par le VPN.
   private_network {
     pn_id       = var.private_network_id
     enable_ipam = true
+  }
+
+  # Endpoint public, à n'ouvrir qu'une fois l'ACL posée et vérifiée (cf.
+  # scaleway_rdb_acl plus bas) : le provider crée l'endpoint avant l'ACL.
+  # Retirer ce bloc ne supprime pas un endpoint existant (le provider ignore
+  # son absence) : le supprimer à la main, `scw rdb endpoint delete <id>`.
+  dynamic "load_balancer" {
+    for_each = var.public_endpoint_enabled ? [1] : []
+    content {}
   }
 
   tags = concat(
@@ -70,6 +77,12 @@ resource "scaleway_rdb_instance" "main" {
 
   lifecycle {
     prevent_destroy = true
+
+    # Vider public_allowed_cidrs détruirait l'ACL en laissant l'endpoint ouvert.
+    postcondition {
+      condition     = length(self.load_balancer) == 0 || length(var.public_allowed_cidrs) > 0
+      error_message = "L'instance a encore un endpoint public : le supprimer (scw rdb endpoint delete <id>) avant de vider public_allowed_cidrs, qui porte son ACL."
+    }
   }
 }
 
@@ -85,3 +98,21 @@ resource "scaleway_rdb_privilege" "admin" {
   permission    = "all"
 }
 
+# ACL de l'endpoint public : elle ne filtre que lui, pas le Private Network.
+# Elle se pose sans endpoint, et avant lui : l'appliquer avec
+# public_endpoint_enabled = false, la vérifier (`scw rdb acl list
+# instance-id=<id>`), puis ouvrir l'endpoint dans un second apply. Elle reste
+# gérée tant que l'endpoint existe (postcondition de l'instance).
+resource "scaleway_rdb_acl" "public" {
+  count = length(var.public_allowed_cidrs) > 0 ? 1 : 0
+
+  instance_id = scaleway_rdb_instance.main.id
+
+  dynamic "acl_rules" {
+    for_each = var.public_allowed_cidrs
+    content {
+      ip          = acl_rules.value
+      description = acl_rules.key
+    }
+  }
+}

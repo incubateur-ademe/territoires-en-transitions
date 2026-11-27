@@ -98,3 +98,24 @@ variable "vpn_public_ip" {
     error_message = "vpn_public_ip : une adresse IPv4, sans masque."
   }
 }
+
+variable "prod_project_id" {
+  description = "UUID du projet Scaleway de production, pour y lire l'IP publique du serveur prod (pg_public_reader_tiers). Même valeur que dans infra/platform."
+  type        = string
+}
+
+variable "pg_public_reader_tiers" {
+  description = "Tiers dont le serveur applicatif lit la base de stats par son endpoint public (backend : ANALYTICS_DATABASE_URL). L'ACL de l'endpoint n'autorise que l'IP publique de ces serveurs. La prod est dans un autre projet, sans lien réseau : ce sont eux qui viennent lire, jamais le tier data qui va vers eux. N'ouvre pas l'endpoint (pg_public_endpoint_enabled) ; ne se vide qu'une fois l'endpoint supprimé."
+  type        = set(string)
+  default     = []
+  validation {
+    condition     = alltrue([for t in var.pg_public_reader_tiers : contains(["nonprod", "prod"], t)])
+    error_message = "pg_public_reader_tiers : nonprod et/ou prod."
+  }
+}
+
+variable "pg_public_endpoint_enabled" {
+  description = "Ouvre l'endpoint public de la RDB stats. Première ouverture en deux applies : d'abord -var pg_public_endpoint_enabled=false pour poser l'ACL seule et la vérifier, puis l'apply normal. Repasser à false ne supprime pas l'endpoint : scw rdb endpoint delete (cf. README)."
+  type        = bool
+  default     = false
+}

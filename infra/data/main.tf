@@ -6,9 +6,10 @@
 #                distincte de la nôtre qui porte la prod : le data analyst y est
 #                autonome sans rien voir des autres environnements.
 #   postgres   — base de stats managée, reprise de Koyeb par pg_dump | pg_restore
-#                lancé depuis ce serveur (la RDB n'a pas d'endpoint public). Elle
-#                vit dans son propre Private Network, sans route vers nonprod ni
-#                prod.
+#                lancé depuis ce serveur. Elle vit dans son propre Private
+#                Network, sans route vers nonprod ni prod. Les backends
+#                applicatifs la lisent par un endpoint public fermé par ACL
+#                (pg_public_reader_tiers) : le flux part d'eux, jamais d'ici.
 #
 # Instance arm64 (BASIC2-*) : les images Docker déployées par Coolify doivent
 # exister en linux/arm64 (Metabase, Streamlit et les serveurs MCP usuels oui).
@@ -44,6 +45,21 @@ module "postgres" {
 
   backup_schedule_frequency = 24
   backup_schedule_retention = 7
+
+  # Valeurs posées par Scaleway à la création de l'instance. Les déclarer évite
+  # que le plan les remette à null, ce qui peut redémarrer l'instance
+  # (max_connections), cf. infra/prod.
+  settings = {
+    "effective_cache_size"            = "1300"
+    "maintenance_work_mem"            = "150"
+    "max_connections"                 = "100"
+    "max_parallel_workers"            = "0"
+    "max_parallel_workers_per_gather" = "0"
+    "work_mem"                        = "4"
+  }
+
+  public_allowed_cidrs    = local.pg_public_allowed_cidrs
+  public_endpoint_enabled = var.pg_public_endpoint_enabled
 }
 
 # Mots de passe restreints aux caractères URL-safe : injectables tels quels
@@ -72,6 +88,34 @@ resource "scaleway_rdb_privilege" "mcp_reader" {
   instance_id   = module.postgres.instance_id
   database_name = module.postgres.database_name
   user_name     = scaleway_rdb_user.mcp_reader.name
+  permission    = "readonly"
+}
+
+# Rôle des backends applicatifs (ANALYTICS_DATABASE_URL, par l'endpoint
+# public) : lecture seule, à part de mcp_reader, qui vit dans la Team Coolify
+# du data analyst. Chacun se renouvelle sans couper l'autre, et
+# pg_stat_activity dit qui lit.
+resource "random_password" "backend_reader" {
+  length           = 32
+  special          = true
+  override_special = "-_.!*~"
+  min_lower        = 1
+  min_upper        = 1
+  min_numeric      = 1
+  min_special      = 1
+}
+
+resource "scaleway_rdb_user" "backend_reader" {
+  instance_id = module.postgres.instance_id
+  name        = "backend_reader"
+  password    = random_password.backend_reader.result
+  is_admin    = false
+}
+
+resource "scaleway_rdb_privilege" "backend_reader" {
+  instance_id   = module.postgres.instance_id
+  database_name = module.postgres.database_name
+  user_name     = scaleway_rdb_user.backend_reader.name
   permission    = "readonly"
 }
 

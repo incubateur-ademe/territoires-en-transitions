@@ -1,5 +1,6 @@
 # Ressources créées par infra/platform, lues par data source plutôt que
-# recopiées dans terraform.tfvars : platform doit avoir été appliqué avant.
+# recopiées dans terraform.tfvars : platform doit avoir été appliqué avant, et
+# le stack de chaque tier de pg_public_reader_tiers (nonprod, prod) aussi.
 
 data "scaleway_vpc_private_network" "data" {
   name       = "tet-data-pn"
@@ -24,7 +25,33 @@ data "scaleway_instance_servers" "vpn" {
   }
 }
 
+# Serveurs applicatifs autorisés sur l'endpoint public de la RDB stats, lus sur
+# l'infra réelle (même lecture que infra/platform). Lecture stricte : un serveur
+# absent ferait sortir son IP de l'ACL sans que le plan le montre.
+data "scaleway_instance_servers" "pg_public_reader" {
+  for_each = var.pg_public_reader_tiers
+
+  name       = "tet-${each.key}-apps"
+  project_id = each.key == "prod" ? var.prod_project_id : var.project_id
+  zone       = var.scaleway_zone
+
+  lifecycle {
+    postcondition {
+      condition     = length([for s in self.servers : s if s.name == "tet-${each.key}-apps"]) == 1
+      error_message = "Serveur tet-${each.key}-apps introuvable (ou en double) : appliquer son stack d'abord, ou le retirer de pg_public_reader_tiers."
+    }
+  }
+}
+
 locals {
+  pg_public_allowed_cidrs = {
+    for tier, ds in data.scaleway_instance_servers.pg_public_reader : tier => "${one([
+      for s in ds.servers : one([
+        for ip in s.public_ips : ip.address if ip.family == "inet"
+      ]) if s.name == "tet-${tier}-apps"
+    ])}/32"
+  }
+
   private_network_id = data.scaleway_vpc_private_network.data.id
 
   # var.vpn_public_ip : secours si la passerelle n'existe plus (cf. variables.tf).
