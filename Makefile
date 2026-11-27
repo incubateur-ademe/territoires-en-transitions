@@ -408,8 +408,17 @@ lint-target: preflight-env-keys ## Lance le lint d'un projet Nx : make lint-targ
 typecheck: preflight-env-keys ## Lance le typecheck : make typecheck [project=<nx-project>]
 	@$(call run_node,pnpm exec nx $(if $(project),typecheck "$(project)",run-many -t typecheck --parallel=3))
 
-test: preflight-env-keys ## Lance les tests : make test [project=<nx-project>]
-	@$(call run_node,pnpm exec nx $(if $(project),test "$(project)",run-many -t test))
+# Goals après `test` (ex. make test project=backend diagnostic) : patterns
+# transmis à nx, pas des cibles Make. .DEFAULT ne vaut que pour les goals sans
+# règle : sans lui, make s'arrête sur « No rule to make target », et une vraie
+# cible (make test down) garde sa recette.
+ifeq ($(firstword $(MAKECMDGOALS)),test)
+TEST_ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
+.DEFAULT: ; @:
+endif
+
+test: preflight-env-keys ## Lance les tests : make test [project=<nx-project>] [<pattern>...]
+	@$(call run_node,pnpm exec nx $(if $(project),test "$(project)",run-many -t test) $(if $(TEST_ARGS),-- $(TEST_ARGS)))
 
 # Sur l'hôte, avec le même env que make dev : le .env de l'app déchiffré (et
 # ses variantes .local), puis le .env racine. Les variables injectées priment
