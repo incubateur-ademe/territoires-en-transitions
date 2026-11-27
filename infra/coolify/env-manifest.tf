@@ -200,7 +200,6 @@ locals {
         POSTHOG_HOST     = { value = local.coolify_env_posthog_host }
         POSTHOG_KEY      = { secret = "posthog-key" }
         PCAET_LAUNCHED   = { value = "true" }
-        DB_STATS_URL     = { secret = "db-stats-url" }
       }
 
       # Variables du compose infra/nonprod/supabase-api/docker-compose.yml :
