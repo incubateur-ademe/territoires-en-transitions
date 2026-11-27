@@ -565,7 +565,7 @@ serveur, ne détient aucun identifiant qui l'ouvre. Les deux flux partent de la 
 
 ```
  prod                                  bucket                      tier data
- RDB ── export filtré, chaque nuit ──► tet-analytics-export ◄── tet-data-apps
+ RDB ── export filtré, chaque nuit ──► tet-analytics-export ◄── tet-data-apps ──► schéma prod de stats
  site ──► backend ── TLS vérifié, IP autorisée ──────────────► tet-stats-pg (endpoint public + ACL)
 ```
 
@@ -632,31 +632,104 @@ scw rdb endpoint list "$PG_ID"   # l'endpoint qui porte un load_balancer
 scw rdb endpoint delete <endpoint-id> instance-id="$PG_ID"
 ```
 
-Reprise de la base de stats depuis Koyeb : le dump passe par le serveur data, qui sort sur
-internet et joint la RDB en privé.
+**Miroir de la prod (schéma `prod` de `stats`).** Copie complète à J-1, pas une
+réplication : une réplication logique ou un `postgres_fdw` demanderaient au tier data une
+connexion vers la prod, et la première ferait grossir le WAL de la prod à chaque
+migration non rejouée côté miroir.
+
+1. Le job `export-analytics` de `.github/workflows/backup-database.yml`
+   ([`analytics-export.sh`](../data_layer/backup/analytics-export.sh)) dépose l'export dans
+   `tet-analytics-export`. Le filtre est à la source : données des seuls schémas listés
+   dans le script, sans les tables de secrets, et `auth.users` réduit à quelques colonnes
+   (ni hash, ni jeton, ni téléphone).
+2. [`prod-mirror/refresh-prod-mirror.sh`](data/prod-mirror/refresh-prod-mirror.sh), sur
+   `tet-data-apps`, restaure l'export dans une base de travail, y construit les tables
+   `prod.<schéma>_<table>` (types de la prod ramenés à des types standards, sans index ni
+   contrainte) et bascule le schéma en une transaction.
+
+Mise en place, une fois :
+
+1. Faire créer par un admin de l'organisation deux applications IAM, avec le droit objets
+   sur le projet `tet` : l'une dépose (job de backup), l'autre télécharge (serveur data).
+   Renseigner `analytics_export` dans `data/terraform.tfvars` et appliquer : la bucket
+   policy cantonne chacune à ce bucket et à son sens.
+2. Environnement GitHub `prod` : variables `ANALYTICS_EXPORT_BUCKET` (output
+   `analytics_export_bucket_name`) et `ANALYTICS_EXPORT_AWS_ACCESS_KEY_ID`, secret
+   `ANALYTICS_EXPORT_AWS_SECRET_ACCESS_KEY`. Sans `ANALYTICS_EXPORT_BUCKET`, le job est sauté.
+3. Sur `tet-data-apps`, construire l'image et planifier le job après l'export (22 h UTC) :
 
 ```sh
-# Sur tet-data-apps (cf. Se connecter). Source : l'URI Koyeb ; cible : output
-# pg_private_connection_uri (admin).
-docker run --rm -e SRC -e DST postgres:17 sh -c \
-  'pg_dump -Fc --no-owner --no-privileges "$SRC" | pg_restore --no-owner --no-privileges -d "$DST"'
+docker build -t prod-mirror infra/data/prod-mirror
+# /root/prod-mirror.env (600) : STATS_DB_URL (output pg_private_connection_uri),
+# EXPORT_BUCKET, EXPORT_ACCESS_KEY, EXPORT_SECRET_KEY.
+echo '0 2 * * * root docker run --rm --env-file /root/prod-mirror.env prod-mirror >> /var/log/prod-mirror.log 2>&1' \
+  > /etc/cron.d/prod-mirror
 ```
 
-La base `stats` cible doit être vide. Si le transfert échoue en route, les tables déjà
-restaurées restent remplies et une relance telle quelle dupliquerait leurs lignes :
-rejouer avec `pg_restore --clean --if-exists`, qui supprime chaque objet avant de le
-recréer.
+Le job échoue sans rien changer si l'export est incomplet, s'il perd plus de 10 % des
+tables, ou si une vue de `public` dépend de l'ancien miroir : une vue sur `prod.*` se
+recrée après chaque bascule, ou se remplace par une table que les scripts recalculent.
+
+Reprise de la base de stats depuis Koyeb : le dump passe par le serveur data, qui sort sur
+internet et joint la RDB en privé. Seuls les schémas `public` (stats) et `sauvegardes`
+sont repris : `prod` est reconstruit par le miroir ci-dessus. Arrêter les scripts de
+calcul le temps du transfert.
+
+Depuis un poste, avec le VPN : les deux URI dans un fichier lisible par root seul sur le
+serveur. Source en connexion directe, pas par le pooler de Neon (`-pooler` retiré de l'hôte).
+
+```sh
+{
+  printf 'SRC=%s\n' "<URI Koyeb, sans -pooler>"
+  printf 'DST=%s\n' "$(terraform -chdir=infra/data output -raw pg_private_connection_uri)"
+} | ssh -i "$KEY" root@<server_public_ip de data> 'umask 077; cat > /root/reprise.env'
+```
+
+Sur `tet-data-apps` (cf. [Se connecter](#se-connecter)), de préférence dans un `tmux` :
+
+```sh
+pg() { docker run --rm --env-file /root/reprise.env -v /root:/w postgres:17 "$@"; }
+
+cat > /root/count.sql <<'SQL'
+select table_schema || '.' || table_name,
+       (xpath('/row/c/text()', query_to_xml(
+          format('select count(*) as c from %I.%I', table_schema, table_name), false, true, '')))[1]::text
+from information_schema.tables
+where table_schema in ('public', 'sauvegardes') and table_type = 'BASE TABLE'
+order by 1;
+SQL
+
+pg sh -c 'psql -X -At "$SRC" -f /w/count.sql' > /root/count-src.txt
+pg sh -c 'pg_dump -Fc --no-owner --no-privileges -n public -n sauvegardes -f /w/stats.dump "$SRC"'
+
+# -n public fait émettre CREATE SCHEMA public, qui existe déjà : le retirer.
+pg pg_restore -l /w/stats.dump | grep -vE '(SCHEMA - public|COMMENT - SCHEMA public)( |$)' > /root/stats.list
+
+# Une seule transaction : un échec ne laisse rien, la relance repart de zéro.
+pg sh -c 'pg_restore --no-owner --no-privileges --single-transaction --exit-on-error \
+  -L /w/stats.list -d "$DST" /w/stats.dump'
+
+pg sh -c 'psql -X -At "$DST" -f /w/count.sql' > /root/count-dst.txt
+diff /root/count-src.txt /root/count-dst.txt && echo "OK : $(wc -l < /root/count-src.txt) tables identiques"
+
+rm -f /root/reprise.env /root/count.sql /root/count-*.txt /root/stats.dump /root/stats.list
+```
+
+La base `stats` cible doit être vide. Un `diff` non vide veut dire qu'un script a écrit
+dans Koyeb pendant la copie : vider la cible et relancer.
 
 Les droits des rôles (`scaleway_rdb_privilege`) ne couvrent que les tables qui existaient
 quand Terraform les a posés : les tables restaurées, possédées par l'admin, et celles que
 les scripts créeront ensuite leur échappent. Après la restauration :
 
 ```sql
--- En admin (pg_private_connection_uri) : tables restaurées. À adapter si la base
--- Koyeb a d'autres schémas que public.
+-- En admin (pg_private_connection_uri) : tables restaurées. Le schéma prod reçoit
+-- ses droits du miroir, à chaque bascule.
 GRANT SELECT ON ALL TABLES IN SCHEMA public TO mcp_reader, backend_reader;
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO stats_writer;
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO stats_writer;
+GRANT USAGE, CREATE ON SCHEMA sauvegardes TO stats_writer;
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA sauvegardes TO stats_writer;
 
 -- En stats_writer (stats_writer_private_connection_uri) : les tables qu'il créera
 -- seront lisibles par le MCP et les backends.
@@ -943,4 +1016,5 @@ Coolify, reconfigure le proxy : revérifier ensuite les flags ci-dessus.
 - **Bascule DB** par `pg_dump` / `pg_restore` en fenêtre de maintenance, **pas** de
   réplication logique.
 - **Prod et tier data** : les flux partent de la prod (export filtré déposé dans un bucket,
-  lecture de la base de stats par le backend), jamais du tier data.
+  lecture de la base de stats par le backend), jamais du tier data. Miroir par copie
+  complète à J-1, **pas** de réplication logique, de `postgres_fdw` ni de read replica.
