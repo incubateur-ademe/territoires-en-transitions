@@ -1,10 +1,14 @@
 # --- Previews : une stack compose par pull request ---
 #
-# TEST EN COURS (previews natives de Coolify). Une application « Docker
-# Compose » branchée sur ce dépôt par la GitHub App de notre Team :
-# infra/preview/docker-compose.yml porte toute la stack, base seedée comprise.
-# Coolify en déploie un exemplaire par PR (projet compose, réseau et volumes
-# propres), supprimé à la fermeture.
+# Une application « Docker Compose » branchée sur ce dépôt par la GitHub App
+# de notre Team : infra/preview/docker-compose.yml porte toute la stack, base
+# seedée comprise. Coolify en déploie un exemplaire par PR (projet compose,
+# réseau et volumes propres), supprimé à la fermeture.
+#
+# C'est la CI qui crée et déploie les previews, pour les PR portant le label
+# `preview`, une fois leurs images construites (preview-build.yml puis
+# preview-deploy.yml, par l'API). Le webhook de Coolify ne fait que les
+# supprimer à la fermeture des PR.
 #
 # Mise en service, dans l'ordre (cf. infra/README.md « Previews ») :
 #   1. apply avec preview_github_app_uuid : crée l'application, sans domaines ;
@@ -84,9 +88,9 @@ resource "coolify_application_github_app" "preview" {
   # Un push sur la branche de base ne redéploie rien : seules les previews
   # comptent.
   is_auto_deploy_enabled = false
-  # false tant que le test dure : activées, les previews partiraient pour
-  # chaque PR ouverte ou poussée par un membre. À activer dans l'UI le temps
-  # d'un déploiement ; le prochain apply les recoupe.
+  # false : activées, le webhook déploierait chaque PR ouverte ou poussée par
+  # un membre, avant que ses images n'existent. L'API crée les previews sans
+  # ce réglage, et le webhook les supprime quand même à la fermeture.
   is_preview_deployments_enabled = false
   # Jamais de preview pour une PR de fork : son code tournerait sur le serveur,
   # avec les variables de l'application.

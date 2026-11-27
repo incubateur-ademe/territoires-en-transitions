@@ -580,14 +580,27 @@ Le rôle `metabase` n'a accès qu'à la base `metabase` : comme source de donné
 lit `stats` en `mcp_reader`. Vérifier avec `\dp`. Si les scripts doivent créer des tables et que `stats_writer` ne le
 peut pas, le dire avant de lui donner plus : c'est un choix de droits, pas un oubli.
 
-### Previews (test en cours)
+### Previews
 
-Une stack complète par pull request, par les _preview deployments_ natifs de Coolify :
-[`preview/docker-compose.yml`](preview/docker-compose.yml) (app, backend, site, GoTrue,
-Storage, Redis, Postgres ; `app.…/api` routé au backend comme en prod), déclaré comme application compose `stack` (environnement `preview`) dans
+Une stack complète par pull request labellisée `preview`, créée par la CI via l'API de
+Coolify, qui la déploie et la supprime (les _preview deployments_ natifs restent
+désactivés) : [`preview/docker-compose.yml`](preview/docker-compose.yml) (app, backend, site,
+GoTrue, Storage, Redis, Postgres ; `app.…/api` routé au backend comme en prod), déclaré comme
+application compose `stack` (environnement `preview`) dans
 [`coolify/preview-application.tf`](coolify/preview-application.tf). La base part de l'image
 `supabase_db_tet` de la CI (`_prepare-test-db.yml`), déjà migrée et seedée : copiée dans le
-volume de la preview au premier démarrage, supprimée avec elle.
+volume de la preview au premier démarrage, supprimée avec elle ; le backend y applique au
+démarrage les migrations de la PR.
+
+**Usage** : poser le label `preview` sur une PR (hors brouillon, branche du dépôt).
+À chaque push, [`preview-build.yml`](../.github/workflows/preview-build.yml) construit app,
+backend et site au commit de tête (images taguées du SHA complet), puis
+[`preview-deploy.yml`](../.github/workflows/preview-deploy.yml) crée ou redéploie la preview
+à ce commit par l'API Coolify ; le compose prend ses images dans `SOURCE_COMMIT`. URL :
+`https://<n>-app.preview.territoiresentransitions.fr`. Fermer la PR supprime la preview
+(webhook de la GitHub App) ; retirer le label la laisse en place jusqu'à la fermeture.
+Coolify lit le compose sur `main`, pas sur la branche de la PR : une modification de
+`preview/docker-compose.yml` ne vaut pour les previews qu'une fois mergée.
 
 Mise en service :
 
@@ -609,14 +622,18 @@ Mise en service :
    ' "$SECRET" "$role"; done
    ```
 
-3. **Deploy** une première fois : ce déploiement charge le compose. Puis réappliquer avec
+3. **Deploy** une première fois : ce déploiement charge le compose, puis échoue faute
+   d'images au commit de `main` (attendu). Réappliquer ensuite avec
    les mêmes `-var` qu'à l'étape 1 (sans eux, Terraform détruit l'application) et
    `-var preview_compose_loaded=true`, qui pose les domaines, sans port. Ajouter ensuite le
    port d'écoute dans l'UI, une fois : `:3000` sur web, backend et site, `:8000` sur
    supabase. Coolify le range à part et le garde aux applies suivants.
 4. Onglet **Preview Deployments** : régler _Preview URL Template_ sur `{{pr_id}}-{{domain}}`
-   (le défaut `{{pr_id}}.{{domain}}` sort du wildcard DNS `*.preview`), activer les previews
-   le temps du test, **Load Pull Requests** puis **Deploy** sur la PR voulue.
+   (le défaut `{{pr_id}}.{{domain}}` sort du wildcard DNS `*.preview`). Laisser les previews
+   désactivées : c'est la CI qui les crée.
+5. Environnement GitHub `preview-scaleway`, restreint à `main` comme `preprod-scaleway` :
+   secret `COOLIFY_TOKEN` (write + deploy, jamais root) et variable `COOLIFY_ENDPOINT`. Créer
+   le label `preview` dans le dépôt.
 
 À la fermeture d'une PR, Coolify supprime sa preview, mais un `docker rm` en échec n'est que
 journalisé. Sur le serveur preview, rien ne doit rester au nom de la PR :
@@ -810,6 +827,10 @@ Coolify, reconfigure le proxy : revérifier ensuite les flags ci-dessus.
   l'approbation de l'équipe TeT Admin. Ne pas le remettre en secret du repo : n'importe
   quelle branche pourrait le lire. Un token Coolify vaut pour toute la Team : celui de la
   preprod peut aussi déployer la prod, d'où la restriction à `main` des deux côtés.
+- **Previews** : `preview-build` construit les images d'une PR labellisée `preview` (code
+  de la PR, sans token Coolify), puis `preview-deploy`, lancé par `workflow_run` depuis
+  `main`, la déploie avec le token de l'environnement `preview-scaleway`, restreint à
+  `main` pour la même raison.
 - **Infra (à venir)** : `fmt` + `validate` + `plan` en commentaire de PR sur `infra/**`,
   `apply` sur `main` avec approbation manuelle (GitHub Environments), authentification
   Scaleway par OIDC plutôt que par clés long-lived.

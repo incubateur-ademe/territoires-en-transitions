@@ -2,18 +2,22 @@
 #
 # Déployée par Coolify comme application « Docker Compose » branchée sur ce
 # dépôt (previews natives : un projet compose, un réseau et des volumes par
-# PR, supprimés à la fermeture). Rien n'est publié par ce fichier : les
-# domaines sont ceux que Coolify attribue aux services web, backend, site et
-# supabase (port interne compris, cf. preview-application.tf), et qu'il rend
-# sans port dans les variables SERVICE_URL_<SERVICE>.
+# PR, supprimés à la fermeture). Une PR portant le label `preview` a ses
+# images construites au commit de tête (preview-build.yml), puis sa preview
+# déployée à ce commit (preview-deploy.yml) : Coolify le rend dans
+# SOURCE_COMMIT, qui sert de tag aux images de app, backend et site.
+#
+# Coolify lit ce fichier sur la branche de l'application (main), pas sur celle
+# de la PR : une modification ne vaut pour les previews qu'une fois mergée.
+#
+# Rien n'est publié par ce fichier : les domaines sont ceux que Coolify
+# attribue aux services web, backend, site et supabase (port interne compris,
+# cf. preview-application.tf), et qu'il rend sans port dans les variables
+# SERVICE_URL_<SERVICE>.
 #
 # Variables à poser dans Coolify, onglet « Environment Variables » de
 # l'application, dans ses deux jeux : celui de l'application (premier Deploy,
 # cf. README) et « Preview Deployments » (celui que lisent les PR) :
-#   IMAGE_TAG                   tag des images tet-app et tet-backend
-#                               (short SHA d'un commit déjà construit)
-#   SITE_IMAGE_TAG              tag de tet-site : le site est construit à part,
-#                               rarement sur le même commit
 #   DB_SEED_TAG                 tag de l'image supabase_db_tet : la base de
 #                               test de la CI (_prepare-test-db.yml), migrée
 #                               et seedée
@@ -29,9 +33,10 @@
 #                               dossier Drive propre aux previews, en écriture
 #                               pour ce compte
 #
-# ponytail: IMAGE_TAG, SITE_IMAGE_TAG et DB_SEED_TAG sont communs à toutes
-# les previews tant qu'ils sont posés à la main. À faire porter par la CD (un
-# tag par PR) quand le test est concluant.
+# ponytail: DB_SEED_TAG est commun à toutes les previews et posé à la main :
+# le backend applique au démarrage les migrations de la PR (RUN_MIGRATIONS).
+# Les données du seed propres à une PR n'y sont pas ; un seed par PR si le
+# besoin se présente.
 
 services:
   # Copie la base seedée dans le volume de la preview, une seule fois : les
@@ -216,7 +221,7 @@ services:
     command: ["sh", "-c", "printf '%s' \"$$CADDYFILE\" > /etc/caddy/Caddyfile && exec caddy run --config /etc/caddy/Caddyfile"]
 
   backend:
-    image: ghcr.io/incubateur-ademe/tet-backend:${IMAGE_TAG:?IMAGE_TAG requis}
+    image: ghcr.io/incubateur-ademe/tet-backend:${SOURCE_COMMIT:?SOURCE_COMMIT requis}
     restart: unless-stopped
     depends_on:
       db:
@@ -289,7 +294,7 @@ services:
     command: ["sh", "-c", "printf '%s' \"$$CADDYFILE\" > /etc/caddy/Caddyfile && exec caddy run --config /etc/caddy/Caddyfile"]
 
   app:
-    image: ghcr.io/incubateur-ademe/tet-app:${IMAGE_TAG:?IMAGE_TAG requis}
+    image: ghcr.io/incubateur-ademe/tet-app:${SOURCE_COMMIT:?SOURCE_COMMIT requis}
     restart: unless-stopped
     depends_on:
       backend:
@@ -305,7 +310,7 @@ services:
       SUPABASE_AUTH_COOKIE_NAME: *auth-cookie-name
 
   site:
-    image: ghcr.io/incubateur-ademe/tet-site:${SITE_IMAGE_TAG:?SITE_IMAGE_TAG requis}
+    image: ghcr.io/incubateur-ademe/tet-site:${SOURCE_COMMIT:?SOURCE_COMMIT requis}
     restart: unless-stopped
     environment:
       ENV_NAME: preview

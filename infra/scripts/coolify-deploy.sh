@@ -21,6 +21,10 @@
 #                      lui, redéploie la configuration en place : la tête de
 #                      branche pour une application Git
 #                      (git-applications.tf)
+#   PR_ID, COMMIT      (optionnel, ensemble) déploie la preview de la PR PR_ID
+#                      au commit COMMIT, et la crée au besoin
+#                      (preview-deploy.yml). IMAGE_TAG est alors ignoré : le
+#                      compose tire ses images du commit déployé
 #   DEPLOY_TIMEOUT     (optionnel) secondes d'attente max, défaut 900
 #
 # Code de sortie non nul si le déploiement échoue, est annulé ou dépasse le
@@ -72,27 +76,42 @@ if [ -z "$app_uuid" ]; then
   exit 1
 fi
 
-_version="${IMAGE_TAG:-configuration en place}"
-echo "→ Déploiement de ${APP_ID} (uuid=${app_uuid}) : ${_version}…"
-if [ -n "${IMAGE_TAG:-}" ]; then
-  jq -n --arg tag "$IMAGE_TAG" '{docker_registry_image_tag: $tag}' >"$_tmp/tag.json"
-  api PATCH "/applications/${app_uuid}" "$_tmp/tag.json" >/dev/null
-fi
-deployment_uuid="$(api POST "/deploy?uuid=${app_uuid}&force=false" \
-  | jq -r '.deployments[0].deployment_uuid // empty')" || deployment_uuid=""
-if [ -z "$deployment_uuid" ]; then
-  # Rien n'a été déployé : on remet le tag d'avant, sinon Coolify afficherait
-  # une version qui ne tourne pas, que cd-prod lit pour la promouvoir.
-  # Seulement si le tag est encore le nôtre : un déploiement concurrent a pu
-  # le changer entre-temps, et on écraserait sa version.
-  # ponytail: relecture puis PATCH, pas atomique (fenêtre de quelques ms).
-  _current_tag="$(api GET "/applications/${app_uuid}" | jq -r '.docker_registry_image_tag // empty')" || _current_tag=""
-  if [ -n "${IMAGE_TAG:-}" ] && [ -n "$_previous_tag" ] && [ "$_current_tag" = "$IMAGE_TAG" ]; then
-    jq -n --arg tag "$_previous_tag" '{docker_registry_image_tag: $tag}' >"$_tmp/tag.json"
+if [ -n "${PR_ID:-}" ]; then
+  : "${COMMIT:?COMMIT requis avec PR_ID}"
+  _version="PR #${PR_ID} au commit ${COMMIT}"
+  echo "→ Déploiement de ${APP_ID} (uuid=${app_uuid}) : ${_version}…"
+  # Crée la preview au besoin et fixe son commit : droit write.
+  jq -n --argjson pr "$PR_ID" --arg commit "$COMMIT" \
+    '{pull_request_id: $pr, commit: $commit, git_type: "github"}' >"$_tmp/preview.json"
+  deployment_uuid="$(api POST "/applications/${app_uuid}/previews" "$_tmp/preview.json" \
+    | jq -r '.deployment_uuid // empty')" || deployment_uuid=""
+  if [ -z "$deployment_uuid" ]; then
+    echo "✗ Coolify n'a mis aucun déploiement en file." >&2
+    exit 1
+  fi
+else
+  _version="${IMAGE_TAG:-configuration en place}"
+  echo "→ Déploiement de ${APP_ID} (uuid=${app_uuid}) : ${_version}…"
+  if [ -n "${IMAGE_TAG:-}" ]; then
+    jq -n --arg tag "$IMAGE_TAG" '{docker_registry_image_tag: $tag}' >"$_tmp/tag.json"
     api PATCH "/applications/${app_uuid}" "$_tmp/tag.json" >/dev/null
   fi
-  echo "✗ Coolify n'a mis aucun déploiement en file." >&2
-  exit 1
+  deployment_uuid="$(api POST "/deploy?uuid=${app_uuid}&force=false" \
+    | jq -r '.deployments[0].deployment_uuid // empty')" || deployment_uuid=""
+  if [ -z "$deployment_uuid" ]; then
+    # Rien n'a été déployé : on remet le tag d'avant, sinon Coolify afficherait
+    # une version qui ne tourne pas, que cd-prod lit pour la promouvoir.
+    # Seulement si le tag est encore le nôtre : un déploiement concurrent a pu
+    # le changer entre-temps, et on écraserait sa version.
+    # ponytail: relecture puis PATCH, pas atomique (fenêtre de quelques ms).
+    _current_tag="$(api GET "/applications/${app_uuid}" | jq -r '.docker_registry_image_tag // empty')" || _current_tag=""
+    if [ -n "${IMAGE_TAG:-}" ] && [ -n "$_previous_tag" ] && [ "$_current_tag" = "$IMAGE_TAG" ]; then
+      jq -n --arg tag "$_previous_tag" '{docker_registry_image_tag: $tag}' >"$_tmp/tag.json"
+      api PATCH "/applications/${app_uuid}" "$_tmp/tag.json" >/dev/null
+    fi
+    echo "✗ Coolify n'a mis aucun déploiement en file." >&2
+    exit 1
+  fi
 fi
 echo "  déploiement ${deployment_uuid} en file"
 
