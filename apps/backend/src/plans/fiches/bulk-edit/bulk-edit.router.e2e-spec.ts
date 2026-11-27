@@ -1,4 +1,5 @@
 import { INestApplication } from '@nestjs/common';
+import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { libreTagTable } from '@tet/backend/collectivites/tags/libre-tag.table';
 import {
   getAuthUserFromUserCredentials,
@@ -584,6 +585,45 @@ describe('BulkEditRouter', () => {
       await db.db
         .delete(ficheActionServiceTagTable)
         .where(inArray(ficheActionServiceTagTable.ficheId, ficheIds));
+    });
+  });
+
+  test('bulk editing a shared fiche from the recipient collectivité preserves its owner', async () => {
+    const owner = await addTestCollectiviteAndUser(db, {
+      user: { role: CollectiviteRole.ADMIN },
+    });
+    const recipient = await addTestCollectiviteAndUser(db, {
+      user: { role: CollectiviteRole.EDITION },
+    });
+    const ownerCaller = router.createCaller({
+      user: getAuthUserFromUserCredentials(owner.user),
+    });
+    const recipientCaller = router.createCaller({
+      user: getAuthUserFromUserCredentials(recipient.user),
+    });
+    const ficheId = await createFiche({
+      caller: ownerCaller,
+      ficheInput: { collectiviteId: owner.collectivite.id },
+    });
+    await ownerCaller.plans.fiches.update({
+      ficheId,
+      ficheFields: {
+        restreint: true,
+        sharedWithCollectivites: [{ id: recipient.collectivite.id }],
+      },
+      isNotificationEnabled: false,
+    });
+
+    await recipientCaller.plans.fiches.bulkEdit({
+      collectiviteId: recipient.collectivite.id,
+      ficheIds: [ficheId],
+      statut: StatutEnum.EN_RETARD,
+    });
+
+    const [fiche] = await fetchFiches(db, [ficheId]);
+    expect(fiche).toMatchObject({
+      collectiviteId: owner.collectivite.id,
+      statut: StatutEnum.EN_RETARD,
     });
   });
 
