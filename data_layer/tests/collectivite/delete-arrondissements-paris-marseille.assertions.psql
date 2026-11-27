@@ -1,0 +1,421 @@
+-- À exécuter uniquement dans une base jetable vide avec pgTAP installé.
+-- Extension .psql : exclure ce schéma synthétique de la suite sur base initialisée.
+\set ON_ERROR_STOP on
+BEGIN;
+DO $$
+BEGIN
+    IF to_regclass('public.collectivite') IS NOT NULL
+       OR EXISTS (SELECT 1 FROM pg_namespace WHERE nspname IN ('storage', 'historique', 'imports')) THEN
+        RAISE EXCEPTION 'Ces tests nécessitent une base jetable vide';
+    END IF;
+END;
+$$;
+
+SET LOCAL client_min_messages = warning;
+SELECT no_plan();
+CREATE SCHEMA storage;
+CREATE SCHEMA historique;
+CREATE SCHEMA imports;
+CREATE TABLE public.collectivite (
+    id serial PRIMARY KEY,
+    nom text NOT NULL,
+    type text NOT NULL,
+    commune_code text,
+    UNIQUE (id, type)
+);
+CREATE TABLE storage.buckets (id text PRIMARY KEY);
+CREATE TABLE storage.objects (id integer PRIMARY KEY, bucket_id text REFERENCES storage.buckets);
+CREATE TABLE public.collectivite_bucket (
+    collectivite_id integer REFERENCES public.collectivite,
+    bucket_id text REFERENCES storage.buckets,
+    PRIMARY KEY (collectivite_id, bucket_id)
+);
+CREATE TABLE public.unknown_droit_reference (
+    collectivite_id integer REFERENCES public.collectivite ON DELETE CASCADE
+);
+CREATE TYPE public.niveau_acces AS ENUM ('lecture', 'edition', 'admin');
+CREATE TABLE public.private_utilisateur_droit (
+    id serial PRIMARY KEY,
+    user_id integer NOT NULL,
+    collectivite_id integer NOT NULL REFERENCES public.collectivite,
+    active boolean NOT NULL,
+    niveau_acces public.niveau_acces NOT NULL,
+    UNIQUE (user_id, collectivite_id)
+);
+CREATE TABLE public.collectivite_relations (
+    parent_id integer REFERENCES public.collectivite ON DELETE SET NULL
+);
+CREATE TABLE public.composite_reference (
+    owner_id integer,
+    owner_type text,
+    FOREIGN KEY (owner_id, owner_type) REFERENCES public.collectivite (id, type) ON DELETE CASCADE
+);
+CREATE TABLE historique.action_statut (collectivite_id integer, statut text);
+CREATE TABLE imports.commune (code text PRIMARY KEY);
+CREATE TABLE public.utilisateur (id integer PRIMARY KEY, nom text);
+
+INSERT INTO public.collectivite (nom, type, commune_code)
+SELECT 'Arrondissement ' || code, 'commune', code::text
+FROM (
+    SELECT generate_series(13201, 13216) AS code
+    UNION ALL
+    SELECT generate_series(75101, 75120)
+) AS codes;
+-- Noms trompeurs, limites voisines, autre type et autre ville restent intacts.
+INSERT INTO public.collectivite (nom, type, commune_code) VALUES
+    ('Marseille', 'commune', '13055'), ('Paris', 'commune', '75056'),
+    ('Lyon', 'commune', '69123'), ('Lyon 1er Arrondissement', 'commune', '69381'),
+    ('Paris 21e Arrondissement', 'commune', '75121'),
+    ('Marseille 17e Arrondissement', 'commune', '13217'),
+    ('Paris', 'commune', '75100'), ('Marseille', 'commune', '13200'),
+    ('Paris 1er Arrondissement', 'test', '75101'),
+    ('Marseille 1er Arrondissement', 'commune', NULL);
+INSERT INTO storage.buckets SELECT id::text FROM public.collectivite;
+INSERT INTO public.collectivite_bucket SELECT id, id::text FROM public.collectivite;
+INSERT INTO imports.commune SELECT DISTINCT commune_code FROM public.collectivite WHERE commune_code IS NOT NULL;
+INSERT INTO public.utilisateur VALUES (1, 'Compte à conserver');
+CREATE TEMP TABLE before_collectivites AS SELECT * FROM public.collectivite;
+CREATE TEMP TABLE before_buckets AS SELECT * FROM storage.buckets;
+CREATE TEMP TABLE before_communes AS SELECT * FROM imports.commune;
+
+\ir ../../../apps/tools/src/migrations/delete-arrondissements-paris-marseille/delete-arrondissements-paris-marseille.function.sql
+
+SELECT is(pg_temp.delete_arrondissements_paris_marseille(), 0, 'Le mode par défaut ne supprime rien');
+SELECT results_eq('SELECT * FROM public.collectivite ORDER BY id', 'SELECT * FROM before_collectivites ORDER BY id', 'L''inventaire conserve toutes les collectivités');
+SELECT is((SELECT count(*)::integer FROM public.collectivite_bucket), 46, 'L''inventaire conserve les liens de stockage');
+SELECT is(to_regclass('private.arrondissements_paris_marseille_cleanup'), NULL::regclass,
+    'L''inventaire ne crée pas d''archive persistante');
+
+INSERT INTO public.unknown_droit_reference VALUES (1);
+SELECT is(pg_temp.delete_arrondissements_paris_marseille(false), 0, 'L''inventaire reste disponible en présence de données');
+SELECT throws_ok(
+    'SELECT pg_temp.delete_arrondissements_paris_marseille(true)', 'P0001',
+    'Suppression refusée : des dépendances hors périmètre ou des droits Ville nécessitent un arbitrage. Aucune suppression effectuée',
+    'Une dépendance inconnue bloque toute suppression, même avec une FK CASCADE'
+);
+SELECT is((SELECT count(*)::integer FROM public.unknown_droit_reference), 1, 'La dépendance inconnue reste intacte');
+SELECT results_eq('SELECT * FROM public.collectivite ORDER BY id', 'SELECT * FROM before_collectivites ORDER BY id', 'Un blocage conserve aussi les arrondissements vides');
+DELETE FROM public.unknown_droit_reference;
+
+INSERT INTO public.collectivite_relations VALUES (1);
+SELECT throws_ok('SELECT pg_temp.delete_arrondissements_paris_marseille(true)', 'P0001', NULL,
+    'Une référence parent_id avec SET NULL bloque la suppression');
+DELETE FROM public.collectivite_relations;
+
+INSERT INTO public.composite_reference VALUES (1, 'commune');
+SELECT throws_ok('SELECT pg_temp.delete_arrondissements_paris_marseille(true)', 'P0001', NULL,
+    'Une clé étrangère composite bloque la suppression');
+DELETE FROM public.composite_reference;
+
+INSERT INTO historique.action_statut VALUES (1, 'fait');
+SELECT throws_ok('SELECT pg_temp.delete_arrondissements_paris_marseille(true)', 'P0001', NULL,
+    'Un historique sans clé étrangère bloque la suppression');
+DELETE FROM historique.action_statut;
+
+CREATE TABLE public.fiche_action_import_csv (collectivite_id text);
+INSERT INTO public.fiche_action_import_csv VALUES ('hors périmètre'), ('999999'), (NULL);
+SELECT is(pg_temp.delete_arrondissements_paris_marseille(false), 0,
+    'L''inventaire accepte les références textuelles, même non numériques');
+INSERT INTO public.fiche_action_import_csv VALUES ('1');
+SELECT throws_ok('SELECT pg_temp.delete_arrondissements_paris_marseille(true)', 'P0001',
+    'Suppression refusée : des dépendances hors périmètre ou des droits Ville nécessitent un arbitrage. Aucune suppression effectuée',
+    'Une référence textuelle à un arrondissement bloque la suppression');
+DELETE FROM public.fiche_action_import_csv WHERE collectivite_id = '1';
+
+-- Plusieurs buckets par collectivité : le second ne doit pas être oublié.
+INSERT INTO storage.buckets VALUES ('second-bucket');
+INSERT INTO public.collectivite_bucket VALUES (1, 'second-bucket');
+INSERT INTO storage.objects VALUES (1, 'second-bucket');
+SELECT throws_ok('SELECT pg_temp.delete_arrondissements_paris_marseille(true)', 'P0001', NULL,
+    'Un fichier dans un deuxième bucket bloque la suppression');
+SELECT is((SELECT count(*)::integer FROM storage.objects), 1, 'Les fichiers restent intacts');
+DELETE FROM storage.objects;
+DELETE FROM public.collectivite_bucket WHERE bucket_id = 'second-bucket';
+DELETE FROM storage.buckets WHERE id = 'second-bucket';
+
+UPDATE public.collectivite SET commune_code = NULL WHERE commune_code = '75056';
+SELECT throws_ok('SELECT pg_temp.delete_arrondissements_paris_marseille(true)', 'P0001', NULL,
+    'L''absence de l''espace Ville de Paris bloque la suppression');
+UPDATE public.collectivite SET commune_code = '75056' WHERE nom = 'Paris' AND commune_code IS NULL;
+
+INSERT INTO public.collectivite (nom, type, commune_code) VALUES ('Doublon', 'commune', '13201');
+SELECT throws_ok('SELECT pg_temp.delete_arrondissements_paris_marseille(true)', 'P0001',
+    'Plusieurs espaces portent le même code arrondissement : arbitrage requis', 'Un code dupliqué exige un arbitrage');
+DELETE FROM public.collectivite WHERE nom = 'Doublon';
+SELECT throws_ok('SELECT pg_temp.delete_arrondissements_paris_marseille(NULL)', 'P0001',
+    'Le mode apply doit être true ou false', 'Un mode NULL est refusé');
+
+CREATE ROLE arrondissements_test_reader;
+GRANT USAGE ON SCHEMA public, storage, historique, imports TO arrondissements_test_reader;
+SELECT format('GRANT USAGE ON SCHEMA %I TO arrondissements_test_reader', nspname)
+FROM pg_namespace WHERE oid = pg_my_temp_schema() \gexec
+GRANT SELECT ON ALL TABLES IN SCHEMA public, storage, historique, imports TO arrondissements_test_reader;
+ALTER TABLE public.private_utilisateur_droit ENABLE ROW LEVEL SECURITY;
+SET LOCAL ROLE arrondissements_test_reader;
+SELECT throws_ok('SELECT pg_temp.delete_arrondissements_paris_marseille(false)', '42501', NULL,
+    'Un rôle limité par RLS ne peut pas produire un inventaire incomplet');
+SELECT throws_ok('SELECT pg_temp.delete_arrondissements_paris_marseille(true)', '42501', NULL,
+    'Un rôle sans permission d''écriture ne peut pas supprimer');
+RESET ROLE;
+
+-- Frontière SQL réelle : cascades, triggers, enum des droits et lignes enfants.
+-- Les anciens tests ne couvraient que le refus et les espaces vides.
+CREATE SCHEMA labellisation;
+CREATE SCHEMA migration;
+CREATE SCHEMA archive;
+CREATE SCHEMA private;
+DO $$
+DECLARE role_name text;
+BEGIN
+    FOREACH role_name IN ARRAY ARRAY['anon', 'authenticated', 'service_role'] LOOP
+        IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = role_name) THEN
+            EXECUTE format('CREATE ROLE %I %s', role_name,
+                CASE WHEN role_name = 'service_role' THEN 'BYPASSRLS' ELSE '' END);
+        END IF;
+    END LOOP;
+END;
+$$;
+GRANT USAGE ON SCHEMA private TO anon, authenticated, service_role;
+ALTER DEFAULT PRIVILEGES IN SCHEMA private GRANT SELECT ON TABLES TO anon, authenticated, service_role;
+CREATE TABLE public.fiche_action (
+    id integer PRIMARY KEY,
+    collectivite_id integer NOT NULL REFERENCES public.collectivite,
+    parent_id integer REFERENCES public.fiche_action,
+    titre text NOT NULL,
+    description text,
+    modified_by integer,
+    modified_at timestamptz NOT NULL DEFAULT '2026-01-01',
+    deleted boolean NOT NULL DEFAULT false
+);
+CREATE TABLE public.fiche_action_note (fiche_id integer REFERENCES public.fiche_action ON DELETE CASCADE, note text);
+CREATE TABLE historique.fiche_action (id serial PRIMARY KEY, fiche_id integer, collectivite_id integer, titre text);
+CREATE TABLE historique.fiche_action_pilote (
+    fiche_historise_id integer REFERENCES historique.fiche_action ON DELETE CASCADE, user_id integer
+);
+CREATE TABLE public.indicateur_valeur (
+    id integer PRIMARY KEY, collectivite_id integer REFERENCES public.collectivite ON DELETE CASCADE,
+    indicateur_id integer, resultat numeric, objectif numeric, resultat_commentaire text, metadonnee_id integer
+);
+CREATE TABLE public.commune (code text, collectivite_id integer REFERENCES public.collectivite);
+CREATE TABLE migration.plan_action (id integer PRIMARY KEY, collectivite_id integer);
+CREATE TABLE labellisation.demande (id integer PRIMARY KEY, collectivite_id integer REFERENCES public.collectivite, envoyee_le timestamptz);
+CREATE TABLE labellisation.audit (
+    id integer PRIMARY KEY, collectivite_id integer REFERENCES public.collectivite,
+    demande_id integer REFERENCES labellisation.demande, clos boolean
+);
+CREATE TABLE public.audit_auditeur (audit_id integer REFERENCES labellisation.audit, auditeur integer);
+CREATE TABLE public.score_snapshot (id integer, collectivite_id integer, audit_id integer REFERENCES labellisation.audit, scores jsonb);
+CREATE TABLE public.private_collectivite_membre (collectivite_id integer REFERENCES public.collectivite, user_id integer, fonction text);
+CREATE TABLE public.panier (
+    id integer PRIMARY KEY, collectivite_id integer REFERENCES public.collectivite,
+    collectivite_preset integer REFERENCES public.collectivite,
+    latest_update timestamptz NOT NULL DEFAULT '2026-01-01',
+    private boolean GENERATED ALWAYS AS (collectivite_id IS NOT NULL) STORED
+);
+CREATE TABLE public.action_impact_panier (panier_id integer REFERENCES public.panier, action_id integer);
+CREATE TABLE public.action_impact_statut (panier_id integer REFERENCES public.panier, action_id integer, categorie_id text);
+CREATE TABLE public.action_pilote (collectivite_id integer, user_id integer, action_id text);
+CREATE TABLE public.service_tag (id integer PRIMARY KEY, collectivite_id integer, nom text);
+CREATE TABLE public.reponse_binaire (collectivite_id integer, question_id text, reponse boolean);
+CREATE TABLE historique.reponse_binaire (collectivite_id integer, question_id text, reponse boolean);
+CREATE TABLE archive.indicateur_resultat (collectivite_id integer, resultat numeric);
+CREATE TABLE public.usage (collectivite_id integer, user_id integer, fonction text);
+CREATE TABLE public.visite (collectivite_id integer, user_id integer);
+
+INSERT INTO public.utilisateur SELECT id, 'Compte ' || id FROM generate_series(2, 5) id;
+INSERT INTO public.fiche_action (id, collectivite_id, parent_id, titre, description, modified_by) VALUES
+    (1, 1, NULL, 'Fiche Marseille', 'Contenu à conserver', 1),
+    (2, 1, 1, 'Sous-action Marseille', 'Liens à conserver', 1),
+    (3, 17, NULL, 'Fiche Paris', 'Autre ville', 2),
+    (4, 37, NULL, 'Fiche Ville Marseille', 'Déjà présente', 1);
+INSERT INTO public.fiche_action_note VALUES (1, 'Note à conserver');
+INSERT INTO historique.fiche_action (fiche_id, collectivite_id, titre) VALUES (1, 1, 'Ancien titre');
+INSERT INTO historique.fiche_action_pilote VALUES (1, 1);
+INSERT INTO public.indicateur_valeur VALUES
+    (1, 1, 10, 100, NULL, NULL, 1),
+    (2, 17, 10, 200, 150, 'Valeur saisie à conserver dans l''archive', NULL),
+    (3, 37, 10, 9000, NULL, 'Ville Marseille', 1),
+    (4, 38, 10, 8000, NULL, 'Ville Paris', 1),
+    (5, 40, 10, 7000, NULL, 'Lyon arrondissement hors périmètre', 1);
+INSERT INTO public.commune SELECT commune_code, id FROM public.collectivite WHERE type = 'commune' AND commune_code IS NOT NULL;
+INSERT INTO migration.plan_action SELECT id, id FROM public.collectivite WHERE id <= 36;
+INSERT INTO labellisation.demande VALUES (1, 1, NULL), (2, 37, '2026-01-01');
+INSERT INTO labellisation.audit VALUES (1, 1, 1, false), (2, 37, 2, true);
+INSERT INTO public.audit_auditeur VALUES (1, 1), (2, 2);
+INSERT INTO public.score_snapshot VALUES (1, 1, 1, '{"score": 42}'), (2, 37, 2, '{"score": 90}');
+INSERT INTO public.private_utilisateur_droit (user_id, collectivite_id, active, niveau_acces) VALUES
+    (1, 1, true, 'admin'), (1, 2, true, 'admin'),
+    (2, 17, true, 'edition'), (2, 38, true, 'admin'),
+    (3, 2, false, 'admin'), (4, 17, true, 'admin'),
+    (5, 1, true, 'admin'), (5, 17, true, 'admin');
+INSERT INTO public.private_collectivite_membre VALUES (1, 1, 'technique'), (37, 1, 'politique');
+INSERT INTO public.panier (id, collectivite_id, collectivite_preset) VALUES (1, NULL, 1), (2, 37, 37);
+INSERT INTO public.action_impact_panier VALUES (1, 10), (2, 20);
+INSERT INTO public.action_impact_statut VALUES (1, 10, 'en_cours'), (2, 20, 'realise');
+INSERT INTO public.action_pilote VALUES (1, 1, 'cae_1.1.1');
+INSERT INTO public.service_tag VALUES (1, 1, 'Service arrondissement');
+INSERT INTO public.reponse_binaire VALUES (1, 'question', true);
+INSERT INTO historique.reponse_binaire VALUES (1, 'question', false);
+INSERT INTO archive.indicateur_resultat VALUES (1, 42);
+INSERT INTO public.usage VALUES (1, 1, 'lecture'), (37, 1, 'edition');
+INSERT INTO public.visite VALUES (1, 1), (37, 1);
+
+CREATE TEMP TABLE before_fiches AS SELECT * FROM public.fiche_action;
+CREATE TEMP TABLE before_users AS SELECT * FROM public.utilisateur;
+CREATE TEMP TABLE before_droits AS SELECT * FROM public.private_utilisateur_droit;
+CREATE TEMP TABLE before_indicateurs AS SELECT * FROM public.indicateur_valeur;
+CREATE TEMP TABLE expected_archive (source_table text, row_data jsonb);
+-- Copie des données attendues, indépendante de la liste de traitement du script.
+DO $$
+DECLARE source text;
+BEGIN
+    FOREACH source IN ARRAY ARRAY[
+        'public.commune', 'migration.plan_action', 'labellisation.demande', 'labellisation.audit',
+        'public.score_snapshot', 'public.private_collectivite_membre', 'public.private_utilisateur_droit',
+        'public.indicateur_valeur', 'public.action_pilote', 'public.service_tag', 'public.reponse_binaire',
+        'historique.reponse_binaire', 'archive.indicateur_resultat', 'public.usage', 'public.visite',
+        'historique.fiche_action', 'public.collectivite_bucket'
+    ] LOOP
+        EXECUTE format('INSERT INTO expected_archive SELECT $1, to_jsonb(t) FROM %s t WHERE collectivite_id <= 36', source) USING source;
+    END LOOP;
+END;
+$$;
+INSERT INTO expected_archive SELECT 'public.collectivite', to_jsonb(t) FROM public.collectivite t WHERE id <= 36;
+INSERT INTO expected_archive SELECT 'historique.fiche_action_pilote', to_jsonb(t) FROM historique.fiche_action_pilote t;
+INSERT INTO expected_archive SELECT 'public.audit_auditeur', to_jsonb(t) FROM public.audit_auditeur t WHERE audit_id = 1;
+INSERT INTO expected_archive SELECT 'public.panier', to_jsonb(t) FROM public.panier t WHERE id = 1;
+INSERT INTO expected_archive SELECT 'public.action_impact_panier', to_jsonb(t) FROM public.action_impact_panier t WHERE panier_id = 1;
+INSERT INTO expected_archive SELECT 'public.action_impact_statut', to_jsonb(t) FROM public.action_impact_statut t WHERE panier_id = 1;
+
+SELECT is(pg_temp.delete_arrondissements_paris_marseille(false), 0, 'L''inventaire prévoit le traitement des dépendances connues');
+SELECT results_eq('TABLE public.indicateur_valeur', 'TABLE before_indicateurs', 'L''inventaire conserve les données métier');
+SELECT results_eq('TABLE public.private_utilisateur_droit', 'TABLE before_droits', 'L''inventaire ne crée aucun accès Ville');
+SELECT is(to_regclass('private.arrondissements_paris_marseille_cleanup'), NULL::regclass, 'L''inventaire des dépendances ne crée aucune archive');
+
+CREATE TABLE public.unknown_indicateur_score (valeur_id integer REFERENCES public.indicateur_valeur ON DELETE CASCADE);
+INSERT INTO public.unknown_indicateur_score VALUES (1);
+SELECT throws_ok('SELECT pg_temp.delete_arrondissements_paris_marseille(true)', 'P0001', NULL,
+    'Une dépendance indirecte inconnue bloque avant toute cascade');
+SELECT results_eq('TABLE public.indicateur_valeur', 'TABLE before_indicateurs', 'Le refus conserve toutes les valeurs');
+DELETE FROM public.unknown_indicateur_score;
+
+UPDATE public.panier SET collectivite_id = 38 WHERE id = 1;
+SELECT throws_ok('SELECT pg_temp.delete_arrondissements_paris_marseille(true)', 'P0001', NULL,
+    'Le filtre d''un panier Ville n''autorise pas sa suppression');
+UPDATE public.panier SET collectivite_id = NULL WHERE id = 1;
+
+INSERT INTO public.private_utilisateur_droit (user_id, collectivite_id, active, niveau_acces) VALUES (4, 38, false, 'edition');
+SELECT throws_ok('SELECT pg_temp.delete_arrondissements_paris_marseille(true)', 'P0001', NULL,
+    'Un accès Ville retiré n''est pas réactivé automatiquement');
+DELETE FROM public.private_utilisateur_droit WHERE user_id = 4 AND collectivite_id = 38;
+
+INSERT INTO public.collectivite (nom, type, commune_code) VALUES ('Ville dupliquée', 'commune', '13055');
+SELECT throws_ok('SELECT pg_temp.delete_arrondissements_paris_marseille(true)', 'P0001', NULL,
+    'Deux espaces Ville de même code ne doivent pas recevoir un transfert arbitraire');
+DELETE FROM public.collectivite WHERE nom = 'Ville dupliquée';
+
+CREATE FUNCTION pg_temp.save_fiche_history() RETURNS trigger LANGUAGE plpgsql AS $$
+BEGIN
+    INSERT INTO historique.fiche_action (fiche_id, collectivite_id, titre) VALUES (NEW.id, NEW.collectivite_id, NEW.titre);
+    RETURN NEW;
+END;
+$$;
+CREATE TRIGGER save_history AFTER UPDATE ON public.fiche_action FOR EACH ROW EXECUTE FUNCTION pg_temp.save_fiche_history();
+CREATE FUNCTION pg_temp.touch_panier() RETURNS trigger LANGUAGE plpgsql AS $$
+BEGIN
+    UPDATE public.panier SET latest_update = CURRENT_TIMESTAMP WHERE id = OLD.panier_id;
+    RETURN OLD;
+END;
+$$;
+CREATE TRIGGER touch_panier AFTER DELETE ON public.action_impact_panier
+FOR EACH ROW EXECUTE FUNCTION pg_temp.touch_panier();
+
+CREATE FUNCTION pg_temp.promote_new_droit() RETURNS trigger LANGUAGE plpgsql AS $$
+BEGIN
+    NEW.niveau_acces := 'admin';
+    RETURN NEW;
+END;
+$$;
+CREATE TRIGGER promote_new_droit BEFORE INSERT ON public.private_utilisateur_droit
+FOR EACH ROW EXECUTE FUNCTION pg_temp.promote_new_droit();
+SELECT throws_ok('SELECT pg_temp.delete_arrondissements_paris_marseille(true)', 'P0001',
+    'Un accès créé ne correspond pas au droit lecture prévu', 'Un trigger ne peut pas augmenter les nouveaux droits');
+DROP TRIGGER promote_new_droit ON public.private_utilisateur_droit;
+
+CREATE FUNCTION pg_temp.add_reference_after_delete() RETURNS trigger LANGUAGE plpgsql AS $$
+BEGIN
+    INSERT INTO historique.action_statut VALUES (OLD.id, 'fait');
+    RETURN OLD;
+END;
+$$;
+CREATE TRIGGER add_reference_after_delete AFTER DELETE ON public.collectivite
+FOR EACH ROW EXECUTE FUNCTION pg_temp.add_reference_after_delete();
+SELECT throws_ok('SELECT pg_temp.delete_arrondissements_paris_marseille(true)', 'P0001',
+    'Références restantes après traitement : historique.action_statut.collectivite_id',
+    'Une référence sans FK créée par le dernier trigger annule le lot');
+DROP TRIGGER add_reference_after_delete ON public.collectivite;
+
+CREATE FUNCTION pg_temp.skip_delete() RETURNS trigger LANGUAGE plpgsql AS $$
+BEGIN
+    IF OLD.id = 36 THEN RETURN NULL; END IF;
+    RETURN OLD;
+END;
+$$;
+CREATE TRIGGER skip_delete BEFORE DELETE ON public.collectivite
+FOR EACH ROW EXECUTE FUNCTION pg_temp.skip_delete();
+SELECT throws_ok('SELECT pg_temp.delete_arrondissements_paris_marseille(true)', 'P0001',
+    'Traitement incomplet de collectivite : 35/36 lignes', 'Une suppression incomplète annule la transaction');
+SELECT is((SELECT count(*)::integer FROM public.collectivite_bucket), 46, 'Les liens sont restaurés après un échec');
+SELECT results_eq('SELECT * FROM public.collectivite ORDER BY id', 'SELECT * FROM before_collectivites ORDER BY id', 'Tous les espaces sont restaurés après un échec');
+SELECT results_eq('TABLE public.fiche_action', 'TABLE before_fiches', 'Un échec final annule aussi les transferts');
+SELECT results_eq('TABLE public.private_utilisateur_droit', 'TABLE before_droits', 'Un échec final annule aussi les nouveaux droits');
+SELECT is(to_regclass('private.arrondissements_paris_marseille_cleanup'), NULL::regclass, 'Un échec annule la création de l''archive');
+DROP TRIGGER skip_delete ON public.collectivite;
+
+SELECT is(pg_temp.delete_arrondissements_paris_marseille(true), 36, 'Les 36 espaces et leurs dépendances sont traités');
+SELECT results_eq(
+    'SELECT source_table, row_data FROM private.arrondissements_paris_marseille_cleanup WHERE operation = ''archive'' AND phase = ''before'' ORDER BY source_table, row_data',
+    'SELECT source_table, row_data FROM expected_archive ORDER BY source_table, row_data',
+    'Chaque ligne retirée, y compris les enfants, garde son image avant toute modification par trigger');
+SELECT is((SELECT (row_data->>'latest_update')::timestamptz FROM private.arrondissements_paris_marseille_cleanup
+    WHERE source_table = 'public.panier' AND phase = 'removed'), CURRENT_TIMESTAMP,
+    'L''état modifié par le trigger est aussi conservé, séparément de l''original');
+SELECT results_eq(
+    'SELECT to_jsonb(f) - ''collectivite_id'' FROM public.fiche_action f ORDER BY id',
+    'SELECT to_jsonb(f) - ''collectivite_id'' FROM before_fiches f ORDER BY id',
+    'Les fiches et sous-actions gardent identifiants, contenu, auteurs et dates');
+SELECT results_eq('SELECT id, collectivite_id FROM public.fiche_action ORDER BY id',
+    'VALUES (1, 37), (2, 37), (3, 38), (4, 37)', 'Les fiches sont rattachées à leur Ville respective');
+SELECT is((SELECT note FROM public.fiche_action_note WHERE fiche_id = 1), 'Note à conserver', 'Les liens des fiches sont préservés');
+SELECT results_eq('TABLE public.indicateur_valeur', 'SELECT * FROM before_indicateurs WHERE collectivite_id > 36',
+    'Les indicateurs Ville et Lyon restent intacts, sans agrégation ni réattribution');
+SELECT results_eq('TABLE public.utilisateur', 'TABLE before_users', 'Tous les comptes restent intacts');
+SELECT results_eq('SELECT user_id, collectivite_id, niveau_acces::text, active FROM public.private_utilisateur_droit ORDER BY user_id, collectivite_id',
+    $$VALUES (1, 37, 'lecture', true), (2, 38, 'admin', true), (4, 38, 'lecture', true),
+        (5, 37, 'lecture', true), (5, 38, 'lecture', true)$$,
+    'Accès lecture seulement, un par Ville, sans réactivation des droits inactifs ni modification des accès existants');
+SELECT results_eq('SELECT * FROM public.private_utilisateur_droit WHERE user_id = 2 AND collectivite_id = 38',
+    'SELECT * FROM before_droits WHERE user_id = 2 AND collectivite_id = 38', 'Le droit Ville préexistant reste strictement identique');
+SELECT is((SELECT count(*)::integer FROM historique.fiche_action WHERE collectivite_id IN (37, 38)), 3,
+    'Les triggers de transfert restent actifs et écrivent sur la Ville');
+SELECT is((SELECT count(*)::integer FROM private.arrondissements_paris_marseille_cleanup WHERE operation = 'transfer'), 3,
+    'Les fiches transférées gardent une image de leur état initial');
+SELECT is((SELECT count(*)::integer FROM private.arrondissements_paris_marseille_cleanup WHERE operation = 'grant'), 4,
+    'Les nouveaux accès sont tracés dans le même lot');
+SELECT ok(NOT has_table_privilege('arrondissements_test_reader', 'private.arrondissements_paris_marseille_cleanup', 'SELECT'),
+    'L''archive ne donne pas accès aux données via PUBLIC');
+SELECT ok(NOT (SELECT bool_or(has_table_privilege(role_name, 'private.arrondissements_paris_marseille_cleanup', 'SELECT'))
+    FROM unnest(ARRAY['anon', 'authenticated', 'service_role']) role_name),
+    'Les grants par défaut des API sont révoqués, même pour service_role avec BYPASSRLS');
+SELECT is((SELECT count(*)::integer FROM public.collectivite WHERE id <= 36), 0, 'Aucun arrondissement ciblé ne reste');
+SELECT results_eq('SELECT * FROM public.collectivite ORDER BY id',
+    'SELECT * FROM before_collectivites WHERE id > 36 ORDER BY id', 'Villes, Lyon, codes voisins et autres types sont conservés');
+SELECT results_eq('TABLE imports.commune', 'TABLE before_communes', 'Les données géographiques sont conservées');
+SELECT results_eq('TABLE storage.buckets', 'TABLE before_buckets', 'Les buckets vides restent disponibles pour une gestion via Storage');
+SELECT is((SELECT count(*)::integer FROM public.collectivite_bucket), 10, 'Seuls les liens des espaces ciblés sont supprimés');
+SELECT is((SELECT count(*)::integer FROM public.fiche_action_import_csv), 3,
+    'Les imports CSV hors périmètre restent intacts');
+SELECT is(pg_temp.delete_arrondissements_paris_marseille(true), 0, 'Une nouvelle exécution est sans effet');
+
+SELECT * FROM finish();
+ROLLBACK;
