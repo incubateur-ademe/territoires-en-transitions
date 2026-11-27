@@ -88,3 +88,14 @@ output "metabase_private_connection_uri" {
   module.postgres.private_endpoint_ip, module.postgres.private_endpoint_port, scaleway_rdb_database.metabase.name)
   sensitive = true
 }
+
+# Sans sslmode : le backend refuse ce paramètre quand une CA est fournie (pg le
+# ferait primer sur elle) et vérifie le certificat avec pg_tls_ca. Les deux se
+# déposent ensemble : sans la CA, la connexion partirait en clair.
+output "backend_reader_public_connection_uri" {
+  description = "URI Postgres du rôle backend_reader (lecture seule) par l'endpoint public (ACL), pour ANALYTICS_DATABASE_URL du backend. À déposer avec pg_tls_ca (ANALYTICS_DATABASE_SSL_ROOT_CERT), jamais seule. Null sans endpoint public."
+  value = module.postgres.public_endpoint_ip == null ? null : format("postgres://%s:%s@%s:%d/%s",
+    scaleway_rdb_user.backend_reader.name, random_password.backend_reader.result,
+  module.postgres.public_endpoint_ip, module.postgres.public_endpoint_port, module.postgres.database_name)
+  sensitive = true
+}

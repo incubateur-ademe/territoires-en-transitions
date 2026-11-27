@@ -99,7 +99,8 @@ l'agent Alloy. Pour l'instant, seule la preprod est ouverte (`application_enviro
 Deux VPC **sans aucun lien** : `tet` (projet principal, un Private Network par tier hors
 prod) et `tet-prod` (un seul Private Network avec serveur, Postgres et Redis de prod).
 `10.0.2.0/24` est le Private Network du tier data (VM data, RDB stats), sans route vers
-nonprod.
+nonprod. La RDB stats a en plus un endpoint public, fermé par ACL aux seuls serveurs
+applicatifs dont le backend la lit (cf. [Tier data](#tier-data-team--tet---data-)).
 
 - **Coolify** (instance de l'incubateur, hors de nos VPC) joint chaque serveur en SSH sur
   son **IP publique**. Le port 22 n'y est ouvert qu'aux `ssh_allowed_ips` du stack du tier :
@@ -133,10 +134,11 @@ flowchart LR
   prod["prod<br/>VPC tet-prod, VM,<br/>RDB/Redis prod"]
   data["data<br/>VM arm64, RDB stats"]
   nonprod & preview & prod --> coolifys
+  nonprod & prod -. "IP du serveur,<br/>ACL RDB stats" .-> data
   coolifys["coolify<br/>clés, serveurs, environnements,<br/>applications, env vars, S3"]
 ```
 
-Ordre d'application : `platform → nonprod / prod / preview → coolify`, et `platform → data`.
+Ordre d'application : `platform → nonprod / prod / preview → coolify`, puis `data`.
 
 - **Un state par stack**, dans le bucket `tet-tfstate`, avec locking natif
   (`use_lockfile`, cf. [Bootstrap](#bootstrap-une-fois)).
@@ -146,6 +148,12 @@ Ordre d'application : `platform → nonprod / prod / preview → coolify`, et `p
   modules (`tet-<tier>-pn`, `tet-<tier>-apps`, `tet-platform-vpn`). Ce qui n'existe que
   dans un state est publié dans Secret Manager : la clé d'hôte SSH des serveurs
   (`tet-<tier>-server-sshd-host-public-key`), lue par `coolify`.
+- **`data` après les tiers qu'il autorise** : il lit l'IP publique des serveurs de
+  `pg_public_reader_tiers` (nonprod, prod) pour l'ACL de la RDB stats. La lecture est
+  stricte, sans variable de secours : serveur absent ou en cours de recréation, `data` ne
+  se planifie plus, même pour un changement sans rapport. Le temps de le recréer, retirer
+  le tier de `pg_public_reader_tiers` (s'il est le dernier, supprimer d'abord l'endpoint,
+  cf. [Flux entre la prod et le tier data](#flux-entre-la-prod-et-le-tier-data)).
 - **Une seule flèche à rebours** : `platform` lit les IP publiques des serveurs
   applicatifs pour les router dans le tunnel. La lecture est souple (liste vide si les
   serveurs n'existent pas, avec un avertissement du bloc `check`) : sur une infra vide,
@@ -550,8 +558,77 @@ Mise en place, une fois :
    `mcp_reader_private_connection_uri`, `metabase_private_connection_uri`) se collent dans
    les variables des ressources Coolify concernées.
 
-Reprise de la base de stats depuis Koyeb : la RDB n'a pas d'endpoint public, le dump passe
-par le serveur data, qui sort sur internet et joint la RDB en privé.
+#### Flux entre la prod et le tier data
+
+Aucune connexion ne part du tier data vers la prod : le data analyst, autonome sur son
+serveur, ne détient aucun identifiant qui l'ouvre. Ce sont les serveurs applicatifs qui
+viennent lire la base de stats.
+
+```
+ serveur applicatif                                       tier data
+ site ──► backend ── TLS vérifié, IP autorisée ──► tet-stats-pg (endpoint public + ACL)
+```
+
+**Lecture de la base de stats par les backends.** `pg_public_reader_tiers`
+([`data/terraform.tfvars`](data/terraform.tfvars)) pose sur la RDB une ACL qui n'autorise
+que l'IP publique des serveurs listés, et `pg_public_endpoint_enabled` ouvre l'endpoint
+public qu'elle filtre. Le backend s'y connecte en `backend_reader` (lecture seule, rôle à
+part de celui du MCP) et vérifie le certificat avec la CA de l'instance ; le site ne s'y
+connecte pas, il demande ses chiffres au backend.
+
+Première ouverture, en deux applies : le provider crée l'endpoint avant l'ACL, et un apply
+interrompu entre les deux le laisserait sans filtre.
+
+```sh
+# 1. L'ACL seule, puis la vérifier : les serveurs listés, jamais 0.0.0.0/0.
+terraform -chdir=infra/data apply -var pg_public_endpoint_enabled=false
+PG_ID="$(terraform -chdir=infra/data output -raw pg_instance_id | cut -d/ -f2)"
+scw rdb acl list instance-id="$PG_ID"
+
+# 2. L'endpoint, puis revérifier l'ACL.
+terraform -chdir=infra/data apply
+scw rdb acl list instance-id="$PG_ID"
+
+# 3. L'URI et la CA, toujours ensemble : l'URI ne porte pas de sslmode (le backend le
+#    refuse quand une CA est fournie), sans la CA la connexion partirait en clair.
+#    Leurs coquilles viennent de infra/coolify (env-manifest.tf).
+terraform -chdir=infra/coolify apply \
+  -target='scaleway_secret.coolify_env_manual["preprod/analytics-database-url"]' \
+  -target='scaleway_secret.coolify_env_manual["preprod/analytics-database-tls-ca"]'
+terraform -chdir=infra/data output -raw backend_reader_public_connection_uri \
+  | infra/scripts/coolify-env-secret-set.sh preprod analytics-database-url
+terraform -chdir=infra/data output -raw pg_tls_ca \
+  | infra/scripts/coolify-env-secret-set.sh preprod analytics-database-tls-ca
+```
+
+Si le backend refuse le certificat sur l'IP de l'endpoint public, le renouveler pour qu'il
+porte ce nouvel endpoint. L'ancien certificat cesse de valoir : `terraform output` lit le
+state, à rafraîchir avant de redéposer la CA, et les conteneurs du tier data qui épinglent
+l'ancienne la reçoivent aussi.
+
+```sh
+scw rdb instance renew-certificate "$PG_ID"
+terraform -chdir=infra/data apply -refresh-only
+terraform -chdir=infra/data output -raw pg_tls_ca \
+  | infra/scripts/coolify-env-secret-set.sh preprod analytics-database-tls-ca
+```
+
+Tant que le backend de prod tourne sur Koyeb, dont les IP de sortie ne sont pas fixes, il
+ne peut pas être autorisé : la base Koyeb reste sa source jusqu'à sa bascule. Ajouter
+alors `prod` à `pg_public_reader_tiers`.
+
+Fermer l'endpoint : Terraform ne le supprime pas (le provider ignore le retrait du bloc).
+Le supprimer à la main, puis seulement passer `pg_public_endpoint_enabled` à `false` et
+vider `pg_public_reader_tiers` : tant que l'endpoint existe, le plan refuse de retirer
+son ACL.
+
+```sh
+scw rdb endpoint list "$PG_ID"   # l'endpoint qui porte un load_balancer
+scw rdb endpoint delete <endpoint-id> instance-id="$PG_ID"
+```
+
+Reprise de la base de stats depuis Koyeb : le dump passe par le serveur data, qui sort sur
+internet et joint la RDB en privé.
 
 ```sh
 # Sur tet-data-apps (cf. Se connecter). Source : l'URI Koyeb ; cible : output
@@ -572,13 +649,13 @@ les scripts créeront ensuite leur échappent. Après la restauration :
 ```sql
 -- En admin (pg_private_connection_uri) : tables restaurées. À adapter si la base
 -- Koyeb a d'autres schémas que public.
-GRANT SELECT ON ALL TABLES IN SCHEMA public TO mcp_reader;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO mcp_reader, backend_reader;
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO stats_writer;
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO stats_writer;
 
 -- En stats_writer (stats_writer_private_connection_uri) : les tables qu'il créera
--- seront lisibles par le MCP.
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO mcp_reader;
+-- seront lisibles par le MCP et les backends.
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO mcp_reader, backend_reader;
 ```
 
 Le rôle `metabase` n'a accès qu'à la base `metabase` : comme source de données, Metabase
@@ -860,3 +937,5 @@ Coolify, reconfigure le proxy : revérifier ensuite les flags ci-dessus.
 - **Sous-domaines dédiés par service** plutôt que reverse proxy unique.
 - **Bascule DB** par `pg_dump` / `pg_restore` en fenêtre de maintenance, **pas** de
   réplication logique.
+- **Serveurs applicatifs et tier data** : le backend vient lire la base de stats (endpoint
+  public, ACL sur l'IP du serveur, TLS vérifié), jamais le tier data ne va vers lui.

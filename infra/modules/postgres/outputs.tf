@@ -47,3 +47,13 @@ output "certificate" {
   value       = scaleway_rdb_instance.main.certificate
   sensitive   = true
 }
+
+output "public_endpoint_ip" {
+  description = "IP de l'endpoint public, null s'il n'y en a pas."
+  value       = try(scaleway_rdb_instance.main.load_balancer[0].ip, null)
+}
+
+output "public_endpoint_port" {
+  description = "Port de l'endpoint public, null s'il n'y en a pas."
+  value       = try(scaleway_rdb_instance.main.load_balancer[0].port, null)
+}
