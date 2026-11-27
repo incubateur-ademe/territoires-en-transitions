@@ -1,5 +1,6 @@
 import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
 import { usePersonneListe } from '@/app/collectivites/tags/use-list-personnes';
+import { useListServices } from '@/app/collectivites/tags/use-list-services';
 import { appLabels } from '@/app/labels/catalog';
 import {
   PlanFilterKey,
@@ -10,7 +11,7 @@ import { PlanNode } from '@tet/domain/plans';
 import { BadgeFilters } from '@tet/ui';
 import { useSuiviPlanBlocFilters } from './use-suivi-plan-bloc-filters';
 
-type BadgeKey = PlanFilterKey | 'thematiqueIds' | 'axeIds';
+type BadgeKey = PlanFilterKey | 'thematiqueIds' | 'axeIds' | 'servicePiloteIds';
 
 type Option = { value: string; label: string };
 
@@ -23,6 +24,7 @@ export const SuiviPlanFilterBadges = ({
 }) => {
   const { data: personnes } = usePersonneListe();
   const { thematiqueListe } = useGetThematiqueOptions();
+  const { data: services } = useListServices();
 
   const getPersonneLabel = (value: string) =>
     personnes?.find((personne) => getPersonneStringId(personne) === value)
@@ -32,6 +34,10 @@ export const SuiviPlanFilterBadges = ({
     axeIds: filters.axeIds.map((id) => ({
       value: String(id),
       label: axes.find((axe) => axe.id === id)?.nom || appLabels.sansTitre,
+    })),
+    servicePiloteIds: filters.servicePiloteIds.map((id) => ({
+      value: String(id),
+      label: services?.find((service) => service.id === id)?.nom ?? String(id),
     })),
     thematiqueIds: filters.thematiqueIds.map((id) => ({
       value: String(id),
@@ -62,6 +68,8 @@ export const SuiviPlanFilterBadges = ({
           ? appLabels.suiviPlanThematiques
           : key === 'axeIds'
           ? appLabels.suiviPlanAxe
+          : key === 'servicePiloteIds'
+          ? appLabels.directionOuServicePilote()
           : planFilterLabels[key],
       selectedFilters: optionsByKey[key]?.map((option) => option.label) ?? [],
     }));
@@ -75,6 +83,8 @@ export const SuiviPlanFilterBadges = ({
       filters.setThematiqueIds(values.map(Number));
     } else if (key === 'axeIds') {
       filters.setAxeIds(values.map(Number));
+    } else if (key === 'servicePiloteIds') {
+      filters.setServicePiloteIds(values.map(Number));
     } else {
       filters.setFormFilters({ ...filters.formFilters, [key]: values });
     }

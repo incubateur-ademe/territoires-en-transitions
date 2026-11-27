@@ -14,6 +14,8 @@ import {
 import { Badge, Icon, InfoTooltip } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
 import Link from 'next/link';
+import { ReactNode, useRef } from 'react';
+import { IndicateurObjectifMenu } from './indicateur-objectif.menu';
 import {
   formatEvolution,
   IndicateurObjectifAvancement,
@@ -39,6 +41,7 @@ export const IndicateurObjectifCard = ({
   horizon,
   canMutateValeurs,
   showSources,
+  poignee,
 }: {
   collectiviteId: number;
   indicateur: IndicateurObjectif;
@@ -46,6 +49,8 @@ export const IndicateurObjectifCard = ({
   canMutateValeurs: boolean;
   /** Les badges de source, seulement pour un plan rattaché à un dépôt PCAET */
   showSources: boolean;
+  /** La poignée de réordonnancement, quand le bloc permet de déplacer la carte */
+  poignee?: ReactNode;
 }) => {
   const {
     titre,
@@ -65,6 +70,7 @@ export const IndicateurObjectifCard = ({
     identifiantReferentiel: indicateur.identifiantReferentiel,
   });
 
+  const cardRef = useRef<HTMLElement>(null);
   const formatNombre = (valeur: number) => toLocaleFixed(valeur, precision);
   const formatValeur = (valeur: number) =>
     `${formatNombre(valeur)} ${unite}`.trim();
@@ -85,7 +91,8 @@ export const IndicateurObjectifCard = ({
 
   return (
     <article
-      className="flex flex-col gap-3 p-4 bg-white border border-grey-3 rounded-lg"
+      ref={cardRef}
+      className="group flex flex-col gap-3 p-4 bg-white border border-grey-3 rounded-lg"
       data-test="plans.suivi.indicateurs-objectifs.carte"
     >
       <div className="flex items-start gap-2">
@@ -104,6 +111,17 @@ export const IndicateurObjectifCard = ({
         >
           {titre}
         </Link>
+        <div
+          className="ml-auto flex shrink-0 items-start gap-1"
+          data-html2canvas-ignore
+        >
+          {poignee}
+          <IndicateurObjectifMenu
+            indicateurId={indicateur.id}
+            titre={titre}
+            cardRef={cardRef}
+          />
+        </div>
       </div>
 
       {showSources && (
@@ -171,6 +189,11 @@ export const IndicateurObjectifCard = ({
           depart={avancement || evolutionObjectif !== null ? depart : null}
           isOpenData={isOpenData}
           formatValeur={formatNombre}
+          libelleSerie={
+            resultats?.source.type === 'open-data'
+              ? resultats.source.libelle
+              : appLabels.indicateursObjectifsResultatsCollectivite
+          }
         />
       ) : (
         <div className="flex flex-col items-center justify-center gap-2 py-6 text-sm text-grey-8 bg-grey-2 rounded">

@@ -3,8 +3,13 @@ import { saveBlob } from '@/app/utils/save-blob';
 import { useApiClient } from '@/app/utils/use-api-client';
 import { useMutation } from '@tanstack/react-query';
 import type { IndicateursObjectifsFiltreSource } from '../indicateurs-objectifs/search-indicateurs-objectifs';
+import type { ExportSuiviPlanBlocInput } from './use-export-suivi-plan-bloc';
 
-type ExportIndicateursObjectifsInput = {
+// les critères du bloc (axes, pilotes, thématiques…) sont ceux de la liste
+type ExportIndicateursObjectifsInput = Pick<
+  ExportSuiviPlanBlocInput,
+  'thematiqueIds' | 'axeIds' | 'filters'
+> & {
   planId: number;
   horizon: number;
   source: IndicateursObjectifsFiltreSource;

@@ -831,6 +831,10 @@ export const plansLabels = {
   indicateursObjectifsAfficherTous: 'Tous',
   indicateursObjectifsAfficherReglementaires: 'Réglementaires',
   indicateursObjectifsAfficherPlan: "Liés au plan d'action",
+  indicateursObjectifsDeplacer: "Déplacer l'indicateur",
+  indicateursObjectifsResultatsCollectivite: 'Résultats de la collectivité',
+  indicateursObjectifsOrdreErreur:
+    "Impossible d'enregistrer l'ordre des indicateurs",
   indicateursObjectifsEnPeriode: (periode: string): string => `en ${periode}`,
   indicateursObjectifsOpenData: (source: string): string =>
     `Donnée open data issue de ${source}. Aucun résultat saisi par la collectivité.`,

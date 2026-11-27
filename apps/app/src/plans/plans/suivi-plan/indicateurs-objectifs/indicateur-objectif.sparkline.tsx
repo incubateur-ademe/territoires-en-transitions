@@ -4,10 +4,12 @@ import {
   IndicateurValeurAnnee,
 } from '@tet/domain/plans';
 import { cn } from '@tet/ui/utils/cn';
+import { PointerEvent, useRef, useState } from 'react';
 
 const WIDTH = 320;
 const HEIGHT = 120;
-const PADDING = { left: 8, right: 28, top: 16, bottom: 22 };
+// la marge gauche loge la pastille de la valeur survolée
+const PADDING = { left: 30, right: 28, top: 16, bottom: 22 };
 const MIN_TICK_GAP = 32;
 // Une année au bord gauche s'y aligne au lieu d'être centrée et rognée.
 const EDGE_LABEL_ZONE = 12;
@@ -49,6 +51,7 @@ export const IndicateurObjectifSparkline = ({
   depart = null,
   isOpenData,
   formatValeur,
+  libelleSerie,
 }: {
   resultats: IndicateurResultat[];
   objectifs: IndicateurObjectifHorizon[];
@@ -56,7 +59,12 @@ export const IndicateurObjectifSparkline = ({
   depart?: IndicateurValeurAnnee | null;
   isOpenData: boolean;
   formatValeur: (valeur: number) => string;
+  /** Le nom de la série dans l'infobulle du survol */
+  libelleSerie: string;
 }) => {
+  const svgRef = useRef<SVGSVGElement>(null);
+  const [survolIndex, setSurvolIndex] = useState<number | null>(null);
+
   const serie: Point[] = resultats.map(({ dateValeur, valeur }) => ({
     x: toAnnee(dateValeur),
     valeur,
@@ -139,85 +147,220 @@ export const IndicateurObjectifSparkline = ({
   const cibleXY = cible ? toXY({ x: cible.annee, valeur: cible.valeur }) : null;
   const departXY = departPoint ? toXY(departPoint) : null;
 
+  // le point de la série le plus proche du curseur, en coordonnées du dessin
+  const onPointerMove = (event: PointerEvent<SVGSVGElement>) => {
+    const rect = svgRef.current?.getBoundingClientRect();
+    if (!rect || rect.width === 0) {
+      return;
+    }
+    const x = ((event.clientX - rect.left) / rect.width) * WIDTH;
+    let plusProche = 0;
+    serie.forEach((point, index) => {
+      if (
+        Math.abs(scaleX(point.x) - x) <
+        Math.abs(scaleX(serie[plusProche].x) - x)
+      ) {
+        plusProche = index;
+      }
+    });
+    setSurvolIndex(plusProche);
+  };
+
+  const survol = survolIndex !== null ? serie[survolIndex] : null;
+  const survolXY = survol ? toXY(survol) : null;
+  const survolAnnee = survol ? Math.floor(survol.x) : null;
+  const survolValeur = survol ? formatValeur(survol.valeur) : null;
+  const premierXY = toXY(serie[0]);
+  // la valeur du premier point passe sous lui si elle sortirait du dessin
+  const premierValeurY =
+    premierXY.y - 7 > 8 ? premierXY.y - 7 : premierXY.y + 14;
+
   return (
-    <svg
-      viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
-      className={cn(
-        'w-full h-auto',
-        isOpenData ? 'text-info-1' : 'text-primary-9'
-      )}
-      aria-hidden
-    >
-      {aire && <path d={aire} fill="currentColor" fillOpacity={0.08} />}
-      {ligneResultats && (
-        <path
-          d={ligneResultats}
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={2}
-        />
-      )}
-      {ligneProjection && (
-        <path
-          d={ligneProjection}
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={1.5}
-          strokeDasharray="4 4"
-        />
-      )}
-      {serie.map((point, index) => {
-        const { x, y } = toXY(point);
-        return (
-          <circle key={`r-${index}`} cx={x} cy={y} r={3} fill="currentColor" />
-        );
-      })}
-      {projection.map((point, index) => {
-        const { x, y } = toXY(point);
-        return (
-          <circle
-            key={`o-${index}`}
-            cx={x}
-            cy={y}
-            r={3.5}
-            className="fill-white"
+    <div className="relative w-full">
+      <svg
+        ref={svgRef}
+        viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
+        className={cn(
+          'w-full h-auto',
+          isOpenData ? 'text-info-1' : 'text-primary-9'
+        )}
+        aria-hidden
+        onPointerMove={onPointerMove}
+        onPointerLeave={() => setSurvolIndex(null)}
+      >
+        {aire && <path d={aire} fill="currentColor" fillOpacity={0.08} />}
+        {ligneResultats && (
+          <path
+            d={ligneResultats}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+          />
+        )}
+        {ligneProjection && (
+          <path
+            d={ligneProjection}
+            fill="none"
             stroke="currentColor"
             strokeWidth={1.5}
+            strokeDasharray="4 4"
           />
-        );
-      })}
-      {departXY && (
-        <circle
-          cx={departXY.x}
-          cy={departXY.y}
-          r={4}
-          className="fill-new-1 stroke-white"
-          strokeWidth={1.5}
-          data-test="plans.suivi.indicateurs-objectifs.depart"
-        />
-      )}
-      {cible && cibleXY && (
+        )}
+        {serie.map((point, index) => {
+          const { x, y } = toXY(point);
+          return (
+            <circle
+              key={`r-${index}`}
+              cx={x}
+              cy={y}
+              r={3}
+              fill="currentColor"
+            />
+          );
+        })}
+        {projection.map((point, index) => {
+          const { x, y } = toXY(point);
+          return (
+            <circle
+              key={`o-${index}`}
+              cx={x}
+              cy={y}
+              r={3.5}
+              className="fill-white"
+              stroke="currentColor"
+              strokeWidth={1.5}
+            />
+          );
+        })}
+        {departXY && (
+          <circle
+            cx={departXY.x}
+            cy={departXY.y}
+            r={4}
+            className="fill-new-1 stroke-white"
+            strokeWidth={1.5}
+            data-test="plans.suivi.indicateurs-objectifs.depart"
+          />
+        )}
+        {cible && cibleXY && (
+          <text
+            x={cibleXY.x}
+            y={cibleXY.y > HEIGHT / 2 ? cibleXY.y - 8 : cibleXY.y + 16}
+            textAnchor="middle"
+            className="fill-current text-[10px] font-bold"
+          >
+            {formatValeur(cible.valeur)}
+          </text>
+        )}
         <text
-          x={cibleXY.x}
-          y={cibleXY.y > HEIGHT / 2 ? cibleXY.y - 8 : cibleXY.y + 16}
+          x={premierXY.x}
+          y={premierValeurY}
           textAnchor="middle"
           className="fill-current text-[10px] font-bold"
+          data-test="plans.suivi.indicateurs-objectifs.valeur-depart"
         >
-          {formatValeur(cible.valeur)}
+          {formatValeur(serie[0].valeur)}
         </text>
+        {ticks.map(({ x, annee, kind }) => (
+          <text
+            key={x}
+            x={x}
+            y={HEIGHT - 6}
+            textAnchor={x < PADDING.left + EDGE_LABEL_ZONE ? 'start' : 'middle'}
+            dx={x < PADDING.left + EDGE_LABEL_ZONE ? -PADDING.left : 0}
+            className={cn('text-[10px]', TICK_CLASSNAMES[kind])}
+          >
+            {annee}
+          </text>
+        ))}
+        {survolXY && survolAnnee !== null && survolValeur !== null && (
+          <g data-test="plans.suivi.indicateurs-objectifs.survol">
+            <line
+              x1={survolXY.x}
+              x2={survolXY.x}
+              y1={PADDING.top}
+              y2={HEIGHT - PADDING.bottom}
+              stroke="currentColor"
+              strokeOpacity={0.5}
+              strokeDasharray="3 3"
+            />
+            <line
+              x1={PADDING.left}
+              x2={survolXY.x}
+              y1={survolXY.y}
+              y2={survolXY.y}
+              stroke="currentColor"
+              strokeOpacity={0.5}
+              strokeDasharray="3 3"
+            />
+            <circle
+              cx={survolXY.x}
+              cy={survolXY.y}
+              r={4.5}
+              className="fill-white"
+              stroke="currentColor"
+              strokeWidth={2}
+            />
+            <rect
+              x={Math.max(0, PADDING.left - 4 - (survolValeur.length * 6 + 8))}
+              y={survolXY.y - 7}
+              width={survolValeur.length * 6 + 8}
+              height={14}
+              rx={3}
+              className="fill-grey-8"
+            />
+            <text
+              x={
+                Math.max(0, PADDING.left - 4 - (survolValeur.length * 6 + 8)) +
+                (survolValeur.length * 6 + 8) / 2
+              }
+              y={survolXY.y + 3}
+              textAnchor="middle"
+              className="fill-white text-[10px] font-bold"
+            >
+              {survolValeur}
+            </text>
+            <rect
+              x={survolXY.x - 17}
+              y={HEIGHT - 19}
+              width={34}
+              height={15}
+              rx={3}
+              className="fill-grey-8"
+            />
+            <text
+              x={survolXY.x}
+              y={HEIGHT - 8}
+              textAnchor="middle"
+              className="fill-white text-[10px] font-bold"
+            >
+              {survolAnnee}
+            </text>
+          </g>
+        )}
+      </svg>
+      {survolXY && survolAnnee !== null && survolValeur !== null && (
+        <div
+          className="pointer-events-none absolute top-0 flex flex-col gap-0.5 rounded border border-grey-3 bg-white px-2 py-1.5 text-xs shadow-md whitespace-nowrap"
+          style={{
+            left: `${(survolXY.x / WIDTH) * 100}%`,
+            transform:
+              survolXY.x / WIDTH > 0.55
+                ? 'translateX(calc(-100% - 10px))'
+                : 'translateX(10px)',
+          }}
+        >
+          <span className="font-bold text-primary-9">{survolAnnee}</span>
+          <span className="flex items-center gap-1.5 text-grey-8">
+            <span
+              className="inline-block size-2 rounded-full bg-current"
+              aria-hidden
+            />
+            {libelleSerie}
+            <b className="text-primary-9">{survolValeur}</b>
+          </span>
+        </div>
       )}
-      {ticks.map(({ x, annee, kind }) => (
-        <text
-          key={x}
-          x={x}
-          y={HEIGHT - 6}
-          textAnchor={x < PADDING.left + EDGE_LABEL_ZONE ? 'start' : 'middle'}
-          dx={x < PADDING.left + EDGE_LABEL_ZONE ? -PADDING.left : 0}
-          className={cn('text-[10px]', TICK_CLASSNAMES[kind])}
-        >
-          {annee}
-        </text>
-      ))}
-    </svg>
+    </div>
   );
 };
