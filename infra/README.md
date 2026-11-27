@@ -561,13 +561,18 @@ Mise en place, une fois :
 #### Flux entre la prod et le tier data
 
 Aucune connexion ne part du tier data vers la prod : le data analyst, autonome sur son
-serveur, ne détient aucun identifiant qui l'ouvre. Ce sont les serveurs applicatifs qui
-viennent lire la base de stats.
+serveur, ne détient aucun identifiant qui l'ouvre. Les deux flux partent de la prod.
 
 ```
- serveur applicatif                                       tier data
- site ──► backend ── TLS vérifié, IP autorisée ──► tet-stats-pg (endpoint public + ACL)
+ prod                                  bucket                      tier data
+ RDB ── export filtré, chaque nuit ──► tet-analytics-export ◄── tet-data-apps
+ site ──► backend ── TLS vérifié, IP autorisée ──────────────► tet-stats-pg (endpoint public + ACL)
 ```
+
+**Export de la prod.** Le job `export-analytics` de `.github/workflows/backup-database.yml`
+([`analytics-export.sh`](../data_layer/backup/analytics-export.sh)) dépose chaque nuit un
+export filtré dans le bucket `tet-analytics-export`
+([`data/analytics-export.tf`](data/analytics-export.tf)), que le serveur data télécharge.
 
 **Lecture de la base de stats par les backends.** `pg_public_reader_tiers`
 ([`data/terraform.tfvars`](data/terraform.tfvars)) pose sur la RDB une ACL qui n'autorise
@@ -937,5 +942,5 @@ Coolify, reconfigure le proxy : revérifier ensuite les flags ci-dessus.
 - **Sous-domaines dédiés par service** plutôt que reverse proxy unique.
 - **Bascule DB** par `pg_dump` / `pg_restore` en fenêtre de maintenance, **pas** de
   réplication logique.
-- **Serveurs applicatifs et tier data** : le backend vient lire la base de stats (endpoint
-  public, ACL sur l'IP du serveur, TLS vérifié), jamais le tier data ne va vers lui.
+- **Prod et tier data** : les flux partent de la prod (export filtré déposé dans un bucket,
+  lecture de la base de stats par le backend), jamais du tier data.
