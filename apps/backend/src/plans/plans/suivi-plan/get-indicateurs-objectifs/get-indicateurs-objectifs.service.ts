@@ -2,19 +2,23 @@ import { Injectable } from '@nestjs/common';
 import { IndicateurValeursReadAccessService } from '@tet/backend/indicateurs/valeurs/indicateur-valeurs-read-access.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { Result, success } from '@tet/backend/utils/result.type';
-import { PCAET_INDICATEURS_REGLEMENTAIRES_SUIVI } from '@tet/domain/demarches';
+import {
+  PCAET_INDICATEURS_HORS_DEPOT_SUIVI,
+  PCAET_INDICATEURS_REGLEMENTAIRES_SUIVI,
+} from '@tet/domain/demarches';
 import {
   buildDepot,
-  compareIndicateursObjectifs,
   IndicateurObjectif,
   IndicateurObjectifSource,
   LigneValeurDepot,
   listObjectifs,
   pickResultats,
+  sortIndicateursObjectifs,
 } from '@tet/domain/plans';
 import { groupBy } from 'es-toolkit';
 import { GetPlanError } from '../../get-plan/get-plan.errors';
 import { ListSuiviPlanFichesService } from '../list-suivi-plan-fiches.service';
+import { withSousAxes } from '../with-sous-axes';
 import { GetIndicateursObjectifsInput } from './get-indicateurs-objectifs.input';
 import {
   DepotDuPlan,
@@ -30,12 +34,12 @@ export class GetIndicateursObjectifsService {
   ) {}
 
   async getIndicateursObjectifs(
-    { planId }: GetIndicateursObjectifsInput,
+    input: GetIndicateursObjectifsInput,
     { user, tx }: ServiceSecondArg
   ): Promise<Result<IndicateurObjectif[], GetPlanError>> {
     // vérifie la lecture du plan et écarte les fiches restreintes invisibles
     const fichesResult = await this.listSuiviPlanFichesService.listFiches(
-      { planId },
+      input,
       { user, tx }
     );
     if (!fichesResult.success) {
@@ -44,10 +48,21 @@ export class GetIndicateursObjectifsService {
     const { plan, fiches } = fichesResult.data;
     const { collectiviteId } = plan;
 
-    const axeIndicateurIdsResult = await this.repository.listAxeIndicateurIds(
-      [plan.id, ...plan.axes.map((axe) => axe.id)],
-      tx
-    );
+    // un filtre de fiche (pilote, service, thématique…) ne tient pas aux axes :
+    // les indicateurs liés à un axe sans fiche sortent alors de la liste
+    const hasFiltreFiche =
+      (input.thematiqueIds?.length ?? 0) > 0 ||
+      Object.values(input.filters ?? {}).some(
+        (value) =>
+          value !== undefined && (!Array.isArray(value) || value.length)
+      );
+    const hasFiltre = hasFiltreFiche || (input.axeIds?.length ?? 0) > 0;
+    const axeIdsScope = input.axeIds?.length
+      ? withSousAxes(plan, input.axeIds)
+      : [plan.id, ...plan.axes.map((axe) => axe.id)];
+    const axeIndicateurIdsResult = hasFiltreFiche
+      ? success([])
+      : await this.repository.listAxeIndicateurIds(axeIdsScope, tx);
     if (!axeIndicateurIdsResult.success) {
       return axeIndicateurIdsResult;
     }
@@ -57,6 +72,11 @@ export class GetIndicateursObjectifsService {
       ),
       ...axeIndicateurIdsResult.data,
     ]);
+
+    const ordrePlanResult = await this.repository.listOrdrePlan(plan.id, tx);
+    if (!ordrePlanResult.success) {
+      return ordrePlanResult;
+    }
 
     const reader = await this.readAccessService.resolveReader({
       collectiviteId,
@@ -98,8 +118,26 @@ export class GetIndicateursObjectifsService {
         .filter(([, depotIndicateur]) => depotIndicateur.objectifs.length)
     );
 
+    // un plan rattaché au dépôt suit aussi les réglementaires hors dépôt
+    // (ex. cae_3.b), qui n'ont pas d'objectif de dépôt à faire valoir
+    const horsDepotIdsResult =
+      depot && canReadValeurs
+        ? await this.repository.listIndicateurIdsByIdentifiants(
+            PCAET_INDICATEURS_HORS_DEPOT_SUIVI,
+            tx
+          )
+        : success([]);
+    if (!horsDepotIdsResult.success) {
+      return horsDepotIdsResult;
+    }
+    const horsDepotIds = new Set(horsDepotIdsResult.data);
+
     const indicateurIds = [
-      ...new Set([...depotParIndicateur.keys(), ...planIndicateurIds]),
+      ...new Set([
+        ...depotParIndicateur.keys(),
+        ...horsDepotIds,
+        ...planIndicateurIds,
+      ]),
     ];
     const definitionsResult = await this.repository.listDefinitions(
       indicateurIds,
@@ -122,29 +160,35 @@ export class GetIndicateursObjectifsService {
     );
 
     return success(
-      definitionsResult.data
-        .map(({ confidentiel, ...definition }): IndicateurObjectif => {
-          const valeurs = valeursParIndicateur[definition.id] ?? [];
-          const depotIndicateur = depotParIndicateur.get(definition.id);
-          const sources: IndicateurObjectifSource[] = [
-            ...(depotIndicateur ? (['reglementaire'] as const) : []),
-            ...(planIndicateurIds.has(definition.id)
-              ? (['plan'] as const)
-              : []),
-          ];
-          return {
-            ...definition,
-            resultats: pickResultats(valeurs, definition.periodicite, {
-              maskDernierResultatCollectivite:
-                confidentiel && !canReadConfidentiel,
-            }),
-            // les objectifs du dépôt priment sur ceux saisis hors dépôt
-            objectifs: depotIndicateur?.objectifs ?? listObjectifs(valeurs),
-            sources,
-            departDepot: depotIndicateur?.departDepot ?? null,
-          };
-        })
-        .sort(compareIndicateursObjectifs)
+      sortIndicateursObjectifs(
+        // avec un filtre, seuls restent les indicateurs liés aux fiches ou aux axes
+        definitionsResult.data
+          .filter(({ id }) => !hasFiltre || planIndicateurIds.has(id))
+          .map(({ confidentiel, ...definition }): IndicateurObjectif => {
+            const valeurs = valeursParIndicateur[definition.id] ?? [];
+            const depotIndicateur = depotParIndicateur.get(definition.id);
+            const sources: IndicateurObjectifSource[] = [
+              ...(depotIndicateur || horsDepotIds.has(definition.id)
+                ? (['reglementaire'] as const)
+                : []),
+              ...(planIndicateurIds.has(definition.id)
+                ? (['plan'] as const)
+                : []),
+            ];
+            return {
+              ...definition,
+              resultats: pickResultats(valeurs, definition.periodicite, {
+                maskDernierResultatCollectivite:
+                  confidentiel && !canReadConfidentiel,
+              }),
+              // les objectifs du dépôt priment sur ceux saisis hors dépôt
+              objectifs: depotIndicateur?.objectifs ?? listObjectifs(valeurs),
+              sources,
+              departDepot: depotIndicateur?.departDepot ?? null,
+            };
+          }),
+        ordrePlanResult.data
+      )
     );
   }
 

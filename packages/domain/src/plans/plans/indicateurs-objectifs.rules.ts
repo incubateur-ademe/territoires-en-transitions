@@ -1,4 +1,5 @@
 import { isNil } from 'es-toolkit';
+import { PCAET_ORDRE_REGLEMENTAIRES_SUIVI } from '../../demarches/pcaet/diagnostic/demarche-pcaet-diagnostic.config';
 import { deriveReferenceYearFromIndicateurValeurYears } from '../../demarches/pcaet/diagnostic/demarche-pcaet-diagnostic.rules';
 import { IndicateurPeriodicite } from '../../indicateurs/indicateur/indicateur-periodicite.schema';
 import { normalizeIndicateurReferenceObjectifs } from '../../indicateurs/valeurs/indicateur-reference-objectif.rules';
@@ -234,22 +235,45 @@ export function getHorizonParDefaut(
 }
 
 /**
- * Les réglementaires du dépôt PCAET d'abord, puis les favoris de la
- * collectivité, puis l'ordre alphabétique.
+ * L'ordre du bloc : d'abord celui que la collectivité a choisi (`ordrePlan`),
+ * puis les réglementaires dans l'ordre du dépôt PCAET, puis les autres par
+ * titre. Un identifiant absent de `ordrePlan` n'a pas de place choisie.
  */
-export function compareIndicateursObjectifs(
-  a: Pick<IndicateurObjectif, 'favori' | 'titre' | 'sources'>,
-  b: Pick<IndicateurObjectif, 'favori' | 'titre' | 'sources'>
-): number {
-  const reglementaireA = a.sources.includes('reglementaire');
-  const reglementaireB = b.sources.includes('reglementaire');
-  if (reglementaireA !== reglementaireB) {
-    return reglementaireA ? -1 : 1;
-  }
-  if (a.favori !== b.favori) {
-    return a.favori ? -1 : 1;
-  }
-  return a.titre.localeCompare(b.titre, 'fr');
+export function sortIndicateursObjectifs<
+  T extends Pick<
+    IndicateurObjectif,
+    'id' | 'titre' | 'sources' | 'identifiantReferentiel'
+  >
+>(
+  indicateurs: readonly T[],
+  ordrePlan: readonly number[] = [],
+  ordreReglementaires: readonly string[] = PCAET_ORDRE_REGLEMENTAIRES_SUIVI
+): T[] {
+  const rang = (indicateur: T): [number, number] => {
+    const choisi = ordrePlan.indexOf(indicateur.id);
+    if (choisi !== -1) {
+      return [0, choisi];
+    }
+    const reglementaire = indicateur.identifiantReferentiel
+      ? ordreReglementaires.indexOf(indicateur.identifiantReferentiel)
+      : -1;
+    if (indicateur.sources.includes('reglementaire') && reglementaire !== -1) {
+      return [1, reglementaire];
+    }
+    return [2, 0];
+  };
+
+  return indicateurs.toSorted((a, b) => {
+    const [tierA, rangA] = rang(a);
+    const [tierB, rangB] = rang(b);
+    if (tierA !== tierB) {
+      return tierA - tierB;
+    }
+    if (rangA !== rangB) {
+      return rangA - rangB;
+    }
+    return a.titre.localeCompare(b.titre, 'fr');
+  });
 }
 
 /** Une valeur datée à l'année : départ ou dernier résultat d'un indicateur. */

@@ -8,6 +8,7 @@ import { indicateurSourceMetadonneeTable } from '@tet/backend/indicateurs/shared
 import { indicateurSourceTable } from '@tet/backend/indicateurs/shared/models/indicateur-source.table';
 import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
 import { axeIndicateurTable } from '@tet/backend/plans/fiches/shared/models/axe-indicateur.table';
+import { planIndicateurOrdreTable } from '../plan-indicateur-ordre.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
@@ -25,7 +26,7 @@ import {
   LigneValeurDepot,
   LigneValeurIndicateurObjectif,
 } from '@tet/domain/plans';
-import { and, eq, inArray, isNotNull, isNull, ne, or } from 'drizzle-orm';
+import { and, asc, eq, inArray, isNotNull, isNull, ne, or } from 'drizzle-orm';
 import { GetPlanError } from '../../get-plan/get-plan.errors';
 
 /** Le dépôt PCAET dont le suivi du plan reprend les indicateurs réglementaires */
@@ -64,6 +65,21 @@ export class GetIndicateursObjectifsRepository {
         .selectDistinct({ indicateurId: axeIndicateurTable.indicateurId })
         .from(axeIndicateurTable)
         .where(inArray(axeIndicateurTable.axeId, axeIds));
+      return rows.map((row) => row.indicateurId);
+    });
+  }
+
+  /** L'ordre choisi par la collectivité pour le plan, sans les indicateurs non classés */
+  async listOrdrePlan(
+    planId: number,
+    tx?: Transaction
+  ): Promise<Result<number[], GetPlanError>> {
+    return this.run(async () => {
+      const rows = await (tx ?? this.databaseService.db)
+        .select({ indicateurId: planIndicateurOrdreTable.indicateurId })
+        .from(planIndicateurOrdreTable)
+        .where(eq(planIndicateurOrdreTable.planId, planId))
+        .orderBy(asc(planIndicateurOrdreTable.ordre));
       return rows.map((row) => row.indicateurId);
     });
   }

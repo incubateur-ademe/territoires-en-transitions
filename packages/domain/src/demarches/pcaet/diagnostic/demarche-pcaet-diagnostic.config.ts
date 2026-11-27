@@ -627,6 +627,21 @@ export const PCAET_INDICATEURS_REGLEMENTAIRES_SUIVI: readonly string[] =
   );
 
 /**
+ * Indicateurs réglementaires du suivi qui ne sont pas dans le dépôt PCAET : le
+ * ratio de production ENR, calculé à partir de `cae_3.a` et `cae_2.a`. Ils
+ * suivent les réglementaires du dépôt dans l'ordre d'affichage.
+ */
+export const PCAET_INDICATEURS_HORS_DEPOT_SUIVI: readonly string[] = [
+  'cae_3.b',
+];
+
+/** L'ordre des réglementaires du suivi, celui du dépôt puis les hors dépôt. */
+export const PCAET_ORDRE_REGLEMENTAIRES_SUIVI: readonly string[] = [
+  ...PCAET_INDICATEURS_REGLEMENTAIRES_SUIVI,
+  ...PCAET_INDICATEURS_HORS_DEPOT_SUIVI,
+];
+
+/**
  * Topic vulnérabilité du diagnostic PCAET (niveaux par thématique, hors
  * référentiel indicateurs).
  */

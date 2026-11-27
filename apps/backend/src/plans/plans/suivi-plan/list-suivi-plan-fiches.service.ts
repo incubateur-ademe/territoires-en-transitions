@@ -15,6 +15,7 @@ import ListFichesService from '../../fiches/list-fiches/list-fiches.service';
 import { GetPlanService } from '../get-plan/get-plan.service';
 import { GetPlanError } from '../get-plan/get-plan.errors';
 import { SuiviPlanBlocInput } from './suivi-plan.input';
+import { withSousAxes } from './with-sous-axes';
 
 @Injectable()
 export class ListSuiviPlanFichesService {
@@ -116,19 +117,9 @@ export class ListSuiviPlanFichesService {
         ...filters,
         planActionIds: [planId],
         thematiqueIds: thematiqueIds?.length ? thematiqueIds : undefined,
-        axesId: axeIds?.length ? this.withSousAxes(plan, axeIds) : undefined,
+        axesId: axeIds?.length ? withSousAxes(plan, axeIds) : undefined,
         restreint: canReadFichesRestreintes ? undefined : false,
       },
     });
-  }
-
-  private withSousAxes(plan: Plan, axeIds: number[]): number[] {
-    const sousAxeIds = plan.axes
-      .filter((axe) => axe.parent !== null && axeIds.includes(axe.parent))
-      .map((axe) => axe.id);
-    const newIds = sousAxeIds.filter((id) => !axeIds.includes(id));
-    return newIds.length
-      ? this.withSousAxes(plan, [...axeIds, ...newIds])
-      : axeIds;
   }
 }

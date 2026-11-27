@@ -6,6 +6,7 @@ import { GetFaireAvancerLePlanRouter } from './get-faire-avancer-le-plan/get-fai
 import { GetIndicateursObjectifsRouter } from './get-indicateurs-objectifs/get-indicateurs-objectifs.router';
 import { GetVueEnsembleRouter } from './get-vue-ensemble/get-vue-ensemble.router';
 import { SuiviPlanModulesRouter } from './suivi-plan-modules/suivi-plan-modules.router';
+import { UpdateIndicateursObjectifsOrdreRouter } from './update-indicateurs-objectifs-ordre/update-indicateurs-objectifs-ordre.router';
 
 @Injectable()
 export class SuiviPlanRouter {
@@ -16,7 +17,8 @@ export class SuiviPlanRouter {
     private readonly getEvolutionStatutsRouter: GetEvolutionStatutsRouter,
     private readonly getFaireAvancerLePlanRouter: GetFaireAvancerLePlanRouter,
     private readonly suiviPlanModulesRouter: SuiviPlanModulesRouter,
-    private readonly getIndicateursObjectifsRouter: GetIndicateursObjectifsRouter
+    private readonly getIndicateursObjectifsRouter: GetIndicateursObjectifsRouter,
+    private readonly updateIndicateursObjectifsOrdreRouter: UpdateIndicateursObjectifsOrdreRouter
   ) {}
 
   router = this.trpc.mergeRouters(
@@ -25,6 +27,7 @@ export class SuiviPlanRouter {
     this.getEvolutionStatutsRouter.router,
     this.getFaireAvancerLePlanRouter.router,
     this.suiviPlanModulesRouter.router,
-    this.getIndicateursObjectifsRouter.router
+    this.getIndicateursObjectifsRouter.router,
+    this.updateIndicateursObjectifsOrdreRouter.router
   );
 }

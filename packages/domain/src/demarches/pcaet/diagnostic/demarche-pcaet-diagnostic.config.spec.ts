@@ -4,6 +4,7 @@ import {
   PCAET_DIAGNOSTIC_INDICATEURS,
   PCAET_DIAGNOSTIC_VULNERABILITE,
   PCAET_INDICATEURS_REGLEMENTAIRES_SUIVI,
+  PCAET_ORDRE_REGLEMENTAIRES_SUIVI,
 } from './demarche-pcaet-diagnostic.config';
 
 describe('DEMARCHE_PCAET_DIAGNOSTIC_INDICATEURS', () => {
@@ -87,5 +88,15 @@ describe('PCAET_INDICATEURS_REGLEMENTAIRES_SUIVI', () => {
       'cae_2.a',
       'cae_3.a',
     ]);
+  });
+});
+
+describe('PCAET_ORDRE_REGLEMENTAIRES_SUIVI', () => {
+  it('place le ratio ENR cae_3.b après le total ENR, hors dépôt', () => {
+    expect(PCAET_ORDRE_REGLEMENTAIRES_SUIVI.slice(-2)).toEqual([
+      'cae_3.a',
+      'cae_3.b',
+    ]);
+    expect(PCAET_INDICATEURS_REGLEMENTAIRES_SUIVI).not.toContain('cae_3.b');
   });
 });
