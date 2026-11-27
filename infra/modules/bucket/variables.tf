@@ -25,3 +25,9 @@ variable "statements" {
   type        = any
   default     = []
 }
+
+variable "expiration_days" {
+  description = "Jours après lesquels un objet (et ses anciennes versions) est supprimé. Null (défaut) : rien n'expire."
+  type        = number
+  default     = null
+}
