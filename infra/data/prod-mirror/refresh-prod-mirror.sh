@@ -21,13 +21,13 @@
 #   EXPORT_ACCESS_KEY, EXPORT_SECRET_KEY   clé de l'application IAM lectrice
 #   EXPORT_REGION          (optionnel) défaut fr-par
 #   EXPORT_DIR             (optionnel) export déjà sur disque : pas de téléchargement
-#   READ_ROLES             (optionnel) rôles lecteurs du miroir, défaut "mcp_reader stats_writer"
+#   READ_ROLES             (optionnel) rôles lecteurs du miroir, défaut "mcp_reader backend_reader stats_writer"
 #   BUILD_DB               (optionnel) base de travail, défaut prod_mirror_build
 #   JOBS                   (optionnel) parallélisme du chargement, défaut 4
 set -euo pipefail
 
 : "${STATS_DB_URL:?STATS_DB_URL non défini}"
-READ_ROLES="${READ_ROLES:-mcp_reader stats_writer}"
+READ_ROLES="${READ_ROLES:-mcp_reader backend_reader stats_writer}"
 BUILD_DB="${BUILD_DB:-prod_mirror_build}"
 EXPORT_REGION="${EXPORT_REGION:-fr-par}"
 JOBS="${JOBS:-4}"

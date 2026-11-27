@@ -565,7 +565,7 @@ serveur, ne détient aucun identifiant qui l'ouvre. Les deux flux partent de la 
 
 ```
  prod                                  bucket                      tier data
- RDB ── export filtré, chaque nuit ──► tet-analytics-export ◄── tet-data-apps
+ RDB ── export filtré, chaque nuit ──► tet-analytics-export ◄── tet-data-apps ──► schéma prod de stats
  site ──► backend ── TLS vérifié, IP autorisée ──────────────► tet-stats-pg (endpoint public + ACL)
 ```
 
@@ -985,4 +985,5 @@ Coolify, reconfigure le proxy : revérifier ensuite les flags ci-dessus.
 - **Bascule DB** par `pg_dump` / `pg_restore` en fenêtre de maintenance, **pas** de
   réplication logique.
 - **Prod et tier data** : les flux partent de la prod (export filtré déposé dans un bucket,
-  lecture de la base de stats par le backend), jamais du tier data.
+  lecture de la base de stats par le backend), jamais du tier data. Miroir par copie
+  complète à J-1, **pas** de réplication logique, de `postgres_fdw` ni de read replica.
