@@ -310,6 +310,12 @@ export const backendConfigurationSchema = z
       .describe(
         'URL Postgres de la base analytique (rôle en lecture seule) interrogée par le serveur MCP'
       ),
+    ANALYTICS_DATABASE_SSL_ROOT_CERT: z
+      .string()
+      .optional()
+      .describe(
+        "CA (PEM) de la base analytique, pour un TLS vérifié face à un certificat auto-signé (RDB Scaleway). L'URL ne doit alors pas porter de sslmode."
+      ),
     // Outils « support » du serveur MCP : optionnels, sans eux ces outils
     // répondent CRISP_NOT_CONFIGURED. Jeton REST Crisp de niveau `website`.
     CRISP_API_IDENTIFIER: z
