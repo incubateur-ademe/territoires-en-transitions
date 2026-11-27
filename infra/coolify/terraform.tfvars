@@ -20,3 +20,9 @@ ghcr_pull_credentials_revision = "2"
 
 # Incrémenter après chaque nouvelle version de secret dans Secret Manager.
 coolify_env_revision = "5"
+
+# Application de preview (preview-application.tf) : en service. Sans ces deux
+# valeurs, un apply la détruirait. UUID de la GitHub App de notre Team
+# (Coolify → Sources), pas un secret.
+preview_github_app_uuid = "n10a11ablvrs416jcqffjn1i"
+preview_compose_loaded  = true
