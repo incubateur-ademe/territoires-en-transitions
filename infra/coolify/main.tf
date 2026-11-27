@@ -134,6 +134,20 @@ resource "coolify_server_docker_cleanup" "app" {
   delete_unused_networks   = false
 }
 
+# Métriques (CPU/RAM par conteneur) et analytics de trafic natifs de Coolify,
+# collectés par Sentinel. Doublon partiel du Cockpit Scaleway, gardé pour la
+# vue par app directement dans l'UI Coolify. Sentinel lui-même est obligatoire
+# côté Coolify (≥ 4.4) : on ne pilote pas is_sentinel_enabled, que l'API
+# refuse en 422. IPs des visiteurs tronquées (/24, /48) : pas besoin de l'IP
+# complète pour une vue de trafic.
+resource "coolify_server_sentinel" "app" {
+  for_each = coolify_server.app
+
+  server_uuid        = each.value.uuid
+  is_metrics_enabled = true
+  traffic_ip_mode    = "anonymized"
+}
+
 # docker login ghcr.io sur root@serveur — prérequis pour tirer les images
 # privées. Coolify 4.4 a une API de login registry, mais le provider mettrait
 # le PAT dans le state : le helper monte /root/.docker/config.json en SSH.
