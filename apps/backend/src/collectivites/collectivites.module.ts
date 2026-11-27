@@ -80,6 +80,7 @@ import { PertinenceLeviersModule } from './pertinence-leviers/pertinence-leviers
 import GroupementsService from './services/groupements.service';
 import { PersonnesService } from './services/personnes.service';
 import { GetSiteCollectiviteService } from './site/get-site-collectivite/get-site-collectivite.service';
+import { GetSiteStatsHeroSectionService } from './site/get-site-stats-hero-section/get-site-stats-hero-section.service';
 import { ListSiteCarteService } from './site/list-site-carte/list-site-carte.service';
 import { SearchSiteCollectivitesService } from './site/search-site-collectivites/search-site-collectivites.service';
 import { SiteRouter } from './site/site.router';
@@ -100,6 +101,7 @@ import { SiteRouter } from './site/site.router';
     SearchSiteCollectivitesService,
     GetSiteCollectiviteService,
     ListSiteCarteService,
+    GetSiteStatsHeroSectionService,
     SiteRouter,
     ListMembresService,
     ListAdminContactsService,

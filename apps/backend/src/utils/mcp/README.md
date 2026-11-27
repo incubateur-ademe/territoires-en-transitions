@@ -72,15 +72,16 @@ Les outils par collectivité ou par utilisateur vérifient les permissions de l'
 
 - **Authentification** : le guard global du backend (JWT Supabase). Trois sources de jeton fonctionnent : une session utilisateur, un jeton OAuth émis par Supabase Auth (connecteurs Claude.ai / Claude Desktop), un jeton de clé API (`POST /api/v1/oauth/token`).
 - **Autorisation** : utilisateur humain (un jeton `service_role` est refusé) porteur de `utils.mcp.read`. Vérifiée au contrôleur et dans chaque service d'outil.
-- **Lecture seule** : rôle Postgres `mcp_readonly` sur la base analytique `tet-shared` (Postgres managé Koyeb, `koyeb databases list`) : `SELECT` sur `public` et `prod`, nouvelles tables comprises (privilèges par défaut de `koyeb-adm`), aucune écriture. S'y ajoutent `default_transaction_read_only` posé à la connexion, la validation SQL (`validate-select-sql.rules.ts`), la sous-requête `LIMIT` et un `statement_timeout` de 10 s.
-- **Données personnelles** : `mcp_readonly` lit tout `prod`, tables personnelles comprises (`auth_users`, `public_dcp`…) : l'accès est réservé aux comptes support. Côté PostHog, les colonnes `email` sont retirées du résultat.
+- **Lecture seule** : rôle Postgres `backend_reader` sur la base de stats `tet-stats-pg` (RDB Scaleway du tier data, cf. `infra/README.md`, « Tier data ») : `SELECT` sur `public` et `prod`, aucune écriture. Le backend la joint par son endpoint public, ouvert à la seule IP du serveur. S'y ajoutent `default_transaction_read_only` posé à la connexion, la validation SQL (`validate-select-sql.rules.ts`), la sous-requête `LIMIT` et un `statement_timeout` de 10 s.
+- **Données personnelles** : le miroir `prod` porte des tables nominatives (`auth_users` réduit à l'e-mail et aux dates, `public_dcp` sans téléphone…), jamais de hash de mot de passe, de jeton ni de clé d'API, retirés à l'export (`data_layer/backup/analytics-export.sh`). L'accès est réservé aux comptes support. Côté PostHog, les colonnes `email` sont retirées du résultat.
 - **Journalisation** : chaque requête SQL ou HogQL est tracée (requête seule, jamais les données), avec l'utilisateur et le `client_id` du contexte ; chaque appel émet l'événement PostHog `api_post_mcp`.
 
 ## Configuration
 
 | Variable | Rôle |
 | --- | --- |
-| `ANALYTICS_DATABASE_URL` | URL Postgres de la base analytique (Neon, `?sslmode=verify-full`), avec le rôle lecture seule. Sans elle, les outils SQL répondent `ANALYTICS_DATABASE_NOT_CONFIGURED`. |
+| `ANALYTICS_DATABASE_URL` | URL Postgres de la base analytique, avec le rôle lecture seule. Sans elle, les outils SQL répondent `ANALYTICS_DATABASE_NOT_CONFIGURED`. |
+| `ANALYTICS_DATABASE_SSL_ROOT_CERT` | CA (PEM) de la base analytique, pour vérifier son certificat auto-signé (RDB Scaleway). L'URL ne porte alors pas de `sslmode`. |
 | `POSTHOG_PERSONAL_API_KEY` | Clé API personnelle PostHog en lecture. Sans elle, `run_hogql_query` répond `POSTHOG_NOT_CONFIGURED`. |
 | `CRISP_API_IDENTIFIER`, `CRISP_API_KEY` | Jeton REST Crisp de niveau `website` (portée `website:conversation:sessions` et `website:conversation:messages`). Sans lui, les outils support répondent `CRISP_NOT_CONFIGURED`. `CRISP_WEBSITE_ID` a pour défaut l'espace de TeT. |
 | `GITHUB_API_TOKEN` | Jeton GitHub en lecture seule (aucune permission au-delà du dépôt public). Sans lui, `search_code` répond `GITHUB_NOT_CONFIGURED` ; `list_repo_files` et `read_code` fonctionnent avec le quota anonyme de GitHub. |
