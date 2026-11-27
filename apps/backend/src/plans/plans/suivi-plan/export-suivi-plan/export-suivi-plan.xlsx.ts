@@ -181,3 +181,60 @@ export const buildEvolutionStatutsXlsx = (
   setColumnWidths(worksheet, [40, 16, 16, 12]);
   return workbook.xlsx.writeBuffer();
 };
+
+export type LigneIndicateurObjectifExport = {
+  titre: string;
+  unite: string;
+  precision: number;
+  sources: string[];
+  depart: { annee: number; valeur: number } | null;
+  dernier: { annee: number; valeur: number } | null;
+  objectif: { annee: number; valeur: number } | null;
+  chemin: number | null;
+};
+
+const formatNombre = (precision: number) =>
+  precision > 0 ? `#,##0.${'0'.repeat(precision)}` : '#,##0';
+
+export const buildIndicateursObjectifsXlsx = (
+  entete: SuiviPlanExportEntete,
+  lignes: LigneIndicateurObjectifExport[]
+) => {
+  const { workbook, worksheet } = createWorksheet(entete);
+
+  addHeaderRow(worksheet, [
+    'Indicateur',
+    'Unité',
+    'Source',
+    'Valeur de départ',
+    'Année de départ',
+    'Dernière valeur',
+    'Année de la dernière valeur',
+    'Objectif',
+    'Année de l’objectif',
+    'Chemin parcouru',
+  ]);
+
+  lignes.forEach((ligne) => {
+    const row = worksheet.addRow([
+      ligne.titre,
+      ligne.unite,
+      ligne.sources.join(', '),
+      ligne.depart?.valeur ?? null,
+      ligne.depart?.annee ?? null,
+      ligne.dernier?.valeur ?? null,
+      ligne.dernier?.annee ?? null,
+      ligne.objectif?.valeur ?? null,
+      ligne.objectif?.annee ?? null,
+      null,
+    ]);
+    const numFmt = formatNombre(ligne.precision);
+    [4, 6, 8].forEach((index) => {
+      row.getCell(index).numFmt = numFmt;
+    });
+    setNumValue(row.getCell(10), ligne.chemin, FORMAT_PERCENT);
+  });
+
+  setColumnWidths(worksheet, [50, 16, 28, 16, 14, 16, 18, 14, 16, 16]);
+  return workbook.xlsx.writeBuffer();
+};

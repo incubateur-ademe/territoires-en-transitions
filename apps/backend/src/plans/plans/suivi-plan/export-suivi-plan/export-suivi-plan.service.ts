@@ -9,8 +9,14 @@ import { Result, success } from '@tet/backend/utils/result.type';
 import { unaccent } from '@tet/backend/utils/unaccent.utils';
 import { format } from 'date-fns';
 import {
+  computeAvancementObjectif,
   EN_COURS_SANS_AVANCEMENT_LABEL,
+  getHorizonParDefaut,
+  IndicateurObjectif,
   NON_MODIFIEE_DEPUIS_PLUS_D_UN_AN_LABEL,
+  pickDepart,
+  pickDernier,
+  pickObjectifAHorizon,
   Plan,
   SANS_PILOTE_LABEL,
   SANS_PRIORITE_LABEL,
@@ -23,12 +29,16 @@ import { GetPlanService } from '../../get-plan/get-plan.service';
 import { GetAvancementParAxeService } from '../get-avancement-par-axe/get-avancement-par-axe.service';
 import { GetEvolutionStatutsInput } from '../get-evolution-statuts/get-evolution-statuts.input';
 import { GetEvolutionStatutsService } from '../get-evolution-statuts/get-evolution-statuts.service';
+import { GetIndicateursObjectifsService } from '../get-indicateurs-objectifs/get-indicateurs-objectifs.service';
 import { GetVueEnsembleService } from '../get-vue-ensemble/get-vue-ensemble.service';
 import { SuiviPlanBlocInput, SuiviPlanFilters } from '../suivi-plan.input';
+import { ExportIndicateursObjectifsInput } from './export-indicateurs-objectifs.input';
 import {
   buildAvancementParAxeXlsx,
   buildEvolutionStatutsXlsx,
+  buildIndicateursObjectifsXlsx,
   buildVueEnsembleXlsx,
+  LigneIndicateurObjectifExport,
   SuiviPlanExportEntete,
 } from './export-suivi-plan.xlsx';
 
@@ -41,7 +51,8 @@ export class ExportSuiviPlanService {
     private readonly getPlanService: GetPlanService,
     private readonly getVueEnsembleService: GetVueEnsembleService,
     private readonly getAvancementParAxeService: GetAvancementParAxeService,
-    private readonly getEvolutionStatutsService: GetEvolutionStatutsService
+    private readonly getEvolutionStatutsService: GetEvolutionStatutsService,
+    private readonly getIndicateursObjectifsService: GetIndicateursObjectifsService
   ) {}
 
   async exportVueEnsemble(
@@ -93,6 +104,60 @@ export class ExportSuiviPlanService {
         result.data,
         input.inclureActionsContinues
       )
+    );
+  }
+
+  async exportIndicateursObjectifs(
+    input: ExportIndicateursObjectifsInput,
+    context: ServiceSecondArg
+  ): Promise<Result<SuiviPlanExport, GetPlanError>> {
+    const result =
+      await this.getIndicateursObjectifsService.getIndicateursObjectifs(
+        { planId: input.planId },
+        context
+      );
+    if (!result.success) {
+      return result;
+    }
+    const anneeCourante = new Date().getFullYear();
+    const horizon = input.horizon ?? getHorizonParDefaut(anneeCourante);
+    // le bloc n'affiche que « Afficher » : les fiches et la recherche ne s'appliquent pas
+    const indicateurs = result.data.filter(
+      ({ sources }) =>
+        input.source === 'tous' ||
+        sources.includes(
+          input.source === 'reglementaires' ? 'reglementaire' : 'plan'
+        )
+    );
+    const lignes = indicateurs.map((indicateur) =>
+      toLigneIndicateurObjectif(indicateur, horizon, anneeCourante)
+    );
+
+    return this.export(
+      { planId: input.planId },
+      'Indicateurs et objectifs',
+      context,
+      (entete) =>
+        buildIndicateursObjectifsXlsx(
+          {
+            ...entete,
+            filtres: [
+              ...entete.filtres,
+              ...(input.source === 'tous'
+                ? []
+                : [
+                    [
+                      'Afficher',
+                      input.source === 'reglementaires'
+                        ? 'Réglementaires'
+                        : "Liés au plan d'action",
+                    ] as [string, string],
+                  ]),
+              ['Horizon', String(horizon)],
+            ],
+          },
+          lignes
+        )
     );
   }
 
@@ -237,3 +302,36 @@ export class ExportSuiviPlanService {
       .map(([libelle, valeurs]) => [libelle, valeurs.join(', ')]);
   }
 }
+
+const SOURCE_LIBELLE: Record<IndicateurObjectif['sources'][number], string> = {
+  reglementaire: 'Réglementaire',
+  plan: "Lié au plan d'action",
+};
+
+const toLigneIndicateurObjectif = (
+  indicateur: IndicateurObjectif,
+  horizon: number,
+  anneeCourante: number
+): LigneIndicateurObjectifExport => {
+  // mêmes règles que la carte de l'écran
+  const points = indicateur.resultats?.points ?? [];
+  const depart = pickDepart(points, indicateur.departDepot);
+  const dernier = pickDernier(points);
+  const objectif = pickObjectifAHorizon(indicateur.objectifs, horizon);
+  const avancement = computeAvancementObjectif({
+    depart,
+    dernier,
+    cible: objectif,
+    anneeCourante,
+  });
+  return {
+    titre: indicateur.titre,
+    unite: indicateur.unite,
+    precision: indicateur.precision,
+    sources: indicateur.sources.map((source) => SOURCE_LIBELLE[source]),
+    depart,
+    dernier,
+    objectif,
+    chemin: avancement?.chemin ?? null,
+  };
+};
