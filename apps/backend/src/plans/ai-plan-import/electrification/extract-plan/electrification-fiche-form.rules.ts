@@ -13,6 +13,7 @@ import { ElectrificationIndicateursDocumentRules } from './electrification-indic
 import { electrificationFichesDocument } from '@tet/backend/plans/plans/electrification/config/electrification-fiches-document.config';
 import { electrificationIndicateursDocument as indicateurs } from '@tet/backend/plans/plans/electrification/config/electrification-indicateurs-document.config';
 import { ElectrificationValueContext } from './electrification-value-interpretation.schema';
+import { electrificationDocumentFormats } from '@tet/backend/plans/plans/electrification/config/electrification-document-formats.config';
 
 const { fields, sousActions } = electrificationFichesDocument;
 export type ElectrificationFicheFieldName = keyof typeof fields;
@@ -42,19 +43,26 @@ export class ElectrificationFicheFormRules {
     catalogue: ElectrificationConfig,
     valueContext?: ElectrificationValueContext
   ): FicheForm {
+    // Les fusions horizontales sont développées par le lecteur ; un champ reste unique.
+    const formRows = rows
+      .map((row) => ({
+        row,
+        cells: [...new Map(row.map((cell) => [cell.id, cell])).values()],
+      }))
+      .filter(({ cells }) =>
+        cells.some((cell) => cell.text.trim() || cell.links.length)
+      );
     const format = rows
       .map((row) => ElectrificationIndicateursTableAdapter.fromHeader(row))
       .find((adapter) => adapter !== null)?.documentFormat;
     const placeholders: Partial<Record<ElectrificationFicheFieldName, string>> =
       format?.fieldPlaceholders ?? {};
     const titleDefinition = fields.titre;
-    const titleCell = rows
-      .map((row) => [...new Map(row.map((cell) => [cell.id, cell])).values()])
-      .find(
-        (row) =>
-          Values.normalize(row[0]?.text ?? '') ===
-          Values.normalize(titleDefinition.label)
-      )?.[1];
+    const titleCell = formRows.find(
+      ({ cells }) =>
+        Values.normalize(cells[0]?.text ?? '') ===
+        Values.normalize(titleDefinition.label)
+    )?.cells[1];
     const actionLocation = Locations.entity(
       'Action',
       titleCell
@@ -73,16 +81,12 @@ export class ElectrificationFicheFormRules {
     };
     const { issues } = form;
     let section: 'fields' | ChildSection = 'fields';
-    let hasChildrenHeader = false;
+    let childrenHeaderValid: boolean | null = null;
     let childIndex = 0;
     let indicateursAdapter: ElectrificationIndicateursTableAdapter | null =
       null;
 
-    for (const row of rows) {
-      // Les fusions horizontales sont développées par le lecteur ; un champ reste unique.
-      const originalCells = [
-        ...new Map(row.map((cell) => [cell.id, cell])).values(),
-      ];
+    for (const [index, { row, cells: originalCells }] of formRows.entries()) {
       const cells =
         section === 'indicateurs'
           ? originalCells
@@ -92,12 +96,28 @@ export class ElectrificationFicheFormRules {
               actionLocation,
               childIndex + 1
             );
-      if (!cells.some((cell) => cell.text.trim() || cell.links.length))
-        continue;
-      const childSection = this.getChildSection(cells);
+      const childSection = this.getChildSection(
+        cells,
+        formRows[index + 1]?.cells ?? []
+      );
       if (childSection) {
+        const heading =
+          childSection === 'sousActions'
+            ? sousActions.heading
+            : indicateurs.heading;
+        if (Values.normalize(cells[0].text) !== Values.normalize(heading)) {
+          issues.push(
+            Errors.unexpectedLabel(
+              {
+                ...cells[0],
+                location: Locations.field(actionLocation, heading),
+              },
+              [heading]
+            )
+          );
+        }
         section = childSection;
-        hasChildrenHeader = false;
+        childrenHeaderValid = null;
         childIndex = 0;
         indicateursAdapter = null;
         continue;
@@ -107,19 +127,25 @@ export class ElectrificationFicheFormRules {
         if (!field.success) issues.push(...field.error);
         continue;
       }
-      if (!hasChildrenHeader) {
+      if (childrenHeaderValid === null) {
         indicateursAdapter =
           section === 'indicateurs'
             ? ElectrificationIndicateursTableAdapter.fromHeader(row)
             : null;
-        if (
+        childrenHeaderValid =
           section === 'indicateurs'
-            ? !indicateursAdapter
-            : !this.isSousActionsHeader(cells)
-        )
+            ? indicateursAdapter !== null
+            : this.isSousActionsHeader(cells);
+        if (!childrenHeaderValid)
           issues.push(
-            Errors.issue(
-              'UNSUPPORTED_ELECTRIFICATION_STRUCTURE',
+            Errors.invalidTableHeader(
+              cells,
+              section === 'sousActions'
+                ? [sousActions.columns]
+                : Object.values(electrificationDocumentFormats).map(
+                    ({ indicateurs }) =>
+                      indicateurs.columns.map(({ label }) => label)
+                  ),
               Locations.field(
                 actionLocation,
                 section === 'sousActions'
@@ -128,9 +154,10 @@ export class ElectrificationFicheFormRules {
               )
             )
           );
-        hasChildrenHeader = true;
         continue;
       }
+      // Sans en-tête valide, les lignes ne peuvent pas être interprétées comme des données.
+      if (!childrenHeaderValid) continue;
       childIndex += 1;
       if (section === 'sousActions') {
         const child = this.parseSousAction(cells);
@@ -208,7 +235,10 @@ export class ElectrificationFicheFormRules {
     );
   }
 
-  private static getChildSection(cells: Source[]): ChildSection | null {
+  private static getChildSection(
+    cells: Source[],
+    nextRow: Source[]
+  ): ChildSection | null {
     if (cells.length !== 1) return null;
     switch (Values.normalize(cells[0].text)) {
       case Values.normalize(sousActions.heading):
@@ -216,6 +246,11 @@ export class ElectrificationFicheFormRules {
       case Values.normalize(indicateurs.heading):
         return 'indicateurs';
       default:
+        // L'en-tête exact permet de localiser une section mal nommée, sans l'accepter.
+        if (headings.includes(Values.normalize(cells[0].text))) return null;
+        if (this.isSousActionsHeader(nextRow)) return 'sousActions';
+        if (ElectrificationIndicateursTableAdapter.fromHeader(nextRow))
+          return 'indicateurs';
         return null;
     }
   }
@@ -233,7 +268,17 @@ export class ElectrificationFicheFormRules {
     const field = fieldDefinitions.find(
       ({ label: expected }) => Values.normalize(expected) === label
     );
-    if (!field || cells.length !== 2) {
+    if (!field) {
+      return failure([
+        Errors.unexpectedLabel(
+          cells[0],
+          cells.length === 1
+            ? electrificationFichesDocument.headings
+            : fieldDefinitions.map(({ label }) => label)
+        ),
+      ]);
+    }
+    if (cells.length !== 2) {
       return failure([
         Errors.issue(
           'UNSUPPORTED_ELECTRIFICATION_STRUCTURE',

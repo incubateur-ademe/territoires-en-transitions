@@ -213,6 +213,35 @@ export const electrificationExtractionErrors = {
 export class ElectrificationExtractionErrors {
   static issue = createIssueFactory(electrificationExtractionErrors);
 
+  static unexpectedLabel(
+    source: ElectrificationDocumentSource,
+    expected: readonly string[]
+  ): ElectrificationIssue {
+    return {
+      ...this.issue('UNSUPPORTED_ELECTRIFICATION_STRUCTURE', source.location),
+      message: `Libellé trouvé : "${source.text}". ${
+        expected.length === 1 ? 'Libellé attendu' : 'Libellés possibles'
+      } : ${expected
+        .map((label) => `"${label}"`)
+        .join(', ')}. Rétablissez le libellé du canevas Word.`,
+    };
+  }
+
+  static invalidTableHeader(
+    cells: ElectrificationDocumentSource[],
+    expected: readonly (readonly string[])[],
+    location: string
+  ): ElectrificationIssue {
+    const found = cells.map(({ text }) => `"${text}"`).join(' | ');
+    const headers = expected
+      .map((labels) => labels.map((label) => `"${label}"`).join(' | '))
+      .join('\nou\n');
+    return {
+      ...this.issue('UNSUPPORTED_ELECTRIFICATION_STRUCTURE', location),
+      message: `En-tête trouvé : ${found}.\nColonnes attendues :\n${headers}.\nRétablissez l'en-tête du canevas Word.`,
+    };
+  }
+
   static invalidTarget(
     source: ElectrificationDocumentSource,
     targets: ElectrificationConfig['engagements'][number]['cibles']

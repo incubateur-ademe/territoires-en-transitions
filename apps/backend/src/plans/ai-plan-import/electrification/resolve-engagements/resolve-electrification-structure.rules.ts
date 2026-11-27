@@ -93,6 +93,13 @@ export class ResolveElectrificationStructureRules {
     for (const axe of input.axes) {
       let axeKey: string;
       if (axe.numero === null) {
+        result.report.issues.push(
+          ElectrificationEngagementsErrors.freeAxis(
+            'FREE_ELECTRIFICATION_AXIS',
+            axe.titre,
+            axe.source.location
+          )
+        );
         axeKey = `libre:${axe.source.key}`;
         axes.set(axeKey, {
           key: axeKey,
@@ -122,6 +129,13 @@ export class ResolveElectrificationStructureRules {
       }
       for (const sousAxe of axe.sousAxes) {
         if (sousAxe.numero === null) {
+          result.report.issues.push(
+            ElectrificationEngagementsErrors.freeAxis(
+              'FREE_ELECTRIFICATION_SUB_AXIS',
+              sousAxe.titre,
+              sousAxe.source.location
+            )
+          );
           const key = `libre:${sousAxe.source.key}`;
           axes.set(key, {
             key,

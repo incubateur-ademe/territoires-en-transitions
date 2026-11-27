@@ -44,6 +44,16 @@ export const electrificationEngagementsErrors = {
     message:
       "Le numéro d'axe ne figure pas dans le catalogue. Vérifiez le numéro dans le champ Axe de l'action à partir du référentiel fourni avec le canevas.",
   },
+  FREE_ELECTRIFICATION_AXIS: {
+    kind: 'warning',
+    message:
+      "Aucun numéro d'axe n'est renseigné : ce libellé crée un axe libre, distinct des axes du catalogue, même si leurs intitulés sont proches. Pour rattacher l'action à un axe du catalogue, renseignez son numéro dans le champ Axe.",
+  },
+  FREE_ELECTRIFICATION_SUB_AXIS: {
+    kind: 'warning',
+    message:
+      "Aucun numéro de sous-axe n'est renseigné : ce libellé crée un sous-axe libre sous l'axe indiqué. Pour utiliser un sous-axe du catalogue, renseignez son numéro dans le champ Sous-axe (exemple : 1.1) et celui de son axe parent dans le champ Axe.",
+  },
 
   UNKNOWN_SUB_AXIS: {
     kind: 'document-error',
@@ -128,6 +138,18 @@ export const electrificationEngagementsIssue = createIssueFactory(
 
 /** Messages contextualisés des contrôles d'engagements. */
 export class ElectrificationEngagementsErrors {
+  static freeAxis(
+    code: 'FREE_ELECTRIFICATION_AXIS' | 'FREE_ELECTRIFICATION_SUB_AXIS',
+    titre: string,
+    location?: string
+  ): ElectrificationIssue {
+    const issue = electrificationEngagementsIssue(code, location);
+    return {
+      ...issue,
+      message: `${issue.message} Libellé saisi : "${titre}".`,
+    };
+  }
+
   static duplicate(code: string, location?: string): ElectrificationIssue {
     return {
       ...electrificationEngagementsIssue('DUPLICATE_ENGAGEMENT', location),

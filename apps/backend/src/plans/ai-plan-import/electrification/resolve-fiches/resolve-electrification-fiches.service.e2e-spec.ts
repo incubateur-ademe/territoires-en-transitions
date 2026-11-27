@@ -1940,6 +1940,9 @@ describe('Résolution des fiches actions Électrification', () => {
       'duplicate-field',
       'unknown-table',
       'nested-table',
+      'unknown-sous-actions-heading',
+      'unknown-indicator-heading',
+      'unknown-sous-actions-header',
       'unknown-indicator-header',
       'merged-indicator-reference',
     ] as const)(
@@ -1959,6 +1962,15 @@ describe('Résolution des fiches actions Électrification', () => {
           ]);
         if (kind === 'unknown-indicator-header')
           rows[22][2].text = 'Valeur modifiée sans année';
+        if (kind === 'unknown-sous-actions-heading')
+          rows[17][0].text = 'ous-actions (facultatif)';
+        if (kind === 'unknown-indicator-heading')
+          rows[21][0].text = 'Indicateurs modifiés';
+        if (kind === 'unknown-sous-actions-header') {
+          rows[18][0].text = 'Sous-action modifiée';
+          rows[19][0].text = 'Travaux';
+          rows[19][1].text = 'Date illisible sous un en-tête invalide';
+        }
         if (kind === 'merged-indicator-reference')
           rows.splice(23, 1, [
             { text: 'Nombre de ménages', columnSpan: 3 },
@@ -1986,11 +1998,40 @@ describe('Résolution des fiches actions Électrification', () => {
             }),
           ];
         await useForm({ fiches: [rows], extra });
-        await expectExtractionIssue(
+        const issues = await expectExtractionIssue(
           kind === 'duplicate-field'
             ? 'DUPLICATE_ELECTRIFICATION_FIELD'
             : 'UNSUPPORTED_ELECTRIFICATION_STRUCTURE'
         );
+        if (kind === 'unknown-sous-actions-heading') {
+          expect(issues).toHaveLength(1);
+          expect(issues[0]).toMatchObject({
+            location: 'Action "Action du document" > Sous-actions (facultatif)',
+            message: expect.stringContaining('"Sous-actions (facultatif)"'),
+          });
+          expect(issues[0].message).toContain('"ous-actions (facultatif)"');
+        }
+        if (kind === 'unknown-indicator-heading') {
+          expect(issues).toHaveLength(1);
+          expect(issues[0].message).toContain('"Indicateurs de suivi"');
+          expect(issues[0].message).toContain('"Indicateurs modifiés"');
+        }
+        if (kind === 'unknown-sous-actions-header') {
+          expect(issues).toHaveLength(1);
+          expect(issues[0].message).toContain('"Intitulé de la sous-action"');
+          expect(issues[0].message).toContain('"Sous-action modifiée"');
+        }
+        if (kind === 'unknown-indicator-header') {
+          expect(issues).toHaveLength(1);
+          expect(issues[0].message).toContain(
+            '"Valeur de résultat (avec son année de référence)"'
+          );
+          expect(issues[0].message).toContain('"Valeur modifiée sans année"');
+        }
+        if (kind === 'unknown-field') {
+          expect(issues[0].message).toContain('"Information nouvelle"');
+          expect(issues[0].message).toContain('"Intitulé de l\'action"');
+        }
       }
     );
 

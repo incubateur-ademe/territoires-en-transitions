@@ -549,6 +549,53 @@ describe(
       expect(llm.chat).not.toHaveBeenCalled();
     });
 
+    test('signale les axes sans numéro dans le compte rendu et les crée séparément du catalogue', async () => {
+      const axeTitre = catalogue.axes[0].titre;
+      const jobId = await enqueue({
+        fields: { Axe: axeTitre, 'Sous-axe (facultatif)': 'Priorité locale' },
+      });
+
+      await worker.generate(jobId);
+
+      const done = await status(jobId);
+      expect(done).toMatchObject({
+        status: 'done',
+        createdPlanId: expect.any(Number),
+        report: {
+          issues: [
+            {
+              kind: 'warning',
+              code: 'FREE_ELECTRIFICATION_AXIS',
+              location: `Action "Action synthétique" > Axe "${axeTitre}"`,
+              message: expect.stringContaining(axeTitre),
+            },
+            {
+              kind: 'warning',
+              code: 'FREE_ELECTRIFICATION_SUB_AXIS',
+              location:
+                'Action "Action synthétique" > Sous-axe "Priorité locale"',
+              message: expect.stringContaining('Priorité locale'),
+            },
+          ],
+        },
+      });
+      const axes = await readAxes();
+      const freeAxe = axes.find(({ nom }) => nom === axeTitre);
+      expect(freeAxe).toMatchObject({
+        parent: done.createdPlanId,
+        referenceCode: null,
+      });
+      expect(axes.find(({ nom }) => nom === 'Priorité locale')).toMatchObject({
+        parent: freeAxe?.id,
+        referenceCode: null,
+      });
+      expect(
+        axes.filter(({ referenceCode }) => referenceCode !== null)
+      ).toHaveLength(1);
+      expect(llm.complete).not.toHaveBeenCalled();
+      expect(llm.chat).not.toHaveBeenCalled();
+    });
+
     test.each([
       {
         reference: 'complément indicateur automatique',
