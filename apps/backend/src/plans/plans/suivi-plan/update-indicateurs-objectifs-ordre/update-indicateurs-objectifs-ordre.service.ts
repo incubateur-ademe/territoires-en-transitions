@@ -7,6 +7,7 @@ import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { and, eq } from 'drizzle-orm';
 import { GetPlanError } from '../../get-plan/get-plan.errors';
+import { GetPlanRepository } from '../../get-plan/get-plan.repository';
 import { GetPlanService } from '../../get-plan/get-plan.service';
 import { planIndicateurOrdreTable } from '../plan-indicateur-ordre.table';
 import { UpdateIndicateursObjectifsOrdreInput } from './update-indicateurs-objectifs-ordre.input';
@@ -20,6 +21,7 @@ export class UpdateIndicateursObjectifsOrdreService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly getPlanService: GetPlanService,
+    private readonly getPlanRepository: GetPlanRepository,
     private readonly permissionService: PermissionService
   ) {}
 
@@ -50,6 +52,8 @@ export class UpdateIndicateursObjectifsOrdreService {
     // un identifiant répété ne garde que sa première place
     const ordre = [...new Set(indicateurIds)];
     const remplace = async (transaction: Transaction) => {
+      // deux remplacements du même plan s'exécutent l'un après l'autre
+      await this.getPlanRepository.lockPlan(planId, 'update', transaction);
       await transaction
         .delete(planIndicateurOrdreTable)
         .where(

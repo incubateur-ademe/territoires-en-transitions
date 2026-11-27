@@ -83,6 +83,11 @@ export const IndicateursObjectifsBloc = ({
     planId,
     ...filters.queryInput,
   });
+  // la présence des réglementaires se lit sans filtre : un filtre ne doit pas
+  // faire disparaître le contrôle « Afficher » ni réinitialiser sa source
+  const { data: indicateursSansFiltre } = useGetIndicateursObjectifs({
+    planId,
+  });
   const { data: personnes } = usePersonneListe();
   const { data: services } = useListServices();
   const { thematiqueListe } = useGetThematiqueOptions();
@@ -109,7 +114,8 @@ export const IndicateursObjectifsBloc = ({
   const blocRef = useRef<HTMLElement>(null);
   const { mutate: exportExcel, isPending: isExportingExcel } =
     useExportIndicateursObjectifs();
-  const { mutate: updateOrdre } = useUpdateIndicateursObjectifsOrdre();
+  const { mutate: updateOrdre, isPending: isOrdreEnregistrement } =
+    useUpdateIndicateursObjectifsOrdre();
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
     useSensor(KeyboardSensor, {
@@ -141,8 +147,9 @@ export const IndicateursObjectifsBloc = ({
   );
   // badges et filtre de source n'ont de sens que pour un plan du dépôt PCAET
   const hasReglementaires =
-    indicateurs?.some(({ sources }) => sources.includes('reglementaire')) ??
-    false;
+    indicateursSansFiltre?.some(({ sources }) =>
+      sources.includes('reglementaire')
+    ) ?? false;
   const filtres = indicateurs
     ? filterIndicateursObjectifs(indicateurs, {
         recherche,
@@ -166,12 +173,16 @@ export const IndicateursObjectifsBloc = ({
 
   // on ne réordonne que la liste entière : un filtre, une recherche ou une
   // source partielle n'en montrerait qu'un sous-ensemble
+  // un réordonnancement à la fois : le suivant part de l'ordre enregistré
   const canReorder =
     hasCollectivitePermission('plans.mutate') &&
+    !isOrdreEnregistrement &&
     filters.filtersCount === 0 &&
     recherche === '' &&
     selectionIds.length === 0 &&
-    (!hasReglementaires || source === 'tous');
+    (!hasReglementaires || source === 'tous') &&
+    // les cartes masquées par « voir plus » ne sont pas dans le tri
+    (isAllVisible || filtres.length <= NB_INDICATEURS_VISIBLES);
 
   const onDragEnd = ({ active, over }: DragEndEvent) => {
     if (!indicateurs || !over || active.id === over.id) {

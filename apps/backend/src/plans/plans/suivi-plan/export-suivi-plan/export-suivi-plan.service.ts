@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
+import { serviceTagTable } from '@tet/backend/collectivites/tags/service-tag.table';
 import { thematiqueTable } from '@tet/backend/shared/thematiques/thematique.table';
 import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/utilisateur-collectivite-access.table';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
@@ -245,6 +246,20 @@ export class ExportSuiviPlanService {
       ).map(({ prenom, nom }) => `${prenom} ${nom}`),
     ];
 
+    const servicesPilotes = filters.servicePiloteIds?.length
+      ? (
+          await this.databaseService.db
+            .select({ nom: serviceTagTable.nom })
+            .from(serviceTagTable)
+            .where(
+              and(
+                inArray(serviceTagTable.id, filters.servicePiloteIds),
+                eq(serviceTagTable.collectiviteId, collectiviteId)
+              )
+            )
+        ).map(({ nom }) => nom)
+      : [];
+
     const filtres: [string, string[]][] = [
       [
         'Personne pilote',
@@ -256,6 +271,7 @@ export class ExportSuiviPlanService {
           ...(filters.noPilote ? [SANS_PILOTE_LABEL] : []),
         ],
       ],
+      ['Direction ou service pilote', servicesPilotes],
       [
         'Statut',
         [

@@ -361,6 +361,18 @@ export const IndicateurObjectifSparkline = ({
           </span>
         </div>
       )}
+      <ul
+        className="sr-only"
+        data-test="plans.suivi.indicateurs-objectifs.resultats-texte"
+      >
+        {serie.map((point) => (
+          <li key={point.x}>
+            {`${Math.floor(point.x)} : ${libelleSerie} ${formatValeur(
+              point.valeur
+            )}`}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };

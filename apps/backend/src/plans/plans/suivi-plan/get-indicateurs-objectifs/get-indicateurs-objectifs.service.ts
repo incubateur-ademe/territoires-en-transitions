@@ -57,9 +57,14 @@ export class GetIndicateursObjectifsService {
           value !== undefined && (!Array.isArray(value) || value.length)
       );
     const hasFiltre = hasFiltreFiche || (input.axeIds?.length ?? 0) > 0;
+    // seuls les axes de ce plan comptent : un identifiant d'un autre plan est ignoré
+    const axeIdsDuPlan = new Set([plan.id, ...plan.axes.map((axe) => axe.id)]);
     const axeIdsScope = input.axeIds?.length
-      ? withSousAxes(plan, input.axeIds)
-      : [plan.id, ...plan.axes.map((axe) => axe.id)];
+      ? withSousAxes(
+          plan,
+          input.axeIds.filter((id) => axeIdsDuPlan.has(id))
+        )
+      : [...axeIdsDuPlan];
     const axeIndicateurIdsResult = hasFiltreFiche
       ? success([])
       : await this.repository.listAxeIndicateurIds(axeIdsScope, tx);
