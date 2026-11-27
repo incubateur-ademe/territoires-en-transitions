@@ -113,7 +113,7 @@ export class ExportSuiviPlanService {
   ): Promise<Result<SuiviPlanExport, GetPlanError>> {
     const result =
       await this.getIndicateursObjectifsService.getIndicateursObjectifs(
-        { planId: input.planId },
+        input,
         context
       );
     if (!result.success) {
@@ -133,31 +133,27 @@ export class ExportSuiviPlanService {
       toLigneIndicateurObjectif(indicateur, horizon, anneeCourante)
     );
 
-    return this.export(
-      { planId: input.planId },
-      'Indicateurs et objectifs',
-      context,
-      (entete) =>
-        buildIndicateursObjectifsXlsx(
-          {
-            ...entete,
-            filtres: [
-              ...entete.filtres,
-              ...(input.source === 'tous'
-                ? []
-                : [
-                    [
-                      'Afficher',
-                      input.source === 'reglementaires'
-                        ? 'Réglementaires'
-                        : "Liés au plan d'action",
-                    ] as [string, string],
-                  ]),
-              ['Horizon', String(horizon)],
-            ],
-          },
-          lignes
-        )
+    return this.export(input, 'Indicateurs et objectifs', context, (entete) =>
+      buildIndicateursObjectifsXlsx(
+        {
+          ...entete,
+          filtres: [
+            ...entete.filtres,
+            ...(input.source === 'tous'
+              ? []
+              : [
+                  [
+                    'Afficher',
+                    input.source === 'reglementaires'
+                      ? 'Réglementaires'
+                      : "Liés au plan d'action",
+                  ] as [string, string],
+                ]),
+            ['Horizon', String(horizon)],
+          ],
+        },
+        lignes
+      )
     );
   }
 

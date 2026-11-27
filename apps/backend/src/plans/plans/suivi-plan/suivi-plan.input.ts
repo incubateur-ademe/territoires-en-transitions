@@ -15,6 +15,7 @@ export const suiviPlanFiltersSchema = listFichesRequestFiltersObjectSchema.pick(
     noReferent: true,
     enCoursSansAvancement: true,
     notModifiedForOverAYear: true,
+    servicePiloteIds: true,
   }
 );
 

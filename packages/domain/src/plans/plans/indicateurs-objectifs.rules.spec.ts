@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { IndicateurPeriodiciteEnum } from '../../indicateurs/indicateur/indicateur-periodicite.schema';
 import {
   buildDepot,
-  compareIndicateursObjectifs,
+  sortIndicateursObjectifs,
   computeAvancementObjectif,
   computeEvolutionObjectif,
   pickDepart,
@@ -215,39 +215,63 @@ describe('getHorizonParDefaut', () => {
   });
 });
 
-describe('compareIndicateursObjectifs', () => {
-  it('place les favoris en tête, puis trie par titre', () => {
+describe('sortIndicateursObjectifs', () => {
+  const indicateur = (
+    id: number,
+    titre: string,
+    {
+      sources = ['plan'],
+      identifiantReferentiel = null,
+    }: {
+      sources?: ('plan' | 'reglementaire')[];
+      identifiantReferentiel?: string | null;
+    } = {}
+  ) => ({ id, titre, sources, identifiantReferentiel });
+
+  it('suit l’ordre choisi par la collectivité, puis trie le reste par titre', () => {
     expect(
-      [
-        { favori: false, titre: 'Émissions' },
-        { favori: true, titre: 'Zéro artificialisation' },
-        { favori: false, titre: 'Air' },
-        { favori: true, titre: 'Bâtiments' },
-      ]
-        .map((i) => ({ ...i, sources: ['plan' as const] }))
-        .toSorted(compareIndicateursObjectifs)
-        .map(({ titre }) => titre)
-    ).toEqual(['Bâtiments', 'Zéro artificialisation', 'Air', 'Émissions']);
+      sortIndicateursObjectifs(
+        [
+          indicateur(1, 'Air'),
+          indicateur(2, 'Zéro artificialisation'),
+          indicateur(3, 'Bâtiments'),
+        ],
+        [2, 1]
+      ).map(({ titre }) => titre)
+    ).toEqual(['Zéro artificialisation', 'Air', 'Bâtiments']);
   });
 
-  it('ouvre la liste sur les réglementaires du dépôt, avant les favoris', () => {
+  it('sans ordre choisi, range les réglementaires dans l’ordre du dépôt avant le reste', () => {
     expect(
-      [
-        { favori: true, titre: 'Bornes', sources: ['plan' as const] },
-        {
-          favori: false,
-          titre: 'Production ENR',
-          sources: ['reglementaire' as const],
-        },
-        {
-          favori: false,
-          titre: 'Émissions GES',
-          sources: ['reglementaire' as const, 'plan' as const],
-        },
-      ]
-        .toSorted(compareIndicateursObjectifs)
-        .map(({ titre }) => titre)
-    ).toEqual(['Émissions GES', 'Production ENR', 'Bornes']);
+      sortIndicateursObjectifs(
+        [
+          indicateur(1, 'Bornes'),
+          indicateur(2, 'Production ENR', {
+            sources: ['reglementaire'],
+            identifiantReferentiel: 'cae_3.a',
+          }),
+          indicateur(3, 'Émissions GES', {
+            sources: ['reglementaire', 'plan'],
+            identifiantReferentiel: 'cae_1.a',
+          }),
+          indicateur(4, 'Ratio ENR', {
+            sources: ['reglementaire'],
+            identifiantReferentiel: 'cae_3.b',
+          }),
+        ],
+        [],
+        ['cae_1.a', 'cae_3.a', 'cae_3.b']
+      ).map(({ titre }) => titre)
+    ).toEqual(['Émissions GES', 'Production ENR', 'Ratio ENR', 'Bornes']);
+  });
+
+  it('ne retient pas les favoris en tête', () => {
+    expect(
+      sortIndicateursObjectifs([
+        { ...indicateur(1, 'Bornes'), favori: true },
+        { ...indicateur(2, 'Air'), favori: false },
+      ]).map(({ titre }) => titre)
+    ).toEqual(['Air', 'Bornes']);
   });
 });
 

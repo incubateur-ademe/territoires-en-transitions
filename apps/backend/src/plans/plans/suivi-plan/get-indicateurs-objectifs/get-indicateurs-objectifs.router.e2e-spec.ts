@@ -122,7 +122,7 @@ describe('Suivi du plan : indicateurs et objectifs', () => {
       .createCaller({ user })
       .plans.suivi.getIndicateursObjectifs({ planId });
 
-  it('liste les indicateurs des fiches et des axes, une carte par indicateur, avec ses résultats et ses objectifs, favoris en tête', async () => {
+  it('liste les indicateurs des fiches et des axes, une carte par indicateur, avec ses résultats et ses objectifs, par ordre alphabétique', async () => {
     const { planId, axeId } = await createPlan();
     const indicateurFiche = await createIndicateur('B - émissions', {
       valeurs: [
@@ -155,15 +155,8 @@ describe('Suivi du plan : indicateurs et objectifs', () => {
       sources: ['plan'],
       departDepot: null,
     };
+    // sans ordre choisi : alphabétique, le favori n'est plus remonté en tête
     expect(indicateurs).toEqual([
-      {
-        ...definition,
-        id: indicateurFavori,
-        titre: 'Z - favori',
-        favori: true,
-        resultats: null,
-        objectifs: [],
-      },
       {
         ...definition,
         id: indicateurAxe,
@@ -189,7 +182,46 @@ describe('Suivi du plan : indicateurs et objectifs', () => {
           { annee: 2050, valeur: 0 },
         ],
       },
+      {
+        ...definition,
+        id: indicateurFavori,
+        titre: 'Z - favori',
+        favori: true,
+        resultats: null,
+        objectifs: [],
+      },
     ]);
+  });
+
+  it('restreint les indicateurs liés à un axe aux axes choisis', async () => {
+    const { planId, axeId } = await createPlan();
+    const autreAxe = await adminCaller().plans.axes.create({
+      nom: 'Autre axe',
+      collectiviteId,
+      planId,
+      parent: planId,
+    });
+    const indicateurAxe = await createIndicateur('A - sur l’axe');
+    const indicateurAutreAxe = await createIndicateur('B - sur un autre axe');
+    await db.db.insert(axeIndicateurTable).values([
+      { axeId, indicateurId: indicateurAxe, createdBy: admin.id },
+      {
+        axeId: autreAxe.id,
+        indicateurId: indicateurAutreAxe,
+        createdBy: admin.id,
+      },
+    ]);
+
+    const filtres = (axeIds: number[]) =>
+      router
+        .createCaller({ user: admin })
+        .plans.suivi.getIndicateursObjectifs({ planId, axeIds })
+        .then((indicateurs) => indicateurs.map(({ id }) => id));
+
+    expect(await filtres([axeId])).toEqual([indicateurAxe]);
+    expect(await filtres([])).toEqual(
+      expect.arrayContaining([indicateurAxe, indicateurAutreAxe])
+    );
   });
 
   it('ignore les indicateurs des seules fiches supprimées ou restreintes invisibles', async () => {
@@ -438,6 +470,27 @@ describe('Suivi du plan : indicateurs et objectifs', () => {
       expect(
         (await getIndicateursObjectifs(lecteur, planId)).map(({ id }) => id)
       ).not.toContain(ids['cae_2.a']);
+    });
+
+    it('liste cae_3.b, hors dépôt, sans objectif, après les réglementaires du dépôt', async () => {
+      const { planId, ids, lecteur } = await createPlanAvecDepot();
+      const ratioId = (await getIndicateurIds(['cae_3.b']))['cae_3.b'];
+
+      const indicateurs = await getIndicateursObjectifs(lecteur, planId);
+      const ordre = indicateurs.map(({ id }) => id);
+
+      expect(ordre.indexOf(ids['cae_1.a'])).toBeLessThan(
+        ordre.indexOf(ids['cae_4.a'])
+      );
+      expect(ordre.indexOf(ids['cae_4.a'])).toBeLessThan(
+        ordre.indexOf(ratioId)
+      );
+      expect(summarize(indicateurs).find(({ id }) => id === ratioId)).toEqual({
+        id: ratioId,
+        sources: ['reglementaire'],
+        departDepot: null,
+        objectifs: [],
+      });
     });
 
     it('fusionne un réglementaire lié au plan en une seule carte, objectifs du dépôt en priorité', async () => {
