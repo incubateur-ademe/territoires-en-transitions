@@ -173,6 +173,7 @@ export class AiImportFixture {
           data = this.status;
           break;
         case 'findPreviousAiImport':
+        case 'findAbandonedAiImport':
           data = null;
           break;
         case 'listRecentAiImports': {
