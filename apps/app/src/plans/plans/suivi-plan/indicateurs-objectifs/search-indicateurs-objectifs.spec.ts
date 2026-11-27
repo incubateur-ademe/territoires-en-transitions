@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import {
   buildSearchIndicateursSuggestions,
+  buildSearchSuggestions,
   filterIndicateursObjectifs,
+  parseSuggestionFiltre,
 } from './search-indicateurs-objectifs';
 
 const indicateurs = [
@@ -95,5 +97,34 @@ describe('buildSearchIndicateursSuggestions', () => {
     expect(group?.options).toEqual([
       expect.objectContaining({ id: '1', badge: 'Favori' }),
     ]);
+  });
+});
+
+describe('buildSearchSuggestions', () => {
+  const sources = {
+    indicateurs: [],
+    axes: [{ id: 7, nom: 'Mobilités' }],
+    pilotes: [{ id: 'u-1', nom: 'Marie Durand' }],
+    services: [{ id: '3', nom: 'Énergie' }],
+    thematiques: [{ id: '5', nom: 'Bâtiment' }],
+  };
+  const optionsPour = (query: string) =>
+    buildSearchSuggestions(sources)(query).flatMap((group) =>
+      group.options.map((option) => option.id)
+    );
+
+  it('propose chaque critère de filtre avec son préfixe', () => {
+    expect(optionsPour('mobil')).toEqual(['axe:7']);
+    expect(optionsPour('durand')).toEqual(['pilote:u-1']);
+    expect(optionsPour('énergie')).toEqual(['service:3']);
+    expect(optionsPour('bâtiment')).toEqual(['thematique:5']);
+  });
+
+  it('lit le préfixe et la valeur d’une suggestion de filtre', () => {
+    expect(parseSuggestionFiltre('axe:7')).toEqual({
+      prefixe: 'axe',
+      valeur: '7',
+    });
+    expect(parseSuggestionFiltre('12')).toBeNull();
   });
 });

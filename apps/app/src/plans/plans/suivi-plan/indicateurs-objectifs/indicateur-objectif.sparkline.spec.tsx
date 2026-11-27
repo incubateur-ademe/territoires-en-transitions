@@ -1,5 +1,5 @@
-import { render } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
 import { IndicateurObjectifSparkline } from './indicateur-objectif.sparkline';
 
 const VIEWBOX_WIDTH = 320;
@@ -15,6 +15,7 @@ const renderTicks = (
       cible={objectifs.at(-1) ?? null}
       isOpenData={false}
       formatValeur={String}
+      libelleSerie="Résultats de la collectivité"
     />
   );
   return [...container.querySelectorAll('text')]
@@ -68,6 +69,7 @@ describe('IndicateurObjectifSparkline', () => {
         depart={{ annee: 2015, valeur: 152 }}
         isOpenData={false}
         formatValeur={String}
+        libelleSerie="Résultats de la collectivité"
       />
     );
 
@@ -79,5 +81,61 @@ describe('IndicateurObjectifSparkline', () => {
       (text) => text.textContent === '2015'
     );
     expect(anneeDepart?.getAttribute('class')).toContain('fill-new-1');
+  });
+});
+
+describe('IndicateurObjectifSparkline : survol et valeur du premier point', () => {
+  const rendreAvecSurvol = () => {
+    const { container } = render(
+      <IndicateurObjectifSparkline
+        resultats={[
+          { dateValeur: '2021-01-01', valeur: 133 },
+          { dateValeur: '2023-01-01', valeur: 100 },
+        ]}
+        objectifs={[]}
+        cible={null}
+        isOpenData={false}
+        formatValeur={String}
+        libelleSerie="Résultats de la collectivité"
+      />
+    );
+    const svg = container.querySelector('svg') as SVGSVGElement;
+    vi.spyOn(svg, 'getBoundingClientRect').mockReturnValue({
+      left: 0,
+      top: 0,
+      width: VIEWBOX_WIDTH,
+      height: 120,
+      right: VIEWBOX_WIDTH,
+      bottom: 120,
+      x: 0,
+      y: 0,
+      toJSON: () => ({}),
+    });
+    return { container, svg };
+  };
+
+  it('affiche la valeur du premier point', () => {
+    const { container } = rendreAvecSurvol();
+    expect(
+      container.querySelector(
+        '[data-test="plans.suivi.indicateurs-objectifs.valeur-depart"]'
+      )?.textContent
+    ).toBe('133');
+  });
+
+  it('montre l’année et la valeur du point survolé, puis les efface en quittant', () => {
+    const { container, svg } = rendreAvecSurvol();
+    expect(container.querySelector('[data-test$="survol"]')).toBeNull();
+
+    // le premier point est à l'abscisse 30 du dessin, ici 1 pour 1
+    fireEvent.pointerMove(svg, { clientX: 30 });
+    expect(container.querySelector('[data-test$="survol"]')).not.toBeNull();
+    expect(screen.getAllByText('2021').length).toBeGreaterThan(0);
+    expect(
+      screen.getByText('Résultats de la collectivité', { exact: false })
+    ).toBeTruthy();
+
+    fireEvent.pointerLeave(svg);
+    expect(container.querySelector('[data-test$="survol"]')).toBeNull();
   });
 });

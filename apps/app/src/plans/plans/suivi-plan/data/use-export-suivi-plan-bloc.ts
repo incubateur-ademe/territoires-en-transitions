@@ -9,7 +9,7 @@ export type SuiviPlanBlocExporte =
   | 'avancement-par-axe'
   | 'evolution-statuts';
 
-type ExportSuiviPlanBlocInput = {
+export type ExportSuiviPlanBlocInput = {
   planId: number;
   thematiqueIds?: number[];
   axeIds?: number[];
@@ -27,6 +27,7 @@ type ExportSuiviPlanBlocInput = {
     | 'noReferent'
     | 'enCoursSansAvancement'
     | 'notModifiedForOverAYear'
+    | 'servicePiloteIds'
   >;
   dateDebut?: string;
   dateFin?: string;

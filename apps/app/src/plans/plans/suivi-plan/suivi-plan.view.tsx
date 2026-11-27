@@ -37,6 +37,7 @@ export const SuiviPlanView = ({
         <IndicateursObjectifsBloc
           collectiviteId={collectiviteId}
           planId={planId}
+          axes={axes}
         />
       )}
       <FaireAvancerLePlanBloc collectiviteId={collectiviteId} planId={planId} />

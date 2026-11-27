@@ -1,10 +1,15 @@
 'use client';
 
+import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
+import { usePersonneListe } from '@/app/collectivites/tags/use-list-personnes';
+import { useListServices } from '@/app/collectivites/tags/use-list-services';
 import { appLabels } from '@/app/labels/catalog';
+import { useGetThematiqueOptions } from '@/app/shared/thematiques/use-get-thematique-and-sous-thematique-options';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import {
   getHorizonParDefaut,
   INDICATEURS_OBJECTIFS_HORIZONS,
+  PlanNode,
 } from '@tet/domain/plans';
 import {
   Alert,
@@ -19,17 +24,39 @@ import {
   parseAsStringLiteral,
   useQueryState,
 } from 'nuqs';
+import {
+  closestCenter,
+  DndContext,
+  type DragEndEvent,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  rectSortingStrategy,
+  SortableContext,
+  sortableKeyboardCoordinates,
+} from '@dnd-kit/sortable';
 import { useMemo, useRef, useState } from 'react';
+import { useUpdateIndicateursObjectifsOrdre } from '../data/use-update-indicateurs-objectifs-ordre';
 import { useExportIndicateursObjectifs } from '../data/use-export-indicateurs-objectifs';
 import { useGetIndicateursObjectifs } from '../data/use-get-indicateurs-objectifs';
 import { ExportBlocButton } from '../export-bloc.button';
 import { SuiviPlanBloc } from '../suivi-plan.bloc';
+import { SuiviPlanFilterBadges } from '../suivi-plan-filter-badges';
+import { SuiviPlanFiltersButton } from '../suivi-plan-filters.button';
+import { useSuiviPlanBlocFilters } from '../use-suivi-plan-bloc-filters';
 import { IndicateurObjectifCard } from './indicateur-objectif.card';
+import { IndicateurObjectifSortable } from './indicateur-objectif.sortable';
 import {
-  buildSearchIndicateursSuggestions,
+  buildSearchSuggestions,
   filterIndicateursObjectifs,
+  FILTRE_PREFIXES,
   INDICATEURS_OBJECTIFS_FILTRES_SOURCE,
   IndicateursObjectifsFiltreSource,
+  parseSuggestionFiltre,
 } from './search-indicateurs-objectifs';
 
 const NB_INDICATEURS_VISIBLES = 6;
@@ -40,16 +67,25 @@ const FILTRE_SOURCE_LABELS: Record<IndicateursObjectifsFiltreSource, string> = {
   plan: appLabels.indicateursObjectifsAfficherPlan,
 };
 
+const uniques = (values: number[]) => [...new Set(values)];
+
 export const IndicateursObjectifsBloc = ({
   collectiviteId,
   planId,
+  axes,
 }: {
   collectiviteId: number;
   planId: number;
+  axes: PlanNode[];
 }) => {
+  const filters = useSuiviPlanBlocFilters('indicateursObjectifsFiltres');
   const { data: indicateurs, isError } = useGetIndicateursObjectifs({
     planId,
+    ...filters.queryInput,
   });
+  const { data: personnes } = usePersonneListe();
+  const { data: services } = useListServices();
+  const { thematiqueListe } = useGetThematiqueOptions();
   const { hasCollectivitePermission } = useCurrentCollectivite();
   const canMutateValeurs = hasCollectivitePermission(
     'indicateurs.valeurs.mutate'
@@ -73,11 +109,35 @@ export const IndicateursObjectifsBloc = ({
   const blocRef = useRef<HTMLElement>(null);
   const { mutate: exportExcel, isPending: isExportingExcel } =
     useExportIndicateursObjectifs();
+  const { mutate: updateOrdre } = useUpdateIndicateursObjectifsOrdre();
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   const getSuggestions = useMemo(
     () =>
-      indicateurs ? buildSearchIndicateursSuggestions(indicateurs) : undefined,
-    [indicateurs]
+      indicateurs
+        ? buildSearchSuggestions({
+            indicateurs,
+            axes,
+            pilotes: (personnes ?? []).map((personne) => ({
+              id: getPersonneStringId(personne),
+              nom: personne.nom,
+            })),
+            services: (services ?? []).map(({ id, nom }) => ({
+              id: String(id),
+              nom,
+            })),
+            thematiques: thematiqueListe.map(({ id, nom }) => ({
+              id: String(id),
+              nom,
+            })),
+          })
+        : undefined,
+    [indicateurs, axes, personnes, services, thematiqueListe]
   );
   // badges et filtre de source n'ont de sens que pour un plan du dépôt PCAET
   const hasReglementaires =
@@ -104,17 +164,74 @@ export const IndicateursObjectifsBloc = ({
       ids.includes(id) ? ids.filter((i) => i !== id) : [...ids, id]
     );
 
+  // on ne réordonne que la liste entière : un filtre, une recherche ou une
+  // source partielle n'en montrerait qu'un sous-ensemble
+  const canReorder =
+    hasCollectivitePermission('plans.mutate') &&
+    filters.filtersCount === 0 &&
+    recherche === '' &&
+    selectionIds.length === 0 &&
+    (!hasReglementaires || source === 'tous');
+
+  const onDragEnd = ({ active, over }: DragEndEvent) => {
+    if (!indicateurs || !over || active.id === over.id) {
+      return;
+    }
+    const ids = indicateurs.map(({ id }) => id);
+    const nouvelOrdre = arrayMove(
+      ids,
+      ids.indexOf(Number(active.id)),
+      ids.indexOf(Number(over.id))
+    );
+    updateOrdre({ planId, indicateurIds: nouvelOrdre });
+  };
+
+  // un critère cherché pose ou retire le filtre correspondant du bloc
+  const toggleFiltre = (id: string, pose: boolean) => {
+    const filtre = parseSuggestionFiltre(id);
+    if (!filtre) {
+      return;
+    }
+    const { prefixe, valeur } = filtre;
+    const ajoute = <T,>(values: T[], value: T) =>
+      pose
+        ? (uniques([...values, value] as never[]) as T[])
+        : values.filter((item) => item !== value);
+    if (prefixe === FILTRE_PREFIXES.axe) {
+      filters.setAxeIds(ajoute(filters.axeIds, Number(valeur)));
+    } else if (prefixe === FILTRE_PREFIXES.service) {
+      filters.setServicePiloteIds(
+        ajoute(filters.servicePiloteIds, Number(valeur))
+      );
+    } else if (prefixe === FILTRE_PREFIXES.thematique) {
+      filters.setThematiqueIds(ajoute(filters.thematiqueIds, Number(valeur)));
+    } else if (prefixe === FILTRE_PREFIXES.pilote) {
+      filters.setFormFilters({
+        ...filters.formFilters,
+        pilotes: ajoute(filters.formFilters.pilotes ?? [], valeur),
+      });
+    }
+    setRecherche('');
+  };
+
   return (
     <SuiviPlanBloc
       titre={appLabels.indicateursObjectifsTitre}
       dataTest="plans.suivi.indicateurs-objectifs"
       ref={blocRef}
+      filterBadges={<SuiviPlanFilterBadges filters={filters} axes={axes} />}
       actions={
         <>
+          <SuiviPlanFiltersButton
+            filters={filters}
+            axes={axes}
+            withServicesPilotes
+            dataTest="plans.suivi.indicateurs-objectifs.filtres"
+          />
           <div className="flex items-center gap-2 text-sm text-grey-8">
             {appLabels.indicateursObjectifsHorizon}
             <ButtonGroup
-              size="xs"
+              size="sm"
               label={appLabels.indicateursObjectifsHorizon}
               activeButtonId={String(horizon)}
               buttons={INDICATEURS_OBJECTIFS_HORIZONS.map((annee) => ({
@@ -130,6 +247,7 @@ export const IndicateursObjectifsBloc = ({
             fileName={appLabels.indicateursObjectifsTitre}
             onExportExcel={() =>
               exportExcel({
+                ...filters.queryInput,
                 planId,
                 horizon,
                 source: hasReglementaires ? source : 'tous',
@@ -173,8 +291,16 @@ export const IndicateursObjectifsBloc = ({
               isOptionSelected={(option) =>
                 selectionIds.includes(Number(option.id))
               }
-              onSelectOption={(option) => toggleSelection(Number(option.id))}
-              onDeselectOption={(option) => toggleSelection(Number(option.id))}
+              onSelectOption={(option) =>
+                parseSuggestionFiltre(option.id)
+                  ? toggleFiltre(option.id, true)
+                  : toggleSelection(Number(option.id))
+              }
+              onDeselectOption={(option) =>
+                parseSuggestionFiltre(option.id)
+                  ? toggleFiltre(option.id, false)
+                  : toggleSelection(Number(option.id))
+              }
               selections={selections}
               onRemoveSelection={(id) => toggleSelection(Number(id))}
               fieldClassName="w-full sm:w-[28rem]"
@@ -208,18 +334,36 @@ export const IndicateursObjectifsBloc = ({
               {appLabels.indicateursObjectifsAucunRecherche}
             </p>
           ) : (
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-              {visibles.map((indicateur) => (
-                <IndicateurObjectifCard
-                  key={indicateur.id}
-                  collectiviteId={collectiviteId}
-                  indicateur={indicateur}
-                  horizon={horizon}
-                  canMutateValeurs={canMutateValeurs}
-                  showSources={hasReglementaires}
-                />
-              ))}
-            </div>
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={onDragEnd}
+            >
+              <SortableContext
+                items={visibles.map(({ id }) => id)}
+                strategy={rectSortingStrategy}
+              >
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+                  {visibles.map((indicateur) => (
+                    <IndicateurObjectifSortable
+                      key={indicateur.id}
+                      id={indicateur.id}
+                      isEnabled={canReorder}
+                      renderCard={(poignee) => (
+                        <IndicateurObjectifCard
+                          collectiviteId={collectiviteId}
+                          indicateur={indicateur}
+                          horizon={horizon}
+                          canMutateValeurs={canMutateValeurs}
+                          showSources={hasReglementaires}
+                          poignee={poignee}
+                        />
+                      )}
+                    />
+                  ))}
+                </div>
+              </SortableContext>
+            </DndContext>
           )}
 
           {nbMasques > 0 && (

@@ -1,5 +1,6 @@
 import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
 import { usePersonneListe } from '@/app/collectivites/tags/use-list-personnes';
+import { useListServices } from '@/app/collectivites/tags/use-list-services';
 import { appLabels } from '@/app/labels/catalog';
 import {
   PlanFilterKey,
@@ -15,11 +16,14 @@ export const SuiviPlanFiltersButton = ({
   filters,
   hiddenKeys,
   axes,
+  withServicesPilotes = false,
   dataTest,
 }: {
   filters: ReturnType<typeof useSuiviPlanBlocFilters>;
   hiddenKeys?: PlanFilterKey[];
   axes?: PlanNode[];
+  /** Le filtre par direction ou service pilote, propre au bloc des indicateurs */
+  withServicesPilotes?: boolean;
   dataTest?: string;
 }) => {
   const { data: personnes } = usePersonneListe();
@@ -28,6 +32,36 @@ export const SuiviPlanFiltersButton = ({
       value: getPersonneStringId(personne),
       label: personne.nom,
     })) ?? [];
+  const { data: services } = useListServices();
+
+  const axesField = axes && (
+    <Field title={appLabels.suiviPlanAxe}>
+      <SelectFilter
+        values={filters.axeIds.map(String)}
+        options={axes.map((axe) => ({
+          value: String(axe.id),
+          label: `${' '.repeat((axe.depth - 1) * 4)}${
+            axe.nom || appLabels.sansTitre
+          }`,
+        }))}
+        onChange={({ values }) =>
+          filters.setAxeIds(Array.isArray(values) ? values.map(Number) : [])
+        }
+        disabled={axes.length === 0}
+        isSearcheable
+        dataTest={dataTest && `${dataTest}.axes`}
+      />
+    </Field>
+  );
+  const thematiquesField = (
+    <Field title={appLabels.suiviPlanThematiques}>
+      <ThematiquesDropdown
+        values={filters.thematiqueIds}
+        onChange={filters.setThematiqueIds}
+        dataTest={dataTest && `${dataTest}.thematiques`}
+      />
+    </Field>
+  );
 
   return (
     <FiltersGenericButtonMenu
@@ -37,40 +71,50 @@ export const SuiviPlanFiltersButton = ({
     >
       <div className="flex flex-col gap-4">
         <Alert title={appLabels.suiviPlanFiltresBloc} />
-        {axes && (
-          <Field title={appLabels.suiviPlanAxe}>
-            <SelectFilter
-              values={filters.axeIds.map(String)}
-              options={axes.map((axe) => ({
-                value: String(axe.id),
-                label: `${'\u00a0'.repeat((axe.depth - 1) * 4)}${
-                  axe.nom || appLabels.sansTitre
-                }`,
-              }))}
-              onChange={({ values }) =>
-                filters.setAxeIds(
-                  Array.isArray(values) ? values.map(Number) : []
-                )
-              }
-              disabled={axes.length === 0}
-              isSearcheable
-              dataTest={dataTest && `${dataTest}.axes`}
+        {axesField}
+        {withServicesPilotes ? (
+          <>
+            <PlanFiltersFields
+              filters={filters.formFilters}
+              setFilters={filters.setFormFilters}
+              personneOptions={personneOptions}
+              hiddenKeys={[
+                'statuts',
+                'referents',
+                'priorites',
+                'suivi',
+                ...(hiddenKeys ?? []),
+              ]}
             />
-          </Field>
+            <Field title={appLabels.directionOuServicePilote()}>
+              <SelectFilter
+                values={filters.servicePiloteIds.map(String)}
+                options={(services ?? []).map((service) => ({
+                  value: String(service.id),
+                  label: service.nom,
+                }))}
+                onChange={({ values }) =>
+                  filters.setServicePiloteIds(
+                    Array.isArray(values) ? values.map(Number) : []
+                  )
+                }
+                isSearcheable
+                dataTest={dataTest && `${dataTest}.services`}
+              />
+            </Field>
+            {thematiquesField}
+          </>
+        ) : (
+          <>
+            {thematiquesField}
+            <PlanFiltersFields
+              filters={filters.formFilters}
+              setFilters={filters.setFormFilters}
+              personneOptions={personneOptions}
+              hiddenKeys={hiddenKeys}
+            />
+          </>
         )}
-        <Field title={appLabels.suiviPlanThematiques}>
-          <ThematiquesDropdown
-            values={filters.thematiqueIds}
-            onChange={filters.setThematiqueIds}
-            dataTest={dataTest && `${dataTest}.thematiques`}
-          />
-        </Field>
-        <PlanFiltersFields
-          filters={filters.formFilters}
-          setFilters={filters.setFormFilters}
-          personneOptions={personneOptions}
-          hiddenKeys={hiddenKeys}
-        />
         <Button
           variant="underlined"
           size="xs"
