@@ -18,9 +18,40 @@ comment on table public.plan_indicateur_ordre is
   'Ordre des indicateurs dans le suivi d''un plan, choisi par la collectivité';
 
 alter table public.plan_indicateur_ordre enable row level security;
+
+-- la ligne doit viser un plan de la même collectivité que celle portée par la
+-- ligne : l'écriture s'appuie sur la collectivité du plan, pas sur la valeur saisie
 create policy allow_read on public.plan_indicateur_ordre for select using (is_authenticated());
-create policy allow_insert on public.plan_indicateur_ordre for insert with check (have_edition_acces(collectivite_id));
-create policy allow_update on public.plan_indicateur_ordre for update using (have_edition_acces(collectivite_id));
-create policy allow_delete on public.plan_indicateur_ordre for delete using (have_edition_acces(collectivite_id));
+create policy allow_insert on public.plan_indicateur_ordre for insert with check (
+  have_edition_acces(collectivite_id)
+  and exists (
+    select 1 from public.axe a
+    where a.id = public.plan_indicateur_ordre.plan_id
+      and a.collectivite_id = public.plan_indicateur_ordre.collectivite_id
+  )
+);
+create policy allow_update on public.plan_indicateur_ordre for update using (
+  have_edition_acces(collectivite_id)
+  and exists (
+    select 1 from public.axe a
+    where a.id = public.plan_indicateur_ordre.plan_id
+      and a.collectivite_id = public.plan_indicateur_ordre.collectivite_id
+  )
+) with check (
+  have_edition_acces(collectivite_id)
+  and exists (
+    select 1 from public.axe a
+    where a.id = public.plan_indicateur_ordre.plan_id
+      and a.collectivite_id = public.plan_indicateur_ordre.collectivite_id
+  )
+);
+create policy allow_delete on public.plan_indicateur_ordre for delete using (
+  have_edition_acces(collectivite_id)
+  and exists (
+    select 1 from public.axe a
+    where a.id = public.plan_indicateur_ordre.plan_id
+      and a.collectivite_id = public.plan_indicateur_ordre.collectivite_id
+  )
+);
 
 COMMIT;

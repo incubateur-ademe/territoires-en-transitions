@@ -31,10 +31,14 @@ export const useUpdateIndicateursObjectifsOrdre = () => {
 
   return useMutation(
     trpc.plans.suivi.updateIndicateursObjectifsOrdre.mutationOptions({
-      onMutate: async ({ indicateurIds }) => {
-        await queryClient.cancelQueries({ queryKey });
+      onMutate: async ({ planId, indicateurIds }) => {
+        // seul le cache de ce plan est réordonné
+        const planQueryKey = trpc.plans.suivi.getIndicateursObjectifs.queryKey({
+          planId,
+        });
+        await queryClient.cancelQueries({ queryKey: planQueryKey });
         queryClient.setQueriesData<IndicateurOrdonne[]>(
-          { queryKey },
+          { queryKey: planQueryKey },
           (indicateurs) => reordonner(indicateurs, indicateurIds)
         );
       },

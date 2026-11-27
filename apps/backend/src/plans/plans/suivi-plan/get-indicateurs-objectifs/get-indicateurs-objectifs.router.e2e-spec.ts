@@ -222,6 +222,16 @@ describe('Suivi du plan : indicateurs et objectifs', () => {
     expect(await filtres([])).toEqual(
       expect.arrayContaining([indicateurAxe, indicateurAutreAxe])
     );
+
+    // un axe d'un autre plan ne donne pas accès à ses indicateurs
+    const autrePlan = await createPlan();
+    const indicateurAutrePlan = await createIndicateur('C - autre plan');
+    await db.db.insert(axeIndicateurTable).values({
+      axeId: autrePlan.axeId,
+      indicateurId: indicateurAutrePlan,
+      createdBy: admin.id,
+    });
+    expect(await filtres([autrePlan.axeId])).toEqual([]);
   });
 
   it('ignore les indicateurs des seules fiches supprimées ou restreintes invisibles', async () => {

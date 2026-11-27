@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { IndicateurObjectifSparkline } from './indicateur-objectif.sparkline';
 
@@ -84,6 +84,14 @@ describe('IndicateurObjectifSparkline', () => {
   });
 });
 
+// jsdom n'a pas PointerEvent : on envoie un événement pointeur avec sa position
+const moverCurseur = (svg: SVGSVGElement, clientX: number) =>
+  act(() => {
+    svg.dispatchEvent(
+      new MouseEvent('pointermove', { clientX, bubbles: true })
+    );
+  });
+
 describe('IndicateurObjectifSparkline : survol et valeur du premier point', () => {
   const rendreAvecSurvol = () => {
     const { container } = render(
@@ -128,14 +136,29 @@ describe('IndicateurObjectifSparkline : survol et valeur du premier point', () =
     expect(container.querySelector('[data-test$="survol"]')).toBeNull();
 
     // le premier point est à l'abscisse 30 du dessin, ici 1 pour 1
-    fireEvent.pointerMove(svg, { clientX: 30 });
+    moverCurseur(svg, 30);
     expect(container.querySelector('[data-test$="survol"]')).not.toBeNull();
     expect(screen.getAllByText('2021').length).toBeGreaterThan(0);
     expect(
-      screen.getByText('Résultats de la collectivité', { exact: false })
+      container.querySelector('[data-test$="survol"]')?.parentElement
     ).toBeTruthy();
 
     fireEvent.pointerLeave(svg);
     expect(container.querySelector('[data-test$="survol"]')).toBeNull();
+  });
+
+  it('désigne le point le plus proche du curseur, année, série et valeur', () => {
+    const { container, svg } = rendreAvecSurvol();
+
+    // le second résultat (2023) est à l'abscisse 292 du dessin
+    moverCurseur(svg, 292);
+    const infobulle = container.querySelector(
+      '.pointer-events-none'
+    ) as HTMLElement;
+
+    expect(infobulle.textContent).toContain('2023');
+    expect(infobulle.textContent).toContain('Résultats de la collectivité');
+    expect(infobulle.textContent).toContain('100');
+    expect(infobulle.textContent).not.toContain('133');
   });
 });
