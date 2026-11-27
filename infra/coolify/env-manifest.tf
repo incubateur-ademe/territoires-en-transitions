@@ -124,9 +124,15 @@ locals {
 
         SUPABASE_DATABASE_URL           = { secret = "supabase-database-url" }
         SUPABASE_DATABASE_SSL_ROOT_CERT = { secret = "postgres-tls-ca", multiline = true }
-        SUPABASE_JWT_SECRET             = { secret = "supabase-jwt-secret" }
-        SUPABASE_SERVICE_ROLE_KEY       = { secret = "supabase-service-role-key" }
-        SUPABASE_ANON_KEY               = { secret = "supabase-anon-key" }
+
+        # Base de stats du tier data, lue par son endpoint public (ACL sur l'IP
+        # du serveur) : outputs backend_reader_public_connection_uri et pg_tls_ca
+        # de infra/data, déposés à la main (autre stack, autre Team Coolify).
+        ANALYTICS_DATABASE_URL           = { secret = "analytics-database-url" }
+        ANALYTICS_DATABASE_SSL_ROOT_CERT = { secret = "analytics-database-tls-ca", multiline = true }
+        SUPABASE_JWT_SECRET              = { secret = "supabase-jwt-secret" }
+        SUPABASE_SERVICE_ROLE_KEY        = { secret = "supabase-service-role-key" }
+        SUPABASE_ANON_KEY                = { secret = "supabase-anon-key" }
 
         # Migrations Sqitch au démarrage du conteneur (apps/backend/docker-entrypoint.sh).
         RUN_MIGRATIONS = { value = "true" }

@@ -1,6 +1,7 @@
 import { Injectable, Logger, OnApplicationShutdown } from '@nestjs/common';
 import { Pool } from 'pg';
 import ConfigurationService from '../config/configuration.service';
+import { buildDatabaseSsl } from './build-database-ssl';
 import {
   PgInvalidTransactionState,
   PgOperatorIntervention,
@@ -30,7 +31,8 @@ export type AnalyticsQueryResult = {
 
 /**
  * Connexion à la base analytique (miroir `prod` + statistiques `public`),
- * distincte de la base applicative. Elle n'est ouverte que si
+ * distincte de la base applicative, lue par le serveur MCP et par le site
+ * (chiffres de la page d'accueil). Elle n'est ouverte que si
  * `ANALYTICS_DATABASE_URL` est renseignée : sans elle, les requêtes échouent
  * avec `ANALYTICS_DATABASE_NOT_CONFIGURED` et le backend démarre quand même.
  *
@@ -57,6 +59,12 @@ export class AnalyticsDatabaseService implements OnApplicationShutdown {
 
     this.pool = new Pool({
       connectionString: url,
+      ssl: buildDatabaseSsl({
+        url,
+        ca: this.configService.get('ANALYTICS_DATABASE_SSL_ROOT_CERT'),
+        urlName: 'ANALYTICS_DATABASE_URL',
+        caName: 'ANALYTICS_DATABASE_SSL_ROOT_CERT',
+      }),
       application_name: 'Backend MCP analytics',
       options: '-c default_transaction_read_only=on',
       max: 3,
