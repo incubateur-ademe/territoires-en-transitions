@@ -17,6 +17,10 @@ import {
   type SuiviPlanBlocInput,
 } from '../suivi-plan.input';
 import {
+  exportIndicateursObjectifsInputSchema,
+  type ExportIndicateursObjectifsInput,
+} from './export-indicateurs-objectifs.input';
+import {
   ExportSuiviPlanService,
   SuiviPlanExport,
 } from './export-suivi-plan.service';
@@ -63,6 +67,20 @@ export class ExportSuiviPlanController {
     @Res() res: Response
   ) {
     const result = await this.service.exportEvolutionStatuts(input, { user });
+    this.send(res, this.getResultDataOrThrowError(result));
+  }
+
+  @Post('indicateurs-objectifs/export')
+  @ApiUsage([ApiUsageEnum.APP])
+  async exportIndicateursObjectifs(
+    @Body(new ZodValidationPipe(exportIndicateursObjectifsInputSchema))
+    input: ExportIndicateursObjectifsInput,
+    @TokenInfo() user: AuthenticatedUser,
+    @Res() res: Response
+  ) {
+    const result = await this.service.exportIndicateursObjectifs(input, {
+      user,
+    });
     this.send(res, this.getResultDataOrThrowError(result));
   }
 

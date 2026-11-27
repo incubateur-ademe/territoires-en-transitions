@@ -19,8 +19,10 @@ import {
   parseAsStringLiteral,
   useQueryState,
 } from 'nuqs';
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
+import { useExportIndicateursObjectifs } from '../data/use-export-indicateurs-objectifs';
 import { useGetIndicateursObjectifs } from '../data/use-get-indicateurs-objectifs';
+import { ExportBlocButton } from '../export-bloc.button';
 import { SuiviPlanBloc } from '../suivi-plan.bloc';
 import { IndicateurObjectifCard } from './indicateur-objectif.card';
 import {
@@ -68,6 +70,9 @@ export const IndicateursObjectifsBloc = ({
   const [recherche, setRecherche] = useState('');
   const [selectionIds, setSelectionIds] = useState<number[]>([]);
   const [isAllVisible, setIsAllVisible] = useState(false);
+  const blocRef = useRef<HTMLElement>(null);
+  const { mutate: exportExcel, isPending: isExportingExcel } =
+    useExportIndicateursObjectifs();
 
   const getSuggestions = useMemo(
     () =>
@@ -103,21 +108,37 @@ export const IndicateursObjectifsBloc = ({
     <SuiviPlanBloc
       titre={appLabels.indicateursObjectifsTitre}
       dataTest="plans.suivi.indicateurs-objectifs"
+      ref={blocRef}
       actions={
-        <div className="flex items-center gap-2 text-sm text-grey-8">
-          {appLabels.indicateursObjectifsHorizon}
-          <ButtonGroup
-            size="xs"
-            label={appLabels.indicateursObjectifsHorizon}
-            activeButtonId={String(horizon)}
-            buttons={INDICATEURS_OBJECTIFS_HORIZONS.map((annee) => ({
-              id: String(annee),
-              children: String(annee),
-              onClick: () => setHorizon(annee),
-              'data-test': `plans.suivi.indicateurs-objectifs.horizon-${annee}`,
-            }))}
+        <>
+          <div className="flex items-center gap-2 text-sm text-grey-8">
+            {appLabels.indicateursObjectifsHorizon}
+            <ButtonGroup
+              size="xs"
+              label={appLabels.indicateursObjectifsHorizon}
+              activeButtonId={String(horizon)}
+              buttons={INDICATEURS_OBJECTIFS_HORIZONS.map((annee) => ({
+                id: String(annee),
+                children: String(annee),
+                onClick: () => setHorizon(annee),
+                'data-test': `plans.suivi.indicateurs-objectifs.horizon-${annee}`,
+              }))}
+            />
+          </div>
+          <ExportBlocButton
+            blocRef={blocRef}
+            fileName={appLabels.indicateursObjectifsTitre}
+            onExportExcel={() =>
+              exportExcel({
+                planId,
+                horizon,
+                source: hasReglementaires ? source : 'tous',
+              })
+            }
+            isExportingExcel={isExportingExcel}
+            dataTest="plans.suivi.indicateurs-objectifs.exporter"
           />
-        </div>
+        </>
       }
     >
       {isError ? (
