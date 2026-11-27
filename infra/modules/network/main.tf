@@ -13,12 +13,14 @@ locals {
   common_tags = ["tet", "managed-by:terraform"]
 }
 
-# VPC unique, partagé par tous les environnements.
+# Un VPC par appel du module : `tet` (stack platform, tiers hors prod) et
+# `tet-prod` (stack prod), sans lien réseau entre eux.
 #
-# enable_routing permet le routage entre Private Networks du VPC : c'est ce qui
-# autorise le serveur Coolify (PN platform) à joindre les serveurs applicatifs
-# (PN prod / nonprod / preview) en SSH sur leur IP privée, sans exposer le port
-# 22 sur Internet.
+# enable_routing permet le routage entre Private Networks du VPC : dans `tet`,
+# c'est ce qui autorise la passerelle VPN des opérateurs (PN platform) à joindre
+# les serveurs, Postgres et Redis de nonprod et preview sur leur IP privée.
+# L'ACL ci-dessous restreint ces flux quand acl_enabled vaut true (défaut). Coolify,
+# hors de nos VPC, passe par les IP publiques.
 #
 # Attention : enable_routing et enable_custom_routes_propagation ne peuvent pas
 # être désactivés après coup (contrainte Scaleway).
