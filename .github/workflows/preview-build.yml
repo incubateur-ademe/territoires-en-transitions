@@ -1,0 +1,87 @@
+# Construit les images d'une preview (app, backend, site) au commit de tête
+# d'une pull request portant le label `preview`. Le déploiement suit dans
+# preview-deploy.yml : il tourne depuis main, seul à pouvoir lire le token
+# Coolify. Ce workflow-ci exécute le code de la PR et n'y a donc pas accès.
+name: Previews
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, ready_for_review]
+
+permissions: {}
+
+# Un nouveau push remplace le build en cours : seule la tête compte. Le groupe
+# vaut aussi pour un run dont le job est sauté : poser un autre label que
+# `preview` prend donc un groupe à part, sans quoi il annulerait le build.
+concurrency:
+  group: preview-build-${{ github.event.pull_request.number }}-${{ (github.event.action == 'labeled' && github.event.label.name != 'preview') && github.run_id || 'head' }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build ${{ matrix.app }}
+    # - Label `preview` : une stack par PR coûte ~1 Go de RAM sur le serveur
+    #   preview, on ne la monte que sur demande.
+    #   Poser un autre label ne relance rien (cf. concurrency).
+    # - Pas de brouillon.
+    # - Branche du dépôt : une PR de fork n'a pas les secrets, et son code
+    #   tournerait sur le serveur.
+    if: >
+      contains(github.event.pull_request.labels.*.name, 'preview') &&
+      !github.event.pull_request.draft &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      (github.event.action != 'labeled' || github.event.label.name == 'preview')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      packages: write
+      # Signature de l'attestation de provenance (cf. docker-build-push).
+      id-token: write
+      attestations: write
+
+    strategy:
+      matrix:
+        app: [app, backend, site]
+
+    steps:
+      # Le commit de tête, celui que Coolify déploie (pull/<n>/head), pas le
+      # commit de merge que teste la CI.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+          fetch-depth: 0
+
+      - id: meta
+        uses: ./.github/actions/app/build-metadata
+
+      - uses: ./.github/actions/docker/login
+        with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Tag = SHA complet du commit : c'est ce que Coolify rend dans
+      # SOURCE_COMMIT (infra/preview/docker-compose.yml). Distinct des tags
+      # courts de main.
+      - id: image
+        uses: ./.github/actions/docker/image-path
+        with:
+          username: incubateur-ademe
+          image: tet-${{ matrix.app }}
+          tag: ${{ github.event.pull_request.head.sha }}
+
+      - name: Build et push de l'image ${{ matrix.app }}
+        uses: ./.github/actions/docker/build-push
+        env:
+          BRYNTUM_ACCESS_TOKEN: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}
+        with:
+          dockerfile: apps/${{ matrix.app }}/Dockerfile
+          image: ${{ steps.image.outputs.path }}
+          cache-scope: tet-${{ matrix.app }}
+          secrets: |
+            bryntum_token=BRYNTUM_ACCESS_TOKEN
+          build-args: |
+            GIT_SHORT_HASH=${{ steps.meta.outputs.git-short-hash }}
+            GIT_COMMIT_TIMESTAMP=${{ steps.meta.outputs.git-commit-timestamp }}
+            APPLICATION_VERSION=${{ steps.meta.outputs.application-version }}

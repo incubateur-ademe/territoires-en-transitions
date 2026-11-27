@@ -1,0 +1,89 @@
+# Déploie la preview d'une pull request une fois ses images construites
+# (preview-build.yml), au commit de ces images.
+#
+# workflow_run : ce workflow tourne depuis main, jamais depuis la branche de la
+# PR, et c'est ce qui lui ouvre l'environnement preview-scaleway (restreint à
+# main) et son token Coolify. Il n'exécute aucun code de la PR : il lit le
+# numéro de PR et le SHA, puis appelle l'API Coolify.
+#
+# Fermer la PR supprime sa preview : c'est le webhook de la GitHub App de
+# Coolify qui s'en charge, même previews désactivées
+# (infra/coolify/preview-application.tf).
+name: Déploiement des previews
+
+run-name: "Preview de la PR #${{ github.event.workflow_run.pull_requests[0].number }}"
+
+on:
+  workflow_run:
+    workflows: [Previews]
+    types: [completed]
+
+permissions: {}
+
+jobs:
+  deploy:
+    name: Déploie la preview
+    # Branche du dépôt seulement : une PR de fork peut faire tourner sa propre
+    # version du workflow Previews, qui finirait en succès sans rien construire.
+    if: >
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.path == '.github/workflows/preview-build.yml' &&
+      github.event.workflow_run.head_repository.full_name == github.repository &&
+      github.event.workflow_run.pull_requests[0].number
+    environment:
+      name: preview-scaleway
+      url: https://${{ github.event.workflow_run.pull_requests[0].number }}-app.preview.territoiresentransitions.fr
+    # Un déploiement à la fois par PR, sans annuler celui en cours : Coolify
+    # le finirait sans que personne n'en lise l'issue.
+    concurrency:
+      group: preview-deploy-${{ github.event.workflow_run.pull_requests[0].number }}
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      actions: read
+      contents: read
+      pull-requests: read
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # Un run de Previews dont les jobs sont sautés (brouillon, autre label)
+      # se termine aussi en succès, sans image, et la PR a pu avancer, se
+      # fermer ou perdre son label depuis : on ne déploie qu'un build réel, à la
+      # tête actuelle d'une PR ouverte, prête et labellisée.
+      - name: Vérifie la PR
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_ID: ${{ github.event.workflow_run.pull_requests[0].number }}
+          COMMIT: ${{ github.event.workflow_run.head_sha }}
+          RUN_ID: ${{ github.event.workflow_run.id }}
+        run: |
+          built="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$RUN_ID/jobs" \
+            --jq '[.jobs[] | select(.conclusion == "success")] | length')"
+          if [ "$built" -eq 0 ]; then
+            echo "Aucun build dans ce run de Previews : rien à déployer."
+            exit 0
+          fi
+          gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_ID" >pr.json
+          jq -e --arg sha "$COMMIT" --arg repo "$GITHUB_REPOSITORY" '.state == "open"
+            and .draft == false and .head.sha == $sha and .head.repo.full_name == $repo
+            and any(.labels[]; .name == "preview")' pr.json >/dev/null || {
+            echo "::error::PR #$PR_ID : fermée, brouillon, de fork, sans label preview, ou $COMMIT n'est plus sa tête."
+            exit 1
+          }
+          echo "deploy=true" >>"$GITHUB_OUTPUT"
+
+      - name: Déploie sur Coolify
+        if: steps.check.outputs.deploy == 'true'
+        env:
+          COOLIFY_ENDPOINT: ${{ vars.COOLIFY_ENDPOINT }}
+          COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
+          APP_ID: preview/stack
+          PR_ID: ${{ github.event.workflow_run.pull_requests[0].number }}
+          COMMIT: ${{ github.event.workflow_run.head_sha }}
+        run: infra/scripts/coolify-deploy.sh
