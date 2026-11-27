@@ -1,4 +1,7 @@
-import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
+import {
+  getPersonneStringId,
+  isMembre,
+} from '@/app/collectivites/tags/personnes.utils';
 import { usePersonneListe } from '@/app/collectivites/tags/use-list-personnes';
 import { useListServices } from '@/app/collectivites/tags/use-list-services';
 import { appLabels } from '@/app/labels/catalog';
@@ -28,7 +31,7 @@ export const SuiviPlanFiltersButton = ({
 }) => {
   const { data: personnes } = usePersonneListe();
   const personneOptions =
-    personnes?.map((personne) => ({
+    personnes?.filter(isMembre).map((personne) => ({
       value: getPersonneStringId(personne),
       label: personne.nom,
     })) ?? [];
