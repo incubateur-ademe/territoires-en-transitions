@@ -9,6 +9,10 @@ import { ListFichesRequestFilters as Filtres } from '@tet/domain/plans';
 export const getPersonneStringId = (personne: PersonneTagOrUser): string =>
   personne.tagId ? personne.tagId.toString() : (personne.userId as string);
 
+/** Une personne membre de la collectivité, par opposition à un tag saisi librement */
+export const isMembre = (personne: PersonneTagOrUser): boolean =>
+  !!personne.userId;
+
 /** Renvoie un object avec les utilisateurs et les tags séparés pilotes */
 export const splitPilotePersonnesAndUsers = (
   personnes: PersonneTagOrUser[]

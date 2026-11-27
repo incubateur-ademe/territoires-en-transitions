@@ -1,6 +1,9 @@
 'use client';
 
-import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
+import {
+  getPersonneStringId,
+  isMembre,
+} from '@/app/collectivites/tags/personnes.utils';
 import { usePersonneListe } from '@/app/collectivites/tags/use-list-personnes';
 import { useListServices } from '@/app/collectivites/tags/use-list-services';
 import { appLabels } from '@/app/labels/catalog';
@@ -129,7 +132,7 @@ export const IndicateursObjectifsBloc = ({
         ? buildSearchSuggestions({
             indicateurs,
             axes,
-            pilotes: (personnes ?? []).map((personne) => ({
+            pilotes: (personnes ?? []).filter(isMembre).map((personne) => ({
               id: getPersonneStringId(personne),
               nom: personne.nom,
             })),
@@ -180,9 +183,10 @@ export const IndicateursObjectifsBloc = ({
     filters.filtersCount === 0 &&
     recherche === '' &&
     selectionIds.length === 0 &&
-    (!hasReglementaires || source === 'tous') &&
-    // les cartes masquées par « voir plus » ne sont pas dans le tri
-    (isAllVisible || filtres.length <= NB_INDICATEURS_VISIBLES);
+    (!hasReglementaires || source === 'tous');
+
+  // les cartes masquées par « voir plus » doivent pouvoir servir de cible
+  const onDragStart = () => setIsAllVisible(true);
 
   const onDragEnd = ({ active, over }: DragEndEvent) => {
     if (!indicateurs || !over || active.id === over.id) {
@@ -348,6 +352,7 @@ export const IndicateursObjectifsBloc = ({
             <DndContext
               sensors={sensors}
               collisionDetection={closestCenter}
+              onDragStart={onDragStart}
               onDragEnd={onDragEnd}
             >
               <SortableContext
