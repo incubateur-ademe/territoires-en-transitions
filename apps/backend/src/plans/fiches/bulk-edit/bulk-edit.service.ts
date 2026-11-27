@@ -11,7 +11,7 @@ import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { getDataOrThrow } from '@tet/backend/utils/result.type';
 import { applyJaugeStatutChange, Statut } from '@tet/domain/plans';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
-import { and, eq, inArray, or, sql } from 'drizzle-orm';
+import { and, eq, inArray, or } from 'drizzle-orm';
 import { NotifyPiloteService } from '../notify-pilote/notify-pilote.service';
 import { ficheActionPiloteTable } from '../shared/models/fiche-action-pilote.table';
 import { ficheActionReferentTable } from '../shared/models/fiche-action-referent.table';
@@ -37,6 +37,10 @@ export class BulkEditService {
     request: BulkEditRequest,
     user: AuthenticatedUser
   ): Promise<void> {
+    if (request.ficheIds !== 'all' && request.ficheIds.length === 0) {
+      return;
+    }
+
     const filters =
       request.ficheIds === 'all'
         ? request.filters
@@ -51,67 +55,48 @@ export class BulkEditService {
         { user }
       )
     );
+    if (currentFiches.data.length === 0) {
+      return;
+    }
+
     const actualFicheIds = currentFiches.data.map((fiche) => fiche.id);
+    const fichesByCollectivite = new Map<number, typeof currentFiches.data>();
+    for (const fiche of currentFiches.data) {
+      const fiches = fichesByCollectivite.get(fiche.collectiviteId) ?? [];
+      fiches.push(fiche);
+      fichesByCollectivite.set(fiche.collectiviteId, fiches);
+    }
 
-    // Get all the distinct collectiviteIds of the fiches
-    const ficheBycollectiviteIds = await this.db
-      .select({
-        collectiviteId: ficheActionTable.collectiviteId,
-        ficheIds: sql<number[]>`array_agg(${ficheActionTable.id})`.as(
-          'fiche_ids'
-        ),
-      })
-      .from(ficheActionTable)
-      .where(inArray(ficheActionTable.id, actualFicheIds))
-      .groupBy(ficheActionTable.collectiviteId);
-
-    // Check if the user has edition access to all the collectivites
-    for (const c of ficheBycollectiviteIds) {
+    const operation = PermissionOperationEnum['PLANS.FICHES.BULK_UPDATE'];
+    for (const [collectiviteId, fiches] of fichesByCollectivite) {
       const permissionResult = await this.permission.isAllowed(
         user,
-        PermissionOperationEnum['PLANS.FICHES.BULK_UPDATE'],
+        operation,
         ResourceType.COLLECTIVITE,
-        { collectiviteId: c.collectiviteId }
+        { collectiviteId }
       );
       if (!permissionResult.success) {
-        this.logger.log(
-          `Edition not allowed for collectivite ${c.collectiviteId}, checking fiche sharing`
-        );
-        const { data: fiches } = getDataOrThrow(
-          await this.listFichesService.getFichesActionResumes(
-            {
-              collectiviteId: c.collectiviteId,
-              filters: { ficheIds: c.ficheIds },
-              readsMaskedFields: true,
-            },
-            { user }
+        // Check sharing for every selected fiche, without another visibility filter.
+        await Promise.all(
+          fiches.map((fiche) =>
+            this.fichePermissionsService.isAllowedByFicheSharings(
+              fiche,
+              operation,
+              user
+            )
           )
         );
-        // TODO: Optimize by avoid checking each fiche independently
-        const ficheSharingsChecks = fiches.map((fiche) =>
-          this.fichePermissionsService.isAllowedByFicheSharings(
-            fiche,
-            PermissionOperationEnum['PLANS.FICHES.BULK_UPDATE'],
-            user
-          )
-        );
-        await Promise.all(ficheSharingsChecks);
       }
     }
 
-    const {
-      pilotes,
-      referents,
-      services,
-      libreTags,
-      sharedWithCollectivites,
-      statut,
-      priorite,
-      dateFin,
-      ameliorationContinue,
-    } = request;
-    // Selection context can include fiches owned by other collectivités.
-    const plainValues = { statut, priorite, dateFin, ameliorationContinue };
+    const { pilotes, referents, services, libreTags, sharedWithCollectivites } =
+      request;
+    const plainValues = {
+      statut: request.statut,
+      priorite: request.priorite,
+      dateFin: request.dateFin,
+      ameliorationContinue: request.ameliorationContinue,
+    };
 
     await this.db.transaction(async (tx) => {
       // Update modified and plain values
@@ -123,38 +108,33 @@ export class BulkEditService {
         sharedWithCollectivites !== undefined ||
         Object.values(plainValues).some((value) => value !== undefined)
       ) {
-        const updateGroups =
-          statut === undefined
-            ? [{ ficheIds: actualFicheIds, jauge: undefined }]
-            : await this.groupFichesByJaugeAfterStatutChange(
-                actualFicheIds,
-                statut,
-                tx
-              );
+        for (const [collectiviteId, fiches] of fichesByCollectivite) {
+          const ficheIds = fiches.map((fiche) => fiche.id);
+          const updateGroups =
+            plainValues.statut === undefined
+              ? [{ ficheIds, jauge: undefined }]
+              : await this.groupFichesByJaugeAfterStatutChange(
+                  ficheIds,
+                  plainValues.statut,
+                  tx
+                );
 
-        const authorizedFiches = or(
-          ...ficheBycollectiviteIds.map(({ collectiviteId, ficheIds }) =>
-            and(
-              eq(ficheActionTable.collectiviteId, collectiviteId),
-              inArray(ficheActionTable.id, ficheIds)
-            )
-          )
-        );
-        for (const group of updateGroups) {
-          await tx
-            .update(ficheActionTable)
-            .set({
-              ...plainValues,
-              ...(group.jauge !== undefined && { jauge: group.jauge }),
-              modifiedBy: user.id,
-              modifiedAt: new Date().toISOString(),
-            })
-            .where(
-              and(
-                inArray(ficheActionTable.id, group.ficheIds),
-                authorizedFiches
-              )
-            );
+          for (const group of updateGroups) {
+            await tx
+              .update(ficheActionTable)
+              .set({
+                ...plainValues,
+                ...(group.jauge !== undefined && { jauge: group.jauge }),
+                modifiedBy: user.id,
+                modifiedAt: new Date().toISOString(),
+              })
+              .where(
+                and(
+                  inArray(ficheActionTable.id, group.ficheIds),
+                  eq(ficheActionTable.collectiviteId, collectiviteId)
+                )
+              );
+          }
         }
       }
 
