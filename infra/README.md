@@ -632,14 +632,54 @@ scw rdb endpoint list "$PG_ID"   # l'endpoint qui porte un load_balancer
 scw rdb endpoint delete <endpoint-id> instance-id="$PG_ID"
 ```
 
+**Miroir de la prod (schéma `prod` de `stats`).** Copie complète à J-1, pas une
+réplication : une réplication logique ou un `postgres_fdw` demanderaient au tier data une
+connexion vers la prod, et la première ferait grossir le WAL de la prod à chaque
+migration non rejouée côté miroir.
+
+1. Le job `export-analytics` de `.github/workflows/backup-database.yml`
+   ([`analytics-export.sh`](../data_layer/backup/analytics-export.sh)) dépose l'export dans
+   `tet-analytics-export`. Le filtre est à la source : données des seuls schémas listés
+   dans le script, sans les tables de secrets, et `auth.users` réduit à quelques colonnes
+   (ni hash, ni jeton, ni téléphone).
+2. [`prod-mirror/refresh-prod-mirror.sh`](data/prod-mirror/refresh-prod-mirror.sh), sur
+   `tet-data-apps`, restaure l'export dans une base de travail, y construit les tables
+   `prod.<schéma>_<table>` (types de la prod ramenés à des types standards, sans index ni
+   contrainte) et bascule le schéma en une transaction.
+
+Mise en place, une fois :
+
+1. Faire créer par un admin de l'organisation deux applications IAM, avec le droit objets
+   sur le projet `tet` : l'une dépose (job de backup), l'autre télécharge (serveur data).
+   Renseigner `analytics_export` dans `data/terraform.tfvars` et appliquer : la bucket
+   policy cantonne chacune à ce bucket et à son sens.
+2. Environnement GitHub `prod` : variables `ANALYTICS_EXPORT_BUCKET` (output
+   `analytics_export_bucket_name`) et `ANALYTICS_EXPORT_AWS_ACCESS_KEY_ID`, secret
+   `ANALYTICS_EXPORT_AWS_SECRET_ACCESS_KEY`. Sans `ANALYTICS_EXPORT_BUCKET`, le job est sauté.
+3. Sur `tet-data-apps`, construire l'image et planifier le job après l'export (22 h UTC) :
+
+```sh
+docker build -t prod-mirror infra/data/prod-mirror
+# /root/prod-mirror.env (600) : STATS_DB_URL (output pg_private_connection_uri),
+# EXPORT_BUCKET, EXPORT_ACCESS_KEY, EXPORT_SECRET_KEY.
+echo '0 2 * * * root docker run --rm --env-file /root/prod-mirror.env prod-mirror >> /var/log/prod-mirror.log 2>&1' \
+  > /etc/cron.d/prod-mirror
+```
+
+Le job échoue sans rien changer si l'export est incomplet, s'il perd plus de 10 % des
+tables, ou si une vue de `public` dépend de l'ancien miroir : une vue sur `prod.*` se
+recrée après chaque bascule, ou se remplace par une table que les scripts recalculent.
+
 Reprise de la base de stats depuis Koyeb : le dump passe par le serveur data, qui sort sur
-internet et joint la RDB en privé.
+internet et joint la RDB en privé. Seuls les schémas `public` (stats) et `sauvegardes`
+sont repris : `prod` est reconstruit par le miroir ci-dessus. Arrêter les scripts de
+calcul le temps du transfert.
 
 ```sh
 # Sur tet-data-apps (cf. Se connecter). Source : l'URI Koyeb ; cible : output
 # pg_private_connection_uri (admin).
 docker run --rm -e SRC -e DST postgres:17 sh -c \
-  'pg_dump -Fc --no-owner --no-privileges "$SRC" | pg_restore --no-owner --no-privileges -d "$DST"'
+  'pg_dump -Fc --no-owner --no-privileges -n public -n sauvegardes "$SRC" | pg_restore --no-owner --no-privileges -d "$DST"'
 ```
 
 La base `stats` cible doit être vide. Si le transfert échoue en route, les tables déjà
@@ -652,11 +692,13 @@ quand Terraform les a posés : les tables restaurées, possédées par l'admin, 
 les scripts créeront ensuite leur échappent. Après la restauration :
 
 ```sql
--- En admin (pg_private_connection_uri) : tables restaurées. À adapter si la base
--- Koyeb a d'autres schémas que public.
+-- En admin (pg_private_connection_uri) : tables restaurées. Le schéma prod reçoit
+-- ses droits du miroir, à chaque bascule.
 GRANT SELECT ON ALL TABLES IN SCHEMA public TO mcp_reader, backend_reader;
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO stats_writer;
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO stats_writer;
+GRANT USAGE, CREATE ON SCHEMA sauvegardes TO stats_writer;
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA sauvegardes TO stats_writer;
 
 -- En stats_writer (stats_writer_private_connection_uri) : les tables qu'il créera
 -- seront lisibles par le MCP et les backends.
