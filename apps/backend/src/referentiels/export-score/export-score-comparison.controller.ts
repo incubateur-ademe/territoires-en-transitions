@@ -1,5 +1,6 @@
 import { Controller, Get, Logger, Param, Query, Res } from '@nestjs/common';
 import { ApiExcludeController, ApiTags } from '@nestjs/swagger';
+import { collectiviteIdInputSchemaCoerce } from '@tet/backend/collectivites/collectivite-id.input';
 import { COLLECTIVITE_ID_PARAM_KEY } from '@tet/backend/collectivites/shared/models/collectivite-api.constants';
 import { AllowAnonymousAccess } from '@tet/backend/users/decorators/allow-anonymous-access.decorator';
 import { TokenInfo } from '@tet/backend/users/decorators/token-info.decorators';
@@ -9,7 +10,7 @@ import { ApiUsage } from '@tet/backend/utils/api/api-usage.decorator';
 import { createControllerErrorHandler } from '@tet/backend/utils/nest/controller-error-handler';
 import {
   exportScoreComparisonRequestSchema,
-  type ReferentielId,
+  referentielIdEnumSchema,
 } from '@tet/domain/referentiels';
 import type { Response } from 'express';
 import { createZodDto } from 'nestjs-zod';
@@ -19,6 +20,12 @@ import { ExportScoreComparisonService } from './export-score-comparison.service'
 
 export class ExportScoreComparisonApiQueryClass extends createZodDto(
   exportScoreComparisonRequestSchema
+) {}
+
+class ExportScoreComparisonParamsClass extends createZodDto(
+  collectiviteIdInputSchemaCoerce.extend({
+    referentielId: referentielIdEnumSchema,
+  })
 ) {}
 
 @ApiTags('Referentiels')
@@ -40,8 +47,8 @@ export class ExportScoreComparisonController {
   )
   @ApiUsage([ApiUsageEnum.APP])
   async exportAuditScore(
-    @Param(COLLECTIVITE_ID_PARAM_KEY) collectiviteId: number,
-    @Param(REFERENTIEL_ID_PARAM_KEY) referentielId: ReferentielId,
+    @Param()
+    { collectiviteId, referentielId }: ExportScoreComparisonParamsClass,
     @Query() query: ExportScoreComparisonApiQueryClass,
     @Res() res: Response,
     @TokenInfo() user: AuthUser

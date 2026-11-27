@@ -1,9 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 import ListPersonnalisationQuestionsService from '@tet/backend/collectivites/personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
+import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches.service';
 import { HandleMesureServicesService } from '@tet/backend/referentiels/handle-mesure-services/handle-mesure-services.service';
 import { auditeurTable } from '@tet/backend/referentiels/labellisations/auditeur.table';
-import { AuthUser } from '@tet/backend/users/models/auth.models';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import {
+  AuthUser,
+  isAnonymousUser,
+} from '@tet/backend/users/models/auth.models';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
@@ -27,6 +32,7 @@ import {
   type ActionType,
   type ExportScoreComparisonRequestQuery,
 } from '@tet/domain/referentiels';
+import { ResourceType } from '@tet/domain/users';
 import { htmlToText } from '@tet/domain/utils';
 import { format } from 'date-fns';
 import { and, desc, eq } from 'drizzle-orm';
@@ -137,7 +143,9 @@ export class LoadScoreComparisonService {
     private readonly getReferentielDefinitionService: GetReferentielDefinitionService,
     private readonly listActionDefinitionsService: ListActionDefinitionsService,
     private readonly listFichesService: ListFichesService,
-    private readonly listPersonnalisationQuestionsService: ListPersonnalisationQuestionsService
+    private readonly listPersonnalisationQuestionsService: ListPersonnalisationQuestionsService,
+    private readonly collectivitesService: CollectivitesService,
+    private readonly permissionService: PermissionService
   ) {}
 
   async loadScoreComparison(
@@ -179,6 +187,24 @@ export class LoadScoreComparisonService {
           `Pas de référence de snapshot fournie pour la collectivité ${collectiviteId}, referentiel ${referentielId}`
         )
       );
+    }
+
+    const isPrivate = await this.collectivitesService.isPrivate(collectiviteId);
+    if (!isPrivate.success) {
+      return isPrivate;
+    }
+
+    // L'export anonyme reste disponible pour les collectivités publiques.
+    if (isPrivate.data || !isAnonymousUser(user)) {
+      const permission = await this.permissionService.isAllowed(
+        user,
+        isPrivate.data ? 'referentiels.read_confidentiel' : 'referentiels.read',
+        ResourceType.REFERENTIEL,
+        { collectiviteId, referentielId }
+      );
+      if (!permission.success) {
+        return failure(ExportScoreComparisonErrorEnum.UNAUTHORIZED);
+      }
     }
 
     // charge les snapshots et agrège les scores
