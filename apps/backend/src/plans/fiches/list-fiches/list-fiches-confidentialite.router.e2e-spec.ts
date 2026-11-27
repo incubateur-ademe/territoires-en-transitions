@@ -1,5 +1,8 @@
-import { INestApplication } from '@nestjs/common';
-import { addTestCollectivite } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { ForbiddenException, INestApplication } from '@nestjs/common';
+import {
+  addTestCollectivite,
+  addTestCollectiviteAndUser,
+} from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { ficheActionSharingTable } from '@tet/backend/plans/fiches/share-fiches/fiche-action-sharing.table';
 import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
 import {
@@ -101,6 +104,61 @@ describe('listFiches et la confidentialité', () => {
     const { data } = await listFichesFor(user, filters);
     return new Set(data.map((fiche) => fiche.id));
   };
+
+  describe('lecture détaillée d’une fiche', () => {
+    it('autorise le visiteur vérifié à lire une fiche ouverte d’une collectivité publique', async () => {
+      await expect(
+        router.createCaller({ user: visiteurVerifie }).plans.fiches.get({
+          id: ficheOuverteId,
+        })
+      ).resolves.toMatchObject({ id: ficheOuverteId, restreint: false });
+    });
+
+    it('réserve la fiche ouverte d’une collectivité privée aux membres autorisés, y compris via un partage', async () => {
+      const owner = await addTestCollectiviteAndUser(db, {
+        collectivite: { accesRestreint: true },
+        user: { role: CollectiviteRole.LECTURE },
+      });
+      const recipient = await addTestCollectiviteAndUser(db, {
+        user: { role: CollectiviteRole.LECTURE },
+      });
+      const [fiche] = await db.db
+        .insert(ficheActionTable)
+        .values({
+          collectiviteId: owner.collectivite.id,
+          titre: 'Fiche de la collectivité privée',
+          description: 'Description de la fiche',
+          restreint: false,
+        })
+        .returning();
+
+      const getFiche = (user: AuthenticatedUser) =>
+        router.createCaller({ user }).plans.fiches.get({ id: fiche.id });
+      const expectForbidden = (user: AuthenticatedUser) =>
+        expect(() => getFiche(user)).toThrowTrpcHttpError(
+          new ForbiddenException(
+            `Droits insuffisants, l'utilisateur ${user.id} n'a pas l'autorisation plans.fiches.read_confidentiel sur la ressource Collectivité ${owner.collectivite.id}`
+          )
+        );
+
+      const recipientUser = getAuthUserFromUserCredentials(recipient.user);
+      await expectForbidden(visiteurVerifie);
+      await expectForbidden(recipientUser);
+      await expect(
+        getFiche(getAuthUserFromUserCredentials(owner.user))
+      ).resolves.toMatchObject({ description: fiche.description });
+
+      await db.db.insert(ficheActionSharingTable).values({
+        ficheId: fiche.id,
+        collectiviteId: recipient.collectivite.id,
+      });
+
+      await expect(getFiche(recipientUser)).resolves.toMatchObject({
+        description: fiche.description,
+      });
+      await expectForbidden(visiteurVerifie);
+    });
+  });
 
   it('liste et compte les trois fiches pour un visiteur vérifié non membre', async () => {
     const { count, data } = await listFichesFor(visiteurVerifie);

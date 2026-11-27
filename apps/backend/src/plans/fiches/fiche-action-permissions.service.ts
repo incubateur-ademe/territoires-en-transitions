@@ -4,6 +4,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
+import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import {
   FicheAccessMode,
   FicheAccessModeEnum,
@@ -15,6 +16,7 @@ import {
 } from '@tet/backend/users/authorizations/permission.service';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { getDataOrThrow } from '@tet/backend/utils/result.type';
 import { Fiche, FicheWithRelations } from '@tet/domain/plans';
 import {
   hasPermission,
@@ -36,7 +38,8 @@ export default class FicheActionPermissionsService {
     private readonly permissionService: PermissionService,
     private readonly getUserPermissionsService: GetUserRolesAndPermissionsService,
     private readonly databaseService: DatabaseService,
-    private readonly shareFicheService: ShareFicheService
+    private readonly shareFicheService: ShareFicheService,
+    private readonly collectivitesService: CollectivitesService
   ) {}
 
   /** Renvoi une fiche à partir de son id */
@@ -150,23 +153,17 @@ export default class FicheActionPermissionsService {
     doNotThrow?: boolean,
     tx?: Transaction
   ): Promise<FicheAccessMode | null> {
-    // Check direct permissions first
-    const operation = this.getReadFichePermission(fiche);
-    const hasDirectPermission = await this.hasReadFichePermission(
+    return this.resolveReadAccess(
       fiche,
       tokenInfo,
-      true,
-      tx
-    );
-    if (hasDirectPermission) {
-      return FicheAccessModeEnum.DIRECT;
-    }
-
-    return this.isAllowedByFicheSharings(
-      fiche,
-      operation,
-      tokenInfo,
-      doNotThrow,
+      (operation) =>
+        this.isAllowedByFicheSharings(
+          fiche,
+          operation,
+          tokenInfo,
+          doNotThrow,
+          tx
+        ),
       tx
     );
   }
@@ -181,18 +178,37 @@ export default class FicheActionPermissionsService {
       throw new NotFoundException(`Action non trouvée pour l'id ${ficheId}`);
     }
 
-    // Check direct permissions first
-    const operation = this.getReadFichePermission(fiche);
-    const hasDirectPermission = await this.hasReadFichePermission(
-      fiche,
-      tokenInfo,
-      true
+    return this.resolveReadAccess(fiche, tokenInfo, (operation) =>
+      this.isAllowedByFicheIdSharings(fiche, operation, tokenInfo)
     );
-    if (hasDirectPermission) {
-      return FicheAccessModeEnum.DIRECT;
-    }
+  }
 
-    return this.isAllowedByFicheIdSharings(fiche, operation, tokenInfo);
+  private async resolveReadAccess(
+    fiche: Pick<Fiche, 'collectiviteId' | 'restreint'>,
+    tokenInfo: AuthUser,
+    checkSharings: (
+      operation: NonReferentielPermissionOperation
+    ) => Promise<FicheAccessMode | null>,
+    tx?: Transaction
+  ): Promise<FicheAccessMode | null> {
+    // Le droit de visite ne donne accès ni à une fiche confidentielle ni
+    // à une fiche d'une collectivité privée, même via un partage.
+    const restreint =
+      fiche.restreint ||
+      getDataOrThrow(
+        await this.collectivitesService.isPrivate(fiche.collectiviteId, tx)
+      );
+    const operation = this.getReadFichePermission({ restreint });
+    const directPermission = await this.permissionService.isAllowed(
+      tokenInfo,
+      operation,
+      ResourceType.COLLECTIVITE,
+      { collectiviteId: fiche.collectiviteId },
+      tx
+    );
+    return directPermission.success
+      ? FicheAccessModeEnum.DIRECT
+      : checkSharings(operation);
   }
 
   getReadFichePermission(
