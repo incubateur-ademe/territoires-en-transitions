@@ -9,7 +9,7 @@ terraform {
     # vars, le S3 storage et le login GHCR restent donc en scripts (R4).
     coolify = {
       source  = "coolify-terraform/coolify"
-      version = "~> 0.1.31"
+      version = "~> 0.1.35"
     }
     # scaleway : lectures seules (serveurs, clés depuis Secret Manager).
     scaleway = {

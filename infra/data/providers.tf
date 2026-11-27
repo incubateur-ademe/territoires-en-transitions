@@ -18,7 +18,7 @@ terraform {
     # Enregistrement du serveur dans la Team « TeT - Data » (coolify.tf).
     coolify = {
       source  = "coolify-terraform/coolify"
-      version = "~> 0.1.31"
+      version = "~> 0.1.35"
     }
   }
 }

@@ -121,7 +121,7 @@ resource "coolify_application" "git" {
   depends_on = [coolify_environment.env]
 
   lifecycle {
-    # Le provider (0.1.31 à 0.1.33) relit health_check_command à null : chaque
+    # Le provider (0.1.31 à 0.1.35) relit health_check_command à null : chaque
     # apply le renvoyait puis échouait (« inconsistent result after apply »),
     # bloquant les env_push qui en dépendent. Coolify garde bien la valeur.
     ignore_changes = [health_check_command]

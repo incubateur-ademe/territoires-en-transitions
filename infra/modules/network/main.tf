@@ -16,18 +16,15 @@ locals {
 # Un VPC par appel du module : `tet` (stack platform, tiers hors prod) et
 # `tet-prod` (stack prod), sans lien réseau entre eux.
 #
-# enable_routing permet le routage entre Private Networks du VPC : dans `tet`,
-# c'est ce qui autorise la passerelle VPN des opérateurs (PN platform) à joindre
+# Le routage entre Private Networks du VPC (toujours actif sur les VPC
+# Scaleway, l'argument enable_routing est déprécié) : dans `tet`, c'est ce qui
+# autorise la passerelle VPN des opérateurs (PN platform) à joindre
 # les serveurs, Postgres et Redis de nonprod et preview sur leur IP privée.
 # L'ACL ci-dessous restreint ces flux quand acl_enabled vaut true (défaut). Coolify,
 # hors de nos VPC, passe par les IP publiques.
-#
-# Attention : enable_routing et enable_custom_routes_propagation ne peuvent pas
-# être désactivés après coup (contrainte Scaleway).
 resource "scaleway_vpc" "main" {
-  name           = var.vpc_name
-  region         = var.region
-  enable_routing = true
+  name   = var.vpc_name
+  region = var.region
 
   tags = local.common_tags
 }
