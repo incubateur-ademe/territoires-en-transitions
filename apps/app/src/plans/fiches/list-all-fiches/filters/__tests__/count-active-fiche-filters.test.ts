@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { countActiveFicheFilters } from '../count-active-fiche-filters';
+import {
+  countActiveFicheFilters,
+  removeIdleSousActionsScope,
+} from '../count-active-fiche-filters';
 import { FormFilters } from '../types';
 
 describe('countActiveFicheFilters', () => {
@@ -7,6 +10,14 @@ describe('countActiveFicheFilters', () => {
     it('should return 0 for empty filters', () => {
       const filters: FormFilters = {} as FormFilters;
       expect(countActiveFicheFilters(filters)).toBe(0);
+    });
+
+    it('ne compte pas le périmètre « Actions et sous-actions » comme un filtre', () => {
+      const filters: Partial<FormFilters> = {
+        withSousActionsMatches: true,
+        statuts: ['En cours'],
+      };
+      expect(countActiveFicheFilters(filters as FormFilters)).toBe(1);
     });
 
     it('should count single individual filter', () => {
@@ -309,5 +320,37 @@ describe('countActiveFicheFilters', () => {
       // 1 individual (noPilote) // debutPeriode is not counted since it's alone
       expect(countActiveFicheFilters(filters)).toBe(1);
     });
+  });
+});
+
+describe('removeIdleSousActionsScope', () => {
+  it('retire le périmètre « Sous-actions incluses » sans filtre actif', () => {
+    const filters = {
+      withSousActionsMatches: true,
+      sort: 'titre',
+    } as FormFilters;
+
+    expect(
+      removeIdleSousActionsScope(filters, { hasTextSearch: false })
+    ).toEqual({ sort: 'titre' });
+  });
+
+  it('conserve le périmètre dès qu’un filtre est actif', () => {
+    const filters = {
+      withSousActionsMatches: true,
+      statuts: ['À venir'],
+    } as FormFilters;
+
+    expect(removeIdleSousActionsScope(filters, { hasTextSearch: false })).toBe(
+      filters
+    );
+  });
+
+  it('conserve le périmètre avec une recherche texte seule', () => {
+    const filters = { withSousActionsMatches: true } as FormFilters;
+
+    expect(removeIdleSousActionsScope(filters, { hasTextSearch: true })).toBe(
+      filters
+    );
   });
 });

@@ -12,7 +12,7 @@ import {
 const ToutesLesFichesActionContent = () => {
   const { hasCollectivitePermission } = useCurrentCollectivite();
   const { mutate: createFicheAction } = useCreateFicheAction();
-  const { filters } = useFicheActionFilters();
+  const { filters, setFilters } = useFicheActionFilters();
 
   return (
     <>
@@ -28,7 +28,14 @@ const ToutesLesFichesActionContent = () => {
       </PageHeader>
 
       <div className="min-h-[44rem] flex flex-col gap-8">
-        <FichesList defaultSort="titre" displayEditionMenu filters={filters} />
+        <FichesList
+          defaultSort="titre"
+          displayEditionMenu
+          filters={filters}
+          onIncludeSousActions={() =>
+            setFilters({ ...filters, withSousActionsMatches: true })
+          }
+        />
       </div>
     </>
   );

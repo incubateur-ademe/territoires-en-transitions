@@ -44,6 +44,7 @@ export const CHECKBOX_FILTERS_KEYS = [
   'noDescription',
   'noObjectif',
   'noPlan',
+  'withSousActionsMatches',
 ] as const;
 export type CheckboxFilterKeys = (typeof CHECKBOX_FILTERS_KEYS)[number];
 export const filtersByCheckboxProperties: Record<
@@ -64,6 +65,7 @@ export const filtersByCheckboxProperties: Record<
   noDescription: { onlyShowCategory: true, defaultValue: false },
   noObjectif: { onlyShowCategory: true, defaultValue: false },
   noPlan: { onlyShowCategory: true, defaultValue: false },
+  withSousActionsMatches: { onlyShowCategory: true, defaultValue: false },
 };
 
 const periodRelatedKeys: FilterKeys[] = [
@@ -289,9 +291,14 @@ export const formatToPrintableFilters = (
     Array.isArray(obj.key) ? obj.key.join('|') : obj.key.toString()
   );
 
-  const formattedFilterCategories = dateFilterCategory
-    ? [...uniqFilterCategories, dateFilterCategory]
-    : uniqFilterCategories;
+  // Le périmètre « Sous-actions incluses » s'affiche toujours en dernier.
+  const isSousActionsScope = (category: FilterCategory<FilterKeys>) =>
+    category.key === 'withSousActionsMatches';
+  const formattedFilterCategories = [
+    ...uniqFilterCategories.filter((category) => !isSousActionsScope(category)),
+    ...(dateFilterCategory ? [dateFilterCategory] : []),
+    ...uniqFilterCategories.filter(isSousActionsScope),
+  ];
 
   // Define the readonly property for the filter categories
   formattedFilterCategories.forEach((category) => {

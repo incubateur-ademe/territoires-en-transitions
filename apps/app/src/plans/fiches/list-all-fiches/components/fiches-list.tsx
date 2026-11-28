@@ -12,6 +12,7 @@ import { Pagination, useEventTracker } from '@tet/ui';
 import classNames from 'classnames';
 import { isEqual } from 'es-toolkit';
 import { useState } from 'react';
+import { removeIdleSousActionsScope } from '../filters/count-active-fiche-filters';
 import { fromFormFiltersToFilters } from '../filters/filter-converter';
 import { FormFilters } from '../filters/types';
 import {
@@ -19,12 +20,16 @@ import {
   useSelectFichesView,
 } from '../hooks/use-select-fiche-view';
 
+import { appLabels } from '@/app/labels/catalog';
 import { useUser } from '@tet/api/users';
+import { useCountSousActionsMatches } from '../data/use-count-sous-actions-matches';
 import { useCountFiches } from '../hooks/use-count-fiches';
 import { useManageFichesPagination } from '../hooks/use-manage-fiches-pagination';
 import { useSearchFiches } from '../hooks/use-search-fiches';
 import { useSelectFiches } from '../hooks/use-select-fiches';
 import { useSortFiches } from '../hooks/use-sort-fiches';
+import { SousActionsMatchesEmpty } from '../sous-actions-scope/sous-actions-matches.empty';
+import { SousActionsMatchesSummary } from '../sous-actions-scope/sous-actions-matches.summary';
 import { FichesListTable } from './fiches-list.table/fiches-list.table';
 import { HeaderFicheList } from './header-fiche-list';
 import { useActionDefaultTableViewEnabled } from './use-action-default-table-view';
@@ -43,6 +48,11 @@ type Props = {
   displayEditionMenu?: boolean;
   onUnlink?: (ficheId: number) => void;
   displayHeader?: boolean;
+  /**
+   * Active le périmètre « Actions et sous-actions » : résumé des sous-actions
+   * qui correspondent, et état vide qui propose de les inclure.
+   */
+  onIncludeSousActions?: () => void;
 };
 
 const isSearchActive = (
@@ -63,6 +73,7 @@ export const FichesList = ({
   displayHeader = true,
   onUnlink,
   filters,
+  onIncludeSousActions,
 }: Props) => {
   const trackEvent = useEventTracker();
 
@@ -99,8 +110,11 @@ export const FichesList = ({
 
   const user = useUser();
 
+  const appliedFilters = removeIdleSousActionsScope(filters, {
+    hasTextSearch: !!debouncedSearch,
+  });
   const filtersWithSearch = {
-    ...fromFormFiltersToFilters(filters),
+    ...fromFormFiltersToFilters(appliedFilters),
     texteNomOuDescription: debouncedSearch,
     hasAtLeastBeginningOrEndDate: view === 'scheduler',
   };
@@ -132,6 +146,21 @@ export const FichesList = ({
   });
 
   const searchIsActive = isSearchActive(filters, debouncedSearch);
+
+  const withSousActionsMatches = !!appliedFilters.withSousActionsMatches;
+  const hasNoResult = !isLoading && fiches.length === 0;
+  const sousActionsMatches = useCountSousActionsMatches({
+    collectiviteId: collectivite.collectiviteId,
+    filters: filtersWithSearch,
+    enabled:
+      onIncludeSousActions !== undefined &&
+      (withSousActionsMatches || hasNoResult),
+  });
+  const showsSousActionsMatchesEmpty =
+    onIncludeSousActions !== undefined &&
+    !withSousActionsMatches &&
+    hasNoResult &&
+    view !== 'scheduler';
 
   /** Doit être récupéré indépendamment de fiches car pour la vue calendaire,
    *  les fiches sans date sont filtrées, on se retrouve donc avec <FichesListEmpty />
@@ -165,6 +194,7 @@ export const FichesList = ({
           toggleGroupedActionsMode={toggleGroupedActionsMode}
           isLoading={isLoading}
           search={search}
+          hasTextSearch={!!debouncedSearch}
           handleSearchChange={handleSearchChange}
           handleSearchSubmit={handleSearchSubmit}
           resetPagination={resetPagination}
@@ -180,6 +210,23 @@ export const FichesList = ({
         />
       ) : null}
 
+      {onIncludeSousActions && withSousActionsMatches && !isLoading && (
+        <p className="-mt-4 mb-0 text-sm text-grey-7">
+          {appLabels.action({ count: countTotal })}
+          <SousActionsMatchesSummary
+            sousActionsMatches={sousActionsMatches}
+            totalActionsCount={countTotal}
+          />
+        </p>
+      )}
+
+      {showsSousActionsMatchesEmpty && (
+        <SousActionsMatchesEmpty
+          sousActionsMatches={sousActionsMatches}
+          onIncludeSousActions={onIncludeSousActions}
+        />
+      )}
+
       {/** Listes des fiches, affichage en fonction de la vue sélectionnée */}
 
       {view === 'scheduler' && (
@@ -190,7 +237,7 @@ export const FichesList = ({
         />
       )}
 
-      {view === 'grid' && (
+      {view === 'grid' && !showsSousActionsMatchesEmpty && (
         <FichesListGrid
           collectivite={collectivite}
           currentUserId={user.id}
@@ -204,7 +251,7 @@ export const FichesList = ({
         />
       )}
 
-      {view === 'table' && (
+      {view === 'table' && !showsSousActionsMatchesEmpty && (
         <div className="p-4 pt-2 lg:p-8 lg:pt-4 bg-white rounded-xl border border-grey-3">
           <FichesListTable
             collectivite={collectivite}

@@ -1,3 +1,4 @@
+import { INestApplication } from '@nestjs/common';
 import { addTestCollectivite } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   getAuthUserFromUserCredentials,
@@ -9,7 +10,6 @@ import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { CollectiviteRole } from '@tet/domain/users';
-import { INestApplication } from '@nestjs/common';
 import { TRPCError } from '@trpc/server';
 import { ListFichesFiltersRepository } from './list-fiches-filters.repository';
 import { createListFichesScenario } from './list-fiches.test-fixture';
@@ -80,6 +80,25 @@ describe('listFiches : chemins d’erreur', () => {
         `^Droits insuffisants, l'utilisateur ${visiteur.id} n'a pas l'autorisation plans\\.fiches\\.read_confidentiel`
       )
     );
+  });
+
+  test('countSousActionsMatches sans droit de lecture sur la collectivité : FORBIDDEN', async () => {
+    const { collectivite } = await addTestCollectivite(db, {
+      accesRestreint: true,
+    });
+    const { user } = await addTestUser(db);
+    const sansAcces = getAuthUserFromUserCredentials(user);
+
+    const error = await catchTrpcError(() =>
+      router
+        .createCaller({ user: sansAcces })
+        .plans.fiches.countSousActionsMatches({
+          collectiviteId: collectivite.id,
+          filters: { withSousActionsMatches: true },
+        })
+    );
+
+    expect(error.code).toBe('FORBIDDEN');
   });
 
   // Le détail de la panne reste dans la cause : l'errorFormatter tRPC le

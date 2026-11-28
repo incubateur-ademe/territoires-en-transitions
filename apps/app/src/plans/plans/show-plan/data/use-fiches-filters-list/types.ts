@@ -27,6 +27,7 @@ export type Filters = {
   noPriorite?: boolean;
   enCoursSansAvancement?: boolean;
   notModifiedForOverAYear?: boolean;
+  withSousActionsMatches?: boolean;
   page?: number;
 };
 
@@ -38,6 +39,8 @@ export type FormFilters = {
   referents?: ReferentOrNot[];
   pilotes?: PiloteOrNot[];
   suivi?: SuiviOption[];
+  /** Périmètre « Actions et sous-actions » */
+  withSousActionsMatches?: boolean;
 };
 
 export type SuiviOption =
@@ -61,5 +64,29 @@ export const queryPayloadSchema = listFichesRequestFiltersObjectSchema.pick({
   priorites: true,
   enCoursSansAvancement: true,
   notModifiedForOverAYear: true,
+  withSousActionsMatches: true,
 });
 export type QueryPayload = z.infer<typeof queryPayloadSchema>;
+
+/**
+ * Filtres tels qu'écrits dans l'URL par `splitReferentsAndPilotesIds` : les
+ * pilotes et les référents y sont des identifiants de personne (tag ou
+ * utilisateur) sous forme de chaînes.
+ */
+export const searchParametersSchema = listFichesRequestFiltersObjectSchema
+  .pick({
+    noPilote: true,
+    noReferent: true,
+    noStatut: true,
+    noPriorite: true,
+    noPlan: true,
+    statuts: true,
+    priorites: true,
+    enCoursSansAvancement: true,
+    notModifiedForOverAYear: true,
+    withSousActionsMatches: true,
+  })
+  .extend({
+    pilotes: z.array(z.string()).optional(),
+    referents: z.array(z.string()).optional(),
+  });

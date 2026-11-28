@@ -259,6 +259,12 @@ export const ficheWithRelationsSchema = ficheSchema.extend({
     .describe(`Budgets de l'action`),
   actionImpactId: z.number().nullish(),
   jaugeModifiedAt: z.string().nullish(),
+  sousActionsCount: z
+    .number()
+    .optional()
+    .describe(
+      "Nombre de sous-actions de l'action ; avec `withSousActionsMatches`, seulement celles qui satisfont les filtres appliqués aux sous-actions"
+    ),
   completion: completionSchema.describe('Données de completion de la fiche'),
 });
 

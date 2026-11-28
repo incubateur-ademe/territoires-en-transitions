@@ -49,6 +49,7 @@ export const filterLabels: Record<FilterKeys, string> = {
   noTitre: appLabels.sansTitre,
   noDescription: appLabels.filtreNoDescription,
   noObjectif: appLabels.filtreNoObjectif,
+  withSousActionsMatches: appLabels.filtresSousActionsIncluses,
 };
 
 export const typePeriodLabels: Record<

@@ -1,8 +1,12 @@
+import type { SousActionsMatches } from '@/app/plans/fiches/list-all-fiches/data/use-count-sous-actions-matches';
 import { makeCollectiviteActionUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
+import { FicheSousActionsCountLink } from '@/app/plans/fiches/components/card/fiche-sous-actions-count.link';
 import { FicheCard } from '@/app/plans/fiches/components/card/fiche.card';
 import { FicheCardSkeleton } from '@/app/plans/fiches/components/card/fiche.skeleton';
 import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
+import { SousActionsMatchesEmpty } from '@/app/plans/fiches/list-all-fiches/sous-actions-scope/sous-actions-matches.empty';
+import { SousActionsMatchesSummary } from '@/app/plans/fiches/list-all-fiches/sous-actions-scope/sous-actions-matches.summary';
 import {
   CurrentFiltersKeys,
   usePlanFilters,
@@ -12,10 +16,20 @@ import { BadgeFilters, FilterCategory, Spacer, VisibleWhen } from '@tet/ui';
 
 const ficheListGridClassName = 'grid md:grid-cols-2 gap-4';
 
-const FilteredResultsSummary = ({ count }: { count: number }) => {
+const FilteredResultsSummary = ({
+  count,
+  sousActionsMatches,
+}: {
+  count: number;
+  sousActionsMatches?: SousActionsMatches;
+}) => {
   return (
     <span className="text-sm text-gray-400">
       {appLabels.resultat({ count })}
+      <SousActionsMatchesSummary
+        sousActionsMatches={sousActionsMatches}
+        totalActionsCount={count}
+      />
     </span>
   );
 };
@@ -52,6 +66,11 @@ const FilteredResultsList = ({
           })}
           currentCollectivite={collectivite}
           currentUserId={currentUserId}
+          footerExtra={
+            fiche.sousActionsCount ? (
+              <FicheSousActionsCountLink fiche={fiche} planId={planId} />
+            ) : undefined
+          }
         />
       ))}
     </div>
@@ -78,7 +97,10 @@ export const FilteredResults = ({
     onDeleteFilterValue,
     onDeleteFilterCategory,
     filteredResults,
+    sousActionsMatches,
+    includeSousActions,
   } = usePlanFilters();
+  const withSousActionsMatches = !!filters.withSousActionsMatches;
 
   const filtersToDisplay = {
     referents: filters.referents,
@@ -89,8 +111,8 @@ export const FilteredResults = ({
   };
   const hasFilteredContent = filteredResults.length > 0;
 
-  const filterCategories: FilterCategory<CurrentFiltersKeys>[] = Object.entries(
-    filtersToDisplay
+  const filterCategories: FilterCategory<CurrentFiltersKeys>[] = (
+    Object.entries(filtersToDisplay) as [string, string[] | undefined][]
   )
     .filter(([, value]) => Array.isArray(value) === true && value.length > 0)
     .map(([key, value]) => {
@@ -104,12 +126,29 @@ export const FilteredResults = ({
         key: key as CurrentFiltersKeys,
         title: getFilterLabel(currentKey),
         selectedFilters: filterValueLabels,
-      };
-    });
+      } as FilterCategory<CurrentFiltersKeys>;
+    })
+    .concat(
+      withSousActionsMatches
+        ? [
+            {
+              key: 'withSousActionsMatches',
+              title: getFilterLabel('withSousActionsMatches'),
+              selectedFilters: [],
+              onlyShowCategory: true,
+            } satisfies FilterCategory<CurrentFiltersKeys>,
+          ]
+        : []
+    );
 
   return (
     <>
-      <FilteredResultsSummary count={filteredResults.length} />
+      <FilteredResultsSummary
+        count={filteredResults.length}
+        sousActionsMatches={
+          withSousActionsMatches ? sousActionsMatches : undefined
+        }
+      />
       <Spacer height={0.5} />
       <BadgeFilters<CurrentFiltersKeys>
         filterCategories={filterCategories}
@@ -135,7 +174,14 @@ export const FilteredResults = ({
             />
           </VisibleWhen>
           <VisibleWhen condition={hasFilteredContent === false}>
-            <FilteredResultsEmpty />
+            {withSousActionsMatches ? (
+              <FilteredResultsEmpty />
+            ) : (
+              <SousActionsMatchesEmpty
+                sousActionsMatches={sousActionsMatches}
+                onIncludeSousActions={includeSousActions}
+              />
+            )}
           </VisibleWhen>
         </>
       )}

@@ -1,4 +1,5 @@
 import { appLabels } from '@/app/labels/catalog';
+import { SousActionsScopeField } from '@/app/plans/fiches/list-all-fiches/sous-actions-scope/sous-actions-scope.field';
 import PrioritesFilterDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
 import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
 import { TOption } from '@/app/ui/shared/select/commons';
@@ -9,7 +10,7 @@ import { FormFilters } from '../data/use-fiches-filters-list/types';
 
 export type PlanFilterKey = Exclude<
   keyof FormFilters,
-  'collectiviteId' | 'axes'
+  'collectiviteId' | 'axes' | 'withSousActionsMatches'
 >;
 
 export const planFilterLabels: Record<PlanFilterKey, string> = {
@@ -25,11 +26,14 @@ export const PlanFiltersFields = ({
   setFilters,
   personneOptions,
   hiddenKeys = [],
+  showsSousActionsScope = false,
 }: {
   filters: FormFilters;
   setFilters: (filters: FormFilters) => void;
   personneOptions: TOption[];
   hiddenKeys?: PlanFilterKey[];
+  /** Affiche le périmètre « Actions uniquement / Actions et sous-actions » */
+  showsSousActionsScope?: boolean;
 }) => {
   const getFilterLabel = (key: PlanFilterKey) => planFilterLabels[key];
   return (
@@ -98,6 +102,17 @@ export const PlanFiltersFields = ({
             onChange={(priorites) => setFilters({ ...filters, priorites })}
           />
         </Field>
+      )}
+      {showsSousActionsScope && (
+        <SousActionsScopeField
+          withSousActionsMatches={!!filters.withSousActionsMatches}
+          onChange={(withSousActionsMatches) =>
+            setFilters({
+              ...filters,
+              withSousActionsMatches: withSousActionsMatches || undefined,
+            })
+          }
+        />
       )}
     </>
   );

@@ -15,6 +15,7 @@ export const FiltersButtonMenu = () => {
         filters={filters}
         readonlyFilters={readonlyFilters}
         setFilters={setFilters}
+        showsSousActionsScope
       />
     </FiltersGenericButtonMenu>
   );

@@ -32,6 +32,7 @@ import {
 import { isNil } from 'es-toolkit';
 import { useEffect, useRef } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { SousActionsScopeField } from '../sous-actions-scope/sous-actions-scope.field';
 import { getFilterLabel } from './labels';
 import {
   BUDGET_OPTIONS,
@@ -56,12 +57,15 @@ export const ToutesLesFichesFiltersForm = ({
   readonlyFilters = {},
   hiddenFilters = [],
   setFilters,
+  showsSousActionsScope = false,
 }: {
   title?: string;
   filters: FormFilters;
   readonlyFilters?: Partial<FormFilters>;
   hiddenFilters?: ReadonlyArray<keyof FormFilters>;
   setFilters: (filters: Partial<FormFilters>) => void;
+  /** Affiche le périmètre « Actions uniquement / Actions et sous-actions » */
+  showsSousActionsScope?: boolean;
 }) => {
   const pilotes = getPilotesValues(filters);
   const referents = getReferentsValues(filters);
@@ -105,6 +109,20 @@ export const ToutesLesFichesFiltersForm = ({
           title={title}
           className="grid-cols-1 md:grid-cols-2 gap-x-8"
         >
+          {showsSousActionsScope && (
+            <div className="col-span-full">
+              <Controller
+                name="withSousActionsMatches"
+                control={control}
+                render={({ field }) => (
+                  <SousActionsScopeField
+                    withSousActionsMatches={!!field.value}
+                    onChange={field.onChange}
+                  />
+                )}
+              />
+            </div>
+          )}
           <div className="*:mb-4 first:!mb-0">
             <Field title="Plans">
               <Controller

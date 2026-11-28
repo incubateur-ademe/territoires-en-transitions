@@ -50,6 +50,7 @@ const visibleFilterKeys = new Set<ListFichesRequestFiltersKeys>([
   'onlyChildren',
   'withChildren',
   'withAxesAncestors',
+  'withSousActionsMatches',
 ]);
 
 const visibleCountByProperties = new Set<CountByPropertyEnumType>([
@@ -137,6 +138,7 @@ const toMaskedFicheRestreinte = (
   axes: fiche.axes,
   sharedWithCollectivites: fiche.sharedWithCollectivites,
   actionImpactId: fiche.actionImpactId,
+  sousActionsCount: fiche.sousActionsCount,
   description: null,
   piliersEci: null,
   objectifs: null,

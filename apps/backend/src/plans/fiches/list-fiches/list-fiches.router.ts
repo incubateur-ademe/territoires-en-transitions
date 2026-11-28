@@ -3,7 +3,10 @@ import { createTrpcErrorHandler } from '@tet/backend/utils/trpc/trpc-error-handl
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import z from 'zod';
 import { listFichesErrorConfig } from './list-fiches.errors';
-import { listFichesInputSchema } from './list-fiches.request';
+import {
+  countSousActionsMatchesInputSchema,
+  listFichesInputSchema,
+} from './list-fiches.request';
 import ListFichesService from './list-fiches.service';
 
 @Injectable()
@@ -39,6 +42,19 @@ export class ListFichesRouter {
             filters: filters ?? {},
             queryOptions,
             readsMaskedFields: false,
+          },
+          { user: ctx.user }
+        );
+        return this.getResultDataOrThrowError(result);
+      }),
+
+    countSousActionsMatches: this.trpc.authedProcedure
+      .input(countSousActionsMatchesInputSchema)
+      .query(async ({ input, ctx }) => {
+        const result = await this.service.countSousActionsMatches(
+          {
+            collectiviteId: input.collectiviteId,
+            filters: input.filters ?? {},
           },
           { user: ctx.user }
         );

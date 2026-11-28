@@ -1,10 +1,10 @@
 import {
-  StatutFigeantJauge,
-  OrigineSecteurs,
-  SECTEUR_REGLEMENTAIRE_LABELS,
+  AI_PLAN_IMPORT_PROFILE_LABELS,
   AiPlanImportProfile,
   AiPlanImportProfileEnum,
-  AI_PLAN_IMPORT_PROFILE_LABELS,
+  OrigineSecteurs,
+  SECTEUR_REGLEMENTAIRE_LABELS,
+  StatutFigeantJauge,
 } from '@tet/domain/plans';
 import { plural } from '@tet/ui/labels/plural';
 
@@ -59,6 +59,16 @@ type PlanBudgetCalculArgs = {
   totalFiches: number | undefined;
 };
 
+const sousActionsCorrespondantes = plural({
+  one: 'sous-action correspondante',
+  other: 'sous-actions correspondantes',
+});
+const sousActionsCorrespondent = plural({
+  one: 'sous-action correspond',
+  other: 'sous-actions correspondent',
+});
+const actionsCountLabel = plural({ one: 'action', other: 'actions' });
+
 const planBudgetCalculInfo = ({
   nbFiches,
   totalFiches,
@@ -111,6 +121,45 @@ export const plansLabels = {
   sousAction: plural({ one: 'sous-action', other: 'sous-actions' }),
   sousActionSupprimer: 'Supprimer la sous-action',
   sousActionAjouter: 'Ajouter une sous-action',
+
+  /** Filtres : périmètre « Actions et sous-actions » */
+  filtresPerimetreActions: 'Appliquer les filtres sur : actions',
+  filtresPerimetreActionsEtSousActions: 'actions et sous-actions',
+  filtresPerimetreInfo:
+    "Sur les sous-actions, seuls les filtres sur le titre, la description, le statut, les pilotes et la date de fin s'appliquent. Les autres filtres portent sur l'action.",
+  filtresSousActionsIncluses: 'Sous-actions incluses',
+  /**
+   * Sous-actions correspondantes parmi les actions listées. « dans M d'entre
+   * elles » n'est ajouté que si toutes les actions listées n'en ont pas.
+   */
+  filtresSousActionsCorrespondantes: ({
+    actionsCount,
+    sousActionsCount,
+    totalActionsCount,
+  }: {
+    actionsCount: number;
+    sousActionsCount: number;
+    totalActionsCount: number;
+  }): string =>
+    `${sousActionsCorrespondantes({ count: sousActionsCount })}${
+      actionsCount < totalActionsCount
+        ? ` dans ${actionsCount} d'entre elles`
+        : ''
+    }`,
+  filtresSousActionsCorrespondent: ({
+    actionsCount,
+    sousActionsCount,
+  }: {
+    actionsCount: number;
+    sousActionsCount: number;
+  }): string =>
+    `${sousActionsCorrespondent({
+      count: sousActionsCount,
+    })} à ces filtres, dans ${actionsCount} ${actionsCountLabel({
+      count: actionsCount,
+      withoutCount: true,
+    })}.`,
+  filtresInclureSousActions: 'Inclure les sous-actions',
 
   ficheStatut: 'Statut',
   ficheJauge: 'Progression',

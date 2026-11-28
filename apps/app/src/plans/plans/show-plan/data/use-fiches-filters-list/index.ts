@@ -2,10 +2,10 @@ import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-
 import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
-import { listFichesRequestFiltersObjectSchema } from '@tet/domain/plans';
+import { ListFichesRequestFilters } from '@tet/domain/plans';
 import { parseAsJson, useQueryState } from 'nuqs';
 import * as formatter from './filter-formatters';
-import { Filters, FormFilters } from './types';
+import { Filters, FormFilters, searchParametersSchema } from './types';
 
 type Args = {
   parameters: {
@@ -13,20 +13,6 @@ type Args = {
     axes: number[];
   };
 };
-
-const searchParametersSchema = listFichesRequestFiltersObjectSchema.pick({
-  noPilote: true,
-  noReferent: true,
-  noStatut: true,
-  noPriorite: true,
-  noPlan: true,
-  personnePiloteIds: true,
-  personneReferenteIds: true,
-  statuts: true,
-  priorites: true,
-  enCoursSansAvancement: true,
-  notModifiedForOverAYear: true,
-});
 
 const countActiveFilters = (formattedFilters: FormFilters): number => {
   const filterKeysToConsider: (keyof FormFilters)[] = [
@@ -53,6 +39,8 @@ export const useFichesActionFiltresListe = ({
   isLoading: boolean;
   total: number;
   filters: FormFilters;
+  /** Filtres envoyés à `listFiches` */
+  queryFilters: ListFichesRequestFilters;
   filtersCount: number;
   setFilters: (filters: FormFilters) => void;
 } => {
@@ -69,13 +57,15 @@ export const useFichesActionFiltresListe = ({
     collectiviteId,
   };
 
+  const queryFilters: ListFichesRequestFilters = {
+    ...formatter.toQueryPayload(filtersWithCollectiviteId),
+    axesId: parameters.axes,
+  };
+
   const { data, isLoading } = useQuery(
     trpcClient.plans.fiches.listFiches.queryOptions({
       collectiviteId,
-      filters: {
-        ...formatter.toQueryPayload(filtersWithCollectiviteId),
-        axesId: parameters.axes,
-      },
+      filters: queryFilters,
     })
   );
 
@@ -92,6 +82,7 @@ export const useFichesActionFiltresListe = ({
       : { items: [], total: 0 }),
     isLoading,
     filters: formattedFilters,
+    queryFilters,
     setFilters: setFiltersHandler,
     filtersCount: countActiveFilters(formattedFilters),
   };

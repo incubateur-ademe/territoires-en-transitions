@@ -5,7 +5,12 @@ import {
   SANS_STATUT_LABEL,
 } from '@tet/domain/plans';
 import * as formatter from './filter-formatters';
-import { Filters, FormFilters, QueryPayload } from './types';
+import {
+  Filters,
+  FormFilters,
+  QueryPayload,
+  searchParametersSchema,
+} from './types';
 
 describe('useFichesActionFiltresListe filter formatters', () => {
   it('format from form filters to raw filters', () => {
@@ -101,5 +106,49 @@ describe('useFichesActionFiltresListe filter formatters', () => {
     };
     const result = formatter.toQueryPayload(filters);
     expect(result).toEqual(expected);
+  });
+});
+
+describe('périmètre « Actions et sous-actions »', () => {
+  it('conserve withSousActionsMatches du formulaire à la requête', () => {
+    const formFilters: FormFilters = {
+      collectiviteId: 1,
+      axes: [1],
+      pilotes: ['111'],
+      withSousActionsMatches: true,
+    };
+    const filters = formatter.splitReferentsAndPilotesIds(formFilters);
+    expect(filters).toEqual({
+      collectiviteId: 1,
+      axes: [1],
+      pilotes: ['111'],
+      withSousActionsMatches: true,
+    });
+    expect(formatter.toFilters(filters)).toEqual(formFilters);
+    expect(formatter.toQueryPayload(filters)).toMatchObject({
+      personnePiloteIds: [111],
+      withSousActionsMatches: true,
+    });
+  });
+});
+
+describe('searchParametersSchema', () => {
+  it('relit les pilotes et les référents écrits dans l’URL', () => {
+    const urlFilters = formatter.splitReferentsAndPilotesIds({
+      collectiviteId: 1,
+      axes: [],
+      pilotes: ['111', '123e4567-e89b-12d3-a456-426614174000'],
+      referents: ['222'],
+      statuts: ['À venir'],
+      withSousActionsMatches: true,
+    });
+    const { collectiviteId, ...urlValue } = urlFilters;
+
+    expect(searchParametersSchema.parse(urlValue)).toEqual({
+      pilotes: ['111', '123e4567-e89b-12d3-a456-426614174000'],
+      referents: ['222'],
+      statuts: ['À venir'],
+      withSousActionsMatches: true,
+    });
   });
 });
