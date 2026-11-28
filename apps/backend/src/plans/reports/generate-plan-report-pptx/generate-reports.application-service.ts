@@ -55,9 +55,11 @@ export class GenerateReportsApplicationService {
         axe_summary_slide: 11,
         fiche_summary_slide: 12,
         fiche_indicateurs_slide: 13,
-        ressources_slide: 14,
+        fiche_sous_actions_slide: 14,
+        ressources_slide: 15,
       },
       max_fiche_indicateurs_per_slide: 1,
+      max_sous_actions_per_slide: 5,
     },
   };
 

@@ -5,7 +5,7 @@ import {
 import { Test } from '@nestjs/testing';
 import { failure, success } from '@tet/backend/utils/result.type';
 import { IndicateurSourceEnum } from '@tet/domain/indicateurs';
-import { FicheWithRelations } from '@tet/domain/plans';
+import { FicheWithRelations, StatutEnum } from '@tet/domain/plans';
 import { mkdtempSync, rmSync, writeFileSync } from 'fs';
 import { DomUtils, parseDocument } from 'htmlparser2';
 import { tmpdir } from 'os';
@@ -209,64 +209,317 @@ describe('PptBuilderService', () => {
     );
   });
 
-  describe('sortFichesForReport', () => {
-    const fiche = (
-      overrides: Partial<FicheWithRelations>
-    ): FicheWithRelations =>
-      ({
-        titre: null,
-        parentId: null,
-        createdAt: '2024-01-01T00:00:00.000Z',
-        ...overrides,
-      } as FicheWithRelations);
+  const fiche = (overrides: Partial<FicheWithRelations>): FicheWithRelations =>
+    ({
+      titre: null,
+      description: null,
+      parentId: null,
+      statut: null,
+      pilotes: [],
+      dateFin: null,
+      createdAt: '2024-01-01T00:00:00.000Z',
+      ...overrides,
+    } as FicheWithRelations);
 
-    it('trie les actions de premier niveau par titre, alphabétiquement', () => {
-      const fiches = [
-        fiche({ id: 1, titre: 'Action C' }),
-        fiche({ id: 2, titre: 'Action A' }),
-        fiche({ id: 3, titre: 'Action B' }),
-      ];
+  describe('groupFichesForReport', () => {
+    const groupIds = (fiches: FicheWithRelations[]) =>
+      (pptBuilderService as any)
+        .groupFichesForReport(fiches)
+        .map(
+          ({
+            action,
+            sousActions,
+          }: {
+            action: FicheWithRelations;
+            sousActions: FicheWithRelations[];
+          }) => [action.id, sousActions.map((sousAction) => sousAction.id)]
+        );
 
-      const result = (pptBuilderService as any).sortFichesForReport(fiches);
-
-      expect(result.map((f: FicheWithRelations) => f.id)).toEqual([2, 3, 1]);
-    });
-
-    it('place chaque sous-action juste après sa fiche parente, triées par date de création (pas par titre)', () => {
-      const fiches = [
-        fiche({ id: 1, titre: 'Action A' }),
-        fiche({ id: 2, titre: 'Action B' }),
-        // Sous-actions de l'action B, volontairement pas dans l'ordre alphabétique ni d'insertion
-        fiche({
-          id: 21,
-          titre: 'Z sous-action',
-          parentId: 2,
-          createdAt: '2024-01-02T00:00:00.000Z',
-        }),
-        fiche({
-          id: 22,
-          titre: 'A sous-action',
-          parentId: 2,
-          createdAt: '2024-01-01T00:00:00.000Z',
-        }),
-      ];
-
-      const result = (pptBuilderService as any).sortFichesForReport(fiches);
-
-      expect(result.map((f: FicheWithRelations) => f.id)).toEqual([
-        1, 2, 22, 21,
+    it('trie les actions par titre, alphabétiquement', () => {
+      expect(
+        groupIds([
+          fiche({ id: 1, titre: 'Action C' }),
+          fiche({ id: 2, titre: 'Action A' }),
+          fiche({ id: 3, titre: 'Action B' }),
+        ])
+      ).toEqual([
+        [2, []],
+        [3, []],
+        [1, []],
       ]);
     });
 
-    it('inclut les sous-actions orphelines (dont la fiche parente est absente de la liste)', () => {
+    it('range les sous-actions sous leur action, par date de création (pas par titre)', () => {
+      expect(
+        groupIds([
+          fiche({ id: 1, titre: 'Action A' }),
+          fiche({ id: 2, titre: 'Action B' }),
+          // ni dans l'ordre alphabétique, ni dans l'ordre d'insertion
+          fiche({
+            id: 21,
+            titre: 'Z sous-action',
+            parentId: 2,
+            createdAt: '2024-01-02T00:00:00.000Z',
+          }),
+          fiche({
+            id: 22,
+            titre: 'A sous-action',
+            parentId: 2,
+            createdAt: '2024-01-01T00:00:00.000Z',
+          }),
+        ])
+      ).toEqual([
+        [1, []],
+        [2, [22, 21]],
+      ]);
+    });
+
+    it("ne fait jamais d'une sous-action une action, même sans son action parente", () => {
+      expect(
+        groupIds([
+          fiche({ id: 1, titre: 'Action A' }),
+          fiche({ id: 99, titre: 'Sous-action orpheline', parentId: 999 }),
+        ])
+      ).toEqual([[1, []]]);
+    });
+  });
+
+  describe('slides « Sous-actions »', () => {
+    const ROWS_PER_SLIDE = 5;
+
+    /** Génère les slides « Sous-actions » d'une action avec le vrai template. */
+    const renderSousActionsSlides = async (
+      sousActions: FicheWithRelations[]
+    ) => {
+      const mediaDir = mkdtempSync(path.join(tmpdir(), 'plan-report-'));
+      onTestFinished(() => rmSync(mediaDir, { recursive: true, force: true }));
+      const presentation = new Automizer({
+        templateDir: path.join(__dirname, 'docs'),
+        mediaDir,
+        removeExistingSlides: true,
+        autoImportSlideMasters: true,
+        cleanup: true,
+        verbosity: 0,
+      })
+        .loadRoot('template_bilan.pptx')
+        .load('template_bilan.pptx', 'bilan');
+
+      (pptBuilderService as any).addFicheSousActionsSlides({
+        presentation,
+        planGeneralInfo: { PLAN_NOM: 'Plan Climat', PLAN_TYPE: 'PCAET' },
+        logo: null,
+        template: {
+          key: 'bilan',
+          slides: { fiche_sous_actions_slide: 14 },
+          max_sous_actions_per_slide: ROWS_PER_SLIDE,
+        },
+        ficheTextReplacementsInfo: { FICHE_TITRE: '1.1. Construire' },
+        sousActions,
+      });
+
+      const archive = await presentation.getJSZip();
+      const slideFiles = archive
+        .file(/^ppt\/slides\/slide\d+\.xml$/)
+        .sort((a, b) => a.name.localeCompare(b.name, 'en', { numeric: true }));
+
+      return Promise.all(
+        slideFiles.map(async (file) => {
+          const slide = parseDocument(await file.async('string'), {
+            xmlMode: true,
+          });
+          // le remplacement découpe un texte en plusieurs runs : on les recolle
+          const texts = (node: { children: any[] }) =>
+            DomUtils.findAll((el) => el.name === 'a:t', node.children)
+              .map((el) => DomUtils.textContent(el))
+              .join('');
+          const fieldShape = (node: { children: any[] }, suffix: string) =>
+            DomUtils.findOne(
+              (el) =>
+                el.name === 'p:sp' &&
+                (
+                  DomUtils.findOne((c) => c.name === 'p:cNvPr', el.children)
+                    ?.attribs.name ?? ''
+                ).endsWith(`_${suffix}`),
+              node.children
+            );
+          const field = (node: { children: any[] }, suffix: string) => {
+            const shape = fieldShape(node, suffix);
+            return shape ? texts(shape) : undefined;
+          };
+          /** Couleurs des runs qui portent du texte (srgb, ou nom du thème). */
+          const textColors = (node: { children: any[] }, suffix: string) => {
+            const shape = fieldShape(node, suffix);
+            const colors = DomUtils.findAll(
+              (el) =>
+                el.name === 'a:r' && DomUtils.textContent(el).trim() !== '',
+              shape?.children ?? []
+            ).map((run) => {
+              const color = DomUtils.findOne(
+                (el) => el.name === 'a:srgbClr' || el.name === 'a:schemeClr',
+                run.children
+              );
+              return color?.attribs.val;
+            });
+            return [...new Set(colors)];
+          };
+          const groups = DomUtils.findAll(
+            (el) =>
+              el.name === 'p:grpSp' &&
+              /^grp_sous_action_\d+$/.test(
+                DomUtils.findOne((c) => c.name === 'p:cNvPr', el.children)
+                  ?.attribs.name ?? ''
+              ),
+            slide.children
+          );
+          const rows = groups.map((row) => ({
+            badges: DomUtils.findAll(
+              (el) =>
+                el.name === 'p:cNvPr' &&
+                el.attribs.name.startsWith('txt_sous_action_') &&
+                el.attribs.name.includes('_statut_'),
+              row.children
+            ).map((el) => el.attribs.name),
+            titre: field(row, 'titre'),
+            description: field(row, 'description'),
+            pilotes: field(row, 'pilotes'),
+            dateFin: field(row, 'date_fin'),
+          }));
+          return {
+            text: texts(slide),
+            rows,
+            dateFinColors: groups.map((row) => textColors(row, 'date_fin')),
+          };
+        })
+      );
+    };
+
+    it('liste titre, description, pilotes, date de fin et statut de chaque sous-action', async () => {
+      const [slide, ...autres] = await renderSousActionsSlides([
+        fiche({
+          id: 11,
+          titre: 'Organiser la réunion de lancement',
+          description: '<p>Envoyer une proposition de créneaux</p>',
+          statut: StatutEnum.REALISE,
+          pilotes: [
+            { prenom: 'Marie', nomFamille: 'Bouvier', nom: 'Marie Bouvier' },
+            { nom: 'Service mobilité' },
+          ] as FicheWithRelations['pilotes'],
+          dateFin: '2026-02-22',
+        }),
+        fiche({ id: 12, titre: 'Valider une première version' }),
+      ]);
+
+      expect(autres).toHaveLength(0);
+      expect(slide.text).toContain('Sous-actions : 1.1. Construire');
+      expect(slide.text).not.toContain('{{');
+      expect(slide.rows).toEqual([
+        {
+          badges: ['txt_sous_action_1_statut_REALISE'],
+          titre: 'Organiser la réunion de lancement',
+          description: 'Envoyer une proposition de créneaux',
+          pilotes: 'M. Bouvier, Service mobilité',
+          dateFin: '22/02/2026',
+        },
+        {
+          badges: ['txt_sous_action_2_statut_SANS_STATUT'],
+          titre: 'Valider une première version',
+          description: '',
+          pilotes: '',
+          dateFin: '',
+        },
+      ]);
+    });
+
+    it(`répartit les sous-actions par ${ROWS_PER_SLIDE} et numérote les slides dans le titre`, async () => {
+      const slides = await renderSousActionsSlides(
+        Array.from({ length: ROWS_PER_SLIDE + 2 }, (_, i) =>
+          fiche({ id: i + 1, titre: `Sous-action ${i + 1}` })
+        )
+      );
+
+      expect(slides.map((slide) => slide.rows.length)).toEqual([
+        ROWS_PER_SLIDE,
+        2,
+      ]);
+      expect(slides[0].text).toContain('1.1. Construire (1/2)');
+      expect(slides[1].text).toContain('1.1. Construire (2/2)');
+      expect(slides[1].rows.map((row) => row.titre)).toEqual([
+        `Sous-action ${ROWS_PER_SLIDE + 1}`,
+        `Sous-action ${ROWS_PER_SLIDE + 2}`,
+      ]);
+    });
+
+    it("met en rouge la date de fin dépassée d'une sous-action ni réalisée ni abandonnée", async () => {
+      const [slide] = await renderSousActionsSlides([
+        fiche({
+          id: 1,
+          titre: 'En retard',
+          statut: StatutEnum.EN_COURS,
+          dateFin: '2020-01-31',
+        }),
+        fiche({
+          id: 2,
+          titre: 'Réalisée après la date',
+          statut: StatutEnum.REALISE,
+          dateFin: '2020-01-31',
+        }),
+        fiche({ id: 3, titre: 'À venir', dateFin: '2999-12-31' }),
+      ]);
+
+      expect(slide.rows.map((row) => row.dateFin)).toEqual([
+        '31/01/2020',
+        '31/01/2020',
+        '31/12/2999',
+      ]);
+      expect(slide.dateFinColors).toEqual([['CE0500'], ['dk1'], ['dk1']]);
+    });
+
+    it("n'ajoute aucune slide à une action sans sous-action", async () => {
+      expect(await renderSousActionsSlides([])).toEqual([]);
+    });
+
+    it('résume en « +N » les pilotes au-delà des deux premiers', async () => {
+      const [slide] = await renderSousActionsSlides([
+        fiche({
+          id: 1,
+          titre: 'Coordonner',
+          pilotes: [
+            { prenom: 'Marie', nomFamille: 'Bouvier', nom: 'Marie Bouvier' },
+            { nom: 'Service mobilité' },
+            { nom: 'Service voirie' },
+            { nom: 'Service urbanisme' },
+          ] as FicheWithRelations['pilotes'],
+        }),
+      ]);
+
+      expect(slide.rows[0].pilotes).toBe('M. Bouvier, Service mobilité +2');
+    });
+
+    it('coupe une description trop longue pour ses deux lignes', async () => {
+      const [slide] = await renderSousActionsSlides([
+        fiche({ id: 1, titre: 'Publier', description: 'mot '.repeat(100) }),
+      ]);
+
+      const description = slide.rows[0].description ?? '';
+      expect(description.length).toBeLessThanOrEqual(170);
+      expect(description.endsWith('…')).toBe(true);
+    });
+  });
+
+  describe('SOUS_FICHES_COUNT', () => {
+    it('compte les sous-actions des actions données', () => {
+      const actions = [fiche({ id: 1 }), fiche({ id: 2 })];
       const fiches = [
-        fiche({ id: 1, titre: 'Action A' }),
-        fiche({ id: 99, titre: 'Sous-action orpheline', parentId: 999 }),
+        ...actions,
+        fiche({ id: 11, parentId: 1 }),
+        fiche({ id: 12, parentId: 1 }),
+        fiche({ id: 21, parentId: 2 }),
+        fiche({ id: 31, parentId: 3 }),
       ];
 
-      const result = (pptBuilderService as any).sortFichesForReport(fiches);
-
-      expect(result.map((f: FicheWithRelations) => f.id)).toEqual([1, 99]);
+      expect((pptBuilderService as any).countSousActions(actions, fiches)).toBe(
+        3
+      );
     });
   });
 

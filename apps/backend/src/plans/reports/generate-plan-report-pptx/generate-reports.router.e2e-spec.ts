@@ -224,13 +224,107 @@ describe('generate-reports.router.e2e-spec.ts', () => {
     );
   }, 90000);
 
+  it("Liste les sous-actions dans une slide de leur action, sans slide d'action à elles, y compris quand on choisit les actions", async () => {
+    const db = await getTestDatabase(app);
+    const { collectivite, user } = await addTestCollectiviteAndUser(db, {
+      user: { role: CollectiviteRole.ADMIN },
+    });
+    const collectiviteId = collectivite.id;
+    const caller = router.createCaller({
+      user: getAuthUserFromUserCredentials(user),
+    });
+
+    const plan = await caller.plans.plans.create({
+      nom: 'Plan sous-actions',
+      collectiviteId,
+    });
+    const { id: axeId } = await caller.plans.axes.create({
+      nom: 'Axe Mobilité',
+      collectiviteId,
+      planId: plan.id,
+      parent: plan.id,
+    });
+    const createFiche = async (titre: string, parentId?: number) =>
+      (
+        await caller.plans.fiches.create({
+          fiche: { titre, collectiviteId, parentId },
+        })
+      ).id;
+
+    const actionId = await createFiche('Développer le covoiturage');
+    await caller.plans.fiches.update({
+      ficheId: actionId,
+      ficheFields: { axes: [{ id: axeId }] },
+    });
+    // sans axe propre : rattachées au plan par leur action parente
+    const sousActionRealiseeId = await createFiche(
+      'Lancer une ligne de covoiturage',
+      actionId
+    );
+    await caller.plans.fiches.update({
+      ficheId: sousActionRealiseeId,
+      ficheFields: { statut: StatutEnum.REALISE },
+    });
+    await createFiche('Aménager une aire de covoiturage', actionId);
+    const autreActionId = await createFiche('Action non choisie');
+    await caller.plans.fiches.update({
+      ficheId: autreActionId,
+      ficheFields: { axes: [{ id: axeId }] },
+    });
+
+    const slides = await generateReportSlidesText(caller, {
+      collectiviteId,
+      planId: plan.id,
+    });
+
+    const sousActionsSlides = slides.filter((texte) =>
+      texte.includes('Sous-actions : Développer le covoiturage')
+    );
+    expect(sousActionsSlides).toHaveLength(1);
+    expect(sousActionsSlides[0]).toContain('Lancer une ligne de covoiturage');
+    expect(sousActionsSlides[0]).toContain('Aménager une aire de covoiturage');
+    expect(sousActionsSlides[0]).toContain('RÉALISÉ');
+    expect(sousActionsSlides[0]).not.toContain('{{');
+
+    expect(slides.filter((texte) => texte.includes('Action : ')).length).toBe(
+      2
+    );
+    expect(
+      slides.some((texte) => texte.includes('Action : Lancer une ligne'))
+    ).toBe(false);
+    expect(
+      slides.some((texte) => texte.includes('2 actions - 2 sous-actions'))
+    ).toBe(true);
+
+    const slidesChoisies = await generateReportSlidesText(caller, {
+      collectiviteId,
+      planId: plan.id,
+      ficheIds: [actionId],
+    });
+    expect(
+      slidesChoisies.some((texte) => texte.includes('Action non choisie'))
+    ).toBe(false);
+    expect(
+      slidesChoisies.filter(
+        (texte) =>
+          texte.includes('Sous-actions : Développer le covoiturage') &&
+          texte.includes('Aménager une aire de covoiturage')
+      )
+    ).toHaveLength(1);
+  }, 180000);
+
   async function generateReportSlidesText(
     caller: ReturnType<TrpcRouter['createCaller']>,
-    { collectiviteId, planId }: { collectiviteId: number; planId: number }
+    {
+      collectiviteId,
+      planId,
+      ficheIds,
+    }: { collectiviteId: number; planId: number; ficheIds?: number[] }
   ): Promise<string[]> {
     const { id: reportId } = await caller.plans.reports.create({
       planId,
       templateKey: 'general_bilan_template',
+      ficheIds,
     });
 
     await expect
@@ -259,10 +353,12 @@ describe('generate-reports.router.e2e-spec.ts', () => {
       .load('rapport.pptx', 'rapport')
       .getInfo();
 
-    return info
-      .slidesByTemplate('rapport')
-      .map((slide) =>
-        slide.elements.flatMap((element) => element.getText()).join(' ')
-      );
+    return info.slidesByTemplate('rapport').map((slide) =>
+      slide.elements
+        .flatMap((element) => element.getText())
+        .join(' ')
+        // un texte remplacé est découpé en plusieurs runs
+        .replace(/\s+/g, ' ')
+    );
   }
 });
