@@ -11,7 +11,7 @@ import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { allSectionKeys } from '@tet/pdf-components';
 import { FICHE_ACTION_PDF_EXPORT_CONFIG } from './fiche-action-pdf-export.config';
 import { randomUUID } from 'node:crypto';
-import { createFiche, createFiches } from '../fiches.test-fixture';
+import { createFiche, createFiches, createPlan } from '../fiches.test-fixture';
 
 let router: TrpcRouter;
 let yoloDodo: AuthenticatedUser;
@@ -221,6 +221,47 @@ describe('generatePdf', () => {
     const buffer = Buffer.from(result.pdf, 'base64');
     expect(buffer.subarray(0, 5).toString('ascii')).toBe('%PDF-');
     expect(buffer.length).toBeGreaterThan(1000);
+  }, 60_000);
+
+  it('exports the fiches of a plan without turning sous-actions into separate fiches', async () => {
+    const caller = router.createCaller({ user: yoloDodo });
+
+    const plan = await createPlan({
+      caller,
+      planData: {
+        collectiviteId: COLLECTIVITE_ID,
+        nom: 'Test export PDF - plan',
+      },
+    });
+    const parentId = await createFiche({
+      caller,
+      ficheInput: {
+        collectiviteId: COLLECTIVITE_ID,
+        titre: 'Test export PDF - action du plan',
+        axeId: plan.id,
+      },
+    });
+    // Copie de l'axe du parent, comme à l'import ou à la duplication.
+    await createFiche({
+      caller,
+      ficheInput: {
+        collectiviteId: COLLECTIVITE_ID,
+        titre: 'Test export PDF - sous-action du plan',
+        parentId,
+        axeId: plan.id,
+      },
+    });
+
+    const result = await caller.plans.fiches.generatePdf({
+      mode: 'all',
+      collectiviteId: COLLECTIVITE_ID,
+      filters: { planActionIds: [plan.id] },
+      sort: [{ field: 'titre', direction: 'asc' }],
+      sections: [...MINIMAL_SECTION_KEYS],
+      notesYears: 'all',
+    });
+
+    expect(result.includedFicheIds).toEqual([parentId]);
   }, 60_000);
 
   it('silently excludes a non-existent fiche and fails with NO_FICHES when selection is empty', async () => {

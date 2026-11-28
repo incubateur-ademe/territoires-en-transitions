@@ -1,16 +1,33 @@
 import { appLabels } from '@/app/labels/catalog';
-import { SortOptions } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
+import {
+  SortOptions,
+  useListFiches,
+} from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { Filters } from '@/app/plans/fiches/list-all-fiches/filters/types';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { FicheWithRelations } from '@tet/domain/plans';
-import { Alert, Button, Modal, ModalFooter, ModalProps } from '@tet/ui';
+import {
+  Alert,
+  Button,
+  Event,
+  Modal,
+  ModalFooter,
+  ModalProps,
+  useEventTracker,
+} from '@tet/ui';
 import { useState } from 'react';
-import { useDownloadPdfExport } from '../use-download-pdf-export';
+import {
+  useDownloadPdfExport,
+  UseDownloadPdfExportOptions,
+} from '../use-download-pdf-export';
 import { sectionsInitValue, sectionsValuesToApiInput } from '../utils';
 import ExportFicheActionTable from './export-fa-table';
 
 // Doit rester aligné avec FICHE_ACTION_PDF_EXPORT_CONFIG.maxFiches côté backend.
 const PDF_EXPORT_MAX_FICHES = 200;
+
+// Même ordre que la liste des fiches d'un axe sur la page du plan.
+const PLAN_EXPORT_SORT: SortOptions = [{ field: 'titre', direction: 'asc' }];
 
 const ExportFicheModalWrapper = ({
   openState,
@@ -108,7 +125,10 @@ export const ExportMultipleFichesModal = ({
       : { mode: 'selection' as const, ficheIds: selectedFicheIds };
 
   const warning = isOverLimit
-    ? `L'export est limité à ${PDF_EXPORT_MAX_FICHES} fiches. Vous en avez sélectionné ${effectiveCount}.`
+    ? appLabels.exportPdfLimiteFiches({
+        max: PDF_EXPORT_MAX_FICHES,
+        count: effectiveCount,
+      })
     : undefined;
 
   return (
@@ -135,11 +155,70 @@ export const ExportMultipleFichesModal = ({
   );
 };
 
+/**
+ * Export PDF de toutes les fiches d'un plan, ouvert depuis le menu du plan.
+ * Les sous-actions restent dans la page de leur fiche parente.
+ */
+export const ExportPlanFichesModal = ({
+  planId,
+  openState,
+}: {
+  planId: number;
+  openState: ModalProps['openState'];
+}): React.ReactElement => {
+  const collectiviteId = useCollectiviteId();
+  const tracker = useEventTracker();
+  const filters = { planActionIds: [planId] };
+
+  // Compte les fiches que l'utilisateur peut lire, comme le contrôle du
+  // backend (seules les fiches partagées par une autre collectivité peuvent
+  // différer). Le backend reste juge de la limite (TOO_MANY_FICHES).
+  const { count, isLoading } = useListFiches(collectiviteId, {
+    filters,
+    queryOptions: { limit: 1 },
+  });
+  const isOverLimit = count > PDF_EXPORT_MAX_FICHES;
+
+  const warning = isOverLimit
+    ? appLabels.exportPdfPlanLimiteFiches({
+        max: PDF_EXPORT_MAX_FICHES,
+        count,
+      })
+    : undefined;
+
+  return (
+    <ExportFicheModalWrapper
+      openState={openState}
+      warning={warning}
+      submitButton={(close, options) => (
+        <ExportPdfButton
+          input={{
+            mode: 'all',
+            collectiviteId,
+            filters,
+            sort: PLAN_EXPORT_SORT,
+          }}
+          sections={options}
+          close={close}
+          disabled={isLoading || isOverLimit}
+          trackSuccess={(variables) =>
+            tracker(Event.plans.exportPlan, {
+              format: 'pdf',
+              sections: variables.sections ?? [],
+            })
+          }
+        />
+      )}
+    />
+  );
+};
+
 function ExportPdfButton({
   input,
   sections,
   close,
   disabled,
+  trackSuccess,
 }: {
   input:
     | { mode: 'selection'; ficheIds: number[] }
@@ -152,8 +231,9 @@ function ExportPdfButton({
   sections: typeof sectionsInitValue;
   close: () => void;
   disabled?: boolean;
+  trackSuccess?: UseDownloadPdfExportOptions['trackSuccess'];
 }): React.ReactElement {
-  const { mutate, isPending } = useDownloadPdfExport();
+  const { mutate, isPending } = useDownloadPdfExport({ trackSuccess });
   const apiOptions = sectionsValuesToApiInput(sections);
 
   return (
