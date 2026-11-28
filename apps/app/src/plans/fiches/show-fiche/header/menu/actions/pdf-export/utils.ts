@@ -1,4 +1,6 @@
+import { appLabels } from '@/app/labels/catalog';
 import { RouterInput } from '@tet/api';
+import { capitalize } from '@tet/ui/labels/plural';
 
 type GeneratePdfInput = RouterInput['plans']['fiches']['generatePdf'];
 export type PdfSectionKey = NonNullable<GeneratePdfInput['sections']>[number];
@@ -16,6 +18,7 @@ export const sectionsInitValue: TSectionsValues = {
   intro: { isChecked: true, values: undefined },
   acteurs: { isChecked: true, values: undefined },
   indicateurs: { isChecked: true, values: undefined },
+  sousActions: { isChecked: true, values: undefined },
   notes: { isChecked: true, values: [ALL_YEARS_OPTION_KEY] },
   moyens: { isChecked: true, values: undefined },
   fiches: { isChecked: true, values: undefined },
@@ -29,6 +32,10 @@ export const sectionsList: TSectionsList = [
   { key: 'intro', title: 'Intro : Description, Instances de gouvernance' },
   { key: 'acteurs', title: 'Acteurs du projet' },
   { key: 'indicateurs', title: 'Indicateurs liés' },
+  {
+    key: 'sousActions',
+    title: capitalize(appLabels.sousAction({ plural: true })),
+  },
   { key: 'notes', title: 'Notes' },
   { key: 'moyens', title: 'Budget' },
   { key: 'fiches', title: 'Actions liées' },

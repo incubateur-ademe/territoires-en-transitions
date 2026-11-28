@@ -1,7 +1,17 @@
 import { INestApplication } from '@nestjs/common';
-import { getAuthUser, getTestApp, getTestRouter, YOLO_DODO } from '@tet/backend/test';
+import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import {
+  getAuthUser,
+  getAuthUserFromUserCredentials,
+  getTestApp,
+  getTestDatabase,
+  getTestRouter,
+  YOLO_DODO,
+} from '@tet/backend/test';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { CollectiviteRole } from '@tet/domain/users';
 import { createFiche } from '../fiches.test-fixture';
 import { FicheExportPayloadService } from './fiche-export-payload.service';
 
@@ -114,7 +124,7 @@ describe('buildFicheExportPayload - fiches liées', () => {
     );
   }, 30_000);
 
-  it('inclut une fiche liée même quand le lien a été créé depuis l\'autre fiche', async () => {
+  it("inclut une fiche liée même quand le lien a été créé depuis l'autre fiche", async () => {
     const caller = router.createCaller({ user: yoloDodo });
 
     const ficheId = await createFiche({
@@ -149,6 +159,55 @@ describe('buildFicheExportPayload - fiches liées', () => {
 
     expect(result.data.fichesLiees.map((ficheLiee) => ficheLiee.id)).toEqual([
       ficheSourceId,
+    ]);
+  }, 30_000);
+});
+
+describe('buildFicheExportPayload - sous-actions', () => {
+  const sousActionIdsExportees = async (
+    ficheId: number,
+    user: AuthenticatedUser
+  ) => {
+    const result = await payloadService.buildFicheExportPayload({
+      ficheId,
+      user,
+    });
+    if (!result.success) throw new Error(result.error);
+    return result.data.sousActions.map((sousAction) => sousAction.id);
+  };
+
+  it('inclut les sous-actions lisibles, par ordre de création, sans les supprimées', async () => {
+    const db = await getTestDatabase(app);
+    const { collectivite, user: admin } = await addTestCollectiviteAndUser(db, {
+      user: { role: CollectiviteRole.ADMIN },
+    });
+    const adminUser = getAuthUserFromUserCredentials(admin);
+    const caller = router.createCaller({ user: adminUser });
+    const create = (titre: string, fields = {}) =>
+      createFiche({
+        caller,
+        ficheInput: { collectiviteId: collectivite.id, titre, ...fields },
+      });
+
+    const ficheId = await create('Fiche exportée');
+    const premiereId = await create('Première', { parentId: ficheId });
+    const restreinteId = await create('Restreinte', {
+      parentId: ficheId,
+      restreint: true,
+    });
+    const supprimeeId = await create('Supprimée', { parentId: ficheId });
+    await caller.plans.fiches.delete({ ficheId: supprimeeId });
+
+    expect(await sousActionIdsExportees(ficheId, adminUser)).toEqual([
+      premiereId,
+      restreinteId,
+    ]);
+
+    // Un visiteur non membre ne voit pas la sous-action restreinte.
+    const { user } = await addTestUser(db);
+    const visiteur = getAuthUserFromUserCredentials(user);
+    expect(await sousActionIdsExportees(ficheId, visiteur)).toEqual([
+      premiereId,
     ]);
   }, 30_000);
 });
